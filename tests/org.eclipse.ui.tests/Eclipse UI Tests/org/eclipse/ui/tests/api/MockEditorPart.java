@@ -173,17 +173,11 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
         saveNeeded = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
-     */
     @Override
 	protected IActionBars getActionBars() {
         return getEditorSite().getActionBars();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
-     */
     @Override
 	public void showEditorInput(IEditorInput editorInput) {
         callTrace.add("showEditorInput");

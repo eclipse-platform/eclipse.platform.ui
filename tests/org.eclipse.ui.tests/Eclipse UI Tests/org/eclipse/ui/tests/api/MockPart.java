@@ -56,9 +56,6 @@ public class MockPart extends EventManager implements IExecutableExtension {
     private Image titleImage;
 
     private DisposeListener disposeListener = new DisposeListener() {
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-    	 */
     	@Override
 		public void widgetDisposed(DisposeEvent e) {
     		MockPart.this.widgetDisposed();

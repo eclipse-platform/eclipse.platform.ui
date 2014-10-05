@@ -24,11 +24,6 @@ import org.eclipse.ui.IPerspectiveFactory;
 public class PerspectiveViewsBug120934 implements IPerspectiveFactory {
 	public static final String PERSP_ID = "org.eclipse.ui.tests.api.PerspectiveViewsBug120934";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
-	 */
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addView(IPageLayout.ID_BOOKMARKS, IPageLayout.RIGHT, 0.25f,

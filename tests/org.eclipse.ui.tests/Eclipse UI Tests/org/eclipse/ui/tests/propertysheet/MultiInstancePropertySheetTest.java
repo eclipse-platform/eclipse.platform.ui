@@ -84,12 +84,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.tests.propertysheet.AbstractPropertySheetTest#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
@@ -108,11 +102,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
-	 */
 	@Override
 	protected void doTearDown() throws Exception {
 	    activePage.resetPerspective();         

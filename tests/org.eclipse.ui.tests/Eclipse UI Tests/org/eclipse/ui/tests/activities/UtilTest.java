@@ -358,10 +358,6 @@ public class UtilTest extends TestCase {
 			return new String[] { VARIABLE };
 		}
 
-		/* 
-		 * (non-Javadoc)		 
-		 * @see org.eclipse.ui.ISourceProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
@@ -624,18 +620,12 @@ public class UtilTest extends TestCase {
     	}
     }
     
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		rememberedSet = getActivityManager().getEnabledActivityIds();
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

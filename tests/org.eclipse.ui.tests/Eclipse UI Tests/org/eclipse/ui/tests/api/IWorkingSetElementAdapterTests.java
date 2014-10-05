@@ -28,18 +28,12 @@ public class IWorkingSetElementAdapterTests extends TestCase {
 	String data = "org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon;adapt=true,org.eclipse.ui.tests.menus.ObjectContributionClasses$IF;adapt=true";
 	BasicWorkingSetElementAdapter adapter;
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		adapter = new BasicWorkingSetElementAdapter();
 		adapter.setInitializationData(null, "class", data);
 	}
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		adapter.dispose();

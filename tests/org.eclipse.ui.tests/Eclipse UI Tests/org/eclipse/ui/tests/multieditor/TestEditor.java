@@ -84,11 +84,6 @@ public class TestEditor extends EditorPart {
 		l.setText(getEditorInput().getName());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		fMainPanel.setFocus();

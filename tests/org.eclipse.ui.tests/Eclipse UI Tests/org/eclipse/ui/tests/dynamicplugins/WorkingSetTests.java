@@ -46,50 +46,27 @@ public class WorkingSetTests extends DynamicTestCase {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
-	 */
 	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.DynamicWorkingSetElementAdapter";
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#testClass()
-	 */
 	@Override
 	public void testClass() throws Exception {
 		super.testClass();
 		// commented out for now - it's causing grief
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionId()
-	 */
 	@Override
 	protected String getExtensionId() {
 		return "newWorkingSet1.testDynamicWorkingSetAddition1";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
-	 */
 	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_WORKINGSETS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
-	 */
 	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newWorkingSet1";

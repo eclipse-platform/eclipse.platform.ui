@@ -24,25 +24,16 @@ public class ZoomedViewActivateTest extends ActivateTest {
         super(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.zoom.ActivateTest#getStackedPart1()
-     */
     @Override
 	public IWorkbenchPart getStackedPart1() {
         return stackedView1;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.zoom.ActivateTest#getStackedPart2()
-     */
     @Override
 	public IWorkbenchPart getStackedPart2() {
         return stackedView2;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.zoom.ActivateTest#getUnstackedPart()
-     */
     @Override
 	public IWorkbenchPart getUnstackedPart() {
         return unstackedView;

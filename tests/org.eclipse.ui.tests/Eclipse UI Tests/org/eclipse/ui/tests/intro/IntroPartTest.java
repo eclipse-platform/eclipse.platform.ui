@@ -37,18 +37,12 @@ public class IntroPartTest extends IWorkbenchPartTest {
         super(testName);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
-     */
     @Override
 	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
         return (MockIntroPart) page.getWorkbenchWindow().getWorkbench()
                 .getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#closePart(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.tests.api.MockWorkbenchPart)
-     */
     @Override
 	protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
@@ -92,9 +86,6 @@ public class IntroPartTest extends IWorkbenchPartTest {
         closePart(fPage, part);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
-     */
     @Override
 	protected void doSetUp() throws Exception {
         super.doSetUp();
@@ -111,9 +102,6 @@ public class IntroPartTest extends IWorkbenchPartTest {
                 .getIntroRegistry().getIntro("org.eclipse.ui.testintro");
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
-     */
     @Override
 	protected void doTearDown() throws Exception {
         super.doTearDown();

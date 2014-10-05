@@ -30,11 +30,6 @@ public class MarkerSortUtilTest extends UITestCase {
 		super("MarkerSortUtilTest");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		// TODO Auto-generated method stub

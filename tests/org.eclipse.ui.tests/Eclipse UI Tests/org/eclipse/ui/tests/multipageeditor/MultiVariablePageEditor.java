@@ -80,11 +80,6 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.MultiPageEditorPart#pageChange(int)
-	 */
 	@Override
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);

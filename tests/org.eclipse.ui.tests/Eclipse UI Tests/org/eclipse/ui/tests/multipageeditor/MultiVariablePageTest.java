@@ -249,13 +249,6 @@ public class MultiVariablePageTest extends UITestCase {
 		MultiPageEditorPart editor;
 		Object page;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.dialogs.IPageChangedListener#pageChanged(org.eclipse
-		 * .jface.dialogs.PageChangedEvent)
-		 */
 		@Override
 		public void pageChanged(PageChangedEvent event) {
 			editor = (MultiPageEditorPart) event.getSource();

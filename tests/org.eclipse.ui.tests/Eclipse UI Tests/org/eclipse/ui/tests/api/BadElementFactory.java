@@ -50,11 +50,6 @@ public class BadElementFactory implements IElementFactory {
 		public static boolean failAttempted = false;
 
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-		 */
 		@Override
 		public Object getAdapter(Class adapter) {
 			if (adapter.equals(IPersistableElement.class))
@@ -62,21 +57,11 @@ public class BadElementFactory implements IElementFactory {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
-		 */
 		@Override
 		public String getFactoryId() {
 			return "org.eclipse.ui.tests.badFactory";
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
-		 */
 		@Override
 		public void saveState(IMemento memento) {
 			if (fail) {

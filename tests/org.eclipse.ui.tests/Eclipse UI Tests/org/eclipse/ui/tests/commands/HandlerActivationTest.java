@@ -57,11 +57,6 @@ public class HandlerActivationTest extends UITestCase {
 			contextId = id;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-		 */
 		@Override
 		public Object execute(ExecutionEvent event) {
 			executionCount++;
@@ -189,11 +184,6 @@ public class HandlerActivationTest extends UITestCase {
 		makeHandler(handlerId, contextId, expression);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		for (int i = 0; i < CREATE_CONTEXTS.length; i++) {
@@ -213,11 +203,6 @@ public class HandlerActivationTest extends UITestCase {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
-	 */
 	@Override
 	protected void doTearDown() throws Exception {
 		handlerService.deactivateHandlers(testHandlerActivations.values());

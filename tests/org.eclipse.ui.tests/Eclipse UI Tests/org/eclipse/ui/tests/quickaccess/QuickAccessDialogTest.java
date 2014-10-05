@@ -38,9 +38,6 @@ public class QuickAccessDialogTest extends UITestCase {
 		super(testName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbench()
@@ -54,9 +51,6 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertNotNull("Search Field must exist", searchField);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
-	 */
 	@Override
 	protected void doTearDown() throws Exception {
 		Text text = searchField.getQuickAccessSearchText();

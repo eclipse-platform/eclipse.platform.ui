@@ -27,17 +27,11 @@ public class OverriddenTitleView extends EmptyView {
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#getTitle()
-     */
     @Override
 	public String getTitle() {
         return overriddenTitle;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#setTitle(java.lang.String)
-     */
     public void customSetTitle(String title) {
         overriddenTitle = Util.safeString(title);
 

@@ -32,18 +32,12 @@ public class ComboBoxPropertyDescriptorTest extends TestCase {
 
     private ComboBoxPropertyDescriptor descriptor;
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
         descriptor = new ComboBoxPropertyDescriptor(ID, NAME, values);
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
     @Override
 	protected void tearDown() throws Exception {
         super.tearDown();

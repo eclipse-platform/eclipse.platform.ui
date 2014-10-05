@@ -65,9 +65,7 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
             }
         }
         super.doSetUp();
-    } /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.navigator.LightweightDecoratorTestCase#doTearDown()
-     */
+	}
 
     @Override
 	protected void doTearDown() throws Exception {

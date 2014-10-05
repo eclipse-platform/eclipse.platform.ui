@@ -36,9 +36,6 @@ public class TestMemento implements IMemento {
 		return createChild(type, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#createChild(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IMemento createChild(String type, String id) {
 		IMemento child  = new TestMemento(typeName,id);
@@ -46,9 +43,6 @@ public class TestMemento implements IMemento {
 		return child;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getChild(java.lang.String)
-	 */
 	@Override
 	public IMemento getChild(String type) {
 		Iterator iterator = children.iterator();
@@ -60,9 +54,6 @@ public class TestMemento implements IMemento {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getChildren()
-	 */
 	@Override
 	public IMemento[] getChildren() {
 		IMemento[] returnValue = new IMemento[children.size()];
@@ -86,9 +77,6 @@ public class TestMemento implements IMemento {
 		return returnValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getFloat(java.lang.String)
-	 */
 	@Override
 	public Float getFloat(String key) {
 		if(values.containsKey(key))
@@ -96,17 +84,11 @@ public class TestMemento implements IMemento {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getID()
-	 */
 	@Override
 	public String getID() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getInteger(java.lang.String)
-	 */
 	@Override
 	public Integer getInteger(String key) {
 		if(values.containsKey(key))
@@ -114,9 +96,6 @@ public class TestMemento implements IMemento {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getString(java.lang.String)
-	 */
 	@Override
 	public String getString(String key) {
 		if(values.containsKey(key))
@@ -124,34 +103,22 @@ public class TestMemento implements IMemento {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getTextData()
-	 */
 	@Override
 	public String getTextData() {
 		return textData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putFloat(java.lang.String, float)
-	 */
 	@Override
 	public void putFloat(String key, float value) {
 		values.put(key,new Float(value));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putInteger(java.lang.String, int)
-	 */
 	@Override
 	public void putInteger(String key, int value) {
 		values.put(key,new Integer(value));
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putMemento(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void putMemento(IMemento memento) {
 		TestMemento newMemento = (TestMemento) memento;
@@ -162,36 +129,24 @@ public class TestMemento implements IMemento {
 		textData =  newMemento.textData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putString(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void putString(String key, String value) {
 		values.put(key,value);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putTextData(java.lang.String)
-	 */
 	@Override
 	public void putTextData(String data) {
 		textData = data;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getAttributeKeys()
-	 */
 	@Override
 	public String[] getAttributeKeys() {
 		Set keySet = values.keySet();
 		return (String[]) keySet.toArray(new String[keySet.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getBoolean(java.lang.String)
-	 */
 	@Override
 	public Boolean getBoolean(String key) {
 		if(values.containsKey(key))
@@ -199,17 +154,11 @@ public class TestMemento implements IMemento {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getType()
-	 */
 	@Override
 	public String getType() {
 		return typeName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putBoolean(java.lang.String, boolean)
-	 */
 	@Override
 	public void putBoolean(String key, boolean value) {
 		values.put(key, value?Boolean.TRUE:Boolean.FALSE);

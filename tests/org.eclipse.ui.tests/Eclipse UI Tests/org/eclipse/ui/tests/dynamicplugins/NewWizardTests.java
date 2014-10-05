@@ -58,33 +58,21 @@ public class NewWizardTests extends DynamicTestCase {
 		assertNotNull(wizard.getImageDescriptor());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionId()
-	 */
 	@Override
 	protected String getExtensionId() {		
 		return "newNewWizard1.testDynamicNewWizardAddition";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
-	 */
 	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_NEW;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
-	 */
 	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newNewWizard1";
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
-	 */
 	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.DynamicWizard";

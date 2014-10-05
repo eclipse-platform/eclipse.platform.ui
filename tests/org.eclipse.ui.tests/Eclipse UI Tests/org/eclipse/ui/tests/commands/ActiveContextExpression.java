@@ -36,11 +36,6 @@ public class ActiveContextExpression extends Expression {
 		expressionInfo = info;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.expressions.Expression#collectExpressionInfo(org.eclipse.core.expressions.ExpressionInfo)
-	 */
 	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		for (int i = 0; i < expressionInfo.length; i++) {
@@ -48,11 +43,6 @@ public class ActiveContextExpression extends Expression {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.expressions.Expression#evaluate(org.eclipse.core.expressions.IEvaluationContext)
-	 */
 	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		final Object variable = context
@@ -65,11 +55,6 @@ public class ActiveContextExpression extends Expression {
 		return EvaluationResult.FALSE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ActiveContextExpression) {

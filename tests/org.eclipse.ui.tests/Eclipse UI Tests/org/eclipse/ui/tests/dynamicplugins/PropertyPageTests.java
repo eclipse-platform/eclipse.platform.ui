@@ -56,33 +56,21 @@ public class PropertyPageTests extends DynamicTestCase {
 		assertNull(manager.find(PROPERTYPAGE));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionId()
-	 */
 	@Override
 	protected String getExtensionId() {
 		return "newPropertyPage1.testDynamicPropertyPageAddition";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getExtensionPoint()
-	 */
 	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_PROPERTY_PAGES;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
-	 */
 	@Override
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newPropertyPage1";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
-	 */
 	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.DynamicPropertyPage";

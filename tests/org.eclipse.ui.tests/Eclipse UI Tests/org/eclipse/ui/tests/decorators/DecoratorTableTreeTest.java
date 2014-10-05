@@ -29,9 +29,6 @@ public class DecoratorTableTreeTest extends DecoratorViewerTest {
 	public DecoratorTableTreeTest(String testName) {
 		super(testName);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#backgroundCheck(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	protected void backgroundCheck(IViewPart view) {
 		TableTreeItem first = ((DecoratorTableTreeView) view).viewer.getTableTree().getItems()[0];
@@ -40,9 +37,6 @@ public class DecoratorTableTreeTest extends DecoratorViewerTest {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#foregroundCheck(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	protected void foregroundCheck(IViewPart view) {
 		TableTreeItem first = ((DecoratorTableTreeView) view).viewer.getTableTree().getItems()[0];
@@ -51,17 +45,11 @@ public class DecoratorTableTreeTest extends DecoratorViewerTest {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#openView(org.eclipse.ui.IWorkbenchPage)
-	 */
 	@Override
 	protected IViewPart openView(IWorkbenchPage page) throws PartInitException {
 		return page.showView("org.eclipse.ui.tests.decorator.TableTreeTest");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.decorators.DecoratorViewerTest#fontCheck(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	protected void fontCheck(IViewPart view) {
 		TableTreeItem first = ((DecoratorTableTreeView) view).viewer.getTableTree().getItems()[0];

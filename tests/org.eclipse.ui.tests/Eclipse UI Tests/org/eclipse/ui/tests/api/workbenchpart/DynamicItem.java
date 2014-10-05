@@ -65,11 +65,6 @@ public class DynamicItem extends CompoundContributionItem {
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
-	 */
 	@Override
 	protected IContributionItem[] getContributionItems() {
 		IContributionItem[] items = { new ActionContributionItem(action1),

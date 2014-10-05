@@ -28,11 +28,6 @@ public class DeclaredProgrammaticFactory extends ExtensionContributionFactory {
 		 */
 		public MyItem() {
 			super(new Action("MyItem") {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.action.Action#getId()
-				 */
 				@Override
 				public String getId() {
 					return "myitem";

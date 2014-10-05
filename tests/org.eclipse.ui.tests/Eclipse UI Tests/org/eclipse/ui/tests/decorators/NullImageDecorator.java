@@ -30,17 +30,11 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
     public NullImageDecorator() {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-     */
     @Override
 	public void addListener(ILabelProviderListener listener) {
         // XXX Auto-generated method stub
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
-     */
     @Override
 	public void decorate(Object element, IDecoration decoration) {
         if (fail) {
@@ -49,26 +43,17 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-     */
     @Override
 	public void dispose() {
         // XXX Auto-generated method stub
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-     */
     @Override
 	public boolean isLabelProperty(Object element, String property) {
         // XXX Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-     */
     @Override
 	public void removeListener(ILabelProviderListener listener) {
         // XXX Auto-generated method stub

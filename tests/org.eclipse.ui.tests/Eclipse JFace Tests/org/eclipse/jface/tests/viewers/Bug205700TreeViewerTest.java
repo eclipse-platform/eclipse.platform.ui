@@ -38,11 +38,6 @@ public class Bug205700TreeViewerTest extends TestCase {
 
 	private final TreeNode child10 = new TreeNode("Child10");
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		shell = new Shell();
@@ -57,11 +52,6 @@ public class Bug205700TreeViewerTest extends TestCase {
 		shell.open();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		shell.close();

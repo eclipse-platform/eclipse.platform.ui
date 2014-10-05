@@ -57,17 +57,6 @@ public class DeclaredProgrammaticFactoryForToolbarVisibilityTest extends Extensi
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.gmf.runtime.common.ui.action.ActionMenuManager which is
-     * an implementation of an <code>IMenuManager</code> that inherits its UI
-     * (text + icon + hints) from a given action. When filled in a toolbar, the
-     * menu is rendered as a tool item.
-     *
-     * See Bug 410426 which corrects a ClassCastException in
-     * ToolbarManagerRenderer while looking for a IContributionItem parent ToolBarManager.
-     */
     private static class TestActionMenuManager extends MenuManager {
         private ActionContributionItem actionContributionItem;
 
@@ -77,23 +66,11 @@ public class DeclaredProgrammaticFactoryForToolbarVisibilityTest extends Extensi
             add(new TestAction(TEST_ITEM_WITHOUT_VISIBLE_WHEN));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets
-         * .ToolBar, int)
-         */
         @Override
 		public void fill(ToolBar parent, int index) {
             actionContributionItem.fill(parent, index);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.eclipse.jface.action.MenuManager#dispose()
-         */
         @Override
         public void dispose() {
             super.dispose();

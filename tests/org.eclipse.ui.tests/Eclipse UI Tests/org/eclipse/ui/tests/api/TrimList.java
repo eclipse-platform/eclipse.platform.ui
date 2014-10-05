@@ -49,96 +49,52 @@ public class TrimList implements IWindowTrim {
 		fCombo.select(0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fCombo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#getValidSides()
-	 */
 	@Override
 	public int getValidSides() {
 		return SWT.TOP | SWT.BOTTOM;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#dock(int)
-	 */
 	@Override
 	public void dock(int dropSide) {
 		// nothing to do, we don't have to re-orient our control
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#getId()
-	 */
 	@Override
 	public String getId() {
 		return TRIM_LIST_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#getDisplayName()
-	 */
 	@Override
 	public String getDisplayName() {
 		// Should be the NLS string name, but I'll cheat for now
 		return "Trim List";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#isCloseable()
-	 */
 	@Override
 	public boolean isCloseable() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWindowTrim#handleClose()
-	 */
 	@Override
 	public void handleClose() {
 		// nothing to do here.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
-	 */
 	@Override
 	public int getWidthHint() {
 		return SWT.DEFAULT;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
-	 */
 	@Override
 	public int getHeightHint() {
 		return SWT.DEFAULT;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
-	 */
 	@Override
 	public boolean isResizeable() {
 		return false;

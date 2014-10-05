@@ -87,9 +87,6 @@ public abstract class TestBrowser extends ApplicationWindow {
         addMenuBar();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Window.
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);

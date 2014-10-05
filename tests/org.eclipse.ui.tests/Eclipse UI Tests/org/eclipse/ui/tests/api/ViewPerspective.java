@@ -21,9 +21,6 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class ViewPerspective implements IPerspectiveFactory {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
-     */
     @Override
 	public void createInitialLayout(IPageLayout layout) {
         String editorArea = layout.getEditorArea();

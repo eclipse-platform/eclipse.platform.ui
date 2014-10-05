@@ -40,9 +40,6 @@ public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
         return getPage().findView(targetPart);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-     */
     @Override
 	public String toString() {
         IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
@@ -52,9 +49,6 @@ public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
         return title + " view tab area";
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-     */
     @Override
 	public Point getLocation() {
         Rectangle bounds = DragOperations.getDisplayBounds(DragOperations

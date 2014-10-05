@@ -128,11 +128,6 @@ public class MockViewPart5 extends MockWorkbenchPart implements IViewPart {
 		// how's this for a comment, filthy human compiler
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
-	 */
 	@Override
 	protected IActionBars getActionBars() {
 		return getViewSite().getActionBars();

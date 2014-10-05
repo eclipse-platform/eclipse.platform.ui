@@ -28,9 +28,6 @@ public class LocaleTest extends AbstractNavigatorTest {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();

@@ -39,9 +39,6 @@ public class TextWidget extends WorkbenchWindowControlContribution {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ControlContribution#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createControl(Composite parent) {
 		Composite textHolder = new Composite(parent, SWT.NONE);

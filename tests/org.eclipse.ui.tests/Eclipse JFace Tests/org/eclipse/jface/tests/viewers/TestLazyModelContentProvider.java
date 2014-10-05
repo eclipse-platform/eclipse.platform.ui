@@ -34,9 +34,6 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int, int)
-	 */
 	@Override
 	public void updateElement(int index) {
 		
@@ -49,17 +46,11 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.TestModelContentProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.TestModelContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		input = (TestElement) newInput;
@@ -67,9 +58,6 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 		super.inputChanged(viewer, oldInput, newInput);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.TestModelContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object element) {
 		Assert.isTrue(false,"Should not ever call getElements if lazy");

@@ -27,17 +27,11 @@ public class WindowDropTarget extends WorkbenchWindowDropTarget {
         this.side = side;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-     */
     @Override
 	public String toString() {
         return DragOperations.nameForConstant(side) + " of window";
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-     */
     @Override
 	public Point getLocation() {
         Shell shell = getShell();

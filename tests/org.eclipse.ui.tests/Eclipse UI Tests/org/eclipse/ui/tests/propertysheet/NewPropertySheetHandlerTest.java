@@ -44,12 +44,6 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.tests.propertysheet.AbstractPropertySheetTest#doSetUp()
-	 */
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();

@@ -61,9 +61,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
             Button applyButton = new Button(buttonBar, SWT.PUSH);
             applyButton.setText("Apply");
             applyButton.addSelectionListener(new SelectionAdapter() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
                 @Override
 				public void widgetSelected(SelectionEvent e) {
                     applyPressed();
@@ -74,9 +71,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
             Button clearButton = new Button(buttonBar, SWT.PUSH);
             clearButton.setText("Reset");
             clearButton.addSelectionListener(new SelectionAdapter() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
                 @Override
 				public void widgetSelected(SelectionEvent e) {
                     minWidthText.setText("");
@@ -94,9 +88,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
             Button newViewButton = new Button(buttonBar, SWT.PUSH);
             newViewButton.setText("New View");
             newViewButton.addSelectionListener(new SelectionAdapter() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
                 @Override
 				public void widgetSelected(SelectionEvent e) {
                     try {
@@ -168,9 +159,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
         updateLayout();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
-     */
     @Override
 	public int getSizeFlags(boolean width) {
         int flags = 0;
@@ -279,9 +267,6 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
         control.setFocus();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
-     */
     @Override
 	public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {

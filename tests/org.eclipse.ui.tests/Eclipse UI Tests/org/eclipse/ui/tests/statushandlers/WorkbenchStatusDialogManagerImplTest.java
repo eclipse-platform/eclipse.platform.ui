@@ -28,9 +28,6 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 public class WorkbenchStatusDialogManagerImplTest extends TestCase {
 
 	WorkbenchStatusDialogManagerImpl mgr;
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -38,9 +35,6 @@ public class WorkbenchStatusDialogManagerImplTest extends TestCase {
 		mgr.setProperty(IStatusDialogConstants.ANIMATION, Boolean.FALSE);
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

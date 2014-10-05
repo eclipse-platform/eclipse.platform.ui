@@ -89,11 +89,6 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		viewer.setSelection(new StructuredSelection(new TestResourceMapping(

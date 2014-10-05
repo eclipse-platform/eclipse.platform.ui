@@ -29,9 +29,6 @@ public class StartupClass implements IStartup {
      */
     private static boolean earlyStartupCompleted = false;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IStartup#earlyStartup()
-     */
     @Override
 	public void earlyStartup() {
         earlyStartupCalled = true;

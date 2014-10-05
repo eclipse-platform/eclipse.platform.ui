@@ -59,11 +59,6 @@ public abstract class DecoratorTestPart extends ViewPart {
 	private ILabelProviderListener getDecoratorManagerListener() {
 		listener = new ILabelProviderListener() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
-			 */
 			@Override
 			public void labelProviderChanged(LabelProviderChangedEvent event) {
 				// Reset the end time each time we get an update

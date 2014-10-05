@@ -102,9 +102,6 @@ public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
         return input;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IBaseLabelProvider
-     */
     /**
      * Disposes of all allocated images.
      */
@@ -125,9 +122,6 @@ public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
                 .getAdapter(IWorkbenchAdapter.class);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ILabelProvider
-     */
     @Override
 	public final Image getImage(Object element) {
         //obtain the base image by querying the element
@@ -144,9 +138,6 @@ public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
         return descriptor.createImage();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ILabelProvider
-     */
     @Override
 	public final String getText(Object element) {
         //query the element for its label

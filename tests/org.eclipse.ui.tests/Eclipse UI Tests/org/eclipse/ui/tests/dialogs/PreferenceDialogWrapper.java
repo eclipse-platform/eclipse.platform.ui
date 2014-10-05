@@ -56,9 +56,6 @@ public class PreferenceDialogWrapper extends PreferenceDialog implements IWorkbe
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#registerUpdateJob(org.eclipse.core.runtime.jobs.Job)
-	 */
 	@Override
 	public void registerUpdateJob(Job job) {
 		//Do nothing as we are not testing this.

@@ -20,9 +20,6 @@ import org.eclipse.core.expressions.PropertyTester;
 public class StaticVarPropertyTester extends PropertyTester {
 	public static boolean result = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {

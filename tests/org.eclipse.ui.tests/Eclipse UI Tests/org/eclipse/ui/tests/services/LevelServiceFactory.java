@@ -29,11 +29,6 @@ public class LevelServiceFactory extends AbstractServiceFactory {
 			level = l;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.tests.services.ILevelService#getLevel()
-		 */
 		@Override
 		public int getLevel() {
 			return level;

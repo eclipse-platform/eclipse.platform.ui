@@ -97,43 +97,28 @@ public class SaveableMockViewPart extends MockViewPart implements
 		this.adapt = selection;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		callTrace.add("doSave" );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		callTrace.add("doSaveAs" );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		callTrace.add("isDirty" );
 		return isDirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		callTrace.add("isSaveAsAllowed" );
 		return saveAsAllowed ;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
-	 */
 	@Override
 	public boolean isSaveOnCloseNeeded() {
 		callTrace.add("isSaveOnCloseNeeded" );
@@ -153,18 +138,12 @@ public class SaveableMockViewPart extends MockViewPart implements
         this.saveNeeded = isSaveOnCloseNeeded;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
-	 */
 	@Override
 	public Saveable[] getActiveSaveables() {
 		// TODO Auto-generated method stub
 		return getSaveables();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
-	 */
 	@Override
 	public Saveable[] getSaveables() {
 		Saveable[] result = new Saveable[1];

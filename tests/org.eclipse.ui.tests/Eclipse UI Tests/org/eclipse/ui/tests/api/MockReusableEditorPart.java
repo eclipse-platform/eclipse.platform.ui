@@ -174,25 +174,16 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
         saveNeeded = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
-     */
     @Override
 	protected IActionBars getActionBars() {
         return getEditorSite().getActionBars();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
-     */
     @Override
 	public void showEditorInput(IEditorInput editorInput) {
         callTrace.add("showEditorInput");
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IReusableEditor#setInput(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	public void setInput(IEditorInput input) {
 		this.input = input;

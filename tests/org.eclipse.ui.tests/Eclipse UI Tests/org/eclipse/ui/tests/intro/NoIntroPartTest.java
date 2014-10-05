@@ -32,18 +32,12 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
         // TODO Auto-generated constructor stub
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
-     */
     @Override
 	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
         return (MockPart) page.getWorkbenchWindow().getWorkbench()
                 .getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#closePart(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.tests.api.MockWorkbenchPart)
-     */
     @Override
 	protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
@@ -59,9 +53,6 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
         assertNull(part);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
-     */
     @Override
 	protected void doSetUp() throws Exception {
         super.doSetUp();
@@ -69,9 +60,6 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
         Workbench.getInstance().setIntroDescriptor(null);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
-     */
     @Override
 	protected void doTearDown() throws Exception {
         super.doTearDown();

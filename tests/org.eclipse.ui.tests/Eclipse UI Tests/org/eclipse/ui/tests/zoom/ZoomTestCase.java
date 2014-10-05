@@ -65,9 +65,6 @@ public class ZoomTestCase extends UITestCase {
         super(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
-     */
     @Override
 	protected void doTearDown() throws Exception {
     	// Ensure that the model is sane

@@ -146,9 +146,6 @@ public class AdaptedResourceNavigator extends ViewPart {
         return new StructuredSelection(list);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPart.
-     */
     @Override
 	public void createPartControl(Composite parent) {
         viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -219,9 +216,6 @@ public class AdaptedResourceNavigator extends ViewPart {
         memento = null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPart.
-     */
     @Override
 	public void dispose() {
         getSite().getPage().removePartListener(partListener);
@@ -398,9 +392,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 
     }
 
-    /* (non-Javadoc)
-     * Method declared on IViewPart.
-     */
     @Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
         super.init(site, memento);

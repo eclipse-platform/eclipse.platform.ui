@@ -34,11 +34,6 @@ public class ToggleContextHandler extends AbstractHandler implements
 	private static final String TOGGLE_ID = "toggleContext.contextId";
 	Map contextActivations = new HashMap();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String contextId = event.getParameter(TOGGLE_ID);
@@ -71,9 +66,6 @@ public class ToggleContextHandler extends AbstractHandler implements
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
-	 */
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
 

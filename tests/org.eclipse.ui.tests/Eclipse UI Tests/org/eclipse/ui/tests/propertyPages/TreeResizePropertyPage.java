@@ -88,11 +88,6 @@ public class TreeResizePropertyPage extends PropertyPage {
 		return composite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		return true;

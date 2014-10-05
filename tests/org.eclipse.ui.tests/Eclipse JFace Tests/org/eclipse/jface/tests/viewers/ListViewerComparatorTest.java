@@ -30,9 +30,6 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.tests.viewers.ViewerTestCase#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
         ListViewer viewer = new ListViewer(parent);
