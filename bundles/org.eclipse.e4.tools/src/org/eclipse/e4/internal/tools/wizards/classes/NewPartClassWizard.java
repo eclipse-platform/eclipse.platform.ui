@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Sopot Cela <sopotcela@gmail.com>
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
 import org.eclipse.e4.internal.tools.wizards.classes.templates.PartTemplate;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -32,110 +33,118 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewPartClassWizard extends AbstractNewClassWizard {
 
+	private static final String PERSIST_METHOD_NAME = "persistMethodName"; //$NON-NLS-1$
+	private static final String USE_PERSIST = "usePersist"; //$NON-NLS-1$
+	private static final String USE_FOCUS = "useFocus"; //$NON-NLS-1$
+	private static final String FOCUS_METHOD_NAME = "focusMethodName"; //$NON-NLS-1$
+	private static final String USE_PREDESTROY = "usePredestroy"; //$NON-NLS-1$
+	private static final String PRE_DESTROY_METHOD_NAME = "preDestroyMethodName"; //$NON-NLS-1$
+	private static final String USE_POST_CONSTRUCT = "usePostConstruct"; //$NON-NLS-1$
+	private static final String POST_CONSTRUCT_METHOD_NAME = "postConstructMethodName"; //$NON-NLS-1$
 	private String initialString;
 
 	public NewPartClassWizard(String contributionURI) {
-		this.initialString = contributionURI;
+		initialString = contributionURI;
 	}
-	
+
 	public NewPartClassWizard() {
-		// Intentially left empty 
+		// Intentially left empty
 	}
 
 	@Override
 	public void addPages() {
-		addPage(new AbstractNewClassPage("Classinformation", "New Part",
-				"Create a new part class", root, ResourcesPlugin.getWorkspace()
-						.getRoot(), initialString) {
+		addPage(new AbstractNewClassPage("Classinformation", Messages.NewPartClassWizard_NewPart, //$NON-NLS-1$
+			Messages.NewPartClassWizard_CreateNewPart, root, ResourcesPlugin.getWorkspace()
+			.getRoot(), initialString) {
 
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
-				IWidgetValueProperty textProp = WidgetProperties
-						.text(SWT.Modify);
-				IWidgetValueProperty enabledProp = WidgetProperties.enabled();
+				final IWidgetValueProperty textProp = WidgetProperties
+					.text(SWT.Modify);
+				final IWidgetValueProperty enabledProp = WidgetProperties.enabled();
 
 				{
-					Label l = new Label(parent, SWT.NONE);
-					l.setText("PostContruct Method");
+					final Label l = new Label(parent, SWT.NONE);
+					l.setText(Messages.NewPartClassWizard_PostConstructMethod);
 
-					Text t = new Text(parent, SWT.BORDER);
+					final Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					dbc.bindValue(textProp.observe(t),
-							BeanProperties.value("postConstructMethodName")
-									.observe(getClazz()));
+						BeanProperties.value(POST_CONSTRUCT_METHOD_NAME)
+						.observe(getClazz()));
 					dbc.bindValue(
-							enabledProp.observe(t),
-							BeanProperties.value("usePostConstruct").observe(
-									getClazz()));
+						enabledProp.observe(t),
+						BeanProperties.value(USE_POST_CONSTRUCT).observe(
+							getClazz()));
 
-					Button b = new Button(parent, SWT.CHECK);
+					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-							WidgetProperties.selection().observe(b),
-							BeanProperties.value("usePostConstruct").observe(
-									getClazz()));
+						WidgetProperties.selection().observe(b),
+						BeanProperties.value(USE_POST_CONSTRUCT).observe(
+							getClazz()));
 				}
-				
-				{
-					Label l = new Label(parent, SWT.NONE);
-					l.setText("Predestroy Method");
 
-					Text t = new Text(parent, SWT.BORDER);
+				{
+					final Label l = new Label(parent, SWT.NONE);
+					l.setText(Messages.NewPartClassWizard_PredestroyMethod);
+
+					final Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					dbc.bindValue(textProp.observe(t),
-							BeanProperties.value("preDestroyMethodName")
-									.observe(getClazz()));
+						BeanProperties.value(PRE_DESTROY_METHOD_NAME)
+						.observe(getClazz()));
 					dbc.bindValue(
-							enabledProp.observe(t),
-							BeanProperties.value("usePredestroy").observe(
-									getClazz()));
+						enabledProp.observe(t),
+						BeanProperties.value(USE_PREDESTROY).observe(
+							getClazz()));
 
-					Button b = new Button(parent, SWT.CHECK);
+					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-							WidgetProperties.selection().observe(b),
-							BeanProperties.value("usePredestroy").observe(
-									getClazz()));
+						WidgetProperties.selection().observe(b),
+						BeanProperties.value(USE_PREDESTROY).observe(
+							getClazz()));
 				}
-				
-				{
-					Label l = new Label(parent, SWT.NONE);
-					l.setText("Focus Method");
 
-					Text t = new Text(parent, SWT.BORDER);
+				{
+					final Label l = new Label(parent, SWT.NONE);
+					l.setText(Messages.NewPartClassWizard_FocusMethod);
+
+					final Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					dbc.bindValue(textProp.observe(t),
-							BeanProperties.value("focusMethodName")
-									.observe(getClazz()));
+						BeanProperties.value(FOCUS_METHOD_NAME)
+						.observe(getClazz()));
 					dbc.bindValue(
-							enabledProp.observe(t),
-							BeanProperties.value("useFocus").observe(
-									getClazz()));
+						enabledProp.observe(t),
+						BeanProperties.value(USE_FOCUS).observe(
+							getClazz()));
 
-					Button b = new Button(parent, SWT.CHECK);
+					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-							WidgetProperties.selection().observe(b),
-							BeanProperties.value("useFocus").observe(
-									getClazz()));
+						WidgetProperties.selection().observe(b),
+						BeanProperties.value(USE_FOCUS).observe(
+							getClazz()));
 				}
-				
-				{
-					Label l = new Label(parent, SWT.NONE);
-					l.setText("Persist Method");
 
-					Text t = new Text(parent, SWT.BORDER);
+				{
+					final Label l = new Label(parent, SWT.NONE);
+					l.setText(Messages.NewPartClassWizard_PersistMethod);
+
+					final Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					dbc.bindValue(textProp.observe(t),
-							BeanProperties.value("persistMethodName")
-									.observe(getClazz()));
+						BeanProperties.value(PERSIST_METHOD_NAME)
+						.observe(getClazz()));
 					dbc.bindValue(
-							enabledProp.observe(t),
-							BeanProperties.value("usePersist").observe(
-									getClazz()));
+						enabledProp.observe(t),
+						BeanProperties.value(USE_PERSIST).observe(
+							getClazz()));
 
-					Button b = new Button(parent, SWT.CHECK);
+					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-							WidgetProperties.selection().observe(b),
-							BeanProperties.value("usePersist").observe(
-									getClazz()));
+						WidgetProperties.selection().observe(b),
+						BeanProperties.value(USE_PERSIST).observe(
+							getClazz()));
 				}
 			}
 
@@ -146,45 +155,46 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 
 		});
 	}
-	
+
 	@Override
 	protected Set<String> getRequiredBundles() {
-		Set<String> rv = super.getRequiredBundles();
-		PartClass cl = (PartClass)getDomainClass();
-		if( cl.usePostConstruct || cl.usePredestroy ) {
-			rv.add("javax.annotation");
-		} else if( cl.useFocus || cl.usePersist ) {
-			rv.add("org.eclipse.e4.ui.di");
+		final Set<String> rv = super.getRequiredBundles();
+		final PartClass cl = (PartClass) getDomainClass();
+		if (cl.usePostConstruct || cl.usePredestroy) {
+			rv.add("javax.annotation"); //$NON-NLS-1$
+		} else if (cl.useFocus || cl.usePersist) {
+			rv.add("org.eclipse.e4.ui.di"); //$NON-NLS-1$
 		}
-		
+
 		return rv;
 	}
-	
+
 	@Override
 	protected String getContent() {
-		PartTemplate template = new PartTemplate();
+		final PartTemplate template = new PartTemplate();
 		return template.generate(getDomainClass());
 	}
 
 	public static class PartClass extends JavaClass {
-		private PropertyChangeSupport support = new PropertyChangeSupport(this);
+
+		private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 		private boolean usePostConstruct = true;
-		private String postConstructMethodName = "postConstruct";
+		private String postConstructMethodName = "postConstruct"; //$NON-NLS-1$
 
 		private boolean usePredestroy;
-		private String preDestroyMethodName = "preDestroy";
+		private String preDestroyMethodName = "preDestroy"; //$NON-NLS-1$
 
 		private boolean useFocus;
-		private String focusMethodName = "onFocus";
+		private String focusMethodName = "onFocus"; //$NON-NLS-1$
 
 		private boolean usePersist;
-		private String persistMethodName = "save";
+		private String persistMethodName = "save"; //$NON-NLS-1$
 
 		public PartClass(IPackageFragmentRoot fragmentRoot) {
 			super(fragmentRoot);
 		}
-		
+
 		@Override
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			support.addPropertyChangeListener(listener);
@@ -200,9 +210,9 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setUsePostConstruct(boolean usePostConstruct) {
-			support.firePropertyChange("usePostConstruct",
-					this.usePostConstruct,
-					this.usePostConstruct = usePostConstruct);
+			support.firePropertyChange(USE_POST_CONSTRUCT,
+				this.usePostConstruct,
+				this.usePostConstruct = usePostConstruct);
 		}
 
 		public String getPostConstructMethodName() {
@@ -210,9 +220,9 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setPostConstructMethodName(String postConstructMethodName) {
-			support.firePropertyChange("postConstructMethodName",
-					this.postConstructMethodName,
-					this.postConstructMethodName = postConstructMethodName);
+			support.firePropertyChange(POST_CONSTRUCT_METHOD_NAME,
+				this.postConstructMethodName,
+				this.postConstructMethodName = postConstructMethodName);
 		}
 
 		public boolean isUsePredestroy() {
@@ -220,8 +230,8 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setUsePredestroy(boolean usePredestroy) {
-			support.firePropertyChange("usePredestroy", this.usePredestroy,
-					this.usePredestroy = usePredestroy);
+			support.firePropertyChange(USE_PREDESTROY, this.usePredestroy,
+				this.usePredestroy = usePredestroy);
 		}
 
 		public String getPreDestroyMethodName() {
@@ -229,9 +239,9 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setPreDestroyMethodName(String preDestroyMethodName) {
-			support.firePropertyChange("preDestroyMethodName",
-					this.preDestroyMethodName,
-					this.preDestroyMethodName = preDestroyMethodName);
+			support.firePropertyChange(PRE_DESTROY_METHOD_NAME,
+				this.preDestroyMethodName,
+				this.preDestroyMethodName = preDestroyMethodName);
 		}
 
 		public boolean isUseFocus() {
@@ -239,8 +249,8 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setUseFocus(boolean useFocus) {
-			support.firePropertyChange("useFocus", this.useFocus,
-					this.useFocus = useFocus);
+			support.firePropertyChange(USE_FOCUS, this.useFocus,
+				this.useFocus = useFocus);
 		}
 
 		public String getFocusMethodName() {
@@ -248,8 +258,8 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setFocusMethodName(String focusMethodName) {
-			support.firePropertyChange("focusMethodName", this.focusMethodName,
-					this.focusMethodName = focusMethodName);
+			support.firePropertyChange(FOCUS_METHOD_NAME, this.focusMethodName,
+				this.focusMethodName = focusMethodName);
 		}
 
 		public boolean isUsePersist() {
@@ -257,8 +267,8 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setUsePersist(boolean usePersist) {
-			support.firePropertyChange("usePersist", this.usePersist,
-					this.usePersist = usePersist);
+			support.firePropertyChange(USE_PERSIST, this.usePersist,
+				this.usePersist = usePersist);
 		}
 
 		public String getPersistMethodName() {
@@ -266,9 +276,9 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setPersistMethodName(String persistMethodName) {
-			support.firePropertyChange("persistMethodName",
-					this.persistMethodName,
-					this.persistMethodName = persistMethodName);
+			support.firePropertyChange(PERSIST_METHOD_NAME,
+				this.persistMethodName,
+				this.persistMethodName = persistMethodName);
 		}
 	}
 }

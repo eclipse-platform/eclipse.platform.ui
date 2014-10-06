@@ -36,6 +36,20 @@ public class Messages extends NLS {
 	public static String NewDynamicMenuContributionClassWizard_AboutToShowMethod;
 	public static String NewDynamicMenuContributionClassWizard_CreateNewContribution;
 	public static String NewDynamicMenuContributionClassWizard_NewDynamicContribution;
+	public static String NewHandlerClassWizard_CanExecuteMethod;
+	public static String NewHandlerClassWizard_CreateNewHandler;
+	public static String NewHandlerClassWizard_ExecuteMethod;
+	public static String NewHandlerClassWizard_NewHandler;
+	public static String NewPartClassWizard_CreateNewPart;
+	public static String NewPartClassWizard_FocusMethod;
+	public static String NewPartClassWizard_NewPart;
+	public static String NewPartClassWizard_PersistMethod;
+	public static String NewPartClassWizard_PostConstructMethod;
+	public static String NewPartClassWizard_PredestroyMethod;
+	public static String NewToolControlClassWizard_CreateDefaultConstructor;
+	public static String NewToolControlClassWizard_CreateGUIMethod;
+	public static String NewToolControlClassWizard_CreateNewToolControl;
+	public static String NewToolControlClassWizard_NewToolControl;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

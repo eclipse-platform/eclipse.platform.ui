@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 412672
+ * Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 412672
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
 import org.eclipse.e4.internal.tools.wizards.classes.templates.ToolControlTemplate;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -28,10 +29,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class NewToolControlClassWizard extends AbstractNewClassWizard {
+	private static final String CREATE_DEFAULT_CONSTRUCTOR = "createDefaultConstructor"; //$NON-NLS-1$
+	private static final String CREATE_GUI_METHOD_NAME = "createGuiMethodName"; //$NON-NLS-1$
 	private String initialString;
 
 	public NewToolControlClassWizard(String contributionURI) {
-		this.initialString = contributionURI;
+		initialString = contributionURI;
 	}
 
 	public NewToolControlClassWizard() {
@@ -40,15 +43,15 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 
 	@Override
 	protected String getContent() {
-		ToolControlTemplate template = new ToolControlTemplate();
+		final ToolControlTemplate template = new ToolControlTemplate();
 		return template.generate(getDomainClass());
 	}
 
 	@Override
 	public void addPages() {
-		addPage(new AbstractNewClassPage("Classinformation",
-				"New Tool Control",
-				"Create a new tool control class", root, ResourcesPlugin.getWorkspace().getRoot(),initialString) {
+		addPage(new AbstractNewClassPage("Classinformation", //$NON-NLS-1$
+			Messages.NewToolControlClassWizard_NewToolControl,
+			Messages.NewToolControlClassWizard_CreateNewToolControl, root, ResourcesPlugin.getWorkspace().getRoot(), initialString) {
 
 			@Override
 			protected JavaClass createInstance() {
@@ -57,39 +60,39 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
-				IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+				final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 				{
 					Label l = new Label(parent, SWT.NONE);
-					l.setText("Create GUI Method");
+					l.setText(Messages.NewToolControlClassWizard_CreateGUIMethod);
 
-					Text t = new Text(parent, SWT.BORDER);
+					final Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					dbc.bindValue(
-							textProp.observe(t),
-							BeanProperties.value("createGuiMethodName").observe(
-									getClazz()));
+						textProp.observe(t),
+						BeanProperties.value(CREATE_GUI_METHOD_NAME).observe(
+							getClazz()));
 
 					l = new Label(parent, SWT.NONE);
 				}
 				{
-					Label l = new Label(parent, SWT.NONE);
-					l.setText("Create Default Constructor");
+					final Label l = new Label(parent, SWT.NONE);
+					l.setText(Messages.NewToolControlClassWizard_CreateDefaultConstructor);
 
-//					Text t = new Text(parent, SWT.BORDER);
-//					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//					dbc.bindValue(textProp.observe(t),
-//							BeanProperties.value("defaultConstructorName")
-//									.observe(getClazz()));
-//					dbc.bindValue(
-//							WidgetProperties.enabled().observe(t),
-//							BeanProperties.value("useDefaultConstructor").observe(
-//									getClazz()));
+					// Text t = new Text(parent, SWT.BORDER);
+					// t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+					// dbc.bindValue(textProp.observe(t),
+					// BeanProperties.value("defaultConstructorName")
+					// .observe(getClazz()));
+					// dbc.bindValue(
+					// WidgetProperties.enabled().observe(t),
+					// BeanProperties.value("useDefaultConstructor").observe(
+					// getClazz()));
 
-					Button b = new Button(parent, SWT.CHECK);
+					final Button b = new Button(parent, SWT.CHECK);
 					dbc.bindValue(
-							WidgetProperties.selection().observe(b),
-							BeanProperties.value("createDefaultConstructor").observe(
-									getClazz()));
+						WidgetProperties.selection().observe(b),
+						BeanProperties.value(CREATE_DEFAULT_CONSTRUCTOR).observe(
+							getClazz()));
 				}
 			}
 		});
@@ -97,13 +100,13 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 
 	@Override
 	protected Set<String> getRequiredBundles() {
-		Set<String> set = super.getRequiredBundles();
-		set.add("org.eclipse.e4.core.di");
+		final Set<String> set = super.getRequiredBundles();
+		set.add("org.eclipse.e4.core.di"); //$NON-NLS-1$
 		return set;
 	}
 
 	public static class ToolControlClass extends JavaClass {
-		private String createGuiMethodName = "createGui";
+		private String createGuiMethodName = "createGui"; //$NON-NLS-1$
 		private boolean createDefaultCostructor = false;
 
 		public ToolControlClass(IPackageFragmentRoot root) {
@@ -115,9 +118,9 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setCreateGuiMethodName(String createGuiMethodName) {
-			support.firePropertyChange("createGuiMethodName",
-					this.createGuiMethodName,
-					this.createGuiMethodName = createGuiMethodName);
+			support.firePropertyChange(CREATE_GUI_METHOD_NAME,
+				this.createGuiMethodName,
+				this.createGuiMethodName = createGuiMethodName);
 		}
 
 		public boolean isCreateDefaultConstructor() {
@@ -125,8 +128,8 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 		}
 
 		public void setCreateDefaultConstructor(boolean createDefaultConstructor) {
-			support.firePropertyChange("createDefaultConstructor", this.createDefaultCostructor,
-					this.createDefaultCostructor = createDefaultConstructor);
+			support.firePropertyChange(CREATE_DEFAULT_CONSTRUCTOR, createDefaultCostructor,
+				createDefaultCostructor = createDefaultConstructor);
 		}
 	}
 }
