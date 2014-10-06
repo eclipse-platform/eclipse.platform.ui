@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -512,7 +512,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          */
 		public void checkZOrder(IWorkbenchPage page, Set<String> relevantViews) {
         	// see if view is open already
-        	IViewPart part = page.findView(getViewId());
+        	String viewId = getViewId();
+			IViewPart part = page.findView(viewId);
         	if (part != null) {
         		IViewPart[] viewStack = page.getViewStack(part);
         		if (viewStack != null && viewStack.length > 0) {
@@ -520,6 +521,12 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         			if (relevantViews.contains(top)) {
         			    return;
         			}
+
+					// Don't bring a minimized or fast view to front
+					IViewReference partRef = page.findViewReference(viewId);
+					if (partRef.isFastView() || IWorkbenchPage.STATE_MINIMIZED == page.getPartState(partRef)) {
+						return;
+					}
 
         			// an irrelevant view is visible
                     try {
