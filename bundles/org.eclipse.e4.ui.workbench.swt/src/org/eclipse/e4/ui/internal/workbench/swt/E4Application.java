@@ -10,7 +10,7 @@
  *     Tristan Hume - <trishume@gmail.com> -
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 366364
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 366364, 445724
  *     Terry Parker <tparker@google.com> - Bug 416673
  ******************************************************************************/
 
@@ -232,8 +232,7 @@ public class E4Application implements IApplication {
 		ContextInjectionFactory.setDefault(appContext);
 
 		// Get the factory to create DI instances with
-		IContributionFactory factory = (IContributionFactory) appContext
-				.get(IContributionFactory.class.getName());
+		IContributionFactory factory = appContext.get(IContributionFactory.class);
 
 		// Install the life-cycle manager for this session if there's one
 		// defined
@@ -265,15 +264,13 @@ public class E4Application implements IApplication {
 
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
-		if (!E4Workbench.getServiceContext().containsKey(
-				MApplication.class.getName())) {
+		if (!E4Workbench.getServiceContext().containsKey(MApplication.class)) {
 			// first one wins.
-			E4Workbench.getServiceContext().set(MApplication.class.getName(),
-					appModel);
+			E4Workbench.getServiceContext().set(MApplication.class, appModel);
 		}
 
 		// Set the app's context after adding itself
-		appContext.set(MApplication.class.getName(), appModel);
+		appContext.set(MApplication.class, appModel);
 
 		// adds basic services to the contexts
 		initializeServices(appModel);
