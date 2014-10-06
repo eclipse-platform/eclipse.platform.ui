@@ -8,6 +8,7 @@
  * Contributors:
  *    Brad Reynolds - initial API and implementation
  *    Lars Vogel <Lars.Vogel@vogella.com> - Bug 443804
+ *    Jeanderson Candido <http://jeandersonbc.github.io> - Bug 443804
  *******************************************************************************/
 
 package org.eclipse.ui.tests.harness.tests;
@@ -163,7 +164,8 @@ public class MocksTest  {
 		assertEquals(value.longValue(), primitiveMock.getLong());
 	}
 
-	public void testPrimitiveFloatReturnType() throws Exception {
+	@Test
+	public void testPrimitiveFloatReturnType() {
 		try {
 			float value = primitiveMock.getFloat();
 			assertEquals(unitializedFloat, value, 0);
