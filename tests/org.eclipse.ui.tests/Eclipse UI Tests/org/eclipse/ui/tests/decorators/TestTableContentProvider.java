@@ -17,9 +17,7 @@ import org.eclipse.jface.viewers.Viewer;
  * The TestTableContentProvider is the content provider for the
  * tabel views in the decorator testing.
  */
-public class TestTableContentProvider implements IStructuredContentProvider {	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+public class TestTableContentProvider implements IStructuredContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		TableElement[] elements = new TableElement[100];
