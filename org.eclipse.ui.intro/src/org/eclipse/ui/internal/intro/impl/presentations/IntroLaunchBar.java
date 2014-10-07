@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.AnimationEngine;
@@ -78,8 +77,6 @@ public class IntroLaunchBar implements IWindowTrim {
 	private IntroLaunchBarElement element;
 
 	protected boolean simple;
-
-	private String presentationId;
 	
 	private IntroTheme theme;
 
@@ -209,8 +206,14 @@ public class IntroLaunchBar implements IWindowTrim {
 		return null; // not using the default workbench window
 	}
 	
+	/**
+	 * Not supported anymore as of the removal of the presentation API
+	 * TODO remove usage, see Bug 446171
+	 * 
+	 * @return
+	 */
 	protected boolean isPlain() {
-		return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
+		return true; 
 	}
 
 	public void createControl(Composite parent) {
