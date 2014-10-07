@@ -153,10 +153,7 @@ public class ImportTypeDialog extends TrayDialog {
 		if (store.getBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE))
 			variable = preferredVariable;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
-	 */
+
 	@Override
 	public boolean close() {
 		return super.close();

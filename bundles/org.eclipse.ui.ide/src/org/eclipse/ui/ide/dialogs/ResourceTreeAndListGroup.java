@@ -63,9 +63,6 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 * @see ResourceTreeAndListGroup#addCheckStateListener(ICheckStateListener)
 	 */
 	private class CheckListener implements ICheckStateListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-		 */
 		@Override
 		public void checkStateChanged(final CheckStateChangedEvent event) {
 			//Potentially long operation - show a busy cursor
@@ -91,9 +88,6 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 * TODO do we want to make this extensible like checked listeners?
 	 */
 	private class SelectionListener implements ISelectionChangedListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -119,16 +113,10 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 * TODO do we want to make this extensible like checked listeners?
 	 */
 	private class TreeListener implements ITreeViewerListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeViewerListener#treeCollapsed(org.eclipse.jface.viewers.TreeExpansionEvent)
-		 */
 		@Override
 		public void treeCollapsed(TreeExpansionEvent event) {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeViewerListener#treeExpanded(org.eclipse.jface.viewers.TreeExpansionEvent)
-		 */
 		@Override
 		public void treeExpanded(TreeExpansionEvent event) {
 			expandTreeElement(event.getElement());

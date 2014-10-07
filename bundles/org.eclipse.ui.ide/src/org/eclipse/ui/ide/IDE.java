@@ -1523,11 +1523,6 @@ public final class IDE {
 						createDetailsButton(parent);
 					}
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.dialogs.ErrorDialog#buttonPressed(int)
-					 */
 					@Override
 					protected void buttonPressed(int id) {
 						if (id == IDialogConstants.YES_ID) {

@@ -111,32 +111,16 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		createControl(parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
-	 */
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		((GridData) getContainer().getLayoutData()).horizontalSpan = numColumns;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite,
-	 *      int)
-	 */
 	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		container = createEncodingGroup(parent, numColumns);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
-	 */
 	@Override
 	protected void doLoad() {
 		if (encodingCombo != null) {
@@ -154,51 +138,26 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 */
 	protected abstract String getStoredValue();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
-	 */
 	@Override
 	protected void doLoadDefault() {
 		updateEncodingState(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
-	 */
 	@Override
 	public int getNumberOfControls() {
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return isValid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
-	 */
 	@Override
 	protected void refreshValidState() {
 		updateValidState();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#setPreferenceStore(org.eclipse.jface.preference.IPreferenceStore)
-	 */
 	@Override
 	public void setPreferenceStore(IPreferenceStore store) {
 		super.setPreferenceStore(store);
@@ -272,22 +231,12 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		data = new GridData();
 		encodingCombo.setLayoutData(data);
 		encodingCombo.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateValidState();
 			}
 		});
 		encodingCombo.addKeyListener(new KeyAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-			 */
 			@Override
 			public void keyReleased(KeyEvent e) {
 				updateValidState();
@@ -297,13 +246,6 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		return topControl;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean,
-	 *      org.eclipse.swt.widgets.Composite)
-	 * @since 3.3
-	 */
 	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
 		if (container != null)
