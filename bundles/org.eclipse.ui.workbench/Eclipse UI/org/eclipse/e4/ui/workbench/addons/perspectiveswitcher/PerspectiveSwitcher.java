@@ -688,7 +688,7 @@ public class PerspectiveSwitcher {
 		WorkbenchPage page = (WorkbenchPage) win.getContext().get(IWorkbenchPage.class);
 		String perspectiveId = persp.getElementId();
 		IPerspectiveDescriptor desc = getDescriptorFor(perspectiveId);
-		page.closePerspective(desc, perspectiveId, true, false);
+		page.closePerspective(desc, perspectiveId, true, true);
 
 		// removePerspectiveItem(persp);
 	}

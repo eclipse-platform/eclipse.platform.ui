@@ -1777,6 +1777,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 						curPersp.getElementId(),
 						false);
 			}
+			if (closePage) {
+				close();
+			}
 		}
 	}
 
