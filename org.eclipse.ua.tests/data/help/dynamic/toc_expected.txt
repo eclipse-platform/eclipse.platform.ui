@@ -383,7 +383,6 @@
       <topic href="reference/api/org/eclipse/ui/model/package-summary.html" label="org.eclipse.ui.model"/>
       <topic href="reference/api/org/eclipse/ui/part/package-summary.html" label="org.eclipse.ui.part"/>
       <topic href="reference/api/org/eclipse/ui/plugin/package-summary.html" label="org.eclipse.ui.plugin"/>
-      <topic href="reference/api/org/eclipse/ui/presentations/package-summary.html" label="org.eclipse.ui.presentations"/>
       <topic href="reference/api/org/eclipse/ui/progress/package-summary.html" label="org.eclipse.ui.progress"/>
       <topic href="reference/api/org/eclipse/ui/testing/package-summary.html" label="org.eclipse.ui.testing"/>
       <topic href="reference/api/org/eclipse/ui/themes/package-summary.html" label="org.eclipse.ui.themes"/>
