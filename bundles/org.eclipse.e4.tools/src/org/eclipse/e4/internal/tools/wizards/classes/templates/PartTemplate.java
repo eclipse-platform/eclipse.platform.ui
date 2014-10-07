@@ -1,7 +1,7 @@
 package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.NewPartClassWizard.PartClass;
-
+@SuppressWarnings("nls")
 public class PartTemplate
 {
   protected static String nl;

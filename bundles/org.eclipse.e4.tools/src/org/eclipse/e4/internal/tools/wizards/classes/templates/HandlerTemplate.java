@@ -1,7 +1,7 @@
 package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.NewHandlerClassWizard.HandlerClass;
-
+@SuppressWarnings("nls")
 public class HandlerTemplate
 {
   protected static String nl;

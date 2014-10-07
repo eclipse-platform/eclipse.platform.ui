@@ -1,7 +1,7 @@
 package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
-
+@SuppressWarnings("nls")
 public class AddonTemplate
 {
   protected static String nl;

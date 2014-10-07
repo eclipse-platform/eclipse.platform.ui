@@ -1,7 +1,7 @@
 package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.NewDynamicMenuContributionClassWizard.DynamicMenuContributionClass;
-
+@SuppressWarnings("nls")
 public class DynamicMenuContributionTemplate
 {
   protected static String nl;

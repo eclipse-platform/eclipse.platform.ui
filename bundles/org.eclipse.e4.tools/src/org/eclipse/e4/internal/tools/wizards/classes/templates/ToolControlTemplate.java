@@ -1,7 +1,7 @@
 package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.NewToolControlClassWizard.ToolControlClass;
-
+@SuppressWarnings("nls")
 public class ToolControlTemplate
 {
   protected static String nl;
