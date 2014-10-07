@@ -5,22 +5,21 @@ package <%= domainClass.getPackageFragment().getElementName() %>;
 <% } %>
 
 import javax.inject.Inject;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.EventTopic;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.osgi.service.event.Event;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 public class <%= domainClass.getName() %> {
+
 	@Inject
-	IEventBroker eventBroker;
-	
-	@PostConstruct
-	void hookListeners() {
-		// Hook event listeners
+	@Optional
+	public void applicationStarted(
+			@EventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
+		// TODO Modify the UIEvents.UILifeCycle.APP_STARTUP_COMPLETE EventTopic to a certain event you want to listen to.
 	}
-	
-	@PreDestroy
-	void unhookListeners() {
-		// Unhook event listeners
-	}
+
 }

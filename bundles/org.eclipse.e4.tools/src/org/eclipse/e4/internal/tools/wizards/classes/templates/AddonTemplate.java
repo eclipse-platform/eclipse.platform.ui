@@ -1,7 +1,7 @@
 package org.eclipse.e4.internal.tools.wizards.classes.templates;
 
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
-@SuppressWarnings("nls")
+
 public class AddonTemplate
 {
   protected static String nl;
@@ -17,8 +17,9 @@ public class AddonTemplate
   protected final String TEXT_1 = " ";
   protected final String TEXT_2 = NL + "package ";
   protected final String TEXT_3 = ";";
-  protected final String TEXT_4 = NL + NL + "import javax.inject.Inject;" + NL + "import javax.annotation.PostConstruct;" + NL + "import javax.annotation.PreDestroy;" + NL + "" + NL + "import org.eclipse.e4.core.services.events.IEventBroker;" + NL + "" + NL + "public class ";
-  protected final String TEXT_5 = " {" + NL + "\t@Inject" + NL + "\tIEventBroker eventBroker;" + NL + "\t" + NL + "\t@PostConstruct" + NL + "\tvoid hookListeners() {" + NL + "\t\t// Hook event listeners" + NL + "\t}" + NL + "\t" + NL + "\t@PreDestroy" + NL + "\tvoid unhookListeners() {" + NL + "\t\t// Unhook event listeners" + NL + "\t}" + NL + "}";
+  protected final String TEXT_4 = NL + NL + "import javax.inject.Inject;" + NL + "" + NL + "import org.eclipse.e4.core.di.annotations.Optional;" + NL + "import org.eclipse.e4.core.di.extensions.EventTopic;" + NL + "import org.eclipse.e4.ui.workbench.UIEvents;" + NL + "import org.osgi.service.event.Event;" + NL + "" + NL + "import org.eclipse.e4.core.services.events.IEventBroker;" + NL + "" + NL + "public class ";
+  protected final String TEXT_5 = " {" + NL + "" + NL + "\t@Inject" + NL + "\t@Optional" + NL + "\tpublic void applicationStarted(" + NL + "\t\t\t@EventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {" + NL + "\t\t// TODO Modify the UIEvents.UILifeCycle.APP_STARTUP_COMPLETE EventTopic to a certain event you want to listen to." + NL + "\t}" + NL + "" + NL + "}";
+  protected final String TEXT_6 = NL;
 
   public String generate(Object argument)
   {
@@ -33,6 +34,7 @@ public class AddonTemplate
     stringBuffer.append(TEXT_4);
     stringBuffer.append( domainClass.getName() );
     stringBuffer.append(TEXT_5);
+    stringBuffer.append(TEXT_6);
     return stringBuffer.toString();
   }
 }
