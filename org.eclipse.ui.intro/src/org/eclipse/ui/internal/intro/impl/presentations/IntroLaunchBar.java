@@ -5,6 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
+ * Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
  **************************************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
@@ -160,8 +161,6 @@ public class IntroLaunchBar implements IWindowTrim {
 		this.theme = theme;
 
 		simple = true;
-		presentationId = PlatformUI.getPreferenceStore().getString(
-				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
 		loadStoredLocation();
 	}
 
