@@ -65,12 +65,6 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#updateResourceChangeDescriptionFactory(org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory,
-	 *      int)
-	 */
 	@Override
 	protected boolean updateResourceChangeDescriptionFactory(
 			IResourceChangeDescriptionFactory factory, int operation) {
@@ -86,32 +80,20 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		return (IProject) resources[0];
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#isDestinationPathValid(org.eclipse.core.resources.IResource, int)
-	 */
 	@Override
 	protected boolean isDestinationPathValid(IResource resource, int index) {
 		// path has already been validated in #computeMoveOrCopyStatus()
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getProposedName(org.eclipse.core.resources.IResource, int)
-	 */
 	@Override
 	protected String getProposedName(IResource resource, int index) {
 		return getProject().getName();
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Checks that the specified project location is valid in addition to
 	 * superclass checks.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#computeMoveOrCopyStatus()
 	 */
 	@Override
 	protected IStatus computeMoveOrCopyStatus() {
@@ -127,12 +109,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map execute to moving the project
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
@@ -142,14 +119,6 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		setResourceDescriptions(new ResourceDescription[0]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * Map undo to moving the project.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
@@ -177,11 +146,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	}
 	
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map undo to move status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {

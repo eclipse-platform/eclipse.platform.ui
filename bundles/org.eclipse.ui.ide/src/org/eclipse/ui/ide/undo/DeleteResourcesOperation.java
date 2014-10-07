@@ -55,12 +55,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map execution to resource deletion.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
@@ -69,12 +64,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map undo to resource recreation.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
@@ -82,12 +72,6 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		recreate(monitor, uiInfo);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#updateResourceChangeDescriptionFactory(org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory,
-	 *      int)
-	 */
 	@Override
 	protected boolean updateResourceChangeDescriptionFactory(
 			IResourceChangeDescriptionFactory factory, int operation) {
@@ -111,33 +95,19 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		return modified;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getExecuteSchedulingRule()
-	 */
 	@Override
 	protected ISchedulingRule getExecuteSchedulingRule() {
 		return super.computeDeleteSchedulingRule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getUndoSchedulingRule()
-	 */
 	@Override
 	protected ISchedulingRule getUndoSchedulingRule() {
 		return super.computeCreateSchedulingRule();
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map execution status to deletion status. Provide an extra warning if
 	 * project content is to be deleted.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
@@ -149,11 +119,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map undo status to resource creation status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
@@ -168,11 +134,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map redo status to resource deletion status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
@@ -183,11 +145,6 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		return status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
-	 */
 	@Override
 	protected void appendDescriptiveText(StringBuffer text) {
 		super.appendDescriptiveText(text);

@@ -88,12 +88,7 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map execution to updating the markers.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)
@@ -108,12 +103,7 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map undo to execute (since both operations update the markers).
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
 	protected void doUndo(IProgressMonitor monitor, IAdaptable info)
@@ -124,11 +114,7 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map undo status to marker update status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
 	 */
 	@Override
 	protected IStatus getBasicUndoStatus() {
@@ -136,11 +122,7 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map redo status to marker update status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
 	 */
 	@Override
 	protected IStatus getBasicRedoStatus() {

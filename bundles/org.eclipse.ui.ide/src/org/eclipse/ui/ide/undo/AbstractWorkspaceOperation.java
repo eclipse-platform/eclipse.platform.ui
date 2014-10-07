@@ -142,11 +142,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * This implementation checks a validity flag.
-	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
 	 */
 	@Override
 	public boolean canExecute() {
@@ -154,11 +150,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * This implementation checks a validity flag.
-	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 	 */
 	@Override
 	public boolean canUndo() {
@@ -166,11 +158,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * This implementation checks a validity flag.
-	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
 	 */
 	@Override
 	public boolean canRedo() {
@@ -352,21 +340,11 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		return isValid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
-	 */
 	@Override
 	public void aboutToNotify(OperationHistoryEvent event) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#getAffectedObjects()
-	 */
 	@Override
 	public Object[] getAffectedObjects() {
 		return resources;
@@ -716,19 +694,11 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		return getExecuteSchedulingRule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
-	 */
 	@Override
 	public void setQuietCompute(boolean quiet) {
 		quietCompute = quiet;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer text = new StringBuffer(super.toString());
@@ -777,11 +747,6 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
-	 */
 	@Override
 	public boolean runInBackground() {
 		return true;

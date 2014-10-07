@@ -333,11 +333,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 */
 	protected abstract IStatus getBasicRedoStatus();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = getBasicRedoStatus();
@@ -350,11 +345,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = getBasicUndoStatus();
@@ -367,11 +357,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
 		IStatus status = getBasicRedoStatus();
@@ -442,11 +427,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getExecuteSchedulingRule()
-	 */
 	@Override
 	protected ISchedulingRule getExecuteSchedulingRule() {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
@@ -456,21 +436,11 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return MultiRule.combine(ruleArray);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getUndoSchedulingRule()
-	 */
 	@Override
 	protected ISchedulingRule getUndoSchedulingRule() {
 		return getExecuteSchedulingRule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
-	 */
 	@Override
 	protected void appendDescriptiveText(StringBuffer text) {
 		super.appendDescriptiveText(text);
