@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogPage;
@@ -45,19 +46,18 @@ public class NewModelFilePage extends WizardPage {
 
 	private Text fileText;
 
-	private ISelection selection;
-	
-	private String defaultFilename;
+	private final ISelection selection;
+
+	private final String defaultFilename;
 
 	/**
 	 * Constructor for SampleNewWizardPage.
-	 * 
-	 * @param pageName
+	 *
 	 */
 	public NewModelFilePage(ISelection selection, String defaultFilename) {
-		super("wizardPage");
-		setTitle("New application model");
-		setDescription("This wizard creates a new Eclipse 4 application model");
+		super("wizardPage"); //$NON-NLS-1$
+		setTitle(Messages.NewModelFilePage_NewApplicationModel);
+		setDescription(Messages.NewModelFilePage_TheWizardCreates);
 		this.selection = selection;
 		this.defaultFilename = defaultFilename;
 	}
@@ -65,26 +65,28 @@ public class NewModelFilePage extends WizardPage {
 	/**
 	 * @see IDialogPage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
+		final Composite container = new Composite(parent, SWT.NULL);
+		final GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
 		Label label = new Label(container, SWT.NULL);
-		label.setText("&Container:");
+		label.setText(Messages.NewModelFilePage_Container);
 
 		containerText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
 		containerText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
 		});
 
-		Button button = new Button(container, SWT.PUSH);
-		button.setText("Browse...");
+		final Button button = new Button(container, SWT.PUSH);
+		button.setText(Messages.NewModelFilePage_Browse);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -92,19 +94,20 @@ public class NewModelFilePage extends WizardPage {
 			}
 		});
 		label = new Label(container, SWT.NULL);
-		label.setText("&File name:");
+		label.setText(Messages.NewModelFilePage_FileName);
 
 		fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fileText.setLayoutData(gd);
 		fileText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
 		});
-		
+
 		new Label(container, SWT.NONE);
-		
+
 		createAdditionalControls(container);
 		initialize();
 		dialogChanged();
@@ -112,33 +115,35 @@ public class NewModelFilePage extends WizardPage {
 	}
 
 	protected void createAdditionalControls(Composite parent) {
-		
+
 	}
-	
+
 	/**
 	 * Tests if the current workbench selection is a suitable container to use.
 	 */
 
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
+			&& selection instanceof IStructuredSelection) {
+			final IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (ssel.size() > 1) {
 				return;
-			Object obj = ssel.getFirstElement();
-			
+			}
+			final Object obj = ssel.getFirstElement();
+
 			if (obj instanceof IResource) {
 				IContainer container;
-				if (obj instanceof IContainer)
+				if (obj instanceof IContainer) {
 					container = (IContainer) obj;
-				else
+				} else {
 					container = ((IResource) obj).getParent();
+				}
 				containerText.setText(container.getFullPath().toString());
-			} else if( obj instanceof IJavaProject ) {
-				IJavaProject container = (IJavaProject) obj;
+			} else if (obj instanceof IJavaProject) {
+				final IJavaProject container = (IJavaProject) obj;
 				try {
 					containerText.setText(container.getCorrespondingResource().getFullPath().toString());
-				} catch(JavaModelException e) {
+				} catch (final JavaModelException e) {
 					e.printStackTrace();
 				}
 			}
@@ -152,11 +157,11 @@ public class NewModelFilePage extends WizardPage {
 	 */
 
 	private void handleBrowse() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select new file container");
+		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(
+			getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
+			Messages.NewModelFilePage_SelectTheNewContainer);
 		if (dialog.open() == Window.OK) {
-			Object[] result = dialog.getResult();
+			final Object[] result = dialog.getResult();
 			if (result.length == 1) {
 				containerText.setText(((Path) result[0]).toString());
 			}
@@ -168,36 +173,36 @@ public class NewModelFilePage extends WizardPage {
 	 */
 
 	private void dialogChanged() {
-		IResource container = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(new Path(getContainerName()));
-		String fileName = getFileName();
+		final IResource container = ResourcesPlugin.getWorkspace().getRoot()
+			.findMember(new Path(getContainerName()));
+		final String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {
-			updateStatus("File container must be specified");
+			updateStatus(Messages.NewModelFilePage_FileContainerMustBeSpecified);
 			return;
 		}
 		if (container == null
-				|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
-			updateStatus("File container must exist");
+			|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
+			updateStatus(Messages.NewModelFilePage_FileContainerMustExists);
 			return;
 		}
 		if (!container.isAccessible()) {
-			updateStatus("Project must be writable");
+			updateStatus(Messages.NewModelFilePage_ProjectMustBeWritable);
 			return;
 		}
 		if (fileName.length() == 0) {
-			updateStatus("File name must be specified");
+			updateStatus(Messages.NewModelFilePage_FileNameMustBeSpecified);
 			return;
 		}
 		if (fileName.replace('\\', '/').indexOf('/', 1) > 0) {
-			updateStatus("File name must be valid");
+			updateStatus(Messages.NewModelFilePage_FileNameMustBeValid);
 			return;
 		}
-		int dotLoc = fileName.lastIndexOf('.');
+		final int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
-			String ext = fileName.substring(dotLoc + 1);
-			if (ext.equalsIgnoreCase("e4xmi") == false) {
-				updateStatus("File extension must be \"e4xmi\"");
+			final String ext = fileName.substring(dotLoc + 1);
+			if (ext.equalsIgnoreCase("e4xmi") == false) { //$NON-NLS-1$
+				updateStatus(Messages.NewModelFilePage_FileExtensionMustBeE4XMI);
 				return;
 			}
 		}

@@ -37,6 +37,7 @@ public class Messages extends NLS {
 	public static String BaseApplicationModelWizard_TheFileAlreadyExists;
 	public static String NewAddonClassWizard_NewAddon;
 	public static String NewAddonClassWizard_NewAddonClass;
+	public static String NewApplicationModelWizard_IncludeDefaultAddons;
 	public static String NewDynamicMenuContributionClassWizard_AboutToShowMethod;
 	public static String NewDynamicMenuContributionClassWizard_CreateNewContribution;
 	public static String NewDynamicMenuContributionClassWizard_NewDynamicContribution;
@@ -44,6 +45,18 @@ public class Messages extends NLS {
 	public static String NewHandlerClassWizard_CreateNewHandler;
 	public static String NewHandlerClassWizard_ExecuteMethod;
 	public static String NewHandlerClassWizard_NewHandler;
+	public static String NewModelFilePage_Browse;
+	public static String NewModelFilePage_Container;
+	public static String NewModelFilePage_FileContainerMustBeSpecified;
+	public static String NewModelFilePage_FileContainerMustExists;
+	public static String NewModelFilePage_FileExtensionMustBeE4XMI;
+	public static String NewModelFilePage_FileName;
+	public static String NewModelFilePage_FileNameMustBeSpecified;
+	public static String NewModelFilePage_FileNameMustBeValid;
+	public static String NewModelFilePage_NewApplicationModel;
+	public static String NewModelFilePage_ProjectMustBeWritable;
+	public static String NewModelFilePage_SelectTheNewContainer;
+	public static String NewModelFilePage_TheWizardCreates;
 	public static String NewPartClassWizard_CreateNewPart;
 	public static String NewPartClassWizard_FocusMethod;
 	public static String NewPartClassWizard_NewPart;

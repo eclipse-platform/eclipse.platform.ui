@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 392907, Bug 434371
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Marco Descher <marco@descher.at> - Bug 392907, Bug 434371
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
@@ -20,7 +20,7 @@ public class NewContributionModelWizard extends BaseApplicationModelWizard {
 
 	@Override
 	public String getDefaultFileName() {
-		return "fragment.e4xmi";
+		return "fragment.e4xmi"; //$NON-NLS-1$
 	}
 
 	@Override
