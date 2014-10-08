@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Terminates all launches.
@@ -42,9 +43,7 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 		super.dispose();
 	}
 
-	@Override
-	public void init(IWorkbenchPart part) {
-		super.init(part);
+	private void attachSelfToLaunchManager() {
 		ILaunchManager launchManager = getLaunchManager();
 		launchManager.addLaunchListener(this);
 		// heuristic... rather than updating all the time, just assume there's
@@ -104,6 +103,7 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 	 */
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
+		setEnabled(getLaunchManager().getLaunches().length > 0);
 	}
 
 	/* (non-Javadoc)
@@ -127,5 +127,22 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		setEnabled(getLaunchManager().getLaunches().length > 0);
+	}
+
+	@Override
+	public void init(IWorkbenchPart part) {
+		super.init(part);
+		attachSelfToLaunchManager();
+	}
+
+	/**
+	 * Initializes this action for the given workbench window.
+	 * 
+	 * @param window the workbench window that this action is for
+	 */
+	@Override
+	public void init(IWorkbenchWindow window) {
+		super.init(window);
+		attachSelfToLaunchManager();
 	}
 }
