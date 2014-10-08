@@ -49,11 +49,6 @@ final class ActivityPersistanceHelper {
      */
     private final IActivityManagerListener activityManagerListener = new IActivityManagerListener() {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
-         */
         @Override
 		public void activityManagerChanged(
                 ActivityManagerEvent activityManagerEvent) {
@@ -79,11 +74,6 @@ final class ActivityPersistanceHelper {
      */
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-         */
         @Override
 		public void propertyChange(PropertyChangeEvent event) {
             // dont process property events if we're in the process of

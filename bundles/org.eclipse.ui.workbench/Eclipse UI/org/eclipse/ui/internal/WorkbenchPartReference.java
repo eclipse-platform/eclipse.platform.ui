@@ -140,9 +140,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     protected Map propertyCache = new HashMap();
     
     private IPropertyListener propertyChangeListener = new IPropertyListener() {
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
-         */
         @Override
 		public void propertyChanged(Object source, int propId) {
             partPropertyChanged(source, propId);
@@ -291,22 +288,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     }
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitle()
-	 */
 	@Override
 	public String getTitle() {
 		String title = legacyPart == null ? part.getLocalizedLabel() : legacyPart.getTitle();
 		return Util.safeString(title);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitleToolTip()
-	 */
 	@Override
 	public String getTitleToolTip() {
 		String toolTip = (String) part.getTransientData().get(
@@ -316,11 +303,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		return Util.safeString(toolTip);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartReference#getId()
-	 */
 	@Override
 	public String getId() {
 		String id = part.getElementId();
@@ -491,9 +473,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         return pinned;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPartReference#getPartProperty(java.lang.String)
-     */
     @Override
 	public String getPartProperty(String key) {
 		if (legacyPart != null) {
@@ -506,9 +485,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		return null;
 	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPartReference#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
     @Override
 	public void addPartPropertyListener(IPropertyChangeListener listener) {
     	if (isDisposed()) {
@@ -517,9 +493,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     	partChangeListeners.add(listener);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPartReference#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
     @Override
 	public void removePartPropertyListener(IPropertyChangeListener listener) {
     	if (isDisposed()) {
@@ -543,9 +516,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		}
 	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
-     */
     @Override
 	public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {
@@ -559,9 +529,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         return preferredResult;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
-     */
     @Override
 	public int getSizeFlags(boolean width) {
 		ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(legacyPart,
@@ -581,21 +548,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		page = newPage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartReference#getPartName()
-	 */
 	@Override
 	public String getPartName() {
 		return part.getLocalizedLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartReference#getContentDescription()
-	 */
 	@Override
 	public String getContentDescription() {
 		IWorkbenchPart workbenchPart = getPart(false);
@@ -605,11 +562,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		return workbenchPart.getTitle();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartReference#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		IWorkbenchPart part = getPart(false);
@@ -625,13 +577,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	public final PartPane getPane() {
 		return new PartPane() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.ui.internal.WorkbenchPartReference.PartPane#getControl
-			 * ()
-			 */
 			@Override
 			public Control getControl() {
 				return part == null ? null : (Control) part.getWidget();

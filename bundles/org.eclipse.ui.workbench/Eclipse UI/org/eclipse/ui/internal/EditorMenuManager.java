@@ -86,9 +86,6 @@ public class EditorMenuManager extends SubMenuManager {
             return getParentMenuManager().getOverrides().getText(item);
         }
         
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.action.IContributionManagerOverrides#getVisible(org.eclipse.jface.action.IContributionItem)
-         */
         @Override
 		public Boolean getVisible(IContributionItem item) {
         	return getParentMenuManager().getOverrides().getVisible(item);
@@ -104,39 +101,25 @@ public class EditorMenuManager extends SubMenuManager {
         super(mgr);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContributionManager.
-     */
     @Override
 	public IContributionItem[] getItems() {
         return getParentMenuManager().getItems();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContributionManager.
-     */
     @Override
 	public IContributionManagerOverrides getOverrides() {
         return overrides;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContributionManager.
-     * Inserts the new item after any action set contributions which may
-     * exist within the toolbar to ensure a consistent order for actions.
-     */
+	/*
+	 * Inserts the new item after any action set contributions which may exist
+	 * within the toolbar to ensure a consistent order for actions.
+	 */
     @Override
 	public void prependToGroup(String groupName, IContributionItem item) {
         insertAfter(groupName, item);
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.SubContributionManager#appendToGroup(java.lang
-	 * .String, org.eclipse.jface.action.IContributionItem)
-	 */
 	@Override
 	public void appendToGroup(String groupName, IContributionItem item) {
 		try {
@@ -201,9 +184,6 @@ public class EditorMenuManager extends SubMenuManager {
         overrides.updateEnabledAllowed();
     }
 
-    /* (non-Javadoc)
-     * Method declared on SubMenuManager.
-     */
     @Override
 	protected SubMenuManager wrapMenu(IMenuManager menu) {
         if (wrappers == null) {

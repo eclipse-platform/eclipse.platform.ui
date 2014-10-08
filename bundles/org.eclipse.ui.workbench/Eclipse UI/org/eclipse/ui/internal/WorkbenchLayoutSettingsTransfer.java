@@ -38,11 +38,6 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.preferences.SettingsTransfer#transferSettings(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IStatus transferSettings(IPath newWorkspaceRoot) {
 		try {
@@ -112,11 +107,6 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 		return workspaceFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.preferences.SettingsTransfer#getName()
-	 */
 	@Override
 	public String getName() {
 		return WorkbenchMessages.WorkbenchLayoutSettings_Name;

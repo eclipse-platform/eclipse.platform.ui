@@ -201,28 +201,16 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 		return getElementsArray().isEmpty();
 	}
 	
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IWorkingSet#getImage()
-     */
     @Override
 	public final ImageDescriptor getImage() {
         return getImageDescriptor();
     }
 
 
-	/* 
-	 * (non-Javadoc)
-	 * @return Returns the unigueId.
-	 */
     /*package*/String getUniqueId() {
 		return uniqueId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @param unigueId The unigueId to set.
-	 */
 	/*package*/void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
 	}

@@ -33,18 +33,12 @@ public class EditorActionBuilder extends PluginActionBuilder {
     public EditorActionBuilder() {
     }
 
-    /* (non-Javadoc)
-     * Method declared on PluginActionBuilder.
-     */
     @Override
 	protected ActionDescriptor createActionDescriptor(
             IConfigurationElement element) {
         return new ActionDescriptor(element, ActionDescriptor.T_EDITOR);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PluginActionBuilder.
-     */
     @Override
 	protected BasicContribution createContribution() {
         return new EditorContribution();

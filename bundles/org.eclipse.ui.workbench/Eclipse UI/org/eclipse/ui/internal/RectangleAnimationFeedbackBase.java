@@ -46,11 +46,6 @@ public abstract class RectangleAnimationFeedbackBase extends AnimationFeedbackBa
 		addEndRect(end);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.AnimationFeedbackBase#jobInit(org.eclipse.ui.internal.AnimationEngine)
-	 * 
-	 * Prevent execution if there are no rects to draw or there's a mismatch in the count
-	 */
 	@Override
 	public boolean jobInit(AnimationEngine engine) {
 		if (!super.jobInit(engine))

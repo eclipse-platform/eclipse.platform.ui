@@ -48,27 +48,18 @@ public class CloseAllSavedAction extends PageEventAction implements
         setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageEventAction.
-     */
     @Override
 	public void pageActivated(IWorkbenchPage page) {
         super.pageActivated(page);
         updateState();
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageEventAction.
-     */
     @Override
 	public void pageClosed(IWorkbenchPage page) {
         super.pageClosed(page);
         updateState();
     }
 
-    /* (non-Javadoc)
-     * Method declared on PartEventAction.
-     */
     @Override
 	public void partClosed(IWorkbenchPart part) {
         super.partClosed(part);
@@ -79,9 +70,6 @@ public class CloseAllSavedAction extends PageEventAction implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on PartEventAction.
-     */
     @Override
 	public void partOpened(IWorkbenchPart part) {
         super.partOpened(part);
@@ -92,9 +80,6 @@ public class CloseAllSavedAction extends PageEventAction implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertyListener.
-     */
     @Override
 	public void propertyChanged(Object source, int propID) {
         if (source instanceof IEditorPart) {
@@ -104,9 +89,6 @@ public class CloseAllSavedAction extends PageEventAction implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on Action.
-     */
     @Override
 	public void run() {
         if (getWorkbenchWindow() == null) {
@@ -138,9 +120,6 @@ public class CloseAllSavedAction extends PageEventAction implements
         setEnabled(false);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageEventAction.
-     */
     @Override
 	public void dispose() {
         super.dispose();

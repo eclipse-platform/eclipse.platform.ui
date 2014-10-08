@@ -73,56 +73,28 @@ final class PlaceholderContributionItem implements IContributionItem {
         storedUseChevron = item.getUseChevron();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#dispose()
-     */
     @Override
 	public void dispose() {
         // Do nothing
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void fill(Composite parent) {
         throw new UnsupportedOperationException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar,
-     *      int)
-     */
     @Override
 	public void fill(CoolBar parent, int index) {
         throw new UnsupportedOperationException();
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu,
-     *      int)
-     */
     @Override
 	public void fill(Menu parent, int index) {
         throw new UnsupportedOperationException();
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.ToolBar,
-     *      int)
-     */
     @Override
 	public void fill(ToolBar parent, int index) {
         throw new UnsupportedOperationException();
@@ -138,11 +110,6 @@ final class PlaceholderContributionItem implements IContributionItem {
         return storedHeight;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#getId()
-     */
     @Override
 	public String getId() {
         return id;
@@ -180,94 +147,49 @@ final class PlaceholderContributionItem implements IContributionItem {
         return storedUseChevron;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#isDirty()
-     */
     @Override
 	public boolean isDirty() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#isDynamic()
-     */
     @Override
 	public boolean isDynamic() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#isEnabled()
-     */
     @Override
 	public boolean isEnabled() {
         // XXX Auto-generated method stub
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#isGroupMarker()
-     */
     @Override
 	public boolean isGroupMarker() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#isSeparator()
-     */
     @Override
 	public boolean isSeparator() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#isVisible()
-     */
     @Override
 	public boolean isVisible() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
-     */
     @Override
 	public void saveWidgetState() {
         // Do nothing.
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#setParent(org.eclipse.jface.action.IContributionManager)
-     */
     @Override
 	public void setParent(IContributionManager parent) {
         // Do nothing
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#setVisible(boolean)
-     */
     @Override
 	public void setVisible(boolean visible) {
         // Do nothing.
@@ -282,22 +204,12 @@ final class PlaceholderContributionItem implements IContributionItem {
         return "PlaceholderContributionItem(" + id + ")"; //$NON-NLS-1$//$NON-NLS-2$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#update()
-     */
     @Override
 	public void update() {
         update(null);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IContributionItem#update(java.lang.String)
-     */
     @Override
 	public void update(String identifier) {
         // Do nothing

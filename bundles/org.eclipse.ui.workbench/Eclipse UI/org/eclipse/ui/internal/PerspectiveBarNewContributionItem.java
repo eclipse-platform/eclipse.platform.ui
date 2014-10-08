@@ -41,9 +41,6 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
                 .create(workbenchWindow));
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.ContributionItem#dispose()
-     */
     @Override
 	public void dispose() {
         super.dispose();

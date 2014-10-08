@@ -92,9 +92,6 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
         overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PluginAction.
-     */
     @Override
 	protected void initDelegate() {
         super.initDelegate();
@@ -167,9 +164,6 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
         return overrideActionId;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.PluginAction#dispose()
-     */
     @Override
 	public void dispose() {
     	if (activePart!=null) {

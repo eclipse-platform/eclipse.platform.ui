@@ -42,9 +42,6 @@ public class ViewerActionBuilder extends PluginActionBuilder {
     public ViewerActionBuilder() {
     }
 
-    /* (non-Javadoc)
-     * Method declared on PluginActionBuilder.
-     */
     @Override
 	protected ActionDescriptor createActionDescriptor(
             IConfigurationElement element) {
@@ -54,9 +51,6 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		return new ActionDescriptor(element, ActionDescriptor.T_EDITOR, part);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PluginActionBuilder.
-     */
     @Override
 	protected BasicContribution createContribution() {
         return new ViewerContribution(provider);
@@ -74,9 +68,6 @@ public class ViewerActionBuilder extends PluginActionBuilder {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on PluginActionBuilder.
-     */
     @Override
 	protected boolean readElement(IConfigurationElement element) {
         String tag = element.getName();
@@ -142,9 +133,6 @@ public class ViewerActionBuilder extends PluginActionBuilder {
             visibilityTest = new ActionExpression(element);
         }
 
-        /* (non-Javadoc)
-         * Method declared on BasicContribution.
-         */
         @Override
 		public void contribute(IMenuManager menu, boolean menuAppendIfMissing,
                 IToolBarManager toolbar, boolean toolAppendIfMissing) {
@@ -166,9 +154,6 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 			}
         }
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.internal.PluginActionBuilder.BasicContribution#dispose()
-		 */
 		@Override
 		public void dispose() {
 			if (selProvider != null) {

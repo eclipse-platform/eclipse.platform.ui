@@ -93,11 +93,6 @@ final class JFaceUtil {
 		final String workbenchName = WorkbenchPlugin.getDefault().getBundle().getSymbolicName();
 		
 		rootNode.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
-			 */
 			@Override
 			public void added(NodeChangeEvent event) {
 				if (!event.getChild().name().equals(workbenchName)) {
@@ -106,11 +101,6 @@ final class JFaceUtil {
 				((IEclipsePreferences) event.getChild()).addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 
 			}
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
-			 */
 			@Override
 			public void removed(NodeChangeEvent event) {
 				// Nothing to do here

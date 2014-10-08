@@ -184,9 +184,6 @@ public class NavigationHistoryAction extends PageEventAction {
         setMenuCreator(new MenuCreator());
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageEventAction.
-     */
     @Override
 	public void pageClosed(IWorkbenchPage page) {
         super.pageClosed(page);
@@ -218,9 +215,6 @@ public class NavigationHistoryAction extends PageEventAction {
         return (NavigationHistoryEntry[]) allEntries.toArray(entries);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PageEventAction.
-     */
     @Override
 	public void pageActivated(IWorkbenchPage page) {
         super.pageActivated(page);
@@ -232,9 +226,6 @@ public class NavigationHistoryAction extends PageEventAction {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         if (getWorkbenchWindow() == null) {

@@ -47,19 +47,11 @@ public class UISynchronizer extends Synchronizer {
 	 */
 	public static final ThreadLocal startupThread = new ThreadLocal() {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ThreadLocal#initialValue()
-		 */
 		@Override
 		protected Object initialValue() {
 			return Boolean.FALSE;
 		}
 		
-		/* (non-Javadoc)
-		 * @see java.lang.ThreadLocal#set(java.lang.Object)
-		 */
 		@Override
 		public void set(Object value) {
 			if (value != Boolean.TRUE && value != Boolean.FALSE)
@@ -113,9 +105,6 @@ public class UISynchronizer extends Synchronizer {
     	}    	
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Synchronizer#asyncExec(java.lang.Runnable)
-     */
     @Override
 	protected void asyncExec(Runnable runnable) {
     	// the following block should not be invoked if we're using 3.2 threading.

@@ -116,13 +116,6 @@ public class ShowFastViewContribution extends ContributionItem {
 			ref.addPropertyListener(propertyListener);
 
 			item.addDisposeListener(new DisposeListener() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.swt.events.DisposeListener#widgetDisposed(org
-				 * .eclipse.swt.events.DisposeEvent)
-				 */
 				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					ref.removePropertyListener(propertyListener);

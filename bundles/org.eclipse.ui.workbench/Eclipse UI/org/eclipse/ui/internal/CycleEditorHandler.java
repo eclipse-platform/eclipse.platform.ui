@@ -32,9 +32,6 @@ import org.eclipse.ui.commands.ICommandService;
  */
 public class CycleEditorHandler extends CycleBaseHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.CycleBaseHandler#addItems(org.eclipse.swt.widgets.Table, org.eclipse.ui.internal.WorkbenchPage)
-	 */
 	@Override
 	protected void addItems(Table table, WorkbenchPage page) {
 		List<EditorReference> refs = page.getSortedEditorReferences();
@@ -51,9 +48,6 @@ public class CycleEditorHandler extends CycleBaseHandler {
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.CycleBaseHandler#getBackwardCommand()
-	 */
 	@Override
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
@@ -62,9 +56,6 @@ public class CycleEditorHandler extends CycleBaseHandler {
 		return commandBack;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.CycleBaseHandler#getForwardCommand()
-	 */
 	@Override
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
@@ -73,9 +64,6 @@ public class CycleEditorHandler extends CycleBaseHandler {
 		return commandF;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.CycleBaseHandler#getTableHeader()
-	 */
 	@Override
 	protected String getTableHeader(IWorkbenchPart activePart) {
 		// TODO Auto-generated method stub

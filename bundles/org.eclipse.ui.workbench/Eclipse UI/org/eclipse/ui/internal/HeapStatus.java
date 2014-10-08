@@ -257,9 +257,6 @@ public class HeapStatus extends Composite {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
-	 */
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
         GC gc = new GC(this);
@@ -583,9 +580,6 @@ public class HeapStatus extends Composite {
     		super(WorkbenchMessages.WorkbenchWindow_close );
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.jface.action.IAction#run()
-    	 */
     	@Override
 		public void run(){
 			WorkbenchWindow wbw = (WorkbenchWindow) PlatformUI.getWorkbench()

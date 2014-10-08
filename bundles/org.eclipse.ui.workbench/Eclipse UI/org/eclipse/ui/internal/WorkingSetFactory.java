@@ -20,9 +20,6 @@ import org.eclipse.ui.IMemento;
  */
 public class WorkingSetFactory implements IElementFactory {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IElementFactory
-     */
     @Override
 	public IAdaptable createElement(IMemento memento) {
         String workingSetName = memento.getString(IWorkbenchConstants.TAG_NAME);

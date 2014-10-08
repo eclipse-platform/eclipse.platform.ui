@@ -80,69 +80,43 @@ public abstract class AbstractSelectionService implements ISelectionService {
     protected AbstractSelectionService() {
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionService.
-     */
     @Override
 	public void addSelectionListener(ISelectionListener l) {
         listeners.add(l);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionService.
-     */
     @Override
 	public void addSelectionListener(String partId, ISelectionListener listener) {
         getPerPartTracker(partId).addSelectionListener(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionService.
-     */
     @Override
 	public void addPostSelectionListener(ISelectionListener l) {
         postListeners.add(l);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionService.
-     */
     @Override
 	public void addPostSelectionListener(String partId,
             ISelectionListener listener) {
         getPerPartTracker(partId).addPostSelectionListener(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionService.
-     */
     @Override
 	public void removeSelectionListener(ISelectionListener l) {
         listeners.remove(l);
     }
 
-    /*
-     * (non-Javadoc)
-     * Method declared on ISelectionListener.
-     */
     @Override
 	public void removePostSelectionListener(String partId,
             ISelectionListener listener) {
         getPerPartTracker(partId).removePostSelectionListener(listener);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ISelectionService.
-     */
     @Override
 	public void removePostSelectionListener(ISelectionListener l) {
         postListeners.remove(l);
     }
 
-    /*
-     * (non-Javadoc)
-     * Method declared on ISelectionListener.
-     */
     @Override
 	public void removeSelectionListener(String partId,
             ISelectionListener listener) {

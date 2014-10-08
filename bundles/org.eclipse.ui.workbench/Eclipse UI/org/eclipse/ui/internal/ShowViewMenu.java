@@ -246,21 +246,11 @@ public class ShowViewMenu extends ContributionItem {
 			pluginId = ((ViewDescriptor) v).getPluginId();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-		 */
 		@Override
 		public String getLocalId() {
 			return localId;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-		 */
 		@Override
 		public String getPluginId() {
 			return pluginId;

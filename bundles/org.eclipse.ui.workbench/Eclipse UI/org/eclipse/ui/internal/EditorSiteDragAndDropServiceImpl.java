@@ -156,9 +156,6 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	// Cache any listeners for cleanup
 	List addedListeners = new ArrayList();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dnd.IEditorDropTargetService#addDropTarget(org.eclipse.swt.widgets.Control, int, org.eclipse.swt.dnd.Transfer[], org.eclipse.swt.dnd.DropTargetListener)
-	 */
 	@Override
 	public void addMergedDropTarget(Control control, int ops, Transfer[] transfers,
 			DropTargetListener listener) {
@@ -203,9 +200,6 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 		return (DropTarget)curDT;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dnd.IDragAndDropService#removeMergedDropTarget(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public void removeMergedDropTarget(Control control) {
 		DropTarget targetForControl = getCurrentDropTarget(control);
@@ -215,9 +209,6 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
 		addedListeners.clear();

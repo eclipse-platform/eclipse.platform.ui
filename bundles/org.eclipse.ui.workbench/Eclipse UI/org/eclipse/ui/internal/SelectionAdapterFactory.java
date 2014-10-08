@@ -29,33 +29,18 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class SelectionAdapterFactory implements IAdapterFactory {
 	private static final ICountable ICOUNT_0 = new ICountable() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.expressions.ICountable#count()
-		 */
 		@Override
 		public int count() {
 			return 0;
 		}
 	};
 	private static final ICountable ICOUNT_1 = new ICountable() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.expressions.ICountable#count()
-		 */
 		@Override
 		public int count() {
 			return 1;
 		}
 	};
 	private static final IIterable ITERATE_EMPTY = new IIterable() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.expressions.IIterable#iterator()
-		 */
 		@Override
 		public Iterator iterator() {
 			return Collections.EMPTY_LIST.iterator();

@@ -82,11 +82,6 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	 */
 	private TriggerSequence[] forwardTriggerSequences = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 
 	/**
 	 * Add all items to the dialog in the activation order
@@ -519,12 +514,6 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		return forwardTriggerSequences;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {

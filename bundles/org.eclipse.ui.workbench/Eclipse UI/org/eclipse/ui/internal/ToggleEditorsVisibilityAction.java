@@ -22,9 +22,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class ToggleEditorsVisibilityAction extends PerspectiveAction implements
         IPerspectiveListener {
 
-    /* (non-Javadoc)
-     * Method declared on IPerspectiveListener
-     */
     @Override
 	public void perspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
@@ -35,9 +32,6 @@ public class ToggleEditorsVisibilityAction extends PerspectiveAction implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPerspectiveListener
-     */
     @Override
 	public void perspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
@@ -68,9 +62,6 @@ public class ToggleEditorsVisibilityAction extends PerspectiveAction implements
         window.addPerspectiveListener(this);
     }
 
-    /* (non-Javadoc)
-     * Method declared on PerspectiveAction.
-     */
     @Override
 	protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
         boolean visible = page.isEditorAreaVisible();
@@ -83,9 +74,6 @@ public class ToggleEditorsVisibilityAction extends PerspectiveAction implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     */
     @Override
 	public void dispose() {
         if (getWindow() != null) {

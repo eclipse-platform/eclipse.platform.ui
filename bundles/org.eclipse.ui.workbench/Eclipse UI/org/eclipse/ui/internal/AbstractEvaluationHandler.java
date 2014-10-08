@@ -69,11 +69,6 @@ public abstract class AbstractEvaluationHandler extends AbstractEnabledHandler {
 		return enablementListener;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (enablementRef != null) {

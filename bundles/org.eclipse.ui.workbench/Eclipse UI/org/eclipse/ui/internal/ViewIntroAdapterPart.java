@@ -132,9 +132,6 @@ public final class ViewIntroAdapterPart extends ViewPart {
         handleZoomEvents = handle;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void createPartControl(Composite parent) {
         addZoomListener();
@@ -150,9 +147,6 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#dispose()
-     */
     @Override
 	public void dispose() {
 		eventBroker.unsubscribe(zoomChangeListener);
@@ -164,25 +158,16 @@ public final class ViewIntroAdapterPart extends ViewPart {
         introPart.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
     @Override
 	public Object getAdapter(Class adapter) {
         return introPart.getAdapter(adapter);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
-     */
     @Override
 	public Image getTitleImage() {
         return introPart.getTitleImage();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#getTitle()
-     */
     @Override
 	public String getTitle() {
     	// this method is called eagerly before our init method is called (and
@@ -192,9 +177,6 @@ public final class ViewIntroAdapterPart extends ViewPart {
     	return introPart == null ? super.getTitle() : introPart.getTitle();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
-     */
     @Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
         super.init(site);
@@ -222,19 +204,11 @@ public final class ViewIntroAdapterPart extends ViewPart {
         }
     }
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
     @Override
 	public void setFocus() {
         introPart.setFocus();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
-     */
     @Override
 	public void saveState(IMemento memento) {
         introPart.saveState(memento);

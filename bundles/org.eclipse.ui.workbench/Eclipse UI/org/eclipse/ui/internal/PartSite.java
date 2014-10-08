@@ -381,11 +381,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		return actionBars;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
-	 */
 	@Override
 	public String getId() {
 		return extensionId == null ? element == null ? model.getElementId() : element
@@ -393,21 +388,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				: extensionId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return element == null ? model.getElementId() : element.getNamespaceIdentifier();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
-	 */
 	@Override
 	public String getRegisteredName() {
 		return element == null ? model.getLocalizedLabel() : element

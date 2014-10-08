@@ -207,17 +207,11 @@ public abstract class PluginAction extends Action implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         runWithEvent(null);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void runWithEvent(Event event) {
         // this message dialog is problematic.
@@ -332,17 +326,11 @@ public abstract class PluginAction extends Action implements
         return configElement;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
         return getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
         return pluginId;
@@ -375,9 +363,6 @@ public abstract class PluginAction extends Action implements
         selection = null;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getMenuCreator()
-     */
     @Override
 	public IMenuCreator getMenuCreator() {
     	// now that action contribution item defers asking for the menu

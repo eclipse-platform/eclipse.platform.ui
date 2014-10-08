@@ -195,9 +195,6 @@ public class WWinPluginPulldown extends WWinPluginAction {
 		setMenuCreator(menuProxy);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on PluginAction.
-	 */
 	@Override
 	protected IActionDelegate validateDelegate(Object obj)
 			throws WorkbenchException {

@@ -64,17 +64,11 @@ public class ActionSetActionBars extends SubActionBars2 {
 		adjunctContributions.add(item);
 	}
 
-	/*
-	 * (non-Javadoc) Inherited from SubActionBars.
-	 */
 	@Override
 	protected SubMenuManager createSubMenuManager(IMenuManager parent) {
 		return new ActionSetMenuManager(parent, actionSetId);
 	}
 
-	/*
-	 * (non-Javadoc) Inherited from SubActionBars.
-	 */
 	@Override
 	protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
 		// return null, action sets are managed by CoolItemToolBarManagers

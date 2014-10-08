@@ -120,25 +120,16 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
         return ((WorkbenchWindow) window).getWindowConfigurer();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getSaveAndRestore()
-     */
     @Override
 	public boolean getSaveAndRestore() {
         return saveAndRestore;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#setSaveAndRestore(boolean)
-     */
     @Override
 	public void setSaveAndRestore(boolean enabled) {
         saveAndRestore = enabled;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getData
-     */
     @Override
 	public Object getData(String key) {
         if (key == null) {
@@ -147,9 +138,6 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
         return extraData.get(key);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#setData(String, Object)
-     */
     @Override
 	public void setData(String key, Object data) {
         if (key == null) {
@@ -162,9 +150,6 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClose()
-     */
     @Override
 	public void emergencyClose() {
         if (!isEmergencyClosing) {
@@ -178,49 +163,31 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClosing()
-     */
     @Override
 	public boolean emergencyClosing() {
         return isEmergencyClosing;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreState()
-     */
     @Override
 	public IStatus restoreState() {
 		return Status.OK_STATUS;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.IWorkbenchConfigurer#openFirstTimeWindow()
-     */
     @Override
 	public void openFirstTimeWindow() {
         ((Workbench) getWorkbench()).openFirstTimeWindow();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreWorkbenchWindow(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
 		return getWindowConfigurer(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getExitOnLastWindowClose()
-	 */
 	@Override
 	public boolean getExitOnLastWindowClose() {
 		return exitOnLastWindowClose;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#setExitOnLastWindowClose(boolean)
-	 */
 	@Override
 	public void setExitOnLastWindowClose(boolean enabled) {
 		exitOnLastWindowClose = enabled;

@@ -116,11 +116,6 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 			final Image finalImage = image;
 
 			display.syncExec(new Runnable() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.lang.Runnable#run()
-				 */
 				@Override
 				public void run() {
 					showImage(finalImage);

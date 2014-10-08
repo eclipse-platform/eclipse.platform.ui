@@ -75,9 +75,6 @@ public class PluginActionContributionItem extends ActionContributionItem
 		}
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IContributionItem#setParent(org.eclipse.jface.action.IContributionManager)
-     */
     @Override
 	public void setParent(IContributionManager parent) {
         IContributionManager oldParent = getParent();
@@ -137,11 +134,6 @@ public class PluginActionContributionItem extends ActionContributionItem
         disposeIdentifier();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
-     */
     @Override
 	public boolean isVisible() {
         if (identifier != null && !identifier.isEnabled()) {
@@ -150,9 +142,6 @@ public class PluginActionContributionItem extends ActionContributionItem
         return super.isVisible();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org.eclipse.ui.activities.IdentifierEvent)
-     */
     @Override
 	public void identifierChanged(IdentifierEvent identifierEvent) {
         invalidateParent();
@@ -170,9 +159,6 @@ public class PluginActionContributionItem extends ActionContributionItem
 		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
-     */
     @Override
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
         // ensure that if we're going from a non-filtering state that we get an identifier

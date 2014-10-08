@@ -57,9 +57,6 @@ public abstract class PerspectiveAction extends Action implements ActionFactory.
         return workbenchWindow;
     }
     
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         if (workbenchWindow == null) {
@@ -80,9 +77,6 @@ public abstract class PerspectiveAction extends Action implements ActionFactory.
      */
     protected abstract void run(IWorkbenchPage page, IPerspectiveDescriptor persp);
 
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     */
     @Override
 	public void dispose() {
         if (workbenchWindow == null) {

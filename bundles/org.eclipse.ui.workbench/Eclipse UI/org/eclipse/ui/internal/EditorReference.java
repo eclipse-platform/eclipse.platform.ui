@@ -288,21 +288,11 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return (IEditorInput) input;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorReference#getEditor(boolean)
-	 */
 	@Override
 	public IEditorPart getEditor(boolean restore) {
 		return (IEditorPart) getPart(restore);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorReference#getEditorInput()
-	 */
 	@Override
 	public IEditorInput getEditorInput() throws PartInitException {
 		IEditorPart editor = getEditor(false);
@@ -327,13 +317,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return input;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.internal.e4.compatibility.WorkbenchPartReference#createPart
-	 * ()
-	 */
 	@Override
 	public IWorkbenchPart createPart() throws PartInitException {
 		try {
@@ -369,13 +352,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return new ErrorEditorPart(status);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.internal.e4.compatibility.WorkbenchPartReference#initialize
-	 * (org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		IConfigurationElement element = descriptor.getConfigurationElement();
