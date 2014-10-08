@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -145,7 +144,6 @@ public class ValidatorServlet extends HttpServlet {
 	
 	public boolean isSecure(HttpServletRequest req,HttpServletResponseAdv resp) 
 			throws SecurityException {
-		
 		Enumeration names = req.getParameterNames();
 		List values = new ArrayList();
 		List scripts = new ArrayList();
@@ -160,7 +158,6 @@ public class ValidatorServlet extends HttpServlet {
 		}
 		
 		if (resp.getWriter() != null) {
-			
 			String data = resp.getString();
 			for (int s=0; s < scripts.size(); s++)
 				if (data.indexOf((String)scripts.get(s)) > -1)
@@ -193,13 +190,11 @@ public class ValidatorServlet extends HttpServlet {
 	private class HttpServletResponseAdv extends HttpServletResponseWrapper {
 		
 		private HttpServletResponse response;
-		private ByteArrayOutputStream out;
 		private ServletPrintWriter writer;
-		private SecureServletOutputStream stream;
+		private ServletOutputStream stream;
 		
 		public HttpServletResponseAdv(HttpServletResponse response) {
 			super(response);
-			out = new ByteArrayOutputStream();
 			this.response = response;
 		}
 
@@ -210,10 +205,10 @@ public class ValidatorServlet extends HttpServlet {
 			return writer;
 		}
 		
-		public ServletOutputStream getOutputStream() {
+		public ServletOutputStream getOutputStream() throws IOException {
 			
 			if (stream == null && writer == null)
-				stream = new SecureServletOutputStream(out);
+				stream = response.getOutputStream();
 			return stream;
 		}
 		
@@ -221,23 +216,13 @@ public class ValidatorServlet extends HttpServlet {
 			
 			OutputStream os = response.getOutputStream();
 			InputStream is = getInputStream();
-			
-			Utils.transferContent(is, os);
-			
+			if (is != null) {
+				Utils.transferContent(is, os);
+			}
 			os.flush();
 		}
 		
 		public InputStream getInputStream() {
-			
-			if (stream != null) {
-			
-				try {
-					out.flush();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return new ByteArrayInputStream(out.toByteArray());
-			}
 			if (writer != null) {
 				
 				try {
@@ -255,20 +240,6 @@ public class ValidatorServlet extends HttpServlet {
 				return writer.toString();
 			
 			return null;
-		}
-	}
-	
-	
-	private class SecureServletOutputStream extends ServletOutputStream {
-
-		private OutputStream out;
-
-		public SecureServletOutputStream(OutputStream out) {
-			this.out = out;
-		}
-		
-		public void write(int b) throws IOException {
-			out.write(b);
 		}
 	}
 }
