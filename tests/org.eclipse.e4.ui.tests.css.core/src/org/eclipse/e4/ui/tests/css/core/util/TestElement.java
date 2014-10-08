@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource and others. All rights reserved.
+ * Copyright (c) 2014 EclipseSource and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
  * Contributors:
  *   EclipseSource - initial API and implementation
  *   Stefan Winkler <stefan@winklerweb.net> - Bug 419482
+ *   Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.util;
 
@@ -27,7 +28,7 @@ public class TestElement extends ElementAdapter {
 	private final String typeName;
 	private String className;
 	private String id;
-	private Map attrs = new HashMap();
+	private Map<String, String> attrs = new HashMap<String, String>();
 	private Node parentNode = null;
 
 	public TestElement(String type, CSSEngine engine) {
@@ -55,7 +56,7 @@ public class TestElement extends ElementAdapter {
 
 	@Override
 	public String getAttribute(String name) {
-		String value = (String) attrs.get(name);
+		String value = attrs.get(name);
 		return value == null ? "" : value;
 	}
 
