@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 
 package org.eclipse.ui.tests.harness.util;
@@ -42,21 +43,14 @@ public class FileTool {
 	 * extracting only those entries the pass through the given
 	 * filter.
 	 *
-	 * @param filter filters out unwanted zip entries
 	 * @param zipFile the zip file to unzip
 	 * @param dstDir the destination directory
 	 */
 	public static void unzip(ZipFile zipFile, File dstDir) throws IOException {
-		unzip(zipFile, dstDir, dstDir, 0);
-	}
-
-	private static void unzip(ZipFile zipFile, File rootDstDir, File dstDir, int depth) throws IOException {
-
-		Enumeration entries = zipFile.entries();
-
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		try {
 			while(entries.hasMoreElements()){
-				ZipEntry entry = (ZipEntry)entries.nextElement();
+				ZipEntry entry = entries.nextElement();
 				if(entry.isDirectory()){
 					continue;
 				}
@@ -163,9 +157,9 @@ public class FileTool {
 	public static void copy(File src, File dst) throws IOException {
 		if(src.isDirectory()){
 			String[] srcChildren = src.list();
-			for(int i = 0; i < srcChildren.length; ++i){
-				File srcChild= new File(src, srcChildren[i]);
-				File dstChild= new File(dst, srcChildren[i]);
+			for (String srcChildPathName : srcChildren) {
+				File srcChild = new File(src, srcChildPathName);
+				File dstChild = new File(dst, srcChildPathName);
 				copy(srcChild, dstChild);
 			}
 		} else
@@ -183,7 +177,10 @@ public class FileTool {
 	}
 
 	public static StringBuffer read(String fileName) throws IOException {
-		return read(new FileReader(fileName));
+		FileReader reader = new FileReader(fileName);
+		StringBuffer result = read(reader);
+		reader.close();
+		return result;
 	}
 
 	public static StringBuffer read(Reader reader) throws IOException {

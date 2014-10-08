@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
@@ -52,8 +53,7 @@ public class ActionUtil {
     public static void runActionWithLabel(TestCase test, IMenuManager mgr,
             String label) {
         IContributionItem[] items = mgr.getItems();
-        for (int nX = 0; nX < items.length; nX++) {
-            IContributionItem item = items[nX];
+		for (IContributionItem item : items) {
             if (item instanceof SubContributionItem)
                 item = ((SubContributionItem) item).getInnerItem();
             if (item instanceof ActionContributionItem) {
@@ -123,8 +123,7 @@ public class ActionUtil {
      */
     public static IAction getActionWithLabel(IMenuManager mgr, String label) {
         IContributionItem[] items = mgr.getItems();
-        for (int nX = 0; nX < items.length; nX++) {
-            IContributionItem item = items[nX];
+		for (IContributionItem item : items) {
             if (item instanceof SubContributionItem)
                 item = ((SubContributionItem) item).getInnerItem();
             if (item instanceof ActionContributionItem) {
@@ -146,7 +145,7 @@ public class ActionUtil {
      * @param mgr the menu manager to open
      */
     public static void fireAboutToShow(MenuManager mgr) throws Throwable {
-        Class clazz = mgr.getClass();
+		Class<?> clazz = mgr.getClass();
         Method method = clazz.getDeclaredMethod("handleAboutToShow",
                 new Class[0]);
         method.setAccessible(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <code>CallHistory</code> is used to record the invocation
@@ -35,9 +37,9 @@ import java.util.ArrayList;
  * </p>
  */
 public class CallHistory {
-    private ArrayList methodList;
+	private List<String> methodList;
 
-    private Class classType;
+    private Class<? extends Object> classType;
 
     /**
      * Creates a new call history for an object.
@@ -45,7 +47,7 @@ public class CallHistory {
      * @param target the call history target.
      */
     public CallHistory(Object target) {
-        methodList = new ArrayList();
+        methodList = new ArrayList<String>();
         classType = target.getClass();
     }
 
@@ -55,8 +57,8 @@ public class CallHistory {
      */
     private void testMethodName(String methodName) {
         Method[] methods = classType.getMethods();
-        for (int i = 0; i < methods.length; i++)
-            if (methods[i].getName().equals(methodName))
+		for (Method method : methods)
+			if (method.getName().equals(methodName))
                 return;
         throw new IllegalArgumentException("Target class ("
                 + classType.getName() + ") does not contain method: "
@@ -93,8 +95,7 @@ public class CallHistory {
         int testLength = testNames.length;
         if (testLength == 0)
             return true;
-        for (int nX = 0; nX < methodList.size(); nX++) {
-            String methodName = (String) methodList.get(nX);
+		for (String methodName : methodList) {
             String testName = testNames[testIndex];
             testMethodName(testName);
             if (testName.equals(methodName))
@@ -123,9 +124,9 @@ public class CallHistory {
      * @return <code>true</code> if the methods were called
      */
     public boolean contains(String[] methodNames) {
-        for (int i = 0; i < methodNames.length; i++) {
-            testMethodName(methodNames[i]);
-            if (!methodList.contains(methodNames[i]))
+		for (String methodName : methodNames) {
+			testMethodName(methodName);
+			if (!methodList.contains(methodNames))
                 return false;
         }
         return true;
@@ -144,7 +145,7 @@ public class CallHistory {
      * Prints the call history to the console.
      */
     public void printToConsole() {
-        for (int i = 0; i < methodList.size(); i++)
-            System.out.println(methodList.get(i));
+		for (String methodName : methodList)
+			System.out.println(methodName);
     }
 }

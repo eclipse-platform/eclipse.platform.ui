@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -57,20 +57,24 @@ public abstract class UITestCase extends TestCase {
             this.enabled = enabled;
         }
 
-        public void windowActivated(IWorkbenchWindow window) {
+        @Override
+		public void windowActivated(IWorkbenchWindow window) {
             // do nothing
         }
 
-        public void windowDeactivated(IWorkbenchWindow window) {
+        @Override
+		public void windowDeactivated(IWorkbenchWindow window) {
             // do nothing
         }
 
-        public void windowClosed(IWorkbenchWindow window) {
+        @Override
+		public void windowClosed(IWorkbenchWindow window) {
             if (enabled)
                 testWindows.remove(window);
         }
 
-        public void windowOpened(IWorkbenchWindow window) {
+        @Override
+		public void windowOpened(IWorkbenchWindow window) {
             if (enabled)
                 testWindows.add(window);
         }
@@ -78,14 +82,14 @@ public abstract class UITestCase extends TestCase {
 
     protected IWorkbench fWorkbench;
 
-    private List testWindows;
+    private List<IWorkbenchWindow> testWindows;
 
     private TestWindowListener windowListener;
 
     public UITestCase(String testName) {
         super(testName);
         //		ErrorDialog.NO_UI = true;
-        testWindows = new ArrayList(3);
+        testWindows = new ArrayList<IWorkbenchWindow>(3);
     }
 
 	/**
@@ -171,7 +175,8 @@ public abstract class UITestCase extends TestCase {
      * from overriding this method to maintain logging consistency.
      * doSetUp() should be overriden instead.
      */
-    protected final void setUp() throws Exception {
+    @Override
+	protected final void setUp() throws Exception {
     	super.setUp();
 		fWorkbench = PlatformUI.getWorkbench();
     	trace("----- " + this.getName()); //$NON-NLS-1$
@@ -196,7 +201,8 @@ public abstract class UITestCase extends TestCase {
      * from overriding this method to maintain logging consistency.
      * doTearDown() should be overriden instead.
      */
-    protected final void tearDown() throws Exception {
+    @Override
+	protected final void tearDown() throws Exception {
         super.tearDown();
         trace(this.getName() + ": tearDown...\n"); //$NON-NLS-1$
         removeWindowListener();
@@ -301,10 +307,8 @@ public abstract class UITestCase extends TestCase {
 	 * Close all test windows.
 	 */
     public void closeAllTestWindows() {
-        Iterator iter = new ArrayList(testWindows).iterator();
-        while (iter.hasNext()) {
-            IWorkbenchWindow win = (IWorkbenchWindow) iter.next();
-            win.close();
+		for (IWorkbenchWindow testWindows : testWindows) {
+            testWindows.close();
         }
         testWindows.clear();
     }
