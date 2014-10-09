@@ -54,11 +54,6 @@ public class ResourceFilterPage extends PropertyPage {
 		groupWidget.performDefaults();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		groupWidget.dispose();

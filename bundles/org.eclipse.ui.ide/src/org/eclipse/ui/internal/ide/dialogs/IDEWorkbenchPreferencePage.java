@@ -31,11 +31,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         implements IWorkbenchPreferencePage {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage
-     */
     @Override
 	protected Control createContents(Composite parent) {
 

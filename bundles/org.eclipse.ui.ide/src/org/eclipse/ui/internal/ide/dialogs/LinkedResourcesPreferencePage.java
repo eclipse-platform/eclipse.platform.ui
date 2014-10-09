@@ -136,9 +136,6 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
         return pageComponent;
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		dragAndDropHandlingEditor.loadDefault();

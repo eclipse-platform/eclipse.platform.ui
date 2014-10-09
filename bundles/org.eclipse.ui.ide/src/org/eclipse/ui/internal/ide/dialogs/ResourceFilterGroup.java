@@ -814,11 +814,6 @@ public class ResourceFilterGroup {
 							null));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
 			ISelection selection = filterView.getSelection();
@@ -829,11 +824,6 @@ public class ResourceFilterGroup {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.Action#isEnabled()
-		 */
 		@Override
 		public boolean isEnabled() {
 			ISelection selection = filterView.getSelection();
@@ -935,13 +925,6 @@ public class ResourceFilterGroup {
 			super(viewer);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang
-		 * .Object)
-		 */
 		@Override
 		public boolean performDrop(Object data) {
 			Object target = getCurrentTarget();
@@ -972,13 +955,6 @@ public class ResourceFilterGroup {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang
-		 * .Object, int, org.eclipse.swt.dnd.TransferData)
-		 */
 		@Override
 		public boolean validateDrop(Object target, int operation,
 				TransferData transferType) {
@@ -993,13 +969,6 @@ public class ResourceFilterGroup {
 
 	class FilterCopyDrag implements DragSourceListener {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt
-		 * .dnd.DragSourceEvent)
-		 */
 		@Override
 		public void dragFinished(DragSourceEvent event) {
 			if (event.detail == DND.DROP_MOVE) {
@@ -1007,13 +976,6 @@ public class ResourceFilterGroup {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt
-		 * .dnd.DragSourceEvent)
-		 */
 		@Override
 		public void dragSetData(DragSourceEvent event) {
 			if (filterCopyTransfer.isSupportedType(event.dataType)) {
@@ -1021,13 +983,6 @@ public class ResourceFilterGroup {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.
-		 * dnd.DragSourceEvent)
-		 */
 		@Override
 		public void dragStart(DragSourceEvent event) {
 			if (getFilterCopySelection().length == 0)
@@ -1889,9 +1844,6 @@ class FilterCopy extends UIResourceFilterDescription {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceFilterDescription#getFileInfoMatcherDescription()
-	 */
 	@Override
 	public FileInfoMatcherDescription getFileInfoMatcherDescription() {
 		
@@ -1969,13 +1921,6 @@ class FilterEditDialog extends TrayDialog {
 		customfilterArgumentMap.put(ui.getID(), ui);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -2025,9 +1970,6 @@ class FilterEditDialog extends TrayDialog {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -2363,11 +2305,6 @@ class FilterEditDialog extends TrayDialog {
 				getButton(OK).setEnabled(true);
 		}
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
@@ -2511,17 +2448,11 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		this.filter = filter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#getID()
-	 */
 	@Override
 	public Object getID() {
 		return FileInfoAttributesMatcher.ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#dispose()
-	 */
 	@Override
 	public void dispose() {
 		Widget list[] = new Widget[] {multiKey, multiOperator, multiArgumentComposite, stringArgumentComposite, stringTextArgumentComposite, arguments, argumentsLabel, argumentsCaseSensitive, argumentsRegularExpresion, attributeStringArgumentComposite, description, conditionComposite, descriptionComposite, dummyLabel1, dummyLabel2};
@@ -2550,9 +2481,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		initializationComplete = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#create(org.eclipse.swt.widgets.Composite, org.eclipse.swt.graphics.Font)
-	 */
 	@Override
 	public void create(Composite argumentComposite, Font font) {
 		shell = argumentComposite.getShell();
@@ -3103,9 +3031,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		return (String []) list.toArray(new String[0]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#selectionChanged()
-	 */
 	@Override
 	public void selectionChanged() {
 	}
@@ -3173,9 +3098,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		return message;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#formatStyledText(org.eclipse.ui.internal.ide.dialogs.FilterCopy, org.eclipse.jface.viewers.StyledString.Styler, org.eclipse.jface.viewers.StyledString.Styler)
-	 */
 	@Override
 	public StyledString formatStyledText(FilterCopy filter,
 			Styler fPlainStyler, Styler fBoldStyler) {
@@ -3232,17 +3154,11 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		this.filter = filter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#getID()
-	 */
 	@Override
 	public Object getID() {
 		return new String();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#dispose()
-	 */
 	@Override
 	public void dispose() {
 		Widget list[] = new Widget[] {arguments, argumentsLabel, description};
@@ -3257,9 +3173,6 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		description = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#create(org.eclipse.swt.widgets.Composite, org.eclipse.swt.graphics.Font)
-	 */
 	@Override
 	public void create(Composite argumentComposite, Font font) {
 		shell = argumentComposite.getShell();
@@ -3333,9 +3246,6 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		return label;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#selectionChanged()
-	 */
 	@Override
 	public void selectionChanged() {
 		if (arguments != null)
@@ -3369,9 +3279,6 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.dialogs.ICustomFilterArgumentUI#formatStyledText(org.eclipse.ui.internal.ide.dialogs.FilterCopy, org.eclipse.jface.viewers.StyledString.Styler, org.eclipse.jface.viewers.StyledString.Styler)
-	 */
 	@Override
 	public StyledString formatStyledText(FilterCopy filter,
 			Styler fPlainStyler, Styler fBoldStyler) {

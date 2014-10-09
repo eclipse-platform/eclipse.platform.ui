@@ -847,7 +847,7 @@ public class WelcomeEditor extends EditorPart {
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * Saves the contents of this editor.
      * <p>
      * Subclasses must override this method to implement the open-save-close lifecycle
@@ -861,7 +861,7 @@ public class WelcomeEditor extends EditorPart {
         // do nothing
     }
 
-    /* (non-Javadoc)
+    /**
      * Saves the contents of this editor to another object.
      * <p>
      * Subclasses must override this method to implement the open-save-close lifecycle
@@ -899,7 +899,7 @@ public class WelcomeEditor extends EditorPart {
         return parser.getItems();
     }
 
-    /* (non-Javadoc)
+    /**
      * Sets the cursor and selection state for this editor to the passage defined
      * by the given marker.
      * <p>
@@ -912,7 +912,7 @@ public class WelcomeEditor extends EditorPart {
         // do nothing
     }
 
-    /* (non-Javadoc)
+    /**
      * Initializes the editor part with a site and input.
      * <p>
      * Subclasses of <code>EditorPart</code> must implement this method.  Within
@@ -937,7 +937,7 @@ public class WelcomeEditor extends EditorPart {
         setInput(input);
     }
 
-    /* (non-Javadoc)
+    /**
      * Returns whether the contents of this editor have changed since the last save
      * operation.
      * <p>
@@ -952,7 +952,7 @@ public class WelcomeEditor extends EditorPart {
         return false;
     }
 
-    /* (non-Javadoc)
+    /**
      * Returns whether the "save as" operation is supported by this editor.
      * <p>
      * Subclasses must override this method to implement the open-save-close lifecycle

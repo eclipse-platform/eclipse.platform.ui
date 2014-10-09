@@ -56,11 +56,6 @@ public class FileSystemSelectionArea {
 		fileSystems.getControl().setFont(composite.getFont());
 
 		fileSystems.setLabelProvider(new LabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
 			@Override
 			public String getText(Object element) {
 				return ((FileSystemConfiguration) element).getLabel();
@@ -69,33 +64,17 @@ public class FileSystemSelectionArea {
 
 		fileSystems.setContentProvider(new IStructuredContentProvider() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
 			@Override
 			public void dispose() {
 				// Nothing to do
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
 			@Override
 			public Object[] getElements(Object inputElement) {
 				return FileSystemSupportRegistry.getInstance()
 						.getConfigurations();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer,
 					Object oldInput, Object newInput) {

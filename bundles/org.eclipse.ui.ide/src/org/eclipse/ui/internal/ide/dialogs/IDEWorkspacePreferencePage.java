@@ -86,11 +86,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 
 	private StringFieldEditor systemExplorer;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage
-     */
     @Override
 	protected Control createContents(Composite parent) {
 
@@ -303,9 +298,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 		encodingEditor.setPage(this);
 		encodingEditor.load();
 		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-			 */
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(FieldEditor.IS_VALID)) {

@@ -94,22 +94,12 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
         return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage#performDefaults()
-     */
     @Override
 	protected void performDefaults() {
         projectSwitchField.loadDefault();
         super.performDefaults();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage#performOk()
-     */
     @Override
 	public boolean performOk() {
         projectSwitchField.store();

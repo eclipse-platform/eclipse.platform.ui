@@ -448,11 +448,6 @@ public class ResourceInfoPage extends PropertyPage {
 			encodingEditor.load();
 
 			encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-				 */
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty().equals(FieldEditor.IS_VALID)) {
