@@ -81,9 +81,6 @@ public class BuildProjectHandler extends AbstractHandler {
 				IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
-	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		boolean enabled = false;
