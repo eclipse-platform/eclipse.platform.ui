@@ -79,12 +79,6 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		workbenchConfigurer = configurer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.statushandlers.WorkbenchErrorHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter,
-	 *      int)
-	 */
 	@Override
 	public void handle(final StatusAdapter statusAdapter, int style) {
 
@@ -113,11 +107,6 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		if (isFatal(statusAdapter)) {
 			UIJob handlingExceptionJob = new UIJob("IDE Exception Handler") //$NON-NLS-1$
 			{
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					handleException(statusAdapter.getStatus().getException());

@@ -123,9 +123,6 @@ public class FeatureSelectionDialog extends SelectionDialog {
         setInitialSelections(new Object[0]);
     }
 
-    /* (non-Javadoc)
-     * Method declared on Window.
-     */
     @Override
 	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
@@ -133,9 +130,6 @@ public class FeatureSelectionDialog extends SelectionDialog {
 				helpContextId);
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
@@ -189,9 +183,6 @@ public class FeatureSelectionDialog extends SelectionDialog {
         return composite;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected void okPressed() {
         IStructuredSelection selection = (IStructuredSelection) listViewer

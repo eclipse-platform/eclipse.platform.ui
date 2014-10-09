@@ -133,9 +133,6 @@ public class TipsAndTricksAction extends PartEventAction implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     */
     @Override
 	public void dispose() {
         if (workbenchWindow == null) {

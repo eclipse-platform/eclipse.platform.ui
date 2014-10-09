@@ -91,11 +91,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		super(parentShell, launchData, suppressAskAgain, centerOnMonitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.ide.ChooseWorkspaceDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control top = super.createDialogArea(parent);
@@ -139,11 +134,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 			boolean notExpanded = true;
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
-			 */
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				form.reflow(true);
@@ -162,11 +152,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanging(org.eclipse.ui.forms.events.ExpansionEvent)
-			 */
 			@Override
 			public void expansionStateChanging(ExpansionEvent e) {
 				// Nothing to do here
@@ -227,11 +212,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 			button.setBackground(sectionClient.getBackground());
 			button.addSelectionListener(new SelectionAdapter() {
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (button.getSelection())
@@ -260,11 +240,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.ide.ChooseWorkspaceDialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		Iterator settingsIterator = selectedSettings.iterator();
@@ -328,11 +303,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		final IStatus[] exceptions = new IStatus[1];
 
 		SafeRunner.run(new ISafeRunnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-			 */
 			@Override
 			public void run() throws Exception {
 
@@ -346,11 +316,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-			 */
 			@Override
 			public void handleException(Throwable exception) {
 				exceptions[0] = StatusUtil
@@ -372,11 +337,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
-	 */
 	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTLOCATION;

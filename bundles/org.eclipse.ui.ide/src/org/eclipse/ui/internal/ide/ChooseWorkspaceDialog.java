@@ -375,11 +375,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				.getItem(0) : launchData.getInitialDefault())));
     }
     
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-     * 
-     * @since 3.2
-     */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		// If we were explicitly instructed to center on the monitor, then

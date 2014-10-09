@@ -153,10 +153,6 @@ public class IDEWorkbenchActivityHelper {
      */
     private IResourceChangeListener getChangeListener() {
         return new IResourceChangeListener() {
-            /*
-             * (non-Javadoc) @see
-             * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-             */
             @Override
 			public void resourceChanged(IResourceChangeEvent event) {
                 if (!WorkbenchActivityHelper.isFiltering()) {
