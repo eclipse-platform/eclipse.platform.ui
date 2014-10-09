@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -847,7 +847,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 						handleChangeBreakpoint(marker, mDelta);
 						fPostChangMarkersChanged.remove(marker);
 					} else if (marker.getAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, false) && getBreakpoint(marker) == null) {
-						try {
+						try { /*
+							 * There may be breakpoints with matching resource
+							 * and same line number
+							 */
+							IBreakpoint breakpoint = findMatchingBreakpoint(marker);
+							if (breakpoint != null) {
+								removeBreakpoint(breakpoint, true);
+							}
 							fAdded.add(createBreakpoint(marker));
 						} catch (CoreException e) {
 							DebugPlugin.log(e);
@@ -856,6 +863,30 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					fPostBuildMarkersAdded.add(marker);
 				}
 			}
+		}
+
+		/**
+		 * To find a breakpoint with matching marker resources and line number.
+		 *
+		 * @param marker the {@link IMarker} for which existing breakpoint is
+		 *            retrieved
+		 * @return matching breakpoint if exists else return <code>null</code>
+		 */
+		private IBreakpoint findMatchingBreakpoint(IMarker marker) {
+			Vector<IBreakpoint> breakpoints = getBreakpoints0();
+			try {
+				Integer line = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
+				for (int i = 0; i < breakpoints.size(); i++) {
+					IBreakpoint breakpoint = breakpoints.get(i);
+					IMarker bpMarker = breakpoint.getMarker();
+					if (bpMarker != null && marker.getResource().equals(bpMarker.getResource()) && (Integer) bpMarker.getAttribute(IMarker.LINE_NUMBER) == (line == null ? -1 : line.intValue())) {
+						return breakpoint;
+					}
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 
 		/**
