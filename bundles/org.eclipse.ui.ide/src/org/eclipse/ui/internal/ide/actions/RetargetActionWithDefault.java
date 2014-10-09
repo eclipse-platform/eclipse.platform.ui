@@ -35,7 +35,7 @@ public class RetargetActionWithDefault extends RetargetAction {
 		super(actionID, text);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * Method declared on RetargetAction.
 	 */
 	@Override

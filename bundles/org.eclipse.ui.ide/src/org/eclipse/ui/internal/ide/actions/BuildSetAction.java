@@ -86,7 +86,7 @@ public class BuildSetAction extends Action {
 		run();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * For debugging purposes only.
 	 */
 	@Override

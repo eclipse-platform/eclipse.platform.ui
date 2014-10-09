@@ -39,9 +39,6 @@ public class BuildCleanAction extends Action implements ActionFactory.IWorkbench
 		this.window = window;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
-	 */
 	@Override
 	public void dispose() {
 		//nothing to dispose

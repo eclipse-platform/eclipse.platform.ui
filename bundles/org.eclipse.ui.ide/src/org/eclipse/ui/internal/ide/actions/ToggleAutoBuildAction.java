@@ -37,17 +37,11 @@ public class ToggleAutoBuildAction extends Action implements
         setChecked(ResourcesPlugin.getWorkspace().isAutoBuilding());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
-     */
     @Override
 	public void dispose() {
         //nothing to dispose
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#run()
-     */
     @Override
 	public void run() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();

@@ -78,9 +78,6 @@ public class BuildSetMenu extends ContributionItem {
         action.setText(label.toString());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
-     */
     @Override
 	public void fill(Menu menu, int index) {
         if (getParent() instanceof MenuManager) {
