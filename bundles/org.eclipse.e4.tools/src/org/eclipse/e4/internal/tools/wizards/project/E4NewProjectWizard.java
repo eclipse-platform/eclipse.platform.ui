@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Soyatec - initial API and implementation
- *     IBM Corporation - ongoing enhancements
- *     Sopot Cela - ongoing enhancements
- *     Lars Vogel - ongoing enhancements
- *     Wim Jongman - ongoing enhancements
- *     Steven Spungin - ongoing enhancements, Bug 438591
+ * Soyatec - initial API and implementation
+ * IBM Corporation - ongoing enhancements
+ * Sopot Cela - ongoing enhancements
+ * Lars Vogel - ongoing enhancements
+ * Wim Jongman - ongoing enhancements
+ * Steven Spungin - ongoing enhancements, Bug 438591
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -87,7 +88,6 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
@@ -107,12 +107,17 @@ import org.osgi.framework.Version;
 /**
  * @author jin.liu (jin.liu@soyatec.com)
  */
+@SuppressWarnings("restriction")
 public class E4NewProjectWizard extends NewPluginProjectWizard {
 
-	private static final String PLUGIN_XML = "plugin.xml";
-	private static final String MODEL_EDITOR_ID = "org.eclipse.e4.tools.emf.editor3x.e4wbm";
-	private static final String APPLICATION_MODEL = "Application.e4xmi";
-	private PluginFieldData fPluginData;
+	private static final String NAME = "name"; //$NON-NLS-1$
+	private static final String APPLICATION = "application"; //$NON-NLS-1$
+	private static final String PRODUCT = "product"; //$NON-NLS-1$
+	private static final String TRUE = "TRUE"; //$NON-NLS-1$
+	private static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
+	private static final String MODEL_EDITOR_ID = "org.eclipse.e4.tools.emf.editor3x.e4wbm"; //$NON-NLS-1$
+	private static final String APPLICATION_MODEL = "Application.e4xmi"; //$NON-NLS-1$
+	private final PluginFieldData fPluginData;
 	private NewApplicationWizardPage fApplicationPage;
 	private IProjectProvider fProjectProvider;
 	private PluginContentPage fContentPage;
@@ -124,46 +129,47 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 	@Override
 	public void addPages() {
-		fMainPage = new E4NewProjectWizardPage(
-				"main", fPluginData, false, getSelection()); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title);
-		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc);
-		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname != null)
+		fMainPage = new E4NewProjectWizardPage("main", fPluginData, false, getSelection()); //$NON-NLS-1$
+		fMainPage.setTitle(""); //$NON-NLS-1$
+		fMainPage.setDescription(""); //$NON-NLS-1$
+		final String pname = getDefaultValue(DEF_PROJECT_NAME);
+		if (pname != null) {
 			fMainPage.setInitialProjectName(pname);
+		}
 		addPage(fMainPage);
 
 		fProjectProvider = new IProjectProvider() {
+			@Override
 			public String getProjectName() {
 				return fMainPage.getProjectName();
 			}
 
+			@Override
 			public IProject getProject() {
 				return fMainPage.getProjectHandle();
 			}
 
+			@Override
 			public IPath getLocationPath() {
 				return fMainPage.getLocationPath();
 			}
 		};
 
-		fContentPage = new PluginContentPage(
-				"page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
+		fContentPage = new PluginContentPage("page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
 
 		fApplicationPage = new NewApplicationWizardPage(fProjectProvider,
-				fPluginData);
+			fPluginData);
 
 		addPage(fContentPage);
 		addPage(fApplicationPage);
 	}
 
 	@Override
-	@SuppressWarnings("restriction")
 	public boolean performFinish() {
 		try {
 			fMainPage.updateData();
 			fContentPage.updateData();
-			IDialogSettings settings = getDialogSettings();
+			final IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				fMainPage.saveSettings(settings);
 				fContentPage.saveSettings(settings);
@@ -171,31 +177,32 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 			// Create the project
 			getContainer().run(
-					false,
-					true,
-					new NewProjectCreationOperation(fPluginData,
-							fProjectProvider, new ContentWizard()) {
-						private WorkspacePluginModelBase model;
+				false,
+				true,
+				new NewProjectCreationOperation(fPluginData,
+					fProjectProvider, new ContentWizard()) {
+					private WorkspacePluginModelBase model;
 
-						@Override
-						protected void setPluginLibraries(
-								WorkspacePluginModelBase model)
-								throws CoreException {
-							this.model = model;
-							super.setPluginLibraries(model);
-						}
-					});
+					@Override
+					protected void setPluginLibraries(
+						WorkspacePluginModelBase model)
+						throws CoreException {
+						this.model = model;
+						super.setPluginLibraries(model);
+					}
+				});
 
 			// Add Project to working set
-			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
-			if (workingSets.length > 0)
+			final IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
+			if (workingSets.length > 0) {
 				getWorkbench().getWorkingSetManager().addToWorkingSets(
-						fProjectProvider.getProject(), workingSets);
+					fProjectProvider.getProject(), workingSets);
+			}
 
-			this.createProductsExtension(fProjectProvider.getProject());
+			createProductsExtension(fProjectProvider.getProject());
 
-			this.createApplicationResources(fProjectProvider.getProject(),
-					new NullProgressMonitor());
+			createApplicationResources(fProjectProvider.getProject(),
+				new NullProgressMonitor());
 
 			// Add the resources to build.properties
 			adjustBuildPropertiesFile(fProjectProvider.getProject());
@@ -204,10 +211,10 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			openEditorForApplicationModel();
 
 			return true;
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			PDEPlugin.logException(e);
-		} catch (InterruptedException e) {
-		} catch (CoreException e) {
+		} catch (final InterruptedException e) {
+		} catch (final CoreException e) {
 			PDEPlugin.logException(e);
 		}
 		return false;
@@ -215,32 +222,32 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 	/**
 	 * Opens the model editor after the project was created.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	private void openEditorForApplicationModel() throws PartInitException {
-		IFile file = fProjectProvider.getProject().getFile(APPLICATION_MODEL);
+		final IFile file = fProjectProvider.getProject().getFile(APPLICATION_MODEL);
 		if (file != null) {
-			FileEditorInput input = new FileEditorInput(file);
-			IWorkbenchWindow window = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			IWorkbenchPage page = window.getActivePage();
+			final FileEditorInput input = new FileEditorInput(file);
+			final IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+			final IWorkbenchPage page = window.getActivePage();
 			page.openEditor(input, MODEL_EDITOR_ID);
 		}
 	}
 
 	/**
 	 * Adds other resources to the build.properties file.
-	 * 
+	 *
 	 * @param project
 	 * @throws CoreException
 	 */
 	private void adjustBuildPropertiesFile(IProject project)
-			throws CoreException {
-		IFile file = PDEProject.getBuildProperties(project);
+		throws CoreException {
+		final IFile file = PDEProject.getBuildProperties(project);
 		if (file.exists()) {
-			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-			IBuildEntry e = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
+			final WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+			final IBuildEntry e = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
 
 			e.addToken(PLUGIN_XML);
 			e.addToken(APPLICATION_MODEL);
@@ -249,12 +256,12 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			// it seems appropriate to only add it if it contains
 			// some content
 			if (!isMinimalist) {
-				e.addToken("icons/");
+				e.addToken("icons/"); //$NON-NLS-1$
 			}
 
-			Map<String, String> map = fApplicationPage.getData();
-			String cssEntry = map
-					.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
+			final Map<String, String> map = fApplicationPage.getData();
+			final String cssEntry = map
+				.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 			if (cssEntry != null) {
 				e.addToken(cssEntry);
 			}
@@ -265,89 +272,89 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 	/**
 	 * create products extension detail
-	 * 
+	 *
 	 * @param project
 	 */
-	@SuppressWarnings("restriction")
 	public void createProductsExtension(IProject project) {
-		Map<String, String> map = fApplicationPage.getData();
+		final Map<String, String> map = fApplicationPage.getData();
 		if (map == null
-				|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null)
+			|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null) {
 			return;
+		}
 
-		WorkspacePluginModelBase fmodel = new WorkspaceBundlePluginModel(
-				project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR),
-				project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
-		IPluginExtension extension = fmodel.getFactory().createExtension();
+		final WorkspacePluginModelBase fmodel = new WorkspaceBundlePluginModel(
+			project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR),
+			project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
+		final IPluginExtension extension = fmodel.getFactory().createExtension();
 		try {
-			String productName = map.get(NewApplicationWizardPage.PRODUCT_NAME);
-			String applicationName = map
-					.get(NewApplicationWizardPage.APPLICATION);
+			final String productName = map.get(NewApplicationWizardPage.PRODUCT_NAME);
+			final String applicationName = map
+				.get(NewApplicationWizardPage.APPLICATION);
 
 			String cssValue = map
-					.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
+				.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 			if (cssValue != null) {
-				cssValue = "platform:/plugin/" + fPluginData.getId() + "/"
-						+ cssValue;
+				cssValue = "platform:/plugin/" + fPluginData.getId() + "/" //$NON-NLS-1$ //$NON-NLS-2$
+					+ cssValue;
 				map.put(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY,
-						cssValue);
+					cssValue);
 			}
 
-			if ("TRUE".equals(map.get(NewApplicationWizardPage.generateLifecycle))){
+			if (TRUE.equals(map.get(NewApplicationWizardPage.generateLifecycle))) {
 				String lifeCycleValue = map
-						.get(NewApplicationWizardPage.generateLifecycleName);
+					.get(NewApplicationWizardPage.generateLifecycleName);
 				if (lifeCycleValue != null && lifeCycleValue.isEmpty() == false) {
-					lifeCycleValue = "bundleclass://" + fPluginData.getId() + "/"
-							+ fPluginData.getId().toLowerCase() + "." + lifeCycleValue;
+					lifeCycleValue = "bundleclass://" + fPluginData.getId() + "/" //$NON-NLS-1$ //$NON-NLS-2$
+						+ fPluginData.getId().toLowerCase() + "." + lifeCycleValue; //$NON-NLS-1$
 					map.put(NewApplicationWizardPage.LIFECYCLE_URI_PROPERTY,
-							lifeCycleValue);
+						lifeCycleValue);
 				}
 			}
 
-			extension.setPoint("org.eclipse.core.runtime.products");
-			extension.setId("product");
-			IPluginElement productElement = fmodel.getFactory().createElement(
-					extension);
+			extension.setPoint("org.eclipse.core.runtime.products"); //$NON-NLS-1$
+			extension.setId(PRODUCT);
+			final IPluginElement productElement = fmodel.getFactory().createElement(
+				extension);
 
-			productElement.setName("product");
+			productElement.setName(PRODUCT);
 			if (applicationName != null) {
-				productElement.setAttribute("application", applicationName);
+				productElement.setAttribute(APPLICATION, applicationName);
 			} else {
-				productElement.setAttribute("application",
-						NewApplicationWizardPage.E4_APPLICATION);
+				productElement.setAttribute(APPLICATION,
+					NewApplicationWizardPage.E4_APPLICATION);
 			}
-			productElement.setAttribute("name", productName);
+			productElement.setAttribute(NAME, productName);
 
-			Set<Entry<String, String>> set = map.entrySet();
+			final Set<Entry<String, String>> set = map.entrySet();
 			if (set != null) {
-				Iterator<Entry<String, String>> it = set.iterator();
+				final Iterator<Entry<String, String>> it = set.iterator();
 				if (it != null) {
 					while (it.hasNext()) {
-						Entry<String, String> entry = it.next();
-						String value = entry.getValue();
+						final Entry<String, String> entry = it.next();
+						final String value = entry.getValue();
 						if (value == null || value.trim().length() == 0) {
 							continue;
 						}
 
 						if (entry.getKey().equals(
-								NewApplicationWizardPage.PRODUCT_NAME)
-								|| entry.getKey().equals(
-										NewApplicationWizardPage.APPLICATION)
-								|| entry.getKey().equals(
-										NewApplicationWizardPage.richSample)
-								|| entry.getKey().equals(
-												NewApplicationWizardPage.generateLifecycle)
-								|| entry.getKey().equals(
-												NewApplicationWizardPage.generateLifecycleName)
-								|| entry.getKey()
-										.equals(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) {
+							NewApplicationWizardPage.PRODUCT_NAME)
+							|| entry.getKey().equals(
+								NewApplicationWizardPage.APPLICATION)
+							|| entry.getKey().equals(
+								NewApplicationWizardPage.richSample)
+							|| entry.getKey().equals(
+								NewApplicationWizardPage.generateLifecycle)
+							|| entry.getKey().equals(
+								NewApplicationWizardPage.generateLifecycleName)
+							|| entry.getKey()
+								.equals(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) {
 							continue;
 						}
-						IPluginElement element = fmodel.getFactory()
-								.createElement(productElement);
-						element.setName("property");
-						element.setAttribute("name", entry.getKey());
-						element.setAttribute("value", value);
+						final IPluginElement element = fmodel.getFactory()
+							.createElement(productElement);
+						element.setName("property"); //$NON-NLS-1$
+						element.setAttribute(NAME, entry.getKey());
+						element.setAttribute("value", value); //$NON-NLS-1$
 						productElement.add(element);
 					}
 				}
@@ -356,211 +363,220 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			fmodel.getPluginBase().add(extension);
 			fmodel.save();
 
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
 	/**
 	 * create products extension detail
-	 * 
+	 *
 	 * @param project
 	 */
-	@SuppressWarnings("restriction")
 	public void createApplicationResources(IProject project,
-			IProgressMonitor monitor) {
-		Map<String, String> map = fApplicationPage.getData();
+		IProgressMonitor monitor) {
+		final Map<String, String> map = fApplicationPage.getData();
 		isMinimalist = !map.get(NewApplicationWizardPage.richSample)
-				.equalsIgnoreCase("TRUE");
+			.equalsIgnoreCase(TRUE);
 		if (map == null
-				|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null)
+			|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null) {
 			return;
+		}
 
 		// If the project has invalid characters, the plug-in name would replace
 		// them with underscores, product name does the same
-		String pluginName = fPluginData.getId();
-		
-		// BEGIN Generate E4Lifecycle class with annotations	
-		boolean lifeCycleCreated = "TRUE".equals(map.get(NewApplicationWizardPage.generateLifecycle));
-		if (lifeCycleCreated){
-			String classname = fPluginData.getId() + "." + map.get(NewApplicationWizardPage.generateLifecycleName);
-			LifeCycleClassCodeGenerator fGenerator = new LifeCycleClassCodeGenerator(project, classname, fPluginData, false, getContainer());
+		final String pluginName = fPluginData.getId();
+
+		// BEGIN Generate E4Lifecycle class with annotations
+		final boolean lifeCycleCreated = TRUE.equals(map.get(NewApplicationWizardPage.generateLifecycle));
+		if (lifeCycleCreated) {
+			final String classname = fPluginData.getId() + "." //$NON-NLS-1$
+				+ map.get(NewApplicationWizardPage.generateLifecycleName);
+			final LifeCycleClassCodeGenerator fGenerator = new LifeCycleClassCodeGenerator(project, classname,
+				fPluginData, false, getContainer());
 			try {
 				fGenerator.generate(new NullProgressMonitor());
-			} catch (CoreException e2) {
+			} catch (final CoreException e2) {
 				e2.printStackTrace();
 			}
 		}
 		// END Generate E4Lifecycle class with annotations
-		
+
 		// If there's no Activator or LifeCycle created we create default package
 		if (!fPluginData.doGenerateClass() && !lifeCycleCreated) {
-			String packageName = fPluginData.getId();
+			final String packageName = fPluginData.getId();
 			IPath path = new Path(packageName.replace('.', '/'));
-			if (fPluginData.getSourceFolderName().trim().length() > 0)
+			if (fPluginData.getSourceFolderName().trim().length() > 0) {
 				path = new Path(fPluginData.getSourceFolderName()).append(path);
+			}
 
 			try {
 				CoreUtility.createFolder(project.getFolder(path));
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
-		IJavaProject javaProject = JavaCore.create(project);
+		final IJavaProject javaProject = JavaCore.create(project);
 		IPackageFragment fragment = null;
 
 		try {
-			for (IPackageFragment element : javaProject.getPackageFragments()) {
+			for (final IPackageFragment element : javaProject.getPackageFragments()) {
 				if (element.getKind() == IPackageFragmentRoot.K_SOURCE) {
 					fragment = element;
 				}
 			}
-		} catch (JavaModelException e1) {
+		} catch (final JavaModelException e1) {
 			e1.printStackTrace();
 		}
 
 		createApplicationModel(project, pluginName, fragment);
 
-		String cssPath = map
-				.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
+		final String cssPath = map
+			.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 		if (cssPath != null && cssPath.trim().length() > 0) {
-			IFile file = project.getFile(cssPath);
+			final IFile file = project.getFile(cssPath);
 
 			try {
 				prepareFolder(file.getParent(), monitor);
 
-				URL corePath = ResourceLocator
-						.getProjectTemplateFiles("css/default.css");
+				final URL corePath = ResourceLocator
+					.getProjectTemplateFiles("css/default.css"); //$NON-NLS-1$
 				file.create(corePath.openStream(), true, monitor);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				PDEPlugin.logException(e);
 			}
 		}
 
-		String template_id = "common";
-		Set<String> binaryExtentions = new HashSet<String>();
-		binaryExtentions.add(".gif");
-		binaryExtentions.add(".png");
+		final String template_id = "common"; //$NON-NLS-1$
+		final Set<String> binaryExtentions = new HashSet<String>();
+		binaryExtentions.add(".gif"); //$NON-NLS-1$
+		binaryExtentions.add(".png"); //$NON-NLS-1$
 
-		Map<String, String> keys = new HashMap<String, String>();
-		keys.put("projectName", pluginName);
-		keys.put("productFileName",
-				map.get(NewApplicationWizardPage.PRODUCT_NAME));
-		String elementName = fragment.getElementName();
-		keys.put("packageName", (elementName.equals("") ? "" : elementName
-				+ ".")
-				+ "handlers");
-		keys.put("packageName2", (elementName.equals("") ? "" : elementName
-				+ ".")
-				+ "parts");
-		keys.put(
-				"programArgs",
-				"true".equalsIgnoreCase(map
-						.get(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) ? "-clearPersistedState"
-						: "");
+		final Map<String, String> keys = new HashMap<String, String>();
+		keys.put("projectName", pluginName); //$NON-NLS-1$
+		keys.put("productFileName", //$NON-NLS-1$
+			map.get(NewApplicationWizardPage.PRODUCT_NAME));
+		final String elementName = fragment.getElementName();
+		keys.put("packageName", (elementName.equals("") ? "" : elementName //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ ".") //$NON-NLS-1$
+			+ "handlers"); //$NON-NLS-1$
+		keys.put("packageName2", (elementName.equals("") ? "" : elementName //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ ".") //$NON-NLS-1$
+			+ "parts"); //$NON-NLS-1$
+		keys.put("programArgs", //$NON-NLS-1$
+			"true".equalsIgnoreCase(map //$NON-NLS-1$
+				.get(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) ? "-clearPersistedState" //$NON-NLS-1$
+				: ""); //$NON-NLS-1$
 		try {
-			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
-			IRunnableWithProgress op = new TemplateOperation(corePath, project,
-					keys, binaryExtentions, isMinimalist);
+			final URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
+			final IRunnableWithProgress op = new TemplateOperation(corePath, project,
+				keys, binaryExtentions, isMinimalist);
 			getContainer().run(false, true, op);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			PDEPlugin.logException(e);
 		}
 		if (!isMinimalist) {
 			try {
-				URL corePath = ResourceLocator.getProjectTemplateFiles("src");
-				IRunnableWithProgress op = new TemplateOperation(corePath,
-						(IContainer) fragment.getResource(), keys,
-						binaryExtentions, isMinimalist);
+				final URL corePath = ResourceLocator.getProjectTemplateFiles("src"); //$NON-NLS-1$
+				final IRunnableWithProgress op = new TemplateOperation(corePath,
+					(IContainer) fragment.getResource(), keys,
+					binaryExtentions, isMinimalist);
 				getContainer().run(false, true, op);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				PDEPlugin.logException(e);
 			}
 		}
 	}
 
 	private void createApplicationModel(IProject project, String pluginName,
-			IPackageFragment fragment) {
-		Map<String, String> map = fApplicationPage.getData();
-		boolean isMinimalist = !map.get(NewApplicationWizardPage.richSample)
-				.equalsIgnoreCase("TRUE");
+		IPackageFragment fragment) {
+		final Map<String, String> map = fApplicationPage.getData();
+		final boolean isMinimalist = !map.get(NewApplicationWizardPage.richSample)
+			.equalsIgnoreCase(TRUE);
 		if (APPLICATION_MODEL != null && APPLICATION_MODEL.trim().length() > 0) {
 
 			// Create a resource set
 			//
-			ResourceSet resourceSet = new ResourceSetImpl();
+			final ResourceSet resourceSet = new ResourceSetImpl();
 
 			// Get the URI of the model file.
 			//
-			URI fileURI = URI.createPlatformResourceURI(project.getName() + "/"
-					+ APPLICATION_MODEL, true);
+			final URI fileURI = URI.createPlatformResourceURI(project.getName() + "/" //$NON-NLS-1$
+				+ APPLICATION_MODEL, true);
 
 			// Create a resource for this file.
 			//
-			Resource resource = resourceSet.createResource(fileURI);
+			final Resource resource = resourceSet.createResource(fileURI);
 
-			MApplication application = MApplicationFactory.INSTANCE
-					.createApplication();
+			final MApplication application = MApplicationFactory.INSTANCE
+				.createApplication();
 
-			application.setElementId("org.eclipse.e4.ide.application");
+			application.setElementId("org.eclipse.e4.ide.application"); //$NON-NLS-1$
 
 			MAddon addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.core.commands.service");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon");
+			addon.setElementId("org.eclipse.e4.core.commands.service"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.ui.contexts.service");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon");
+			addon.setElementId("org.eclipse.e4.ui.contexts.service"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.ui.bindings.service");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon");
+			addon.setElementId("org.eclipse.e4.ui.bindings.service"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.ui.workbench.commands.model");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon");
+			addon.setElementId("org.eclipse.e4.ui.workbench.commands.model"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.ui.workbench.handler.model");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon");
+			addon.setElementId("org.eclipse.e4.ui.workbench.handler.model"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
+			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
-			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model");
-			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon");
+			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model"); //$NON-NLS-1$
+			addon
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
-			MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
-					.createTrimmedWindow();
+			final MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
+				.createTrimmedWindow();
 			application.getChildren().add(mainWindow);
 			mainWindow.setLabel(pluginName);
 			mainWindow.setWidth(500);
 			mainWindow.setHeight(400);
 			resource.getContents().add((EObject) application);
-			MBindingContext rootContext = MCommandsFactory.INSTANCE
-					.createBindingContext();
-			rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
-			rootContext.setName("In Dialog and Windows");
+			final MBindingContext rootContext = MCommandsFactory.INSTANCE
+				.createBindingContext();
+			rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow"); //$NON-NLS-1$
+			rootContext.setName(Messages.E4NewProjectWizard_InDialogsAndWindows);
 
 			MBindingContext childContext = MCommandsFactory.INSTANCE
-					.createBindingContext();
-			childContext.setElementId("org.eclipse.ui.contexts.window");
-			childContext.setName("In Windows");
+				.createBindingContext();
+			childContext.setElementId("org.eclipse.ui.contexts.window"); //$NON-NLS-1$
+			childContext.setName(Messages.E4NewProjectWizard_InWindows);
 			rootContext.getChildren().add(childContext);
 
 			childContext = MCommandsFactory.INSTANCE.createBindingContext();
-			childContext.setElementId("org.eclipse.ui.contexts.dialog");
-			childContext.setName("In Dialogs");
+			childContext.setElementId("org.eclipse.ui.contexts.dialog"); //$NON-NLS-1$
+			childContext.setName(Messages.E4NewProjectWizard_InDialogs);
 			rootContext.getChildren().add(childContext);
 
 			application.getRootContext().add(rootContext);
@@ -568,120 +584,117 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			if (!isMinimalist) {
 
 				// Create Quit command
-				MCommand quitCommand = createCommand(
-						"org.eclipse.ui.file.exit", "quitCommand",
-						"QuitHandler", "M1+Q", pluginName, fragment,
-						application);
+				final MCommand quitCommand = createCommand("org.eclipse.ui.file.exit", "quitCommand", //$NON-NLS-1$ //$NON-NLS-2$
+					"QuitHandler", "M1+Q", pluginName, fragment, //$NON-NLS-1$ //$NON-NLS-2$
+					application);
 
-				MCommand openCommand = createCommand(pluginName + ".open",
-						"openCommand", "OpenHandler", "M1+O", pluginName,
-						fragment, application);
+				final MCommand openCommand = createCommand(pluginName + ".open", //$NON-NLS-1$
+					"openCommand", "OpenHandler", "M1+O", pluginName, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					fragment, application);
 
-				MCommand saveCommand = createCommand(
-						"org.eclipse.ui.file.save", "saveCommand",
-						"SaveHandler", "M1+S", pluginName, fragment,
-						application);
+				final MCommand saveCommand = createCommand("org.eclipse.ui.file.save", "saveCommand", //$NON-NLS-1$ //$NON-NLS-2$
+					"SaveHandler", "M1+S", pluginName, fragment, //$NON-NLS-1$ //$NON-NLS-2$
+					application);
 
-				MCommand aboutCommand = createCommand(
-						"org.eclipse.ui.help.aboutAction", "aboutCommand",
-						"AboutHandler", "M1+A", pluginName, fragment,
-						application);
+				final MCommand aboutCommand = createCommand("org.eclipse.ui.help.aboutAction", "aboutCommand", //$NON-NLS-1$ //$NON-NLS-2$
+					"AboutHandler", "M1+A", pluginName, fragment, //$NON-NLS-1$//$NON-NLS-2$
+					application);
 
-				MMenu menu = MMenuFactory.INSTANCE.createMenu();
+				final MMenu menu = MMenuFactory.INSTANCE.createMenu();
 				mainWindow.setMainMenu(menu);
-				menu.setElementId("menu:org.eclipse.ui.main.menu");
+				menu.setElementId("menu:org.eclipse.ui.main.menu"); //$NON-NLS-1$
 
-				MMenu fileMenuItem = MMenuFactory.INSTANCE.createMenu();
+				final MMenu fileMenuItem = MMenuFactory.INSTANCE.createMenu();
 				menu.getChildren().add(fileMenuItem);
-				fileMenuItem.setLabel("File");
+				fileMenuItem.setLabel(Messages.E4NewProjectWizard_File);
 				{
-					MHandledMenuItem menuItemOpen = MMenuFactory.INSTANCE
-							.createHandledMenuItem();
+					final MHandledMenuItem menuItemOpen = MMenuFactory.INSTANCE
+						.createHandledMenuItem();
 					fileMenuItem.getChildren().add(menuItemOpen);
-					menuItemOpen.setLabel("Open");
-					menuItemOpen.setIconURI("platform:/plugin/" + pluginName
-							+ "/icons/sample.png");
+					menuItemOpen.setLabel(Messages.E4NewProjectWizard_Open);
+					menuItemOpen.setIconURI("platform:/plugin/" + pluginName //$NON-NLS-1$
+						+ "/icons/sample.png"); //$NON-NLS-1$
 					menuItemOpen.setCommand(openCommand);
 
-					MHandledMenuItem menuItemSave = MMenuFactory.INSTANCE
-							.createHandledMenuItem();
+					final MHandledMenuItem menuItemSave = MMenuFactory.INSTANCE
+						.createHandledMenuItem();
 					fileMenuItem.getChildren().add(menuItemSave);
-					menuItemSave.setLabel("Save");
-					menuItemSave.setIconURI("platform:/plugin/" + pluginName
-							+ "/icons/save_edit.png");
+					menuItemSave.setLabel(Messages.E4NewProjectWizard_Save);
+					menuItemSave.setIconURI("platform:/plugin/" + pluginName //$NON-NLS-1$
+						+ "/icons/save_edit.png"); //$NON-NLS-1$
 					menuItemSave.setCommand(saveCommand);
 
-					MHandledMenuItem menuItemQuit = MMenuFactory.INSTANCE
-							.createHandledMenuItem();
+					final MHandledMenuItem menuItemQuit = MMenuFactory.INSTANCE
+						.createHandledMenuItem();
 					fileMenuItem.getChildren().add(menuItemQuit);
-					menuItemQuit.setLabel("Quit");
+					menuItemQuit.setLabel(Messages.E4NewProjectWizard_Quit);
 					menuItemQuit.setCommand(quitCommand);
 				}
-				MMenu helpMenuItem = MMenuFactory.INSTANCE.createMenu();
+				final MMenu helpMenuItem = MMenuFactory.INSTANCE.createMenu();
 				menu.getChildren().add(helpMenuItem);
-				helpMenuItem.setLabel("Help");
+				helpMenuItem.setLabel(Messages.E4NewProjectWizard_Help);
 				{
-					MHandledMenuItem menuItemAbout = MMenuFactory.INSTANCE
-							.createHandledMenuItem();
+					final MHandledMenuItem menuItemAbout = MMenuFactory.INSTANCE
+						.createHandledMenuItem();
 					helpMenuItem.getChildren().add(menuItemAbout);
-					menuItemAbout.setLabel("About");
+					menuItemAbout.setLabel(Messages.E4NewProjectWizard_About);
 					menuItemAbout.setCommand(aboutCommand);
 				}
 
 				// PerspectiveStack
-				MPerspectiveStack perspectiveStack = MAdvancedFactory.INSTANCE
-						.createPerspectiveStack();
+				final MPerspectiveStack perspectiveStack = MAdvancedFactory.INSTANCE
+					.createPerspectiveStack();
 				mainWindow.getChildren().add(perspectiveStack);
 
-				MPerspective perspective = MAdvancedFactory.INSTANCE
-						.createPerspective();
+				final MPerspective perspective = MAdvancedFactory.INSTANCE
+					.createPerspective();
 				perspectiveStack.getChildren().add(perspective);
 				{
 					// Part Container
-					MPartSashContainer partSashContainer = MBasicFactory.INSTANCE
-							.createPartSashContainer();
+					final MPartSashContainer partSashContainer = MBasicFactory.INSTANCE
+						.createPartSashContainer();
 					perspective.getChildren().add(partSashContainer);
 
-					MPartStack partStack = MBasicFactory.INSTANCE
-							.createPartStack();
+					final MPartStack partStack = MBasicFactory.INSTANCE
+						.createPartStack();
 					partSashContainer.getChildren().add(partStack);
 
-					MPart part = MBasicFactory.INSTANCE.createPart();
+					final MPart part = MBasicFactory.INSTANCE.createPart();
 					partStack.getChildren().add(part);
-					part.setLabel("Sample Part");
-					part.setContributionURI("bundleclass://" + pluginName + "/"
-							+ fragment.getElementName() + ".parts"
-							+ ".SamplePart");
+					part.setLabel(Messages.E4NewProjectWizard_SamplePart);
+					part.setContributionURI("bundleclass://" + pluginName + "/" //$NON-NLS-1$ //$NON-NLS-2$
+						+ fragment.getElementName() + ".parts" //$NON-NLS-1$
+						+ ".SamplePart"); //$NON-NLS-1$
 
 				}
 
 				// WindowTrim
-				MTrimBar trimBar = MBasicFactory.INSTANCE.createTrimBar();
+				final MTrimBar trimBar = MBasicFactory.INSTANCE.createTrimBar();
 				mainWindow.getTrimBars().add(trimBar);
 
-				MToolBar toolBar = MMenuFactory.INSTANCE.createToolBar();
-				toolBar.setElementId("toolbar:org.eclipse.ui.main.toolbar");
+				final MToolBar toolBar = MMenuFactory.INSTANCE.createToolBar();
+				toolBar.setElementId("toolbar:org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
 				trimBar.getChildren().add(toolBar);
 
-				MHandledToolItem toolItemOpen = MMenuFactory.INSTANCE
-						.createHandledToolItem();
+				final MHandledToolItem toolItemOpen = MMenuFactory.INSTANCE
+					.createHandledToolItem();
 				toolBar.getChildren().add(toolItemOpen);
-				toolItemOpen.setIconURI("platform:/plugin/" + pluginName
-						+ "/icons/sample.png");
+				toolItemOpen.setIconURI("platform:/plugin/" + pluginName //$NON-NLS-1$
+					+ "/icons/sample.png"); //$NON-NLS-1$
 				toolItemOpen.setCommand(openCommand);
 
-				MHandledToolItem toolItemSave = MMenuFactory.INSTANCE
-						.createHandledToolItem();
+				final MHandledToolItem toolItemSave = MMenuFactory.INSTANCE
+					.createHandledToolItem();
 				toolBar.getChildren().add(toolItemSave);
-				toolItemSave.setIconURI("platform:/plugin/" + pluginName
-						+ "/icons/save_edit.png");
+				toolItemSave.setIconURI("platform:/plugin/" + pluginName //$NON-NLS-1$
+					+ "/icons/save_edit.png"); //$NON-NLS-1$
 				toolItemSave.setCommand(saveCommand);
 			}
-			Map<Object, Object> options = new HashMap<Object, Object>();
-			options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+			final Map<Object, Object> options = new HashMap<Object, Object>();
+			options.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
 			try {
 				resource.save(options);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				PDEPlugin.logException(e);
 
 			}
@@ -689,42 +702,42 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 	}
 
 	private MCommand createCommand(String commandId, String name,
-			String className, String keyBinding, String projectName,
-			IPackageFragment fragment, MApplication application) {
-		MCommand command = MCommandsFactory.INSTANCE.createCommand();
+		String className, String keyBinding, String projectName,
+		IPackageFragment fragment, MApplication application) {
+		final MCommand command = MCommandsFactory.INSTANCE.createCommand();
 		command.setCommandName(name);
 		command.setElementId(commandId);
 		application.getCommands().add(command);
 		{
 			// Create handler for command
-			MHandler handler = MCommandsFactory.INSTANCE.createHandler();
+			final MHandler handler = MCommandsFactory.INSTANCE.createHandler();
 			handler.setCommand(command);
-			String elementName = fragment.getElementName();
-			handler.setContributionURI("bundleclass://" + projectName + "/"
-					+ (elementName.equals("") ? "" : elementName + ".")
-					+ "handlers." + className);
-			handler.setElementId(projectName + ".handler." + name);
+			final String elementName = fragment.getElementName();
+			handler.setContributionURI("bundleclass://" + projectName + "/" //$NON-NLS-1$ //$NON-NLS-2$
+				+ (elementName.equals("") ? "" : elementName + ".") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ "handlers." + className); //$NON-NLS-1$
+			handler.setElementId(projectName + ".handler." + name); //$NON-NLS-1$
 			application.getHandlers().add(handler);
 
 			// create binding for the command
-			MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
+			final MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 			binding.setKeySequence(keyBinding);
 			binding.setCommand(command);
-			List<MBindingTable> tables = application.getBindingTables();
+			final List<MBindingTable> tables = application.getBindingTables();
 			if (tables.size() == 0) {
 				MBindingContext rootContext = null;
 				if (application.getRootContext().size() > 0) {
 					rootContext = application.getRootContext().get(0);
 				} else {
 					rootContext = MCommandsFactory.INSTANCE
-							.createBindingContext();
+						.createBindingContext();
 					rootContext
-							.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
-					rootContext.setName("In Dialog and Windows");
+						.setElementId("org.eclipse.ui.contexts.dialogAndWindow"); //$NON-NLS-1$
+					rootContext.setName(Messages.E4NewProjectWizard_InDialogsAndWindows);
 					application.getRootContext().add(rootContext);
 				}
-				MBindingTable table = MCommandsFactory.INSTANCE
-						.createBindingTable();
+				final MBindingTable table = MCommandsFactory.INSTANCE
+					.createBindingTable();
 				table.setBindingContext(rootContext);
 				tables.add(table);
 			}
@@ -734,13 +747,13 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 	}
 
 	private void prepareFolder(IContainer container, IProgressMonitor monitor)
-			throws CoreException {
-		IContainer parent = container.getParent();
+		throws CoreException {
+		final IContainer parent = container.getParent();
 		if (parent instanceof IFolder) {
 			prepareFolder(parent, monitor);
 		}
 		if (!container.exists() && container instanceof IFolder) {
-			IFolder folder = (IFolder) container;
+			final IFolder folder = (IFolder) container;
 			folder.create(true, true, monitor);
 		}
 	}
@@ -757,44 +770,49 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 	private class ContentWizard extends Wizard implements IBundleContentWizard {
 
-		String[] dependencies = new String[] { "javax.inject",
-				"org.eclipse.core.runtime", "org.eclipse.swt",
-				"org.eclipse.e4.ui.model.workbench", "org.eclipse.jface",
-				"org.eclipse.e4.ui.services", "org.eclipse.e4.ui.workbench",
-				"org.eclipse.e4.core.di", "org.eclipse.e4.ui.di",
-				"org.eclipse.e4.core.contexts", };
+		String[] dependencies = new String[] { "javax.inject", //$NON-NLS-1$
+			"org.eclipse.core.runtime", "org.eclipse.swt", //$NON-NLS-1$//$NON-NLS-2$
+			"org.eclipse.e4.ui.model.workbench", "org.eclipse.jface", //$NON-NLS-1$ //$NON-NLS-2$
+			"org.eclipse.e4.ui.services", "org.eclipse.e4.ui.workbench", //$NON-NLS-1$ //$NON-NLS-2$
+			"org.eclipse.e4.core.di", "org.eclipse.e4.ui.di", //$NON-NLS-1$ //$NON-NLS-2$
+			"org.eclipse.e4.core.contexts", }; //$NON-NLS-1$
 
+		@Override
 		public void init(IFieldData data) {
 		}
 
+		@Override
 		public IPluginReference[] getDependencies(String schemaVersion) {
-			ArrayList<IPluginReference> result = new ArrayList<IPluginReference>(
-					dependencies.length);
-			for (String dependency : dependencies) {
-				Bundle bundle = Platform.getBundle(dependency);
-				String versionString = "0.0.0";
+			final ArrayList<IPluginReference> result = new ArrayList<IPluginReference>(
+				dependencies.length);
+			for (final String dependency : dependencies) {
+				final Bundle bundle = Platform.getBundle(dependency);
+				String versionString = "0.0.0"; //$NON-NLS-1$
 				if (dependency != null) {
-					Version version = bundle.getVersion();
-					versionString = version.getMajor() + "."
-							+ version.getMinor() + "." + version.getMicro();
+					final Version version = bundle.getVersion();
+					versionString = version.getMajor() + "." //$NON-NLS-1$
+						+ version.getMinor() + "." + version.getMicro(); //$NON-NLS-1$
 				}
 				result.add(new PluginReference(dependency, versionString,
-						IMatchRules.GREATER_OR_EQUAL));
+					IMatchRules.GREATER_OR_EQUAL));
 			}
 			return result.toArray(new IPluginReference[0]);
 		}
 
+		@Override
 		public String[] getNewFiles() {
 			return new String[0];
 		}
 
+		@Override
 		public boolean performFinish(IProject project, IPluginModelBase model,
-				IProgressMonitor monitor) {
+			IProgressMonitor monitor) {
 			return true;
 		}
 
+		@Override
 		public String[] getImportPackages() {
-			return new String[] { };
+			return new String[] {};
 		}
 
 		@Override
