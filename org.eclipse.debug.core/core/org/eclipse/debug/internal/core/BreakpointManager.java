@@ -879,7 +879,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				for (int i = 0; i < breakpoints.size(); i++) {
 					IBreakpoint breakpoint = breakpoints.get(i);
 					IMarker bpMarker = breakpoint.getMarker();
-					if (bpMarker != null && marker.getResource().equals(bpMarker.getResource()) && (Integer) bpMarker.getAttribute(IMarker.LINE_NUMBER) == (line == null ? -1 : line.intValue())) {
+					if (bpMarker != null && marker.getResource().equals(bpMarker.getResource()) && bpMarker.getAttribute(IMarker.LINE_NUMBER, -1) == (line == null ? -1 : line.intValue())) {
 						return breakpoint;
 					}
 				}
