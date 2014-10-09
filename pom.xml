@@ -85,6 +85,7 @@
     <module>bundles/org.eclipse.e4.ui.css.swt</module>
     <module>bundles/org.eclipse.e4.ui.css.swt.theme</module>
     <module>bundles/org.eclipse.e4.ui.di</module>
+    <module>bundles/org.eclipse.e4.ui.dialogs</module>
     <module>bundles/org.eclipse.e4.ui.model.workbench</module>
     <module>bundles/org.eclipse.e4.ui.progress</module>
     <module>bundles/org.eclipse.e4.ui.services</module>
