@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class DataDeltaNode extends DataTreeNode {
 	/**
 	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
+	@Override
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		AbstractDataTreeNode[] newChildren;
 		if (children.length == 0) {
@@ -50,6 +51,7 @@ public class DataDeltaNode extends DataTreeNode {
 		return new DataDeltaNode(name, parentTree.getData(key), newChildren);
 	}
 
+	@Override
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
 		AbstractDataTreeNode[] comparedChildren = compareWithParent(children, key, parent, comparator);
 		Object oldData = parent.getData(key);
@@ -67,6 +69,7 @@ public class DataDeltaNode extends DataTreeNode {
 	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
 	 * children, but a shallow copy of name and data.
 	 */
+	@Override
 	AbstractDataTreeNode copy() {
 		AbstractDataTreeNode[] childrenCopy;
 		if (children.length == 0) {
@@ -82,6 +85,7 @@ public class DataDeltaNode extends DataTreeNode {
 	 * Returns true if the receiver represents delta information,
 	 * false if it represents the complete information.
 	 */
+	@Override
 	boolean isDelta() {
 		return true;
 	}
@@ -89,6 +93,7 @@ public class DataDeltaNode extends DataTreeNode {
 	/** 
 	 * Simplifies the given node, and answers its replacement.
 	 */
+	@Override
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		AbstractDataTreeNode[] simplifiedChildren = simplifyWithParent(children, key, parent, comparer);
 		/* don't compare root nodes */
@@ -101,6 +106,7 @@ public class DataDeltaNode extends DataTreeNode {
 	 * Returns a unicode representation of the node.  This method is used
 	 * for debugging purposes only (no NLS support needed)
 	 */
+	@Override
 	public String toString() {
 		return "a DataDeltaNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -108,6 +114,7 @@ public class DataDeltaNode extends DataTreeNode {
 	/**
 	 * Returns a constant describing the type of node.
 	 */
+	@Override
 	int type() {
 		return T_DELTA_NODE;
 	}

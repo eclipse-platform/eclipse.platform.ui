@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2014 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IPath getValue(String varName) {
 		URI uri = getURIValue(varName);
 		if (uri != null)
@@ -194,6 +195,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IPath resolvePath(IPath path) {
 		if (path == null || path.segmentCount() == 0 || path.isAbsolute() || path.getDevice() != null)
 			return path;
@@ -292,6 +294,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		if (newValue == null)
 			setURIValue(varName, (URI) null);

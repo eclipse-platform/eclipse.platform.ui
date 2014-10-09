@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -105,6 +105,7 @@ public interface IProjectDescription {
 	 * @deprecated Since 3.2, project locations are not necessarily in the local file
 	 * system.  The more general {@link #getLocationURI()} method should be used instead.
 	 */
+	@Deprecated
 	public IPath getLocation();
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -103,6 +103,7 @@ public interface IPathVariableManager {
 	 * <li>The variable value is relative</li>
 	 * </ul>
 	 */
+	@Deprecated
 	public void setValue(String name, IPath value) throws CoreException;
 
 	/**
@@ -150,6 +151,7 @@ public interface IPathVariableManager {
 	 *    variable defined with the given name
 	 * @deprecated use getURIValue(String) instead.
 	 */
+	@Deprecated
 	public IPath getValue(String name);
 
 	/**
@@ -248,6 +250,7 @@ public interface IPathVariableManager {
 	 * @return the resolved path or <code>null</code>
 	 * @deprecated use resolveURI(URI) instead.
 	 */
+	@Deprecated
 	public IPath resolvePath(IPath path);
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		/* (non-Javadoc)
 		 * See Job#belongsTo(Object)
 		 */
+		@Override
 		public boolean belongsTo(Object family) {
 			return FAMILY_DESCRIPTION_CACHE_FLUSH.equals(family);
 		}
@@ -62,6 +63,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		/* (non-Javadoc)
 		 * See WorkspaceJob#runInWorkspace(IProgressMonitor)
 		 */
+		@Override
 		public IStatus runInWorkspace(final IProgressMonitor monitor) {
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
@@ -134,12 +136,14 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			this.target = target;
 		}
 
+		@Override
 		public int available() throws IOException {
 			if (actual == null)
 				return 0;
 			return actual.available();
 		}
 
+		@Override
 		public void close() throws IOException {
 			if (actual == null)
 				return;
@@ -158,16 +162,19 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			}
 		}
 
+		@Override
 		public int read() throws IOException {
 			ensureOpened();
 			return actual.read();
 		}
 
+		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			ensureOpened();
 			return actual.read(b, off, len);
 		}
 
+		@Override
 		public long skip(long n) throws IOException {
 			ensureOpened();
 			return actual.skip(n);

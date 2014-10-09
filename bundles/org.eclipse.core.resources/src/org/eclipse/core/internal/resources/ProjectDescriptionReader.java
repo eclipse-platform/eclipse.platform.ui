@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,6 +152,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ContentHandler#characters(char[], int, int)
 	 */
+	@Override
 	public void characters(char[] chars, int offset, int length) {
 		//accumulate characters and process them when endElement is reached
 		charBuffer.append(chars, offset, length);
@@ -273,6 +274,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
+	@Override
 	public void endElement(String uri, String elementName, String qname) {
 		switch (state) {
 			case S_PROJECT_DESC :
@@ -827,6 +829,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
+	@Override
 	public void error(SAXParseException error) {
 		log(error);
 	}
@@ -834,6 +837,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
+	@Override
 	public void fatalError(SAXParseException error) throws SAXException {
 		// ensure a null value is not passed as message to Status constructor (bug 42782)
 		String message = error.getMessage();
@@ -971,6 +975,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
+	@Override
 	public void startElement(String uri, String elementName, String qname, Attributes attributes) throws SAXException {
 		//clear the character buffer at the start of every element
 		charBuffer.setLength(0);
@@ -1105,6 +1110,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ErrorHandler#warning(SAXParseException)
 	 */
+	@Override
 	public void warning(SAXParseException error) {
 		log(error);
 	}

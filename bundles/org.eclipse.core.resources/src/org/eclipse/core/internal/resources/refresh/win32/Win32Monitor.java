@@ -73,10 +73,12 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			this.file = file;
 		}
 
+		@Override
 		public boolean exists() {
 			return file.exists();
 		}
 
+		@Override
 		public void handleNotification() {
 			if (!isOpen())
 				return;
@@ -108,6 +110,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			findNextChange();
 		}
 
+		@Override
 		public void open() {
 			if (!isOpen()) {
 				Handle next = getNext();
@@ -239,6 +242,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			setPrevious((size > 0) ? fileHandleChain.get(size - 1) : null);
 		}
 
+		@Override
 		public void destroy() {
 			super.destroy();
 			for (Iterator<FileHandle> i = fileHandleChain.iterator(); i.hasNext();) {
@@ -247,11 +251,13 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			}
 		}
 
+		@Override
 		public boolean exists() {
 			IPath location = resource.getLocation();
 			return location == null ? false : location.toFile().exists();
 		}
 
+		@Override
 		public void handleNotification() {
 			if (isOpen()) {
 				postRefreshRequest(resource);
@@ -259,6 +265,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			}
 		}
 
+		@Override
 		public void open() {
 			if (!isOpen()) {
 				if (exists()) {
@@ -288,6 +295,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			return resource;
 		}
 
+		@Override
 		public void handleNotification() {
 			if (isOpen()) {
 				postRefreshRequest(resource);
@@ -295,6 +303,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			}
 		}
 
+		@Override
 		public void open() {
 			if (!isOpen()) {
 				openHandleOn(resource);
@@ -492,6 +501,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	/*
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		long start = -System.currentTimeMillis();
 		if (Policy.DEBUG_AUTO_REFRESH)
@@ -539,6 +549,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 	 */
+	@Override
 	public boolean shouldRun() {
 		return !fHandleValueToHandle.isEmpty();
 	}

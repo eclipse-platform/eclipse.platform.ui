@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class ObjectMap<K,V> implements Map<K,V>, IStringPoolParticipant {
 	/**
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		return new ObjectMap<K, V>(this);
 	}
@@ -106,6 +107,7 @@ public class ObjectMap<K,V> implements Map<K,V>, IStringPoolParticipant {
 	/**
 	 * See Object#equals
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
 			return false;
@@ -151,6 +153,7 @@ public class ObjectMap<K,V> implements Map<K,V>, IStringPoolParticipant {
 	/**
 	 * See Object#hashCode
 	 */
+	@Override
 	public int hashCode() {
 		int hash = 0;
 		for (int i = 0; i < elements.length; i = i + 2) {

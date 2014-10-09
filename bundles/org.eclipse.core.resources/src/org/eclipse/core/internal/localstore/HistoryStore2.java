@@ -32,6 +32,7 @@ public class HistoryStore2 implements IHistoryStore {
 			this.destination = destination;
 		}
 
+		@Override
 		public void afterSaving(Bucket bucket) throws CoreException {
 			saveChanges();
 			changes.clear();
@@ -51,6 +52,7 @@ public class HistoryStore2 implements IHistoryStore {
 			bucket.save();
 		}
 
+		@Override
 		public int visit(Entry sourceEntry) {
 			IPath destinationPath = destination.append(sourceEntry.getPath().removeFirstSegments(source.segmentCount()));
 			HistoryEntry destinationEntry = new HistoryEntry(destinationPath, (HistoryEntry) sourceEntry);
@@ -104,6 +106,7 @@ public class HistoryStore2 implements IHistoryStore {
 		final Set<IPath> allFiles = new HashSet<IPath>();
 		try {
 			tree.accept(new Bucket.Visitor() {
+				@Override
 				public int visit(Entry fileEntry) {
 					allFiles.add(fileEntry.getPath());
 					return CONTINUE;
@@ -137,6 +140,7 @@ public class HistoryStore2 implements IHistoryStore {
 		final int maxStates = description.getMaxFileStates();
 		// apply policy to the given tree		
 		tree.accept(new Bucket.Visitor() {
+			@Override
 			public int visit(Entry entry) {
 				applyPolicy((HistoryEntry) entry, maxStates, minimumTimestamp);
 				return CONTINUE;
@@ -155,6 +159,7 @@ public class HistoryStore2 implements IHistoryStore {
 			final int[] entryCount = new int[1];
 			if (description.isApplyFileStatePolicy()) {
 				tree.accept(new Bucket.Visitor() {
+					@Override
 					public int visit(Entry fileEntry) {
 						if (monitor.isCanceled())
 							return STOP;
@@ -324,6 +329,7 @@ public class HistoryStore2 implements IHistoryStore {
 		try {
 			final Set<UniversalUniqueIdentifier> tmpBlobsToRemove = blobsToRemove;
 			tree.accept(new Bucket.Visitor() {
+				@Override
 				public int visit(Entry fileEntry) {
 					for (int i = 0; i < fileEntry.getOccurrences(); i++)
 						// remember we need to delete the files later
@@ -344,6 +350,7 @@ public class HistoryStore2 implements IHistoryStore {
 		try {
 			final Set<UniversalUniqueIdentifier> tmpBlobsToRemove = blobsToRemove;
 			tree.accept(new Bucket.Visitor() {
+				@Override
 				public int visit(Entry fileEntry) {
 					for (int i = 0; i < fileEntry.getOccurrences(); i++)
 						// remember we need to delete the files later

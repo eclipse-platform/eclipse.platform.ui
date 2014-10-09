@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 		super(monitor);
 	}
 
+	@Override
 	protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.createResource(node, target);
 		IFileStore store = node.getStore();
@@ -39,6 +40,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			}
 	}
 
+	@Override
 	protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.deleteResource(node, target);
 		IFileStore store = node.getStore();
@@ -62,6 +64,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 		}
 	}
 
+	@Override
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		super.resourceChanged(node, target);
 		IFileStore store = node.getStore();
@@ -75,6 +78,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			}
 	}
 
+	@Override
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.fileToFolder(node, target);
 		IFileStore store = node.getStore();
@@ -86,6 +90,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 				super.fileToFolder(node, (Resource) aliases[i]);
 	}
 
+	@Override
 	protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.folderToFile(node, target);
 		IFileStore store = node.getStore();
@@ -97,6 +102,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 				super.folderToFile(node, (Resource) aliases[i]);
 	}
 
+	@Override
 	protected void refresh(Container parent) throws CoreException {
 		parent.getLocalManager().refresh(parent, IResource.DEPTH_ZERO, true, null);
 	}

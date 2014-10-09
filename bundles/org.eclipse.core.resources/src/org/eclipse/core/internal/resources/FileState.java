@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/**
 	 * Returns a string representation of this object. Used for debug only.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer s = new StringBuffer();
 		s.append("FileState(uuid: "); //$NON-NLS-1$

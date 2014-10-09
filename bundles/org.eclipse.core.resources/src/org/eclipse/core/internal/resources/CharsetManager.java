@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class CharsetManager implements IManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Messages.resources_updatingEncoding, null);
 			monitor = Policy.monitorFor(monitor);
@@ -112,6 +113,7 @@ public class CharsetManager implements IManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
+		@Override
 		public boolean shouldRun() {
 			synchronized (asyncChanges) {
 				return !asyncChanges.isEmpty();

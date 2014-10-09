@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 		super(workspace);
 	}
 
+	@Override
 	protected int getVersion() {
 		return ICoreConstants.WORKSPACE_TREE_VERSION_2;
 	}
@@ -55,6 +56,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	/*
 	 * overwritten from WorkspaceTreeReader_1
 	 */
+	@Override
 	protected void readBuildersPersistentInfo(IProject project, DataInputStream input, List<BuilderPersistentInfo> builders, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -78,6 +80,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	 * Read a workspace tree storing information about multiple projects.
 	 * Overrides {@link WorkspaceTreeReader_1#readTree(DataInputStream, IProgressMonitor)}
 	 */
+	@Override
 	public void readTree(DataInputStream input, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		String message;
@@ -132,6 +135,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	 * Read a workspace tree storing information about a single project.
 	 * Overrides {@link WorkspaceTreeReader_2#readTree(IProject, DataInputStream, IProgressMonitor)}
 	 */
+	@Override
 	public void readTree(IProject project, DataInputStream input, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		String message;
@@ -180,6 +184,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	 * Links trees with the given builders, but does not add them to the projects.
 	 * Overrides {@link WorkspaceTreeReader_1#linkBuildersToTrees(List, ElementTree[], int, IProgressMonitor)}
 	 */
+	@Override
 	protected void linkBuildersToTrees(List<BuilderPersistentInfo> buildersToBeLinked, ElementTree[] trees, int index, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public abstract class Container extends Resource implements IContainer {
 	 * Converts this resource and all its children into phantoms by modifying
 	 * their resource infos in-place.
 	 */
+	@Override
 	public void convertToPhantom() throws CoreException {
 		if (isPhantom())
 			return;
@@ -127,6 +128,7 @@ public abstract class Container extends Resource implements IContainer {
 		return (info == null) ? null : workspace.newResource(childPath, info.getType());
 	}
 
+	@Override
 	protected void fixupAfterMoveSource() throws CoreException {
 		super.fixupAfterMoveSource();
 		if (!synchronizing(getResourceInfo(true, false)))
@@ -225,6 +227,8 @@ public abstract class Container extends Resource implements IContainer {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public boolean isLocal(int flags, int depth) {
 		if (!super.isLocal(flags, depth))
 			return false;
@@ -352,6 +356,7 @@ public abstract class Container extends Resource implements IContainer {
 	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
+	@Deprecated
 	public void setDefaultCharset(String charset) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));

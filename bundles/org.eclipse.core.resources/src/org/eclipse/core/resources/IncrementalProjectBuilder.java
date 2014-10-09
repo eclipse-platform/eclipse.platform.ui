@@ -141,6 +141,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @exception CoreException if this build fails.
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
+	@Override
 	protected abstract IProject[] build(int kind, Map<String,String> args, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -173,6 +174,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @see #CLEAN_BUILD
 	 * @since 3.0
 	 */
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		//default implementation does nothing
 		//thwart compiler warning
@@ -185,6 +187,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * state upon which to base an incremental build.
 	 * This supersedes a call to {@link #rememberLastBuiltState()}.
 	 */
+	@Override
 	public final void forgetLastBuiltState() {
 		super.forgetLastBuiltState();
 	}
@@ -201,6 +204,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * This is superseded by a call to {@link #forgetLastBuiltState()}.
 	 * @since 3.7
 	 */
+	@Override
 	public final void rememberLastBuiltState() {
 		super.rememberLastBuiltState();
 	}
@@ -218,6 +222,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @since 3.1
 	 */
+	@Override
 	public final ICommand getCommand() {
 		return super.getCommand();
 	}
@@ -262,6 +267,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 
 	 * @return the resource delta for the project or <code>null</code>
 	 */
+	@Override
 	public final IResourceDelta getDelta(IProject project) {
 		return super.getDelta(project);
 	}
@@ -271,6 +277,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 
 	 * @return the project
 	 */
+	@Override
 	public final IProject getProject() {
 		return super.getProject();
 	}
@@ -280,6 +287,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @return the build configuration
 	 * @since 3.7
 	 */
+	@Override
 	public final IBuildConfiguration getBuildConfig() {
 		return super.getBuildConfig();
 	}
@@ -301,6 +309,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @see #needRebuild()
 	 * @since 2.1
 	 */
+	@Override
 	public final boolean hasBeenBuilt(IProject project) {
 		return super.hasBeenBuilt(project);
 	}
@@ -319,6 +328,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <code>false</code> otherwise.
 	 * @since 3.0
 	 */
+	@Override
 	public final boolean isInterrupted() {
 		return super.isInterrupted();
 	}
@@ -336,6 +346,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @see #hasBeenBuilt(IProject)
 	 * @since 2.1
 	 */
+	@Override
 	public final void needRebuild() {
 		super.needRebuild();
 	}
@@ -379,6 +390,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 
 	 * @see #setInitializationData(IConfigurationElement, String, Object)
 	 */
+	@Override
 	protected void startupOnInitialize() {
 		// reserved for future use
 	}
@@ -452,6 +464,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @return the context for the most recent invocation of the builder
 	 * @since 3.7
 	 */
+	@Override
 	public final IBuildContext getContext() {
 		return super.getContext();
 	}

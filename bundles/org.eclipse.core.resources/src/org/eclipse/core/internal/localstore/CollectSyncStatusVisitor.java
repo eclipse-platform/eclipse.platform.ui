@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,19 +54,23 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 		resourceChanged = true;
 	}
 
+	@Override
 	protected void createResource(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
+	@Override
 	protected void deleteResource(UnifiedTreeNode node, Resource target) {
 		if (!ignoreLocalDeletions)
 			changed(target);
 	}
 
+	@Override
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
+	@Override
 	protected void folderToFile(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
@@ -87,14 +91,17 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 		return status;
 	}
 
+	@Override
 	protected void makeLocal(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
+	@Override
 	protected void refresh(Container parent) {
 		changed(parent);
 	}
 
+	@Override
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}

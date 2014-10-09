@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/**
 	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
+	@Override
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		if (parentTree.includes(key))
 			return parentTree.copyCompleteSubtree(key);
@@ -59,6 +60,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	 * the comparison for this node and all children.  Returns null
 	 * if this node should no longer be included in the comparison tree.
 	 */
+	@Override
 	AbstractDataTreeNode asReverseComparisonNode(IComparator comparator) {
 		NodeComparison comparison = null;
 		try {
@@ -107,6 +109,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		return new DataTreeNode(name, new NodeComparison(oldData, newData, NodeComparison.K_CHANGED, userComparison), comparedChildren);
 	}
 
+	@Override
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
 		if (!parent.includes(key))
 			return convertToAddedComparisonNode(this, NodeComparison.K_ADDED);
@@ -117,6 +120,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/**
 	 * Creates and returns a new copy of the receiver.
 	 */
+	@Override
 	AbstractDataTreeNode copy() {
 		if (children.length > 0) {
 			AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
@@ -298,6 +302,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/**
 	 * Returns the data for the node 
 	 */
+	@Override
 	public Object getData() {
 		return data;
 	}
@@ -305,6 +310,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/**
 	 * Returns true if the receiver can carry data, false otherwise.
 	 */
+	@Override
 	boolean hasData() {
 		return true;
 	}
@@ -319,6 +325,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/** 
 	 * Simplifies the given node, and answers its replacement.
 	 */
+	@Override
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		/* If not in parent, can't be simplified */
 		if (!parent.includes(key)) {
@@ -334,6 +341,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/* (non-Javadoc
 	 * Method declared on IStringPoolParticipant
 	 */
+	@Override
 	public void storeStrings(StringPool set) {
 		super.storeStrings(set);
 		//copy data for thread safety
@@ -346,6 +354,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	 * Returns a unicode representation of the node.  This method is used
 	 * for debugging purposes only (no NLS support needed)
 	 */
+	@Override
 	public String toString() {
 		return "a DataTreeNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -353,6 +362,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	/**
 	 * Returns a constant describing the type of node.
 	 */
+	@Override
 	int type() {
 		return T_COMPLETE_NODE;
 	}

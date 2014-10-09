@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
+	@Override
 	public boolean contains(ResourceMapping mapping) {
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping childMapping = mappings[i];
@@ -65,6 +66,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelObject()
 	 */
+	@Override
 	public Object getModelObject() {
 		return modelObject;
 	}
@@ -72,6 +74,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelProviderId()
 	 */
+	@Override
 	public String getModelProviderId() {
 		return providerId;
 	}
@@ -79,6 +82,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getProjects()
 	 */
+	@Override
 	public IProject[] getProjects() {
 		if (projects == null) {
 			Set<IProject> result = new HashSet<IProject>();
@@ -94,6 +98,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getTraversals(org.eclipse.core.internal.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();

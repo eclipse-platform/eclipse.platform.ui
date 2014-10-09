@@ -978,6 +978,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;
@@ -1313,6 +1314,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace;
 	}
 
+	@Override
 	public int hashCode() {
 		// the container may be null if the identified resource 
 		// does not exist so don't bother with it in the hash
@@ -1479,6 +1481,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isLocal(int)
 	 * @deprecated
 	 */
+	@Deprecated
 	public boolean isLocal(int depth) {
 		ResourceInfo info = getResourceInfo(false, false);
 		return isLocal(getFlags(info), depth);
@@ -1489,6 +1492,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * this method is over-ridden by Container.isLocal().
 	 * @deprecated
 	 */
+	@Deprecated
 	public boolean isLocal(int flags, int depth) {
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 	}
@@ -1531,6 +1535,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isReadOnly()
 	 * @deprecated
 	 */
+	@Deprecated
 	public boolean isReadOnly() {
 		final ResourceAttributes attributes = getResourceAttributes();
 		return attributes == null ? false : attributes.isReadOnly();
@@ -1819,6 +1824,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#setLocal(boolean, int, IProgressMonitor)
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1861,6 +1867,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#setReadOnly(boolean)
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setReadOnly(boolean readonly) {
 		ResourceAttributes attributes = getResourceAttributes();
 		if (attributes == null)
@@ -1923,6 +1930,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getTypeString() + getFullPath().toString();
 	}

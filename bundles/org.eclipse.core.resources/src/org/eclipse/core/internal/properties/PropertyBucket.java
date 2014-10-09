@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,6 +161,7 @@ public class PropertyBucket extends Bucket {
 			value = result;
 		}
 
+		@Override
 		public int getOccurrences() {
 			return value == null ? 0 : value.length;
 		}
@@ -178,10 +179,12 @@ public class PropertyBucket extends Bucket {
 			return this.value[i][2];
 		}
 
+		@Override
 		public Object getValue() {
 			return value;
 		}
 
+		@Override
 		public void visited() {
 			compact();
 		}
@@ -216,6 +219,7 @@ public class PropertyBucket extends Bucket {
 		super();
 	}
 
+	@Override
 	protected Entry createEntry(IPath path, Object value) {
 		return new PropertyEntry(path, (String[][]) value);
 	}
@@ -231,6 +235,7 @@ public class PropertyBucket extends Bucket {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.localstore.Bucket#getIndexFileName()
 	 */
+	@Override
 	protected String getIndexFileName() {
 		return "properties.index"; //$NON-NLS-1$
 	}
@@ -242,6 +247,7 @@ public class PropertyBucket extends Bucket {
 		return entry.getProperty(name);
 	}
 
+	@Override
 	protected byte getVersion() {
 		return VERSION;
 	}
@@ -249,15 +255,18 @@ public class PropertyBucket extends Bucket {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.localstore.Bucket#getVersionFileName()
 	 */
+	@Override
 	protected String getVersionFileName() {
 		return "properties.version"; //$NON-NLS-1$
 	}
 
+	@Override
 	public void load(String newProjectName, File baseLocation, boolean force) throws CoreException {
 		qualifierIndex.clear();
 		super.load(newProjectName, baseLocation, force);
 	}
 
+	@Override
 	protected Object readEntryValue(DataInputStream source) throws IOException, CoreException {
 		int length = source.readUnsignedShort();
 		String[][] properties = new String[length][3];
@@ -286,6 +295,7 @@ public class PropertyBucket extends Bucket {
 		return properties;
 	}
 
+	@Override
 	public void save() throws CoreException {
 		qualifierIndex.clear();
 		super.save();
@@ -320,6 +330,7 @@ public class PropertyBucket extends Bucket {
 		setEntryValue(pathAsString, newValue);
 	}
 
+	@Override
 	protected void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException {
 		String[][] properties = (String[][]) entryValue;
 		destination.writeShort(properties.length);

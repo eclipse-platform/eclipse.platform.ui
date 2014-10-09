@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class ProjectContentTypes {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -84,6 +85,7 @@ public class ProjectContentTypes {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			return getName().hashCode();
 		}

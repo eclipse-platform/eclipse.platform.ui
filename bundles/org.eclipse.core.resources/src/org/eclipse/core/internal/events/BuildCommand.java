@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 		super(""); //$NON-NLS-1$
 	}
 
+	@Override
 	public Object clone() {
 		BuildCommand result = null;
 		result = (BuildCommand) super.clone();
@@ -123,6 +124,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/* (non-Javadoc)
 	 * Method declared on Object
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (this == object)
 			return true;
@@ -179,6 +181,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/* (non-Javadoc)
 	 * Method declared on Object
 	 */
+	@Override
 	public int hashCode() {
 		// hash on name and trigger
 		return 37 * getName().hashCode() + (ALL_TRIGGERS & triggers);
@@ -294,6 +297,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * For debugging purposes only
 	 */
+	@Override
 	public String toString() {
 		return "BuildCommand(" + getName() + ")";//$NON-NLS-1$ //$NON-NLS-2$
 	}

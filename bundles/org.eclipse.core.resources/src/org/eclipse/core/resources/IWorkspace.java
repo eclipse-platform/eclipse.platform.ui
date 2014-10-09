@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -170,6 +170,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeSaveParticipant(Plugin)
 	 * @deprecated Use {@link #addSaveParticipant(String, ISaveParticipant)} instead
 	 */
+	@Deprecated
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
 	
 	/**
@@ -338,6 +339,7 @@ public interface IWorkspace extends IAdaptable {
 	 * which produces a more usable result when there are cycles in project
 	 * reference graph.
 	 */
+	@Deprecated
 	public IProject[][] computePrerequisiteOrder(IProject[] projects);
 
 	/**
@@ -1036,6 +1038,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 * @deprecated Use {@link #removeSaveParticipant(String)} instead
 	 */
+	@Deprecated
 	public void removeSaveParticipant(Plugin plugin);
 	
 	/**

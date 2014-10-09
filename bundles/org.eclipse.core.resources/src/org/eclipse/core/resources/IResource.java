@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -1897,6 +1897,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
+	@Deprecated
 	public boolean isLocal(int depth);
 
 	/**
@@ -1932,6 +1933,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		<code>false</code> otherwise
 	 * @deprecated use <tt>IResource#getResourceAttributes()</tt>
 	 */
+	@Deprecated
 	public boolean isReadOnly();
 
 	/**
@@ -2474,6 +2476,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which 
 	 * is a workspace operation and reports changes in resource deltas.
 	 */
+	@Deprecated
 	public void setDerived(boolean isDerived) throws CoreException;
 
 	/**
@@ -2596,6 +2599,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
+	@Deprecated
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -2660,6 +2664,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		<code>false</code> to unset
 	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
 	 */
+	@Deprecated
 	public void setReadOnly(boolean readOnly);
 
 	/**

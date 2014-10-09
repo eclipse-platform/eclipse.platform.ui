@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,6 +106,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		});
 	}
 
+	@Override
 	public Object clone() {
 		// should never be called - throws an exception to avoid using a 
 		// WorkspacePreferences when using WorkspaceDescription was the real 
@@ -124,6 +125,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getBuildOrder()
 	 */
+	@Override
 	public String[] getBuildOrder() {
 		boolean defaultBuildOrder = preferences.getBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER);
 		if (defaultBuildOrder)
@@ -135,6 +137,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * @see org.eclipse.core.internal.resources.
 	 * WorkspaceDescription#getBuildOrder(boolean)
 	 */
+	@Override
 	public String[] getBuildOrder(boolean makeCopy) {
 		//note that since this is stored in the preference store, we are creating
 		//a new copy of the string array on every access anyway
@@ -144,6 +147,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setAutoBuilding(boolean)
 	 */
+	@Override
 	public void setAutoBuilding(boolean value) {
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_BUILDING, value);
 	}
@@ -151,11 +155,13 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setBuildOrder(String[])
 	 */
+	@Override
 	public void setBuildOrder(String[] value) {
 		preferences.setValue(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, value == null);
 		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, convertStringArraytoString(value));
 	}
 
+	@Override
 	public void setDeltaExpiration(long value) {
 		preferences.setValue(PreferenceInitializer.PREF_DELTA_EXPIRATION, value);
 	}
@@ -163,6 +169,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setApplyFileStatePolicy(boolean)
 	 */
+	@Override
 	public void setApplyFileStatePolicy(boolean apply) {
 		preferences.setValue(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY, apply);
 	}
@@ -170,6 +177,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setFileStateLongevity(long)
 	 */
+	@Override
 	public void setFileStateLongevity(long time) {
 		preferences.setValue(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, time);
 	}
@@ -177,6 +185,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setMaxBuildIterations(int)
 	 */
+	@Override
 	public void setMaxBuildIterations(int number) {
 		preferences.setValue(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, number);
 	}
@@ -184,6 +193,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setMaxFileStates(int)
 	 */
+	@Override
 	public void setMaxFileStates(int number) {
 		preferences.setValue(ResourcesPlugin.PREF_MAX_FILE_STATES, number);
 	}
@@ -191,10 +201,12 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setMaxFileStateSize(long)
 	 */
+	@Override
 	public void setMaxFileStateSize(long size) {
 		preferences.setValue(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, size);
 	}
 
+	@Override
 	public void setOperationsPerSnapshot(int value) {
 		preferences.setValue(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, value);
 	}
@@ -202,6 +214,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setSnapshotInterval(long)
 	 */
+	@Override
 	public void setSnapshotInterval(long delay) {
 		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, delay);
 	}

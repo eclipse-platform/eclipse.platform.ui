@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		super();
 	}
 
+	@Override
 	@SuppressWarnings({"unchecked"})
 	public Object clone() {
 		ProjectDescription clone = (ProjectDescription) super.clone();
@@ -372,6 +373,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see IProjectDescription#getLocation()
 	 * @deprecated
 	 */
+	@Deprecated
 	public IPath getLocation() {
 		if (location == null)
 			return null;
@@ -827,6 +829,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setName(String)
 	 */
+	@Override
 	public void setName(String value) {
 		super.setName(value);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,7 @@ public class ProjectInfo extends ResourceInfo {
 	/**
 	 * Returns the property store associated with this info.  The return value may be null.
 	 */
+	@Override
 	public Object getPropertyStore() {
 		return propertyStore;
 	}
@@ -132,6 +133,7 @@ public class ProjectInfo extends ResourceInfo {
 	/**
 	 * Sets the property store associated with this info.  The value may be null.
 	 */
+	@Override
 	public void setPropertyStore(Object value) {
 		propertyStore = value;
 	}

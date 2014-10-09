@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class VariableDescription implements Comparable<VariableDescription> {
 		this.value = value;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (!(o.getClass() == VariableDescription.class))
 			return false;
@@ -49,6 +50,7 @@ public class VariableDescription implements Comparable<VariableDescription> {
 		return value;
 	}
 
+	@Override
 	public int hashCode() {
 		return name.hashCode() + value.hashCode();
 	}

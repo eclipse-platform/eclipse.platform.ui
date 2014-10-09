@@ -294,6 +294,7 @@ public class File extends Resource implements IFile {
 	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
+	@Deprecated
 	public int getEncoding() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -312,6 +313,7 @@ public class File extends Resource implements IFile {
 	/* (non-Javadoc)
 	 * @see IResource#getType()
 	 */
+	@Override
 	public int getType() {
 		return FILE;
 	}
@@ -329,6 +331,7 @@ public class File extends Resource implements IFile {
 	 * for the common case where the file exists both locally and on the file system, and
 	 * is in sync.  For all other cases, it defers to the super implementation.
 	 */
+	@Override
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 		if (!getLocalManager().fastIsSynchronized(this))
 			super.refreshLocal(IResource.DEPTH_ZERO, monitor);
@@ -374,6 +377,7 @@ public class File extends Resource implements IFile {
 	/* (non-Javadoc)
 	 * @see IResource#setLocalTimeStamp(long)
 	 */
+	@Override
 	public long setLocalTimeStamp(long value) throws CoreException {
 		//override to handle changing timestamp on project description file
 		long result = super.setLocalTimeStamp(value);
@@ -418,6 +422,7 @@ public class File extends Resource implements IFile {
 	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which 
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
+	@Deprecated
 	public void setCharset(String newCharset) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));

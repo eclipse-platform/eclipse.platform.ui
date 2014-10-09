@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof IMarker))
 			return false;
@@ -205,6 +206,7 @@ public class Marker extends PlatformObject implements IMarker {
 		return resource == null ? null : (Workspace) resource.getWorkspace();
 	}
 
+	@Override
 	public int hashCode() {
 		return (int) id + resource.hashCode();
 	}

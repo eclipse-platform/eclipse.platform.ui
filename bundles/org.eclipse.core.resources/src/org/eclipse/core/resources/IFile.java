@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
+	@Deprecated
 	public int ENCODING_UNKNOWN = 0;
 	/**
 	 * Character encoding constant (value 1) which identifies
@@ -53,6 +54,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details 
 	 */
+	@Deprecated
 	public int ENCODING_US_ASCII = 1;
 	/**
 	 * Character encoding constant (value 2) which identifies
@@ -62,6 +64,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
+	@Deprecated
 	public int ENCODING_ISO_8859_1 = 2;
 	/**
 	 * Character encoding constant (value 3) which identifies
@@ -70,6 +73,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
+	@Deprecated
 	public int ENCODING_UTF_8 = 3;
 	/**
 	 * Character encoding constant (value 4) which identifies
@@ -78,6 +82,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
+	@Deprecated
 	public int ENCODING_UTF_16BE = 4;
 	/**
 	 * Character encoding constant (value 5) which identifies
@@ -86,6 +91,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
+	@Deprecated
 	public int ENCODING_UTF_16LE = 5;
 	/**
 	 * Character encoding constant (value 6) which identifies
@@ -94,6 +100,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
+	@Deprecated
 	public int ENCODING_UTF_16 = 6;
 
 	/**
@@ -753,6 +760,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * </ul>
 	 * @deprecated use IFile#getCharset instead
 	 */
+	@Deprecated
 	public int getEncoding() throws CoreException;
 
 	/**
@@ -871,6 +879,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which 
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
+	@Deprecated
 	public void setCharset(String newCharset) throws CoreException;
 
 	/**

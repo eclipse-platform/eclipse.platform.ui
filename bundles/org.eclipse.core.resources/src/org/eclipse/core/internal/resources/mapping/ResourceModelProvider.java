@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public final class ResourceModelProvider extends ModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.IResource, org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) {
 		return new ResourceMapping[] {new SimpleResourceMapping(resource)};
 	}
@@ -34,6 +35,7 @@ public final class ResourceModelProvider extends ModelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		Set<IAdaptable> result = new HashSet<IAdaptable>();
 		for (int i = 0; i < traversals.length; i++) {

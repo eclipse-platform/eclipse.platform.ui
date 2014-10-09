@@ -1159,6 +1159,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			this.ignoreCancel = ignore;
 		}
 
+		@Override
 		public boolean isCanceled() {
 			return ignoreCancel ? false : super.isCanceled();
 		}

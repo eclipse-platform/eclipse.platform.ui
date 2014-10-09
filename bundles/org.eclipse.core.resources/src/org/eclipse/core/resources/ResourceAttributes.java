@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Red Hat Incorporated and others
+ * Copyright (c) 2004, 2014 Red Hat Incorporated and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,6 +227,7 @@ public class ResourceAttributes {
 	 * Returns a string representation of the attributes, suitable 
 	 * for debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		return "ResourceAttributes(" + attributes + ')'; //$NON-NLS-1$
 	}

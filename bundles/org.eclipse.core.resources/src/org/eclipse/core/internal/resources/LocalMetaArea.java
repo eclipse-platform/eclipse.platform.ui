@@ -427,6 +427,7 @@ public class LocalMetaArea implements ICoreConstants {
 	 * @deprecated should not be called any more - workspace preferences are
 	 *                     now maintained in the plug-in's preferences
 	 */
+	@Deprecated
 	public synchronized void write(WorkspaceDescription description) throws CoreException {
 		IPath path = getOldWorkspaceDescriptionLocation();
 		path.toFile().getParentFile().mkdirs();

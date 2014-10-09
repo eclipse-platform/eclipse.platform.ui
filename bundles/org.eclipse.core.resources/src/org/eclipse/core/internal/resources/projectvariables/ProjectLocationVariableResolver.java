@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2014 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,12 @@ public class ProjectLocationVariableResolver extends PathVariableResolver {
 		// nothing
 	}
 
+	@Override
 	public String[] getVariableNames(String variable, IResource resource) {
 		return new String[] {NAME};
 	}
 
+	@Override
 	public String getValue(String variable, IResource resource) {
 		if (resource.getProject().getLocationURI() != null)
 			return resource.getProject().getLocationURI().toASCIIString();

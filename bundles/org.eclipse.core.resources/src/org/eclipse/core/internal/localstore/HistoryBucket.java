@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,6 +189,7 @@ public class HistoryBucket extends Bucket {
 			return data;
 		}
 
+		@Override
 		public int getOccurrences() {
 			return data.length;
 		}
@@ -201,14 +202,17 @@ public class HistoryBucket extends Bucket {
 			return new UniversalUniqueIdentifier(data[i]);
 		}
 
+		@Override
 		public Object getValue() {
 			return data;
 		}
 
+		@Override
 		public boolean isEmpty() {
 			return data.length == 0;
 		}
 
+		@Override
 		public void visited() {
 			compact();
 		}
@@ -274,6 +278,7 @@ public class HistoryBucket extends Bucket {
 		setEntryValue(pathAsString, HistoryEntry.merge(existing, additions));
 	}
 
+	@Override
 	protected Bucket.Entry createEntry(IPath path, Object value) {
 		return new HistoryEntry(path, (byte[][]) value);
 	}
@@ -286,18 +291,22 @@ public class HistoryBucket extends Bucket {
 		return new HistoryEntry(path, existing);
 	}
 
+	@Override
 	protected String getIndexFileName() {
 		return "history.index"; //$NON-NLS-1$
 	}
 	
+	@Override
 	protected byte getVersion() {
 		return VERSION;
 	}
 
+	@Override
 	protected String getVersionFileName() {
 		return "history.version"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected Object readEntryValue(DataInputStream source) throws IOException {
 		int length = source.readUnsignedShort();
 		byte[][] uuids = new byte[length][HistoryEntry.DATA_LENGTH];
@@ -306,6 +315,7 @@ public class HistoryBucket extends Bucket {
 		return uuids;
 	}
 
+	@Override
 	protected void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException {
 		byte[][] uuids = (byte[][]) entryValue;
 		destination.writeShort(uuids.length);

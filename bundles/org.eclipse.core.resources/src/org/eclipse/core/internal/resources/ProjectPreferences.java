@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,6 +314,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			qualifier = getSegment(path, 2);
 	}
 
+	@Override
 	public String[] childrenNames() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -322,6 +323,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return super.childrenNames();
 	}
 
+	@Override
 	public void clear() {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -354,6 +356,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return result.toArray(EMPTY_STRING_ARRAY);
 	}
 
+	@Override
 	public void flush() throws BackingStoreException {
 		if (isReading)
 			return;
@@ -381,6 +384,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	/*
 	 * Return the node at which these preferences are loaded/saved.
 	 */
+	@Override
 	protected IEclipsePreferences getLoadLevel() {
 		if (loadLevel == null) {
 			if (project == null || qualifier == null)
@@ -404,6 +408,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	 * NOTE: we cannot cache the location since it may change over the course
 	 * of the project life-cycle.
 	 */
+	@Override
 	protected IPath getLocation() {
 		if (project == null || qualifier == null)
 			return null;
@@ -411,10 +416,12 @@ public class ProjectPreferences extends EclipsePreferences {
 		return computeLocation(path, qualifier);
 	}
 
+	@Override
 	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Object context) {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
+	@Override
 	protected String internalGet(String key) {
 		// throw NPE if key is null
 		if (key == null)
@@ -425,6 +432,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return super.internalGet(key);
 	}
 
+	@Override
 	protected String internalPut(String key, String newValue) {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -467,10 +475,12 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 	}
 
+	@Override
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.absolutePath());
 	}
 
+	@Override
 	public String[] keys() {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -478,6 +488,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return super.keys();
 	}
 
+	@Override
 	protected void load() throws BackingStoreException {
 		load(true);
 	}
@@ -522,6 +533,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	 * want special behaviour. If the child is a single segment name, then we want to
 	 * return true if the node exists OR if a project with that name exists in the workspace.
 	 */
+	@Override
 	public boolean nodeExists(String path) throws BackingStoreException {
 		// short circuit for checking this node
 		if (path.length() == 0)
@@ -544,6 +556,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(path).exists() || super.nodeExists(path);
 	}
 
+	@Override
 	public void remove(String key) {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -560,6 +573,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 	}
 
+	@Override
 	protected void save() throws BackingStoreException {
 		final IFile fileInWorkspace = getFile();
 		if (fileInWorkspace == null) {

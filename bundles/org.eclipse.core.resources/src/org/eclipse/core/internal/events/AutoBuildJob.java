@@ -59,6 +59,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		avoidBuild = true;
 	}
 
+	@Override
 	public boolean belongsTo(Object family) {
 		return family == ResourcesPlugin.FAMILY_AUTO_BUILD;
 	}
@@ -225,6 +226,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
 		synchronized (this) {

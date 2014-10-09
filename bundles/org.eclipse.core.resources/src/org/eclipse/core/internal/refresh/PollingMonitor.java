@@ -93,6 +93,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	/**
 	 * Polls the file system under the root containers for changes.
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		//sleep until resources plugin has finished starting
 		if (firstRun) {
@@ -187,6 +188,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	/* (non-Javadoc)
 	 * @see Job#shouldRun
 	 */
+	@Override
 	public boolean shouldRun() {
 		//only run if there is something to refresh
 		return !resourceRoots.isEmpty() || !toRefresh.isEmpty();

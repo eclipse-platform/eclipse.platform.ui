@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -586,6 +586,7 @@ public abstract class AbstractDataTreeNode {
 	 * Returns a unicode representation of the node.  This method is used
 	 * for debugging purposes only (no NLS support needed)
 	 */
+	@Override
 	public String toString() {
 		return "an AbstractDataTreeNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

@@ -187,6 +187,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * @deprecated Do not use.
 	 * @since 3.0
 	 */
+	@Deprecated
 	public static final String PREF_MAX_NOTIFICATION_DELAY = "maxnotifydelay"; //$NON-NLS-1$
 
 	/**
@@ -416,6 +417,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * closes the workspace without saving.
 	 * @see BundleActivator#stop(BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 
@@ -441,6 +443,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * opens the workspace.
 	 * @see BundleActivator#start(BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 

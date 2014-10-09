@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -292,6 +292,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * Returns a copy of the tree which shares its instance variables.
 	 */
+	@Override
 	protected AbstractDataTree copy() {
 		return new DeltaDataTree(rootNode, parent);
 	}
@@ -302,6 +303,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * @param key
 	 *	key of subtree to copy
 	 */
+	@Override
 	public AbstractDataTreeNode copyCompleteSubtree(IPath key) {
 		AbstractDataTreeNode node = searchNodeAt(key);
 		if (node == null) {
@@ -317,6 +319,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#createChild(IPath, String)
 	 */
+	@Override
 	public void createChild(IPath parentKey, String localName) {
 		createChild(parentKey, localName, null);
 	}
@@ -324,6 +327,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#createChild(IPath, String, Object)
 	 */
+	@Override
 	public void createChild(IPath parentKey, String localName, Object data) {
 		if (isImmutable())
 			handleImmutableTree();
@@ -346,6 +350,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * Creates and returns an instance of the receiver.
 	 * @see AbstractDataTree#createInstance()
 	 */
+	@Override
 	protected AbstractDataTree createInstance() {
 		return new DeltaDataTree();
 	}
@@ -353,6 +358,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#createSubtree(IPath, AbstractDataTreeNode)
 	 */
+	@Override
 	public void createSubtree(IPath key, AbstractDataTreeNode node) {
 		if (isImmutable())
 			handleImmutableTree();
@@ -367,6 +373,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#deleteChild(IPath, String)
 	 */
+	@Override
 	public void deleteChild(IPath parentKey, String localName) {
 		if (isImmutable())
 			handleImmutableTree();
@@ -381,6 +388,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * Initializes the receiver so that it is a complete, empty tree. 
 	 * @see AbstractDataTree#empty()
 	 */
+	@Override
 	public void empty() {
 		rootNode = new DataTreeNode(null, null);
 		parent = null;
@@ -465,6 +473,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#getChildCount(IPath)
 	 */
+	@Override
 	public int getChildCount(IPath parentKey) {
 		return getChildNodes(parentKey).length;
 	}
@@ -530,6 +539,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#getChildren(IPath)
 	 */
+	@Override
 	public IPath[] getChildren(IPath parentKey) {
 		AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
 		int len = childNodes.length;
@@ -547,6 +557,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * @param key
 	 *	key of node for which to return data.
 	 */
+	@Override
 	public Object getData(IPath key) {
 
 		/* Algorithm:
@@ -589,6 +600,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#getNameOfChild(IPath, int)
 	 */
+	@Override
 	public String getNameOfChild(IPath parentKey, int index) {
 		AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
 		return childNodes[index].name;
@@ -599,6 +611,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 *
 	 * @see AbstractDataTree#getNamesOfChildren(IPath)
 	 */
+	@Override
 	public String[] getNamesOfChildren(IPath parentKey) {
 		AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
 		int len = childNodes.length;
@@ -618,6 +631,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * Returns the root node of the tree.
 	 */
+	@Override
 	protected AbstractDataTreeNode getRootNode() {
 		return rootNode;
 	}
@@ -641,6 +655,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * Returns true if the receiver includes a node with
 	 * the given key, false otherwise.
 	 */
+	@Override
 	public boolean includes(IPath key) {
 		return searchNodeAt(key) != null;
 	}
@@ -657,6 +672,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 *
 	 * @param key  key of node for which we want to retrieve data.
 	 */
+	@Override
 	public DataTreeLookup lookup(IPath key) {
 		int keyLength = key.segmentCount();
 		for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
@@ -911,6 +927,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * @see AbstractDataTree#setData(IPath, Object)
 	 */
+	@Override
 	public void setData(IPath key, Object data) {
 		if (isImmutable())
 			handleImmutableTree();
@@ -929,6 +946,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * Sets the root node of the tree
 	 */
+	@Override
 	void setRootNode(AbstractDataTreeNode aNode) {
 		rootNode = aNode;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,6 +103,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
 			return false;
@@ -152,6 +153,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int hash = 0;
 		if (count == 0)

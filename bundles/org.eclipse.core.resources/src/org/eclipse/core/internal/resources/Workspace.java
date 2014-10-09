@@ -842,6 +842,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * {@link Workspace#computeProjectBuildConfigOrder(IBuildConfiguration[])} which
 	 * produces more usable results when there are cycles in project reference.
 	 */
+	@Deprecated
 	public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 		return computePrerequisiteOrder1(targets);
 	}

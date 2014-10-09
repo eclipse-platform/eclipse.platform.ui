@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		schedule(CHARSET_DELTA_DELAY);
 	}
 
+	@Override
 	public boolean belongsTo(Object family) {
 		return FAMILY_CHARSET_DELTA.equals(family);
 	}
@@ -158,6 +159,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {

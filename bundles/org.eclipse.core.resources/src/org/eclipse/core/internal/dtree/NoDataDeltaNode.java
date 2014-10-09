@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	/**
 	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
+	@Override
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		int numChildren = children.length;
 		if (numChildren == 0)
@@ -64,6 +65,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	/**
 	 * @see AbstractDataTreeNode#compareWithParent(IPath, DeltaDataTree, IComparator)
 	 */
+	@Override
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
 		AbstractDataTreeNode[] comparedChildren = compareWithParent(children, key, parent, comparator);
 		Object oldData = parent.getData(key);
@@ -74,6 +76,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
 	 * children, but a shallow copy of name and data.
 	 */
+	@Override
 	AbstractDataTreeNode copy() {
 		AbstractDataTreeNode[] childrenCopy;
 		if (children.length == 0) {
@@ -89,6 +92,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	 * Returns true if the receiver represents delta information,
 	 * false if it represents the complete information.
 	 */
+	@Override
 	boolean isDelta() {
 		return true;
 	}
@@ -96,6 +100,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	/**
 	 * Returns true if the receiver is an empty delta node, false otherwise.
 	 */
+	@Override
 	boolean isEmptyDelta() {
 		return this.size() == 0;
 	}
@@ -103,6 +108,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	/** 
 	 * Simplifies the given node, and returns its replacement.
 	 */
+	@Override
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		AbstractDataTreeNode[] simplifiedChildren = simplifyWithParent(children, key, parent, comparer);
 		return new NoDataDeltaNode(name, simplifiedChildren);
@@ -112,6 +118,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	 * Returns a unicode representation of the node.  This method is used
 	 * for debugging purposes only (no NLS support needed)
 	 */
+	@Override
 	public String toString() {
 		return "a NoDataDeltaNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -119,6 +126,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	/**
 	 * Return a constant describing the type of node.
 	 */
+	@Override
 	int type() {
 		return T_NO_DATA_DELTA_NODE;
 	}

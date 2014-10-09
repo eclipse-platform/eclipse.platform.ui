@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,10 +35,12 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 		super(url);
 	}
 
+	@Override
 	protected boolean allowCaching() {
 		return false; // don't cache, workspace is local
 	}
 
+	@Override
 	protected URL resolve() throws IOException {
 		String filePath = url.getFile().trim();
 		filePath = URLDecoder.decode(filePath, "UTF-8"); //$NON-NLS-1$

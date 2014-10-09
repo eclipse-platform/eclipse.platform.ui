@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/**
 	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
+	@Override
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		if (parentTree.includes(key))
 			return parentTree.copyCompleteSubtree(key);
@@ -40,6 +41,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/**
 	 * Returns the child with the given local name
 	 */
+	@Override
 	AbstractDataTreeNode childAt(String localName) {
 		/* deleted nodes do not have children */
 		throw new ObjectNotFoundException(NLS.bind(Messages.dtree_missingChild, localName));
@@ -48,11 +50,13 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/**
 	 * Returns the child with the given local name
 	 */
+	@Override
 	AbstractDataTreeNode childAtOrNull(String localName) {
 		/* deleted nodes do not have children */
 		return null;
 	}
 
+	@Override
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
 		/**
 		 * Just because there is a deleted node, it doesn't mean there must
@@ -70,6 +74,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
 	 * children, but a shallow copy of name and data.
 	 */
+	@Override
 	AbstractDataTreeNode copy() {
 		return new DeletedNode(name);
 	}
@@ -77,6 +82,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/**
 	 * Returns true if the receiver represents a deleted node, false otherwise.
 	 */
+	@Override
 	boolean isDeleted() {
 		return true;
 	}
@@ -84,6 +90,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/** 
 	 * Simplifies the given node, and returns its replacement.
 	 */
+	@Override
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		if (parent.includes(key))
 			return this;
@@ -93,6 +100,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/**
 	 * Returns the number of children of the receiver
 	 */
+	@Override
 	int size() {
 		/* deleted nodes have no children */
 		return 0;
@@ -102,6 +110,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	 * Return a unicode representation of the node.  This method
 	 * is used for debugging purposes only (no NLS please)
 	 */
+	@Override
 	public String toString() {
 		return "a DeletedNode(" + this.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -109,10 +118,12 @@ public class DeletedNode extends AbstractDataTreeNode {
 	/**
 	 * Returns a string describing the type of node.
 	 */
+	@Override
 	int type() {
 		return T_DELETED_NODE;
 	}
 
+	@Override
 	AbstractDataTreeNode childAtIgnoreCase(String localName) {
 		/* deleted nodes do not have children */
 		return null;

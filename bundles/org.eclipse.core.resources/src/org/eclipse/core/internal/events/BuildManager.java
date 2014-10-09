@@ -81,6 +81,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		/**
 		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
+		@Override
 		protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) {
 			if (!hasBeenBuilt && Policy.DEBUG_BUILD_FAILURE) {
 				hasBeenBuilt = true;

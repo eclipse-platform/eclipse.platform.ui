@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,10 +29,12 @@ public class VirtualFileStore extends FileStore {
 		this.location = location;
 	}
 
+	@Override
 	public String[] childNames(int options, IProgressMonitor monitor) {
 		return FileStore.EMPTY_STRING_ARRAY;
 	}
 
+	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
 		FileInfo result = new FileInfo();
 		result.setDirectory(true);
@@ -41,30 +43,37 @@ public class VirtualFileStore extends FileStore {
 		return result;
 	}
 
+	@Override
 	public void delete(int options, IProgressMonitor monitor) {
 		//nothing to do - virtual resources don't exist in any physical file system
 	}
 
+	@Override
 	public IFileStore getChild(String name) {
 		return EFS.getNullFileSystem().getStore(new Path(name).makeAbsolute());
 	}
 
+	@Override
 	public String getName() {
 		return "virtual"; //$NON-NLS-1$
 	}
 
+	@Override
 	public IFileStore getParent() {
 		return null;
 	}
 
+	@Override
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		destination.mkdir(EFS.NONE, monitor);
 	}
 
+	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) {
 		return null;
 	}
 
+	@Override
 	public URI toURI() {
 		return location;
 	}

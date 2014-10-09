@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class DataTree extends AbstractDataTree {
 	 * @param key
 	 *	Key of subtree to copy
 	 */
+	@Override
 	public AbstractDataTreeNode copyCompleteSubtree(IPath key) {
 		DataTreeNode node = findNodeAt(key);
 		if (node == null) {
@@ -72,6 +73,7 @@ public class DataTree extends AbstractDataTree {
 	 * Creates a new child in the tree.
 	 * @see AbstractDataTree#createChild(IPath, String)
 	 */
+	@Override
 	public void createChild(IPath parentKey, String localName) {
 		createChild(parentKey, localName, null);
 	}
@@ -80,6 +82,7 @@ public class DataTree extends AbstractDataTree {
 	 * Creates a new child in the tree.
 	 * @see AbstractDataTree#createChild(IPath, String, Object)
 	 */
+	@Override
 	public void createChild(IPath parentKey, String localName, Object data) {
 		DataTreeNode node = findNodeAt(parentKey);
 		if (node == null)
@@ -99,6 +102,7 @@ public class DataTree extends AbstractDataTree {
 	 * implementation of the factory method creational pattern for allowing
 	 * abstract methods to create instances
 	 */
+	@Override
 	protected AbstractDataTree createInstance() {
 		return new DataTree();
 	}
@@ -111,6 +115,7 @@ public class DataTree extends AbstractDataTree {
 	 * @param subtree
 	 *	New node to insert into tree.
 	 */
+	@Override
 	public void createSubtree(IPath key, AbstractDataTreeNode subtree) {
 
 		// Copy it since destructive mods are allowed on the original
@@ -147,6 +152,7 @@ public class DataTree extends AbstractDataTree {
 	 * Deletes a child of the tree.
 	 * @see AbstractDataTree#deleteChild(IPath, String)
 	 */
+	@Override
 	public void deleteChild(IPath parentKey, String localName) {
 		if (this.isImmutable())
 			handleImmutableTree();
@@ -162,6 +168,7 @@ public class DataTree extends AbstractDataTree {
 	 * Initializes the receiver.
 	 * @see AbstractDataTree#empty()
 	 */
+	@Override
 	public void empty() {
 		this.setRootNode(new DataTreeNode(null, null));
 	}
@@ -191,6 +198,7 @@ public class DataTree extends AbstractDataTree {
 	 * @param key
 	 *	Node whose data to return.
 	 */
+	@Override
 	public Object getData(IPath key) {
 		DataTreeNode node = findNodeAt(key);
 		if (node == null) {
@@ -204,6 +212,7 @@ public class DataTree extends AbstractDataTree {
 	 * Returns the names of the children of a node.
 	 * @see AbstractDataTree#getNamesOfChildren(IPath)
 	 */
+	@Override
 	public String[] getNamesOfChildren(IPath parentKey) {
 		DataTreeNode parentNode;
 		parentNode = findNodeAt(parentKey);
@@ -217,6 +226,7 @@ public class DataTree extends AbstractDataTree {
 	/**
 	 * Returns the root node of the tree
 	 */
+	@Override
 	AbstractDataTreeNode getRootNode() {
 		return rootNode;
 	}
@@ -225,6 +235,7 @@ public class DataTree extends AbstractDataTree {
 	 * Returns true if the receiver includes a node with
 	 * the given key, false otherwise.
 	 */
+	@Override
 	public boolean includes(IPath key) {
 		return (findNodeAt(key) != null);
 	}
@@ -236,6 +247,7 @@ public class DataTree extends AbstractDataTree {
 	 * @param key
 	 *	key of node for which we want to retrieve data.
 	 */
+	@Override
 	public DataTreeLookup lookup(IPath key) {
 		DataTreeNode node = this.findNodeAt(key);
 		if (node == null)
@@ -260,6 +272,7 @@ public class DataTree extends AbstractDataTree {
 	 * Sets the data at the specified node.
 	 * @see AbstractDataTree#setData(IPath, Object)
 	 */
+	@Override
 	public void setData(IPath key, Object data) {
 		DataTreeNode node = this.findNodeAt(key);
 		if (this.isImmutable())

@@ -75,6 +75,7 @@ public class RefreshJob extends WorkspaceJob {
 	/* (non-Javadoc)
 	 *  @see org.eclipse.core.runtime.jobs.Job#belongsTo(Object)
 	 */
+	@Override
 	public boolean belongsTo(Object family) {
 		return family == ResourcesPlugin.FAMILY_AUTO_REFRESH;
 	}
@@ -146,6 +147,7 @@ public class RefreshJob extends WorkspaceJob {
 	/* (non-Javadoc)
 	 * @see WorkspaceJob#runInWorkspace
 	 */
+	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		String msg = Messages.refresh_refreshErr;
@@ -203,6 +205,7 @@ public class RefreshJob extends WorkspaceJob {
 	/* (non-Javadoc)
 	 *  @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 	 */
+	@Override
 	public synchronized boolean shouldRun() {
 		return !fRequests.isEmpty();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,6 +143,7 @@ public class Project extends Container implements IProject {
 	 *
 	 * @exception CoreException if this resource is not accessible
 	 */
+	@Override
 	public void checkAccessible(int flags) throws CoreException {
 		super.checkAccessible(flags);
 		if (!isOpen(flags)) {
@@ -219,6 +220,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#copy(IPath, int, IProgressMonitor)
 	 */
+	@Override
 	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
 		//   so that IResource.copy(IPath,int,IProgressMonitor) works properly for
@@ -241,6 +243,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
 	 */
+	@Override
 	public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
 		//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
@@ -338,6 +341,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
 	 */
+	@Override
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		updateFlags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT;
@@ -347,11 +351,13 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#delete(boolean, IProgressMonitor)
 	 */
+	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		delete(updateFlags, monitor);
 	}
 
+	@Override
 	public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
 		super.deleteResource(convertToPhantom, status);
 		// Clear the history store.
@@ -360,6 +366,7 @@ public class Project extends Container implements IProject {
 		workspace.getMetaArea().delete(this);
 	}
 
+	@Override
 	protected void fixupAfterMoveSource() throws CoreException {
 		workspace.deleteResource(this);
 		// check if we deleted a preferences file 
@@ -454,6 +461,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#getParent()
 	 */
+	@Override
 	public IContainer getParent() {
 		return workspace.getRoot();
 	}
@@ -462,6 +470,7 @@ public class Project extends Container implements IProject {
 	 * @see IProject#getPluginWorkingLocation(IPluginDescriptor)
 	 * @deprecated
 	 */
+	@Deprecated
 	public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
 		if (plugin == null)
 			return null;
@@ -471,6 +480,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return this;
 	}
@@ -478,6 +488,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#getProjectRelativePath()
 	 */
+	@Override
 	public IPath getProjectRelativePath() {
 		return Path.EMPTY;
 	}
@@ -485,6 +496,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#getRawLocation()
 	 */
+	@Override
 	public IPath getRawLocation() {
 		ProjectDescription description = internalGetDescription();
 		return description == null ? null : description.getLocation();
@@ -493,6 +505,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#getRawLocation()
 	 */
+	@Override
 	public URI getRawLocationURI() {
 		ProjectDescription description = internalGetDescription();
 		return description == null ? null : description.getLocationURI();
@@ -552,6 +565,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#getType()
 	 */
+	@Override
 	public int getType() {
 		return PROJECT;
 	}
@@ -872,6 +886,7 @@ public class Project extends Container implements IProject {
 		}
 	}
 
+	@Override
 	public void internalSetLocal(boolean flag, int depth) throws CoreException {
 		// do nothing for projects, but call for its children
 		if (depth == IResource.DEPTH_ZERO)
@@ -888,6 +903,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#isAccessible()
 	 */
+	@Override
 	public boolean isAccessible() {
 		return isOpen();
 	}
@@ -895,6 +911,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.resources.Resource#isDerived(int)
 	 */
+	@Override
 	public boolean isDerived(int options) {
 		//projects are never derived
 		return false;
@@ -903,10 +920,12 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#isLinked(int)
 	 */
+	@Override
 	public boolean isLinked(int options) {
 		return false;//projects are never linked
 	}
 
+	@Override
 	public boolean isVirtual() {
 		return false; // projects are never virtual
 	}
@@ -914,6 +933,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#isTeamPrivateMember(int)
 	 */
+	@Override
 	public boolean isTeamPrivateMember(int options) {
 		return false;//projects are never team private members
 	}
@@ -922,6 +942,8 @@ public class Project extends Container implements IProject {
 	 * @see IResource#isLocal(int)
 	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public boolean isLocal(int depth) {
 		// the flags parameter is ignored for projects so pass anything
 		return isLocal(-1, depth);
@@ -931,6 +953,8 @@ public class Project extends Container implements IProject {
 	 * @see IResource#isLocal(int)
 	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public boolean isLocal(int flags, int depth) {
 		// don't check the flags....projects are always local
 		if (depth == DEPTH_ZERO)
@@ -1023,6 +1047,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#move(IProjectDescription, int, IProgressMonitor)
 	 */
+	@Override
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(description);
 		monitor = Policy.monitorFor(monitor);
@@ -1391,6 +1416,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IResource#touch(IProgressMonitor)
 	 */
+	@Override
 	public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {

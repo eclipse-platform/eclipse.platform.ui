@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,6 +84,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @return <code>true</code> if the receiver is equal to the
 	 * given object, and <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -196,6 +197,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	/**
 	 * Override hashCode to use the model object.
 	 */
+	@Override
 	public int hashCode() {
 		return getModelObject().hashCode();
 	}

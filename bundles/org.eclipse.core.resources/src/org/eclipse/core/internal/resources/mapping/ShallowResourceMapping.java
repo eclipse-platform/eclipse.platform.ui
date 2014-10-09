@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,22 +26,27 @@ public class ShallowResourceMapping extends ResourceMapping {
 		this.container = container;
 	}
 
+	@Override
 	public Object getModelObject() {
 		return container;
 	}
 
+	@Override
 	public String getModelProviderId() {
 		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	}
 
+	@Override
 	public IProject[] getProjects() {
 		return new IProject[] { container.getResource().getProject() };
 	}
 
+	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
 		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { container.getResource() }, IResource.DEPTH_ONE, IResource.NONE)};
 	}
 	
+	@Override
 	public boolean contains(ResourceMapping mapping) {
 		if (mapping.getModelProviderId().equals(this.getModelProviderId())) {
 			Object object = mapping.getModelObject();

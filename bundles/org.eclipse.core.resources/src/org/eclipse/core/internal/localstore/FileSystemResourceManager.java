@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -402,6 +402,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public int doGetEncoding(IFileStore store) throws CoreException {
 		InputStream input = null;
 		try {
@@ -474,6 +475,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public int getEncoding(File target) throws CoreException {
 		// thread safety: (the location can be null if the project for this file does not exist)
 		IFileStore store = getStore(target);

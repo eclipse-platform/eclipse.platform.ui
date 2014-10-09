@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class PropertyManager2 implements IPropertyManager {
 			this.destination = destination;
 		}
 
+		@Override
 		public void afterSaving(Bucket bucket) throws CoreException {
 			saveChanges((PropertyBucket) bucket);
 			changes.clear();
@@ -57,6 +58,7 @@ public class PropertyManager2 implements IPropertyManager {
 			bucket.save();
 		}
 
+		@Override
 		public int visit(Entry entry) {
 			PropertyEntry sourceEntry = (PropertyEntry) entry;
 			IPath destinationPath = destination.append(sourceEntry.getPath().removeFirstSegments(source.segmentCount()));
@@ -99,6 +101,7 @@ public class PropertyManager2 implements IPropertyManager {
 
 	public synchronized void deleteProperties(IResource target, int depth) throws CoreException {
 		tree.accept(new PropertyBucket.Visitor() {
+			@Override
 			public int visit(Entry entry) {
 				entry.delete();
 				return CONTINUE;
@@ -113,6 +116,7 @@ public class PropertyManager2 implements IPropertyManager {
 	public synchronized Map<QualifiedName, String> getProperties(IResource target) throws CoreException {
 		final Map<QualifiedName, String> result = new HashMap<QualifiedName, String>();
 		tree.accept(new PropertyBucket.Visitor() {
+			@Override
 			public int visit(Entry entry) {
 				PropertyEntry propertyEntry = (PropertyEntry) entry;
 				int propertyCount = propertyEntry.getOccurrences();

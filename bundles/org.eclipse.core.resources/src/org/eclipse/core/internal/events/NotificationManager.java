@@ -33,6 +33,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			setSystem(true);
 		}
 
+		@Override
 		public IStatus run(IProgressMonitor monitor) {
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;

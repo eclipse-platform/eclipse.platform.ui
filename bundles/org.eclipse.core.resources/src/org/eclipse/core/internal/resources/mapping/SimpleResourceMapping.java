@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class SimpleResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */
+	@Override
 	public boolean contains(ResourceMapping mapping) {
 		if (mapping.getModelProviderId().equals(this.getModelProviderId())) {
 			Object object = mapping.getModelObject();
@@ -49,10 +50,12 @@ public class SimpleResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
+	@Override
 	public Object getModelObject() {
 		return resource;
 	}
 
+	@Override
 	public String getModelProviderId() {
 		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	}
@@ -60,6 +63,7 @@ public class SimpleResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
+	@Override
 	public IProject[] getProjects() {
 		if (resource.getType() == IResource.ROOT)
 			return ((IWorkspaceRoot)resource).getProjects();
@@ -69,6 +73,7 @@ public class SimpleResourceMapping extends ResourceMapping {
 	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
+	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
 		if (resource.getType() == IResource.ROOT) {
 			return new ResourceTraversal[] {new ResourceTraversal(((IWorkspaceRoot)resource).getProjects(), IResource.DEPTH_INFINITE, IResource.NONE)};
