@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.bindings.keys;
 
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.bindings.Trigger;
@@ -128,7 +129,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 
 			if (i % 2 == 0) {
 				if (stringTokenizer.hasMoreTokens()) {
-					token = token.toUpperCase();
+					token = token.toUpperCase(Locale.ENGLISH);
 					final int modifierKey = lookup.formalModifierLookup(token);
 					if (modifierKey == NO_KEY) {
 						throw new ParseException(
@@ -142,7 +143,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 					naturalKey = token.charAt(0);
 
 				} else {
-					token = token.toUpperCase();
+					token = token.toUpperCase(Locale.ENGLISH);
 					naturalKey = lookup.formalKeyLookup(token);
 				}
 			}

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import org.eclipse.core.commands.Command;
@@ -281,7 +282,7 @@ public class BindingPersistence extends PreferencePersistence {
 		if (size % 2 == 1) {
 			String token = tokens[size - 1];
 			final Integer integer = (Integer) r2_1KeysByName.get(token
-					.toUpperCase());
+					.toUpperCase(Locale.ENGLISH));
 
 			if (integer != null) {
 				value = integer.intValue();

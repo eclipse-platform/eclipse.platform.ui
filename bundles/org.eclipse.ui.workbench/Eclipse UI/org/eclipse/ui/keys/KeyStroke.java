@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,11 @@ package org.eclipse.ui.keys;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -172,7 +172,7 @@ public final class KeyStroke implements Comparable {
 
             if (i % 2 == 0) {
                 if (stringTokenizer.hasMoreTokens()) {
-                    token = token.toUpperCase();
+					token = token.toUpperCase(Locale.ENGLISH);
                     ModifierKey modifierKey = (ModifierKey) ModifierKey.modifierKeysByName
                             .get(token);
 
@@ -185,7 +185,7 @@ public final class KeyStroke implements Comparable {
                     naturalKey = CharacterKey.getInstance(token.charAt(0));
                     break;
                 } else {
-                    token = token.toUpperCase();
+					token = token.toUpperCase(Locale.ENGLISH);
                     naturalKey = (NaturalKey) CharacterKey.characterKeysByName
                             .get(token);
 
