@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -15,19 +15,20 @@ import java.util.Map;
 /**
  * A <em>very</em> basic template processor.<br />
  * Any value between pairs of @@ will be substituted by the value in a map.<br />
- * Any values not in the map will be replaced by an empty string.
- * <br /> <br />
+ * Any values not in the map will be replaced by an empty string. <br />
+ * <br />
  * Behavior is undefined if keys or values contain the @@ marker.
+ * 
  * @author Steven Spungin
  *
  */
 public class SimpleTemplate {
 
 	public static String process(String source, Map<String, String> substitutionMap) {
-		for (String key : substitutionMap.keySet()) {
-			source = source.replaceAll("@@" + key + "@@", substitutionMap.get(key));
+		for (final String key : substitutionMap.keySet()) {
+			source = source.replaceAll("@@" + key + "@@", substitutionMap.get(key)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		source = source.replaceAll("@@.*?@@", "");
+		source = source.replaceAll("@@.*?@@", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		return source;
 	}
 }

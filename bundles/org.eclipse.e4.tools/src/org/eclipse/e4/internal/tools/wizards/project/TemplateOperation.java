@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Soyatec - initial API and implementation
- *     Sopot Cela - ongoing enhancements
+ * Soyatec - initial API and implementation
+ * Sopot Cela - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -42,109 +42,116 @@ import org.eclipse.pde.ui.templates.IVariableProvider;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class TemplateOperation extends WorkspaceModifyOperation implements
-		IVariableProvider {
+IVariableProvider {
 
 	private final URL templateDirectory;
 	private final IContainer target;
 	private final Map<String, String> keys;
 	private final Set<String> binaryExtentions;
-	private boolean isMinimalist;
+	private final boolean isMinimalist;
 
 	public TemplateOperation(URL source, IContainer target,
-			Map<String, String> keys, Set<String> binaryExtentions, boolean justProduct) {
+		Map<String, String> keys, Set<String> binaryExtentions, boolean justProduct) {
 		templateDirectory = source;
 		this.binaryExtentions = binaryExtentions;
 		this.target = target;
 		this.keys = keys;
-		this.isMinimalist = justProduct;
+		isMinimalist = justProduct;
 	}
 
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
+	InvocationTargetException, InterruptedException {
 		monitor.setTaskName(PDEUIMessages.AbstractTemplateSection_generating);
 
 		if ("jar".equals(templateDirectory.getProtocol())) { //$NON-NLS-1$
-			String file = templateDirectory.getFile();
-			int exclamation = file.indexOf('!');
-			if (exclamation < 0)
+			final String file = templateDirectory.getFile();
+			final int exclamation = file.indexOf('!');
+			if (exclamation < 0) {
 				return;
+			}
 			URL fileUrl = null;
 			try {
 				fileUrl = new URL(file.substring(0, exclamation));
-			} catch (MalformedURLException mue) {
+			} catch (final MalformedURLException mue) {
 				ToolsPlugin.logError(mue);
 				return;
 			}
-			File pluginJar = new File(fileUrl.getFile());
-			if (!pluginJar.exists())
+			final File pluginJar = new File(fileUrl.getFile());
+			if (!pluginJar.exists()) {
 				return;
-			String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
-			IPath path = new Path(templateDirectory);
+			}
+			final String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
+			final IPath path = new Path(templateDirectory);
 			ZipFile zipFile = null;
 			try {
 				zipFile = new ZipFile(pluginJar);
 				generateFiles(zipFile, path, target, monitor);
-			} catch (ZipException ze) {
-			} catch (IOException ioe) {
+			} catch (final ZipException ze) {
+			} catch (final IOException ioe) {
 			} finally {
 				if (zipFile != null) {
 					try {
 						zipFile.close();
-					} catch (IOException e) {
+					} catch (final IOException e) {
 					}
 				}
 			}
 		} else if ("file".equals(templateDirectory.getProtocol())) { //$NON-NLS-1$
-			File directory = new File(templateDirectory.getFile());
-			if (!directory.exists())
+			final File directory = new File(templateDirectory.getFile());
+			if (!directory.exists()) {
 				return;
+			}
 			generateFiles(directory, target, true, monitor);
 		}
 	}
 
 	private void generateFiles(File src, IContainer dst, boolean firstLevel,
-			IProgressMonitor monitor) throws CoreException {
-		if ((!firstLevel)&&(isMinimalist))
-		return;
-		File[] members = src.listFiles();
+		IProgressMonitor monitor) throws CoreException {
+		if (!firstLevel && isMinimalist) {
+			return;
+		}
+		final File[] members = src.listFiles();
 
 		for (int i = 0; i < members.length; i++) {
-			File member = members[i];
-			String name = member.getName();
+			final File member = members[i];
+			final String name = member.getName();
 			if (member.isDirectory()) {
-				if (".svn".equals(name) || "cvs".equalsIgnoreCase(name))
+				if (".svn".equals(name) || "cvs".equalsIgnoreCase(name)) { //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
+				}
 				IContainer dstContainer = null;
 
 				if (dstContainer == null) {
-					String folderName = getProcessedString(name, name);
+					final String folderName = getProcessedString(name, name);
 					dstContainer = dst.getFolder(new Path(folderName));
 				}
-				if (dstContainer != null && !dstContainer.exists())
+				if (dstContainer != null && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
-			
+				}
+
 				generateFiles(member, dstContainer, false, monitor);
 			} else {
 				InputStream in = null;
 				try {
 					in = new FileInputStream(member);
 					copyFile(name, in, dst, monitor);
-				} catch (IOException ioe) {
+				} catch (final IOException ioe) {
 				} finally {
-					if (in != null)
+					if (in != null) {
 						try {
 							in.close();
-						} catch (IOException ioe2) {
+						} catch (final IOException ioe2) {
 						}
+					}
 				}
 			}
 		}
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param zipFile
 	 * @param path
 	 * @param dst
@@ -152,15 +159,15 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 	 * @throws CoreException
 	 */
 	private void generateFiles(ZipFile zipFile, IPath path, IContainer dst,
-			IProgressMonitor monitor) throws CoreException {
-		int pathLength = path.segmentCount();
+		IProgressMonitor monitor) throws CoreException {
+		final int pathLength = path.segmentCount();
 		// Immidiate children
-		Map childZipEntries = new HashMap(); // "dir/" or "dir/file.java"
+		final Map childZipEntries = new HashMap(); // "dir/" or "dir/file.java"
 
-		for (Enumeration zipEntries = zipFile.entries(); zipEntries
-				.hasMoreElements();) {
-			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
-			IPath entryPath = new Path(zipEntry.getName());
+		for (final Enumeration zipEntries = zipFile.entries(); zipEntries
+			.hasMoreElements();) {
+			final ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+			final IPath entryPath = new Path(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
 				// ancestor or current directory
 				continue;
@@ -172,55 +179,57 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 			if (entryPath.segmentCount() == pathLength + 1) {
 				childZipEntries.put(zipEntry.getName(), zipEntry);
 			} else {
-				String name = entryPath.uptoSegment(pathLength + 1)
-						.addTrailingSeparator().toString();
+				final String name = entryPath.uptoSegment(pathLength + 1)
+					.addTrailingSeparator().toString();
 				if (!childZipEntries.containsKey(name)) {
-					ZipEntry dirEntry = new ZipEntry(name);
+					final ZipEntry dirEntry = new ZipEntry(name);
 					childZipEntries.put(name, dirEntry);
 				}
 			}
 		}
 
-		for (Iterator it = childZipEntries.values().iterator(); it.hasNext();) {
-			ZipEntry zipEnry = (ZipEntry) it.next();
-			String name = new Path(zipEnry.getName()).lastSegment().toString();
+		for (final Iterator it = childZipEntries.values().iterator(); it.hasNext();) {
+			final ZipEntry zipEnry = (ZipEntry) it.next();
+			final String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;
 
 				if (dstContainer == null) {
-					String folderName = getProcessedString(name, name);
+					final String folderName = getProcessedString(name, name);
 					dstContainer = dst.getFolder(new Path(folderName));
 				}
-				if (dstContainer != null && !dstContainer.exists())
+				if (dstContainer != null && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
+				}
 				generateFiles(zipFile, path.append(name), dstContainer, monitor);
 			} else {
 				InputStream in = null;
 				try {
 					in = zipFile.getInputStream(zipEnry);
 					copyFile(name, in, dst, monitor);
-				} catch (IOException ioe) {
+				} catch (final IOException ioe) {
 				} finally {
-					if (in != null)
+					if (in != null) {
 						try {
 							in.close();
-						} catch (IOException ioe2) {
+						} catch (final IOException ioe2) {
 						}
+					}
 				}
 			}
 		}
 	}
 
 	private void copyFile(String fileName, InputStream input, IContainer dst,
-			IProgressMonitor monitor) throws CoreException {
-		String targetFileName = getProcessedString(fileName, fileName);
+		IProgressMonitor monitor) throws CoreException {
+		final String targetFileName = getProcessedString(fileName, fileName);
 
 		monitor.subTask(targetFileName);
-		IFile dstFile = dst.getFile(new Path(targetFileName));
+		final IFile dstFile = dst.getFile(new Path(targetFileName));
 
 		try {
-			InputStream stream = isBinary(fileName) ? input
-					: getProcessedStream(fileName, input);
+			final InputStream stream = isBinary(fileName) ? input
+				: getProcessedStream(fileName, input);
 			if (dstFile.exists()) {
 				dstFile.setContents(stream, true, true, monitor);
 			} else {
@@ -228,12 +237,12 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 			}
 			stream.close();
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 	}
 
 	protected void copyFile(String fileName, InputStream input, IContainer dst,
-			final String destPath, IProgressMonitor monitor)
+		final String destPath, IProgressMonitor monitor)
 			throws CoreException {
 		String targetFileName = null;
 		if (destPath == null) {
@@ -243,11 +252,11 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 		}
 
 		monitor.subTask(targetFileName);
-		IFile dstFile = dst.getFile(new Path(targetFileName));
+		final IFile dstFile = dst.getFile(new Path(targetFileName));
 
 		try {
-			InputStream stream = isBinary(fileName) ? input
-					: getProcessedStream(fileName, input);
+			final InputStream stream = isBinary(fileName) ? input
+				: getProcessedStream(fileName, input);
 			if (dstFile.exists()) {
 				dstFile.setContents(stream, true, true, monitor);
 			} else {
@@ -255,12 +264,12 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 			}
 			stream.close();
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param fileName
 	 * @param input
 	 * @param dst
@@ -269,21 +278,21 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 	 * @throws CoreException
 	 */
 	public void copyFile(String fileName, InputStream input, IContainer dst,
-			final String basePath, final String destName,
-			IProgressMonitor monitor) throws CoreException {
-		if (basePath == null || basePath.equals("")) {
+		final String basePath, final String destName,
+		IProgressMonitor monitor) throws CoreException {
+		if (basePath == null || basePath.equals("")) { //$NON-NLS-1$
 			copyFile(fileName, input, dst, monitor);
 		}
 
-		String targetFileName = destName == null ? getProcessedString(fileName,
-				fileName) : destName;
+		final String targetFileName = destName == null ? getProcessedString(fileName,
+			fileName) : destName;
 
 		monitor.subTask(targetFileName);
-		IFile dstFile = dst.getFile(new Path(basePath + targetFileName));
+		final IFile dstFile = dst.getFile(new Path(basePath + targetFileName));
 
 		try {
-			InputStream stream = isBinary(fileName) ? input
-					: getProcessedStream(fileName, input);
+			final InputStream stream = isBinary(fileName) ? input
+				: getProcessedStream(fileName, input);
 			if (dstFile.exists()) {
 				dstFile.setContents(stream, true, true, monitor);
 			} else {
@@ -291,7 +300,7 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 			}
 			stream.close();
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 	}
 
@@ -300,27 +309,29 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 			return false;
 		}
 
-		String ext = getfileExtention(fileName);
-		if (ext == null)
+		final String ext = getfileExtention(fileName);
+		if (ext == null) {
 			return false;
+		}
 		return binaryExtentions.contains(ext);
 	}
 
 	private String getfileExtention(String name) {
-		int indexOf = name.lastIndexOf('.');
-		if (indexOf == -1)
+		final int indexOf = name.lastIndexOf('.');
+		if (indexOf == -1) {
 			return null;
+		}
 		return name.substring(indexOf);
 	}
 
 	private InputStream getProcessedStream(String fileName, InputStream stream)
-			throws IOException, CoreException {
-		InputStreamReader reader = new InputStreamReader(stream);
-		int bufsize = 1024;
-		char[] cbuffer = new char[bufsize];
+		throws IOException, CoreException {
+		final InputStreamReader reader = new InputStreamReader(stream);
+		final int bufsize = 1024;
+		final char[] cbuffer = new char[bufsize];
 		int read = 0;
-		StringBuffer keyBuffer = new StringBuffer();
-		StringBuffer outBuffer = new StringBuffer();
+		final StringBuffer keyBuffer = new StringBuffer();
+		final StringBuffer outBuffer = new StringBuffer();
 
 		boolean replacementMode = false;
 		boolean almostReplacementMode = false;
@@ -328,10 +339,10 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 		while (read != -1) {
 			read = reader.read(cbuffer);
 			for (int i = 0; i < read; i++) {
-				char c = cbuffer[i];
+				final char c = cbuffer[i];
 
 				if (escape) {
-					StringBuffer buf = outBuffer;
+					final StringBuffer buf = outBuffer;
 					buf.append(c);
 					escape = false;
 					continue;
@@ -342,9 +353,9 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 						almostReplacementMode = false;
 					} else if (replacementMode) {
 						replacementMode = false;
-						String key = keyBuffer.toString();
-						String value = key.length() == 0 ? "@@" //$NON-NLS-1$
-								: getReplacementString(key);
+						final String key = keyBuffer.toString();
+						final String value = key.length() == 0 ? "@@" //$NON-NLS-1$
+							: getReplacementString(key);
 						outBuffer.append(value);
 						keyBuffer.delete(0, keyBuffer.length());
 					} else if (almostReplacementMode) {
@@ -353,11 +364,12 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 						almostReplacementMode = true;
 					}
 				} else {
-					if (replacementMode)
+					if (replacementMode) {
 						keyBuffer.append(c);
-					else {
-						if (almostReplacementMode)
+					} else {
+						if (almostReplacementMode) {
 							outBuffer.append('@');
+						}
 						outBuffer.append(c);
 						almostReplacementMode = false;
 					}
@@ -371,17 +383,18 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 	}
 
 	private String getProcessedString(String fileName, String source) {
-		if (source.indexOf('$') == -1)
+		if (source.indexOf('$') == -1) {
 			return source;
+		}
 		int loc = -1;
-		StringBuffer buffer = new StringBuffer();
+		final StringBuffer buffer = new StringBuffer();
 		boolean replacementMode = false;
 		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
+			final char c = source.charAt(i);
 			if (c == '$') {
 				if (replacementMode) {
-					String key = source.substring(loc, i);
-					String value = key.length() == 0 ? "$" : getReplacementString(key); //$NON-NLS-1$
+					final String key = source.substring(loc, i);
+					final String value = key.length() == 0 ? "$" : getReplacementString(key); //$NON-NLS-1$
 					buffer.append(value);
 					replacementMode = false;
 				} else {
@@ -389,17 +402,19 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 					loc = i + 1;
 					continue;
 				}
-			} else if (!replacementMode)
+			} else if (!replacementMode) {
 				buffer.append(c);
+			}
 		}
 		return buffer.toString();
 	}
 
 	public String getReplacementString(String key) {
-		String result = keys.get(key);
+		final String result = keys.get(key);
 		return result != null ? result : key;
 	}
 
+	@Override
 	public Object getValue(String variable) {
 		return getReplacementString(variable);
 	}

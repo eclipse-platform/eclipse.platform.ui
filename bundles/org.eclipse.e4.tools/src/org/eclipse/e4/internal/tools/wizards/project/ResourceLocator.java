@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Soyatec - initial API and implementation
+ * Soyatec - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.e4.internal.tools.ToolsPlugin;
 
 public class ResourceLocator {
-	private static final String TEMPLATE_FOLDER = "templates";
+	private static final String TEMPLATE_FOLDER = "templates"; //$NON-NLS-1$
 
 	private static ResourceLocator instance = new ResourceLocator();
 
@@ -30,19 +30,19 @@ public class ResourceLocator {
 	}
 
 	public static URL getProjectTemplateFiles(String folder)
-			throws IOException {
-		Plugin plugin = getResorucePlugin();
-		URL installURL = plugin.getBundle().getEntry(
-				"/" + TEMPLATE_FOLDER + "/" + folder);
+		throws IOException {
+		final Plugin plugin = getResorucePlugin();
+		final URL installURL = plugin.getBundle().getEntry(
+			"/" + TEMPLATE_FOLDER + "/" + folder); //$NON-NLS-1$ //$NON-NLS-2$
 		// FileLocator.toFileURL(installURL);
-		URL corePath = FileLocator.resolve(installURL);
+		final URL corePath = FileLocator.resolve(installURL);
 		return corePath;
 	}
 
 	public static URL getFile(String relativePath) throws IOException {
-		Plugin plugin = getResorucePlugin();
-		URL installURL = plugin.getBundle().getEntry(relativePath);
-		URL corePath = FileLocator.resolve(installURL);
+		final Plugin plugin = getResorucePlugin();
+		final URL installURL = plugin.getBundle().getEntry(relativePath);
+		final URL corePath = FileLocator.resolve(installURL);
 		return corePath;
 	}
 
