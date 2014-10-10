@@ -23,6 +23,7 @@ import javax.inject.Named;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
@@ -1619,8 +1620,13 @@ public class StackRenderer extends LazyStackRenderer {
 				part.getTags().remove(CSSConstants.CSS_HIGHLIGHTED_CLASS);
 			}
 
+			String prevCssCls = WidgetElement.getCSSClass(cti);
 			setCSSInfo(part, cti);
-			reapplyStyles(cti.getParent());
+
+			if (prevCssCls == null
+					|| !prevCssCls.equals(WidgetElement.getCSSClass(cti))) {
+				reapplyStyles(cti.getParent());
+			}
 		}
 
 		public boolean validateElement(Object element) {
