@@ -119,16 +119,15 @@ public class SymlinkTest extends FileSystemTest {
 		assertEquals(illFile.getLength(), 0);
 		assertEquals(illDir.getLastModified(), 0);
 		assertEquals(illDir.getLength(), 0);
-		if (haveSymlinks()) {
-			assertTrue(ilFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(ilFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aFile");
-			assertTrue(ilDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(ilDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aDir");
-			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
-			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
-		}
+
+		assertTrue(ilFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(ilFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aFile");
+		assertTrue(ilDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(ilDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aDir");
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
 	}
 
 	// Moving a broken symlink is possible.
@@ -205,10 +204,10 @@ public class SymlinkTest extends FileSystemTest {
 		IFileInfo i1 = l1.fetchInfo();
 		assertFalse(i1.exists());
 		assertFalse(i1.isDirectory());
-		if (haveSymlinks()) {
-			assertTrue(i1.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals("l2", i1.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET));
-		}
+
+		assertTrue(i1.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals("l2", i1.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET));
+
 		IFileInfo[] infos = baseStore.childInfos(EFS.NONE, getMonitor());
 		assertEquals(infos.length, 2);
 		i1.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
@@ -265,16 +264,15 @@ public class SymlinkTest extends FileSystemTest {
 		assertEquals(iFile.getLength(), illFile.getLength());
 		assertEquals(iDir.getLastModified(), illDir.getLastModified());
 		assertEquals(iDir.getLength(), illDir.getLength());
-		if (haveSymlinks()) {
-			assertTrue(ilFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(ilFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aFile");
-			assertTrue(ilDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(ilDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aDir");
-			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
-			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
-		}
+
+		assertTrue(ilFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(ilFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aFile");
+		assertTrue(ilDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(ilDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aDir");
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
 	}
 
 	// Reading from a directory pointed to by a link is possible.
@@ -359,7 +357,7 @@ public class SymlinkTest extends FileSystemTest {
 			} else {
 				assertTrue("4." + infoName, infos[i].isDirectory());
 			}
-			if (haveSymlinks() && infos[i].getName().charAt(0) == 'l') {
+			if (infos[i].getName().charAt(0) == 'l') {
 				assertTrue("5." + infoName, infos[i].getAttribute(EFS.ATTRIBUTE_SYMLINK));
 				assertTrue("6." + infoName, infos[i].getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET).endsWith(specialCharName));
 			}
@@ -390,15 +388,14 @@ public class SymlinkTest extends FileSystemTest {
 		iDir = aDir.fetchInfo();
 		assertTrue(iDir.getLastModified() != oldTime);
 		assertEquals(iDir.getLastModified(), timeToSet);
-		if (haveSymlinks()) {
-			//check that link properties are maintained even through putInfo
-			illFile = llFile.fetchInfo();
-			illDir = llDir.fetchInfo();
-			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
-			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
-		}
+
+		// Check that link properties are maintained even through putInfo
+		illFile = llFile.fetchInfo();
+		illDir = llDir.fetchInfo();
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+		assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
 	}
 
 	public void testSymlinkPutReadOnly() throws Exception {
@@ -426,15 +423,14 @@ public class SymlinkTest extends FileSystemTest {
 		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
 		iDir = aDir.fetchInfo();
 		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		if (haveSymlinks()) {
-			//check that link properties are maintained even through putInfo
-			illFile = llFile.fetchInfo();
-			illDir = llDir.fetchInfo();
-			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
-			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
-		}
+
+		// Check that link properties are maintained even through putInfo
+		illFile = llFile.fetchInfo();
+		illDir = llDir.fetchInfo();
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+		assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
 	}
 
 	public void testSymlinkPutExecutable() throws Exception {
@@ -452,15 +448,14 @@ public class SymlinkTest extends FileSystemTest {
 		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
 		iDir = aDir.fetchInfo();
 		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
-		if (haveSymlinks()) {
-			//check that link properties are maintained even through putInfo
-			illFile = llFile.fetchInfo();
-			illDir = llDir.fetchInfo();
-			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
-			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
-			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
-		}
+
+		// Check that link properties are maintained even through putInfo
+		illFile = llFile.fetchInfo();
+		illDir = llDir.fetchInfo();
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+		assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
 	}
 
 	// Removing a symlink keeps the link target intact.
