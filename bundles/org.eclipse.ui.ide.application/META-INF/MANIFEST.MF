@@ -13,8 +13,15 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.ui.navigator.resources;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.core.net;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.core.filesystem;bundle-version="1.3.0",
- org.eclipse.e4.ui.workbench
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.di.extensions,
+ org.eclipse.osgi.services,
+ org.eclipse.e4.core.services;bundle-version="2.0.0"
 Export-Package: org.eclipse.ui.internal.ide.application;x-internal:=true,
+ org.eclipse.ui.internal.ide.application.addons;x-internal:=true,
  org.eclipse.ui.internal.ide.application.dialogs;x-internal:=true
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

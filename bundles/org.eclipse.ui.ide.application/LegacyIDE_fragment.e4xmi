@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_sTbSsF4zEeO8pdiqk8eUfg">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_sTbSsF4zEeO8pdiqk8eUfg">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_xyk_UF9tEeO-yojH_y4TJA" featurename="trimContributions" parentElementId="org.eclipse.e4.legacy.ide.application" positionInList="last">
     <elements xsi:type="menu:TrimContribution" xmi:id="_2r10UF9tEeO-yojH_y4TJA" elementId="org.eclipse.ui.ide.application.trimcontribution.QuickAccess" parentId="org.eclipse.ui.main.toolbar" positionInParent="last">
       <children xsi:type="menu:ToolControl" xmi:id="_76uUAF9tEeO-yojH_y4TJA" elementId="Spacer Glue" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl">
@@ -18,5 +18,8 @@
         <tags>SHOW_RESTORE_MENU</tags>
       </children>
     </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cBZJoGOlEeSMMaPQU2nlzw" featurename="addons" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="application:Addon" xmi:id="_dz0JgGOlEeSMMaPQU2nlzw" elementId="org.eclipse.ui.ide.application.addon.0" contributionURI="bundleclass://org.eclipse.ui.ide.application/org.eclipse.ui.internal.ide.application.addons.ModelCleanupAddon"/>
   </fragments>
 </fragment:ModelFragments>
