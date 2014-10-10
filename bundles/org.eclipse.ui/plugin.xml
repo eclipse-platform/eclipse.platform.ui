@@ -759,7 +759,7 @@
             platform="carbon"
             commandId="org.eclipse.ui.window.splitEditor"
             contextId="org.eclipse.ui.contexts.window"
-            sequence="Command+Shift+-"
+            sequence="COMMAND+SHIFT+-"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
          <parameter
                id="Splitter.isHorizontal"
@@ -787,7 +787,7 @@
             platform="carbon"
             commandId="org.eclipse.ui.window.splitEditor"
             contextId="org.eclipse.ui.contexts.window"
-            sequence="Command+Shift+["
+            sequence="COMMAND+SHIFT+["
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
          <parameter
                id="Splitter.isHorizontal"
@@ -922,7 +922,7 @@
             description="%command.save.description"
             defaultHandler="org.eclipse.ui.internal.handlers.SaveHandler"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.save" />
+            id="org.eclipse.ui.file.save"/>
       <command
             name="%command.saveAs.name"
             description="%command.saveAs.description"
