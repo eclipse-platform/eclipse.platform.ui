@@ -248,17 +248,23 @@ public class CoreTest extends TestCase {
 	 */
 	protected boolean canCreateSymLinks() {
 		if (canCreateSymLinks == null) {
-			IPath tempDir = getTempDir();
-			String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
-			try {
-				// Try to create a symlink.
-				createSymLink(tempDir.toFile(), linkName, "testTarget", false);
-				// Clean up if the link was created.
-				new File(tempDir.toFile(), linkName).delete();
+			if (isWindowsVistaOrHigher()) {
+				// Creation of a symbolic link on Windows requires administrator privileges,
+				// so it may or may not be possible.
+				IPath tempDir = getTempDir();
+				String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
+				try {
+					// Try to create a symlink.
+					createSymLink(tempDir.toFile(), linkName, "testTarget", false);
+					// Clean up if the link was created.
+					new File(tempDir.toFile(), linkName).delete();
+					canCreateSymLinks = Boolean.TRUE;
+				} catch (AssertionFailedError e) {
+					// This exception indicates that creation of the symlink failed.
+					canCreateSymLinks = Boolean.FALSE;
+				}
+			} else {
 				canCreateSymLinks = Boolean.TRUE;
-			} catch (AssertionFailedError e) {
-				// This exception indicates that creation of the symlink failed.
-				canCreateSymLinks = Boolean.FALSE;
 			}
 		}
 		return canCreateSymLinks.booleanValue();
