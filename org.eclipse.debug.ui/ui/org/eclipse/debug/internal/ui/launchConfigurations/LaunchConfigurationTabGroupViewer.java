@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -575,9 +575,9 @@ public class LaunchConfigurationTabGroupViewer {
 	 * updates the button states
 	 */
 	private void updateButtons() {
-		boolean dirty = isDirty() && canSave();
-		fApplyButton.setEnabled(dirty);
-		fRevertButton.setEnabled(dirty);
+		boolean isDirty = isDirty();
+		fApplyButton.setEnabled(isDirty && canSave());
+		fRevertButton.setEnabled(isDirty);
 	}
 
 	/* (non-Javadoc)
