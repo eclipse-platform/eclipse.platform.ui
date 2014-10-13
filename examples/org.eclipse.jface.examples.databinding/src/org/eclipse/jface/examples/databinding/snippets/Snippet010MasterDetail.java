@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
@@ -65,8 +66,7 @@ public class Snippet010MasterDetail {
 
 				// 3. Bind the Text widget to the name detail (selection's
 				// name).
-				new DataBindingContext().bindValue(SWTObservables.observeText(
-						name, SWT.None), detailObservable,
+				new DataBindingContext().bindValue(WidgetProperties.text(SWT.NONE).observe(name), detailObservable,
 						new UpdateValueStrategy(false,
 								UpdateValueStrategy.POLICY_NEVER), null);
 
