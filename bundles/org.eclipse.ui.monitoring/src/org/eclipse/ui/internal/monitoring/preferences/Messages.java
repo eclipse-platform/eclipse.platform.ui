@@ -27,9 +27,9 @@ public final class Messages extends NLS {
 	public static String MonitoringPreferencePage_enable_monitoring_label;
 	public static String MonitoringPreferencePage_filter_label;
 	public static String MonitoringPreferencePage_log_freeze_events_label;
-	public static String MonitoringPreferencePage_long_event_warning_threshold_label;
-	public static String MonitoringPreferencePage_long_event_error_threshold_label;
-	public static String MonitoringPreferencePage_long_event_error_threshold_too_low_error;
+	public static String MonitoringPreferencePage_warning_threshold_label;
+	public static String MonitoringPreferencePage_error_threshold_label;
+	public static String MonitoringPreferencePage_error_threshold_too_low_error;
 	public static String MonitoringPreferencePage_max_stack_samples_label;
 
 	private Messages() {

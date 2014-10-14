@@ -73,7 +73,7 @@ public class DefaultLoggerTests {
 		UiFreezeEvent event = createFreezeEvent();
 		String expectedTime = dateFormat.format(new Date(TIME));
 		String expectedHeader =
-				String.format("UI Delay of %.2gs at %s", DURATION / 1000.0, expectedTime);
+				String.format("UI freeze of %.2gs at %s", DURATION / 1000.0, expectedTime);
 		String expectedEventMessage = String.format("Sample at %s (+%.3fs)", expectedTime, 0.000);
 
 		logger.log(event);

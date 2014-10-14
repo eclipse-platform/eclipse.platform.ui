@@ -68,7 +68,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 			if (preferenceName.equals(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS)) {
 				if (longEventWarningThreshold.isValid() &&
 						getIntValue() < longEventWarningThreshold.getIntValue()) {
-					showMessage(Messages.MonitoringPreferencePage_long_event_error_threshold_too_low_error);
+					showMessage(Messages.MonitoringPreferencePage_error_threshold_too_low_error);
 					return false;
 				}
 			} else if (preferenceName.equals(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS)) {
@@ -126,19 +126,19 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 
 		longEventWarningThreshold = createIntegerEditor(
 				PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS,
-				Messages.MonitoringPreferencePage_long_event_warning_threshold_label, topGroup,
+				Messages.MonitoringPreferencePage_warning_threshold_label, topGroup,
 				3, HOUR_IN_MS);
 		longEventErrorThreshold = createIntegerEditor(
 				PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS,
-				Messages.MonitoringPreferencePage_long_event_error_threshold_label, topGroup,
+				Messages.MonitoringPreferencePage_error_threshold_label, topGroup,
 				3, HOUR_IN_MS);
-		createIntegerEditor(
-				PreferenceConstants.MAX_STACK_SAMPLES,
-				Messages.MonitoringPreferencePage_max_stack_samples_label, topGroup, 0, 100);
 		deadlockThreshold = createIntegerEditor(
 				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
 				Messages.MonitoringPreferencePage_deadlock_threshold_label, topGroup,
 				1000, 24 * HOUR_IN_MS);
+		createIntegerEditor(
+				PreferenceConstants.MAX_STACK_SAMPLES,
+				Messages.MonitoringPreferencePage_max_stack_samples_label, topGroup, 0, 100);
 
 		topGroup.setLayout(layout);
 
