@@ -42,12 +42,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -81,27 +79,21 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -155,9 +147,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.EditorSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
-import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
@@ -180,7 +170,6 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -3603,7 +3592,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	public static boolean saveAll(List dirtyParts, final boolean confirm, final boolean closing,
 			boolean addNonPartSources, final IRunnableContext runnableContext,
-			final IShellProvider shellProvider) {
+			final IWorkbenchWindow workbenchWindow) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
 
@@ -3613,46 +3602,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 			removeSaveOnCloseNotNeededParts(dirtyParts);
 		}
 
-		List modelsToSave;
+		SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench().getService(
+				ISaveablesLifecycleListener.class);
 		if (confirm) {
-			if (processSaveable2(dirtyParts)) {
-				return false;
-			}
-
-			modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
-			// If nothing to save, return.
-			if (modelsToSave.isEmpty()) {
-				return true;
-			}
-
-			if (SaveableHelper.waitForBackgroundSaveJobs(modelsToSave)) {
-				return false;
-			}
-
-			if (modelsToSave.size() == 1) {
-				modelsToSave = promptForSaving(shellProvider, (Saveable) modelsToSave.get(0));
-			} else {
-				modelsToSave = promptForSaving(shellProvider, modelsToSave);
-			}
-			if (modelsToSave == null) {
-				return false;
-			}
-		} else {
-			modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
+			return processSaveable2(dirtyParts) ? false : saveablesList.preCloseParts(dirtyParts, true, true,
+					workbenchWindow, workbenchWindow) != null;
 		}
+		List modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
+		return modelsToSave.isEmpty() ? true : !saveablesList.saveModels(modelsToSave, workbenchWindow,
+				runnableContext, closing);
 
-		// If the editor list is empty return.
-		if (modelsToSave.isEmpty()) {
-			return true;
-		}
-
-		// Create save block.
-		final List finalModels = modelsToSave;
-		IRunnableWithProgress progressOp = createRunnableWithProgress(confirm, closing, shellProvider, finalModels);
-
-		// Do the save.
-		return SaveableHelper.runProgressMonitorOperation(WorkbenchMessages.Save_All, progressOp,
-				runnableContext, shellProvider);
 	}
 
 	/**
@@ -3747,106 +3706,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 				listIterator.remove();
 			}
 		}
-	}
-
-	/**
-	 * Prompt the user to save the given saveable.
-	 *
-	 * @param shellProvider
-	 *            the provider used to obtain a shell in prompting is required
-	 * @param modelToSave
-	 *            the saveable to be saved
-	 * @return a list with the model to save (empty if the saveable is not
-	 *         accepted to be saved) or null if canceled
-	 */
-	private static List promptForSaving(final IShellProvider shellProvider, Saveable modelToSave) {
-		String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion,
- modelToSave.getName());
-		// Show a dialog.
-		String[] buttons = new String[] { IDialogConstants.YES_LABEL,
-				IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-		MessageDialog d = new MessageDialog(shellProvider.getShell(),
-				WorkbenchMessages.Save_Resource, null, message, MessageDialog.QUESTION,
-				buttons, 0) {
-			@Override
-			protected int getShellStyle() {
-				return super.getShellStyle() | SWT.SHEET;
-			}
-		};
-
-		int choice = SaveableHelper.testGetAutomatedResponse();
-		if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
-			choice = d.open();
-		}
-		if (choice == ISaveablePart2.CANCEL) {
-			return null;
-		}
-
-		List<Saveable> modelsToSave = new ArrayList<Saveable>();
-		if (choice != ISaveablePart2.NO) {
-			modelsToSave.add(modelToSave);
-		}
-		return modelsToSave;
-	}
-
-	/**
-	 * Prompt the user to save the given saveables.
-	 *
-	 * @param shellProvider
-	 *            the provider used to obtain a shell in prompting is required
-	 * @param modelsToSave
-	 *            the saveables to be saved
-	 * @return a list with the models selected to save or null if canceled
-	 */
-	private static List promptForSaving(final IShellProvider shellProvider, List modelsToSave) {
-		ListSelectionDialog dlg = new ListSelectionDialog(shellProvider.getShell(), modelsToSave,
-				new ArrayContentProvider(), new WorkbenchPartLabelProvider(),
-				WorkbenchMessages.EditorManager_saveResourcesMessage) {
-			@Override
-			protected int getShellStyle() {
-				return super.getShellStyle() | SWT.SHEET;
-			}
-		};
-		dlg.setInitialSelections(modelsToSave.toArray());
-		dlg.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
-
-		// this "if" statement aids in testing.
-		if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
-			int result = dlg.open();
-			// Just return false to prevent the operation continuing
-			if (result == IDialogConstants.CANCEL_ID) {
-				return null;
-			}
-
-			modelsToSave = Arrays.asList(dlg.getResult());
-		}
-		return modelsToSave;
-	}
-
-	private static IRunnableWithProgress createRunnableWithProgress(final boolean confirm, final boolean closing,
-			final IShellProvider shellProvider, final List finalModels) {
-		return new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-				monitorWrap.beginTask(WorkbenchMessages.Saving_Modifications, finalModels.size());
-				for (Iterator i = finalModels.iterator(); i.hasNext();) {
-					Saveable model = (Saveable) i.next();
-					// handle case where this model got saved as a result of
-					// saving another
-					if (!model.isDirty()) {
-						monitor.worked(1);
-						continue;
-					}
-					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), shellProvider, closing
-							|| confirm);
-					if (monitorWrap.isCanceled()) {
-						break;
-					}
-				}
-				monitorWrap.done();
-			}
-		};
 	}
 
 	/**
