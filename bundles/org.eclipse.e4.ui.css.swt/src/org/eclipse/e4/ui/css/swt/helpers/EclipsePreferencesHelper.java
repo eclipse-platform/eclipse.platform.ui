@@ -27,6 +27,10 @@ public class EclipsePreferencesHelper {
 
 	private static IPreferenceChangeListener preferenceChangeListener;
 
+	private static String previousThemeId;
+
+	private static String currentThemeId;
+
 	public static void appendOverriddenPropertyName(
 			IEclipsePreferences preferences, String name) {
 		String value = preferences.get(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR);
@@ -85,6 +89,18 @@ public class EclipsePreferencesHelper {
 		}
 		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP,
 				overriddenByCSS.toString());
+	}
+
+	public static void setPreviousThemeId(String themeId) {
+		previousThemeId = themeId;
+	}
+
+	public static void setCurrentThemeId(String themeId) {
+		currentThemeId = themeId;
+	}
+
+	public static boolean isThemeChanged() {
+		return currentThemeId != null && !currentThemeId.equals(previousThemeId);
 	}
 
 	public static class PreferenceOverriddenByCssChangeListener implements

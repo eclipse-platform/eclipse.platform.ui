@@ -44,6 +44,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
+import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -453,6 +454,9 @@ public class ThemeEngine implements IThemeEngine {
 
 		if (restore) {
 			IEclipsePreferences pref = getPreferences();
+			EclipsePreferencesHelper.setPreviousThemeId(pref.get(THEMEID_KEY, null));
+			EclipsePreferencesHelper.setCurrentThemeId(theme.getId());
+
 			pref.put(THEMEID_KEY, theme.getId());
 			try {
 				pref.flush();
