@@ -41,8 +41,9 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.common.ModelEditorPreferences;
+import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
@@ -239,8 +240,8 @@ public class ListTab implements IViewEObjects {
 	private void loadSettings() {
 		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
 
-		boolean restoreColumns = pref.getBoolean("list-tab-remember-columns", false); //$NON-NLS-1$
-		boolean restoreFilters = pref.getBoolean("list-tab-remember-filters", false); //$NON-NLS-1$
+		boolean restoreColumns = pref.getBoolean(ModelEditorPreferences.LIST_TAB_REMEMBER_COLUMNS, false);
+		boolean restoreFilters = pref.getBoolean(ModelEditorPreferences.LIST_TAB_REMEMBER_FILTERS, false);
 		if (!restoreColumns && !restoreFilters) {
 			return;
 		}

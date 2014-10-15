@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import org.eclipse.e4.tools.emf.ui.common.Plugin;
+
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;

@@ -1,4 +1,4 @@
-package org.eclipse.e4.tools.emf.ui.internal;
+package org.eclipse.e4.tools.emf.ui.common;
 
 public interface Plugin {
 

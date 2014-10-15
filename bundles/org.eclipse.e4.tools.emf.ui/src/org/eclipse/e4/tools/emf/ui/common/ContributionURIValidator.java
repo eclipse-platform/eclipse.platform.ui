@@ -14,7 +14,6 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.emf.common.util.URI;
 
 public class ContributionURIValidator implements IValidator {

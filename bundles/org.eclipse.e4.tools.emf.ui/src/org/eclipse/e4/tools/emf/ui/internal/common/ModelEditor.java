@@ -60,11 +60,12 @@ import org.eclipse.e4.tools.emf.ui.common.IModelExtractor;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
+import org.eclipse.e4.tools.emf.ui.common.ModelEditorPreferences;
+import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
-import org.eclipse.e4.tools.emf.ui.internal.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
@@ -292,11 +293,11 @@ public class ModelEditor implements IGotoObject {
 	private IClipboardService clipboardService;
 
 	@Inject
-	@Preference(nodePath = Plugin.ID, value = "autoCreateElementId")
+	@Preference(nodePath = Plugin.ID, value = ModelEditorPreferences.AUTO_CREATE_ELEMENT_ID)
 	private boolean autoCreateElementId;
 
 	@Inject
-	@Preference(nodePath = Plugin.ID, value = "showXMIId")
+	@Preference(nodePath = Plugin.ID, value = ModelEditorPreferences.SHOW_XMI_ID)
 	private boolean showXMIId;
 
 	@Inject
@@ -1042,7 +1043,7 @@ public class ModelEditor implements IGotoObject {
 
 		TreeViewer tempViewer = null;
 		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
+		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, false)) { //$NON-NLS-1$
 			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), false);
 			tempViewer = viewParent.getViewer();
 		} else {
@@ -1309,7 +1310,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	@Inject
-	public void setNotVisibleColor(@Preference("notVisibleColor") String color) {
+	public void setNotVisibleColor(@Preference(ModelEditorPreferences.NOT_VISIBLE_COLOR) String color) {
 		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_KEY);
 
 		if (current == null || !current.equals(color)) {
@@ -1323,7 +1324,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	@Inject
-	public void setNotRenderedColor(@Preference("notRenderedColor") String color) {
+	public void setNotRenderedColor(@Preference(ModelEditorPreferences.NOT_RENDERED_COLOR) String color) {
 		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_RENDERED_KEY);
 
 		if (current == null || !current.equals(color)) {
@@ -1337,7 +1338,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	@Inject
-	public void setNotVisibleRenderedColor(@Preference("notVisibleAndRenderedColor") String color) {
+	public void setNotVisibleRenderedColor(@Preference(ModelEditorPreferences.NOT_VISIBLE_AND_RENDERED_COLOR) String color) {
 		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
 
 		if (current == null || !current.equals(color)) {
