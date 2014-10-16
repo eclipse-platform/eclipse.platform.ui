@@ -113,7 +113,14 @@
                  <adapt type="org.eclipse.core.resources.IFile"/>
               </or>
            </possibleDropTargets>
-        </dropAssistant>        
+        </dropAssistant>
+        <dropAssistant
+              class="org.eclipse.ui.internal.navigator.workingsets.ProjectInWorkingSetDropAdapterAssistant"
+              id="org.eclipse.ui.navigator.resources.projectInWorkingSetDropAdapter">
+           <possibleDropTargets>
+             <adapt type="org.eclipse.ui.IWorkingSet"/>
+           </possibleDropTargets>
+        </dropAssistant>
 
         <actionProvider
               class="org.eclipse.ui.internal.navigator.resources.actions.EditActionProvider"
