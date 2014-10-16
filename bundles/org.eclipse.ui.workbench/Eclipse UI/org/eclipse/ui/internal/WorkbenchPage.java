@@ -192,14 +192,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		@Override
 		public void partActivated(MPart part) {
+			updateActivations(part);
+			firePartActivated(part);
+
 			// update the workbench window's current selection with the active
 			// part's selection
 			SelectionService service = (SelectionService) getWorkbenchWindow()
 					.getSelectionService();
 			service.updateSelection(getWorkbenchPart(part));
-			
-			updateActivations(part);
-			firePartActivated(part);
 		}
 
 		@Override
