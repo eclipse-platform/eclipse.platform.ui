@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -155,6 +156,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ISourceProvider;
@@ -1334,15 +1336,25 @@ public final class Workbench extends EventManager implements IWorkbench,
 	}
 
 	private boolean saveAllEditors(boolean confirm, boolean closing) {
-		for (IWorkbenchWindow window : getWorkbenchWindows()) {
-			IWorkbenchPage page = window.getActivePage();
+		IWorkbenchWindow[] windows = getWorkbenchWindows();
+		if (windows.length == 0) {
+			return true;
+		}
+
+		Set<ISaveablePart> dirtyParts = new HashSet<ISaveablePart>();
+		for (IWorkbenchWindow window : windows) {
+			WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 			if (page != null) {
-				if (!((WorkbenchPage) page).saveAllEditors(confirm, closing, false)) {
-					return false;
-				}
+				Collections.addAll(dirtyParts, page.getDirtyParts());
 			}
 		}
-		return true;
+
+		IWorkbenchWindow activeWindow = getActiveWorkbenchWindow();
+		if (activeWindow == null) {
+			activeWindow = windows[0];
+		}
+		return WorkbenchPage.saveAll(new ArrayList<ISaveablePart>(dirtyParts),
+				confirm, closing, true, activeWindow, activeWindow);
 	}
 
 	@Override
