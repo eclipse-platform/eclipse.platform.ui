@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -943,20 +943,20 @@ public class LinkedResourceTest extends ResourceTest {
 			file1.createLink(localFile, IResource.NONE, getMonitor());
 			file2.createLink(localFile, IResource.NONE, getMonitor());
 
-			HashMap links = ((Project) project).internalGetDescription().getLinks();
-			LinkDescription linkDescription1 = (LinkDescription) links.get(file1.getProjectRelativePath());
+			HashMap<IPath, LinkDescription> links = ((Project) project).internalGetDescription().getLinks();
+			LinkDescription linkDescription1 = links.get(file1.getProjectRelativePath());
 			assertNotNull("1.0", linkDescription1);
 			assertEquals("1.1", URIUtil.toURI(localFile), linkDescription1.getLocationURI());
-			LinkDescription linkDescription2 = (LinkDescription) links.get(file2.getProjectRelativePath());
+			LinkDescription linkDescription2 = links.get(file2.getProjectRelativePath());
 			assertNotNull("2.0", linkDescription2);
 			assertEquals("2.1", URIUtil.toURI(localFile), linkDescription2.getLocationURI());
 
 			folder.delete(true, getMonitor());
 
 			links = ((Project) project).internalGetDescription().getLinks();
-			linkDescription1 = (LinkDescription) links.get(file1.getProjectRelativePath());
+			linkDescription1 = links.get(file1.getProjectRelativePath());
 			assertNull("3.0", linkDescription1);
-			linkDescription2 = (LinkDescription) links.get(file2.getProjectRelativePath());
+			linkDescription2 = links.get(file2.getProjectRelativePath());
 			assertNotNull("4.0", linkDescription2);
 			assertEquals("4.1", URIUtil.toURI(localFile), linkDescription2.getLocationURI());
 		} catch (CoreException e) {
@@ -1769,7 +1769,7 @@ public class LinkedResourceTest extends ResourceTest {
 			assertFalse("6.0", linkedFile.exists());
 
 			// the project description should not contain links
-			HashMap links = null;
+			HashMap<IPath, LinkDescription> links = null;
 			try {
 				links = ((ProjectDescription) existingProject.getDescription()).getLinks();
 			} catch (CoreException e) {
