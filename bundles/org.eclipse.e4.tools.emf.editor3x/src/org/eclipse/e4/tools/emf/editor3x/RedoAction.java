@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -19,12 +19,14 @@ public class RedoAction extends Action {
 
 	public RedoAction(IModelResource resource) {
 		this.resource = resource;
-		this.listener = new IModelResource.ModelListener() {
+		listener = new IModelResource.ModelListener() {
 
+			@Override
 			public void commandStackChanged() {
 				update();
 			}
 
+			@Override
 			public void dirtyChanged() {
 
 			}
@@ -43,12 +45,12 @@ public class RedoAction extends Action {
 
 	private void update() {
 		if (resource.getEditingDomain().getCommandStack().canRedo()) {
-			setText("Redo "
-					+ resource.getEditingDomain().getCommandStack()
-							.getRedoCommand().getLabel());
+			setText(Messages.RedoAction_Redo + " " //$NON-NLS-1$
+				+ resource.getEditingDomain().getCommandStack()
+					.getRedoCommand().getLabel());
 			setEnabled(true);
 		} else {
-			setText("Redo");
+			setText(Messages.RedoAction_Redo);
 			setEnabled(false);
 		}
 	}

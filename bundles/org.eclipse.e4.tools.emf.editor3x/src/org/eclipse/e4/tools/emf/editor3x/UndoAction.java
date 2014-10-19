@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -19,12 +19,14 @@ public class UndoAction extends Action {
 
 	public UndoAction(IModelResource resource) {
 		this.resource = resource;
-		this.listener = new IModelResource.ModelListener() {
+		listener = new IModelResource.ModelListener() {
 
+			@Override
 			public void commandStackChanged() {
 				update();
 			}
 
+			@Override
 			public void dirtyChanged() {
 			}
 		};
@@ -41,12 +43,12 @@ public class UndoAction extends Action {
 
 	private void update() {
 		if (resource.getEditingDomain().getCommandStack().canUndo()) {
-			setText("Undo "
-					+ resource.getEditingDomain().getCommandStack()
-							.getUndoCommand().getLabel());
+			setText(Messages.UndoAction_Undo + " " //$NON-NLS-2$
+				+ resource.getEditingDomain().getCommandStack()
+				.getUndoCommand().getLabel());
 			setEnabled(true);
 		} else {
-			setText("Undo");
+			setText(Messages.UndoAction_Undo);
 			setEnabled(false);
 		}
 	}

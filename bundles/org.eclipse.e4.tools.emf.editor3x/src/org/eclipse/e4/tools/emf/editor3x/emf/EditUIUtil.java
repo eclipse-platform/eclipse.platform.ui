@@ -15,7 +15,7 @@ public class EditUIUtil {
 		Class<?> fileClass = null;
 		try {
 			fileClass = IFile.class;
-		} catch (Exception exception) {
+		} catch (final Exception exception) {
 			// Ignore any exceptions and assume the class isn't available.
 		}
 		FILE_CLASS = fileClass;
@@ -26,15 +26,15 @@ public class EditUIUtil {
 	static {
 		Class<?> fileRevisionClass = null;
 		Method fileRevisionGetURIMethod = null;
-		Bundle bundle = Platform.getBundle("org.eclipse.team.core");
+		final Bundle bundle = Platform.getBundle("org.eclipse.team.core"); //$NON-NLS-1$
 		if (bundle != null
-				&& (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0) {
+			&& (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0) {
 			try {
 				fileRevisionClass = bundle
-						.loadClass("org.eclipse.team.core.history.IFileRevision");
+					.loadClass("org.eclipse.team.core.history.IFileRevision"); //$NON-NLS-1$
 				fileRevisionGetURIMethod = fileRevisionClass
-						.getMethod("getURI");
-			} catch (Exception exeption) {
+					.getMethod("getURI"); //$NON-NLS-1$
+			} catch (final Exception exeption) {
 				// Ignore any exceptions and assume the class isn't available.
 			}
 		}
@@ -47,7 +47,7 @@ public class EditUIUtil {
 		Class<?> uriEditorInputClass = null;
 		try {
 			uriEditorInputClass = IURIEditorInput.class;
-		} catch (Exception exception) {
+		} catch (final Exception exception) {
 			// The class is not available.
 		}
 		URI_EDITOR_INPUT_CLASS = uriEditorInputClass;
@@ -56,20 +56,20 @@ public class EditUIUtil {
 	public static URI getURI(IEditorInput editorInput) {
 
 		if (FILE_CLASS != null) {
-			IFile file = (IFile) editorInput.getAdapter(FILE_CLASS);
+			final IFile file = (IFile) editorInput.getAdapter(FILE_CLASS);
 			if (file != null) {
 				return URI.createPlatformResourceURI(file.getFullPath()
-						.toString(), true);
+					.toString(), true);
 			}
 		}
 		if (FILE_REVISION_CLASS != null) {
-			Object fileRevision = editorInput.getAdapter(FILE_REVISION_CLASS);
+			final Object fileRevision = editorInput.getAdapter(FILE_REVISION_CLASS);
 			if (fileRevision != null) {
 				try {
 					return URI
-							.createURI(((java.net.URI) FILE_REVISION_GET_URI_METHOD
-									.invoke(fileRevision)).toString());
-				} catch (Exception exception) {
+						.createURI(((java.net.URI) FILE_REVISION_GET_URI_METHOD
+							.invoke(fileRevision)).toString());
+				} catch (final Exception exception) {
 					// TODO Log error
 				}
 			}
@@ -77,8 +77,8 @@ public class EditUIUtil {
 		if (URI_EDITOR_INPUT_CLASS != null) {
 			if (editorInput instanceof IURIEditorInput) {
 				return URI.createURI(
-						((IURIEditorInput) editorInput).getURI().toString())
-						.trimFragment();
+					((IURIEditorInput) editorInput).getURI().toString())
+					.trimFragment();
 			}
 		}
 

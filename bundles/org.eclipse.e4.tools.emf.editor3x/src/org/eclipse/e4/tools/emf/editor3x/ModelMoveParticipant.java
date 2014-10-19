@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Wim Jongman <wim.jongman@remainsoftware.com> - Bug 395174: e4xmi should participate in package renaming 
- *                                                    Bug 432892: Eclipse 4 Application does not work after renaming the project name
+ * Wim Jongman <wim.jongman@remainsoftware.com> - Bug 395174: e4xmi should participate in package renaming
+ * Bug 432892: Eclipse 4 Application does not work after renaming the project name
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -62,13 +62,13 @@ public class ModelMoveParticipant extends MoveParticipant {
 
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pMonitor,
-			CheckConditionsContext pContext) throws OperationCanceledException {
+		CheckConditionsContext pContext) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
 	@Override
 	public Change createChange(IProgressMonitor pMonitor) throws CoreException,
-			OperationCanceledException {
+		OperationCanceledException {
 
 		pMonitor.beginTask("Creating Change ..", IProgressMonitor.UNKNOWN);
 
@@ -92,21 +92,21 @@ public class ModelMoveParticipant extends MoveParticipant {
 	}
 
 	private Change createFileChange(IProgressMonitor pMonitor, IFile file)
-			throws CoreException {
+		throws CoreException {
 
-		String newUrl = "platform:/plugin/";
+		String newUrl = "platform:/plugin/"; //$NON-NLS-1$
 		if (getArguments().getDestination() instanceof IFolder) {
-			IFolder folder = (IFolder) getArguments().getDestination();
-			newUrl += folder.getProject().getName() + "/"
-					+ folder.getProjectRelativePath().toString() + "/"
-					+ file.getName();
+			final IFolder folder = (IFolder) getArguments().getDestination();
+			newUrl += folder.getProject().getName() + "/" //$NON-NLS-1$
+				+ folder.getProjectRelativePath().toString() + "/" //$NON-NLS-1$
+				+ file.getName();
 		} else {
-			IProject project = (IProject) getArguments().getDestination();
-			newUrl += project.getName() + "/" + file.getName();
+			final IProject project = (IProject) getArguments().getDestination();
+			newUrl += project.getName() + "/" + file.getName(); //$NON-NLS-1$
 
 		}
 
-		String oldUrl = "platform:/plugin" + file.getFullPath();
+		final String oldUrl = "platform:/plugin" + file.getFullPath(); //$NON-NLS-1$
 
 		fModel.addTextRename(oldUrl, newUrl);
 
@@ -114,21 +114,21 @@ public class ModelMoveParticipant extends MoveParticipant {
 	}
 
 	private Change createPackageChange(IProgressMonitor pMonitor,
-			IPackageFragment pPckage) throws CoreException,
-			OperationCanceledException {
-		String fromBundle = Util.getBundleSymbolicName(pPckage.getJavaProject()
-				.getProject());
+		IPackageFragment pPckage) throws CoreException,
+		OperationCanceledException {
+		final String fromBundle = Util.getBundleSymbolicName(pPckage.getJavaProject()
+			.getProject());
 
-		IPackageFragmentRoot fragmentRoot = (IPackageFragmentRoot) getArguments()
-				.getDestination();
-		String toBundle = Util.getBundleSymbolicName(fragmentRoot
-				.getJavaProject().getProject());
+		final IPackageFragmentRoot fragmentRoot = (IPackageFragmentRoot) getArguments()
+			.getDestination();
+		final String toBundle = Util.getBundleSymbolicName(fragmentRoot
+			.getJavaProject().getProject());
 
-		final String newUrl = "bundleclass://" + toBundle + "/"
-				+ pPckage.getElementName();
+		final String newUrl = "bundleclass://" + toBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
+			+ pPckage.getElementName();
 
-		String oldUrl = "bundleclass://" + fromBundle + "/"
-				+ pPckage.getElementName();
+		final String oldUrl = "bundleclass://" + fromBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
+			+ pPckage.getElementName();
 
 		fModel.addTextRename(oldUrl, newUrl);
 
@@ -136,24 +136,24 @@ public class ModelMoveParticipant extends MoveParticipant {
 	}
 
 	private Change createClassChange(IProgressMonitor pMonitor, IType pType)
-			throws CoreException, OperationCanceledException {
-		String fromBundle = Util.getBundleSymbolicName(fType.getJavaProject()
-				.getProject());
-		String fromClassname = pType.getFullyQualifiedName();
+		throws CoreException, OperationCanceledException {
+		final String fromBundle = Util.getBundleSymbolicName(fType.getJavaProject()
+			.getProject());
+		final String fromClassname = pType.getFullyQualifiedName();
 
-		IPackageFragment fragment = (IPackageFragment) getArguments()
-				.getDestination();
-		String toBundle = Util.getBundleSymbolicName(fragment.getJavaProject()
-				.getProject());
-		String toClassName = fragment.getElementName().length() == 0 ? pType
-				.getElementName() : fragment.getElementName() + "."
-				+ pType.getElementName();
+		final IPackageFragment fragment = (IPackageFragment) getArguments()
+			.getDestination();
+		final String toBundle = Util.getBundleSymbolicName(fragment.getJavaProject()
+			.getProject());
+		final String toClassName = fragment.getElementName().length() == 0 ? pType
+			.getElementName() : fragment.getElementName() + "." //$NON-NLS-1$
+			+ pType.getElementName();
 
-		return RefactorParticipantDelegate.createChange(
-				pMonitor,
-				fModel.addTextRename("bundleclass://" + fromBundle + "/"
-						+ fromClassname, "bundleclass://" + toBundle + "/"
-						+ toClassName));
+			return RefactorParticipantDelegate.createChange(
+			pMonitor,
+			fModel.addTextRename("bundleclass://" + fromBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
+				+ fromClassname, "bundleclass://" + toBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
+				+ toClassName));
 	}
 
 }

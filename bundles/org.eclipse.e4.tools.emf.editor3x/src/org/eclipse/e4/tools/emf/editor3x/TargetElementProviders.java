@@ -17,109 +17,115 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 
 public class TargetElementProviders implements IModelElementProvider {
-	private static final String APP_E4XMI_DEFAULT = "Application.e4xmi";
+	private static final String APP_E4XMI_DEFAULT = "Application.e4xmi"; //$NON-NLS-1$
 	private ResourceSet resourceSet;
-	
+
+	@Override
 	public void getModelElements(Filter filter, ModelResultHandler handler) {
-		if( resourceSet == null ) {
+		if (resourceSet == null) {
 			resourceSet = new ResourceSetImpl();
-			PDEExtensionRegistry reg = new PDEExtensionRegistry();
-			IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true);
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			
-			for( IExtension ext : extensions ) {
-				for( IConfigurationElement el : ext.getConfigurationElements() ) {
-					if( el.getName().equals("fragment") ) {
+			final PDEExtensionRegistry reg = new PDEExtensionRegistry();
+			IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true); //$NON-NLS-1$
+			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+			for (final IExtension ext : extensions) {
+				for (final IConfigurationElement el : ext.getConfigurationElements()) {
+					if (el.getName().equals("fragment")) { //$NON-NLS-1$
 						URI uri;
-//						System.err.println("Model-Ext: Checking: " + ext.getContributor().getName());
-						IProject p = root.getProject(ext.getContributor().getName());
-						if( p.exists() && p.isOpen() ) {
-							uri = URI.createPlatformResourceURI(ext.getContributor().getName() + "/" + el.getAttribute("uri"), true);	
+						// System.err.println("Model-Ext: Checking: " + ext.getContributor().getName());
+						final IProject p = root.getProject(ext.getContributor().getName());
+						if (p.exists() && p.isOpen()) {
+							uri = URI.createPlatformResourceURI(
+								ext.getContributor().getName() + "/" + el.getAttribute("uri"), true); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
-							uri = URI.createURI("platform:/plugin/" + ext.getContributor().getName() + "/" + el.getAttribute("uri") );							
+							uri = URI.createURI("platform:/plugin/" + ext.getContributor().getName() + "/" //$NON-NLS-1$ //$NON-NLS-2$
+								+ el.getAttribute("uri")); //$NON-NLS-1$
 						}
-//						System.err.println(uri);
+						// System.err.println(uri);
 						try {
-							resourceSet.getResource(uri, true);							
-						} catch (Exception e) {
+							resourceSet.getResource(uri, true);
+						} catch (final Exception e) {
 							e.printStackTrace();
-//							System.err.println("=============> Failing");
+							// System.err.println("=============> Failing");
 						}
 
 					}
 				}
 			}
-			
-			extensions = reg.findExtensions("org.eclipse.core.runtime.products", true);
-			for( IExtension ext : extensions ) {
-				for( IConfigurationElement el : ext.getConfigurationElements() ) {
-					if( el.getName().equals("product") ) {
+
+			extensions = reg.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
+			for (final IExtension ext : extensions) {
+				for (final IConfigurationElement el : ext.getConfigurationElements()) {
+					if (el.getName().equals("product")) { //$NON-NLS-1$
 						boolean xmiPropertyPresent = false;
-						for( IConfigurationElement prop: el.getChildren("property") ) {
-							if( prop.getAttribute("name").equals("applicationXMI") ) {
-								String v = prop.getAttribute("value");
+						for (final IConfigurationElement prop : el.getChildren("property")) { //$NON-NLS-1$
+							if (prop.getAttribute("name").equals("applicationXMI")) { //$NON-NLS-1$//$NON-NLS-2$
+								final String v = prop.getAttribute("value"); //$NON-NLS-1$
 								setUpResourceSet(root, v);
 								xmiPropertyPresent = true;
 								break;
 							}
 						}
-						if (!xmiPropertyPresent){
-							setUpResourceSet(root, ext.getNamespaceIdentifier()+"/"+APP_E4XMI_DEFAULT);
+						if (!xmiPropertyPresent) {
+							setUpResourceSet(root, ext.getNamespaceIdentifier() + "/" + APP_E4XMI_DEFAULT); //$NON-NLS-1$
 							break;
 						}
 					}
 				}
-			}			
+			}
 		}
-		
+
 		applyFilter(filter, handler);
 	}
 
 	private void setUpResourceSet(IWorkspaceRoot root, String v) {
-		String[] s = v.split("/");
+		final String[] s = v.split("/"); //$NON-NLS-1$
 		URI uri;
-//								System.err.println("Product-Ext: Checking: " + v + " => P:" +  s[0] + "");
-		IProject p = root.getProject(s[0]);
-		if( p.exists() && p.isOpen() ) {
-			uri = URI.createPlatformResourceURI(v, true );	
+		// System.err.println("Product-Ext: Checking: " + v + " => P:" + s[0] + "");
+		final IProject p = root.getProject(s[0]);
+		if (p.exists() && p.isOpen()) {
+			uri = URI.createPlatformResourceURI(v, true);
 		} else {
-			uri = URI.createURI("platform:/plugin/" + v );
+			uri = URI.createURI("platform:/plugin/" + v); //$NON-NLS-1$
 		}
-		
-//		System.err.println(uri);
+
+		// System.err.println(uri);
 		try {
-			//prevent some unnecessary calls by checking the uri 
-			if (resourceSet.getURIConverter().exists(uri, null)
-					)
-			resourceSet.getResource(uri, true);							
-		} catch (Exception e) {
+			// prevent some unnecessary calls by checking the uri
+			if (resourceSet.getURIConverter().exists(uri, null)) {
+				resourceSet.getResource(uri, true);
+			}
+		} catch (final Exception e) {
 			e.printStackTrace();
-//									System.err.println("=============> Failing");
-		}
-	}
-	
-	private void applyFilter(Filter filter, ModelResultHandler handler) {
-		for (Resource res : resourceSet.getResources()) {
-				TreeIterator<EObject> it = EcoreUtil.getAllContents(res,
-						true);
-				while (it.hasNext()) {
-					EObject o = it.next();
-					if (o.eContainingFeature() != FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
-						if (o.eClass().equals(filter.eClass)) {
-//							System.err.println("Found: " + o);
-							handler.result(o);
-						}
-					}
-				}
+			// System.err.println("=============> Failing");
 		}
 	}
 
+	private void applyFilter(Filter filter, ModelResultHandler handler) {
+		for (final Resource res : resourceSet.getResources()) {
+			final TreeIterator<EObject> it = EcoreUtil.getAllContents(res,
+				true);
+			while (it.hasNext()) {
+				final EObject o = it.next();
+				if (o.eContainingFeature() != FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+					if (o.eClass().equals(filter.eClass)) {
+						// System.err.println("Found: " + o);
+						handler.result(o);
+					}
+				}
+			}
+		}
+	}
+
+	@Override
 	public void clearCache() {
-		if (resourceSet==null) return;
-		for (Resource r : resourceSet.getResources()) {
+		if (resourceSet == null) {
+			return;
+		}
+		for (final Resource r : resourceSet.getResources()) {
 			r.unload();
 		}
 		resourceSet = null;
 	}
-	
+
 }

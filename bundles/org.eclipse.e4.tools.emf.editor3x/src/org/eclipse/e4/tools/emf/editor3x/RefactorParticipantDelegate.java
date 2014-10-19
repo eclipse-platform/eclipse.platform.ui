@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Wim Jongman <wim.jongman@remainsoftware.com>  Bug 432892: Eclipse 4 Application does not work after renaming the project name
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Wim Jongman <wim.jongman@remainsoftware.com> Bug 432892: Eclipse 4 Application does not work after renaming the
+ * project name
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -34,12 +35,12 @@ import org.eclipse.text.edits.TextEditGroup;
 
 class RefactorParticipantDelegate {
 
-	private static final String E4_MODEL_CHANGES = "Eclipse 4 Application Model Changes";
+	private static final String E4_MODEL_CHANGES = "Eclipse 4 Application Model Changes"; //$NON-NLS-1$
 
 	/**
 	 * Creates a set of changes and returns a new {@link CompositeChange} or
 	 * adds the changes to the passed {@link CompositeChange}.
-	 * 
+	 *
 	 * @param pProgressMonitor
 	 * @param pParticipant
 	 * @param pOldUrl
@@ -53,44 +54,44 @@ class RefactorParticipantDelegate {
 	 * @throws OperationCanceledException
 	 */
 	public static CompositeChange createChange(
-			IProgressMonitor pProgressMonitor, final RefactorModel pModel)
+		IProgressMonitor pProgressMonitor, final RefactorModel pModel)
 			throws CoreException, OperationCanceledException {
 
-		String[] filenames = { "*.e4xmi", "plugin.xml" };
-		FileTextSearchScope scope = FileTextSearchScope.newWorkspaceScope(
-				filenames, false);
+		final String[] filenames = { "*.e4xmi", "plugin.xml" }; //$NON-NLS-1$ //$NON-NLS-2$
+		final FileTextSearchScope scope = FileTextSearchScope.newWorkspaceScope(
+			filenames, false);
 
 		final Map<IFile, TextFileChange> changes = new HashMap<IFile, TextFileChange>();
-		TextSearchRequestor searchRequestor = new TextSearchRequestor() {
+		final TextSearchRequestor searchRequestor = new TextSearchRequestor() {
 
 			@Override
 			public boolean acceptPatternMatch(TextSearchMatchAccess matchAccess)
-					throws CoreException {
-				IFile file = matchAccess.getFile();
+				throws CoreException {
+				final IFile file = matchAccess.getFile();
 				TextFileChange change = changes.get(file);
 
 				if (change == null) {
-					TextChange textChange = pModel.getTextChange(file);
+					final TextChange textChange = pModel.getTextChange(file);
 					if (textChange != null) {
 						return false;
 					}
 
 					if (pModel.isProjectRename()
-							&& file.getProject().equals(pModel.getOldProject())) {
+						&& file.getProject().equals(pModel.getOldProject())) {
 						// The project/resources get refactored before the
 						// TextChange is applied, therefore we need their
 						// future locations
-						IProject newProject = pModel.getNewProject();
+						final IProject newProject = pModel.getNewProject();
 
 						// If the model is in a non-standard location the
 						// new project will keep that location, only the project
 						// will be changed
-						IPath oldFile = file.getFullPath().removeFirstSegments(
-								1);
-						IFile newFile = newProject.getFile(oldFile);
+						final IPath oldFile = file.getFullPath().removeFirstSegments(
+							1);
+						final IFile newFile = newProject.getFile(oldFile);
 
 						change = new MovedTextFileChange(file.getName(),
-								newFile, file);
+							newFile, file);
 						change.setEdit(new MultiTextEdit());
 						changes.put(file, change);
 
@@ -101,34 +102,35 @@ class RefactorParticipantDelegate {
 					}
 				}
 
-				ReplaceEdit edit = new ReplaceEdit(
-						matchAccess.getMatchOffset(),
-						matchAccess.getMatchLength(),
-						pModel.getNewTextCurrentIndex());
+				final ReplaceEdit edit = new ReplaceEdit(
+					matchAccess.getMatchOffset(),
+					matchAccess.getMatchLength(),
+					pModel.getNewTextCurrentIndex());
 				change.addEdit(edit);
 				change.addTextEditGroup(new TextEditGroup(E4_MODEL_CHANGES,
-						edit)); //$NON-NLS-1$
+					edit));
 				return true;
 			}
 		};
 
 		CompositeChange result;
-		TextSearchEngine searchEngine = TextSearchEngine.create();
+		final TextSearchEngine searchEngine = TextSearchEngine.create();
 		for (int count = pModel.getRenameCount(); count > 0; count--) {
 			pModel.setIndex(count - 1);
 			searchEngine.search(
-					scope,
-					searchRequestor,
-					TextSearchEngine.createPattern(
-							pModel.getOldTextCurrentIndex(), true, false),
+				scope,
+				searchRequestor,
+				TextSearchEngine.createPattern(
+					pModel.getOldTextCurrentIndex(), true, false),
 					pProgressMonitor);
 		}
 
-		if (changes.isEmpty())
+		if (changes.isEmpty()) {
 			return null;
+		}
 
-		result = new CompositeChange(E4_MODEL_CHANGES); //$NON-NLS-1$
-		for (TextFileChange c : changes.values()) {
+		result = new CompositeChange(E4_MODEL_CHANGES);
+		for (final TextFileChange c : changes.values()) {
 			result.add(c);
 		}
 		return result;
