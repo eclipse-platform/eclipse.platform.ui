@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,13 +54,6 @@ public abstract class MenuItemRenderer extends SWTPartRenderer {
 			ec = new ExpressionContext(c);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.e4.core.contexts.RunAndTrack#changed(org.eclipse.e4.core
-		 * .contexts.IEclipseContext)
-		 */
 		@Override
 		public boolean changed(IEclipseContext context) {
 			try {
@@ -172,14 +165,6 @@ public abstract class MenuItemRenderer extends SWTPartRenderer {
 		itemContext.runAndTrack(rat);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#hideChild
-	 * (org.eclipse.e4.ui.model.application.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
@@ -205,13 +190,6 @@ public abstract class MenuItemRenderer extends SWTPartRenderer {
 		item.setText(text);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#hookControllerLogic
-	 * (org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public void hookControllerLogic(MUIElement me) {
 		// If the item is a CHECK or RADIO update the model's state to match

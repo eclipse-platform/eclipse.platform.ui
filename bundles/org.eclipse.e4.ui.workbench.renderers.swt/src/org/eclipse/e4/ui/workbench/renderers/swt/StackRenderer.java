@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728, 430166, 441150, 442285
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -110,7 +110,7 @@ import org.w3c.dom.css.CSSValue;
  */
 public class StackRenderer extends LazyStackRenderer {
 	/**
-	 * 
+	 *
 	 */
 	private static final String THE_PART_KEY = "thePart"; //$NON-NLS-1$
 
@@ -235,7 +235,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	/**
 	 * Handles changes in tags
-	 * 
+	 *
 	 * @param event
 	 */
 	@Inject
@@ -1175,7 +1175,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	/**
 	 * Closes the part that's backed by the given widget.
-	 * 
+	 *
 	 * @param widget
 	 *            the part that owns this widget
 	 * @param check
@@ -1529,7 +1529,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	/**
 	 * Determine whether the given view menu has any visible menu items.
-	 * 
+	 *
 	 * @param viewMenu
 	 *            the view menu to check
 	 * @param part

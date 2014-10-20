@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -85,13 +85,6 @@ public class MenuRenderer extends SWTPartRenderer {
 		return newMenu;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#processContents
-	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer)
-	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> container) {
 		if (container.getChildren().size() == 0) {
@@ -200,14 +193,6 @@ public class MenuRenderer extends SWTPartRenderer {
 		item.setText(text);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#hideChild
-	 * (org.eclipse.e4.ui.model.application.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
@@ -220,13 +205,6 @@ public class MenuRenderer extends SWTPartRenderer {
 			widget.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.AbstractPartRenderer#getUIContainer
-	 * (org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public Object getUIContainer(MUIElement element) {
 		if (!(element instanceof MMenuElement))

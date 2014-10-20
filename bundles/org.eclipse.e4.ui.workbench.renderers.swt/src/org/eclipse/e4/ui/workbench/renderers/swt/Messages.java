@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Lars Vogel <Lars.Vogel@gmail.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;

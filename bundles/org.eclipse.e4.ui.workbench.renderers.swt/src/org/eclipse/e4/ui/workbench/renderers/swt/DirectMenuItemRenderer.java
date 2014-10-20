@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -74,13 +74,6 @@ public class DirectMenuItemRenderer extends MenuItemRenderer {
 		// TODO direct query to @CanExecute goes here
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#hookControllerLogic
-	 * (org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public void hookControllerLogic(MUIElement me) {
 		super.hookControllerLogic(me);

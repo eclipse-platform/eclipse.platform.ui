@@ -61,10 +61,10 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 	/**
 	 * Process dynamic menu contributions provided by
 	 * {@link MDynamicMenuContribution} application model elements
-	 * 
+	 *
 	 * @param menu
 	 * @param menuModel
-	 * 
+	 *
 	 */
 	private void processDynamicElements(Menu menu, final MMenu menuModel) {
 		if (!menu.isDisposed()) {

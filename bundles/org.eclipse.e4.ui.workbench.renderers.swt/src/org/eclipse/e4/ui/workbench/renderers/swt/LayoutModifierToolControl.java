@@ -25,11 +25,6 @@ public class LayoutModifierToolControl {
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl tc) {
 		Composite comp = new Composite(parent, SWT.NONE) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Control#computeSize(int, int)
-			 */
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean flushCache) {
 				return new Point(0, 0);

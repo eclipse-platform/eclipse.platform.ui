@@ -67,7 +67,7 @@ public class ContributionRecord {
 
 	/**
 	 * Access to analyze for tests. For Looking, not touching!
-	 * 
+	 *
 	 * @return the shared elements collection
 	 */
 	public Collection<MMenuElement> getSharedElements() {
@@ -76,7 +76,7 @@ public class ContributionRecord {
 
 	/**
 	 * Access to analyze for tests. For Looking, not touching!
-	 * 
+	 *
 	 * @return the generated elements collection
 	 */
 	public Collection<MMenuElement> getGeneratedElements() {

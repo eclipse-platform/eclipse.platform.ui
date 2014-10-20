@@ -43,13 +43,6 @@ public class ToolControlContribution extends ControlContribution {
 		super(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.ControlContribution#createControl(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createControl(Composite parent) {
 		IEclipseContext localContext = EclipseContextFactory.create();

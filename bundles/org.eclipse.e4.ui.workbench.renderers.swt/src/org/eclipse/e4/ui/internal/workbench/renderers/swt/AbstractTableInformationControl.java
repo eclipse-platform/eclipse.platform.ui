@@ -62,9 +62,6 @@ public abstract class AbstractTableInformationControl {
 	 */
 	protected class NamePatternFilter extends ViewerFilter {
 
-		/*
-		 * (non-Javadoc) Method declared on ViewerFilter.
-		 */
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
@@ -107,7 +104,7 @@ public abstract class AbstractTableInformationControl {
 	/**
 	 * Creates an information control with the given shell as parent. The given
 	 * styles are applied to the shell and the table widget.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent shell
 	 * @param shellStyle
@@ -458,7 +455,7 @@ public abstract class AbstractTableInformationControl {
 
 	/**
 	 * Delete all selected elements.
-	 * 
+	 *
 	 * @return <code>true</code> if there are no elements left after deletion.
 	 */
 	protected abstract boolean deleteSelectedElements();

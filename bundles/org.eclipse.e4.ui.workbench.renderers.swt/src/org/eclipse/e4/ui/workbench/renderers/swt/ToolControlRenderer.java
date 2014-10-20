@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sopot Cela <sopotcela@gmail.com> - Bug 431868
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431868
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431868
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -57,7 +57,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	 * Will be published or removed in 4.5.
 	 */
 	private static final String SHOW_RESTORE_MENU = "SHOW_RESTORE_MENU"; //$NON-NLS-1$
-	
+
 	@Inject
 	private MApplication application;
 	/**

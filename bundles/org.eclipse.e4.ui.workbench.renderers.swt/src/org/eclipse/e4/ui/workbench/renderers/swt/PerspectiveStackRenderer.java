@@ -43,13 +43,6 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		super.init(eventBroker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#createWidget
-	 * (org.eclipse.e4.ui.model.application.MUIElement, java.lang.Object)
-	 */
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
 		if (!(element instanceof MPerspectiveStack)
@@ -65,13 +58,6 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		return perspStack;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.LazyStackRenderer#postProcess
-	 * (org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public void postProcess(MUIElement element) {
 		super.postProcess(element);
@@ -87,13 +73,6 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.LazyStackRenderer#showTab(org
-	 * .eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	protected void showTab(MUIElement tabElement) {
 		MPerspective persp = (MPerspective) tabElement;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ragnar Nevries <r.eclipse@nevri.es> - Bug 443514
@@ -292,7 +292,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	 * Calculates the index of the element in terms of the other <b>rendered</b>
 	 * elements. This is useful when 'inserting' elements in the middle of
 	 * existing, rendered parents.
-	 * 
+	 *
 	 * @param element
 	 *            The element to get the index for
 	 * @return The visible index or -1 if the element is not a child of the
@@ -318,26 +318,11 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		return parent.getChildren().indexOf(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.AbstractPartRenderer#childRendered
-	 * (org.eclipse.e4.ui.model.application.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.MUIElement)
-	 */
 	@Override
 	public void childRendered(MElementContainer<MUIElement> parentElement,
 			MUIElement element) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#init(org
-	 * .eclipse.e4.core.contexts.IEclipseContext)
-	 */
 	@Override
 	public void init(IEclipseContext context) {
 		super.init(context);
@@ -393,13 +378,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		return getModelElement(ctrl.getParent());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#forceFocus
-	 * (org.eclipse.e4.ui.model.application.ui.MUIElement)
-	 */
 	@Override
 	public void forceFocus(MUIElement element) {
 		if (element.getWidget() instanceof Control) {

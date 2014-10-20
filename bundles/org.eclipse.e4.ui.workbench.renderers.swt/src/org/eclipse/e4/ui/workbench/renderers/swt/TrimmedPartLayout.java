@@ -32,15 +32,15 @@ import org.eclipse.swt.widgets.Layout;
  * <li>Center: fills the area remaining once the other controls have been
  * positioned</li>
  * </ol>
- * 
+ *
  * <strong>NOTE:</strong> <i>All</i> the child controls must exist. Also,
  * computeSize is not implemented because we expect this to be used in
  * situations (i.e. shells) where the outer bounds are always 'set', not
  * computed. Also, the interior structure of the center may contain overlapping
  * controls so it may not be capable of performing the calculation.
- * 
+ *
  * @author emoffatt
- * 
+ *
  */
 public class TrimmedPartLayout extends Layout {
 
@@ -49,7 +49,7 @@ public class TrimmedPartLayout extends Layout {
 	 * be placed between the bottom trim component and the bottom edge of the
 	 * client area. If there is no bottom trim component, the gutter serves as a
 	 * margin.
-	 * 
+	 *
 	 * The default value is 0.
 	 */
 	public int gutterBottom = 0;
@@ -58,7 +58,7 @@ public class TrimmedPartLayout extends Layout {
 	 * gutterLeft specifies the number of pixels of horizontal margin that will
 	 * be placed between the left trim component and the left edge of the client
 	 * area. If there is no left trim component, the gutter serves as a margin.
-	 * 
+	 *
 	 * The default value is 0.
 	 */
 	public int gutterLeft = 0;
@@ -67,7 +67,7 @@ public class TrimmedPartLayout extends Layout {
 	 * gutterTop specifies the number of pixels of vertical margin that will be
 	 * placed between the top trim component and the top edge of the client
 	 * area. If there is no top trim component, the gutter serves as a margin.
-	 * 
+	 *
 	 * The default value is 0.
 	 */
 	public int gutterTop = 0;
@@ -77,7 +77,7 @@ public class TrimmedPartLayout extends Layout {
 	 * be placed between the right trim component and the right edge of the
 	 * client area. If there is no right trim component, the gutter serves as a
 	 * margin.
-	 * 
+	 *
 	 * The default value is 0.
 	 */
 	public int gutterRight = 0;
@@ -91,7 +91,7 @@ public class TrimmedPartLayout extends Layout {
 	/**
 	 * This layout is used to support parts that want trim for their containing
 	 * composites.
-	 * 
+	 *
 	 * @param trimOwner
 	 */
 	public TrimmedPartLayout(Composite parent) {
@@ -99,13 +99,6 @@ public class TrimmedPartLayout extends Layout {
 		clientArea.setLayout(new FillLayout());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite
-	 * , int, int, boolean)
-	 */
 	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
