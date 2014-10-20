@@ -271,11 +271,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		return multiPageEditor.getEditorSite().getActionBars();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		return null;
@@ -316,9 +311,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IEditorSite.
-	 */
 	@Override
 	public IKeyBindingService getKeyBindingService() {
 		if (service == null) {
@@ -362,11 +354,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		return getMultiPageEditor().getSite().getPage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getPart()
-	 */
 	@Override
 	public IWorkbenchPart getPart() {
 		return editor;

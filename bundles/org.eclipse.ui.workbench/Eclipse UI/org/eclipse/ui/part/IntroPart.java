@@ -78,23 +78,11 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.intro.IIntroPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
-     */
     @Override
 	public void addPropertyListener(IPropertyListener l) {
         addListenerObject(l);
     }
 
-    /*
-     * (non-Javadoc) Creates the SWT controls for this intro part. <p>
-     * Subclasses must implement this method. For a detailed description of the
-     * requirements see <code> IIntroPart </code></p>
-     * 
-     * @param parent the parent control
-     * 
-     * @see IIntroPart
-     */
     @Override
 	public abstract void createPartControl(Composite parent);
 
@@ -170,19 +158,11 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
                 ISharedImages.IMG_DEF_VIEW);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.IIntroPart#getIntroSite()
-     */
     @Override
 	public final IIntroSite getIntroSite() {
         return partSite;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.intro.IIntroPart#getTitleImage()
-     */
     @Override
 	public Image getTitleImage() {
         if (titleImage != null) {
@@ -191,9 +171,6 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
         return getDefaultImage();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.intro.IIntroPart#getTitle()
-     */
     @Override
 	public String getTitle() {
     	if (titleLabel != null) {
@@ -242,9 +219,6 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
         this.partSite = site;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.intro.IIntroPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
-     */
     @Override
 	public void removePropertyListener(IPropertyListener l) {
         removeListenerObject(l);
@@ -262,15 +236,6 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
         //no-op
     }
 
-    /*
-     * (non-Javadoc) Asks this part to take focus within the workbench. 
-     * <p>
-     * Subclasses must implement this method. For a detailed description of the
-     * requirements see <code>IIntroPart</code>
-     * </p>
-     * 
-     * @see IIntroPart
-     */
     @Override
 	public abstract void setFocus();
 

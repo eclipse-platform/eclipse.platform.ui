@@ -52,10 +52,6 @@ public class PluginDropAdapter extends ViewerDropAdapter {
         super(viewer);
     }
 
-    /* (non-Javadoc)
-     * Method declared on DropTargetAdapter.
-     * The user has dropped something on the desktop viewer.
-     */
     @Override
 	public void drop(DropTargetEvent event) {
         try {

@@ -120,27 +120,16 @@ public class EditorInputTransfer extends ByteArrayTransfer {
         return instance;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Transfer.
-     */
     @Override
 	protected int[] getTypeIds() {
         return new int[] { TYPEID };
     }
 
-    /* (non-Javadoc)
-     * Returns the type names.
-     *
-     * @return the list of type names
-     */
     @Override
 	protected String[] getTypeNames() {
         return new String[] { TYPE_NAME };
     }
 
-    /* (non-Javadoc)
-     * Method declared on Transfer.
-     */
     @Override
 	public void javaToNative(Object data, TransferData transferData) {
 
@@ -181,9 +170,6 @@ public class EditorInputTransfer extends ByteArrayTransfer {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on Transfer.
-     */
     @Override
 	public Object nativeToJava(TransferData transferData) {
 

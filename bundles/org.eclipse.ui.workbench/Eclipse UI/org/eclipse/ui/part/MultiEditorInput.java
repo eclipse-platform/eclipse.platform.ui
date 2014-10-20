@@ -108,9 +108,6 @@ public class MultiEditorInput implements IEditorInput {
     }
     
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if (this == obj) {
@@ -124,9 +121,6 @@ public class MultiEditorInput implements IEditorInput {
     }
     
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         int hash = 0;

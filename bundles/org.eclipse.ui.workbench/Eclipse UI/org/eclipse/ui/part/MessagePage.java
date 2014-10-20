@@ -39,9 +39,6 @@ public class MessagePage extends Page {
         // do nothing
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPage.
-     */
     @Override
 	public void createControl(Composite parent) {
         // Message in default page of Outline should have margins
@@ -52,9 +49,6 @@ public class MessagePage extends Page {
         msgLabel.setText(message);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPage.
-     */
     @Override
 	public Control getControl() {
         return pgComp;
