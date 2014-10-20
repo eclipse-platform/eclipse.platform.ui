@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bachmann electronic GmbH - Bug 447530 - persist the id of active non visible filters
  ******************************************************************************/
 
 package org.eclipse.ui.internal.navigator;
@@ -67,9 +68,22 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		SafeRunner.run(new NavigatorSafeRunnable() {
 			@Override
 			public void run() throws Exception {
+
+				CommonFilterDescriptor[] visibleFilterDescriptors = CommonFilterDescriptorManager.getInstance()
+						.findVisibleFilters(contentService);
+
+				// add the non visible in ui active by default filters
+				for (CommonFilterDescriptor filterDescription : visibleFilterDescriptors) {
+					if (!filterDescription.isVisibleInUi() && filterDescription.isActiveByDefault()) {
+						activeFilters.add(filterDescription.getId());
+					}
+
+				}
+
 				IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 
 				if (prefs.get(getFilterActivationPreferenceKey(), null) != null) {
+					// add all visible ui filters that had been activated by the user
 					String activatedFiltersPreferenceValue = prefs.get(
 							getFilterActivationPreferenceKey(), null);
 					String[] activeFilterIds = activatedFiltersPreferenceValue.split(DELIM);
@@ -81,10 +95,10 @@ public class NavigatorFilterService implements INavigatorFilterService {
 					}
 
 				} else {
-					ICommonFilterDescriptor[] visibleFilterDescriptors = getVisibleFilterDescriptors();
-					for (ICommonFilterDescriptor visibleFilterDescriptor : visibleFilterDescriptors) {
-						if (visibleFilterDescriptor.isActiveByDefault()) {
-							activeFilters.add(visibleFilterDescriptor.getId());
+					// add all visible in ui filters
+					for (CommonFilterDescriptor filterDescription : visibleFilterDescriptors) {
+						if (filterDescription.isVisibleInUi() && filterDescription.isActiveByDefault()) {
+							activeFilters.add(filterDescription.getId());
 						}
 					}
 				}

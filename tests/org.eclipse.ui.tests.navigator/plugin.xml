@@ -1459,6 +1459,19 @@
             <adapt type="org.eclipse.core.resources.IResource" /> 
          </enablement>
       </commonWizard>
+   <commonFilter
+         activeByDefault="true"
+         id="org.eclipse.ui.tests.navigator.filters.nonvisibleactive"
+         name="Non visible active filter"
+         visibleInUI="false">
+      <filterExpression>
+         <not>
+            <instanceof
+                  value="java.lang.Object">
+            </instanceof>
+         </not>
+      </filterExpression>
+   </commonFilter>
 
    </extension>
 
