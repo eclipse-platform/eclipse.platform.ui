@@ -108,9 +108,6 @@ public class AddTaskAction extends SelectionListenerAction {
         return resource;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         IResource resource = getElement(getStructuredSelection());

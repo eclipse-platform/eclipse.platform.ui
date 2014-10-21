@@ -120,9 +120,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		initAction();
 	}
 	
-	/*
-	 * (non-Javadoc)overrides method on CloseResourceAction.
-	 */
 	@Override
 	public void run() {
 		if(promptForConfirmation())
@@ -176,11 +173,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_UNRELATED_PROJECTS_ACTION);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.SelectionListenerAction#clearCache()
-	 */
 	@Override
 	protected void clearCache() {
 		super.clearCache();
@@ -202,11 +194,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		set.toList(projectsToClose);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedResources()
-	 */
 	@Override
 	protected List getSelectedResources() {
 		if (selectionDirty) {

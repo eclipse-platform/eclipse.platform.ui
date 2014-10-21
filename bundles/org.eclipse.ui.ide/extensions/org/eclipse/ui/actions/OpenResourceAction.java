@@ -111,25 +111,16 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		return count;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on WorkspaceAction.
-	 */
 	@Override
 	protected String getOperationMessage() {
 		return IDEWorkbenchMessages.OpenResourceAction_operationMessage;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on WorkspaceAction.
-	 */
 	@Override
 	protected String getProblemsMessage() {
 		return IDEWorkbenchMessages.OpenResourceAction_problemMessage;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on WorkspaceAction.
-	 */
 	@Override
 	protected String getProblemsTitle() {
 		return IDEWorkbenchMessages.OpenResourceAction_dialogTitle;
@@ -211,10 +202,6 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAction; overrides method on
-	 * WorkspaceAction.
-	 */
 	@Override
 	public void run() {
 		try {
@@ -294,9 +281,6 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		job.schedule();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on WorkspaceAction.
-	 */
 	@Override
 	protected boolean shouldPerformResourcePruning() {
 		return false;

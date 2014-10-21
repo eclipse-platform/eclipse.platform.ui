@@ -108,9 +108,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 					new Integer(projects.length));
 		}
 
-		/*
-		 * (non-Javadoc) Method declared on Window.
-		 */
 		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
@@ -192,11 +189,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			return deleteContent;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.window.Window#open()
-		 */
 		@Override
 		public int open() {
 			// Override Window#open() to allow for non-interactive testing.
@@ -471,9 +463,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return types;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAction.
-	 */
 	@Override
 	public void run() {
 		final IResource[] resources = getSelectedResourcesArray();
@@ -495,11 +484,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
 		Job deletionCheckJob = new Job(IDEWorkbenchMessages.DeleteResourceAction_checkJobName) {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (resources.length == 0)
@@ -508,11 +492,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				return Status.OK_STATUS;
 			}
 			
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-			 */
 			@Override
 			public boolean belongsTo(Object family) {
 				if (IDEWorkbenchMessages.DeleteResourceAction_jobName
@@ -552,9 +531,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 						// or validation checking occurs.  Do it in a syncExec because
 						// we are calling this from a Job.
 						WorkbenchJob statusJob = new WorkbenchJob("Status checking"){ //$NON-NLS-1$
-							/* (non-Javadoc)
-							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-							 */
 							@Override
 							public IStatus runInUIThread(
 									IProgressMonitor monitor) {
@@ -587,11 +563,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				}
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-			 */
 			@Override
 			public boolean belongsTo(Object family) {
 				if (IDEWorkbenchMessages.DeleteResourceAction_jobName

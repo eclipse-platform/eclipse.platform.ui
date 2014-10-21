@@ -120,9 +120,6 @@ public class AddBookmarkAction extends SelectionListenerAction {
 		setId(ID);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAction.
-	 */
 	@Override
 	public void run() {
 		if (getSelectedResources().isEmpty())

@@ -464,11 +464,6 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		final List resources = new ArrayList(getActionResources());
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-			 */
 			@Override
 			public boolean belongsTo(Object family) {
 				if (jobFamilies == null || family == null) {
@@ -482,11 +477,6 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 				return false;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				return WorkspaceAction.this.execute(resources, monitor);

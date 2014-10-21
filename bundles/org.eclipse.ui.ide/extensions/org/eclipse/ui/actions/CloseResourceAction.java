@@ -105,25 +105,16 @@ public class CloseResourceAction extends WorkspaceAction implements
 				IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
 	}
     
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected String getOperationMessage() {
         return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected String getProblemsMessage() {
         return IDEWorkbenchMessages.CloseResourceAction_problemMessage;
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected String getProblemsTitle() {
         return IDEWorkbenchMessages.CloseResourceAction_title;
@@ -170,9 +161,6 @@ public class CloseResourceAction extends WorkspaceAction implements
         runInBackground(rule);
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected boolean shouldPerformResourcePruning() {
         return false;
@@ -228,17 +216,11 @@ public class CloseResourceAction extends WorkspaceAction implements
     }
     
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedResources()
-     */
     @Override
 	protected synchronized List getSelectedResources() {
     	return super.getSelectedResources();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionListenerAction#getSelectedNonResources()
-     */
     @Override
 	protected synchronized List getSelectedNonResources() {
     	return super.getSelectedNonResources();
