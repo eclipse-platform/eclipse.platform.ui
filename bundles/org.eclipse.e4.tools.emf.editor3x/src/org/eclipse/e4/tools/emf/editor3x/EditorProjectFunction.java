@@ -8,10 +8,10 @@ import org.eclipse.ui.IFileEditorInput;
 public class EditorProjectFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKex) {
 		final IEditorInput input = context.get(IEditorInput.class);
-		if( input != null && input instanceof IFileEditorInput ) {
-			return ((IFileEditorInput)input).getFile().getProject();	
+		if (input != null && input instanceof IFileEditorInput) {
+			return ((IFileEditorInput) input).getFile().getProject();
 		}
 		return null;
 	}

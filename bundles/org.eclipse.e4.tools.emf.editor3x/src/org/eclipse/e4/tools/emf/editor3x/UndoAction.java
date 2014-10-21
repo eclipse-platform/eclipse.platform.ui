@@ -43,9 +43,9 @@ public class UndoAction extends Action {
 
 	private void update() {
 		if (resource.getEditingDomain().getCommandStack().canUndo()) {
-			setText(Messages.UndoAction_Undo + " " //$NON-NLS-2$
+			setText(Messages.UndoAction_Undo + " " //$NON-NLS-1$
 				+ resource.getEditingDomain().getCommandStack()
-				.getUndoCommand().getLabel());
+					.getUndoCommand().getLabel());
 			setEnabled(true);
 		} else {
 			setText(Messages.UndoAction_Undo);

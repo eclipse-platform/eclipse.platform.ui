@@ -23,7 +23,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.e4.internal.tools.ToolsPlugin
 Export-Package: org.eclipse.e4.internal.tools;x-internal:=true,
- org.eclipse.e4.internal.tools.wizards.classes;x-internal:=true,
+ org.eclipse.e4.internal.tools.wizards.classes;x-friends:="org.eclipse.e4.tools.emf.editor3x",
  org.eclipse.e4.internal.tools.wizards.classes.templates;x-internal:=true,
  org.eclipse.e4.internal.tools.wizards.model;x-internal:=true,
  org.eclipse.e4.internal.tools.wizards.project;x-internal:=true

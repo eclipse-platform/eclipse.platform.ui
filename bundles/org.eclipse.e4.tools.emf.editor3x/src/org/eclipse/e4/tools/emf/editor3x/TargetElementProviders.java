@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 
+@SuppressWarnings("restriction")
 public class TargetElementProviders implements IModelElementProvider {
 	private static final String APP_E4XMI_DEFAULT = "Application.e4xmi"; //$NON-NLS-1$
 	private ResourceSet resourceSet;

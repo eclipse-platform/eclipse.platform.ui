@@ -57,7 +57,7 @@ public class ModelMoveParticipant extends MoveParticipant {
 
 	@Override
 	public String getName() {
-		return "Workbench Model Contribution Participant";
+		return "Workbench Model Contribution Participant"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -68,9 +68,9 @@ public class ModelMoveParticipant extends MoveParticipant {
 
 	@Override
 	public Change createChange(IProgressMonitor pMonitor) throws CoreException,
-		OperationCanceledException {
+	OperationCanceledException {
 
-		pMonitor.beginTask("Creating Change ..", IProgressMonitor.UNKNOWN);
+		pMonitor.beginTask(Messages.ModelMoveParticipant_CreatingChange, IProgressMonitor.UNKNOWN);
 
 		Change change = null;
 
@@ -149,11 +149,11 @@ public class ModelMoveParticipant extends MoveParticipant {
 			.getElementName() : fragment.getElementName() + "." //$NON-NLS-1$
 			+ pType.getElementName();
 
-			return RefactorParticipantDelegate.createChange(
-			pMonitor,
-			fModel.addTextRename("bundleclass://" + fromBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
-				+ fromClassname, "bundleclass://" + toBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
-				+ toClassName));
+		return RefactorParticipantDelegate.createChange(
+				pMonitor,
+				fModel.addTextRename("bundleclass://" + fromBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
+					+ fromClassname, "bundleclass://" + toBundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
+					+ toClassName));
 	}
 
 }

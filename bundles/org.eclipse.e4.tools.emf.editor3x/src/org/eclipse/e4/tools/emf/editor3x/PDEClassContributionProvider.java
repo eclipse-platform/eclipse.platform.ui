@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.TypeNameRequestor;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 
+@SuppressWarnings("restriction")
 public class PDEClassContributionProvider implements IClassContributionProvider {
 	private final SearchEngine searchEngine;
 
@@ -42,7 +43,6 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	}
 
 	@Override
-	@SuppressWarnings("restriction")
 	public void findContribution(final Filter filter, final ContributionResultHandler handler) {
 		boolean followReferences = true;
 		if (filter.getSearchScope().contains(ResourceSearchScope.PROJECT)

@@ -33,6 +33,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
+@SuppressWarnings("restriction")
 class RefactorParticipantDelegate {
 
 	private static final String E4_MODEL_CHANGES = "Eclipse 4 Application Model Changes"; //$NON-NLS-1$
@@ -42,13 +43,8 @@ class RefactorParticipantDelegate {
 	 * adds the changes to the passed {@link CompositeChange}.
 	 *
 	 * @param pProgressMonitor
-	 * @param pParticipant
-	 * @param pOldUrl
-	 *            String[] containing the old texts
-	 * @param pNewUrl
-	 *            String[] containing the new texts
-	 * @param pNewProject
-	 *            The name of the project if this is a project change else null.
+	 * @param pModel
+	 * 
 	 * @return a set of changes in a {@link CompositeChange}
 	 * @throws CoreException
 	 * @throws OperationCanceledException

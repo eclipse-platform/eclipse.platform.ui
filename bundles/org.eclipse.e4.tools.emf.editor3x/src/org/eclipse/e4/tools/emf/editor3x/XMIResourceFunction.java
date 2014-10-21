@@ -12,21 +12,23 @@ import org.eclipse.ui.IEditorInput;
 public class XMIResourceFunction extends ContextFunction {
 
 	@Override
-	public Object compute(final IEclipseContext context) {
+	public Object compute(final IEclipseContext context, String contextKey) {
 		final IEditorInput input = context.get(IEditorInput.class);
 		final IDirtyProviderService dirtyProvider = context.get(IDirtyProviderService.class);
-		
-		if( input != null ) {
-			URI resourceURI = EditUIUtil.getURI(input);
+
+		if (input != null) {
+			final URI resourceURI = EditUIUtil.getURI(input);
 			final XMIModelResource resource = new XMIModelResource(resourceURI);
 			resource.addModelListener(new ModelListener() {
-				
+
+				@Override
 				public void dirtyChanged() {
 					dirtyProvider.setDirtyState(resource.isDirty());
 				}
 
+				@Override
 				public void commandStackChanged() {
-					
+
 				}
 			});
 			return resource;

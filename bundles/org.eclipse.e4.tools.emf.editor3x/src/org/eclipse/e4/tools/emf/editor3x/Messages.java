@@ -19,6 +19,9 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.e4.tools.emf.editor3x.messages"; //$NON-NLS-1$
+	public static String ContributionEditor_CurrentURLIsInvalid;
+	public static String ContributionEditor_FailedToOpenEditor;
+	public static String ContributionEditor_InvalidURL;
 	public static String ModelEditorPreferencePage_Color;
 	public static String ModelEditorPreferencePage_ForcesReadOnlyXMITab;
 	public static String ModelEditorPreferencePage_FormTab;

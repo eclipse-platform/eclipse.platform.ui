@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Wim Jongman <wim.jongman@remainsoftware.com> - Bug 432892: Eclipse 4 Application does not work after renaming the project name
+ * Wim Jongman <wim.jongman@remainsoftware.com> - Bug 432892: Eclipse 4 Application does not work after renaming the
+ * project name
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -22,7 +23,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 /**
  * A temporary data storage for Ecipse 4 model refactoring. Use the static
  * methods to get hold of an instance.
- * 
+ *
  * @author Remain Software - Wim Jongman
  *
  */
@@ -39,10 +40,9 @@ public class RefactorModel {
 	private RefactoringParticipant fParticipant;
 
 	/**
-	 * Factory for an empty model. Use the
-	 * {@link #addTextRename(String, String)} method to add one or more text
+	 * Factory for an empty model. Use the {@link #addTextRename(String, String)} method to add one or more text
 	 * renames.
-	 * 
+	 *
 	 * @param pParticipant
 	 * @return the model
 	 */
@@ -51,27 +51,27 @@ public class RefactorModel {
 	}
 
 	/**
-	 * Factory for a model with one rename. Use the
-	 * {@link #addTextRename(String, String)} method to add one or more text
+	 * Factory for a model with one rename. Use the {@link #addTextRename(String, String)} method to add one or more
+	 * text
 	 * renames.
-	 * 
+	 *
 	 * @param pParticipant
 	 * @param pOldText
 	 * @param pNewText
 	 * @return the model.
 	 */
 	public static RefactorModel getModel(RefactoringParticipant pParticipant,
-			String pOldText, String pNewText) {
+		String pOldText, String pNewText) {
 		return new RefactorModel().addTextRename(pOldText, pNewText);
 	}
 
 	/**
 	 * Factory for a model with one rename and a project rename. The project
 	 * rename uses the old and new project because the refactoring framework
-	 * expects the already renamed filenames. Use the
-	 * {@link #addTextRename(String, String)} method to add one or more text
+	 * expects the already renamed filenames. Use the {@link #addTextRename(String, String)} method to add one or more
+	 * text
 	 * renames and the old and the new project.
-	 * 
+	 *
 	 * @param pParticipant
 	 * @param pOldText
 	 * @param pNewText
@@ -80,18 +80,17 @@ public class RefactorModel {
 	 * @return the model.
 	 */
 	public static RefactorModel getModel(RefactoringParticipant pParticipant,
-			String pOldText, String pNewText, IProject pOldProject,
-			IProject pNewProject) {
+		String pOldText, String pNewText, IProject pOldProject,
+		IProject pNewProject) {
 		return new RefactorModel().addTextRename(pOldText, pNewText)
-				.setProjectRename(pOldProject, pNewProject)
-				.setRefactorParticipant(pParticipant);
+			.setProjectRename(pOldProject, pNewProject)
+			.setRefactorParticipant(pParticipant);
 	}
 
 	/**
 	 * Adds a text rename to be processed later. For example, if the project
-	 * name changes there can be <code>bundlclass://</code> and
-	 * <code>platform:/plugin</code> changes.
-	 * 
+	 * name changes there can be <code>bundlclass://</code> and <code>platform:/plugin</code> changes.
+	 *
 	 * @param oldText
 	 * @param newText
 	 * @return the model
@@ -107,7 +106,7 @@ public class RefactorModel {
 	/**
 	 * When project renaming this returns the new project. This project does not
 	 * necessarily exist yet.
-	 * 
+	 *
 	 * @return the new project or null if it was not set
 	 * @see RefactorModel#setProjectRename(IProject, IProject)
 	 */
@@ -124,7 +123,7 @@ public class RefactorModel {
 
 	/**
 	 * When project renaming this returns the old project.
-	 * 
+	 *
 	 * @return the new project or null if it was not set
 	 * @see RefactorModel#setProjectRename(IProject, IProject)
 	 */
@@ -133,7 +132,7 @@ public class RefactorModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the old text in the current index.
 	 */
 	public String getOldTextCurrentIndex() {
@@ -141,7 +140,7 @@ public class RefactorModel {
 	}
 
 	/**
-	 * @return
+	 * @return the refactoring participant
 	 */
 	public RefactoringParticipant getRefactoringParticipant() {
 		return fParticipant;
@@ -156,7 +155,7 @@ public class RefactorModel {
 
 	/**
 	 * Delegates to the same method of the embedded RefactoringParticipant.
-	 * 
+	 *
 	 * @param file
 	 * @return a TextChange object
 	 * @see RefactoringParticipant#getTextChange(Object)
@@ -174,26 +173,26 @@ public class RefactorModel {
 
 	/**
 	 * Sets the current 0-based index. May not be out of bounds.
-	 * 
+	 *
 	 * @param index
 	 * @return the model
 	 */
 	public RefactorModel setIndex(int index) {
 		Assert.isTrue(index >= 0);
 		Assert.isTrue(index < fOldTexts.size());
-		this.fIndex = index;
+		fIndex = index;
 		return this;
 	}
 
 	/**
 	 * Sets the old and the new project in case of project renaming.
-	 * 
+	 *
 	 * @param oldProject
 	 * @param newProject
 	 * @return the model
 	 */
 	public RefactorModel setProjectRename(IProject oldProject,
-			IProject newProject) {
+		IProject newProject) {
 		Assert.isNotNull(oldProject);
 		Assert.isNotNull(newProject);
 		fOldProject = oldProject;
@@ -203,14 +202,14 @@ public class RefactorModel {
 
 	/**
 	 * Sets the RefactoringParticipant.
-	 * 
+	 *
 	 * @param pParticipant
 	 * @return the model
 	 * @see RefactoringParticipant
 	 */
 	public RefactorModel setRefactorParticipant(
-			RefactoringParticipant pParticipant) {
-		this.fParticipant = pParticipant;
+		RefactoringParticipant pParticipant) {
+		fParticipant = pParticipant;
 		return this;
 	}
 }

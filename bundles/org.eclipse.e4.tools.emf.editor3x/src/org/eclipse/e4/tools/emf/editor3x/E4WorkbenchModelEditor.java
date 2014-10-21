@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
@@ -19,23 +19,25 @@ import org.eclipse.ui.actions.ActionFactory;
 
 @SuppressWarnings("restriction")
 public class E4WorkbenchModelEditor extends
-		DIEditorPart<ApplicationModelEditor> {
+	DIEditorPart<ApplicationModelEditor> {
 	private UndoAction undoAction;
 	private RedoAction redoAction;
 
-	private ModelListener listener = new ModelListener() {
+	private final ModelListener listener = new ModelListener() {
 
+		@Override
 		public void dirtyChanged() {
 			firePropertyChange(PROP_DIRTY);
 		}
 
+		@Override
 		public void commandStackChanged() {
 
 		}
 	};
 
 	public E4WorkbenchModelEditor() {
-		super(ApplicationModelEditor.class, COPY|CUT|PASTE);
+		super(ApplicationModelEditor.class, COPY | CUT | PASTE);
 	}
 
 	@Override
@@ -43,32 +45,35 @@ public class E4WorkbenchModelEditor extends
 		super.createPartControl(parent);
 		setPartName(getEditorInput().getName());
 	}
-	
+
 	@Override
 	protected void makeActions() {
 		super.makeActions();
 		undoAction = new UndoAction(getComponent().getModelProvider());
 		undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
-		
+
 		redoAction = new RedoAction(getComponent().getModelProvider());
 		redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 
 		getEditorSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.UNDO.getId(), undoAction);
+			ActionFactory.UNDO.getId(), undoAction);
 		getEditorSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.REDO.getId(), redoAction);
+			ActionFactory.REDO.getId(), redoAction);
 	}
 
 	@Override
 	public void dispose() {
-		if (undoAction != null)
+		if (undoAction != null) {
 			undoAction.dispose();
+		}
 
-		if (redoAction != null)
+		if (redoAction != null) {
 			redoAction.dispose();
+		}
 
-		if (listener != null && getComponent() != null && getComponent().getModelProvider() != null)
+		if (listener != null && getComponent() != null && getComponent().getModelProvider() != null) {
 			getComponent().getModelProvider().removeModelListener(listener);
+		}
 
 		super.dispose();
 	}
