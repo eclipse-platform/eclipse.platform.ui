@@ -350,7 +350,15 @@ public class ModelEditor implements IGotoObject {
 		this.context.set(ModelEditor.class, this);
 		this.obsManager = new ObservablesManager();
 		if (project != null) {
-			ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project, (String) this.context.get(TranslationService.LOCALE)) {
+			String localeString = ""; //$NON-NLS-1$
+			Object object = this.context.get(TranslationService.LOCALE);
+			// TODO simplify once we break e4 tools
+			// compatibility with Luna, in Luna we representation has changed to
+			// be Locale instead of String
+			if (object != null) {
+				localeString = object.toString();
+			}
+			ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project, localeString) {
 				@Override
 				protected void updateResourceBundle() {
 					super.updateResourceBundle();

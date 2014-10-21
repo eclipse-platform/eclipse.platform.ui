@@ -55,6 +55,8 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 *            The initial {@link Locale} for which this translation provider
 	 *            should be created.
 	 */
+	// TODO change parameter to Locale instead of String once we break e4 tools
+	// compatibility with Luna
 	public ProjectOSGiTranslationProvider(IProject project, String locale) {
 		// create the translation provider with no initial ResourceBundle as we
 		// need to calculate it first
@@ -91,6 +93,8 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		}
 	}
 
+	// TODO remove once we break e4 tools
+	// compatibility with Luna
 	@Inject
 	void setLocale(@Named(TranslationService.LOCALE) String locale, @Optional Boolean performUpdate) {
 		try {
@@ -103,8 +107,16 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 			updateResourceBundle();
 	}
 
+	@Inject
+	void setLocale(@Named(TranslationService.LOCALE) Locale locale, @Optional Boolean performUpdate) {
+		this.locale = locale == null ? Locale.getDefault() : locale;
+
+		if (performUpdate == null || performUpdate)
+			updateResourceBundle();
+	}
+
 	/**
-	 * 
+	 *
 	 * @param delta
 	 *            The resource delta that represents the changes in the state of
 	 *            a resource tree between two discrete points in time.
@@ -154,7 +166,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 * Will check if the manifest header identifying the base name of the
 	 * bundle's localization entries has changed and if so it will update the
 	 * underlying {@link ResourceBundle} and clear the caches.
-	 * 
+	 *
 	 * @param file
 	 *            The reference to the manifest file of the current project.
 	 */
@@ -181,7 +193,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	/**
 	 * Extracts the manifest header identifying the base name of the bundle's
 	 * localization entries.
-	 * 
+	 *
 	 * @param file
 	 *            The reference to the manifest file of the current project.
 	 * @return The manifest header identifying the base name of the bundle's
@@ -190,7 +202,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 *             If loading the contents of the given {@link IFile} fails
 	 * @throws IOException
 	 *             If reading out of the given file fails.
-	 * 
+	 *
 	 * @see IFile#getContents()
 	 */
 	public static String extractBasenameFromManifest(IFile file) throws CoreException, IOException {
@@ -219,7 +231,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	/**
 	 * Specialization of {@link Control} which loads the {@link ResourceBundle}
 	 * by using file structures of a project instead of using a classloader.
-	 * 
+	 *
 	 * @author Dirk Fauth
 	 */
 	class ProjectResourceBundleControl extends ResourceBundle.Control {
@@ -275,7 +287,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		/**
 		 * Loads the properties file by using the {@link IProject} of the
 		 * {@link ProjectOSGiTranslationProvider}.
-		 * 
+		 *
 		 * @param name
 		 * @return The {@link InputStream} to the properties file to load
 		 */
