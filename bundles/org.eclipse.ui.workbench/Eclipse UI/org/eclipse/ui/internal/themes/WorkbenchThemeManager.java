@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,6 @@ public class WorkbenchThemeManager extends EventManager implements
 	public static synchronized WorkbenchThemeManager getInstance() {
 		if (instance == null) {
 			instance = new WorkbenchThemeManager();
-			instance.getCurrentTheme(); // initialize the current theme
 		}
 		return instance;
 	}
@@ -85,6 +84,11 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	private Map themes = new HashMap(7);
 
+	private boolean initialized = false;
+
+	private WorkbenchThemeManager() {
+	}
+
 	/*
 	 * Initialize the WorkbenchThemeManager.
 	 * Determine the default theme according to the following rules:
@@ -93,7 +97,11 @@ public class WorkbenchThemeManager extends EventManager implements
 	 *   3) Otherwise, use our default
 	 * Call dispose when we close.
 	 */
-	private WorkbenchThemeManager() {
+	private synchronized void init() {
+		if (initialized) {
+			return;
+		}
+		initialized = true;
 		defaultThemeColorRegistry = new ColorRegistry(PlatformUI.getWorkbench()
 				.getDisplay());
 
@@ -146,6 +154,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 		PrefUtil.getAPIPreferenceStore().setDefault(
 				IWorkbenchPreferenceConstants.CURRENT_THEME_ID, themeId);
+		getCurrentTheme(); // initialize the current theme
 	}
 
 	/*
@@ -229,6 +238,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * @see org.eclipse.ui.themes.IThemeManager#getCurrentTheme()
 	 */
 	public ITheme getCurrentTheme() {
+		init();
 		if (currentTheme == null) {
 			String themeId = PrefUtil.getAPIPreferenceStore().getString(
 					IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
@@ -259,6 +269,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * @return the default color registry
 	 */
 	public ColorRegistry getDefaultThemeColorRegistry() {
+		init();
 		return defaultThemeColorRegistry;
 	}
 
@@ -268,6 +279,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * @return the default font registry
 	 */
 	public FontRegistry getDefaultThemeFontRegistry() {
+		init();
 		return defaultThemeFontRegistry;
 	}
 
@@ -286,6 +298,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * @see org.eclipse.ui.themes.IThemeManager#getTheme(java.lang.String)
 	 */
 	public ITheme getTheme(String id) {
+		init();
 		if (id.equals(IThemeManager.DEFAULT_THEME)) {
 			return getTheme((IThemeDescriptor) null);
 		}
@@ -322,6 +335,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	 * @see org.eclipse.ui.themes.IThemeManager#setCurrentTheme(java.lang.String)
 	 */
 	public void setCurrentTheme(String id) {
+		init();
 		ITheme oldTheme = currentTheme;
 		if (WorkbenchThemeManager.getInstance().doSetCurrentTheme(id)) {
 			firePropertyChange(CHANGE_CURRENT_THEME, oldTheme,
