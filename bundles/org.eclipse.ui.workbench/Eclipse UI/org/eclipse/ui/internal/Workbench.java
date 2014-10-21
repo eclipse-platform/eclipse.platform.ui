@@ -12,7 +12,7 @@
  *     Tristan Hume - <trishume@gmail.com> -
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724, 366708
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
  *******************************************************************************/
@@ -1427,6 +1427,12 @@ public final class Workbench extends EventManager implements IWorkbench,
 			return null;
 		}
 
+		// search for existing IWorkbenchWindow
+		IWorkbenchWindow iWorkbenchWindow = activeWindow.getContext().get(IWorkbenchWindow.class);
+		if (iWorkbenchWindow != null) {
+			return iWorkbenchWindow;
+		}
+		// otherwise create new IWorkbenchWindow instance
 		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
 				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
 				activeWindow, false);
@@ -1434,6 +1440,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 	IWorkbenchWindow createWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,
 			MWindow window, boolean newWindow) {
+
 		IEclipseContext windowContext = window.getContext();
 		if (windowContext == null) {
 			windowContext = E4Workbench.initializeContext(e4Context, window);
