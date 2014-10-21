@@ -127,7 +127,7 @@ public class EventLoopMonitorThread extends Thread {
 		 * {@link SWT#PreExternalEventDispatch PreExternalEventDispatch} event and popped from
 		 * the stack on {@link SWT#PostExternalEventDispatch PostExternalEventDispatch} event.
 		 */
-		private int[] nestingLevelStack = new int[32];
+		private int[] nestingLevelStack = new int[64];
 		private int nestingLevelStackSize;
 
 		@Override
@@ -194,14 +194,15 @@ public class EventLoopMonitorThread extends Thread {
 		}
 
 		private void saveAndResetNestingLevel() {
-			if (nestingLevelStackSize >= nestingLevelStack.length) {
+			if (nestingLevelStackSize < nestingLevelStack.length) {
+				nestingLevelStack[nestingLevelStackSize++] = nestingLevel;
+				nestingLevel = 0;
+			} else {
 				MonitoringPlugin.logError(
 						NLS.bind(Messages.EventLoopMonitorThread_max_event_loop_depth_exceeded_1,
 						nestingLevelStack.length), null);
 				shutdown();
 			}
-			nestingLevelStack[nestingLevelStackSize++] = nestingLevel;
-			nestingLevel = 0;
 		}
 
 		private void restoreNestingLevel() {
