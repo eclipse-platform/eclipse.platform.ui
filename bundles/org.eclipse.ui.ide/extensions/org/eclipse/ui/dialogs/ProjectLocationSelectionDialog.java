@@ -150,9 +150,6 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		setResult(list);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in Window.
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -160,9 +157,6 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 				IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
@@ -283,11 +277,6 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	 */
 	private IErrorMessageReporter getErrorReporter() {
 		return new IErrorMessageReporter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
-			 */
 			@Override
 			public void reportError(String errorMessage, boolean infoOnly) {
 				setMessage(errorMessage);

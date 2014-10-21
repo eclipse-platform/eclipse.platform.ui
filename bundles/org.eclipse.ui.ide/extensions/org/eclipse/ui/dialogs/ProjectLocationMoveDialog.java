@@ -58,11 +58,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		this.project = existingProject;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#setMessage(java.lang.String)
-	 */
 	@Override
 	public void setMessage(String message) {
 		super.setMessage(message);
@@ -81,9 +76,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in Window.
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -91,9 +83,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 				IIDEHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control content = super.createContents(parent);
@@ -101,9 +90,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 		return content;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
@@ -136,9 +122,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 	 */
 	private IErrorMessageReporter getErrorReporter() {
 		return new IErrorMessageReporter(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
-			 */
 			@Override
 			public void reportError(String errorMessage, boolean notError) {
 				setMessage(errorMessage);

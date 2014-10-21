@@ -118,9 +118,6 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		//need to know the result
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in Window.
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -198,9 +195,6 @@ public class NewFolderDialog extends SelectionStatusDialog {
 				});
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -477,9 +471,6 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		URI linkTarget = linkedResourceGroup.getLinkTargetURI();

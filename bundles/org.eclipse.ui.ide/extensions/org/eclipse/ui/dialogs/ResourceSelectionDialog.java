@@ -111,9 +111,6 @@ public class ResourceSelectionDialog extends SelectionDialog {
         getOkButton().setEnabled(selectionGroup.getCheckedElementCount() > 0);
     }
 
-    /* (non-Javadoc)
-     * Method declared in Window.
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -127,9 +124,6 @@ public class ResourceSelectionDialog extends SelectionDialog {
         initializeDialog();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         // page group

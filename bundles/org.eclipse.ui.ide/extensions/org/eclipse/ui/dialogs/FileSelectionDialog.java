@@ -147,9 +147,6 @@ public class FileSelectionDialog extends SelectionDialog {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared in Window.
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -163,9 +160,6 @@ public class FileSelectionDialog extends SelectionDialog {
         initializeDialog();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         // page group

@@ -175,9 +175,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 */
 	private IErrorMessageReporter getErrorReporter() {
 		return new IErrorMessageReporter(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
-			 */
 			@Override
 			public void reportError(String errorMessage, boolean infoOnly) {
 				if (infoOnly) {

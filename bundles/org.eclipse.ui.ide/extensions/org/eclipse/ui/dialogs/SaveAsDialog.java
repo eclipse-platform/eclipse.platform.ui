@@ -85,9 +85,6 @@ public class SaveAsDialog extends TitleAreaDialog {
         setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
-    /* (non-Javadoc)
-     * Method declared in Window.
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -96,9 +93,6 @@ public class SaveAsDialog extends TitleAreaDialog {
 				IIDEHelpContextIds.SAVE_AS_DIALOG);
     }
 
-    /* (non-Javadoc)
-     * Method declared in Window.
-     */
     @Override
 	protected Control createContents(Composite parent) {
 
@@ -131,9 +125,6 @@ public class SaveAsDialog extends TitleAreaDialog {
         return super.close();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected void createButtonsForButtonBar(Composite parent) {
         okButton = createButton(parent, IDialogConstants.OK_ID,
@@ -142,9 +133,6 @@ public class SaveAsDialog extends TitleAreaDialog {
                 IDialogConstants.CANCEL_LABEL, false);
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         // top level composite
@@ -205,9 +193,6 @@ public class SaveAsDialog extends TitleAreaDialog {
         setDialogComplete(validatePage());
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected void okPressed() {
         // Get new path.
@@ -335,11 +320,6 @@ public class SaveAsDialog extends TitleAreaDialog {
         return true;
     }
     
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-     * 
-     * @since 3.2
-     */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
@@ -350,10 +330,6 @@ public class SaveAsDialog extends TitleAreaDialog {
         return section;
 	}
 	
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
     @Override
 	protected boolean isResizable() {
     	return true;

@@ -301,9 +301,6 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
 		}
     }
 
-    /* (non-Javadoc)
-     * Method declared on WizardDataTransferPage.
-     */
     @Override
 	protected final boolean validateDestinationGroup() {
         if (getContainerFullPath() == null) {
