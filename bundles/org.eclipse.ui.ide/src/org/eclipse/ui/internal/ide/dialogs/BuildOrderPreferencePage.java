@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 448060
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide.dialogs;
@@ -24,6 +25,7 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -122,12 +124,8 @@ public class BuildOrderPreferencePage extends PreferencePage implements
             }
         };
 
-        SimpleListContentProvider contentsProvider = new SimpleListContentProvider();
-        contentsProvider
-                .setElements(sortedDifference(allProjects, currentItems));
-
-        ListSelectionDialog dialog = new ListSelectionDialog(this.getShell(),
-                this, contentsProvider, labelProvider,
+		ListSelectionDialog dialog = new ListSelectionDialog(this.getShell(), sortedDifference(allProjects,
+				currentItems), ArrayContentProvider.getInstance(), labelProvider,
                 PROJECT_SELECTION_MESSAGE) {
         	@Override
 			protected int getShellStyle() {

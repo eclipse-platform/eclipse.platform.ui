@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 448060
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
@@ -17,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -34,7 +36,6 @@ import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
@@ -63,9 +64,8 @@ public class UIDialogs extends TestCase {
     }
 
     public void testAddProjects() {
-        Dialog dialog = new ListSelectionDialog(getShell(), null,
-                new SimpleListContentProvider(), new LabelProvider(),
-                PROJECT_SELECTION_MESSAGE);
+		Dialog dialog = new ListSelectionDialog(getShell(), null, ArrayContentProvider.getInstance(),
+				new LabelProvider(), PROJECT_SELECTION_MESSAGE);
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -120,9 +120,8 @@ public class UIDialogs extends TestCase {
      * IResource[0]); DialogCheck.assertDialog(dialog, this); }
      */
     public void testNavigatorFilter() {
-        Dialog dialog = new ListSelectionDialog(getShell(), null,
-                new SimpleListContentProvider(), new LabelProvider(),
-                FILTER_SELECTION_MESSAGE);
+		Dialog dialog = new ListSelectionDialog(getShell(), null, ArrayContentProvider.getInstance(),
+				new LabelProvider(), FILTER_SELECTION_MESSAGE);
         DialogCheck.assertDialog(dialog, this);
     }
 
