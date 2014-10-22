@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *     Tom Hofmann (Perspectix AG) - bug 297572
+ *     Sergey Prigogin (Google) - bug 441448
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -816,6 +817,40 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 
 	/**
+	 * Creates a new formatting context for a format operation. If the returned context has
+	 * the {@link FormattingContextProperties#CONTEXT_REGION} property set to an {@link IRegion},
+	 * the section of the document defined by that region is formatted, otherwise the whole
+	 * document is formatted.
+	 * <p>
+	 * The default implementation calls {@link #createFormattingContext()} and sets
+	 * the {@link FormattingContextProperties#CONTEXT_REGION} property if the selection is
+	 * not empty. Overriding methods may implement a different logic, or return <code>null</code>
+	 * to indicate that the formatting operation should not proceed.
+	 * <p>
+	 * Returning <code>null</code> may be used, for example, when the user clicks on
+	 * the <b>Cancel</b> button in a dialog that, in case of an empty selection, asks the user
+	 * whether formatting should be applied to the whole document or to the current statement.
+	 * Please notice that returning <code>null</code> from this method cancels the already initiated
+	 * formatting operation unlike {@link #canDoOperation(int)}, which is used for enabling and
+	 * disabling formatting actions.
+	 * <p>
+	 * After the use of the context, clients are required to call its <code>dispose</code> method.
+	 *
+	 * @param selectionOffset the character offset of the selection in the document
+	 * @param selectionLength the length of the selection
+	 * @return The new formatting context, or <code>null</code> to cancel the formatting
+	 * @since 3.10
+	 */
+	protected IFormattingContext createFormattingContext(int selectionOffset, int selectionLength) {
+		IFormattingContext context= createFormattingContext();
+		if (selectionLength != 0) {
+			context.setProperty(FormattingContextProperties.CONTEXT_REGION,
+					new Region(selectionOffset, selectionLength));
+		}
+		return context;
+	}
+
+	/**
 	 * Position storing block selection information in order to maintain a column selection.
 	 * 
 	 * @since 3.5
@@ -969,13 +1004,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 							if (fContentFormatter instanceof IContentFormatterExtension) {
 								final IContentFormatterExtension extension= (IContentFormatterExtension) fContentFormatter;
-								context= createFormattingContext();
-								if (selection.y == 0) {
-									context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
-								} else {
-									context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
-									context.setProperty(FormattingContextProperties.CONTEXT_REGION, new Region(selection.x, selection.y));
+								context= createFormattingContext(selection.x, selection.y);
+								if (context == null) {
+									return;
 								}
+								Object region = context.getProperty(FormattingContextProperties.CONTEXT_REGION);
+								context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT,
+										Boolean.valueOf(region == null));
 								extension.format(document, context);
 							} else {
 								IRegion r;
