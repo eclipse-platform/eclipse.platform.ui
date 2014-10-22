@@ -139,9 +139,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
 	@Override
 	public boolean close() {
 		instance = null;
@@ -166,19 +163,11 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return node;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		super.okPressed();
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-     * 
-     * @since 3.2
-     */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
@@ -189,21 +178,22 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
         return section;
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.window.Dialog#getDialogBoundsStrategy()
-     * 
-     * Overridden to persist only the location, not the size, since the current
-     * page dictates the most appropriate size for the dialog.
-     * @since 3.2
-     */
+	/**
+	 * Overridden to persist only the location, not the size, since the current
+	 * page dictates the most appropriate size for the dialog.
+	 *
+	 * @since 3.2
+	 */
 	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTLOCATION;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#open()
-	 * Overrides to set focus to the specific page if it a specific page was requested. 
+	/**
+	 *
+	 * Overrides to set focus to the specific page if it a specific page was
+	 * requested.
+	 *
 	 * @since 3.5
 	 */
 	@Override

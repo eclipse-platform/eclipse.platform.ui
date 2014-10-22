@@ -192,9 +192,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		reader.registerPropertyPages(Platform.getExtensionRegistry());
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
-     */
     @Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
         IConfigurationElement[] addedElements = extension.getConfigurationElements();
@@ -254,9 +251,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ObjectContributorManager#getExtensionPointFilter()
-	 */
 	@Override
 	protected String getExtensionPointFilter() {
 		return IWorkbenchRegistryConstants.PL_PROPERTY_PAGES;

@@ -74,11 +74,6 @@ public abstract class WorkbenchWizardListSelectionPage extends
         this.message = message;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void createControl(Composite parent) {
 

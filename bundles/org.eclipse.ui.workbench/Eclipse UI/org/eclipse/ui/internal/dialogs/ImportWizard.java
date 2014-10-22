@@ -112,9 +112,6 @@ public class ImportWizard extends Wizard {
         setNeedsProgressMonitor(true);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizard#performFinish()
-     */
     @Override
 	public boolean performFinish() {
         ((SelectionPage) getPages()[0]).saveWidgetValues();

@@ -79,9 +79,6 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 		setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
-    /* (non-Javadoc)
-     * Method declared in Window.
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);

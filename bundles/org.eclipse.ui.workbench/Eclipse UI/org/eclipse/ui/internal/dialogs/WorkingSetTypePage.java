@@ -127,30 +127,17 @@ public class WorkingSetTypePage extends WizardPage {
         typesListViewer.setLabelProvider(new LabelProvider() {
         	private ResourceManager images = new LocalResourceManager(
 					JFaceResources.getResources());
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
 			@Override
 			public String getText(Object element) {
 				return ((WorkingSetDescriptor)element).getName();
 			}
 			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-			 */
 			@Override
 			public void dispose() {
 				images.dispose();
 				super.dispose();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-			 */
 			@Override
 			public Image getImage(Object element) {
 				ImageDescriptor imageDescriptor = ((WorkingSetDescriptor) element)

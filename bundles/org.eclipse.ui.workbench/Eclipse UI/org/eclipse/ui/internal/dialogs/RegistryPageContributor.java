@@ -102,12 +102,6 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 		initializeEnablement(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.dialogs.IPropertyPageContributor#contributePropertyPage(org.eclipse.ui.internal.dialogs.PropertyPageManager,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public PreferenceNode contributePropertyPage(PropertyPageManager mng,
 			Object element) {
@@ -458,12 +452,6 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 * @since 3.1
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IConfigurationElement.class)) {

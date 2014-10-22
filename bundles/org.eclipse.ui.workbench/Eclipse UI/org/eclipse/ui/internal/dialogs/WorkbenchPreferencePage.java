@@ -78,11 +78,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
 	protected static int MAX_SAVE_INTERVAL = 9999;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage
-     */
     @Override
 	protected Control createContents(Composite parent) {
 

@@ -73,9 +73,6 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
      */
     public abstract IWorkbenchWizard createWizard() throws CoreException;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizardNode#dispose()
-     */
     @Override
 	public void dispose() {
         // Do nothing since the wizard wasn't created via reflection.
@@ -88,17 +85,11 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
         return parentWizardPage.getCurrentResourceSelection();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizardNode#getExtent()
-     */
     @Override
 	public Point getExtent() {
         return new Point(-1, -1);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
     	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
@@ -109,9 +100,6 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 		return wizardElement.getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
        	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
@@ -122,9 +110,6 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 		return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizardNode#getWizard()
-     */
     @Override
 	public IWizard getWizard() {
         if (wizard != null) {
@@ -212,9 +197,6 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
         return parentWizardPage.getWorkbench();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizardNode#isContentCreated()
-     */
     @Override
 	public boolean isContentCreated() {
         return wizard != null;

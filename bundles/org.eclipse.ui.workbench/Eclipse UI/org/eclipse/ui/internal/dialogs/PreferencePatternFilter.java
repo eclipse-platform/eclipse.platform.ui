@@ -77,19 +77,11 @@ public class PreferencePatternFilter extends PatternFilter {
 		return (String[]) keywordList.toArray(new String[keywordList.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.dialogs.PatternFilter#isElementSelectable(java.lang.Object)
-	 */
 	@Override
 	public boolean isElementSelectable(Object element) {
 		return element instanceof WorkbenchPreferenceExtensionNode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementVisible(org.eclipse.jface.viewers.Viewer, java.lang.Object)
-	 */
 	@Override
 	public boolean isElementVisible(Viewer viewer, Object element) {
 	    if (WorkbenchActivityHelper.restrictUseOf(
@@ -113,10 +105,6 @@ public class PreferencePatternFilter extends PatternFilter {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.PatternFilter#isLeafMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
-	 * 
-	 */
 	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		IPreferenceNode node = (IPreferenceNode) element;

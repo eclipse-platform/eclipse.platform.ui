@@ -100,9 +100,6 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
         newResourcePage.saveWidgetValues();
     }
         
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-     */
     @Override
 	public boolean canFlipToNextPage() {
         // if the current page advertises that it does have pages then ask it via the super call

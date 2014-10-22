@@ -227,28 +227,17 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 				.convertToResources(originalSelection);
     }
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
     @Override
 	public String getLocalId() {
         return getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
         return (configurationElement != null) ? configurationElement
                 .getNamespaceIdentifier() : null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.wizards.INewWizardDescriptor#getDescriptionImage()
-     */
     @Override
 	public ImageDescriptor getDescriptionImage() {
     	if (descriptionImage == null) {
@@ -262,41 +251,26 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
         return descriptionImage;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.wizards.INewWizardDescriptor#getHelpHref()
-     */
     @Override
 	public String getHelpHref() {
         return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_HREF);
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.INewWizardDescriptor#createWizard()
-	 */
 	@Override
 	public IWorkbenchWizard createWizard() throws CoreException {
 		return (IWorkbenchWizard) createExecutableExtension();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
-	 */
 	@Override
 	public String getLabel() {		
 		return getLabel(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.INewWizardDescriptor#getCategory()
-	 */
 	@Override
 	public IWizardCategory getCategory() {
 		return (IWizardCategory) getParent(this);
@@ -312,9 +286,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 		return (WizardCollectionElement) getParent(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.IWizardDescriptor#getTags()
-	 */
 	@Override
 	public String [] getTags() {
  
@@ -326,9 +297,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
         return EMPTY_TAGS;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object object) {
 		return parentCategory;
@@ -344,17 +312,11 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 		parentCategory = parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.IWizardDescriptor#canFinishEarly()
-	 */
 	@Override
 	public boolean canFinishEarly() {
 		return Boolean.valueOf(configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CAN_FINISH_EARLY)).booleanValue();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.IWizardDescriptor#hasPages()
-	 */
 	@Override
 	public boolean hasPages() {
 		String hasPagesString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_HAS_PAGES);

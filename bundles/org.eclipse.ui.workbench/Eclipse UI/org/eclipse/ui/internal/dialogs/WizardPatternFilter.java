@@ -30,19 +30,11 @@ public class WizardPatternFilter extends PatternFilter {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.PatternFilter#isElementSelectable(java.lang.Object)
-	 */
 	@Override
 	public boolean isElementSelectable(Object element) {
 		return element instanceof WorkbenchWizardElement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.PatternFilter#isElementMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
-	 */
 	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		if (element instanceof WizardCollectionElement) {
