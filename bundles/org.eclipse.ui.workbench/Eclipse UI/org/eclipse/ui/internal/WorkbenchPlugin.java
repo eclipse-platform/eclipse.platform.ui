@@ -225,7 +225,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         editorRegistry = null;
 
         if (decoratorManager != null) {
-            decoratorManager.dispose();
+			decoratorManager.shutdown();
             decoratorManager = null;
         }
 
