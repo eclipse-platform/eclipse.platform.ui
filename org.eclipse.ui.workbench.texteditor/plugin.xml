@@ -488,11 +488,25 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="CTRL+ARROW_UP"/>	<!-- hardcode CTRL to avoid overwriting Command+UP on carbon -->
+	  <!-- Ctrl+ARROW_UP is "Mission Control" on Mac OS X: -->
+	  <key
+	        platform="carbon"
+	        commandId=""
+	        contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="CTRL+ARROW_UP"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.scroll.lineDown"
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="CTRL+ARROW_DOWN"/>	<!-- hardcode CTRL to avoid overwriting Command+DOWN on carbon -->
+	  <!-- Ctrl+ARROW_DOWN is "Application windows" on Mac OS X. -->
+	  <key
+	        platform="carbon"
+	        commandId=""
+	        contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="CTRL+ARROW_DOWN"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.toggleOverwrite"
 	        contextId="org.eclipse.ui.textEditorScope"
@@ -543,7 +557,7 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+M3+J"/>
-	  <!-- disable the key binding for Carbon as it conflicts with another one in the SDK -->
+	  <!-- disable the key binding for Carbon as it conflicts with "Add Javadoc Comment" in the SDK -->
 	  <key
             platform="carbon"
 	        commandId=""
