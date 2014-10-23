@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies - bug 394036
  ******************************************************************************/
 
 package org.eclipse.ui.tests.progress;
@@ -27,6 +28,10 @@ public class DummyJob extends Job {
 
 	private final IStatus status;
 
+	public boolean inProgress = false;
+	/** if false, infinite until changed or job is cancelled */
+	public boolean shouldFinish = true;
+
 	public DummyJob(String name, IStatus status) {
 		super(name);
 		this.status = status;
@@ -34,10 +39,10 @@ public class DummyJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-
+		inProgress = true; // spare us from registering a job change listener
 		monitor.beginTask(getName() + " starts now", 10);
 		try {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10 || !shouldFinish; i++) {
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {

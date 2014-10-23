@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040, 440810
+ *     G.R.Prakash <me@grprakash.com> - Bug 394036
+ *     Manumitting Technologies - Bug 394036
  *******************************************************************************/
 
 package org.eclipse.ui.internal.progress;
@@ -27,6 +29,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -137,6 +142,8 @@ public class ProgressInfoItem extends Composite {
 	private ResourceManager resourceManager;
 
 	private Link link;
+
+	private HandlerChangeTracker tracker;
 
 	static {
 		JFaceResources
@@ -700,7 +707,6 @@ public class ProgressInfoItem extends Composite {
 	 * @param style
 	 */
 	void createProgressBar(int style) {
-
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(progressLabel, 0);
 		buttonData.right = new FormAttachment(100,
@@ -739,7 +745,6 @@ public class ProgressInfoItem extends Composite {
 	 * @param taskString
 	 */
 	void setLinkText(Job linkJob, String taskString, int index) {
-
 		if (index >= taskEntries.size()) {// Is it new?
 			link = new Link(this, SWT.NONE);
 
@@ -815,11 +820,9 @@ public class ProgressInfoItem extends Composite {
 		link.setData(TEXT_KEY, taskString);
 
 		updateText(taskString, link);
-
 	}
 
 	public void executeTrigger() {
-
 		Object data = link.getData(TRIGGER_KEY);
 		if (data instanceof IAction) {
 			IAction action = (IAction) data;
@@ -885,10 +888,10 @@ public class ProgressInfoItem extends Composite {
 			link.setData(TRIGGER_KEY, trigger);
 		} else if (trigger instanceof ParameterizedCommand) {
 			link.setData(TRIGGER_KEY, trigger);
+			hookTriggerCommandEnablement();
 		} else {
 			link.setData(TRIGGER_KEY, null);
 		}
-
 	}
 
 	/**
@@ -1045,5 +1048,61 @@ public class ProgressInfoItem extends Composite {
 	 */
 	public JobTreeElement getInfo() {
 		return info;
+	}
+
+	/**
+	 * For testing only
+	 *
+	 * @return true if the trigger is enabled
+	 * @noreference
+	 */
+	public boolean isTriggerEnabled() {
+		return link != null && !link.isDisposed() && link.isEnabled();
+	}
+
+	/** Called whenever trigger details change */
+	private void hookTriggerCommandEnablement() {
+		final Object data = link.getData(TRIGGER_KEY);
+		if (!(data instanceof ParameterizedCommand) || !PlatformUI.isWorkbenchRunning())
+			return;
+
+		// Would be nice to have the window's context, but we're too deep
+		IEclipseContext context = PlatformUI.getWorkbench().getService(IEclipseContext.class);
+		if (context == null) {
+			return;
+		}
+		if (tracker != null) {
+			// stop any existing RATs as the command details may have changed
+			tracker.stop();
+		}
+		tracker = new HandlerChangeTracker((ParameterizedCommand) data);
+		context.runAndTrack(tracker);
+	}
+
+	/**
+	 * A RAT to update the trigger link on handler changes for the given command
+	 */
+	private class HandlerChangeTracker extends RunAndTrack {
+		private ParameterizedCommand parmCommand;
+		private boolean stop = false;
+
+		public HandlerChangeTracker(ParameterizedCommand parmCommand) {
+			this.parmCommand = parmCommand;
+		}
+
+		public void stop() {
+			this.stop = true;
+		}
+
+		@Override
+		public boolean changed(IEclipseContext context) {
+			if (stop || isDisposed() || !isShowing) {
+				// stop listening for changes
+				return false;
+			}
+			EHandlerService service = context.get(EHandlerService.class);
+			link.setEnabled(service != null && service.canExecute(parmCommand));
+			return true;
+		}
 	}
 }
