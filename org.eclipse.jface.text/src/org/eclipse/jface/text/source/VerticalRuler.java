@@ -92,7 +92,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
 	 * @since 3.6
 	 */
-	private static final boolean IS_MAC= Util.isMac();
+	static final boolean IS_MAC_BUG_298936= Util.isMac();
 
 	/** The vertical ruler's text viewer */
 	private ITextViewer fTextViewer;
@@ -472,7 +472,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 */
 	private void redraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			if (IS_MAC) {
+			if (IS_MAC_BUG_298936) {
 				fCanvas.redraw();
 				fCanvas.update();
 			} else {

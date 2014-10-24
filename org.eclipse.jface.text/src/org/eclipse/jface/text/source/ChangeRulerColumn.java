@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.revisions.RevisionPainter;
 import org.eclipse.jface.internal.text.source.DiffPainter;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -115,13 +114,6 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 
 		}
 	}
-
-	/**
-	 * <code>true</code> if we're on a Mac, where "new GC(canvas)" is expensive.
-	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
-	 * @since 3.6
-	 */
-	private static final boolean IS_MAC= Util.isMac();
 
 	/**
 	 * The view(port) listener.
@@ -341,7 +333,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	public void redraw() {
 
 		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
-			if (IS_MAC) {
+			if (VerticalRuler.IS_MAC_BUG_298936) {
 				fCanvas.redraw();
 				fCanvas.update();
 			} else {

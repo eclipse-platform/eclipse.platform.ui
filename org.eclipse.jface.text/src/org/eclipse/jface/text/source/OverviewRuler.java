@@ -41,8 +41,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.jface.util.Util;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -376,13 +374,6 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	private static final boolean DEBUG_COMPUTE_Y= false;
 	private static final boolean DEBUG_TO_DOCUMENT_LINE_NUMBER= false;
 	
-	/**
-	 * <code>true</code> if we're on a Mac, where "new GC(canvas)" is expensive.
-	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
-	 * @since 3.6
-	 */
-	private static final boolean IS_MAC= Util.isMac();
-
 	private static final int INSET= 2;
 	private static final int ANNOTATION_HEIGHT= 4;
 	private static boolean ANNOTATION_HEIGHT_SCALABLE= true;
@@ -896,7 +887,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			return;
 
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			if (IS_MAC) {
+			if (VerticalRuler.IS_MAC_BUG_298936) {
 				fCanvas.redraw();
 				fCanvas.update();
 			} else {
