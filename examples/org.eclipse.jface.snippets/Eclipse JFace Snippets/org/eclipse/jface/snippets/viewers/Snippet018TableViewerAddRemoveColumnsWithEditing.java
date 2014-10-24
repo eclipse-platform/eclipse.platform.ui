@@ -8,12 +8,12 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 448143
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,18 +23,18 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -45,6 +45,10 @@ import org.eclipse.swt.widgets.TableColumn;
  * @since 3.2
  */
 public class Snippet018TableViewerAddRemoveColumnsWithEditing {
+
+	private static final String EMAIL = "email";
+	private static final String GIVENNAME = "givenname";
+	private static final String SURNAME = "surname";
 
 	public class Person {
 		public String givenname;
@@ -82,74 +86,74 @@ public class Snippet018TableViewerAddRemoveColumnsWithEditing {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
-		private TableViewer viewer;
+	public class MyLabelProvider extends ColumnLabelProvider
+			 {
+		private String propertyName;
 
-		public MyLabelProvider(TableViewer viewer) {
-			this.viewer = viewer;
+		public MyLabelProvider(TableViewer viewer, String propertyName) {
+			this.propertyName = propertyName;
 		}
 
 		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex) {
-			return ((Person) element)
-					.getValue(viewer.getColumnProperties()[columnIndex]
-							.toString());
+		public String getText(Object element) {
+			return ((Person) element).getValue(propertyName);
 		}
 	}
 
-	public class MyCellModifier implements ICellModifier {
-		private TableViewer viewer;
+	private class MyEditingSupport extends EditingSupport{
 
-		public MyCellModifier(TableViewer viewer) {
-			this.viewer = viewer;
+		private String property;
+
+		public MyEditingSupport(ColumnViewer viewer, String property) {
+			super(viewer);
+			this.property = property;
 		}
 
 		@Override
-		public boolean canModify(Object element, String property) {
+		protected CellEditor getCellEditor(Object element) {
+			return new TextCellEditor((Composite) getViewer().getControl());
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
 			return true;
 		}
 
 		@Override
-		public Object getValue(Object element, String property) {
+		protected Object getValue(Object element) {
 			return ((Person) element).getValue(property);
 		}
 
 		@Override
-		public void modify(Object element, String property, Object value) {
-			((Person) ((Item) element).getData()).setValue(property,
+		protected void setValue(Object element, Object value) {
+			((Person) element).setValue(property,
 					value.toString());
-			viewer.update(((Item) element).getData(), null);
+			getViewer().update(element, null);
 		}
 
 	}
 
 	private int activeColumn = -1;
+	private TableViewerColumn emailViewerColumn;
 
 	public Snippet018TableViewerAddRemoveColumnsWithEditing(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
-		v.setLabelProvider(new MyLabelProvider(v));
 		v.setContentProvider(ArrayContentProvider.getInstance());
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()),
-				new TextCellEditor(v.getTable()),
-				new TextCellEditor(v.getTable()) });
-		v.setCellModifier(new MyCellModifier(v));
-
-		v.setColumnProperties(new String[] { "givenname", "surname" });
 
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);
 		column.setText("Givenname");
+		TableViewerColumn viewerColumn = new TableViewerColumn(v, column);
+		viewerColumn.setLabelProvider(new MyLabelProvider(v, GIVENNAME));
+		viewerColumn.setEditingSupport(new MyEditingSupport(v, GIVENNAME));
 
 		column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);
 		column.setText("Surname");
+		TableViewerColumn viewerColumn2 = new TableViewerColumn(v, column);
+		viewerColumn2.setLabelProvider(new MyLabelProvider(v, SURNAME));
+		viewerColumn2.setEditingSupport(new MyEditingSupport(v, SURNAME));
 
 		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);
@@ -220,59 +224,26 @@ public class Snippet018TableViewerAddRemoveColumnsWithEditing {
 	}
 
 	private void removeEmailColumn(TableViewer v) {
-		int emailIndex = -1;
-		for (int i = 0; i < v.getColumnProperties().length; i++) {
-			if (v.getColumnProperties()[i].toString().equals("email")) {
-				emailIndex = i;
-				break;
-			}
+		if (emailViewerColumn != null && !emailViewerColumn.getColumn().isDisposed()) {
+			emailViewerColumn.getColumn().dispose();
+			emailViewerColumn = null;
+			v.refresh();
 		}
-
-		List<?> list = new ArrayList<CellEditor>(Arrays.asList(v
-				.getCellEditors()));
-		list.remove(emailIndex);
-		CellEditor[] editors = new CellEditor[list.size()];
-		list.toArray(editors);
-		v.setCellEditors(editors);
-
-		list = new ArrayList<Object>(Arrays.asList(v.getColumnProperties()));
-		list.remove(emailIndex);
-		String[] columnProperties = new String[list.size()];
-		list.toArray(columnProperties);
-		v.setColumnProperties(columnProperties);
-
-		v.getTable().getColumn(emailIndex).dispose();
-
-		v.refresh();
 	}
 
 	private void addEmailColumn(TableViewer v, int columnIndex) {
-		List<CellEditor> list = new ArrayList<CellEditor>(Arrays.asList(v
-				.getCellEditors()));
-		list.add(columnIndex, new TextCellEditor(v.getTable()));
-
-		CellEditor[] editors = new CellEditor[list.size()];
-		list.toArray(editors);
-		v.setCellEditors(editors);
-
-		List<Object> list2 = new ArrayList<Object>(Arrays.asList(v
-				.getColumnProperties()));
-		list2.add(columnIndex, "email");
-
-		String[] columnProperties = new String[list2.size()];
-		list2.toArray(columnProperties);
-		v.setColumnProperties(columnProperties);
 
 		// 1. Add new column
-		TableColumn column = new TableColumn(v.getTable(), SWT.NONE,
-				columnIndex);
-		column.setText("E-Mail");
+		emailViewerColumn = new TableViewerColumn(v, SWT.NONE, columnIndex);
+		emailViewerColumn.getColumn().setText("E-Mail");
+		emailViewerColumn.setLabelProvider(new MyLabelProvider(v, EMAIL));
+		emailViewerColumn.setEditingSupport(new MyEditingSupport(v, EMAIL));
 
 		// 2. Update the viewer
 		v.refresh();
 
 		// 3. Make the colum visible
-		column.setWidth(200);
+		emailViewerColumn.getColumn().setWidth(300);
 	}
 
 	private List<Person> createModel() {
@@ -281,8 +252,8 @@ public class Snippet018TableViewerAddRemoveColumnsWithEditing {
 				"boris_bokowski@ca.ibm.com"), new Person("Tod", "Creasey",
 				"tod_creasey@ca.ibm.com"), new Person("Jeanderson", "Candido",
 				"jeandersonbc@gmail.com"), new Person("Lars", "Vogel",
-				"Lars.Vogel@gmail.com"), new Person("Hendrik", "Still",
-				"hendrik.still@vogella.com"));
+						"lars.vogel@vogella.com"), new Person("Hendrik", "Still", "hendrik.still@vogella.com"),
+				new Person("Simon", "Scholz", "simon.scholz@vogella.com"));
 	}
 
 	/**
