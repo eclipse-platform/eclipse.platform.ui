@@ -335,11 +335,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 	}
 
 	private static class ListLabelProvider extends LabelProvider {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			return ((ModelElement) element).getName();
@@ -360,11 +355,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 			localResourceManager.dispose();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			String rc = getColumnText(element, 0);
@@ -493,11 +483,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
@@ -1265,11 +1250,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		keyController.addPropertyChangeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		keyController = new KeyController();
@@ -1308,11 +1288,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		keyController.saveBindings(fBindingService);

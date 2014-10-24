@@ -21,17 +21,11 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class NoKeysPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		// do nothing, we don't have content
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Label info = new Label(parent, SWT.NONE);

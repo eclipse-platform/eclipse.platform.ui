@@ -76,11 +76,6 @@ final class LegacySchemeListenerWrapper implements ISchemeListener {
 		return listener.hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.ISchemeListener#schemeChanged(org.eclipse.jface.bindings.SchemeEvent)
-	 */
 	@Override
 	public final void schemeChanged(final SchemeEvent schemeEvent) {
 		final IKeyConfiguration keyConfiguration = new SchemeLegacyWrapper(

@@ -30,11 +30,6 @@ class NativeModifierKeyComparator implements Comparator {
      */
     private final static int UNKNOWN_KEY = Integer.MAX_VALUE;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
     @Override
 	public int compare(Object left, Object right) {
         ModifierKey modifierKeyLeft = (ModifierKey) left;

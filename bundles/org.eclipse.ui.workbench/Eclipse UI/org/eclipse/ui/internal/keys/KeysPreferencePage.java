@@ -139,11 +139,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 			this.columnSelected = columnSelected;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			// Change the column titles.
@@ -518,9 +513,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private KeySequenceText textTriggerSequenceManager;
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
 	@Override
 	public void applyData(Object data) {
 		if(data instanceof Binding) {
@@ -1025,21 +1017,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		editButton.setLayoutData(gridData);
 		editButton.addSelectionListener(new SelectionListener() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public final void widgetDefaultSelected(final SelectionEvent event) {
 				selectedTableKeyBindings();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
@@ -1057,21 +1039,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		buttonExport.setLayoutData(gridData);
 		buttonExport.addSelectionListener(new SelectionListener() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public final void widgetDefaultSelected(final SelectionEvent event) {
 				selectedButtonExport();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);

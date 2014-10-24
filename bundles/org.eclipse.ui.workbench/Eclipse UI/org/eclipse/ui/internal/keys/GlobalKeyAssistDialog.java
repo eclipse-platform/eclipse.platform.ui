@@ -60,11 +60,6 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 		setInfoText(getInfoText());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.bindings.internal.KeyAssistDialog#open()
-	 */
 	@Override
 	public int open() {
 		if (isOpen) {
@@ -74,11 +69,6 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 		return super.open();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.bindings.internal.KeyAssistDialog#close()
-	 */
 	@Override
 	public boolean close() {
 		isOpen = false;
