@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 448831
  *******************************************************************************/
 
 package org.eclipse.core.commands.common;
@@ -52,7 +53,7 @@ public abstract class HandleObjectManager extends EventManager {
 	 */
 	protected final void checkId(final String id) {
 		if (id == null) {
-			throw new NullPointerException(
+			throw new IllegalArgumentException(
 					"A handle object may not have a null identifier"); //$NON-NLS-1$
 		}
 
