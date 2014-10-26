@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2006,2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 436344
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -18,31 +22,32 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ActionBarConfigurerTest extends TestCase {
+public class ActionBarConfigurerTest {
 
-    public ActionBarConfigurerTest(String name) {
-        super(name);
-    }
 
     private Display display = null;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+	@Before
+	public void setUp() throws Exception {
 
         assertNull(display);
         display = PlatformUI.createDisplay();
         assertNotNull(display);
     }
 
-    protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
         assertNotNull(display);
         display.dispose();
         assertTrue(display.isDisposed());
-        super.tearDown();
     }
 
-    public void testDefaults() {
+	@Test
+	public void testDefaults() {
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
             public void fillActionBars(IWorkbenchWindow window,

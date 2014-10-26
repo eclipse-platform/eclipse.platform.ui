@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,32 +7,26 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 436344
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * The test suite for the RCP APIs in the generic workbench.
  * To run, use a headless JUnit Plug-in Test launcher, configured
  * to have [No Application] as its application. 
  */
-public class RcpTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ PlatformUITest.class, WorkbenchAdvisorTest.class, WorkbenchConfigurerTest.class,
+		WorkbenchWindowConfigurerTest.class, ActionBarConfigurerTest.class, IWorkbenchPageTest.class,
+		WorkbenchSaveRestoreStateTest.class, WorkbenchListenerTest.class })
+public class RcpTestSuite {
 
-    /** Returns the suite. This is required to use the JUnit Launcher. */
-    public static Test suite() {
-        return new RcpTestSuite();
-    }
+
 
     public RcpTestSuite() {
-        addTest(PlatformUITest.suite());
-        addTest(new TestSuite(WorkbenchAdvisorTest.class));
-        addTest(new TestSuite(WorkbenchConfigurerTest.class));
-        addTest(new TestSuite(WorkbenchWindowConfigurerTest.class));
-        addTest(new TestSuite(ActionBarConfigurerTest.class));
-        addTest(new TestSuite(IWorkbenchPageTest.class));
-        addTest(new TestSuite(WorkbenchSaveRestoreStateTest.class));
-        addTest(new TestSuite(WorkbenchListenerTest.class));
     }
 }

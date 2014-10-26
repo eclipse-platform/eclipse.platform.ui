@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 436344
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
@@ -36,32 +42,33 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WorkbenchWindowConfigurerTest extends TestCase {
+public class WorkbenchWindowConfigurerTest {
 
-    public WorkbenchWindowConfigurerTest(String name) {
-        super(name);
-    }
 
     private Display display = null;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+	@Before
+	public void setUp() throws Exception {
 
         assertNull(display);
         display = PlatformUI.createDisplay();
         assertNotNull(display);
     }
 
-    protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
         assertNotNull(display);
         display.dispose();
         assertTrue(display.isDisposed());
 
-        super.tearDown();
     }
 
-    public void testDefaults() {
+	@Test
+	public void testDefaults() {
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
             public void fillActionBars(IWorkbenchWindow window,
@@ -111,18 +118,22 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
         assertEquals(PlatformUI.RETURN_OK, code);
     }
 
+	@Test
 	public void test104558_T_T() throws Throwable {
 		doTest104558(true, true);
 	}
 	
+	@Test
 	public void test104558_F_T() throws Throwable {
 		doTest104558(false, true);
 	}
 	
+	@Test
 	public void test104558_T_F() throws Throwable {
 		doTest104558(true, false);
 	}
 	
+	@Test
 	public void test104558_F_F() throws Throwable {
 		doTest104558(false, false);
 	}
@@ -137,6 +148,8 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
 						getWindowConfigurer().setShowCoolBar(showCoolBar);
 						getWindowConfigurer().setShowPerspectiveBar(showPerspectiveBar);
 					}
+
+					@SuppressWarnings("deprecation")
 					public void createWindowContents(Shell shell) {
 						IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 						configurer.createPageComposite(shell);
@@ -163,8 +176,9 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
 	
 
 	// tests to ensure that all WorkbenchAdvisor API is called from the UI thread.
+	@Test
 	public void testThreading() {
-		final ArrayList results = new ArrayList();
+		final ArrayList<String> results = new ArrayList<String>();
 		
 		WorkbenchAdvisor advisor = new RCPTestWorkbenchAdvisor(1) {
 
@@ -261,11 +275,13 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
 						return advisor;
 					}
 
+					@SuppressWarnings("deprecation")
 					public Control createEmptyWindowContents(Composite parent) {
 						ensureThread();
 						return super.createEmptyWindowContents(parent);
 					}
 
+					@SuppressWarnings("deprecation")
 					public void createWindowContents(Shell shell) {
 						ensureThread();
 						super.createWindowContents(shell);
@@ -336,8 +352,8 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
 		
 		if (!results.isEmpty()) {
 			StringBuffer buffer = new StringBuffer("Window/action bar advisor methods called from non-UI threads:\n");
-			for (Iterator i = results.iterator(); i.hasNext();) {
-				String string = (String) i.next();
+			for (Iterator<String> i = results.iterator(); i.hasNext();) {
+				String string = i.next();
 				buffer.append(string).append('\n');
 			}
 			fail(buffer.toString());
