@@ -98,6 +98,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		} else {
 			instance = AccessController.doPrivileged(new PrivilegedAction<M>() {
 
+				@Override
 				public M run() {
 					return createInstance(locale, messages, annotation, provider);
 				}
@@ -138,7 +139,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * this method will not break. In this case the fields of the message class will get initialized
 	 * with values that look like <code>!key!</code> to indicate that there is no translation value
 	 * found for that key.
-	 * 
+	 *
 	 * @param locale
 	 *            The {@link Locale} for which the message class instance is requested.
 	 * @param messages
@@ -149,7 +150,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * @param rbProvider
 	 *            The service that is needed to retrieve {@link ResourceBundle} objects from a
 	 *            bundle with a given locale.
-	 * 
+	 *
 	 * @return The created instance of the given messages class and {@link Locale} or
 	 *         <code>null</code> if an error occured on creating the instance.
 	 */
@@ -232,7 +233,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * <p>
 	 * Note: The method annotated with {@link PostConstruct} does not support method injection
 	 * because we are not using the injection mechanism to call.
-	 * 
+	 *
 	 * @param messageObject
 	 *            The message instance of the given class where the method annotated with
 	 *            {@link PostConstruct} should be called

@@ -34,7 +34,7 @@ public class DefaultResourceBundleProvider implements ResourceBundleProvider {
 	/**
 	 * Method called by DS to set the {@link BundleLocalization} to this
 	 * {@link ResourceBundleProvider}.
-	 * 
+	 *
 	 * @param localization
 	 *            The {@link BundleLocalization} that should be set to this
 	 *            {@link ResourceBundleProvider}
@@ -46,7 +46,7 @@ public class DefaultResourceBundleProvider implements ResourceBundleProvider {
 	/**
 	 * Method called by DS to unset the {@link BundleLocalization} from this
 	 * {@link ResourceBundleProvider}.
-	 * 
+	 *
 	 * @param localization
 	 *            The {@link BundleLocalization} to remove from this {@link ResourceBundleProvider}.
 	 *            If the given {@link BundleLocalization} is not the same that is already set,

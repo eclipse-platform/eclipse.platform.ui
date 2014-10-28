@@ -135,7 +135,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Message {
 	/**
 	 * Caching behaviors.
-	 * 
+	 *
 	 * @see Message
 	 */
 	public enum ReferenceType {

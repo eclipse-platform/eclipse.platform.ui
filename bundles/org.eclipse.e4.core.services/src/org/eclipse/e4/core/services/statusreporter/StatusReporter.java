@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.log.Logger;
 /**
  * Handling warnings or errors, with the intent of making the end user aware of these. Strings are
  * expected to be translated.
- * 
+ *
  * @see Logger
  */
 public abstract class StatusReporter {
@@ -78,7 +78,7 @@ public abstract class StatusReporter {
 
 	/**
 	 * Report the given status, using the given style as a hint.
-	 * 
+	 *
 	 * @param status
 	 *            a status object describing an exceptional situation that should be brought to the
 	 *            attention of the user.
@@ -88,13 +88,13 @@ public abstract class StatusReporter {
 	 *            any number of additional objects to pass along with the status in order to help
 	 *            with diagnosing the problem. One possible use of these objects would be to call
 	 *            their toString() methods.
-	 * 
+	 *
 	 */
 	public abstract void report(IStatus status, int style, Object... information);
 
 	/**
 	 * Return a status object with the given severity, message, and optional exception.
-	 * 
+	 *
 	 * @param severity
 	 *            one of the severity constants (OK, INFO, WARNING, ERROR).
 	 * @param message
@@ -111,7 +111,7 @@ public abstract class StatusReporter {
 	/**
 	 * Convenience method, equivalent to calling
 	 * <code>report(newStatus(severity, message, exception), SHOW, information).</code>
-	 * 
+	 *
 	 * @param severity
 	 *            one of the severity constants (OK, INFO, WARNING, ERROR).
 	 * @param message
@@ -126,7 +126,7 @@ public abstract class StatusReporter {
 	 *            any number of additional objects to pass along in order to help with diagnosing
 	 *            the problem. One possible use of these objects may be that their toString()
 	 *            methods will be called.
-	 * 
+	 *
 	 */
 	final public void show(int severity, String message, Throwable exception, Object... information) {
 		report(newStatus(severity, message, exception), SHOW, information);

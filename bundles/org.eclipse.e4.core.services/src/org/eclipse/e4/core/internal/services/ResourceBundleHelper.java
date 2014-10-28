@@ -33,7 +33,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * Helper class for retrieving {@link ResourceBundle}s out of OSGi {@link Bundle}s.
- * 
+ *
  * @author Dirk Fauth
  */
 // There is no replacement for PackageAdmin#getBundles()
@@ -78,7 +78,7 @@ public class ResourceBundleHelper {
 	 * {@link ResourceBundle}.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param contributionURI
 	 *            The URI that points to a {@link ResourceBundle}
 	 * @param locale
@@ -212,7 +212,7 @@ public class ResourceBundleHelper {
 	 * </p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root
 	 * file to be used instead of falling back to the default locale.
-	 * 
+	 *
 	 * @param baseName
 	 *            the base name of the resource bundle, a fully qualified class name
 	 * @param locale
@@ -220,7 +220,7 @@ public class ResourceBundleHelper {
 	 * @param loader
 	 *            the class loader from which to load the resource bundle
 	 * @return a resource bundle for the given base name and locale
-	 * 
+	 *
 	 * @see ResourceBundle#getBundle(String, Locale, ClassLoader)
 	 */
 	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale,
@@ -305,7 +305,7 @@ public class ResourceBundleHelper {
 	 * </p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root
 	 * file to be used instead of falling back to the default locale.
-	 * 
+	 *
 	 * @param baseName
 	 *            the base name of the resource bundle, a fully qualified class name
 	 * @param locale
@@ -313,7 +313,7 @@ public class ResourceBundleHelper {
 	 * @param bundle
 	 *            The OSGi {@link Bundle} to lookup the {@link ResourceBundle}
 	 * @return a resource bundle for the given base name and locale
-	 * 
+	 *
 	 * @see ResourceBundle#getBundle(String, Locale, Control)
 	 */
 	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale,
@@ -360,7 +360,7 @@ public class ResourceBundleHelper {
 	 * </p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root
 	 * file to be used instead of falling back to the default locale.
-	 * 
+	 *
 	 * @param baseName
 	 *            the base name of the resource bundle, a fully qualified class name
 	 * @param locale
@@ -372,7 +372,7 @@ public class ResourceBundleHelper {
 	 *            The {@link Control} that doesn't use the default locale fallback on searching for
 	 *            resource bundles.
 	 * @return a resource bundle for the given base name and locale
-	 * 
+	 *
 	 * @see ResourceBundle#getBundle(String, Locale, Control)
 	 */
 	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale,
@@ -432,7 +432,7 @@ public class ResourceBundleHelper {
 	/**
 	 * This method is copied out of org.eclipse.e4.ui.internal.workbench.Activator because as it is
 	 * a internal resource, it is not accessible for us.
-	 * 
+	 *
 	 * @param bundleName
 	 *            the bundle id
 	 * @return A bundle if found, or <code>null</code>
@@ -455,28 +455,28 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * Converts a String to a Locale.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method takes the string format of a locale and creates the locale object from it.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 *   MessageFactoryServiceImpl.toLocale("en")         = new Locale("en", "")
 	 *   MessageFactoryServiceImpl.toLocale("en_GB")      = new Locale("en", "GB")
 	 *   MessageFactoryServiceImpl.toLocale("en_GB_xxx")  = new Locale("en", "GB", "xxx")
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * This method validates the input strictly. The language code must be lowercase. The country
 	 * code must be uppercase. The separator must be an underscore. The length must be correct.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method is inspired by <code>org.apache.commons.lang.LocaleUtils.toLocale(String)</code>
 	 * by fixing the parsing error for uncommon Locales like having a language and a variant code
 	 * but no country code, or a Locale that only consists of a country code.
 	 * </p>
-	 * 
+	 *
 	 * @param str
 	 *            the locale String to convert
 	 * @return a Locale that matches the specified locale String. If the given input String is
@@ -491,28 +491,28 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * Converts a String to a Locale.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method takes the string format of a locale and creates the locale object from it.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 *   MessageFactoryServiceImpl.toLocale("en")         = new Locale("en", "")
 	 *   MessageFactoryServiceImpl.toLocale("en_GB")      = new Locale("en", "GB")
 	 *   MessageFactoryServiceImpl.toLocale("en_GB_xxx")  = new Locale("en", "GB", "xxx")
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * This method validates the input strictly. The language code must be lowercase. The country
 	 * code must be uppercase. The separator must be an underscore. The length must be correct.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method is inspired by <code>org.apache.commons.lang.LocaleUtils.toLocale(String)</code>
 	 * by fixing the parsing error for uncommon Locales like having a language and a variant code
 	 * but no country code, or a Locale that only consists of a country code.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Note:</b> This is the same logic as used in <code>EquinoxConfiguration.toLocale()</code>
 	 * </p>
@@ -599,13 +599,13 @@ public class ResourceBundleHelper {
 	/**
 	 * Specialization of {@link Control} which loads the {@link ResourceBundle} out of an OSGi
 	 * {@link Bundle} instead of using a classloader.
-	 * 
+	 *
 	 * <p>
 	 * It only supports properties based {@link ResourceBundle}s. If you want to use source based
 	 * {@link ResourceBundle}s you have to use the bundleclass URI with the Message annotation.
-	 * 
+	 *
 	 * @author Dirk Fauth
-	 * 
+	 *
 	 */
 	static class BundleResourceBundleControl extends ResourceBundle.Control {
 
@@ -621,7 +621,7 @@ public class ResourceBundleHelper {
 		private final Bundle osgiBundle;
 
 		/**
-		 * 
+		 *
 		 * @param osgiBundle
 		 *            The OSGi {@link Bundle} to lookup the {@link ResourceBundle}
 		 * @param useFallback
@@ -646,6 +646,7 @@ public class ResourceBundleHelper {
 				try {
 					stream = AccessController
 							.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+								@Override
 								public InputStream run() throws IOException {
 									InputStream is = null;
 									URL url = osgiBundle.getEntry(resourceName);

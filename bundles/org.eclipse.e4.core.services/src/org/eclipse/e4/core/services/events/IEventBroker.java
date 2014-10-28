@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,11 +17,11 @@ import org.osgi.service.event.EventHandler;
 
 /**
  * To obtain an instance of the event broker service from the {@link IEclipseContext} context, use
- * 
+ *
  * <pre>
  * (IEventBroker) context.get(IEventBroker.class.getName())
  * </pre>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.1
  */
@@ -38,7 +38,7 @@ public interface IEventBroker {
 	 * If data is a {@link Map} or a {@link Dictionary}, it is passed as is. Otherwise, a new Map is
 	 * constructed and its {@link #DATA} attribute is populated with this value.
 	 * </p>
-	 * 
+	 *
 	 * @param topic
 	 *            topic of the event to be published
 	 * @param data
@@ -54,7 +54,7 @@ public interface IEventBroker {
 	 * If data is a {@link Map} or a {@link Dictionary}, it is passed as is. Otherwise, a new Map is
 	 * constructed and its {@link #DATA} attribute is populated with this value.
 	 * </p>
-	 * 
+	 *
 	 * @param topic
 	 *            topic of the event to be published
 	 * @param data
@@ -69,7 +69,7 @@ public interface IEventBroker {
 	 * <p>
 	 * The handler will be called on the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param topic
 	 *            topic of interest
 	 * @param eventHandler
@@ -84,7 +84,7 @@ public interface IEventBroker {
 	 * <p>
 	 * The handler will be called on the UI thread if "headless" is set to <code>true</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param topic
 	 *            topic of interest
 	 * @param filter
@@ -102,7 +102,7 @@ public interface IEventBroker {
 
 	/**
 	 * Unsubscribe handler previously registered using {@link #subscribe(String, EventHandler)}.
-	 * 
+	 *
 	 * @param eventHandler
 	 *            previously registered event handler
 	 * @return <code>true</code> if this operation was performed successfully; <code>false</code>

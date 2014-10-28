@@ -22,9 +22,9 @@ import javax.inject.Qualifier;
  * <p>
  * Annotation used in conjunction with {@link Inject} to mark injected values
  * </p>
- * 
+ *
  * Sample:
- * 
+ *
  * <pre>
  * class TestSimpleObject {
  * 	&#064;Inject
@@ -32,7 +32,7 @@ import javax.inject.Qualifier;
  * 	SimpleMessages simpleMessages;
  * }
  * </pre>
- * 
+ *
  * @since 1.2
  */
 @Qualifier

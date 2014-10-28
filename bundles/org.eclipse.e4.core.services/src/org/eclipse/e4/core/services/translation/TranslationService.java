@@ -20,7 +20,7 @@ import javax.inject.Named;
 
 /**
  * Provides localization service.
- * 
+ *
  * @since 1.2
  */
 public abstract class TranslationService {
@@ -48,7 +48,7 @@ public abstract class TranslationService {
 	 * <p>
 	 * This method is expected to be overridden by the implementors.
 	 * </p>
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param contributorURI
@@ -63,7 +63,7 @@ public abstract class TranslationService {
 	 * Returns the value out of the given ResourceBundle for the given translation key. Note that
 	 * this method will only work correctly if the key matches the specification of a translation
 	 * key in the application model. That means, it needs to start with a % character.
-	 * 
+	 *
 	 * @param key
 	 *            The value that is set as key in the application model.
 	 * @param resourceBundle

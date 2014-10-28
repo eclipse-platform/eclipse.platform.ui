@@ -75,7 +75,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * Setting the {@link Locale} by using this method will cause to create new instances for all
 	 * message classes that were requested before. It also notifys all {@link IRequestor} that
 	 * requested those messages instance which causes dynamic reinjection.
-	 * 
+	 *
 	 * @param locale
 	 *            The {@link Locale} to use for creating the message instances.
 	 */
@@ -101,7 +101,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * Checks if for the specified descriptor class there is already an instance in the local cache.
 	 * If not a new instance is created using the local configuration on {@link Locale},
 	 * {@link BundleLocalization} and given descriptor class.
-	 * 
+	 *
 	 * @param descriptorsClass
 	 *            The class for which an instance is requested.
 	 * @return The instance of the requested message class
@@ -114,7 +114,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * Remember the {@link IRequestor} that requested an instance of the given descriptor class.
 	 * This is needed to be able to inform all {@link IRequestor} if the {@link Locale} changes at
 	 * runtime.
-	 * 
+	 *
 	 * @param descriptorsClass
 	 *            The class for which an instance was requested.
 	 * @param requestor
@@ -132,7 +132,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	/**
 	 * Notify all given {@link IRequestor} about changes for their injected values. This way the
 	 * dynamic injection is performed.
-	 * 
+	 *
 	 * @param requestors
 	 *            The {@link IRequestor} to inform about the instance changes.
 	 */

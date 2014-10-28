@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.statusreporter.StatusReporter;
  * Logging warnings, errors, information, as well as capturing debug and trace information.
  * Everything done through this interface is not meant for normal end users. Strings are not
  * expected to be translated.
- * 
+ *
  * @see StatusReporter
  */
 public abstract class Logger {

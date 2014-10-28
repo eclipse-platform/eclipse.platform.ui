@@ -18,7 +18,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
  * <p>
  * <b>Note:</b> This is not an OSGi service! It is created by a {@link ContextFunction}.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 1.2
@@ -36,7 +36,7 @@ public interface ILocaleChangeService {
 
 	/**
 	 * Change the {@link Locale} in the application context.
-	 * 
+	 *
 	 * @param locale
 	 *            The {@link Locale} to set to the application context.
 	 */
@@ -47,7 +47,7 @@ public interface ILocaleChangeService {
 	 * <p>
 	 * If the given String is not a valid {@link Locale} String representation, there will be no
 	 * locale change performed.
-	 * 
+	 *
 	 * @param localeString
 	 *            The String representation of the {@link Locale} to set to the application context.
 	 */

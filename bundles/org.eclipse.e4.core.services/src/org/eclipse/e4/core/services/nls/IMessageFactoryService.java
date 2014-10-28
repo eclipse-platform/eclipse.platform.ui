@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 
 /**
  * Service that is responsible for creating and managing message class instances.
- * 
+ *
  * @since 1.2
  */
 public interface IMessageFactoryService {
@@ -25,7 +25,7 @@ public interface IMessageFactoryService {
 	 * Returns an instance of the of a given messages class for the given {@link Locale}. If
 	 * configured it caches the created instances and return the already created instances.
 	 * Otherwise a new instance will be created.
-	 * 
+	 *
 	 * @param locale
 	 *            The {@link Locale} for which the message class instance is requested.
 	 * @param messages
