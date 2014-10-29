@@ -345,10 +345,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 				|| labelProvider instanceof CellLabelProvider);
 		updateColumnParts(labelProvider);// Reset the label providers in the
 		// columns
-		super.setLabelProvider(labelProvider);
 		if (labelProvider instanceof CellLabelProvider) {
 			((CellLabelProvider) labelProvider).initialize(this, null);
 		}
+		super.setLabelProvider(labelProvider);
 	}
 
 	@Override
