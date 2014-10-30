@@ -6,3 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.e4.ui.dialogs;x-internal:=true
+Require-Bundle: org.eclipse.jface;bundle-version="3.11.0",
+ com.ibm.icu,
+ org.eclipse.core.runtime;bundle-version="3.10.0"
