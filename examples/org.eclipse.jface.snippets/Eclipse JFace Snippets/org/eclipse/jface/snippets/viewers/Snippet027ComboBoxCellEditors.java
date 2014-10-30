@@ -9,6 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *     Dinko Ivanov - bug 164365
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 448143
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -18,17 +19,17 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 
 /**
  * This snippet represents usage of the ComboBoxCell-Editor
@@ -37,34 +38,6 @@ import org.eclipse.swt.widgets.TableItem;
  *
  */
 public class Snippet027ComboBoxCellEditors {
-	private class MyCellModifier implements ICellModifier {
-
-		private TableViewer viewer;
-
-		public MyCellModifier(TableViewer viewer) {
-			this.viewer = viewer;
-		}
-
-		@Override
-		public boolean canModify(Object element, String property) {
-			return true;
-		}
-
-		@Override
-		public Object getValue(Object element, String property) {
-			// We need to calculate back to the index
-			return new Integer(((MyModel) element).counter / 10);
-		}
-
-		@Override
-		public void modify(Object element, String property, Object value) {
-			TableItem item = (TableItem) element;
-			// We get the index and need to calculate the real value
-			((MyModel) item.getData()).counter = ((Integer) value).intValue() * 10;
-			viewer.update(item.getData(), null);
-		}
-	}
-
 	public class MyModel {
 		public int counter;
 
@@ -81,19 +54,39 @@ public class Snippet027ComboBoxCellEditors {
 	public Snippet027ComboBoxCellEditors(Shell shell) {
 		final Table table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		final TableViewer v = new TableViewer(table);
-		final MyCellModifier modifier = new MyCellModifier(v);
+		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setWidth(200);
+		TableViewerColumn viewerColumn = new TableViewerColumn(v, column);
+		viewerColumn.setLabelProvider(new ColumnLabelProvider());
+		viewerColumn.setEditingSupport(new EditingSupport(v) {
 
-		v.setLabelProvider(new LabelProvider());
-		v.setContentProvider(ArrayContentProvider.getInstance());
-		v.setCellModifier(modifier);
-		v.setColumnProperties(new String[] { "column1" });
-		v.setCellEditors(new CellEditor[] { new ComboBoxCellEditor(
-				v.getTable(), new String[] { "Zero", "Ten", "Twenty", "Thirty",
-						"Fourty", "Fifty", "Sixty", "Seventy", "Eighty",
-						"Ninety" }) });
+			@Override
+			protected void setValue(Object element, Object value) {
+				((MyModel) element).counter = ((Integer) value).intValue() * 10;
+				getViewer().update(element, null);
+			}
+
+			@Override
+			protected Object getValue(Object element) {
+				// We need to calculate back to the index
+				return new Integer(((MyModel) element).counter / 10);
+			}
+
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new ComboBoxCellEditor(
+						v.getTable(), new String[] { "Zero", "Ten", "Twenty", "Thirty",
+							"Fourty", "Fifty", "Sixty", "Seventy", "Eighty",
+							"Ninety" });
+			}
+
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
 
 		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);

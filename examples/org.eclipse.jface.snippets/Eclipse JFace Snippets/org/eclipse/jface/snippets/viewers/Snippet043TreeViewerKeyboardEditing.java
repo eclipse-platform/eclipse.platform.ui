@@ -9,6 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *     Jeanderson Candido (http://jeandersonbc.github.io) - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 448143
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -17,15 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
-import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.TreeViewerEditor;
 import org.eclipse.jface.viewers.TreeViewerFocusCellManager;
 import org.eclipse.jface.viewers.Viewer;
@@ -34,8 +37,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -45,8 +48,8 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class Snippet043NoColumnTreeViewerKeyboardEditing {
-	public Snippet043NoColumnTreeViewerKeyboardEditing(final Shell shell) {
+public class Snippet043TreeViewerKeyboardEditing {
+	public Snippet043TreeViewerKeyboardEditing(final Shell shell) {
 		Button b = new Button(shell, SWT.PUSH);
 		b.setText("BBB");
 		final TreeViewer v = new TreeViewer(shell, SWT.BORDER
@@ -68,27 +71,31 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 
 		});
 
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTree()) });
-		v.setColumnProperties(new String[] { "col1" });
-		v.setCellModifier(new ICellModifier() {
+		TreeViewerColumn viewerColumn = new TreeViewerColumn(v, SWT.NONE);
+		viewerColumn.getColumn().setWidth(300);
+		viewerColumn.setLabelProvider(new ColumnLabelProvider());
+		viewerColumn.setEditingSupport(new EditingSupport(v) {
 
 			@Override
-			public boolean canModify(Object element, String property) {
-				return true;
+			protected void setValue(Object element, Object value) {
+				((MyModel) element).counter = Integer.parseInt(value.toString());
+				getViewer().update(element, null);
 			}
 
 			@Override
-			public Object getValue(Object element, String property) {
+			protected Object getValue(Object element) {
 				return ((MyModel) element).counter + "";
 			}
 
 			@Override
-			public void modify(Object element, String property, Object value) {
-				element = ((Item) element).getData();
-				((MyModel) element).counter = Integer.parseInt(value.toString());
-				v.update(element, null);
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor((Composite) getViewer().getControl());
 			}
 
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
 		});
 
 		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(
@@ -119,7 +126,7 @@ public class Snippet043NoColumnTreeViewerKeyboardEditing {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet043NoColumnTreeViewerKeyboardEditing(shell);
+		new Snippet043TreeViewerKeyboardEditing(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
