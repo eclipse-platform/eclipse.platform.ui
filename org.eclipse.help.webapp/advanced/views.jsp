@@ -39,14 +39,14 @@ BODY {
 	padding:0px;
 	/* Mozilla does not like width:100%, so we set height only */
 	height:100%;
-	position : relative;  // Needed for Safari
+	position:relative; /* Needed for Safari */
 }
 
 IFRAME {
 	width:100%;
 	height:100%;
-	position : absolute;  // Needed for Safari
-	top : 0px;
+	position:absolute; /* Needed for Safari */
+	top:0px;
 }
 
 .hidden {
