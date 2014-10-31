@@ -15,7 +15,7 @@ package org.eclipse.jface.databinding.viewers;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.internal.databinding.viewers.ViewerObservableValueDecorator;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -53,7 +53,7 @@ public abstract class ViewerValueProperty extends SimpleValueProperty implements
 
 	@Override
 	public IViewerObservableValue observe(Viewer viewer) {
-		return (IViewerObservableValue) observe(SWTObservables.getRealm(viewer
+		return (IViewerObservableValue) observe(DisplayRealm.getRealm(viewer
 				.getControl().getDisplay()), viewer);
 	}
 

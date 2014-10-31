@@ -81,7 +81,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -201,7 +201,7 @@ public class E4Application implements IApplication {
 
 		IEclipseContext appContext = createDefaultContext();
 		appContext.set(Display.class, display);
-		appContext.set(Realm.class, SWTObservables.getRealm(display));
+		appContext.set(Realm.class, DisplayRealm.getRealm(display));
 		appContext.set(UISynchronize.class, new UISynchronize() {
 
 			@Override

@@ -117,7 +117,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 
 	@Override
 	public ISWTObservableValue observe(Widget widget) {
-		return (ISWTObservableValue) observe(SWTObservables.getRealm(widget
+		return (ISWTObservableValue) observe(DisplayRealm.getRealm(widget
 				.getDisplay()), widget);
 	}
 

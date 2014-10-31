@@ -12,9 +12,9 @@
 package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.core.databinding.property.list.DelegatingListProperty;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableList;
 import org.eclipse.jface.databinding.swt.IWidgetListProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Widget;
 
 abstract class WidgetDelegatingListProperty extends DelegatingListProperty
@@ -30,7 +30,7 @@ abstract class WidgetDelegatingListProperty extends DelegatingListProperty
 
 	@Override
 	public ISWTObservableList observe(Widget widget) {
-		return (ISWTObservableList) observe(SWTObservables.getRealm(widget
+		return (ISWTObservableList) observe(DisplayRealm.getRealm(widget
 				.getDisplay()), widget);
 	}
 }

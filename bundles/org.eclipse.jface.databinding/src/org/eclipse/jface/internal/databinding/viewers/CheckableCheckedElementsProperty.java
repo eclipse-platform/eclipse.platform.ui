@@ -19,7 +19,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.set.SetProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -69,7 +69,7 @@ public class CheckableCheckedElementsProperty extends SetProperty {
 	@Override
 	public IObservableSet observe(Object source) {
 		if (source instanceof Viewer) {
-			return observe(SWTObservables.getRealm(((Viewer) source)
+			return observe(DisplayRealm.getRealm(((Viewer) source)
 					.getControl().getDisplay()), source);
 		}
 		return super.observe(source);

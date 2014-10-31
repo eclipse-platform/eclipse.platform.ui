@@ -30,7 +30,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -107,7 +107,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 			TreeStructureAdvisor structureAdvisor) {
 		this.structureAdvisor = structureAdvisor;
 		display = Display.getDefault();
-		realm = SWTObservables.getRealm(display);
+		realm = DisplayRealm.getRealm(display);
 		viewerObservable = new WritableValue(realm);
 		viewerUpdater = null;
 

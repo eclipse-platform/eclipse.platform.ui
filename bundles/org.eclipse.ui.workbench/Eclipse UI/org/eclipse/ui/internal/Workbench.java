@@ -118,7 +118,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -579,7 +579,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public static final int createAndRunWorkbench(final Display display,
 			final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
 			@Override
 			public void run() {
 				final String nlExtensions = Platform.getNLExtensions();

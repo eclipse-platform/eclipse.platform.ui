@@ -49,7 +49,7 @@ public abstract class WidgetListProperty extends SimpleListProperty implements
 
 	@Override
 	public ISWTObservableList observe(Widget widget) {
-		return (ISWTObservableList) observe(SWTObservables.getRealm(widget
+		return (ISWTObservableList) observe(DisplayRealm.getRealm(widget
 				.getDisplay()), widget);
 	}
 }

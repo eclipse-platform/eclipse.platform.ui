@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.swt;
 
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
@@ -37,7 +37,7 @@ public class WidgetListenerUtil {
 		if (display == Display.getCurrent()) {
 			widget.addListener(event, listener);
 		} else {
-			SWTObservables.getRealm(display).exec(new Runnable() {
+			DisplayRealm.getRealm(display).exec(new Runnable() {
 				@Override
 				public void run() {
 					if (!widget.isDisposed())
@@ -63,7 +63,7 @@ public class WidgetListenerUtil {
 		if (display == Display.getCurrent()) {
 			widget.removeListener(event, listener);
 		} else {
-			SWTObservables.getRealm(display).exec(new Runnable() {
+			DisplayRealm.getRealm(display).exec(new Runnable() {
 				@Override
 				public void run() {
 					if (!widget.isDisposed())

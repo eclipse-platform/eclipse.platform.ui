@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.viewers;
 
 import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.IViewerObservableSet;
 import org.eclipse.jface.databinding.viewers.IViewerSetProperty;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -53,7 +53,7 @@ public class ViewerCheckedElementsProperty extends DelegatingSetProperty
 
 	@Override
 	public IViewerObservableSet observe(Viewer viewer) {
-		return (IViewerObservableSet) observe(SWTObservables.getRealm(viewer
+		return (IViewerObservableSet) observe(DisplayRealm.getRealm(viewer
 				.getControl().getDisplay()), viewer);
 	}
 }
