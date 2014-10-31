@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,11 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
@@ -44,16 +46,22 @@ public class FileSearchQuery implements ISearchQuery {
 		private final AbstractTextSearchResult fResult;
 		private final boolean fIsFileSearchOnly;
 		private final boolean fSearchInBinaries;
+
+		private final boolean fIsLightweightAutoRefresh;
 		private ArrayList fCachedMatches;
 
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
 			fIsFileSearchOnly= isFileSearchOnly;
 			fSearchInBinaries= searchInBinaries;
+			fIsLightweightAutoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
 
 		}
 
 		public boolean acceptFile(IFile file) throws CoreException {
+			if (fIsLightweightAutoRefresh && !file.exists())
+				return false;
+
 			if (fIsFileSearchOnly) {
 				fResult.addMatch(new FileMatch(file));
 			}
