@@ -30,8 +30,8 @@ import org.eclipse.jface.databinding.dialog.IValidationMessageProvider;
 import org.eclipse.jface.databinding.dialog.ValidationMessageProvider;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationUpdater;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -58,7 +58,7 @@ public class Snippet036ValidationMessageProvider {
 	public static void main(String[] args) {
 		Display display = new Display();
 
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
 			@Override
 			public void run() {
 				IWizard wizard = new MessageProviderWizard();

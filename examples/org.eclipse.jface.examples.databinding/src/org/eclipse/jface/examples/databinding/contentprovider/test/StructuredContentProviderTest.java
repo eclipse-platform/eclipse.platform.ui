@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
@@ -384,7 +384,7 @@ public class StructuredContentProviderTest {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
-		realm = SWTObservables.getRealm(display);
+		realm = DisplayRealm.getRealm(display);
 		StructuredContentProviderTest test = new StructuredContentProviderTest();
 		Shell s = test.getShell();
 		s.pack();

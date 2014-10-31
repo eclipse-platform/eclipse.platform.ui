@@ -28,7 +28,7 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -198,7 +198,7 @@ public class TestMasterDetail {
 	private void run() {
 		final Display display = new Display();
 
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
 			@Override
 			public void run() {
 				createShell();
@@ -218,7 +218,7 @@ public class TestMasterDetail {
 	SimpleModel model = new SimpleModel();
 
 	private void bind(Control parent) {
-		Realm realm = SWTObservables.getRealm(parent.getDisplay());
+		Realm realm = DisplayRealm.getRealm(parent.getDisplay());
 
 		TableViewer peopleViewer = new TableViewer(personsTable);
 		ViewerSupport.bind(peopleViewer, new WritableList(realm, model
