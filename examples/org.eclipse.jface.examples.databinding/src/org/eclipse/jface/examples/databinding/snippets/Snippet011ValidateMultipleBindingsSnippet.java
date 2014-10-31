@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet011ValidateMultipleBindingsSnippet {
 	public static void main(String[] args) {
-		Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
+		Realm.runWithDefault(DisplayRealm.getRealm(Display.getDefault()),
 				new Runnable() {
 					@Override
 					public void run() {

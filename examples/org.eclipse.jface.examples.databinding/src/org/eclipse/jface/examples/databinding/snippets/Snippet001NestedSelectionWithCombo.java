@@ -25,7 +25,7 @@ import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -176,7 +176,7 @@ public class Snippet001NestedSelectionWithCombo {
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
-			Realm realm = SWTObservables.getRealm(shell.getDisplay());
+			Realm realm = DisplayRealm.getRealm(shell.getDisplay());
 
 			List peopleList = new List(shell, SWT.BORDER);
 			Text name = new Text(shell, SWT.BORDER);

@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -106,7 +106,7 @@ public class Library {
 
 	@Inject
 	public Library(Composite parent, final IWorkspace workspace) {
-		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
+		final Realm realm = DisplayRealm.getRealm(parent.getDisplay());
 		this.workspace = workspace;
 		initializeWorkspace();
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
