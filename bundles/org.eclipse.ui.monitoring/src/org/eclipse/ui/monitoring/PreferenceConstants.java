@@ -45,7 +45,7 @@ public class PreferenceConstants {
 	public static final String LOG_TO_ERROR_LOG = "log_to_error_log"; //$NON-NLS-1$
 	/**
 	 * Comma separated fully qualified method names of stack frames to filter out.
-	 *  Long events containing this method in a stack trace of the UI thread are ignored.
+	 * Long events containing this method in a stack trace of the UI thread are ignored.
 	 */
 	public static final String FILTER_TRACES = "filter_traces"; //$NON-NLS-1$
 

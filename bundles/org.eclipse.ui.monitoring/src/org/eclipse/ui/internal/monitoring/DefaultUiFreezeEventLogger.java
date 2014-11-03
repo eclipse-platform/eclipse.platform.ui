@@ -103,21 +103,22 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 		String lockName = thread.getLockName();
 		if (lockName != null && !lockName.isEmpty()) {
 			LockInfo lock = thread.getLockInfo();
-			threadText.append(NLS.bind(
-					Messages.DefaultUiFreezeEventLogger_waiting_for_1,
-					getClassAndHashCode(lock)));
 			String lockOwnerName = thread.getLockOwnerName();
-			if (lockOwnerName != null && !lockOwnerName.isEmpty()) {
+			if (lockOwnerName == null) {
 				threadText.append(NLS.bind(
-						Messages.DefaultUiFreezeEventLogger_lock_owner_2,
-						lockOwnerName, thread.getLockOwnerId()));
+						Messages.DefaultUiFreezeEventLogger_waiting_for_1,
+						getClassAndHashCode(lock)));
+			} else {
+				threadText.append(NLS.bind(
+						Messages.DefaultUiFreezeEventLogger_waiting_for_with_lock_owner_3,
+						new Object[] { getClassAndHashCode(lock), lockOwnerName,
+								thread.getLockOwnerId() }));
 			}
 		}
 
 		for (LockInfo lockInfo : thread.getLockedSynchronizers()) {
 			threadText.append(NLS.bind(
-					Messages.DefaultUiFreezeEventLogger_holding_1,
-					getClassAndHashCode(lockInfo)));
+					Messages.DefaultUiFreezeEventLogger_holding_1, getClassAndHashCode(lockInfo)));
 		}
 
 		return new Status(IStatus.INFO, PreferenceConstants.PLUGIN_ID, threadText.toString(),

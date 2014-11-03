@@ -690,11 +690,11 @@ public class EventLoopMonitorThread extends Thread {
 				if (object instanceof IUiFreezeEventLogger) {
 					externalLoggers.add((IUiFreezeEventLogger) object);
 				} else {
-					MonitoringPlugin.logWarning(String.format(
+					MonitoringPlugin.logWarning(NLS.bind(
 							Messages.EventLoopMonitorThread_invalid_logger_type_error_4,
-							object.getClass().getName(),
-							IUiFreezeEventLogger.class.getClass().getSimpleName(),
-							EXTENSION_ID, element.getContributor().getName()));
+							new Object[] { object.getClass().getName(),
+									IUiFreezeEventLogger.class.getClass().getSimpleName(),
+									EXTENSION_ID, element.getContributor().getName() }));
 				}
 			} catch (CoreException e) {
 				MonitoringPlugin.logError(e.getMessage(), e);
