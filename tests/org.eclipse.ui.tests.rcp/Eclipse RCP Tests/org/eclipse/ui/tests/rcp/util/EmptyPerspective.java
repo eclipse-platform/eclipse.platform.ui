@@ -32,7 +32,7 @@ public class EmptyPerspective implements IPerspectiveFactory {
     }
 
     /**
-     * Defines the initial layout for a perspective.  
+     * Defines the initial layout for a perspective.
      *
      * Implementors of this method may add additional views to a
      * perspective.  The perspective already contains an editor folder
@@ -45,7 +45,8 @@ public class EmptyPerspective implements IPerspectiveFactory {
      *
      * @param factory the factory used to add views to the perspective
      */
-    public void createInitialLayout(IPageLayout layout) {
+    @Override
+	public void createInitialLayout(IPageLayout layout) {
         // do nothing, this is the empty perspective
     }
 }

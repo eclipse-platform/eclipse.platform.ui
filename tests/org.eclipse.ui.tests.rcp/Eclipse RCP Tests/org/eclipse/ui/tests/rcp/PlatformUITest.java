@@ -78,15 +78,15 @@ public class PlatformUITest {
 				"Async from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
 				Boolean.FALSE,
 				RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
-       	
+
 		assertFalse(
 				"DisplayAccess.accessDisplayDuringStartup() in UI thread did not result in exception.",
 				RCPTestWorkbenchAdvisor.displayAccessInUIThreadAllowed);
     }
-    
+
     /**
-     * Tests that, if an exception occurs on startup, the workbench returns RETURN_UNSTARTABLE 
-     * and PlatformUI.isWorkbenchRunning() returns false. 
+     * Tests that, if an exception occurs on startup, the workbench returns RETURN_UNSTARTABLE
+     * and PlatformUI.isWorkbenchRunning() returns false.
      * Regression test for bug 82286.
      */
 	@Ignore
@@ -96,6 +96,7 @@ public class PlatformUITest {
 		assertNotNull(display);
 
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+			@Override
 			public void preStartup() {
 				throw new IllegalArgumentException("Thrown deliberately by PlatformUITest");
 			}
@@ -117,11 +118,13 @@ class CheckForWorkbench extends WorkbenchAdvisorObserver {
         super(idleBeforeExit);
     }
 
-    public void eventLoopIdle(Display display) {
+    @Override
+	public void eventLoopIdle(Display display) {
         super.eventLoopIdle(display);
 
-        if (checkComplete)
-            return;
+        if (checkComplete) {
+			return;
+		}
 
 		assertNotNull(PlatformUI.getWorkbench());
         checkComplete = true;

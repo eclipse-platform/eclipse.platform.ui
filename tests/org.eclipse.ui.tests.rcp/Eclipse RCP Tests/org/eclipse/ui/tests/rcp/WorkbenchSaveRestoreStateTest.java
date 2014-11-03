@@ -46,11 +46,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class WorkbenchSaveRestoreStateTest {
-	
+
 	private static final String ADVISOR_STATE_KEY = "advisorStateKey";
 	private static final String WINDOW_ADVISOR_STATE_KEY = "windowAdvisorStateKey";
 	private static final String ACTIONBAR_ADVISOR_STATE_KEY = "actionBarAdvisorStateKey";
-	
+
 
     private Display display = null;
 
@@ -74,24 +74,27 @@ public class WorkbenchSaveRestoreStateTest {
 	 * Test save/restore state lifecycle API for WorkbenchAdvisor
 	 */
 	@Test
-	public void testSaveRestoreAdvisorState() {		
+	public void testSaveRestoreAdvisorState() {
 		final String advisorStateData = Long.toString(System.currentTimeMillis());
-		
+
 		// launch workbench and save some state data
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-		
+
+			@Override
 			public IStatus saveState (IMemento memento) {
 				assertNotNull(memento);
 				memento.putString(ADVISOR_STATE_KEY, advisorStateData);
 				return super.saveState(memento);
 			}
-			
+
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
             }
 
-            public void eventLoopIdle(Display d) {
+            @Override
+			public void eventLoopIdle(Display d) {
                 workbenchConfig.getWorkbench().restart();
             }
         };
@@ -103,9 +106,10 @@ public class WorkbenchSaveRestoreStateTest {
         assertTrue(display.isDisposed());
 
 		// restore the workbench and check for state data
-        display = PlatformUI.createDisplay();		
+        display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
+			@Override
 			public IStatus restoreState(IMemento memento) {
 				assertNotNull(memento);
 				String stateData = memento.getString(ADVISOR_STATE_KEY);
@@ -113,7 +117,8 @@ public class WorkbenchSaveRestoreStateTest {
 				assertTrue(advisorStateData.equals(stateData));
 				return super.restoreState(memento);
 			}
-			
+
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
@@ -123,19 +128,21 @@ public class WorkbenchSaveRestoreStateTest {
         int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
         assertEquals(PlatformUI.RETURN_OK, code2);
 	}
-	
+
 	/**
 	 * Test save/restore state lifecycle API for WorkbenchWindowAdvisor
 	 */
 	@Test
 	public void testSaveRestoreWindowState() {
 		final String advisorStateData = Long.toString(System.currentTimeMillis());
-		
+
 		// launch workbench and save some state data
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-			
+
+			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
+					@Override
 					public IStatus saveState(IMemento memento) {
 						assertNotNull(memento);
 						memento.putString(WINDOW_ADVISOR_STATE_KEY, advisorStateData);
@@ -144,12 +151,14 @@ public class WorkbenchSaveRestoreStateTest {
 				};
 			}
 
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
             }
 
-            public void eventLoopIdle(Display d) {
+            @Override
+			public void eventLoopIdle(Display d) {
                 workbenchConfig.getWorkbench().restart();
             }
         };
@@ -161,11 +170,13 @@ public class WorkbenchSaveRestoreStateTest {
         assertTrue(display.isDisposed());
 
 		// restore the workbench and check for state data
-        display = PlatformUI.createDisplay();		
+        display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
+			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
+					@Override
 					public IStatus restoreState(IMemento memento) {
 						assertNotNull(memento);
 						String stateData = memento.getString(WINDOW_ADVISOR_STATE_KEY);
@@ -175,7 +186,8 @@ public class WorkbenchSaveRestoreStateTest {
 					}
 				};
 			}
-			
+
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
@@ -185,21 +197,24 @@ public class WorkbenchSaveRestoreStateTest {
         int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
         assertEquals(PlatformUI.RETURN_OK, code2);
 	}
-	
+
 	/**
 	 * Test save/restore state lifecycle API for WorkbenchWindowAdvisor
 	 */
 	@Test
 	public void testSaveRestoreActionBarState() {
 		final String advisorStateData = Long.toString(System.currentTimeMillis());
-		
+
 		// launch workbench and save some state data
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-			
+
+			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
+					@Override
 					public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer1) {
 						return new ActionBarAdvisor(configurer1) {
+							@Override
 							public IStatus saveState(IMemento memento) {
 								assertNotNull(memento);
 								memento.putString(ACTIONBAR_ADVISOR_STATE_KEY, advisorStateData);
@@ -210,12 +225,14 @@ public class WorkbenchSaveRestoreStateTest {
 				};
 			}
 
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
             }
 
-            public void eventLoopIdle(Display d) {
+            @Override
+			public void eventLoopIdle(Display d) {
                 workbenchConfig.getWorkbench().restart();
             }
         };
@@ -227,13 +244,16 @@ public class WorkbenchSaveRestoreStateTest {
         assertTrue(display.isDisposed());
 
 		// restore the workbench and check for state data
-        display = PlatformUI.createDisplay();		
+        display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
+			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
+					@Override
 					public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer1) {
 						return new ActionBarAdvisor(configurer1) {
+							@Override
 							public IStatus restoreState(IMemento memento) {
 								assertNotNull(memento);
 								String stateData = memento.getString(ACTIONBAR_ADVISOR_STATE_KEY);
@@ -245,7 +265,8 @@ public class WorkbenchSaveRestoreStateTest {
 					}
 				};
 			}
-			
+
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
@@ -255,9 +276,9 @@ public class WorkbenchSaveRestoreStateTest {
         int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
         assertEquals(PlatformUI.RETURN_OK, code2);
 	}
-	
+
 	/**
-	 * Test on-demand save/restore state API 
+	 * Test on-demand save/restore state API
 	 */
 	@Ignore
 	@Test
@@ -266,17 +287,21 @@ public class WorkbenchSaveRestoreStateTest {
 		// save some window state on demand
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
 				super.initialize(c);
 				c.setSaveAndRestore(true);
 			}
 
+			@Override
 			public void eventLoopIdle(Display d) {
 				workbenchConfig.getWorkbench().restart();
 			}
 
+			@Override
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
+					@Override
 					public void postWindowOpen() {
 						File stateLocation = getStateFileLocation();
 						ensureDirectoryExists(stateLocation);
@@ -321,11 +346,13 @@ public class WorkbenchSaveRestoreStateTest {
 		display = PlatformUI.createDisplay();
 		WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
+			@Override
 			public void initialize(IWorkbenchConfigurer c) {
 				super.initialize(c);
 				c.setSaveAndRestore(true);
 			}
 
+			@Override
 			public boolean openWindows() {
 				File stateLocation = getStateFileLocation();
 				String stateFileName = "testOnDemandSaveRestoreState.xml";
@@ -354,6 +381,7 @@ public class WorkbenchSaveRestoreStateTest {
 				return true;
 			}
 
+			@Override
 			public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
 				// TODO Auto-generated method stub
 				super.postWindowRestore(configurer);
@@ -363,7 +391,7 @@ public class WorkbenchSaveRestoreStateTest {
 		int code2 = PlatformUI.createAndRunWorkbench(display, wa2);
 		assertEquals(PlatformUI.RETURN_OK, code2);
 	}
-			
+
 	private File getStateFileLocation() {
 		IPath path = UIPlugin.getDefault().getStateLocation();
 		StringBuffer fileName = new StringBuffer();
@@ -376,9 +404,9 @@ public class WorkbenchSaveRestoreStateTest {
 
 		return stateLocation;
 	}
-	
+
 	private void ensureDirectoryExists(File directory) {
 		directory.mkdirs();
 	}
-	
+
 }

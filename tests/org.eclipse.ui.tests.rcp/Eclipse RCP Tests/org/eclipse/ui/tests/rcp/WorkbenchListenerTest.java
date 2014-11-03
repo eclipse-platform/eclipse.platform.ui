@@ -62,13 +62,16 @@ public class WorkbenchListenerTest {
     	final boolean[] proceed = new boolean[1];
 		final List<String> operations = new ArrayList<String>();
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
-        	public void postStartup() {
+        	@Override
+			public void postStartup() {
         		IWorkbench workbench = getWorkbenchConfigurer().getWorkbench();
         		workbench.addWorkbenchListener(new IWorkbenchListener() {
+					@Override
 					public boolean preShutdown(IWorkbench workbench, boolean forced) {
 						operations.add(PRE_SHUTDOWN);
 						return proceed[0];
 					}
+					@Override
 					public void postShutdown(IWorkbench workbench) {
 						operations.add(POST_SHUTDOWN);
 					}
@@ -89,5 +92,5 @@ public class WorkbenchListenerTest {
         assertEquals(WorkbenchAdvisorObserver.POST_SHUTDOWN, operations.get(2));
     }
 
-    
+
 }

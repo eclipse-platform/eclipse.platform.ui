@@ -21,5 +21,5 @@ public class RCPPerformanceTestSetup extends TestSetup {
 	public RCPPerformanceTestSetup(Test test) {
 		super(test);
 	}
-	
+
 }

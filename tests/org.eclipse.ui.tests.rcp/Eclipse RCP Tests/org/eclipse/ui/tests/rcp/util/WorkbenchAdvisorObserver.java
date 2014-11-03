@@ -90,63 +90,75 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
         operations.add(operation);
     }
 
-    public void initialize(IWorkbenchConfigurer configurer) {
+    @Override
+	public void initialize(IWorkbenchConfigurer configurer) {
         super.initialize(configurer);
         workbenchConfig = configurer;
         addOperation(INITIALIZE);
     }
 
-    public void preStartup() {
+    @Override
+	public void preStartup() {
         super.preStartup();
         addOperation(PRE_STARTUP);
     }
 
-    public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
+    @Override
+	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
         super.preWindowOpen(configurer);
         addOperation(PRE_WINDOW_OPEN);
     }
 
-    public void fillActionBars(IWorkbenchWindow window,
+    @Override
+	public void fillActionBars(IWorkbenchWindow window,
             IActionBarConfigurer configurer, int flags) {
         super.fillActionBars(window, configurer, flags);
         addOperation(FILL_ACTION_BARS);
     }
 
-    public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
+    @Override
+	public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
             throws WorkbenchException {
         super.postWindowRestore(configurer);
         addOperation(POST_WINDOW_RESTORE);
     }
 
-    public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
+    @Override
+	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
         super.postWindowOpen(configurer);
         addOperation(POST_WINDOW_OPEN);
     }
 
-    public void postStartup() {
+    @Override
+	public void postStartup() {
         super.postStartup();
         addOperation(POST_STARTUP);
     }
 
-    public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
-        if (!super.preWindowShellClose(configurer))
-            return false;
+    @Override
+	public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
+        if (!super.preWindowShellClose(configurer)) {
+			return false;
+		}
         addOperation(PRE_WINDOW_SHELL_CLOSE);
         return true;
     }
 
-    public boolean preShutdown() {
+    @Override
+	public boolean preShutdown() {
         boolean result = super.preShutdown();
         addOperation(PRE_SHUTDOWN);
         return result;
     }
 
-    public void postShutdown() {
+    @Override
+	public void postShutdown() {
         super.postShutdown();
         addOperation(POST_SHUTDOWN);
     }
 
-    public void eventLoopException(Throwable exception) {
+    @Override
+	public void eventLoopException(Throwable exception) {
         super.eventLoopException(exception);
         addOperation(EVENT_LOOP_EXCEPTION);
     }

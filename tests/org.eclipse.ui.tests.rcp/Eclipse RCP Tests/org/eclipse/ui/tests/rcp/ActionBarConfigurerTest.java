@@ -50,7 +50,8 @@ public class ActionBarConfigurerTest {
 	public void testDefaults() {
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            public void fillActionBars(IWorkbenchWindow window,
+            @Override
+			public void fillActionBars(IWorkbenchWindow window,
                     IActionBarConfigurer actionBarConfig, int flags) {
                 super.fillActionBars(window, actionBarConfig, flags);
 

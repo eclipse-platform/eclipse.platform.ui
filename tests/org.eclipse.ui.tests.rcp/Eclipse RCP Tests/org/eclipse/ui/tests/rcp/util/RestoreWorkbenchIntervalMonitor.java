@@ -19,16 +19,16 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 /**
  * This implementation of the workbench advisor tracks performance for the intervals between
  * lifecycle events.
- * 
+ *
  * @since 3.1
  */
 public class RestoreWorkbenchIntervalMonitor extends RCPTestWorkbenchAdvisor {
 
-    private PerformanceMeter startupMeter; 
-    private PerformanceMeter shutdownMeter; 
-	
+    private PerformanceMeter startupMeter;
+    private PerformanceMeter shutdownMeter;
+
 	private boolean createRestorableWorkbench = false;
-	
+
     private IWorkbenchConfigurer workbenchConfigurer;
 
     /**
@@ -43,29 +43,34 @@ public class RestoreWorkbenchIntervalMonitor extends RCPTestWorkbenchAdvisor {
         this.createRestorableWorkbench = createRestorableWorkbench;
     }
 
-    public void initialize(IWorkbenchConfigurer configurer) {
+    @Override
+	public void initialize(IWorkbenchConfigurer configurer) {
         super.initialize(configurer);
         workbenchConfigurer = configurer;
         workbenchConfigurer.setSaveAndRestore(true);
     }
 
-    public void postStartup() {
+    @Override
+	public void postStartup() {
     	startupMeter.stop();
         // no reason to track performance between when startup completes and shutdown starts
         // since that is just testing overhead
         super.postStartup();
     }
 
-    public boolean preShutdown() {
+    @Override
+	public boolean preShutdown() {
         boolean ret = super.preShutdown();
         shutdownMeter.start();
         return ret;
     }
 
-    public void eventLoopIdle(Display d) {
-        if (createRestorableWorkbench)
-            workbenchConfigurer.getWorkbench().restart();
-        else
-            super.eventLoopIdle(d);
+    @Override
+	public void eventLoopIdle(Display d) {
+        if (createRestorableWorkbench) {
+			workbenchConfigurer.getWorkbench().restart();
+		} else {
+			super.eventLoopIdle(d);
+		}
     }
 }

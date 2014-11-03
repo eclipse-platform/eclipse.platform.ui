@@ -31,8 +31,8 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
         Display display = PlatformUI.createDisplay();
         Performance perf = Performance.getDefault();
         String baseScenarioId = perf.getDefaultScenarioId(this);
-        PerformanceMeter startupMeter = perf.createPerformanceMeter( baseScenarioId + " [open]"); 
-        PerformanceMeter shutdownMeter = perf.createPerformanceMeter( baseScenarioId + " [close]"); 
+        PerformanceMeter startupMeter = perf.createPerformanceMeter( baseScenarioId + " [open]");
+        PerformanceMeter shutdownMeter = perf.createPerformanceMeter( baseScenarioId + " [close]");
 
         tagAsSummary("Open RCP App", Dimension.CPU_TIME);
         for (int i = 0; i < REPEAT_COUNT; ++i ) {
@@ -47,13 +47,13 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
         assertTrue(display.isDisposed());
         startupMeter.commit();
         perf.assertPerformance(startupMeter);
-        
+
         // The shutdown timer is currently < 50ms on all test machine. Due to the granularity of timers
         // and inherent Java variability, values below 100ms usually can not be interpreted.
         // Rather, check for the absolute value to be below threshold of 120ms.
         // If the test goes above it, it probably needs to be investigated.
         perf.assertPerformanceInAbsoluteBand(shutdownMeter, Dimension.CPU_TIME, 0, 120);
-        
+
     	startupMeter.dispose();
     	shutdownMeter.dispose();
     }
@@ -62,12 +62,12 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
         Display display = PlatformUI.createDisplay();
         Performance perf = Performance.getDefault();
         String baseScenarioId = perf.getDefaultScenarioId(this);
-        PerformanceMeter startupMeter = perf.createPerformanceMeter( baseScenarioId + " [open]"); 
+        PerformanceMeter startupMeter = perf.createPerformanceMeter( baseScenarioId + " [open]");
         PerformanceMeter shutdownMeter = perf.createPerformanceMeter( baseScenarioId + " [close]");
-        
+
         // create an advisor that will just start the workbench long enough to create
         // something to be restored later
-        PerformanceMeter startupMeter0 = perf.createPerformanceMeter( baseScenarioId + " [0][open]"); 
+        PerformanceMeter startupMeter0 = perf.createPerformanceMeter( baseScenarioId + " [0][open]");
         PerformanceMeter shutdownMeter0 = perf.createPerformanceMeter( baseScenarioId + " [0][close]");
         WorkbenchAdvisor wa = new RestoreWorkbenchIntervalMonitor(startupMeter0, shutdownMeter0, true);
         int code = PlatformUI.createAndRunWorkbench(display, wa);
@@ -75,9 +75,9 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
         assertFalse(display.isDisposed());
     	startupMeter0.dispose();
     	shutdownMeter0.dispose();
-       
+
         tagAsSummary("Restore RCP App", Dimension.CPU_TIME);
-        
+
         // the rest is a bunch of code to restore the workbench and monitor performance
         // while doing so
         for (int i = 0; i < REPEAT_COUNT; ++i ) {
@@ -87,19 +87,19 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
             shutdownMeter.stop();
             assertEquals(PlatformUI.RETURN_OK, code);
         }
-        
+
         display.dispose();
         assertTrue(display.isDisposed());
-        
+
         startupMeter.commit();
         perf.assertPerformance(startupMeter);
-        
+
         // The shutdown timer is currently < 50ms on all test machine. Due to the granularity of timers
         // and inherit Java variability, values below 100ms usually can not be interpreted.
         // Rather, check for the absolute value to be below threshold of 120ms.
         // If the test goes above it, it probably needs to be investigated.
         perf.assertPerformanceInAbsoluteBand(shutdownMeter, Dimension.CPU_TIME, 0, 120);
-        
+
     	startupMeter.dispose();
     	shutdownMeter.dispose();
     }

@@ -16,23 +16,25 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * Minimal view, for the RCP tests. 
+ * Minimal view, for the RCP tests.
  */
 public class EmptyView extends ViewPart {
 
     public static final String ID = "org.eclipse.ui.tests.rcp.util.EmptyView"; //$NON-NLS-1$
-    
+
     private Label label;
-    
+
 	public EmptyView() {
 	    // do nothing
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 	    label = new Label(parent, SWT.NONE);
 	    label.setText("Empty view");
 	}
 
+	@Override
 	public void setFocus() {
 		label.setFocus();
 	}

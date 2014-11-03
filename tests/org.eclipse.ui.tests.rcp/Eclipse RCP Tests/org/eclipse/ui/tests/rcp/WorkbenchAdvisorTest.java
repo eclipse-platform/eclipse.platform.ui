@@ -66,7 +66,8 @@ public class WorkbenchAdvisorTest {
 	public void testEarlyGetWorkbench() {
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            public void initialize(IWorkbenchConfigurer configurer) {
+            @Override
+			public void initialize(IWorkbenchConfigurer configurer) {
                 super.initialize(configurer);
                 assertNotNull(PlatformUI.getWorkbench());
             }
@@ -103,43 +104,52 @@ public class WorkbenchAdvisorTest {
 
             private boolean windowCloseCalled = false;
 
-            public void initialize(IWorkbenchConfigurer c) {
+            @Override
+			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.getWorkbench().addWindowListener(new IWindowListener() {
 
-                    public void windowActivated(IWorkbenchWindow window) {
+                    @Override
+					public void windowActivated(IWorkbenchWindow window) {
                         // do nothing
                     }
 
-                    public void windowDeactivated(IWorkbenchWindow window) {
+                    @Override
+					public void windowDeactivated(IWorkbenchWindow window) {
                         // do nothing
                     }
 
-                    public void windowClosed(IWorkbenchWindow window) {
+                    @Override
+					public void windowClosed(IWorkbenchWindow window) {
                         windowCloseCalled = true;
                     }
 
-                    public void windowOpened(IWorkbenchWindow window) {
+                    @Override
+					public void windowOpened(IWorkbenchWindow window) {
                         windowOpenCalled = true;
                     }
                 });
             }
 
-            public void preWindowOpen(IWorkbenchWindowConfigurer c) {
+            @Override
+			public void preWindowOpen(IWorkbenchWindowConfigurer c) {
                 assertFalse(windowOpenCalled);
                 super.preWindowOpen(c);
             }
 
-            public void postWindowOpen(IWorkbenchWindowConfigurer c) {
+            @Override
+			public void postWindowOpen(IWorkbenchWindowConfigurer c) {
                 assertTrue(windowOpenCalled);
                 super.postWindowOpen(c);
             }
 
-            public boolean preWindowShellClose(IWorkbenchWindowConfigurer c) {
+            @Override
+			public boolean preWindowShellClose(IWorkbenchWindowConfigurer c) {
                 assertFalse(windowCloseCalled);
                 return super.preWindowShellClose(c);
             }
 
+			@Override
 			@SuppressWarnings("deprecation")
 			public void postWindowClose(IWorkbenchWindowConfigurer c) {
 				// Commented out since postWindowClose seems to be called before IWindowListener.windowClosed(IWorkbenchWindow)
@@ -167,12 +177,14 @@ public class WorkbenchAdvisorTest {
 	public void testTrivialRestoreClose() {
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
-            public void initialize(IWorkbenchConfigurer c) {
+            @Override
+			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
             }
 
-            public void eventLoopIdle(Display d) {
+            @Override
+			public void eventLoopIdle(Display d) {
                 workbenchConfig.getWorkbench().restart();
             }
         };
@@ -186,7 +198,8 @@ public class WorkbenchAdvisorTest {
         display = PlatformUI.createDisplay();
         WorkbenchAdvisorObserver wa2 = new WorkbenchAdvisorObserver(1) {
 
-            public void initialize(IWorkbenchConfigurer c) {
+            @Override
+			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);
                 c.setSaveAndRestore(true);
             }
@@ -216,7 +229,8 @@ public class WorkbenchAdvisorTest {
 	public void testCloseFromPostStartup() {
 
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-            public void postStartup() {
+            @Override
+			public void postStartup() {
                 super.postStartup();
                 assertTrue(PlatformUI.getWorkbench().close());
             }
@@ -250,7 +264,8 @@ public class WorkbenchAdvisorTest {
 	public void testFillAllActionBar() {
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
 
-            public void fillActionBars(IWorkbenchWindow window,
+            @Override
+			public void fillActionBars(IWorkbenchWindow window,
                     IActionBarConfigurer configurer, int flags) {
                 super.fillActionBars(window, configurer, flags);
 
@@ -264,15 +279,17 @@ public class WorkbenchAdvisorTest {
         int code = PlatformUI.createAndRunWorkbench(display, wa);
         assertEquals(PlatformUI.RETURN_OK, code);
     }
-	
+
 	@Test
 	public void testEmptyProgressRegion() {
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+			@Override
 			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				super.preWindowOpen(configurer);
 				configurer.setShowProgressIndicator(false);
 			}
 
+			@Override
 			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
 				try {
 					ProgressManagerUtil.animateUp(new Rectangle(0, 0, 100, 50));
@@ -282,7 +299,7 @@ public class WorkbenchAdvisorTest {
 					fail(e.getMessage());
 				}
 			}
-				
+
         };
 
         int code = PlatformUI.createAndRunWorkbench(display, wa);
@@ -297,13 +314,16 @@ public class WorkbenchAdvisorTest {
 	public void testShellClose() {
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver() {
 
+			@Override
 			public void eventLoopIdle(Display disp) {
 				super.eventLoopIdle(disp);
 
 				Shell[] shells = disp.getShells();
-				for (int i = 0; i < shells.length; ++i)
-					if (shells[i] != null)
-						shells[i].close();
+				for (Shell shell : shells) {
+					if (shell != null) {
+						shell.close();
+					}
+				}
 			}
 		};
 
@@ -335,18 +355,21 @@ class WorkbenchAdvisorExceptionObserver extends WorkbenchAdvisorObserver {
     }
 
     // this is used to indicate when the event loop has started
-    public void eventLoopIdle(Display disp) {
+    @Override
+	public void eventLoopIdle(Display disp) {
         super.eventLoopIdle(disp);
 
         // only crash the loop one time
-        if (runtimeException != null)
-            return;
+        if (runtimeException != null) {
+			return;
+		}
 
         runtimeException = new RuntimeException();
         throw runtimeException;
     }
 
-    public void eventLoopException(Throwable exception) {
+    @Override
+	public void eventLoopException(Throwable exception) {
         // *** Don't let the parent log the exception since it makes for
         // confusing
         //     test results.

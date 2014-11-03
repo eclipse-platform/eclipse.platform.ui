@@ -63,12 +63,14 @@ public class IWorkbenchPageTest {
 	public void test70080() {
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
+            @Override
+			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
                 super.preWindowOpen(configurer);
                 configurer.setShowPerspectiveBar(false);
             }
 
-            public void postStartup() {
+            @Override
+			public void postStartup() {
                 try {
                     IWorkbenchWindow window = getWorkbenchConfigurer()
                             .getWorkbench().getActiveWorkbenchWindow();
