@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     René Brandstetter - Bug 419749 - [Workbench] [e4 Workbench] - Remove the deprecated PackageAdmin
+ *     Lars Vogel <Lars.Vogel@vogela.com> - Bug 449859
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -29,6 +30,11 @@ public class URIHelper {
 	 * The schema identifier used for Eclipse platform references
 	 */
 	final private static String PLATFORM_SCHEMA = "platform:/"; //$NON-NLS-1$
+
+	/**
+	 * The schema identifier used for Eclipse bundlesclass reference
+	 */
+	final private static String BUNDLECLASS_SCHEMA = "bundleclass:/"; //$NON-NLS-1$
 
 	/**
 	 * The schema identifier used for EMF platform references
@@ -98,7 +104,7 @@ public class URIHelper {
 
 	/**
 	 * Helper method which checks if given String represents a Platform URI.
-	 * 
+	 *
 	 * @param uri
 	 *            a possible Platform URI
 	 * @return true if the given string is not {@code null} and starts with
@@ -106,6 +112,27 @@ public class URIHelper {
 	 */
 	public static boolean isPlatformURI(String uri) {
 		return uri != null && uri.startsWith(PLATFORM_SCHEMA);
+	}
+
+	/**
+	 * Helper method which checks if given String represents a Platform URI.
+	 *
+	 * @param uri
+	 *            a possible Platform URI
+	 * @return true if the given string is not {@code null} and starts with
+	 *         {@value #PLATFORM_SCHEMA}; false otherwise
+	 */
+	public static boolean isBundleClassUri(String uri) {
+		if (uri != null && uri.startsWith(BUNDLECLASS_SCHEMA)) {
+			String[] split = uri.substring(BUNDLECLASS_SCHEMA.length()).split("/"); //$NON-NLS-1$
+			// valid bundleclass uri should have two segments:
+			// first one for the bundle-symbolic-name
+			// second one for the full qualified classname
+			if (split.length == 2) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
