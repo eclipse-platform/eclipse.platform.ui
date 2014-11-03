@@ -176,14 +176,14 @@ public class FilteredTree extends Composite {
 	 */
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(FilteredTree.class);
-		IPath enabledPath = new Path("$nl$/icons/full/etool16/clear_co.gif");
+		IPath enabledPath = new Path("$nl$/icons/full/etool16/clear_co.png");
 		URL enabledURL = FileLocator.find(bundle, enabledPath, null);
 		ImageDescriptor enabledDesc = ImageDescriptor.createFromURL(enabledURL);
 		if (enabledDesc != null) {
 			JFaceResources.getImageRegistry().put(CLEAR_ICON, enabledDesc);
 		}
 
-		IPath disabledPath = new Path("$nl$/icons/full/etool16/clear_co.gif");
+		IPath disabledPath = new Path("$nl$/icons/full/dtool16/clear_co.png");
 		URL disabledURL = FileLocator.find(bundle, disabledPath, null);
 		ImageDescriptor disabledDesc = ImageDescriptor
 				.createFromURL(disabledURL);
