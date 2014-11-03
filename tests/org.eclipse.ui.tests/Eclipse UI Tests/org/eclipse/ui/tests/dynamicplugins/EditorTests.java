@@ -56,12 +56,12 @@ public class EditorTests extends DynamicTestCase {
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newEditor1";
 	}
-	
+
 	public void testEditorClosure() throws CoreException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IFile file = getFile();
 		getBundle();
-				
+
 		ReferenceQueue queue = new ReferenceQueue();
 		IEditorPart part = IDE.openEditor(window.getActivePage(), file, EDITOR_ID);
 		WeakReference ref = new WeakReference(part, queue);
@@ -73,14 +73,14 @@ public class EditorTests extends DynamicTestCase {
 			LeakTests.checkRef(queue, ref);
 		} catch (Exception e) {
 			fail(e.getMessage());
-		} 
-		
-        assertEquals(0, window.getActivePage().getEditors().length);		
+		}
+
+        assertEquals(0, window.getActivePage().getEditors().length);
 	}
 
 	public void testEditorProperties() throws Exception {
 		IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
-		
+
 		assertNull(registry.findEditor(EDITOR_ID));
 		getBundle();
 
@@ -88,23 +88,23 @@ public class EditorTests extends DynamicTestCase {
 		IContentType contentType = IDE.getContentType(file);
 		IEditorDescriptor desc = registry.findEditor(EDITOR_ID);
 		assertNotNull(desc);
-	    
+
 		testEditorProperties(desc);
 
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName(), contentType);
 		// should not get our editor since it is not the default
 		assertFalse(desc.equals(descriptor));
-		
-		removeBundle();	
+
+		removeBundle();
 		assertNull(registry.findEditor(EDITOR_ID));
 		try {
 			testEditorProperties(desc);
-			fail();		
+			fail();
 		}
-		catch (RuntimeException e) {			
+		catch (RuntimeException e) {
 		}
 	}
-	
+
 	/**
 	 * @param desc
 	 */
@@ -119,20 +119,20 @@ public class EditorTests extends DynamicTestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private IFile getFile(String fileName) throws CoreException {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IProject testProject = workspace.getRoot().getProject(getName());
         testProject.create(null);
-        testProject.open(null);        
+        testProject.open(null);
 
         IFile iFile = testProject.getFile(fileName);
         iFile.create(new ByteArrayInputStream(new byte[] { '\n' }), true, null);
         return iFile;
-	}	
-	
-	
+	}
+
+
 	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.DynamicEditor";

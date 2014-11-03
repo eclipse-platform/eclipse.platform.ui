@@ -32,7 +32,7 @@ public class MockWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
     /**
      * Overrides method in WizardPage.
-     * 
+     *
      * @see org.eclipse.jface.wizard.WizardPage#createControl(Composite)
      */
     @Override
@@ -41,7 +41,7 @@ public class MockWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
     /**
      * Implements IWorkingSetPage.
-     * 
+     *
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
      */
     @Override
@@ -51,7 +51,7 @@ public class MockWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
     /**
      * Implements IWorkingSetPage.
-     * 
+     *
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(IWorkingSet)
      */
     @Override

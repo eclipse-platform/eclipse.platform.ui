@@ -32,7 +32,7 @@ import org.junit.Test;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class Bug417762Test extends UITestCase {
 

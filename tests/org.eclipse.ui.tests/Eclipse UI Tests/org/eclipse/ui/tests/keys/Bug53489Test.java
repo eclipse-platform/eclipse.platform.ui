@@ -32,14 +32,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * Tests that pressing delete in a styled text widget does not cause a double
  * delete situation.
- * 
+ *
  * @since 3.0
  */
 public class Bug53489Test extends UITestCase {
 
     /**
      * Constructor for Bug53489Test.
-     * 
+     *
      * @param name
      *            The name of the test
      */
@@ -50,7 +50,7 @@ public class Bug53489Test extends UITestCase {
     /**
      * Tests that pressing delete in a styled text widget (in a running
      * Eclipse) does not cause a double delete.
-     * 
+     *
      * @throws AWTException
      *             If the creation of robot
      * @throws CommandException
@@ -78,8 +78,9 @@ public class Bug53489Test extends UITestCase {
 
         // Allow the editor to finish opening.
         Display display = Display.getCurrent();
-        while (display.readAndDispatch())
-            ;
+        while (display.readAndDispatch()) {
+			;
+		}
 
         AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.DEL);
         AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.DEL);
@@ -87,10 +88,11 @@ public class Bug53489Test extends UITestCase {
         AutomationUtil.performCharacterEvent(display, SWT.KeyDown,'S');
         AutomationUtil.performCharacterEvent(display, SWT.KeyUp,'S');
         AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.CTRL);
-      
+
         // Spin the event loop.
-        while (display.readAndDispatch())
-            ;
+        while (display.readAndDispatch()) {
+			;
+		}
 
         // Test the text is only one character different.
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(

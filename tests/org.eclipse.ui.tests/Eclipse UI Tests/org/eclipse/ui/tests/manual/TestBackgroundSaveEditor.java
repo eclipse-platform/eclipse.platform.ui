@@ -54,7 +54,7 @@ import org.eclipse.ui.progress.IJobRunnable;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class TestBackgroundSaveEditor extends EditorPart implements
 		ISaveablesSource {
@@ -330,9 +330,10 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		if (!(input instanceof IFileEditorInput))
+		if (!(input instanceof IFileEditorInput)) {
 			throw new PartInitException(
 					"Invalid Input: Must be IFileEditorInput");
+		}
 		setSite(site);
 		setInput(input);
 		this.input = input;
@@ -506,5 +507,5 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 	public Saveable[] getSaveables() {
 		return new Saveable[] { mySaveable };
 	}
-	
+
 }

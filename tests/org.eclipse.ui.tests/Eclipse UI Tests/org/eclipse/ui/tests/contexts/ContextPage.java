@@ -24,7 +24,7 @@ import org.eclipse.ui.part.Page;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see PageBookView
  */
 public class ContextPage extends Page {
@@ -71,14 +71,15 @@ public class ContextPage extends Page {
 
 	/**
 	 * Sets the message to the given string.
-	 * 
+	 *
 	 * @param message
 	 *            the message text
 	 */
 	public void setMessage(String msg) {
 		this.message = msg;
-		if (msgLabel != null)
+		if (msgLabel != null) {
 			msgLabel.setText(msg);
+		}
 	}
 
 	@Override

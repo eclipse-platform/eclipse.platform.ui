@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class contains test cases appropriate for generic field assist
  * tests in various controls.  Tests that are not appropriate for the
  * pre-configured content assist command adapter should go here.
- * 
+ *
  * @since 3.6
  *
  */
@@ -32,7 +32,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 	static final String SAMPLE_CONTENT = "s";
 	static final char ACTIVATE_CHAR = 'i';
 	static final char EXTRA_CHAR = 'b';
-	
+
 	public void testAutoactivateNoDelay() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -43,8 +43,8 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendKeyDownToControl(ACTIVATE_CHAR);
 		ensurePopupIsUp();
 		assertTwoShellsUp();
-	}	
-	
+	}
+
 	public void testAutoactivateWithDelay() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -55,8 +55,8 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendKeyDownToControl(ACTIVATE_CHAR);
 		ensurePopupIsUp();
 		assertTwoShellsUp();
-	}	
-	
+	}
+
 	public void testExplicitActivate() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -66,7 +66,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendKeyDownToControl(stroke);
 		assertTwoShellsUp();
 	}
-	
+
 	public void testPopupDeactivates() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -80,8 +80,8 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
-	}	
-	
+	}
+
 	public void testPropagateKeysOff() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -93,8 +93,8 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 		sendKeyDownToControl(EXTRA_CHAR);
 		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR}), getControlContent());
-	}	
-	
+	}
+
 	public void testPropagateKeysOn() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(true);
@@ -106,8 +106,8 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 		sendKeyDownToControl(EXTRA_CHAR);
 		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR, EXTRA_CHAR}), getControlContent());
-	}	
-	
+	}
+
 	public void testBug262022() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -132,7 +132,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		});
 		spinEventLoop();
 	}
-	
+
 	public void testBug279953() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -140,13 +140,13 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		window.open();
 		assertOneShellUp();
 		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
-		decoration.setImage(FieldDecorationRegistry.getDefault()             
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
-		decoration.setDescriptionText("");   
+		decoration.setImage(FieldDecorationRegistry.getDefault()
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+		decoration.setDescriptionText("");
 		decoration.showHoverText("");
 		assertOneShellUp();
 	}
-	
+
 	public void testDecorationIsVisible() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -154,9 +154,9 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		window.open();
 		assertOneShellUp();
 		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
-		decoration.setImage(FieldDecorationRegistry.getDefault()             
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
-		decoration.setDescriptionText("foo");   
+		decoration.setImage(FieldDecorationRegistry.getDefault()
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+		decoration.setDescriptionText("foo");
 		spinEventLoop();
 		assertTrue("1.0", decoration.isVisible());
 		decoration.hide();
@@ -181,7 +181,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		decoration.show();
 		assertTrue("1.8", decoration.isVisible());
 	}
-	
+
 	public void testPopupFocus() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -190,7 +190,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		window.open();
 		sendKeyDownToControl(stroke);
 		assertTwoShellsUp();
-		
+
 		// Send focus to the control (not the popup)
 		window.getFieldAssistControl().setFocus();
 		spinEventLoop();
@@ -198,36 +198,36 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		window.getContentProposalAdapter().setProposalPopupFocus();
 		spinEventLoop();
 		assertTrue("1.1", window.getContentProposalAdapter().hasProposalPopupFocus());
-		
+
 		// Setting focus to another shell deactivates the popup
 		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
 		assertFalse("1.2", window.getContentProposalAdapter().hasProposalPopupFocus());
 	}
-	
+
 	public void testPopupIsOpen() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
 		KeyStroke stroke = KeyStroke.getInstance(SWT.F4);
 		window.setKeyStroke(stroke);
 		window.open();
-		
+
 		assertFalse("1.0", window.getContentProposalAdapter().isProposalPopupOpen());
 		sendKeyDownToControl(stroke);
 		assertTwoShellsUp();
 		assertTrue("1.1", window.getContentProposalAdapter().isProposalPopupOpen());
-		
+
 		// Setting focus to another shell deactivates the popup
 		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
 		assertFalse("1.2", window.getContentProposalAdapter().isProposalPopupOpen());
 	}
-	
+
 	/**
 	 * Replace mode is easier to test because we can check that the bounds
-	 * does not intersect the control.  In insertion mode, the popup is 
+	 * does not intersect the control.  In insertion mode, the popup is
 	 * supposed to overlap the control (using the insertion cursor to track
 	 * position).
 	 */
@@ -252,10 +252,10 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		controlBounds = getDisplay().map(getFieldAssistWindow().getFieldAssistControl().getParent(), null, controlBounds);
 		assertFalse("Popup is blocking the control", popupBounds.intersects(controlBounds));
 	}
-	
+
 	/**
 	 * Replace mode is easier to test because we can check that the bounds
-	 * does not intersect the control.  In insertion mode, the popup is 
+	 * does not intersect the control.  In insertion mode, the popup is
 	 * supposed to overlap the control (using the insertion cursor to track
 	 * position).
 	 */

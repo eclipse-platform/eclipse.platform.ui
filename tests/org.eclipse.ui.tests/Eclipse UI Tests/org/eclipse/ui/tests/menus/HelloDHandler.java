@@ -17,7 +17,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class HelloDHandler extends AbstractHandler {
 
@@ -25,7 +25,7 @@ public class HelloDHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		throw new ExecutionException("This should never be called");
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return false;

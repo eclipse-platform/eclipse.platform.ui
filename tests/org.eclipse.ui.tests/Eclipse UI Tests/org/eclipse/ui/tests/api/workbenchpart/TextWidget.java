@@ -22,15 +22,15 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 /**
  * Basic widget wrapping an SWT Text Control.
- * 
+ *
  * @since 3.3
  *
  */
 public class TextWidget extends WorkbenchWindowControlContribution {
 	public TextWidget() {
-		
+
 	}
-	
+
 	/**
 	 * @param id
 	 */
@@ -48,11 +48,12 @@ public class TextWidget extends WorkbenchWindowControlContribution {
 					int hHint, boolean flushCache) {
 				Text tw = (Text) composite.getChildren()[0];
 				Point twSize = tw.computeSize(wHint, hHint, flushCache);
-				
+
 				// Forst it to be at least 100 pixels
-				if (twSize.x < 200)
+				if (twSize.x < 200) {
 					twSize.x = 200;
-				
+				}
+
 				return twSize;
 			}
 
@@ -62,16 +63,18 @@ public class TextWidget extends WorkbenchWindowControlContribution {
 				Point twSize = tw.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 				Rectangle bb = composite.getBounds();
 				int yOffset = ((bb.height-twSize.y) / 2) + 1;
-				if (yOffset < 0) yOffset = 0;
-				
+				if (yOffset < 0) {
+					yOffset = 0;
+				}
+
 				// Set the tw's size to the composite's width and the default height (centered)
 				tw.setBounds(0, yOffset, bb.width, twSize.y);
 			}
 		});
-		
+
 		Text tw = new Text(textHolder, SWT.BORDER);
 		tw.setText("Test Text Eric was here...XXXXXX");
-		
+
 		textHolder.setSize(181, 22);
 		return textHolder;
 	}

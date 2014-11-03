@@ -36,11 +36,11 @@ public class LifecycleViewTest extends UITestCase {
 		assertTrue(v instanceof LifecycleView);
 		LifecycleView view = (LifecycleView) v;
 		processEvents();
-		
+
 		page.hideView(v);
-		
+
 		processEvents();
-		
+
 		assertTrue(view.callPartDispose);
 		assertTrue(view.callWidgetDispose);
 		assertFalse(view.callSiteDispose);

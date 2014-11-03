@@ -38,14 +38,14 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * The virtual trees and tables rely on SWT.SetData event which is only sent if OS requests
 	 * information about the tree / table. If the window is not visible (obscured by another window,
 	 * outside of visible area, or OS determined that it can skip drawing), then OS request won't
-	 * be send, causing automated tests to fail. 
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118919 .  
+	 * be send, causing automated tests to fail.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118919 .
 	 */
 	protected boolean setDataCalled = false;
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	public VirtualTableViewerTest(String name) {
@@ -79,24 +79,25 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		});
 		return viewer;
 	}
-	
+
 	/**
 	 * Checks if update occurred. Updates for virtual items will be skipped
-	 * if, for instance, another window is in the foreground.  
+	 * if, for instance, another window is in the foreground.
 	 * @return <code>true</code> if update occurred
 	 */
 	protected boolean updateTable() {
 		setDataCalled = false;
 		((TableViewer) fViewer).getControl().update();
-		if (setDataCalled)
+		if (setDataCalled) {
 			return true;
+		}
 		System.err.println("SWT.SetData is not received. Cancelled test " + getName());
 		return false;
 	}
 
 	/**
 	 * Get the collection of currently visible table items.
-	 * 
+	 *
 	 * @return TableItem[]
 	 */
 	private TableItem[] getVisibleItems() {
@@ -124,14 +125,16 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		ViewerFilter filter = new TestLabelFilter();
 		visibleItems = new HashSet();
 		fViewer.addFilter(filter);
-		if (!updateTable())
+		if (!updateTable()) {
 			return;
+		}
 		assertEquals("filtered count", 5, getItemCount());
 
 		visibleItems = new HashSet();
 		fViewer.removeFilter(filter);
-		if (!updateTable())
+		if (!updateTable()) {
 			return;
+		}
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
@@ -140,20 +143,23 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		ViewerFilter filter = new TestLabelFilter();
 		visibleItems = new HashSet();
 		fViewer.setFilters(new ViewerFilter[] { filter, new TestLabelFilter2() });
-		if (!updateTable())
+		if (!updateTable()) {
 			return;
+		}
 		assertEquals("2 filters count",1, getItemCount());
 
 		visibleItems = new HashSet();
 		fViewer.setFilters(new ViewerFilter[] { filter });
-		if (!updateTable())
+		if (!updateTable()) {
 			return;
+		}
 		assertEquals("1 filtered count",5, getItemCount());
 
 		visibleItems = new HashSet();
 		fViewer.setFilters(new ViewerFilter[0]);
-		if (!updateTable())
+		if (!updateTable()) {
 			return;
+		}
 		assertEquals("unfiltered count",10, getItemCount());
 	}
 
@@ -206,8 +212,9 @@ public class VirtualTableViewerTest extends TableViewerTest {
 			return;
 		}
 		fViewer.addFilter(new TestLabelFilter());
-		if (!updateTable())
+		if (!updateTable()) {
 			return;
+		}
         TestElement first = fRootElement.getFirstChild();
         first.setLabel("name-1111"); // should disappear
         ((TableViewer) fViewer).getControl().update();
@@ -279,21 +286,21 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		// based on the assumption that all items
 		// are created.
 	}
-	
+
 	@Override
 	public void testDeleteSibling() {
 		//Force creation of the item first
 		((TableViewer) fViewer).getTable().getItem(0).getText();
 		super.testDeleteSibling();
 	}
-	
+
 	@Override
 	public void testSetSelection() {
 		//Force creation of the item first
 		((TableViewer) fViewer).getTable().getItem(0).getText();
 		super.testSetSelection();
 	}
-	
+
 	/**
 	 * Test selecting all elements.
 	 */

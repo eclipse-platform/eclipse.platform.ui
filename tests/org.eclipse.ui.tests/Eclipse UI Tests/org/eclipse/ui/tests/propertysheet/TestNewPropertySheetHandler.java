@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.PropertyShowInContext;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class TestNewPropertySheetHandler extends NewPropertySheetHandler {
 

@@ -89,7 +89,7 @@ public class UIMessageDialogs extends TestCase {
         DialogCheck.assertDialog(dialog, this);
     }
 
-  
+
     public void testCopyOverwrite() {
         Dialog dialog = getQuestionDialog("Exists","Overwrite?");
         DialogCheck.assertDialog(dialog, this);
@@ -131,7 +131,7 @@ public class UIMessageDialogs extends TestCase {
         Dialog dialog = new MessageDialog(
                 getShell(),
                 ResourceNavigatorMessages.DropAdapter_question,
-                null, MessageFormat.format(ResourceNavigatorMessages.DropAdapter_overwriteQuery, 
+                null, MessageFormat.format(ResourceNavigatorMessages.DropAdapter_overwriteQuery,
                         new Object[] { DUMMY_RELATIVE_PATH }),
                 MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL,

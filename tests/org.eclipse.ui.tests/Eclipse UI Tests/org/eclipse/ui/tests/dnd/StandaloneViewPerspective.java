@@ -14,7 +14,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 /**
- * 
+ *
  * @since 3.1.1
  */
 public class StandaloneViewPerspective implements IPerspectiveFactory {

@@ -17,8 +17,8 @@ import org.eclipse.jface.bindings.Binding;
 
 /**
  * Tests Bug 189167
- * 
- * @since 3.4 
+ *
+ * @since 3.4
  */
 public class Bug189167Test extends TestCase {
 
@@ -39,7 +39,7 @@ public class Bug189167Test extends TestCase {
 		Binding b3  = new TestBinding("commandID", "schemeID", "contextID", "locale", "platform", 1, null);
 		assertEquals(one, two);
 		assertEquals(one.hashCode(), two.hashCode());
-		
+
 		assertFalse(one.equals(b3));
 	}
 }

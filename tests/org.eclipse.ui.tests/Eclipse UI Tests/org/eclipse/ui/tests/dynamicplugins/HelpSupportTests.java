@@ -29,18 +29,18 @@ public class HelpSupportTests extends DynamicTestCase {
 		WorkbenchHelpSystem help = WorkbenchHelpSystem.getInstance();
 		help.setDesiredHelpSystemId(getExtensionId());
 		assertFalse(help.hasHelpUI());
-		
+
 		getBundle();
 		help.dispose();
 		assertTrue(help.hasHelpUI());
-		
+
 		removeBundle();
-		help.dispose();		
+		help.dispose();
 		assertFalse(help.hasHelpUI());
-		
-		help.setDesiredHelpSystemId(null);		
+
+		help.setDesiredHelpSystemId(null);
 	}
-	
+
 	@Override
 	protected String getExtensionId() {
 		return "newHelpSupport1.testDynamicHelpSupportAddition";
@@ -55,7 +55,7 @@ public class HelpSupportTests extends DynamicTestCase {
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newHelpSupport1";
 	}
-	
+
 	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.DynamicHelpSupport";

@@ -90,10 +90,12 @@ public class TiledEditor extends MultiEditor {
 				@Override
 				public void propertyChanged(Object source, int property) {
 					if (property == IEditorPart.PROP_DIRTY
-							|| property == IWorkbenchPart.PROP_TITLE)
-						if (source instanceof IEditorPart)
+							|| property == IWorkbenchPart.PROP_TITLE) {
+						if (source instanceof IEditorPart) {
 							updateInnerEditorTitle((IEditorPart) source,
 									innerEditorTitle[index]);
+						}
+					}
 				}
 			});
 		}
@@ -105,8 +107,9 @@ public class TiledEditor extends MultiEditor {
 	@Override
 	protected void drawGradient(IEditorPart innerEditor, Gradient g) {
 		CLabel label = innerEditorTitle[getIndex(innerEditor)];
-		if ((label == null) || label.isDisposed())
+		if ((label == null) || label.isDisposed()) {
 			return;
+		}
 
 		label.setForeground(g.fgColor);
 		label.setBackground(g.bgColors, g.bgPercents);
@@ -122,8 +125,9 @@ public class TiledEditor extends MultiEditor {
 		titleLabel.setAlignment(SWT.LEFT);
 		titleLabel.setBackground(null, null);
 		parent.setTopLeft(titleLabel);
-		if (innerEditorTitle == null)
+		if (innerEditorTitle == null) {
 			innerEditorTitle = new CLabel[getInnerEditors().length];
+		}
 		innerEditorTitle[index] = titleLabel;
 	}
 
@@ -133,28 +137,34 @@ public class TiledEditor extends MultiEditor {
 	 */
 	public void updateInnerEditorTitle(IEditorPart editor, CLabel label) {
 
-		if ((label == null) || label.isDisposed())
+		if ((label == null) || label.isDisposed()) {
 			return;
+		}
 		String title = editor.getTitle();
 		if (editor.isDirty())
+		 {
 			title = "*" + title; //$NON-NLS-1$
+		}
 		label.setText(title);
 		Image image = editor.getTitleImage();
-		if (image != null)
-			if (!image.equals(label.getImage()))
+		if (image != null) {
+			if (!image.equals(label.getImage())) {
 				label.setImage(image);
+			}
+		}
 		label.setToolTipText(editor.getTitleToolTip());
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	@Override
 	protected int getIndex(IEditorPart editor) {
 		IEditorPart innerEditors[] = getInnerEditors();
 		for (int i = 0; i < innerEditors.length; i++) {
-			if (innerEditors[i] == editor)
+			if (innerEditors[i] == editor) {
 				return i;
+			}
 		}
 		return -1;
 	}

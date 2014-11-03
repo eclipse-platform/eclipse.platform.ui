@@ -19,7 +19,7 @@ import org.eclipse.ui.part.ViewPart;
 public class EmptyView extends ViewPart {
 
     /**
-     * 
+     *
      */
     public EmptyView() {
         super();

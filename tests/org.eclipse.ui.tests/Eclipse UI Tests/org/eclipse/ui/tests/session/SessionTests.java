@@ -35,7 +35,7 @@ public class SessionTests extends TestSuite {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public SessionTests() {
 		addHandlerStateTests();
@@ -49,7 +49,7 @@ public class SessionTests extends TestSuite {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void addWindowlessSessionTest() {
 		// Windowless apps are available only on Cocoa
@@ -66,7 +66,7 @@ public class SessionTests extends TestSuite {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void addStatusHandlingTests() {
 		//actually we do not care which workspace is used
@@ -76,7 +76,7 @@ public class SessionTests extends TestSuite {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void addThemeTests() {
 		WorkbenchSessionTest test = new WorkbenchSessionTest("themeSessionTests");
@@ -100,7 +100,7 @@ public class SessionTests extends TestSuite {
 		WorkbenchSessionTest test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(Bug95357Test.suite());
 		addTest(test);
-		
+
 		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(EditorWithStateTest.suite());
 		addTest(test);
@@ -112,7 +112,7 @@ public class SessionTests extends TestSuite {
 
 	/**
 	 * Adds tests related to command and handler state.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void addHandlerStateTests() {
@@ -132,7 +132,7 @@ public class SessionTests extends TestSuite {
 
 	/**
 	 * Add a view state test that involves state from one session to the other.
-	 * 
+	 *
 	 * BTW: the <b>editorSessionTests</b> is the zip file to grab the default
 	 * workspace for these particular session tests.
 	 */
@@ -140,19 +140,19 @@ public class SessionTests extends TestSuite {
 		WorkbenchSessionTest test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(Bug98800Test.suite());
 		addTest(test);
-		
+
 		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(Bug108033Test.suite());
 		addTest(test);
-		
+
 		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(ArbitraryPropertiesViewTest.suite());
 		addTest(test);
-		
+
 		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(NonRestorableViewTest.suite());
 		addTest(test);
-		
+
 		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(NonRestorablePropertySheetTest.suite());
 		addTest(test);

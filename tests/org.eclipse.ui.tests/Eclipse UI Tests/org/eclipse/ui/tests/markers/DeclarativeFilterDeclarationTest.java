@@ -20,13 +20,13 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * The DeclarativeFilterActivityTest is a test that the
 	 * declarative filters are removed by activities
-	 * 
+	 *
 	 * @param testName
 	 */
 	public DeclarativeFilterDeclarationTest(String testName) {
 		super(testName);
 	}
-	
+
 	/**
 	 * Test the filter on any error.
 	 */

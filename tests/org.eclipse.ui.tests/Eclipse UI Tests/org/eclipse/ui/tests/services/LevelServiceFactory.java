@@ -16,7 +16,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class LevelServiceFactory extends AbstractServiceFactory {
 

@@ -37,29 +37,29 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
         viewer.setLabelProvider(new TeamModelLabelProvider());
         return viewer;
 	}
-	
+
 	public void testViewerSorter(){
 		fViewer.setSorter(new ViewerSorter());
 		assertSortedResult(TEAM1_SORTED);
 	}
-	
+
 	public void testViewerSorterInsertElement(){
 		fViewer.setSorter(new ViewerSorter());
 		team1.addMember("Duong");
 		assertSortedResult(TEAM1_SORTED_WITH_INSERT);
 	}
-	
+
 	public void testViewerComparator(){
 		fViewer.setComparator(new ViewerComparator());
 		assertSortedResult(TEAM1_SORTED);
 	}
-	
+
 	public void testViewerComparatorInsertElement(){
 		fViewer.setComparator(new ViewerComparator());
 		team1.addMember("Duong");
 		assertSortedResult(TEAM1_SORTED_WITH_INSERT);
 	}
-	
+
 	private void assertSortedResult(String[] expected){
 		String[] items = getListViewer().getList().getItems();
 		for (int i = 0; i < items.length; i++){
@@ -67,16 +67,16 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 			assertEquals("Item not expected.  actual=" + item + " expected=", expected[i], item);
 		}
 	}
-	
+
 	@Override
 	protected void setInput() {
 		fViewer.setInput(team1);
 	}
-	
+
 	protected ListViewer getListViewer(){
 		return (ListViewer)fViewer;
 	}
-	
+
 	/**
 	 * @param args
 	 */

@@ -18,13 +18,13 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test the lifecycle of an action filter.
- * 
+ *
  * From Javadoc: "An IActionFilter returns whether the specific attribute
  * 		matches the state of the target object."
- * 
- * Setup: The plugin.xml contains a number of popup menu action 
- * targetted to ListElements 
- * 
+ *
+ * Setup: The plugin.xml contains a number of popup menu action
+ * targetted to ListElements
+ *
  * 		redAction -> (name = red)
  * 		blueAction -> (name = blue)
  * 		trueAction -> (flag = true)
@@ -61,13 +61,13 @@ public class IActionFilterTest extends UITestCase {
     }
 
     /**
-     * Select a list element, popup the menu, and verify that the 
+     * Select a list element, popup the menu, and verify that the
      * action filter is called.
-     * 
+     *
      * See Setup above.
      */
     private void testLifecycle(String viewId) throws Throwable {
-        // Create a list view.  
+        // Create a list view.
         ListView view = (ListView) fPage.showView(viewId);
 
         // Create the test objects.
@@ -78,7 +78,7 @@ public class IActionFilterTest extends UITestCase {
         // Get action filter.
         ListElementActionFilter filter = ListElementActionFilter.getSingleton();
 
-        // Open menu.  Verify that action filter is called.			
+        // Open menu.  Verify that action filter is called.
         MenuManager menuMgr = view.getMenuManager();
         ActionUtil.fireAboutToShow(menuMgr);
         assertTrue(filter.getCalled());
@@ -93,11 +93,11 @@ public class IActionFilterTest extends UITestCase {
     }
 
     /**
-     * Select a ListElement, popup a menu and verify that the 
-     * ListElementActionFilter.testAttribute method is invoked.  
+     * Select a ListElement, popup a menu and verify that the
+     * ListElementActionFilter.testAttribute method is invoked.
      * Then verify that the correct actions are added to the
      * popup menu.
-     * 
+     *
      * See Setup above.
      */
     private void testMenu(String viewId) throws Throwable {
@@ -107,7 +107,7 @@ public class IActionFilterTest extends UITestCase {
         ListElement green = new ListElement("green");
         ListElement redTrue = new ListElement("red", true);
 
-        // Create a list view.  
+        // Create a list view.
         ListView view = (ListView) fPage.showView(viewId);
         MenuManager menuMgr = view.getMenuManager();
         view.addElement(red);

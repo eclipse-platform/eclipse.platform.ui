@@ -23,14 +23,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 43168
- * 
+ *
  * @since 3.0
  */
 public class Bug43168Test extends UITestCase {
 
     /**
      * Constructor for Bug43168Test.
-     * 
+     *
      * @param name
      *            The name of the test
      */
@@ -41,7 +41,7 @@ public class Bug43168Test extends UITestCase {
     /**
      * Tests that a <code>StackOverflowError</code> does not occur when
      * trying to set the key sequence in a key sequence entry widget.
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+" is not recognized as a key sequence.
      */

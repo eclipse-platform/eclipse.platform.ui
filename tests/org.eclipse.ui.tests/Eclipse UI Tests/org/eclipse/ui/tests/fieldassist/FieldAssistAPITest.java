@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 271339 
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 271339
  *          [FieldAssist] Add CC text field content assist doesn't work as expected when narrowing suggestions
  *******************************************************************************/
 package org.eclipse.ui.tests.fieldassist;
@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 
 /**
  * Tests the Operations Framework API.
- * 
+ *
  * @since 3.1
  */
 public class FieldAssistAPITest extends TestCase {
@@ -90,5 +90,5 @@ public class FieldAssistAPITest extends TestCase {
 		assertTrue(FieldDecorationRegistry.getDefault()
 				.getMaximumDecorationWidth() == originalMaxWidth);
 	}
-	
+
 }

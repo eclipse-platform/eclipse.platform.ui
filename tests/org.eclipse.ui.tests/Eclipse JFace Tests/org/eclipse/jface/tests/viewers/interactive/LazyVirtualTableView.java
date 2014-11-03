@@ -34,7 +34,7 @@ public class LazyVirtualTableView extends VirtualTableView {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initElements() {
 		elements = new ArrayList();
@@ -66,8 +66,7 @@ public class LazyVirtualTableView extends VirtualTableView {
 	}
 
 	protected void doRemove(Object[] selection, int[] selectionIndices) {
-		for (int i = 0; i < selectionIndices.length; i++) {
-			int index = selectionIndices[i];
+		for (int index : selectionIndices) {
 			elements.remove(index);
 		}
 		super.doRemove(selection);

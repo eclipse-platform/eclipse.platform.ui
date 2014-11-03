@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.tests.TestPlugin;
 
 /**
- * TestTreeLabelProvider is the lable provider for the tree 
+ * TestTreeLabelProvider is the lable provider for the tree
  * decorator test.
  */
 public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
@@ -46,13 +46,14 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 
 	@Override
 	public Color getBackground(Object element) {
-		
+
 		int switchNumber = 0;
-		if(element instanceof TreeElement)
+		if(element instanceof TreeElement) {
 			switchNumber = ((TreeElement) element).level;
-		else
+		} else {
 			switchNumber = ((TableElement) element).index%4;
-		
+		}
+
 		switch (switchNumber) {
 		case 0:
 			return Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
@@ -65,21 +66,22 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 		default:
 			break;
 		}
-		
+
 		return null;
-		
+
 	}
-	
+
 	@Override
 	public Color getForeground(Object element) {
-		
+
 		int switchNumber = 0;
-		if(element instanceof TreeElement)
+		if(element instanceof TreeElement) {
 			switchNumber = ((TreeElement) element).level;
-		else
+		} else {
 			switchNumber = ((TableElement) element).index%4;
-		
-		
+		}
+
+
 		switch (switchNumber) {
 		case 0:
 			return Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
@@ -92,7 +94,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 		default:
 			break;
 		}
-		
+
 		return null;
 	}
 
@@ -108,8 +110,9 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 
 	@Override
 	public void dispose() {
-		if (image != null)
+		if (image != null) {
 			image.dispose();
+		}
 
 	}
 
@@ -120,7 +123,7 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
-		
+
 
 	}
 }

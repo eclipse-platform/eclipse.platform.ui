@@ -63,29 +63,29 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 
 		return viewer;
 	}
-	
+
 	public void testViewerSorter(){
 		fViewer.setSorter(new ViewerSorter());
 		assertSortedResult(TEAM1_SORTED);
 	}
-	
+
 	public void testViewerSorterInsertElement(){
 		fViewer.setSorter(new ViewerSorter());
 		team1.addMember("Duong");
 		assertSortedResult(TEAM1_SORTED_WITH_INSERT);
 	}
-	
+
 	public void testViewerComparator(){
 		fViewer.setComparator(new ViewerComparator());
 		assertSortedResult(TEAM1_SORTED);
 	}
-	
+
 	public void testViewerComparatorInsertElement(){
 		fViewer.setComparator(new ViewerComparator());
 		team1.addMember("Duong");
 		assertSortedResult(TEAM1_SORTED_WITH_INSERT);
 	}
-	
+
 	private void assertSortedResult(String[] expected){
 		TableItem[] items = getTableViewer().getTable().getItems();
 		for (int i = 0; i < items.length; i++){
@@ -93,16 +93,16 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 			assertEquals("Item not expected.  actual=" + item.getText() + " expected=", expected[i], item.getText());
 		}
 	}
-	
+
 	@Override
 	protected void setInput() {
 		fViewer.setInput(team1);
 	}
-	
+
 	protected TableViewer getTableViewer(){
 		return (TableViewer)fViewer;
 	}
-	
+
 	/**
 	 * @param args
 	 */

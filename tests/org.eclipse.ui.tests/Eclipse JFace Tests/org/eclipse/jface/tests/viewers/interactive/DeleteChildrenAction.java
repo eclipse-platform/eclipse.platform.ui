@@ -24,9 +24,10 @@ public class DeleteChildrenAction extends TestSelectionAction {
 
 	@Override
 	public void run(TestElement element) {
-		if (fAll)
+		if (fAll) {
 			element.deleteChildren();
-		else
+		} else {
 			element.deleteSomeChildren();
+		}
 	}
 }

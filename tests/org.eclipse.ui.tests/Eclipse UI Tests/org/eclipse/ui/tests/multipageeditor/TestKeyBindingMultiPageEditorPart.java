@@ -28,14 +28,14 @@ import org.eclipse.ui.part.EditorPart;
  * "Ctrl+Shift+4" -- the second binds "Ctrl+Shift+5" -- to the command
  * "org.eclipse.ui.tests.TestCommand". Which context to use is determined by a
  * page number, which is passed as a parameter.
- * 
+ *
  * @since 3.0
  */
 public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
 
     /**
      * The page number for this part.
-     *  
+     *
      */
     private final int number;
 
@@ -43,7 +43,7 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
 	 * Constructs a new instance of
 	 * <code>TestKeyBindingMultiPageEditorPart</code> with the page number of
 	 * this page.
-     * 
+     *
      * @param number
      *            The page number for this part.
      */

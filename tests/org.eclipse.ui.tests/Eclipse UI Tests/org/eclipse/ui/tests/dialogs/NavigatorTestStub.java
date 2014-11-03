@@ -31,7 +31,7 @@ public class NavigatorTestStub {
      */
     /**
      * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
-     * 
+     *
      public static GotoResourceDialog newGotoResourceDialog(Shell parentShell,IResource[] resources) {
      return new GotoResourceDialog(parentShell, resources);
      }

@@ -26,7 +26,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  */
 public class AnimationEngineTest extends UITestCase {
-	
+
 	/**
 	 * @param testName
 	 */
@@ -46,7 +46,7 @@ public class AnimationEngineTest extends UITestCase {
 		public int initCalled = -1;
 		public int renderCalled = -1;
 		public int disposeCalled = -1;
-		
+
 		@Override
 		public void dispose() {
 			disposeCalled = count++;
@@ -59,16 +59,17 @@ public class AnimationEngineTest extends UITestCase {
 
 		@Override
 		public void renderStep(AnimationEngine engine) {
-			if(renderCalled == -1)
+			if(renderCalled == -1) {
 				renderCalled = count++;
+			}
 		}
-		
+
 	};
-	
+
 	Shell shell;
 	TestFeedback feedback;
 	AnimationEngine engine;
-	
+
 	@Override
 	protected void doSetUp() {
 		shell = new Shell(Display.getCurrent());
@@ -79,7 +80,7 @@ public class AnimationEngineTest extends UITestCase {
 		shell.dispose();
 		shell = null;
 	}
-	
+
 	/**
 	 * Ensure that the protocol expected by the animation implementations works
 	 * as defined:
@@ -93,27 +94,29 @@ public class AnimationEngineTest extends UITestCase {
 		// Ensure that animations are turned on
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
 		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
-		
+
 		feedback = new TestFeedback(shell);
 		engine = new AnimationEngine(feedback, 250, 0);
-		
+
 		// ensure that the init method gets called on construction
 		assertTrue("'initialize' was not called", feedback.initCalled == 0);
-		
+
 		// Run the animation
 		engine.schedule();
-				
+
 		// Wait for the animation to finish
 		Display display = shell.getDisplay();
 		while(engine.getState() != Job.NONE) {
-			while (display.readAndDispatch());
+			while (display.readAndDispatch()) {
+				;
+			}
 			Thread.sleep(20);
 		}
 
 		// Make sure all methods were called...and in the correct order
 		assertTrue("'render' was not called", feedback.renderCalled >= 0);
 		assertTrue("'dispose' was not called", feedback.disposeCalled >= 0);
-		
+
 		//...in the correct order
 		assertTrue("'dispose' called before 'render", feedback.renderCalled < feedback.disposeCalled);
 	}

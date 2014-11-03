@@ -23,7 +23,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * Runs the operations API tests and workbench operation history tests from
  * background threads
- * 
+ *
  * @since 3.1
  */
 public class MultiThreadedOperationsTests extends UITestCase {

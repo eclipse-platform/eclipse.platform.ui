@@ -38,7 +38,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class KeysPreferenceModelTest extends UITestCase {
 

@@ -22,7 +22,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * SessionCreateTest runs the first half of our session
  * presistance tests.
- * 
+ *
  */
 public class SessionCreateTest extends UITestCase {
 
@@ -36,7 +36,7 @@ public class SessionCreateTest extends UITestCase {
 
     public static String TEST_FILE_3 = "three.mock1";
 
-    /** 
+    /**
      * Construct an instance.
      */
     public SessionCreateTest(String arg) {
@@ -91,8 +91,8 @@ public class SessionCreateTest extends UITestCase {
      * Closes the original window set.
      */
     private void closeOriginalWindows() {
-        for (int nX = 0; nX < oldWindows.length; nX++) {
-            oldWindows[nX].close();
+        for (IWorkbenchWindow oldWindow : oldWindows) {
+            oldWindow.close();
         }
     }
 

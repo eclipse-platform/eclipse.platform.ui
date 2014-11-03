@@ -88,7 +88,7 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
     }
 
     /**
-     * Test that if the first font in the list is bad that the 
+     * Test that if the first font in the list is bad that the
      * second one comes back as valid.
      */
 

@@ -146,13 +146,13 @@ public class FileEditorMappingTest extends UITestCase {
 	}
 
 	public void testClone() {
-		FileEditorMapping mapping = new FileEditorMapping("txt");		
+		FileEditorMapping mapping = new FileEditorMapping("txt");
 		assertEquals(mapping, mapping.clone());
-		
-		mapping.addEditor(textEditor);		
+
+		mapping.addEditor(textEditor);
 		assertEquals(mapping, mapping.clone());
-		
-		mapping.removeEditor(textEditor);		
+
+		mapping.removeEditor(textEditor);
 		assertEquals(mapping, mapping.clone());
 	}
 

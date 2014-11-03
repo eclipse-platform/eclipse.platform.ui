@@ -19,7 +19,7 @@ import org.eclipse.ui.tests.TestPlugin;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class TestPreferenceInitializer extends AbstractPreferenceInitializer {
 

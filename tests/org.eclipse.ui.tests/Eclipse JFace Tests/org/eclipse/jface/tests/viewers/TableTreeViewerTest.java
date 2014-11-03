@@ -31,16 +31,18 @@ public class TableTreeViewerTest extends AbstractTreeViewerTest {
 
         @Override
 		public String getText(Object element) {
-            if (fExtended)
-                return providedString((String) element);
+            if (fExtended) {
+				return providedString((String) element);
+			}
 
             return element.toString();
         }
 
         @Override
 		public String getColumnText(Object element, int index) {
-            if (fExtended)
-                return providedString((TestElement) element);
+            if (fExtended) {
+				return providedString((TestElement) element);
+			}
             return element.toString();
         }
 

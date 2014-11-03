@@ -72,7 +72,7 @@ public class TextMessageDialogsAuto extends TestCase {
         }
         DialogCheck.assertDialogTexts(dialog, this);
     }
- 
+
     public void testErrorClosing() {
         Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
                 WorkbenchMessages.ErrorClosingNoArg);

@@ -25,7 +25,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- *  The view provides api to fire a selection event for its workbench page. 
+ *  The view provides api to fire a selection event for its workbench page.
  */
 
 public class SelectionProviderView extends ViewPart implements
@@ -96,8 +96,8 @@ public class SelectionProviderView extends ViewPart implements
 
         // fire the event
         Object[] listeners = selectionChangedListeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-            ((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+        for (Object listener : listeners) {
+            ((ISelectionChangedListener) listener).selectionChanged(event);
         }
     }
 }

@@ -48,7 +48,7 @@ public class ComboViewerTest extends StructuredViewerTest {
     }
 
     /**
-     * TODO: Determine if this test is applicable to ComboViewer 
+     * TODO: Determine if this test is applicable to ComboViewer
      */
     @Override
 	public void testInsertChild() {

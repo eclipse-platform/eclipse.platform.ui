@@ -22,7 +22,7 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  * creates two pages -- each with a different context. The first context binds
  * "Ctrl+Shift+4" -- the second binds "Ctrl+Shift+5" -- to the command
  * "org.eclipse.ui.tests.TestCommand".
- * 
+ *
  * @since 3.0
  */
 public final class TestMultiPageEditor extends MultiPageEditorPart {
@@ -62,7 +62,7 @@ public final class TestMultiPageEditor extends MultiPageEditorPart {
 
     /**
      * Sets the active page.
-     * 
+     *
      * @param page
      *            The page to activate; should be either <code>0</code> or
      *            <code>1</code>.

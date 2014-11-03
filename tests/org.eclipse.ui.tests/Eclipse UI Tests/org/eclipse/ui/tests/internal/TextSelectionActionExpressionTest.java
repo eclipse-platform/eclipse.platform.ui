@@ -160,8 +160,9 @@ public class TextSelectionActionExpressionTest extends UITestCase {
                 "org.eclipse.ui.tests.internal.TextSelectionMenu");
         while (item instanceof SubContributionItem) {
             item = ((SubContributionItem) item).getInnerItem();
-            if (item instanceof MenuManager)
-                return (MenuManager) item;
+            if (item instanceof MenuManager) {
+				return (MenuManager) item;
+			}
         }
         fail("Unable to find menu manager");
         return null;

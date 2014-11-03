@@ -15,7 +15,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class StartupTest extends UITestCase {
 
-    /** 
+    /**
      * Construct an instance.
      */
     public StartupTest(String arg) {

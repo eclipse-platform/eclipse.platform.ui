@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class SelectionAdapterTest extends TestCase {
 

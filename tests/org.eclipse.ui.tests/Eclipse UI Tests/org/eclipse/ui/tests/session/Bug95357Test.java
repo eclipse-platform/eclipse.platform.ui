@@ -40,12 +40,12 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * but only the <b>active</b> editor window(s) should have been instantiated. A
  * bug that crops up occasionally is that all of the editors have been
  * instantiated, which impacts performance.
- * 
+ *
  * These tests more or less depend on being run in order. The workspace exists
  * from method to method.
- * 
+ *
  * @since 3.1
- * 
+ *
  */
 public class Bug95357Test extends TestCase {
 	public static TestSuite suite() {
@@ -104,13 +104,13 @@ public class Bug95357Test extends TestCase {
 	 * Multiple editors open - part 1 of 2. This makes sure that there are
 	 * FILE_MAX editors open, and the files have been created. Then the session
 	 * stops.
-	 * 
+	 *
 	 * @throws PartInitException
 	 * @throws CoreException
 	 */
 	private void multipleEditors() throws PartInitException, CoreException {
 		fActivePage.closeAllEditors(false);
-		
+
 		IEditorPart[] part = new IEditorPart[itsFilename.length];
 		for (int i = 0; i < itsFilename.length; i++) {
 			part[i] = IDE.openEditor(fActivePage, FileUtil.createFile(
@@ -143,7 +143,7 @@ public class Bug95357Test extends TestCase {
 	/**
 	 * Multiple editors in 2 stacks - part 1 of 2. Set up eclipse with FILE_MAX
 	 * editors open in 2 stacks.
-	 * 
+	 *
 	 * @throws PartInitException
 	 * @throws CoreException
 	 */
@@ -179,18 +179,20 @@ public class Bug95357Test extends TestCase {
 	// TBD should this be in the ModelService or PartService?
 	private MElementContainer<MUIElement> getParent(MUIElement element) {
 		MElementContainer<MUIElement> parent = element.getParent();
-		if (parent != null)
+		if (parent != null) {
 			return parent;
+		}
 		MPlaceholder placeholder = element.getCurSharedRef();
-		if (placeholder != null)
+		if (placeholder != null) {
 			return placeholder.getParent();
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Multiple editors in 2 stacks - part 2 of 2. 2 of the editors should have
 	 * been instantiated. The rest should still be inactive.
-	 * 
+	 *
 	 */
 	private void multipleStacksOnStartup() {
 		IEditorReference lastFile = null;
@@ -199,13 +201,13 @@ public class Bug95357Test extends TestCase {
 		IEditorReference[] editors = fActivePage.getEditorReferences();
 		assertEquals(Bug95357Test.FILE_MAX, editors.length);
 
-		for (int i = 0; i < editors.length; i++) {
+		for (IEditorReference editor : editors) {
 			if (itsFilename[itsFilename.length - 1]
-					.equals(editors[i].getName())) {
-				lastFile = editors[i];
-			} else if (itsFilename[itsFilename.length - 2].equals(editors[i]
+					.equals(editor.getName())) {
+				lastFile = editor;
+			} else if (itsFilename[itsFilename.length - 2].equals(editor
 					.getName())) {
-				secondLastFile = editors[i];
+				secondLastFile = editor;
 			}
 		}
 
@@ -221,29 +223,29 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test for .txt files and the basic editor. Part 1 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleEditors() throws Throwable {
 		setupFilenames(".txt");
-		
+
 		multipleEditors();
 	}
 
 	/**
 	 * Test for .txt files and the basic editor. Part 2 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleEditorsOpen() throws Throwable {
 		setupFilenames(".txt");
-	
+
 		multipleEditorsOpen();
 	}
 
 	/**
 	 * Test multiple stacks with .txt editor. Part 1 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleStacks() throws Throwable {
@@ -253,30 +255,30 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test multiple stacks with .txt editor. Part 2 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleStacksOnStartup() throws Throwable {
 		setupFilenames(".txt");
 		multipleStacksOnStartup();
-		
+
 	}
-	
+
 	/**
 	 * Test for .session files and the SessionEditorPart editor. Part 1 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleEditorsSession() throws Throwable {
 		setupFilenames(".session");
 		multipleEditors();
 		assertEquals(Bug95357Test.FILE_MAX, SessionEditorPart.instantiatedEditors);
-		
+
 	}
-	
+
 	/**
 	 * Test for .session files and the SessionEditorPart editor. Part 2 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleEditorsOpenSession() throws Throwable {
@@ -287,7 +289,7 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test multiple stacks with .session editor. Part 1 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleStacksSession() throws Throwable {
@@ -295,12 +297,12 @@ public class Bug95357Test extends TestCase {
 		SessionEditorPart.instantiatedEditors = 0;
 		multipleStacks();
 		assertEquals(Bug95357Test.FILE_MAX, SessionEditorPart.instantiatedEditors);
-		
+
 	}
-	
+
 	/**
 	 * Test multiple stacks with .session editor. Part 2 of 2
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMultipleStacksOnStartupSession() throws Throwable {

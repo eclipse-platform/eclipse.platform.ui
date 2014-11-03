@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * The TableColorProviderTest is a test suite designed to test 
+ * The TableColorProviderTest is a test suite designed to test
  * ITableColorProviders.
  */
 public class TableColorProviderTest extends StructuredViewerTest {
@@ -52,7 +52,7 @@ public class TableColorProviderTest extends StructuredViewerTest {
     public void testColorProviderForeground() {
         TableViewer viewer = (TableViewer) fViewer;
         ColorViewLabelProvider provider = new ColorViewLabelProvider();
-        
+
         viewer.setLabelProvider(provider);
 
         //refresh so that the colors are set
@@ -71,9 +71,9 @@ public class TableColorProviderTest extends StructuredViewerTest {
     public void testColorProviderBackground() {
         TableViewer viewer = (TableViewer) fViewer;
         ColorViewLabelProvider provider = new ColorViewLabelProvider();
-        
+
         viewer.setLabelProvider(provider);
-        
+
         fViewer.refresh();
 
         assertEquals("background 1 red", viewer.getTable().getItem(0).getBackground(0), red);//$NON-NLS-1$
@@ -90,7 +90,7 @@ public class TableColorProviderTest extends StructuredViewerTest {
     public void testTableItemsColorProviderForeground() {
         TableViewer viewer = (TableViewer) fViewer;
         TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
-        
+
         viewer.setLabelProvider(provider);
         Table table = viewer.getTable();
 
@@ -109,9 +109,9 @@ public class TableColorProviderTest extends StructuredViewerTest {
     public void testTableItemsColorProviderBackground() {
         TableViewer viewer = (TableViewer) fViewer;
         TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
-        
+
         viewer.setLabelProvider(provider);
-        
+
         Table table = viewer.getTable();
         fViewer.refresh();
 
@@ -147,7 +147,7 @@ public class TableColorProviderTest extends StructuredViewerTest {
 	protected StructuredViewer createViewer(Composite parent) {
         TableViewer viewer = new TableViewer(parent);
         viewer.setContentProvider(new TestModelContentProvider());
-        
+
         viewer.getTable().setLinesVisible(true);
 
         TableLayout layout = new TableLayout();
@@ -202,8 +202,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
                 return red;
             }
         }
-        
-       
+
+
 
         @Override
 		public Color getBackground(Object element, int columnIndex) {
@@ -225,7 +225,7 @@ public class TableColorProviderTest extends StructuredViewerTest {
 		public Color getBackground(Object element) {
 			return red;
 		}
-		
+
 		@Override
 		public Color getForeground(Object element) {
 			return green;

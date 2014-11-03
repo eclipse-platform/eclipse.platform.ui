@@ -27,14 +27,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 36537
- * 
+ *
  * @since 3.0
  */
 public class Bug36537Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug36537Test.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */

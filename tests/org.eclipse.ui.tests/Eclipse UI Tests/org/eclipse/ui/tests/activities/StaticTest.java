@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.activities.CategoryActivityBinding;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
- * 
+ *
  * The static test reads activity definitions from the plugin.xml (in
  * org.eclipse.ui.tests) file and valides its content.
  */
@@ -41,7 +41,7 @@ public class StaticTest extends UITestCase {
 
     /**
      * Constructor.
-     * 
+     *
      * @param testName
      *            Test's name.
      */
@@ -54,24 +54,29 @@ public class StaticTest extends UITestCase {
 
     /**
      * Populate the id arrays.
-     *  
+     *
      */
     private void populateIds() {
         int index = 0;
         categoryIds = new ArrayList();
         for (index = 1; index <= 6; index++)
-            categoryIds.add("org.eclipse.category" + Integer.toString(index)); //$NON-NLS-1$
+		 {
+			categoryIds.add("org.eclipse.category" + Integer.toString(index)); //$NON-NLS-1$
+		}
         activityIds = new ArrayList();
         for (index = 1; index <= 18; index++)
-            activityIds.add("org.eclipse.activity" + Integer.toString(index)); //$NON-NLS-1$
+		 {
+			activityIds.add("org.eclipse.activity" + Integer.toString(index)); //$NON-NLS-1$
+		}
         patternActivityIds = new ArrayList();
-        for (index = 0; index < 3; index++)
-            patternActivityIds.add(activityIds.toArray()[index]);
+        for (index = 0; index < 3; index++) {
+			patternActivityIds.add(activityIds.toArray()[index]);
+		}
     }
 
     /**
      * Test the activity manager's content.
-     *  
+     *
      */
     public void testActivityManager() {
         // Check the defined category Ids
@@ -81,9 +86,10 @@ public class StaticTest extends UITestCase {
         assertTrue(activityManager.getDefinedActivityIds().containsAll(
                 activityIds));
         // Check enabled activity Ids
-        for (int index = 1; index <= 4; index++)
-            assertTrue(activityManager.getEnabledActivityIds().contains(
+        for (int index = 1; index <= 4; index++) {
+			assertTrue(activityManager.getEnabledActivityIds().contains(
                     "org.eclipse.activity" + Integer.toString(index)));
+		}
         // Check identifier
         IIdentifier activityIdentifier = activityManager
                 .getIdentifier("org.eclipse.pattern1");
@@ -94,7 +100,7 @@ public class StaticTest extends UITestCase {
 
     /**
      * Test an activitie's content.
-     *  
+     *
      */
     public void testActivity() {
         IActivity first_activity = activityManager
@@ -136,7 +142,7 @@ public class StaticTest extends UITestCase {
 
     /**
      * Test a category's content.
-     *  
+     *
      */
     public void testCategory() {
         ICategory first_category = activityManager
@@ -144,11 +150,12 @@ public class StaticTest extends UITestCase {
         // Check category activity bindings
         Set categoryActivityBindings = first_category
                 .getCategoryActivityBindings();
-        for (int index = 1; index <= 4; index++)
-            assertTrue(categoryActivityBindings
+        for (int index = 1; index <= 4; index++) {
+			assertTrue(categoryActivityBindings
                     .contains(new CategoryActivityBinding(
                             "org.eclipse.activity" + Integer.toString(index),
                             first_category.getId())));
+		}
         try {
             // Check category description
             assertTrue(first_category.getDescription().equals("description"));

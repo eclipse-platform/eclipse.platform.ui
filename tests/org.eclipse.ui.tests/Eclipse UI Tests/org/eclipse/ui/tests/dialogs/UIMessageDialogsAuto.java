@@ -40,7 +40,7 @@ public class UIMessageDialogsAuto extends TestCase {
         return DialogCheck.getShell();
     }
 
-  
+
     /*
      * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openInformation.
      * The method will return the dialog instead of opening.

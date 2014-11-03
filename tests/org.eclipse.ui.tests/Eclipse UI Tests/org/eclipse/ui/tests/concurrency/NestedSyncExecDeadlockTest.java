@@ -3,8 +3,8 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *   Jeremiah Lott (jeremiah.lott@timesys.com) - Initial implementation
  *   IBM Added comments, removed printlns, and incorporated into platform test suites
  **********************************************************************/
@@ -117,6 +117,6 @@ public class NestedSyncExecDeadlockTest extends TestCase {
 	}
 
 	public void testOK() throws Exception {
-		doTest(0); // 0 rarely locks		
+		doTest(0); // 0 rarely locks
 	}
 }

@@ -21,11 +21,11 @@ import junit.framework.TestCase;
  *
  */
 public class TreeSelectionTest extends TestCase {
-	
+
 	public TreeSelectionTest(String name) {
 		super(name);
 	}
-	
+
 	public void testBug1384558() {
 		Object one = new Object();
 		Object two = new Object();

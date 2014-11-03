@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class ReopenMenuTest extends TestCase {
 	private static class TextInfo {

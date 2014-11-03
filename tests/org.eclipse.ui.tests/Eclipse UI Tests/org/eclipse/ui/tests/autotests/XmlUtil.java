@@ -36,29 +36,29 @@ public class XmlUtil {
 
         return XMLMemento.createReadRoot(reader);
     }
-    
+
     public static IMemento read(URL toRead) throws WorkbenchException {
         try {
             return read(toRead.openStream());
         } catch (IOException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR, 
+            throw new WorkbenchException(new Status(IStatus.ERROR,
                     TestPlugin.getDefault().getBundle().getSymbolicName(),
                     IStatus.OK, null, e));
         }
     }
-    
+
     public static IMemento read(File toRead) throws WorkbenchException {
         FileInputStream input;
         try {
             input = new FileInputStream(toRead);
             return read(input);
         } catch (FileNotFoundException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR, 
+            throw new WorkbenchException(new Status(IStatus.ERROR,
                     TestPlugin.getDefault().getBundle().getSymbolicName(),
                     IStatus.OK, null, e));
         }
     }
-    
+
     public static void write(File file, XMLMemento data) throws WorkbenchException {
 
         FileOutputStream output;
@@ -72,11 +72,11 @@ public class XmlUtil {
             data.save(writer);
             output.close();
         } catch (FileNotFoundException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR, 
+            throw new WorkbenchException(new Status(IStatus.ERROR,
                     TestPlugin.getDefault().getBundle().getSymbolicName(),
                     IStatus.OK, e.toString(), e));
         } catch (IOException e) {
-            throw new WorkbenchException(new Status(IStatus.ERROR, 
+            throw new WorkbenchException(new Status(IStatus.ERROR,
                     TestPlugin.getDefault().getBundle().getSymbolicName(),
                     IStatus.OK, e.toString(), e));
         }

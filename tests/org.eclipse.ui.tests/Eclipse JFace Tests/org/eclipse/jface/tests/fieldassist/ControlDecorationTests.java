@@ -24,9 +24,9 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
-		decoration.setImage(FieldDecorationRegistry.getDefault()             
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
-		decoration.setDescriptionText("foo");  
+		decoration.setImage(FieldDecorationRegistry.getDefault()
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+		decoration.setDescriptionText("foo");
 		window.open();
 		assertTrue("1.0", decoration.isVisible());
 		decoration.hide();
@@ -37,13 +37,13 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		assertFalse("1.3", decoration.isVisible());
 		window.getFieldAssistControl().setVisible(true);
 		assertTrue("1.4", decoration.isVisible());
-		
+
 		// focus related tests.  Comment out for now.
 		// see bug 275393
 		decoration.setShowOnlyOnFocus(true);
 		anotherControl.setFocus();
 		spinEventLoop();
-		
+
 		/*
 		assertFalse("1.5", decoration.isVisible());
 		window.getFieldAssistControl().setFocus();
@@ -53,14 +53,14 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		*/
 
 	}
-	
+
 	public void testHoverVisibility() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(window.getFieldAssistControl(), SWT.RIGHT);
-		decoration.setImage(FieldDecorationRegistry.getDefault()             
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
-		decoration.setDescriptionText("foo");   
+		decoration.setImage(FieldDecorationRegistry.getDefault()
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+		decoration.setDescriptionText("foo");
 		assertTrue("1.0", decoration.isVisible());
 		assertOneShellUp();
 		decoration.hide();
@@ -74,14 +74,14 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		decoration.showHoverText("Show me");
 		assertTwoShellsUp();
 	}
-	
+
 	public void XXXtestBug418420() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(window.getFieldAssistControl(), SWT.RIGHT);
-		decoration.setImage(FieldDecorationRegistry.getDefault()             
-		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
-		decoration.setDescriptionText("foo");   
+		decoration.setImage(FieldDecorationRegistry.getDefault()
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+		decoration.setDescriptionText("foo");
 		decoration.setShowOnlyOnFocus(true);
 		// focus related tests.  Comment out for now.
 		// see 418420 and bug 275393

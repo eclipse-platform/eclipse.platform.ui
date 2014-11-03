@@ -68,7 +68,7 @@ public class PerspectiveTests extends DynamicTestCase {
 		removeBundle();
 		MPerspective persp = findPerspective(window, desc.getId());
 		assertNull(persp);
-		
+
 
 		assertFalse(window.getActivePage().getPerspective().getId().equals(
 				desc.getId()));
@@ -101,7 +101,7 @@ public class PerspectiveTests extends DynamicTestCase {
 		assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, window.getActivePage()
 				.getPerspective().getId());
 	}
-	
+
 	private MPerspective findPerspective(IWorkbenchWindow window, String id) {
 		EModelService modelService = window
 				.getService(EModelService.class);

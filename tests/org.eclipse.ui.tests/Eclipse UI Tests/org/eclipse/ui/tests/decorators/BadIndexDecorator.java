@@ -30,7 +30,7 @@ public class BadIndexDecorator implements ILightweightLabelDecorator {
      private Set listeners = new HashSet();
 
     private ImageDescriptor descriptor;
-   
+
 
     /*
      * @see IBaseLabelProvider#addListener(ILabelProviderListener)
@@ -65,7 +65,7 @@ public class BadIndexDecorator implements ILightweightLabelDecorator {
     }
 
     /**
-     * Refresh the listeners to update the decorators for 
+     * Refresh the listeners to update the decorators for
      * element.
      */
 

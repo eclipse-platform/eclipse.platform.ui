@@ -35,7 +35,7 @@ public abstract class TestDragSource implements IWorkbenchWindowProvider {
 	public IWorkbenchWindow getWorkbenchWindow() {
         return getPage().getWorkbenchWindow();
     }
-    
+
     public WorkbenchPage getPage() {
         if (page == null) {
             page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI
@@ -43,6 +43,6 @@ public abstract class TestDragSource implements IWorkbenchWindowProvider {
         }
         return page;
     }
-    
-    
+
+
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace] 
+ *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace]
  *                  DialogSettings.save() silently ignores IOException
  *******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
@@ -95,7 +95,7 @@ public class DialogSettingsTest extends TestCase {
 	/**
 	 * Helper method to fill a DialogSettings object to be checked later by
 	 * check.
-	 * 
+	 *
 	 * @param memento
 	 */
 	private void fill(IDialogSettings dialogSettings) {
@@ -114,7 +114,7 @@ public class DialogSettingsTest extends TestCase {
 
 	/**
 	 * Helper method to check if the values set by fill are still there.
-	 * 
+	 *
 	 */
 	protected void check(IDialogSettings dialogSettings) {
 		assertEquals(true, dialogSettings.getBoolean("booleanKey"));
@@ -157,7 +157,7 @@ public class DialogSettingsTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testRemoveSection() {
 		DialogSettings dialogSettings = new DialogSettings(null);
 		IDialogSettings section = dialogSettings.addNewSection("new-section");
@@ -189,7 +189,7 @@ public class DialogSettingsTest extends TestCase {
 
 		assertEquals(1, dialogSettings.getSections().length);
 	}
-	
+
 	public void testRemoveOtherSection() {
 		DialogSettings dialogSettings = new DialogSettings(null);
 		dialogSettings.addNewSection("new-section");
@@ -200,7 +200,7 @@ public class DialogSettingsTest extends TestCase {
 
 		assertEquals(1, dialogSettings.getSections().length);
 	}
-	
+
 	public void testRemoveSectionWithNullArgument() {
 		DialogSettings dialogSettings = new DialogSettings(null);
 

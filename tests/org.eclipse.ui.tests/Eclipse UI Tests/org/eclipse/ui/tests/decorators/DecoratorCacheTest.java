@@ -26,7 +26,7 @@ import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class DecoratorCacheTest extends AbstractNavigatorTest {
 

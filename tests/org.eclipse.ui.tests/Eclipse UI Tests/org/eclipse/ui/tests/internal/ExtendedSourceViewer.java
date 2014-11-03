@@ -39,8 +39,9 @@ public class ExtendedSourceViewer extends SourceViewer {
     @Override
 	public ISelection getSelection() {
         Point p = getSelectedRange();
-        if (p.x == -1 || p.y == -1)
-            return TextSelection.emptySelection();
+        if (p.x == -1 || p.y == -1) {
+			return TextSelection.emptySelection();
+		}
 
         return new ExtendedTextSelection(getDocument(), p.x, p.y);
     }

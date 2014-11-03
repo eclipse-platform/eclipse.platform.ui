@@ -38,7 +38,7 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
 /**
  * bug 99858 [IDE] Error upon deleting a project. Tests that our delete code no
  * longer throws a CoreException when deleting a closed project.
- * 
+ *
  * @since 3.2
  */
 public class Bug99858Test extends TestCase {
@@ -61,7 +61,7 @@ public class Bug99858Test extends TestCase {
 	 * Create a project with some files, close it, and delete it. With the
 	 * changes in runtime to throw a CoreException from IContainer#members(),
 	 * the project won't get deleted if ReadOnlyStateChecker is not fixed.
-	 * 
+	 *
 	 * @throws Throwable
 	 *             if it goes wrong
 	 */
@@ -155,7 +155,7 @@ public class Bug99858Test extends TestCase {
 	/**
 	 * Subclass the delete action and go into testing mode, which limits user
 	 * dialogs.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private class MyDeleteResourceAction extends DeleteResourceAction {
@@ -176,7 +176,7 @@ public class Bug99858Test extends TestCase {
 
 	/**
 	 * Create a quick project file, so the project has some children to delete.
-	 * 
+	 *
 	 * @param testProject
 	 *            the project
 	 * @param name
@@ -199,8 +199,9 @@ public class Bug99858Test extends TestCase {
 	 */
 	private void chewUpEvents() {
 		Display display = Display.getCurrent();
-		while (display.readAndDispatch())
+		while (display.readAndDispatch()) {
 			;
+		}
 	}
 
 	@Override

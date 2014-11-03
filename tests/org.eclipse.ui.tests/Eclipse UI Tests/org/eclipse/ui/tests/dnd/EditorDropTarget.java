@@ -43,7 +43,7 @@ public class EditorDropTarget extends WorkbenchWindowDropTarget {
         return DragOperations.getLocation(DragOperations.getPane(getPart()),
                 side);
     }
-    
+
     @Override
 	public Shell getShell() {
     	return getPart().getSite().getShell();

@@ -122,7 +122,7 @@ public class GenericCommandActionDelegate implements
 
 	/**
 	 * Build a command from the executable extension information.
-	 * 
+	 *
 	 * @param commandService
 	 *            to get the Command object
 	 */

@@ -22,11 +22,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 
-	
+
 	public static final String ID = "org.eclipse.ui.tests.foregroundDecorator";
-	
+
 	public static Color color;
-	
+
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
@@ -67,7 +67,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public static void setUpColor(){
 		color = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW);
 	}

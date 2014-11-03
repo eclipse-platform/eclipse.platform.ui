@@ -27,7 +27,7 @@ import org.eclipse.ui.menus.UIElement;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ToggleContextHandler extends AbstractHandler implements
 		IElementUpdater {

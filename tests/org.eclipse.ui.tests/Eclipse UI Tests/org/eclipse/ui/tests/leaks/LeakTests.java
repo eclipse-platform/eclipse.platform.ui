@@ -43,7 +43,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Very simple leak tests to determine if any of our heavy objects are not being
  * disposed properly. Note that the results of these tests will in no way
  * actually assist you in tracking down the leak.
- * 
+ *
  * @since 3.1
  */
 public class LeakTests extends UITestCase {
@@ -215,16 +215,16 @@ public class LeakTests extends UITestCase {
 			ref.clear();
 		}
 	}
-	
+
 	public void testBug265449PropertiesLeak() throws Exception {
 		// create a project to be selected by the 'Navigator'
     	proj = FileUtil.createProject("projectToSelect");
-    	
+
     	// show the 'Navigator'
     	IViewPart navigator = fActivePage.showView(IPageLayout.ID_RES_NAV);
     	// show the 'Properties' view
     	IViewPart propertiesView = fActivePage.showView(IPageLayout.ID_PROP_SHEET);
-    	
+
     	// select the project in the 'Navigator', this will cause the 'Properties'
     	// view to show something, and create a PropertySheetPage, which was leaking
     	navigator.getSite().getSelectionProvider().setSelection(new StructuredSelection(proj));
@@ -246,7 +246,7 @@ public class LeakTests extends UITestCase {
 			ref.clear();
 		}
 	}
-    
+
     public void testTextEditorContextMenu() throws Exception {
     	proj = FileUtil.createProject("testEditorLeaks");
 
@@ -255,15 +255,15 @@ public class LeakTests extends UITestCase {
         IEditorPart editor = IDE.openEditor(fActivePage, input, "org.eclipse.ui.tests.leak.contextEditor");
         assertTrue(editor instanceof ContextEditorPart);
         Reference ref = createReference(queue, editor);
-        
+
         ContextEditorPart contextMenuEditor = (ContextEditorPart) editor;
-        
+
         contextMenuEditor.showMenu();
         processEvents();
-        
+
         contextMenuEditor.hideMenu();
         processEvents();
-        
+
         try {
             contextMenuEditor = null;
             fActivePage.closeEditor(editor, false);
@@ -275,8 +275,8 @@ public class LeakTests extends UITestCase {
     }
 
       /**
-       * No idea why the following test is failing.  Doug has ran this through a 
-       * profiler and for some reason the window just isn't being GCd despite 
+       * No idea why the following test is failing.  Doug has ran this through a
+       * profiler and for some reason the window just isn't being GCd despite
        * there not being nay incoming references.
        */
 //    public void testSimpleWindowLeak() throws Exception {
@@ -301,7 +301,7 @@ public class LeakTests extends UITestCase {
 //            manageWindows(true);
 //        }
 //    }
-    
+
     /**
      * Test for leaks if dialog is disposed before it is closed.
      * This is really testing the framework rather than individual
@@ -312,7 +312,7 @@ public class LeakTests extends UITestCase {
   public void testDestroyedDialogLeaks() throws Exception {
 	  ReferenceQueue queue = new ReferenceQueue();
 	  // Use SaveAs dialog because it's simple to invoke and utilizes
-	  // framework function such as storing dialog bounds.  
+	  // framework function such as storing dialog bounds.
 	  // We are really testing the framework itself here.
 	  Dialog newDialog = new SaveAsDialog(fWin.getShell());
       newDialog.setBlockOnOpen(false);
@@ -320,7 +320,7 @@ public class LeakTests extends UITestCase {
       assertNotNull(newDialog);
       Reference ref = createReference(queue, newDialog);
       try {
-      	  // Dispose the window before closing it.  
+      	  // Dispose the window before closing it.
        	  newDialog.getShell().dispose();
        	  newDialog.close();
        	  newDialog = null;

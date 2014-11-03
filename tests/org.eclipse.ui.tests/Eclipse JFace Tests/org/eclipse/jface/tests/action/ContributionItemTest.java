@@ -20,14 +20,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Tests for the [I]ContributionItem API.
- * 
+ *
  * @since 3.1
  */
 public class ContributionItemTest extends JFaceActionTest {
 
     /**
      * Constructs a new test with the given name.
-     * 
+     *
      * @param name
      *            the name of the test
      */
@@ -50,7 +50,7 @@ public class ContributionItemTest extends JFaceActionTest {
         mgr.remove(item);
         assertNull(item.getParent());
     }
-    
+
     /**
      * Tests that an action contribution item will display the text in a
      * created SWT button when the MODE_FORCE_TEXT mode is set.
@@ -64,7 +64,7 @@ public class ContributionItemTest extends JFaceActionTest {
     			"icons/anything.gif"));
     	ActionContributionItem item = new ActionContributionItem(action);
     	item.fill(getShell());
-    	
+
     	Control[] children = getShell().getChildren();
     	Button button = (Button) children[0];
     	assertEquals("", button.getText());

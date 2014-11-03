@@ -24,11 +24,11 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * SessionRestoreTest runs the second half of our session
  * presistance tests.
- * 
+ *
  */
 public class DeprecatedSessionRestoreTest extends UITestCase {
 
-    /** 
+    /**
      * Construct an instance.
      */
     public DeprecatedSessionRestoreTest(String arg) {

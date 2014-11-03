@@ -26,7 +26,7 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * The is a test VirtualTableView of the support for SWT.VIRTUAL in JFace.
- * 
+ *
  * @since 3.1
  */
 public class VirtualTableView extends ViewPart {
@@ -81,7 +81,7 @@ public class VirtualTableView extends ViewPart {
 
 	/**
 	 * Get the content provider for the receiver.
-	 * 
+	 *
 	 * @return IContentProvider
 	 */
 	protected IContentProvider getContentProvider() {

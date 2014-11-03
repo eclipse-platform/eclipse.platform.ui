@@ -42,7 +42,7 @@ public class IWorkbenchWindowTest extends UITestCase {
         /*
          * Commented out because until test case can be updated to work
          * with new window/page/perspective implementation
-         * 
+         *
          IWorkbenchPage page1, page2;
          page1 = openTestPage(fWin);
          assertEquals(fWin.getActivePage(), page1);
@@ -66,9 +66,9 @@ public class IWorkbenchWindowTest extends UITestCase {
         openTestPage(fWin, 5);
         IWorkbenchPage[] pages = fWin.getPages();
 
-        for (int i = 0; i < pages.length; i++) {
-            fWin.setActivePage(pages[i]);
-            assertEquals(pages[i], fWin.getActivePage());
+        for (IWorkbenchPage page : pages) {
+            fWin.setActivePage(page);
+            assertEquals(page, fWin.getActivePage());
         }
 
         fWin.setActivePage(null);
@@ -79,7 +79,7 @@ public class IWorkbenchWindowTest extends UITestCase {
         /*
          * Commented out because until test case can be updated to work
          * with new window/page/perspective implementation
-         * 
+         *
          int totalBefore;
          IWorkbenchPage[] pages, domainPages;
 
@@ -114,7 +114,7 @@ public class IWorkbenchWindowTest extends UITestCase {
         /*
          * Commented out because until test case can be updated to work
          * with new window/page/perspective implementation
-         * 
+         *
          IWorkbenchPage page = null;
          try {
          page = fWin.openPage(ResourcesPlugin.getWorkspace());
@@ -134,7 +134,7 @@ public class IWorkbenchWindowTest extends UITestCase {
         /*
          * Commented out because until test case can be updated to work
          * with new window/page/perspective implementation
-         * 
+         *
          IWorkbenchPage page = null;
          try {
          page = fWin.openPage(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
@@ -163,14 +163,16 @@ public class IWorkbenchWindowTest extends UITestCase {
         String[] ids = { IWorkbenchActionConstants.M_FILE,
                 IWorkbenchActionConstants.M_WINDOW, };
 
-        for (int i = 0; i < ids.length; i++)
-            assertEquals(fWin.isApplicationMenu(ids[i]), true);
+        for (String id : ids) {
+			assertEquals(fWin.isApplicationMenu(id), true);
+		}
 
         ids = new String[] { IWorkbenchActionConstants.M_EDIT,
                 IWorkbenchActionConstants.M_HELP,
                 IWorkbenchActionConstants.M_LAUNCH };
 
-        for (int i = 0; i < ids.length; i++)
-            assertEquals(fWin.isApplicationMenu(ids[i]), false);
+        for (String id : ids) {
+			assertEquals(fWin.isApplicationMenu(id), false);
+		}
     }
 }

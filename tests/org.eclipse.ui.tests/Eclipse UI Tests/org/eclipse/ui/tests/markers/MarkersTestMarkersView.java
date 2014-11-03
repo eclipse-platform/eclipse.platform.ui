@@ -27,9 +27,9 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * MarkersTestMarkersView is the test suite version of the markers view.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkersTestMarkersView extends MarkerSupportView {
 
@@ -44,7 +44,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Get the current markers for the receiver.
-	 * 
+	 *
 	 * @return
 	 */
 	public IMarker[] getCurrentMarkers() {
@@ -74,7 +74,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Add a listener for the end of the update.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addUpdateFinishListener(IJobChangeListener listener) {
@@ -84,7 +84,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Return the updateJob.
-	 * 
+	 *
 	 * @return
 	 */
 	private Job getUpdateJobForListener() {
@@ -98,13 +98,13 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * Remove a listener for the end of the update.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removeUpdateFinishListener(IJobChangeListener listener) {
@@ -118,12 +118,12 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	 */
 	public void setColumnWidths(int width) {
 		TreeColumn[] treeColumns = tree.getColumns();
-		for (int j = 0; j < treeColumns.length; j++) {
-			treeColumns[j].setWidth(width);
+		for (TreeColumn treeColumn : treeColumns) {
+			treeColumn.setWidth(width);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -136,11 +136,12 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	 */
 	public boolean checkColumnSizes(int size) {
 		TreeColumn[] treeColumns = tree.getColumns();
-		
+
 		//Do not check the last column as Linux will resize it to fit the whole table
 		for (int j = 0; j < treeColumns.length - 1; j++) {
-			if(treeColumns[j].getWidth() == size)
+			if(treeColumns[j].getWidth() == size) {
 				continue;
+			}
 			return false;
 		}
 		return true;

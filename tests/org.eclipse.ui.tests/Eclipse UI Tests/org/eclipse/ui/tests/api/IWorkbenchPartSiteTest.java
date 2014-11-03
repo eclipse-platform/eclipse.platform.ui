@@ -42,7 +42,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetId() throws Throwable {
-        // From Javadoc: "Returns the part registry extension id for 
+        // From Javadoc: "Returns the part registry extension id for
         // this workbench site's part."
 
         IWorkbenchPart part = createTestPart(fPage);
@@ -51,7 +51,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetPage() throws Throwable {
-        // From Javadoc: "Returns the page containing this workbench 
+        // From Javadoc: "Returns the page containing this workbench
         // site's part."
 
         IWorkbenchPart part = createTestPart(fPage);
@@ -60,7 +60,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetPluginId() throws Throwable {
-        // From Javadoc: "Returns the unique identifier of the 
+        // From Javadoc: "Returns the unique identifier of the
         // plug-in that defines this workbench site's part."
 
         IWorkbenchPart part = createTestPart(fPage);
@@ -69,7 +69,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetRegisteredName() throws Throwable {
-        // From Javadoc: "Returns the registered name for this 
+        // From Javadoc: "Returns the registered name for this
         // workbench site's part."
 
         IWorkbenchPart part = createTestPart(fPage);
@@ -78,7 +78,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetShell() throws Throwable {
-        // From Javadoc: "Returns the shell containing this 
+        // From Javadoc: "Returns the shell containing this
         // workbench site's part"
 
         IWorkbenchPart part = createTestPart(fPage);
@@ -87,7 +87,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetWorkbenchWindow() throws Throwable {
-        // From Javadoc: "Returns the workbench window 
+        // From Javadoc: "Returns the workbench window
         // containing this workbench site's part."
 
         IWorkbenchPart part = createTestPart(fPage);
@@ -96,8 +96,8 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
     }
 
     public void testGetSelectionProvider() throws Throwable {
-        // From Javadoc: "'Get' returns the selection provider 
-        // for this workbench site's part.  
+        // From Javadoc: "'Get' returns the selection provider
+        // for this workbench site's part.
 
         IWorkbenchPart part = createTestPart(fPage);
         IWorkbenchPartSite site = part.getSite();
@@ -120,24 +120,25 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
         site.setSelectionProvider(provider);
         assertEquals(provider, site.getSelectionProvider());
     }
-    
+
     public void testINestableService() throws Throwable {
     	IWorkbenchPart part = createTestPart(fPage);
     	IWorkbenchPartSite site = part.getSite();
 		DummyService service = site.getService(DummyService.class);
 
     	assertTrue(service.isActive());
-    	if(part instanceof IViewPart)
-    		fPage.hideView((IViewPart) part);
-    	else
-    		fPage.closeEditor((IEditorPart) part, false);
+    	if(part instanceof IViewPart) {
+			fPage.hideView((IViewPart) part);
+		} else {
+			fPage.closeEditor((IEditorPart) part, false);
+		}
     	assertFalse(service.isActive());
-    	
+
     }
-    
+
 
     /**
-     * Creates a test part in the page.	
+     * Creates a test part in the page.
      */
     abstract protected IWorkbenchPart createTestPart(IWorkbenchPage page)
             throws Throwable;

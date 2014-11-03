@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.TableItem;
  * {@link IColorProvider}, {@link org.eclipse.jface.viewers.IColorProvider},
  * {@link IFontProvider}
  * @since 3.3
- * 
+ *
  */
 public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest {
 
@@ -58,7 +58,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 
 	/**
 	 * Create a new instance of the recevier.
-	 * 
+	 *
 	 * @param name
 	 */
 	public CompositeLabelProviderTableTest(String name) {
@@ -67,7 +67,7 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-		
+
 		initializeColors(parent);
 		final TableViewer v = new TableViewer(parent);
 		v.setContentProvider(new LabelTableContentProvider());

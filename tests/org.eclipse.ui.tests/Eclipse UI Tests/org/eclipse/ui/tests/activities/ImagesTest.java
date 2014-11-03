@@ -36,7 +36,7 @@ public class ImagesTest extends UITestCase {
 	public ImagesTest(String testName) {
 		super(testName);
 	}
-	
+
 	public void testActivityImages() {
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivity activity1 = support.getActivityManager().getActivity("org.eclipse.activity1");
@@ -45,24 +45,24 @@ public class ImagesTest extends UITestCase {
 		IActivity activity2 = support.getActivityManager().getActivity("org.eclipse.activity2");
 		assertNotNull(activity2);
 		assertTrue(activity2.isDefined());
-		
-		ImageDescriptor defaultImageDesc = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);		
+
+		ImageDescriptor defaultImageDesc = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
 		defaultImage = defaultImageDesc.createImage();
-		
+
 		ImageDescriptor desc1 = support.getImageDescriptor(activity1);
 		image1 = desc1.createImage();
-		
+
 		assertNotSame(defaultImageDesc, desc1);
 	    ImageTests.assertNotEquals(defaultImage, image1);
-	    
+
 		ImageDescriptor desc2 = support.getImageDescriptor(activity2);
 		image2 = desc2.createImage();
-		
+
 		assertSame(defaultImageDesc, desc2);
 		ImageTests.assertEquals(defaultImage, image2);
 	}
-	
-	
+
+
 	public void testCategoryImages() {
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		ICategory category1 = support.getActivityManager().getCategory("org.eclipse.category1");
@@ -71,19 +71,19 @@ public class ImagesTest extends UITestCase {
 		ICategory category2 = support.getActivityManager().getCategory("org.eclipse.category2");
 		assertNotNull(category2);
 		assertTrue(category2.isDefined());
-		
-		ImageDescriptor defaultImageDesc = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);		
+
+		ImageDescriptor defaultImageDesc = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
 		defaultImage = defaultImageDesc.createImage();
-		
+
 		ImageDescriptor desc1 = support.getImageDescriptor(category1);
 		image1 = desc1.createImage();
-		
+
 		assertNotSame(defaultImageDesc, desc1);
 	    ImageTests.assertNotEquals(defaultImage, image1);
-	    
+
 		ImageDescriptor desc2 = support.getImageDescriptor(category2);
 		image2 = desc2.createImage();
-		
+
 		assertSame(defaultImageDesc, desc2);
 		ImageTests.assertEquals(defaultImage, image2);
 	}
@@ -92,11 +92,14 @@ public class ImagesTest extends UITestCase {
 	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
-		if (defaultImage != null)
+		if (defaultImage != null) {
 			defaultImage.dispose();
-		if (image1 != null)
+		}
+		if (image1 != null) {
 			image1.dispose();
-		if (image2 != null)
+		}
+		if (image2 != null) {
 			image2.dispose();
+		}
 	}
 }

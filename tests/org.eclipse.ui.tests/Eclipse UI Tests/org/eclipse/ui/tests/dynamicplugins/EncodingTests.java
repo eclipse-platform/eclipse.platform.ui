@@ -35,7 +35,7 @@ public class EncodingTests extends DynamicTestCase {
 		removeBundle();
 		assertFalse(WorkbenchEncoding.getDefinedEncodings().contains(ENCODING));
 	}
-	
+
 	public void testIDEEncodings() {
 		assertFalse(IDEEncoding.getIDEEncodings().contains(ENCODING));
 		getBundle();
@@ -43,7 +43,7 @@ public class EncodingTests extends DynamicTestCase {
 		removeBundle();
 		assertFalse(IDEEncoding.getIDEEncodings().contains(ENCODING));
 	}
-	
+
 	@Override
 	protected String getExtensionId() {
 		return "newEncoding1.testDynamicEncodingAddition";

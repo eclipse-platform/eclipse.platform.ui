@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
 /**
- * The DecoratorTableTreeTest is the test for table 
+ * The DecoratorTableTreeTest is the test for table
  * trees.
  */
 public class DecoratorTableTreeTest extends DecoratorViewerTest {

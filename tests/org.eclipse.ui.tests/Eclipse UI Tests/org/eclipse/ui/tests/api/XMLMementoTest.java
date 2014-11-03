@@ -24,9 +24,9 @@ import org.eclipse.ui.XMLMemento;
 /**
  * Testing XMLMemento (see bug 93262). Emphasis is on ensuring that the 3.1
  * version behaves just like the 3.0.1 version.
- * 
+ *
  * @since 3.1
- * 
+ *
  */
 public class XMLMementoTest extends TestCase {
 
@@ -96,8 +96,7 @@ public class XMLMementoTest extends TestCase {
 	public void testCreateWriteRoot() {
 		String[] rootTypes = { "type", "type.with.dots",
 				"type_with_underscores" };
-		for (int i = 0; i < rootTypes.length; i++) {
-			String type = rootTypes[i];
+		for (String type : rootTypes) {
 			XMLMemento memento = XMLMemento.createWriteRoot(type);
 			assertNotNull(memento);
 		}
@@ -158,7 +157,7 @@ public class XMLMementoTest extends TestCase {
 
 	/**
 	 * Helper method to fill a memento to be checked later by checkMemento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	private void fillMemento(IMemento memento) {
@@ -175,7 +174,7 @@ public class XMLMementoTest extends TestCase {
 	 * Helper method to check if the values set by fillMemento are still there.
 	 * The boolean parameter is needed because in some cases
 	 * (IMememento#putMemento), the text data gets lost.
-	 * 
+	 *
 	 * @param memento
 	 * @param checkForTextData
 	 */
@@ -282,9 +281,7 @@ public class XMLMementoTest extends TestCase {
 				"id<with<lessthan", "id>with>greaterthan", "id&with&ampersand",
 				"id\"with\"quote", "id#with#hash" };
 
-		for (int i = 0; i < ids.length; i++) {
-			final String id = ids[i];
-
+		for (final String id : ids) {
 			testPutAndGet(new MementoChecker() {
 
 				@Override
@@ -315,8 +312,7 @@ public class XMLMementoTest extends TestCase {
 				new Float(Float.NaN), new Float(Float.POSITIVE_INFINITY),
 				new Float(Float.NEGATIVE_INFINITY) };
 
-		for (int i = 0; i < values.length; i++) {
-			final Float value = values[i];
+		for (final Float value : values) {
 			testPutAndGet(new MementoChecker() {
 
 				@Override
@@ -343,9 +339,7 @@ public class XMLMementoTest extends TestCase {
 				new Integer(1), new Integer(-36254),
 				new Integer(Integer.MAX_VALUE), new Integer(Integer.MIN_VALUE) };
 
-		for (int i = 0; i < values.length; i++) {
-			final Integer value = values[i];
-
+		for (final Integer value : values) {
 			testPutAndGet(new MementoChecker() {
 
 				@Override
@@ -409,9 +403,7 @@ public class XMLMementoTest extends TestCase {
 		// values with newline, tab, or return characters lead to bug 93720.
 		String[] values = TEST_STRINGS;
 
-		for (int i = 0; i < values.length; i++) {
-			final String value = values[i];
-
+		for (final String value : values) {
 			testPutAndGet(new MementoChecker() {
 
 				@Override
@@ -436,8 +428,7 @@ public class XMLMementoTest extends TestCase {
 	public void testPutAndGetTextData() throws WorkbenchException, IOException {
 		String[] values = TEST_STRINGS;
 
-		for (int i = 0; i < values.length; i++) {
-			final String data = values[i];
+		for (final String data : values) {
 			testPutAndGet(new MementoChecker() {
 
 				@Override
@@ -466,8 +457,7 @@ public class XMLMementoTest extends TestCase {
 		String[] legalKeys = { "value", "value.with.many.dots",
 				"value_with_underscores" };
 
-		for (int i = 0; i < legalKeys.length; i++) {
-			final String key = legalKeys[i];
+		for (final String key : legalKeys) {
 			testPutAndGet(new MementoChecker() {
 
 				@Override
@@ -501,8 +491,7 @@ public class XMLMementoTest extends TestCase {
 				"key\nkey", "key<with<lessthan", "key>with>greaterthan",
 				"key&with&ampersand", "key#with#hash", "key\"with\"quote", "\"" };
 
-		for (int i = 0; i < illegalKeys.length; i++) {
-			final String key = illegalKeys[i];
+		for (final String key : illegalKeys) {
 			XMLMemento memento = XMLMemento.createWriteRoot("foo");
 			try {
 				memento.putString(key, "some string");
@@ -557,7 +546,7 @@ public class XMLMementoTest extends TestCase {
 
 		mementoChecker.checkAfterDeserialization(deserializedMemento);
 	}
-	
+
 	   public void testMementoWithTextContent113659() throws Exception {
 	        IMemento memento = XMLMemento.createWriteRoot("root");
 	        IMemento mementoWithChild = XMLMemento.createWriteRoot("root");

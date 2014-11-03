@@ -41,7 +41,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class OpenCloseTest extends UITestCase {
     /**
-	 * 
+	 *
 	 */
 	private static final String ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE = "org.eclipse.jdt.ui.JavaPerspective";
 
@@ -53,7 +53,7 @@ public class OpenCloseTest extends UITestCase {
 
     /**
      * Constructor.
-     * 
+     *
      * @param testName
      *            Test's name.
      */
@@ -65,7 +65,7 @@ public class OpenCloseTest extends UITestCase {
 
     /**
      * Test the opening and closing of a file.
-     *  
+     *
      */
     public void testOpenCloseFile() {
         IWorkbenchPage page = workbenchWindow.getActivePage();
@@ -91,7 +91,7 @@ public class OpenCloseTest extends UITestCase {
 
     /**
      * Test opening and closing of workbench window.
-     *  
+     *
      */
     public void testOpenCloseWorkbenchWindow() {
         IWorkbenchWindow secondWorkbenchWindow = null;
@@ -108,21 +108,21 @@ public class OpenCloseTest extends UITestCase {
 
     /**
      * Test open and close of perspective.
-     *  
+     *
      */
     public void testOpenClosePerspective() {
 		ICommandService commandService = fWorkbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
-		
+
 		HashMap parameters = new HashMap();
 		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID,
 				ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE);
-		
+
 		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
-		
+
 		IHandlerService handlerService = (IHandlerService) workbenchWindow
 				.getService(IHandlerService.class);
-                
+
         for (index = 0; index < numIterations; index++) {
             try {
                 PlatformUI.getWorkbench().showPerspective(
@@ -142,7 +142,7 @@ public class OpenCloseTest extends UITestCase {
 
     /**
      * Test open and close of view.
-     *  
+     *
      */
     public void testOpenCloseView() {
         IViewPart consoleView = null;
@@ -161,7 +161,7 @@ public class OpenCloseTest extends UITestCase {
 
     /**
      * Test open and close intro.
-     *  
+     *
      */
     public void testOpenCloseIntro() {
         IIntroPart introPart = null;

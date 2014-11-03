@@ -29,7 +29,7 @@ public class TestResourceMapping extends ResourceMapping {
 	public Object getModelObject() {
 		return element;
 	}
-	
+
 	@Override
 	public String getModelProviderId() {
 		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
@@ -37,8 +37,9 @@ public class TestResourceMapping extends ResourceMapping {
 
 	@Override
 	public IProject[] getProjects() {
-		if (element.getType() == IResource.ROOT)
+		if (element.getType() == IResource.ROOT) {
 			return ((IWorkspaceRoot) element).getProjects();
+		}
 		return new IProject[] { element.getProject() };
 	}
 
@@ -57,12 +58,13 @@ public class TestResourceMapping extends ResourceMapping {
 
 	/**
 	 * Return the children of the receiver.
-	 * 
+	 *
 	 * @return TestResourceMapping []
 	 */
 	public TestResourceMapping[] getChildren() {
-		if (element.getType() == IResource.FILE)
+		if (element.getType() == IResource.FILE) {
 			return new TestResourceMapping[0];
+		}
 		IResource[] children;
 		try {
 			children = ((IContainer) element).members();
@@ -83,7 +85,7 @@ public class TestResourceMapping extends ResourceMapping {
 
 	public void setParent(TestResourceMapping mapping) {
 		parent = mapping;
-		
+
 	}
 
 	public TestResourceMapping getParent() {

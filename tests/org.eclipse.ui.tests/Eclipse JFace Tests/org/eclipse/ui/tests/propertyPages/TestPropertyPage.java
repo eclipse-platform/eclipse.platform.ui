@@ -29,7 +29,7 @@ public class TestPropertyPage extends PropertyPage implements
 		Label label = new Label(parent,SWT.NONE);
 		label.setText("Test page");
 		return label;
-		
+
 	}
 
 }

@@ -30,20 +30,20 @@ public class BrowserTests extends DynamicTestCase {
         try {
             support.setDesiredBrowserSupportId(getExtensionId());
             assertFalse(support.hasNonDefaultBrowser());
-            
+
             getBundle();
             support.setDesiredBrowserSupportId(getExtensionId());
             assertTrue(support.hasNonDefaultBrowser());
-            
+
             removeBundle();
-            support.setDesiredBrowserSupportId(getExtensionId());    
+            support.setDesiredBrowserSupportId(getExtensionId());
             assertFalse(support.hasNonDefaultBrowser());
         }
         finally {
-            support.setDesiredBrowserSupportId(null);    
+            support.setDesiredBrowserSupportId(null);
         }
     }
-    
+
     @Override
 	protected String getExtensionId() {
         return "newBrowser1.testDynamicBrowserAddition";
@@ -58,7 +58,7 @@ public class BrowserTests extends DynamicTestCase {
 	protected String getInstallLocation() {
         return "data/org.eclipse.newBrowser1";
     }
-    
+
     @Override
 	protected String getMarkerClass() {
         return "org.eclipse.ui.dynamic.DynamicBrowserSupport";

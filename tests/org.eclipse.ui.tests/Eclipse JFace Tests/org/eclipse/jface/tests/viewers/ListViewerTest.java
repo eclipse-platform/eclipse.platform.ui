@@ -50,14 +50,14 @@ public class ListViewerTest extends StructuredViewerTest {
     public static void main(String args[]) {
         junit.textui.TestRunner.run(ListViewerTest.class);
     }
-    
+
     public void testInsert() {
     	ListViewer v = ((ListViewer)fViewer);
     	TestElement element = new TestElement(fModel, fRootElement);
     	v.insert(element, 1);
     	assertSame("test insert", element, v.getElementAt(1));
     	assertEquals("test insert", element.toString(), v.getList().getItem(1));
-    	
+
     	v.addFilter(new ViewerFilter() {
 
 			@Override
@@ -65,16 +65,16 @@ public class ListViewerTest extends StructuredViewerTest {
 				return true;
 			}
     	});
-    	
+
     	TestElement element1 = new TestElement(fModel, fRootElement);
     	v.insert(element1, 1);
     	assertNotSame("test insert", element1, v.getElementAt(1));
-    	
+
     	v.setFilters(new ViewerFilter[0]);
     	v.remove(element);
     	v.remove(element1);
     }
-    
+
     public void testRevealBug69076() {
     	// TODO remove the Mac OS check when SWT has fixed the bug in List.java
     	// see bug 116105
@@ -108,10 +108,10 @@ public class ListViewerTest extends StructuredViewerTest {
 			}
 		}
 	}
-    
+
     /**
      * Asserts the ability to refresh a List that contains no selection without losing vertically scrolled state.
-     * 
+     *
      * @throws Exception
      */
     public void testRefreshBug141435() throws Exception {
@@ -123,42 +123,42 @@ public class ListViewerTest extends StructuredViewerTest {
 		openBrowser();
 		TestElement model = TestElement.createModel(1, 50);
 		fViewer.setInput(model);
-		
+
 		int lastIndex = model.getChildCount() - 1;
-		
+
 		//Scroll...
 		fViewer.reveal(model.getChildAt(lastIndex));
 		List list = (List) fViewer.getControl();
 		int topIndex = list.getTopIndex();
-		
+
 		assertTrue("Top item should not be the first item.", topIndex != 0);
 		fViewer.refresh();
 		processEvents();
 		assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
-		
+
 		//Assert that when the previous top index after refresh is invalid no exceptions are thrown.
 		model.deleteChildren();
-		
+
 		try {
 			fViewer.refresh();
 			assertEquals(0, list.getTopIndex());
 		} catch (Exception e) {
 			fail("Refresh failure when refreshing with an empty model.");
-		}		
+		}
 	}
-    
+
     public void testSelectionRevealBug177619() throws Exception {
     	TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
-		
+
     	fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),true);
     	assertTrue(((ListViewer)fViewer).getList().getTopIndex() != 0);
 	}
-	
+
 	public void testSelectionNoRevealBug177619() throws Exception {
 		TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
-		
+
 		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),false);
 		assertTrue(((ListViewer)fViewer).getList().getTopIndex() == 0);
 	}

@@ -154,7 +154,7 @@ public class UIDialogs extends TestCase {
         dialog.setInitialSelection(description);
         DialogCheck.assertDialog(dialog, this);
     }
-    
+
     // see bug 211350
 	public void testLoadNotExistingPerspective() {
     	fail("PerspectiveRegistry.getCustomPersp not implemented");

@@ -39,17 +39,17 @@ public class ZoomedViewActivateTest extends ActivateTest {
         return unstackedView;
     }
 
-    /** 
+    /**
      * <p>Test: Zoom a view then activate an editor</p>
-     * <p>Expected result: page unzooms</p> 
+     * <p>Expected result: page unzooms</p>
      */
     public void testActivateEditor() {
     	// We allow an editor to be activated *without* unzooming
     	System.out.println("Bogus Test: " + getName());
-    	
+
 //        zoom(stackedView1);
 //        page.activate(editor1);
-//        
+//
 //        assertZoomed(null);
 //        assertActive(editor1);
     }

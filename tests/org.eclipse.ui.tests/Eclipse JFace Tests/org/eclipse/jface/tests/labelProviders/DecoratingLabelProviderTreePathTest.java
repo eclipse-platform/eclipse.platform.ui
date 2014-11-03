@@ -28,9 +28,9 @@ import org.eclipse.swt.widgets.TreeItem;
 /**
  * DecoratingLabelProviderTreePathTest is the tree path version of the
  * DecoratingLabelProviderTreeTest.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class DecoratingLabelProviderTreePathTest extends
 		CompositeLabelProviderTest {
@@ -60,7 +60,7 @@ public class DecoratingLabelProviderTreePathTest extends
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	public DecoratingLabelProviderTreePathTest(String name) {

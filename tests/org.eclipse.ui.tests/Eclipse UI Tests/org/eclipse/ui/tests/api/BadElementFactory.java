@@ -18,9 +18,9 @@ import org.eclipse.ui.IPersistableElement;
 /**
  * Simple factory implementation that will fail on command. This is used to test
  * that working set restoration does not die if one of the factories dies.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class BadElementFactory implements IElementFactory {
 
@@ -28,7 +28,7 @@ public class BadElementFactory implements IElementFactory {
 	 * Set to cause the factory to fail.
 	 */
 	public static boolean fail = false;
-	
+
 
 	/**
 	 * Set to true when {@link #createElement(IMemento)} is called while fail is true.
@@ -42,7 +42,7 @@ public class BadElementFactory implements IElementFactory {
 		 * Set to cause save to fail.
 		 */
 		public static boolean fail = false;
-		
+
 
 		/**
 		 * Set to true when {@link #saveState(IMemento)} is called while fail is true.
@@ -52,8 +52,9 @@ public class BadElementFactory implements IElementFactory {
 
 		@Override
 		public Object getAdapter(Class adapter) {
-			if (adapter.equals(IPersistableElement.class))
+			if (adapter.equals(IPersistableElement.class)) {
 				return this;
+			}
 			return null;
 		}
 

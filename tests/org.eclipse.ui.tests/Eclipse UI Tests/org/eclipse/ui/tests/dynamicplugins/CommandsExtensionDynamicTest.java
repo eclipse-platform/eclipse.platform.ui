@@ -30,14 +30,14 @@ import org.eclipse.ui.keys.IBindingService;
 /**
  * Tests whether the "org.eclipse.ui.commands" extension point can be added and
  * removed dynamically.
- * 
+ *
  * @since 3.1.1
  */
 public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandsExtensionDynamicTest</code>.
-	 * 
+	 *
 	 * @param testName
 	 *            The name of the test; may be <code>null</code>.
 	 */
@@ -47,7 +47,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Returns the full-qualified identifier of the extension to be tested.
-	 * 
+	 *
 	 * @return The extension identifier; never <code>null</code>.
 	 */
 	@Override
@@ -57,7 +57,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Returns the unqualified identifier of the extension point to be tested.
-	 * 
+	 *
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	@Override
@@ -68,7 +68,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	/**
 	 * Returns the relative location of the folder on disk containing the
 	 * plugin.xml file.
-	 * 
+	 *
 	 * @return The relative install location; never <code>null</code>.
 	 */
 	@Override
@@ -81,7 +81,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 * removed dynamically. It tests that the data doesn't exist, and then loads
 	 * the extension. It tests that the data then exists, and unloads the
 	 * extension. It tests that the data then doesn't exist.
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "M1+W" can't be parsed by the extension point.
 	 */
@@ -102,8 +102,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 		found = false;
 		bindings = bindingService.getBindings();
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				final Binding binding = bindings[i];
+			for (final Binding binding : bindings) {
 				if ("monkey".equals(binding.getSchemeId())
 						&& IContextIds.CONTEXT_ID_WINDOW.equals(binding
 								.getContextId())
@@ -168,8 +167,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 		found = false;
 		bindings = bindingService.getBindings();
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				final Binding binding = bindings[i];
+			for (final Binding binding : bindings) {
 				if ("monkey".equals(binding.getSchemeId())
 						&& IContextIds.CONTEXT_ID_WINDOW.equals(binding
 								.getContextId())
@@ -228,8 +226,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 		found = false;
 		bindings = bindingService.getBindings();
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				final Binding binding = bindings[i];
+			for (final Binding binding : bindings) {
 				if ("monkey".equals(binding.getSchemeId())
 						&& IContextIds.CONTEXT_ID_WINDOW.equals(binding
 								.getContextId())
@@ -288,7 +285,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 			assertTrue(true);
 		}
 	}
-	
+
 	public void testNonExistingHandler() {
 		IHandlerService handlerService = getWorkbench()
 				.getService(IHandlerService.class);
@@ -302,8 +299,9 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 					"org.eclipse.ui.tests.command.handlerLoadException", null);
 			fail("An exception should be thrown for this handler");
 		} catch (Exception e) {
-			if (!(e instanceof ExecutionException))
+			if (!(e instanceof ExecutionException)) {
 				fail("Unexpected exception while executing command", e);
+			}
 		}
 
 		// afterwards, we know that the handler couldn't be loaded, so it can't
@@ -314,8 +312,9 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 					"org.eclipse.ui.tests.command.handlerLoadException", null);
 			fail("An exception should be thrown for this handler");
 		} catch (Exception e) {
-			if (!(e instanceof NotHandledException))
+			if (!(e instanceof NotHandledException)) {
 				fail("Unexpected exception while executing command", e);
+			}
 		}
 
 		removeBundle();

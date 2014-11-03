@@ -106,7 +106,7 @@ public class RawIViewPartTest extends UITestCase {
 
     /**
      * Ensure that we've received the given property change events since the start of the test
-     * 
+     *
      * @param titleEvent PROP_TITLE
      * @param nameEvent PROP_PART_NAME
      * @param descriptionEvent PROP_CONTENT_DESCRIPTION

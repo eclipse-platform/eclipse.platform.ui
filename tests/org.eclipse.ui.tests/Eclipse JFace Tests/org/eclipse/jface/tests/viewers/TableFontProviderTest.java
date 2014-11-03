@@ -37,11 +37,11 @@ public class TableFontProviderTest extends StructuredViewerTest {
 	Font font1;
 
 	Font font2;
-	
+
 
 	/**
 	 * Create a new instance of the receiver
-	 * 
+	 *
 	 * @param name
 	 */
 	public TableFontProviderTest(String name) {
@@ -53,7 +53,7 @@ public class TableFontProviderTest extends StructuredViewerTest {
 	 */
 	public void testFontProvider() {
 		TableViewer viewer = (TableViewer) fViewer;
-		
+
 		FontViewLabelProvider provider = new FontViewLabelProvider();
 		viewer.setLabelProvider(provider);
 
@@ -63,7 +63,7 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 		compareFontDatas(viewer.getTable().getItem(0).getFont(0), font1);//$NON-NLS-1$
 		compareFontDatas(viewer.getTable().getItem(0).getFont(1), font1);//$NON-NLS-1$
-		
+
 
 		provider.fExtended = false;
 
@@ -71,7 +71,7 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test that the fonts are being set.
-	 *  
+	 *
 	 */
 	public void testTableItemsFontProvider() {
 		TableViewer viewer = (TableViewer) fViewer;
@@ -94,12 +94,12 @@ public class TableFontProviderTest extends StructuredViewerTest {
 		super.setUp();
 		font1 = JFaceResources.getFont(JFaceResources.BANNER_FONT);
 		font2 = JFaceResources.getFont(JFaceResources.HEADER_FONT);
-		
+
 	}
 
 	/**
 	 * Run as a stand alone test
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -145,18 +145,18 @@ public class TableFontProviderTest extends StructuredViewerTest {
 		Table table = (Table) fViewer.getControl();
 		return table.getItem(at).getText();
 	}
-	
+
 	private void compareFontDatas(Font font1, Font font2){
-		
+
 		FontData[] font1Data = font1.getFontData();
 		FontData[] font2Data = font2.getFontData();
-		
+
 		assertTrue("Mismatched sizes",font1Data.length == font2Data.length);
 		for (int a = 0; a < font2Data.length; a++) {
 			assertTrue("Mismatched fontData",font1Data[a].equals(font2Data[a]));
 		}
-		
-		
+
+
 	}
 
 	class TableFontViewLabelProvider extends TableTestLabelProvider implements

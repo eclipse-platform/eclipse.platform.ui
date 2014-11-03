@@ -46,8 +46,9 @@ public class TestLazyVirtualTree extends TestTree {
 		viewer.setContentProvider(new TestModelLazyTreeContentProvider(viewer));
 		viewer.setUseHashlookup(true);
 
-		if (fViewer2 == null)
+		if (fViewer2 == null) {
 			fViewer2 = viewer;
+		}
 		return viewer;
 	}
 
@@ -67,8 +68,9 @@ public class TestLazyVirtualTree extends TestTree {
 
 	public static void main(String[] args) {
 		TestBrowser browser = new TestLazyVirtualTree();
-		if (args.length > 0 && args[0].equals("-twopanes"))
+		if (args.length > 0 && args[0].equals("-twopanes")) {
 			browser.show2Panes();
+		}
 
 		browser.setBlockOnOpen(true);
 		browser.open(TestElement.createModel(3, 10));

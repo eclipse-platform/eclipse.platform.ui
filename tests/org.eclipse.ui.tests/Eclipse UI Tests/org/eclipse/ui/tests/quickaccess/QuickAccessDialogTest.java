@@ -187,7 +187,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Turning on show all should display more items", newCount > oldCount);
 		assertEquals("Turning on show all should not change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
-		// Run the handler to turn off show all 
+		// Run the handler to turn off show all
 		handlerService
 		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(new Condition() {

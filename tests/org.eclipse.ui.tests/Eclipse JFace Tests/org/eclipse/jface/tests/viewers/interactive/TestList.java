@@ -33,7 +33,7 @@ public class TestList extends TestBrowser {
     }
 
     /**
-     * 
+     *
      */
     @Override
 	protected void viewerFillMenuBar(MenuManager mgr) {

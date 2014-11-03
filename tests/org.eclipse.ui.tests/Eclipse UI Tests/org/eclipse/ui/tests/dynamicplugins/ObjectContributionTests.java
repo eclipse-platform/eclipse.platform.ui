@@ -40,11 +40,11 @@ public class ObjectContributionTests extends DynamicTestCase {
 	private static final String GROUP_ID = "#OC";
 	private static final String OBJECT_ACTION_ID = "org.eclipse.newOC1";
 	private static final String VIEWER_ACTION_ID = "org.eclipse.newOC2";
-	
+
 	public static TestSuite suite() {
 		return new TestSuite(ObjectContributionTests.class);
 	}
-	
+
 	/**
 	 * @param testName
 	 */
@@ -63,10 +63,10 @@ public class ObjectContributionTests extends DynamicTestCase {
 	}
 
 	@Override
-	protected String getInstallLocation() {		
+	protected String getInstallLocation() {
 		return "data/org.eclipse.newOC1";
 	}
-	
+
 	public void testViewerContributions() {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPart part = window.getActivePage().getActivePart();
@@ -76,7 +76,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 
 			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				
+
 			}
 
 			@Override
@@ -91,27 +91,27 @@ public class ObjectContributionTests extends DynamicTestCase {
 			@Override
 			public void setSelection(ISelection selection) {
 			}
-			
+
 		};
-		
+
 		PopupMenuExtender extender = new PopupMenuExtender(GROUP_ID, menu, provider, part, ((PartSite)part.getSite()).getContext());
 		extender.menuAboutToShow(menu);
-					
+
 		assertNull(menu.find(VIEWER_ACTION_ID));
 		resetViewerMenu(menu);
 		getBundle();
-		
+
 		extender.menuAboutToShow(menu);
 		assertNotNull(menu.find(VIEWER_ACTION_ID));
 		resetViewerMenu(menu);
 		removeBundle();
-		
-		extender.menuAboutToShow(menu);		
-		assertNull(menu.find(VIEWER_ACTION_ID));	
-		
+
+		extender.menuAboutToShow(menu);
+		assertNull(menu.find(VIEWER_ACTION_ID));
+
 		extender.dispose();
 	}
-	
+
 	/**
 	 * @param menu
 	 */
@@ -130,7 +130,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 
 			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				
+
 			}
 
 			@Override
@@ -145,24 +145,24 @@ public class ObjectContributionTests extends DynamicTestCase {
 			@Override
 			public void setSelection(ISelection selection) {
 			}
-			
+
 		};
 
 		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 		getBundle();
-		
+
 		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
 		assertNotNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 		removeBundle();
-		
+
 		manager.contributeObjectActions(part, menu, provider, new HashSet<IObjectActionContributor>());
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 	}
-	
+
 	@Override
 	protected String getMarkerClass() {
 		return "org.eclipse.ui.dynamic.MockObjectActionDelegate";

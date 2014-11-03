@@ -74,10 +74,12 @@ public class ResourceNavigatorTest extends UITestCase {
             p2 = FileUtil.createProject("TP2");
             f2 = null;
         }
-        if (f1 == null)
-            f1 = FileUtil.createFile("f1.txt", p1);
-        if (f2 == null)
-            f2 = FileUtil.createFile("f2.txt", p2);
+        if (f1 == null) {
+			f1 = FileUtil.createFile("f1.txt", p1);
+		}
+        if (f2 == null) {
+			f2 = FileUtil.createFile("f2.txt", p2);
+		}
     }
 
     public void fixTestGlobalBookmarkAction() throws Throwable {
@@ -105,11 +107,11 @@ public class ResourceNavigatorTest extends UITestCase {
                 oldCount + 1 == newCount);
     }
 
-    /*	
+    /*
      * This test should be moved to an interactive test suite as this
      * test causes a dialog to popup when the resource is deleted by
      * the delete action
-     * 
+     *
      public void testGlobalDeleteAction() throws Throwable {
      setupView();
      setupResources();
@@ -117,10 +119,10 @@ public class ResourceNavigatorTest extends UITestCase {
      // Select a file
      IStructuredSelection sel = new StructuredSelection(f1);
      ((ResourceNavigator) view).selectReveal(sel);
-     
+
      // Now try the delete action
      ActionUtil.runActionUsingPath(this, workbenchWindow, IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.DELETE);
-     
+
      // Make sure the resource was deleted
      assertTrue("Selected file was not deleted via Edit->Delete action.", p1.findMember(f1.getName()) == null);
      f1 = null;

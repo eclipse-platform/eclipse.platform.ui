@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Control;
 /**
  * A simple application window used for testing various bugs. Insert code as
  * needed to test problems in a raw application window.
- * 
+ *
  * Designed to be started as an SWT application.
- * 
+ *
  * @since 3.2
  */
 

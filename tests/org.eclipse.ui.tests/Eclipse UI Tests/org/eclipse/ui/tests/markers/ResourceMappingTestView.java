@@ -96,10 +96,10 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 	}
 
 	public IMarker addMarkerToFirstProject() {
-		
+
 		TestResourceMapping top = ((TestResourceMapping) viewer.getInput());
 		IResource element = top.getChildren()[0].element;
-		
+
 		try {
 			IMarker marker = element.createMarker("org.eclipse.core.resources.problemmarker");
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
@@ -108,7 +108,7 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 			return null;
 		}
 
-		
-		
+
+
 	}
 }

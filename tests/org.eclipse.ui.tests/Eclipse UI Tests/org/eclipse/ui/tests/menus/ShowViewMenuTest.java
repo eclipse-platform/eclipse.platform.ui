@@ -34,7 +34,7 @@ public class ShowViewMenuTest extends UITestCase {
 		// action tests
 		workbenchWindow = openTestWindow();
 	}
-	
+
 	/***********************************
 	 * Tests for Bug 56368 starts here *
 	 ***********************************/
@@ -59,7 +59,7 @@ public class ShowViewMenuTest extends UITestCase {
 		// action, the item count should simply be one
 		assertEquals("Only the 'Other...' action should be available", 1, swtMenu.getItemCount());
 	}
-	
+
 	/*********************************
 	 * Tests for Bug 56368 ends here *
 	 *********************************/

@@ -27,7 +27,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A test for whether the select all handler will send a selection event.
- * 
+ *
  * @since 3.1
  */
 public final class Bug74982Test extends UITestCase {
@@ -39,7 +39,7 @@ public final class Bug74982Test extends UITestCase {
 
     /**
      * Constructs a new instance of <code>Bug74982Test</code>.
-     * 
+     *
      * @param name
      *            The name of the test
      */
@@ -52,7 +52,7 @@ public final class Bug74982Test extends UITestCase {
      * event. Creates a dialog with a text widget, gives the text widget focus,
      * and then calls the select all command. This should then call the
      * <code>SelectAllHandler</code> and trigger a selection event.
-     * 
+     *
      * @throws ExecutionException
      *             If the <code>SelectAllHandler</code> is broken in some way.
      * @throws NotHandledException

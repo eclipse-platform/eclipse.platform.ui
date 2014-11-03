@@ -96,7 +96,7 @@ public class FontPreferenceTestCase extends UITestCase {
     }
 
     /**
-     * Test that if the first font in the list is bad that the 
+     * Test that if the first font in the list is bad that the
      * second one comes back as valid.
      */
 
@@ -134,9 +134,9 @@ public class FontPreferenceTestCase extends UITestCase {
         assertEquals(bestFont[0].getName(), systemFontData[0].getName());
         assertEquals(bestFont[0].getHeight(), systemFontData[0].getHeight());
     }
-    
+
     /**
-     * The test added to assess results of accessing FontRegistry from a non-UI 
+     * The test added to assess results of accessing FontRegistry from a non-UI
      * thread. See bug 230360.
      */
     public void testNonUIThreadFontAccess() {
@@ -145,22 +145,23 @@ public class FontPreferenceTestCase extends UITestCase {
 		// pre-calculate the default font; calling it in worker thread will only cause SWTException
 		Font defaultFont = fontRegistry.defaultFont();
 		defaultFont.toString(); // avoids compiler warning
-		
+
 		// redirect logging so that we catch the error log
 		final boolean[] errorLogged = new boolean[] { false };
 		ILogger logger = Policy.getLog();
 		Policy.setLog(new ILogger() {
 			@Override
 			public void log(IStatus status) {
-				if (status != null && status.getSeverity() == IStatus.ERROR && status.getPlugin().equals(Policy.JFACE))
+				if (status != null && status.getSeverity() == IStatus.ERROR && status.getPlugin().equals(Policy.JFACE)) {
 					errorLogged[0] = true;
+				}
 			}} );
-		
-		
+
+
     	Job job = new Job("Non-UI thread FontRegistry Access Test") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				// this should produce no exception, but should log a error 
+				// this should produce no exception, but should log a error
 				boolean created = checkFont(fontRegistry);
 				assertFalse(created);
 				return Status.OK_STATUS;
@@ -175,12 +176,12 @@ public class FontPreferenceTestCase extends UITestCase {
 		} finally {
 			Policy.setLog(logger);
 		}
-		
-		// now let's try to create the same font in the UI thread and check that the correct 
+
+		// now let's try to create the same font in the UI thread and check that the correct
 		boolean created = checkFont(fontRegistry);
 		assertTrue(created);
     }
-    
+
 	public boolean checkFont(final FontRegistry fontRegistry) {
 		// Create a font description that will use default font with height increased by 20
 		FontData[] data = fontRegistry.defaultFont().getFontData();
@@ -197,7 +198,7 @@ public class FontPreferenceTestCase extends UITestCase {
 		int receivedHeight = receivedData[0].getHeight();
 		// giving a bit leeway to the OS: the size might not match exactly
 		// so test size not being the default rather then being exactly the testHeight
-		return (receivedHeight != defaultHeight); 
+		return (receivedHeight != defaultHeight);
 	}
-    
+
 }

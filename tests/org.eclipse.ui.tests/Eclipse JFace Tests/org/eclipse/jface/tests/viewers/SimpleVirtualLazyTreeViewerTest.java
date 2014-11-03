@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Tests TreeViewer's VIRTUAL support with a lazy content provider.
- * 
+ *
  * @since 3.2
  */
 public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
@@ -43,7 +43,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 
 	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
 		/**
-		 * 
+		 *
 		 */
 		private Object input;
 
@@ -52,9 +52,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 			updateElementCallCount++;
 			String parentString = (String) parent;
 			Object childElement = parentString + "-" + (index + offset);
-			if (printCallbacks)
+			if (printCallbacks) {
 				System.out.println("updateElement called for " + parent
 						+ " at " + index);
+			}
 			if (callbacksEnabled) {
 				getTreeViewer().replace(parent, index, childElement);
 				getTreeViewer().setChildCount(childElement, NUM_CHILDREN);
@@ -78,9 +79,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 
 		@Override
 		public void updateChildCount(Object element, int currentChildCount) {
-			if (printCallbacks)
+			if (printCallbacks) {
 				System.out.println("updateChildCount called for " + element
 						+ " with " + currentChildCount);
+			}
 			if (callbacksEnabled) {
 				getTreeViewer().setChildCount(element,
 						element == input ? NUM_ROOTS : NUM_CHILDREN);

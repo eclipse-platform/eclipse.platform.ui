@@ -35,7 +35,7 @@ public class PerspectiveWithFastView implements IPerspectiveFactory {
 
     /**
      * Define the initial layout by adding a fast view.
-     * 
+     *
      * @param layout
      *            The page layout.
      */

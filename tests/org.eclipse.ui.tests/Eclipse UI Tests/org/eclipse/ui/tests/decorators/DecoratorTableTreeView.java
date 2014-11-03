@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
  * for table trees.
  */
 public class DecoratorTableTreeView extends DecoratorTestPart {
-	
+
 	TableTreeViewer viewer;
 
 	/**
@@ -40,7 +40,7 @@ public class DecoratorTableTreeView extends DecoratorTestPart {
 
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
 				| GridData.FILL_BOTH);
-		
+
 		viewer.getControl().setLayoutData(data);
 
 	}

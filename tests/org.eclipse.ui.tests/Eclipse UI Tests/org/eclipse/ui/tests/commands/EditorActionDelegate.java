@@ -24,7 +24,7 @@ public class EditorActionDelegate implements IEditorActionDelegate {
 
 	static boolean executed = false;
 	static IEditorPart part = null;
-	
+
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		part = targetEditor;

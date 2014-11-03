@@ -16,7 +16,7 @@ import org.eclipse.core.commands.IHandler;
 
 public class CommandHandler extends AbstractHandler implements IHandler {
 
-	
+
 	public boolean executed;
 	@Override
 	public Object execute(ExecutionEvent event) {

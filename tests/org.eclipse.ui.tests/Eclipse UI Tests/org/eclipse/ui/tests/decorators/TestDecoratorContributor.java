@@ -86,7 +86,7 @@ public class TestDecoratorContributor implements ILabelDecorator {
     }
 
     /**
-     * Refresh the listeners to update the decorators for 
+     * Refresh the listeners to update the decorators for
      * element.
      */
 

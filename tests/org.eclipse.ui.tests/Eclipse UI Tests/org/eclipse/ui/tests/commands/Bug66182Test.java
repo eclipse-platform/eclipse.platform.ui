@@ -31,14 +31,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Tests that dialogs will inherit the handlers from the workbench window, if
  * none is defined for the dialog itself. It tests all of the various
  * combinations of this situation.
- * 
+ *
  * @since 3.0
  */
 public final class Bug66182Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug66182Test.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
@@ -51,7 +51,7 @@ public final class Bug66182Test extends UITestCase {
 	 * workbench window with a handler registered for the command to test. Then
 	 * there is a dialog opened with a handler for the same command. The test is
 	 * to see that the dialog's handler gets priority.
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             This should never happen, and indicates a problem with the
 	 *             test.
@@ -135,7 +135,7 @@ public final class Bug66182Test extends UITestCase {
 	 * with a handler registered for the command to test. Then there is a dialog
 	 * opened, but with no handler. The test is to see that the window's handler
 	 * is active.
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             This should never happen, and indicates a problem with the
 	 *             test.
@@ -205,7 +205,7 @@ public final class Bug66182Test extends UITestCase {
 	 * to the dialog. The set-up is a workbench window with a handler registered
 	 * for the command to test. Then there is a dialog opened, but with no
 	 * handler. The test is to see that no handler is active.
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             This should never happen, and indicates a problem with the
 	 *             test.
@@ -241,8 +241,9 @@ public final class Bug66182Test extends UITestCase {
 		dialogShell.pack();
 		dialogShell.open();
 		final Display display = dialogShell.getDisplay();
-		while (display.readAndDispatch())
+		while (display.readAndDispatch()) {
 			;
+		}
 
 		// Check to see which handler is the right handler.
 		final ICommand command = commandSupport.getCommandManager().getCommand(
@@ -260,8 +261,9 @@ public final class Bug66182Test extends UITestCase {
 		// Close the dialog and let the event loop spin.
 		commandSupport.removeHandlerSubmission(windowSubmission);
 		dialogShell.close();
-		while (display.readAndDispatch())
+		while (display.readAndDispatch()) {
 			;
+		}
 	}
 
 	/**
@@ -269,7 +271,7 @@ public final class Bug66182Test extends UITestCase {
 	 * will take priority. The scenario has two handlers defined: one for the
 	 * workbench window, and one for a dialog that is not open. The workbench
 	 * window handler should be the active handler.
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             This should never happen, and indicates a problem with the
 	 *             test.

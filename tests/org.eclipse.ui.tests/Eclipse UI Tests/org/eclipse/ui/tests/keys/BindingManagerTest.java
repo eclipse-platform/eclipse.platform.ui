@@ -46,7 +46,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * The listener code is tested throughout the various tests. There is no
  * individual test method for the listener code.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.tests.keys.BindingInteractionsTest
  * @since 3.1
  */
@@ -72,7 +72,7 @@ public final class BindingManagerTest extends UITestCase {
 
 	/**
 	 * Constructor for <code>BindingInteractionsTest</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
@@ -116,7 +116,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that it is not possible to add a null binding. Tests that adding a
 	 * binding forces a recomputation.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
@@ -151,7 +151,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that <code>getActiveBindingsDisregardingContext()</code> never
 	 * returns <code>null</code>. The rest of the functionality is tested in
 	 * <code>BindingInteractionsTest</code>.
-	 * 
+	 *
 	 * @see BindingInteractionsTest
 	 */
 	public final void testGetActiveBindingsDisregardingContext() {
@@ -167,7 +167,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that <code>getActiveBindingsDisregardingContextFlat()</code> never
 	 * returns <code>null</code>. The rest of the functionality is tested in
 	 * <code>BindingInteractionsTest</code>.
-	 * 
+	 *
 	 * @see BindingInteractionsTest
 	 */
 	public final void testGetActiveBindingsDisregardingContextFlat() {
@@ -182,7 +182,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests whether the method works with a null argument. Tests that it works
 	 * in a simple case.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
@@ -223,7 +223,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that the active scheme starts off <code>null</code>. The rest of
 	 * the active scheme testing happens in <code>testSetActiveScheme()</code>.
-	 * 
+	 *
 	 * @see BindingManagerTest#testSetActiveScheme()
 	 */
 	public final void testGetActiveScheme() {
@@ -305,7 +305,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * bindings and a partial match binding. In the second scenario, there are
 	 * two partial match bindings. In the third scenario, we are checking that
 	 * all bindings match an empty trigger sequence.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 * @throws ParseException
@@ -389,7 +389,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * binding. In the second scenario, there are two partial match bindings. In
 	 * the third scenario, we are checking that nothing matches an empty
 	 * sequence.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 * @throws ParseException
@@ -481,7 +481,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * binding. In the second scenario, there are two partial match bindings. In
 	 * the third scenario, we are checking that all bindings match an empty
 	 * trigger sequence.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 * @throws ParseException
@@ -550,7 +550,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * binding. In the second scenario, there are two partial match bindings. In
 	 * the third scenario, we are checking that nothing matches an empty
 	 * sequence.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 * @throws ParseException
@@ -615,7 +615,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that you can remove binding, and that it will change the active
 	 * bindings as well.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
@@ -762,7 +762,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Verifies that you can set the bindings to null. Verifies that setting the
 	 * bindings clears the cache.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If this test doesn't properly define a scheme.
 	 */
@@ -802,7 +802,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Verifies that it cannot be set to <code>null</code>. Verifies that it
 	 * clears the cache.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If this test doesn't properly define a scheme.
 	 */
@@ -845,7 +845,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Verifies that it cannot be set to <code>null</code>. Verifies that it
 	 * clears the cache.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If this test doesn't properly define a scheme.
 	 */
@@ -888,7 +888,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests whether the method works with a null argument. Tests that it works
 	 * in a simple case.
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */

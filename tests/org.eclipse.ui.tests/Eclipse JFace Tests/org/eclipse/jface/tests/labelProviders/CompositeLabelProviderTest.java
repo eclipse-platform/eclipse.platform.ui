@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Control;
 /**
  * CompositeLabelProviderTest is the abstract superclass of the LabelProvider
  * tests that use multiple label provider suppliers.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public abstract class CompositeLabelProviderTest extends ViewerTestCase {
 
@@ -56,7 +56,7 @@ public abstract class CompositeLabelProviderTest extends ViewerTestCase {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	public CompositeLabelProviderTest(String name) {
@@ -65,7 +65,7 @@ public abstract class CompositeLabelProviderTest extends ViewerTestCase {
 
 	/**
 	 * Initialize the colors used by the receiver.
-	 * 
+	 *
 	 * @param parent
 	 */
 	void initializeColors(Control parent) {

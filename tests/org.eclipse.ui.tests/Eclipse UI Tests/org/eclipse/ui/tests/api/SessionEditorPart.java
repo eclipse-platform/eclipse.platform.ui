@@ -24,16 +24,16 @@ import org.eclipse.ui.part.EditorPart;
 
 /**
  * @since 3.1
- * 
+ *
  */
 public class SessionEditorPart extends EditorPart {
 
 	public static int instantiatedEditors = 0;
-	
+
 	private Composite fMainPanel;
 
 	/**
-	 * 
+	 *
 	 */
 	public SessionEditorPart() {
 		super();
@@ -55,9 +55,10 @@ public class SessionEditorPart extends EditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		if (!(input instanceof IFileEditorInput))
+		if (!(input instanceof IFileEditorInput)) {
 			throw new PartInitException(
 					"Invalid Input: Must be IFileEditorInput");
+		}
 		setSite(site);
 		setInput(input);
 		++SessionEditorPart.instantiatedEditors;
@@ -79,10 +80,10 @@ public class SessionEditorPart extends EditorPart {
 	public void createPartControl(Composite parent) {
 	       fMainPanel = new Composite(parent, SWT.NONE);
 	       fMainPanel.setLayout(new RowLayout(SWT.VERTICAL));
-	       
+
 	       Label l = new Label(fMainPanel, SWT.NONE);
 	       l.setText("Editor Title:");
-	       
+
 	       l = new Label(fMainPanel, SWT.BORDER);
 	       l.setText(getEditorInput().getName());
 	}

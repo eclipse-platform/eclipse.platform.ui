@@ -26,9 +26,9 @@ import org.eclipse.swt.graphics.Image;
 /**
  * Most of the setup has been taken from
  * org.eclipse.jface.snippets.viewers.Snippet010OwnerDraw.java
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class IDecorationContextTest extends TestCase {
 

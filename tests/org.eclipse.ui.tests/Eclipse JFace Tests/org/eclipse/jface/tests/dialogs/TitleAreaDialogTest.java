@@ -23,9 +23,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class TitleAreaDialogTest extends TestCase {
 
 	static ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.tests", "icons/anything.gif");
-	
+
 	private TitleAreaDialog dialog;
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		if (dialog != null) {
@@ -52,7 +52,7 @@ public class TitleAreaDialogTest extends TestCase {
 		});
 		dialog.open();
 	}
-	
+
 	public void testSetTitleImageNull() {
 		dialog = new TitleAreaDialog(null);
 		dialog.setBlockOnOpen(false);

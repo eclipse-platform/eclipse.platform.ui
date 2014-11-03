@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
-import java.util.Iterator;
-
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -24,7 +22,7 @@ import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Tests the pushing down of current theme changes into JFace.
- * 
+ *
  * @since 3.0
  */
 public class JFaceThemeTest extends ThemeTest {
@@ -42,12 +40,12 @@ public class JFaceThemeTest extends ThemeTest {
         {
             FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
             FontRegistry themeFonts = theme.getFontRegistry();
-            // don't test for equality - other tests (or clients) may be pushing 
+            // don't test for equality - other tests (or clients) may be pushing
             // new items into jface
             assertTrue(jfaceFonts.getKeySet().containsAll(
                     themeFonts.getKeySet()));
-            for (Iterator i = themeFonts.getKeySet().iterator(); i.hasNext();) {
-                String key = (String) i.next();
+            for (Object element : themeFonts.getKeySet()) {
+                String key = (String) element;
                 assertArrayEquals(themeFonts.getFontData(key), jfaceFonts
                         .getFontData(key));
             }
@@ -57,8 +55,8 @@ public class JFaceThemeTest extends ThemeTest {
             ColorRegistry themeColors = theme.getColorRegistry();
             assertTrue(jfaceColors.getKeySet().containsAll(
                     themeColors.getKeySet()));
-            for (Iterator i = themeColors.getKeySet().iterator(); i.hasNext();) {
-                String key = (String) i.next();
+            for (Object element : themeColors.getKeySet()) {
+                String key = (String) element;
                 assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
             }
         }
@@ -78,7 +76,7 @@ public class JFaceThemeTest extends ThemeTest {
         setAndTest(IThemeManager.DEFAULT_THEME, listener);
         assertEquals(10, listener.getEvents().size());
     }
-    
+
     /**
 	 * Tests to ensure correct behavior of getColorDescriptor methods.
 	 */

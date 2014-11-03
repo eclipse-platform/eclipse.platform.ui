@@ -3,7 +3,7 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: Oakland Software (francisu@ieee.org) - initial API and
  * implementation
  ******************************************************************************/
@@ -18,9 +18,9 @@ import org.eclipse.jface.util.SafeRunnable;
  * NOTE - these tests are not really very good, in order to really test this you
  * need to actually see what happens in the dialog, and therefore test it by
  * hand.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class SafeRunnableErrorTest extends TestCase {
 

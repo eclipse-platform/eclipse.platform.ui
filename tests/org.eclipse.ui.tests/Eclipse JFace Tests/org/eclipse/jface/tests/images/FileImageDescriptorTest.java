@@ -30,9 +30,9 @@ import org.osgi.framework.Bundle;
 
 /**
  * Test loading a directory full of images.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class FileImageDescriptorTest extends TestCase {
 
@@ -40,7 +40,7 @@ public class FileImageDescriptorTest extends TestCase {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	public FileImageDescriptorTest(String name) {
@@ -64,15 +64,16 @@ public class FileImageDescriptorTest extends TestCase {
 			URL[] files = FileLocator.findEntries(bundle, new Path(
 					localImagePath));
 
-			for (int i = 0; i < files.length; i++) {
+			for (URL file : files) {
 
 				// Skip any subdirectories added by version control
-				if (files[i].getPath().lastIndexOf('.') < 0)
+				if (file.getPath().lastIndexOf('.') < 0) {
 					continue;
+				}
 
 				try {
 					descriptor = ImageDescriptor.createFromFile(missing,
-							FileLocator.toFileURL(files[i]).getFile());
+							FileLocator.toFileURL(file).getFile());
 				} catch (IOException e) {
 					fail(e.getLocalizedMessage());
 					continue;
@@ -117,7 +118,7 @@ public class FileImageDescriptorTest extends TestCase {
 		Image image = descriptor.createImage(false);
 		assertTrue("Found an image but should be null", image == null);
 	}
-	
+
 	/**
 	 * Test for a missing file image descriptor.
 	 */

@@ -47,14 +47,14 @@ public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
         try {
 	        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	        
+
 	        IMarker[] markers = root.findMarkers(AddMarkersAction.CATEGORY_TEST_MARKER, false, IResource.DEPTH_ZERO);
-	        
-	        for (int i = 0; i < markers.length; i++) {
-	            String message = (String) markers[i].getAttribute(IMarker.MESSAGE);
+
+	        for (IMarker marker : markers) {
+	            String message = (String) marker.getAttribute(IMarker.MESSAGE);
 
 	            if (message != null && message.startsWith("this is a test")) {
-	                markers[i].delete();
+	                marker.delete();
 	            }
 	        }
         } catch (CoreException e) {
@@ -78,7 +78,7 @@ public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
         ErrorDialog.openError(window.getShell(), "Error", msg, status);
     }
 
-    
+
     @Override
 	public void selectionChanged(IAction action, ISelection selection) {
         // TODO Auto-generated method stub

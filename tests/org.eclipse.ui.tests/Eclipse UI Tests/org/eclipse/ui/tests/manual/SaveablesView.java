@@ -14,7 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -30,7 +29,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -122,7 +120,7 @@ public class SaveablesView extends ViewPart {
 	public SaveablesView() {
 		this.resourceManager = new LocalResourceManager(JFaceResources.getResources());
 	}
-	
+
 	@Override
 	public void dispose() {
 		((SaveablesList) getSite().getService(
@@ -180,8 +178,7 @@ public class SaveablesView extends ViewPart {
 				Saveable saveable = (Saveable) ((IStructuredSelection)viewer.getSelection()).getFirstElement();
 				SaveablesList manager = (SaveablesList) getSite().getService(ISaveablesLifecycleListener.class);
 				Object[] sources = manager.testGetSourcesForModel(saveable);
-				for (int i = 0; i < sources.length; i++) {
-					Object source = sources[i];
+				for (Object source : sources) {
 					System.out.println(source);
 				}
 			}

@@ -30,9 +30,9 @@ import org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory.MyItem;
  * contributions</li>
  * <li>The MenuManager's update mechanism works</li>
  * </ul>
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class MenuBaseTests extends MenuTestCase {
 	String[] expectedIds = {
@@ -87,13 +87,13 @@ public class MenuBaseTests extends MenuTestCase {
 	public MenuBaseTests(String testName) {
 		super(testName);
 	}
-	
+
 	public void testBasicPopulation() throws Exception {
 		MenuManager manager = new MenuManager(null, TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"
 				+ TEST_CONTRIBUTIONS_CACHE_ID);
 		IContributionItem[] items = manager.getItems();
-		
+
 		// Correct number of items?
 		assertEquals("Bad count", expectedIds.length, items.length);
 
@@ -111,7 +111,7 @@ public class MenuBaseTests extends MenuTestCase {
 		MenuManager manager = new MenuManager("Test Menu", TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"
 				+ TEST_CONTRIBUTIONS_CACHE_ID);
-		
+
 		Shell shell = window.getShell();
 
 		// Test the initial menu creation
@@ -120,16 +120,16 @@ public class MenuBaseTests extends MenuTestCase {
 		e.type = SWT.Show;
 		e.widget = menuBar;
 		menuBar.notifyListeners(SWT.Show, e);
-		
+
 		MenuItem[] menuItems = menuBar.getItems();
-		
+
 		// NOTE: Uncomment to print the info needed to update the 'expected'
 		// arrays
 		IContributionItem[] items = manager.getItems();
 		printIds(items);
 		printClasses(items);
 		printMenuItemLabels(menuItems);
-		
+
 		// Correct number of items?
 		assertEquals("createMenuBar: Bad count", expectedMenuItemLabels.length, menuItems.length);
 
@@ -137,17 +137,17 @@ public class MenuBaseTests extends MenuTestCase {
 		assertTrue("createMenuBar: Index mismatch at index " + diffIndex , diffIndex == ALL_OK);
 
 		// Test the update mechanism
-		
+
 		// KLUDGE!! Test commented out until bug 170353 is fixed...
 //		manager.update(true);
 //		menuItems = manager.getMenu().getItems();
-//		
+//
 //		// Correct number of items?
 //		assertTrue("manager.update(true): Bad count", menuItems.length == expectedMenuItemLabels.length);
 //
 //		diffIndex = checkMenuItemLabels(menuItems, expectedMenuItemLabels);
 //		assertTrue("manager.update(true): Index mismatch at index " + diffIndex , diffIndex == ALL_OK);
-		
+
 		menuService.releaseContributions(manager);
 		manager.dispose();
 	}

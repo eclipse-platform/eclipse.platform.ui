@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
  * and the "org.eclise.ui.contexts" Java API. This includes tests dealing with
  * other extension points or elements in other extension points that have been
  * deprecated to be replaced by this one.
- * 
+ *
  * @since 3.0
  */
 public final class ContextsTestSuite extends TestSuite {

@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.progress.JobInfo;
 public class JobInfoTestOrdering extends TestCase {
 
 	private List jobinfos = new ArrayList();
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -38,7 +38,7 @@ public class JobInfoTestOrdering extends TestCase {
 		int counter = 0;
 		TestJob job;
 		JobInfo ji;
-		
+
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
 		job.setSystem(false);
@@ -46,7 +46,7 @@ public class JobInfoTestOrdering extends TestCase {
 		job.setInternalJobState(Job.NONE);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
 		jobinfos.add(ji);
-		
+
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
 		job.setSystem(false);
@@ -54,7 +54,7 @@ public class JobInfoTestOrdering extends TestCase {
 		job.setInternalJobState(Job.SLEEPING);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
 		jobinfos.add(ji);
-		
+
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
 		job.setSystem(false);
@@ -62,7 +62,7 @@ public class JobInfoTestOrdering extends TestCase {
 		job.setInternalJobState(Job.WAITING);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
 		jobinfos.add(ji);
-		
+
 		job = new TestJob("Job" + (counter++));
 		job.setUser(true);
 		job.setSystem(false);
@@ -70,7 +70,7 @@ public class JobInfoTestOrdering extends TestCase {
 		job.setInternalJobState(Job.RUNNING);  // JOB STATE
 		ji = new ExtendedJobInfo(job);
 		jobinfos.add(ji);
-		
+
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class JobInfoTestOrdering extends TestCase {
 		assertEquals(Job.SLEEPING, ((JobInfo)jobinfos.get(2)).getJob().getState());
 		assertEquals(Job.NONE,     ((JobInfo)jobinfos.get(3)).getJob().getState());
 	}
-	
+
 	/*
 	 * ========================================================================
 	 */
@@ -105,9 +105,9 @@ public class JobInfoTestOrdering extends TestCase {
 						+ ", isSystem()=" + getJob().isSystem() + ", isUser()=" + getJob().isUser()
 						+ "]";
 		}
-		
+
 	}
-	
+
 	/**
 	 * Enables access to internal state, by using reflection
 	 * Provides better readable {@link #toString()} method.
@@ -122,7 +122,7 @@ public class JobInfoTestOrdering extends TestCase {
 		protected IStatus run(IProgressMonitor monitor) {
 			throw new UnsupportedOperationException("Not implemented, because of just a unit test");
 		}
-		
+
 		public void setInternalJobState(int state) {
 			try {
 				final Field field = InternalJob.class.getDeclaredField("flags");

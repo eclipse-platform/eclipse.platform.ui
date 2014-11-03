@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for the MenuManager API.
- * 
+ *
  * @since 3.1
  */
 public class MenuManagerTest extends JFaceActionTest {
@@ -32,7 +32,7 @@ public class MenuManagerTest extends JFaceActionTest {
 
     /**
      * Constructs a new test with the given name.
-     * 
+     *
      * @param name
      *            the name of the test
      */
@@ -43,7 +43,7 @@ public class MenuManagerTest extends JFaceActionTest {
     /**
      * Tests that a menu with no concrete visible items (that is, ignoring
      * separators and group markers) is hidden.
-     * 
+     *
      * @see MenuManager#isVisible()
      */
     public void testMenuWithNoConcreteVisibleItemsIsHidden() {
@@ -59,7 +59,7 @@ public class MenuManagerTest extends JFaceActionTest {
      * Tests that adding a concrete visible item to a menu with no concrete
      * visible items makes the menu visible. Regression test for bug 54779 [RCP]
      * Problem updating menus, menu not appearing
-     * 
+     *
      * @see MenuManager#isVisible()
      * @see MenuManager#markDirty()
      */
@@ -69,20 +69,20 @@ public class MenuManagerTest extends JFaceActionTest {
         MenuManager fileMenuMgr = createMenuManager("File", "gsgn");
         menuBarMgr.add(fileMenuMgr);
         menuBarMgr.updateAll(false);
-        
+
         Menu menuBar = getShell().getMenuBar();
         assertEquals(0, menuBar.getItems().length);
-        
+
         fileMenuMgr.add(createItem('a'));
         menuBarMgr.updateAll(false);
         assertEquals(1, menuBar.getItems().length);
-        
+
         assertEquals("File", menuBar.getItems()[0].getText());
-        
+
         Menu fileMenu = menuBar.getItems()[0].getMenu();
         assertEquals(1, fileMenu.getItems().length);
     }
-    
+
     /**
      * This is a test case for bug 204788 to ensure that a disposed menu is
      * marked as being dirty.
@@ -93,16 +93,16 @@ public class MenuManagerTest extends JFaceActionTest {
         MenuManager fileMenuMgr = createMenuManager("File", "gsgn");
         menuBarMgr.add(fileMenuMgr);
         menuBarMgr.updateAll(false);
-        
+
         assertFalse(menuBarMgr.isDirty());
-        
+
         menuBarMgr.dispose();
         assertTrue(menuBarMgr.isDirty());
     }
-    
+
     /**
      * This is a test case for bug 255429 to ensure that a menu manager without any text
-     * set does not throw an NPE. 
+     * set does not throw an NPE.
      */
     public void testEmptyMenuManagerNPE() {
     	Menu menu = new Menu(getShell());
@@ -112,10 +112,10 @@ public class MenuManagerTest extends JFaceActionTest {
 
     /**
      * Creates a menu manager with the given name, adding items based on the given template.
-     * 
+     *
      * @param name the name
      * @param template the template
-     * 
+     *
      * @return a menu with no concrete visible items
      */
     private MenuManager createMenuManager(String name, String template) {
@@ -129,7 +129,7 @@ public class MenuManagerTest extends JFaceActionTest {
             manager.add(createItem(template.charAt(i)));
         }
     }
-    
+
     private IContributionItem createItem(char template) {
         switch (template) {
         	case 'g':

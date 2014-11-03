@@ -29,19 +29,19 @@ public class CommandParameterTypeTest extends UITestCase {
 	static final String SUBTRACT = "org.eclipse.ui.tests.commands.subtractInteger";
 	static final String MINUEND = "minuend";
 	static final String SUBTRAHEND = "subtrahend";
-	
+
 	static final String TYPE = "org.eclipse.ui.tests.commands.Integer";
-	
+
 	/**
 	 * Constructs a new instance of <code>CommandParameterTypeTest</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
 	public CommandParameterTypeTest(String testName) {
 		super(testName);
 	}
-	
+
 	/**
 	 * Tests invoking a command that subtracts one number from another. The
 	 * handler for the subtract command will convert the string parameters to
@@ -53,7 +53,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		testSubtract(8, 5, 3);
 		testSubtract(-4, 12, -16);
 	}
-	
+
 	/**
 	 * Test subtract again with invalid parameters and check for failure
 	 * exception.
@@ -71,14 +71,14 @@ public class CommandParameterTypeTest extends UITestCase {
 			fail("expected ParameterValueConversionException");
 		}
 	}
-	
+
 	/**
 	 * Test the complete execution flow for the subtract command
 	 */
 	private void testSubtract(int minuend, int subtrahend, int difference) throws CommandException {
 		testSubtract(new Integer(minuend), new Integer(subtrahend), difference);
 	}
-	
+
 	/**
 	 * Test the complete execution flow for the subtract command
 	 */
@@ -107,7 +107,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		Integer result = (Integer) pCommand.executeWithChecks(null, hs.getCurrentState());
 		assertEquals(difference, result.intValue());
 	}
-	
+
 	/**
 	 * Tests AbstractParameterValueConverter.convertToObject for the Integer
 	 * converter used in this test suite.
@@ -118,7 +118,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		testConvertStringToInteger("blah", 33, true);
 		testConvertStringToInteger(null, 33, true);
 	}
-	
+
 	private void testConvertStringToInteger(String value, int expected,
 			boolean expectFail) throws CommandException {
 		ICommandService commandService = getCommandService();
@@ -141,7 +141,7 @@ public class CommandParameterTypeTest extends UITestCase {
 
 		assertEquals(new Integer(expected), converted);
 	}
-	
+
 	/**
 	 * Tests AbstractParameterValueConverter.convertToString for the Integer
 	 * converter used in this test suite.
@@ -153,7 +153,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		testConvertIntegerToString(null, null, true);
 		testConvertIntegerToString(Boolean.TRUE, null, true);
 	}
-	
+
 	private void testConvertIntegerToString(Object value, String expected,
 			boolean expectFail) throws CommandException {
 		ICommandService commandService = getCommandService();
@@ -175,7 +175,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		}
 		assertEquals(expected, converted);
 	}
-	
+
 	/**
 	 * Tests ParameterType.isCompatible for various values with the Integer
 	 * parameter type used in this test suite.
@@ -183,14 +183,14 @@ public class CommandParameterTypeTest extends UITestCase {
 	public void testIsCompatible() throws CommandException {
 		ICommandService commandService = getCommandService();
 		ParameterType type = commandService.getParameterType(TYPE);
-		
+
 		assertTrue(type.isCompatible(new Integer(4)));
 		assertTrue(type.isCompatible(new Integer(0)));
 		assertTrue(type.isCompatible(new Integer(-434)));
 		assertFalse(type.isCompatible(null));
 		assertFalse(type.isCompatible("4"));
 	}
-	
+
 	/**
 	 * Try to find a command that takes integers as parameters. We might find
 	 * multiple commands - just make sure we can at least find the subtract
@@ -198,24 +198,27 @@ public class CommandParameterTypeTest extends UITestCase {
 	 */
 	public void testFindIntegerParamCommand() throws CommandException {
 		Integer value = new Integer(6);
-		
+
 		ICommandService commandService = getCommandService();
 		Command[] commands = commandService.getDefinedCommands();
-		
+
 		boolean foundSubtract = false;
-		
-		for (int i = 0; i < commands.length; i++) {
-			Command command = commands[i];
-			if (!command.isDefined())
+
+		for (Command command2 : commands) {
+			Command command = command2;
+			if (!command.isDefined()) {
 				continue;
-			
+			}
+
 			IParameter[] parameters = command.getParameters();
-			if (parameters == null)
+			if (parameters == null) {
 				continue;
-			
-			if (parameters.length == 0)
+			}
+
+			if (parameters.length == 0) {
 				continue;
-			
+			}
+
 			if (checkParamType1(command, parameters[0], value)
 					&& checkParamType2(parameters[0], value)) {
 				if (SUBTRACT.equals(command.getId())) {
@@ -224,29 +227,32 @@ public class CommandParameterTypeTest extends UITestCase {
 				}
 			}
 		}
-		
+
 		assertTrue(foundSubtract);
 	}
-	
+
 	private boolean checkParamType1(Command command, IParameter parameter,
 			Object value) throws CommandException {
 		ParameterType type = command.getParameterType(parameter.getId());
-		if (type == null)
+		if (type == null) {
 			return false;
+		}
 		return type.isCompatible(value);
 	}
-	
+
 	private boolean checkParamType2(IParameter parameter, Object value)
 			throws CommandException {
-		if (!(parameter instanceof ITypedParameter))
+		if (!(parameter instanceof ITypedParameter)) {
 			return false;
+		}
 		ParameterType type = ((ITypedParameter) parameter).getParameterType();
-		if (type == null)
+		if (type == null) {
 			return false;
+		}
 		return type.isCompatible(value);
 	}
-	
-	
+
+
 	/**
 	 * Test {@link Command#getReturnType()}, making sure we can get the return
 	 * type of the subtract command.
@@ -254,12 +260,12 @@ public class CommandParameterTypeTest extends UITestCase {
 	public void testGetReturnType() throws CommandException {
 		ICommandService commandService = getCommandService();
 		Command command = commandService.getCommand(SUBTRACT);
-		
+
 		ParameterType returnType = command.getReturnType();
 		assertNotNull(returnType);
 		assertEquals(TYPE, returnType.getId());
 	}
-	
+
 	private ICommandService getCommandService() {
 		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {
@@ -268,7 +274,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Test {@link ParameterizedCommand}, making sure the order of
 	 * the parameters is not important.
@@ -276,7 +282,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	public void testUnrelevantOrder() throws NotDefinedException {
 		ICommandService commandService = getCommandService();
 		Command command = commandService.getCommand(SUBTRACT);
-		
+
 		IParameter sub = command.getParameter(SUBTRAHEND);
 		IParameter min = command.getParameter(MINUEND);
 		Parameterization param1 = new Parameterization(sub, "5");
@@ -289,10 +295,10 @@ public class CommandParameterTypeTest extends UITestCase {
 		Parameterization[] params1 = new Parameterization[2];
 		params1[0] = param2;
 		params1[1] = param1;
-		
+
 		ParameterizedCommand pCommand1 = new ParameterizedCommand(command, params);
 		ParameterizedCommand pCommand2 = new ParameterizedCommand(command, params1);
-		
+
 		assertTrue(pCommand1.equals(pCommand2));
 	}
 }

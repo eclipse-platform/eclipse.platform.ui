@@ -18,14 +18,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 43800.
- * 
+ *
  * @since 3.0
  */
 public class Bug43800Test extends UITestCase {
 
     /**
      * Constructs a new instance of this test case.
-     * 
+     *
      * @param testName
      *           The name of the test
      */

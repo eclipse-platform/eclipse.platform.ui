@@ -41,12 +41,12 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * only perform for real when a system in-place editor is
  * available for *.doc.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public class OpenSystemInPlaceEditorTest extends UITestCase {
 
-	
+
 	public static Test suite() {
 		return new TestSuite(OpenSystemInPlaceEditorTest.class);
 	}
@@ -54,7 +54,7 @@ public class OpenSystemInPlaceEditorTest extends UITestCase {
 
 	/**
 	 * Creates the test object.
-	 * 
+	 *
 	 * @param testName the test name
 	 */
 	public OpenSystemInPlaceEditorTest(String testName) {
@@ -62,8 +62,9 @@ public class OpenSystemInPlaceEditorTest extends UITestCase {
 	}
 
 	public void testWorkspaceFile() throws Exception {
-		if (!PlatformUI.getWorkbench().getEditorRegistry().isSystemInPlaceEditorAvailable("test.doc"))
+		if (!PlatformUI.getWorkbench().getEditorRegistry().isSystemInPlaceEditorAvailable("test.doc")) {
 			return;
+		}
 
 		// Custom setup
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("test" + System.currentTimeMillis());
@@ -85,9 +86,10 @@ public class OpenSystemInPlaceEditorTest extends UITestCase {
 	}
 
 	public void testExternalFile() throws Exception {
-		if (!PlatformUI.getWorkbench().getEditorRegistry().isSystemInPlaceEditorAvailable("test.doc"))
+		if (!PlatformUI.getWorkbench().getEditorRegistry().isSystemInPlaceEditorAvailable("test.doc")) {
 			return;
-		
+		}
+
 		// Custom setup
 		File file = File.createTempFile("test", ".doc");
 
@@ -105,14 +107,16 @@ public class OpenSystemInPlaceEditorTest extends UITestCase {
 	private IWorkbenchPage getWorkbenchPage() {
 		IWorkbenchWindow window;
 		try {
-			if (getWorkbench().getWorkbenchWindowCount() == 0)
+			if (getWorkbench().getWorkbenchWindowCount() == 0) {
 				window = getWorkbench().openWorkbenchWindow(null);
-			else
+			} else {
 				window = getWorkbench().getWorkbenchWindows()[0];
+			}
 
 			IWorkbenchPage[] pages = window.getPages();
-			if (pages.length > 0)
+			if (pages.length > 0) {
 				return pages[0];
+			}
 
 			return window.openPage(null);
 		} catch (WorkbenchException ex) {

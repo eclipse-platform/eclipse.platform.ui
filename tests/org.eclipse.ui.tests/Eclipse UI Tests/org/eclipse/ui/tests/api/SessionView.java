@@ -19,7 +19,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 
 /**
- * This view is used to test the creation and restoration of 
+ * This view is used to test the creation and restoration of
  * view state between sessions.
  */
 public class SessionView extends MockViewPart {
@@ -82,12 +82,12 @@ public class SessionView extends MockViewPart {
         // constructor.
         Assert.assertNotNull(memento);
 
-        // Read float.	
+        // Read float.
         Float bigFloat = memento.getFloat("float");
         Assert.assertNotNull(bigFloat);
         Assert.assertEquals(bigFloat.floatValue(), 0.50f, 0.0001);
 
-        // Read int.	
+        // Read int.
         Integer bigInt = memento.getInteger("integer");
         Assert.assertEquals(bigInt, new Integer(50));
 

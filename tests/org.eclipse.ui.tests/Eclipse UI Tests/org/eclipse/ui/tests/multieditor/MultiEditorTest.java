@@ -55,7 +55,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test MultiEditor behaviour to highlight some of the broken functionality.
- * 
+ *
  * @since 3.1
  */
 public class MultiEditorTest extends UITestCase {
@@ -117,11 +117,11 @@ public class MultiEditorTest extends UITestCase {
 	/**
 	 * Test that the test tiled editor can be opened with a basic
 	 * MultiEditorInput with the same type of files.
-	 * 
+	 *
 	 * Test: Select a couple of files from navigator and use the TiledEditor
 	 * menu to open the editor. It should open with the first selected file on
 	 * top.
-	 * 
+	 *
 	 * @throws Throwable
 	 *             on an error
 	 */
@@ -143,11 +143,11 @@ public class MultiEditorTest extends UITestCase {
 	/**
 	 * Test that the public methods in TiledEditor (and MultiEditor) are called
 	 * in the correct order from 3.0 to 3.1.
-	 * 
+	 *
 	 * Test: this test involves opening the tiled editor on 2 files, changing
 	 * the focus from the first file to the second file, and closing the tiled
 	 * editor.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testOpenTestFile() throws Throwable {
@@ -207,7 +207,7 @@ public class MultiEditorTest extends UITestCase {
 
 		IFile fileA = createFile(testProject, TEST01_TXT);
 		IFile fileB = createFile(testProject, TEST02_TXT);
-		
+
 		MultiEditorInput input = new MultiEditorInput(new String[] { MockEditorPart.ID1, MockEditorPart.ID1}, new IEditorInput[] { new FileEditorInput(fileA),new FileEditorInput(fileB)});
 
 		// catches the framework NPE
@@ -216,7 +216,7 @@ public class MultiEditorTest extends UITestCase {
 		// did we get a multieditor back?
 		assertTrue(editor instanceof MultiEditor);
 		MultiEditor multiEditor = (MultiEditor) editor;
-		
+
 		CTabFolder tabFolder = (CTabFolder) ((WorkbenchPartReference) page
 				.getReference(multiEditor)).getModel().getParent().getWidget();
 		// index is 0 since we want the editor that's behind in the editor
@@ -226,14 +226,14 @@ public class MultiEditorTest extends UITestCase {
 		IEditorPart[] innerEditors = multiEditor.getInnerEditors();
 		MockEditorPart editorA = (MockEditorPart) innerEditors[0];
 		MockEditorPart editorB = (MockEditorPart) innerEditors[0];
-		
+
 		char firstChar = item.getText().charAt(0);
 		assertFalse(firstChar == '*');
-		
+
 		try {
 			editorA.setDirty(true);
 			assertEquals('*', item.getText().charAt(0));
-			
+
 			editorA.setDirty(false);
 			assertEquals(firstChar, item.getText().charAt(0));
 
@@ -251,11 +251,11 @@ public class MultiEditorTest extends UITestCase {
 	 * Test that coolbar items in the workbench are updated when focus moves
 	 * through the different inner editors ... this test as written is not 100%
 	 * accurate, as the items are enabled.
-	 * 
+	 *
 	 * Test: Open two files where the first is a text file and the second is of
 	 * type etest. Change focus to the etest file, and the coolbar should update
 	 * with a new action icon and it should be enabled.
-	 * 
+	 *
 	 * @throws Throwable
 	 *             on an error
 	 */
@@ -305,11 +305,11 @@ public class MultiEditorTest extends UITestCase {
 	/**
 	 * Test that the outline view is updated when focus moves from an editor to
 	 * the ant editor.
-	 * 
+	 *
 	 * Test: Open 2 files where the first is a text file and the second is an
 	 * ant file. Set focus on the ant file, and the outline should be updated to
 	 * reflect the buildfile outline.
-	 * 
+	 *
 	 * @throws Throwable
 	 *             on an error
 	 */
@@ -370,7 +370,7 @@ public class MultiEditorTest extends UITestCase {
 
 	/**
 	 * Return the test editor coolbar.
-	 * 
+	 *
 	 * @param page
 	 *            the workbench page
 	 * @return the IContributionItem for the test editor cool bar.
@@ -386,7 +386,7 @@ public class MultiEditorTest extends UITestCase {
 
 	/**
 	 * Validate the state of an icon in the toolbar.
-	 * 
+	 *
 	 * @param contribution
 	 *            the high level contribution from the coolbar to look through
 	 * @param tooltip
@@ -413,11 +413,11 @@ public class MultiEditorTest extends UITestCase {
 		}
 
 		ToolItem[] items = bar.getItems();
-		for (int i = 0; i < items.length; ++i) {
+		for (ToolItem item : items) {
 			// System.err.println("Item: " + items[i].getToolTipText());
-			if (tooltip.equals(items[i].getToolTipText())) {
+			if (tooltip.equals(item.getToolTipText())) {
 				assertEquals("Invalid icon state for " + tooltip, state,
-						items[i].getEnabled());
+						item.getEnabled());
 				return;
 			}
 		}
@@ -426,7 +426,7 @@ public class MultiEditorTest extends UITestCase {
 
 	/**
 	 * Create the project to work in. If it already exists, just open it.
-	 * 
+	 *
 	 * @param projectName
 	 *            the name of the project to create
 	 * @return the newly opened project
@@ -449,14 +449,15 @@ public class MultiEditorTest extends UITestCase {
 	private void chewUpEvents() throws InterruptedException {
 		Thread.sleep(500);
 		Display display = Display.getCurrent();
-		while (display.readAndDispatch())
+		while (display.readAndDispatch()) {
 			;
+		}
 	}
 
 	/**
 	 * Open the test editor. It does basic validation that there is no
 	 * NullPointerException during initialization.
-	 * 
+	 *
 	 * @param page
 	 *            the workbench page
 	 * @param input
@@ -481,12 +482,12 @@ public class MultiEditorTest extends UITestCase {
 			if (fErrorListener.messages.size() > 0) {
 				String[] msgs = (String[]) fErrorListener.messages
 						.toArray(new String[fErrorListener.messages.size()]);
-				for (int i = 0; i < msgs.length; i++) {
-					if (msgs[i].indexOf("The proxied handler for") == -1
-							&& msgs[i].indexOf("Conflict for \'") == -1
-							&& msgs[i].indexOf("Keybinding conflicts occurred")==-1
-							&& msgs[i].indexOf("A handler conflict occurred")==-1) {
-						fail("Failed with: " + msgs[i]);
+				for (String msg : msgs) {
+					if (msg.indexOf("The proxied handler for") == -1
+							&& msg.indexOf("Conflict for \'") == -1
+							&& msg.indexOf("Keybinding conflicts occurred")==-1
+							&& msg.indexOf("A handler conflict occurred")==-1) {
+						fail("Failed with: " + msg);
 					}
 				}
 			}
@@ -498,7 +499,7 @@ public class MultiEditorTest extends UITestCase {
 
 	/**
 	 * Set up to catch any editor initialization exceptions.
-	 * 
+	 *
 	 */
 	private void setupErrorListener() {
 		final ILog log = WorkbenchPlugin.getDefault().getLog();
@@ -521,7 +522,7 @@ public class MultiEditorTest extends UITestCase {
 	 * Create the multi editor input in the given project. Creates the files in
 	 * the project from template files in the classpath if they don't already
 	 * exist.
-	 * 
+	 *
 	 * @param simpleFiles
 	 *            the array of filenames to copy over
 	 * @param testProject
@@ -545,7 +546,7 @@ public class MultiEditorTest extends UITestCase {
 		MultiEditorInput input = new MultiEditorInput(ids, inputs);
 		return input;
 	}
-	
+
 	private IFile createFile(IProject testProject, String simpleFile) throws CoreException, IOException {
 		IFile file = testProject.getFile(simpleFile);
 		if (!file.exists()) {
@@ -572,9 +573,9 @@ public class MultiEditorTest extends UITestCase {
 	 * Listens for the standard message that indicates the MultiEditor failed
 	 * ... usually caused by incorrect framework initialization that doesn't set
 	 * the innerChildren.
-	 * 
+	 *
 	 * @since 3.1
-	 * 
+	 *
 	 */
 	public static class EditorErrorListener implements ILogListener {
 

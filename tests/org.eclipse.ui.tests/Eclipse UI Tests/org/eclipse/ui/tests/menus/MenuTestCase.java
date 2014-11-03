@@ -26,14 +26,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * Base class for tests concerning the 'org.eclipse.ui.menus'
  * extension point. Gains access to the various services that
- * are useful in writing the tests and defines the id of the 
+ * are useful in writing the tests and defines the id of the
  * URI that contains a 'known' structure. If the XML describing
  * the structure is changed then the static tables that the
  * tests use to determine 'success' have to be verified and
  * updated if necessary.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class MenuTestCase extends UITestCase {
 
@@ -80,22 +80,25 @@ public class MenuTestCase extends UITestCase {
 
 		super.doTearDown();
 	}
-	
+
 	protected static int ALL_OK = -1;
 	protected static int checkContribIds(IContributionItem[] items, String[] ids) {
 		// Test cases should check this independently so they can issue the
 		// correct error (i.e. "Not enough items...wanted 6 got 5") but for
 		// safety's sake...
-		if (items.length != ids.length)
+		if (items.length != ids.length) {
 			return 0;
-		
+		}
+
 		for (int i = 0; i < ids.length; i++) {
 			// HACK!! Some uds are based on intances
-			if (ids[i] == null)
+			if (ids[i] == null) {
 				continue;
-			
-			if (!ids[i].equals(items[i].getId()))
+			}
+
+			if (!ids[i].equals(items[i].getId())) {
 				return i;
+			}
 		}
 		return ALL_OK;
 	}
@@ -104,13 +107,15 @@ public class MenuTestCase extends UITestCase {
 		// Test cases should check this independently so they can issue the
 		// correct error (i.e. "Not enough items...wanted 6 got 5") but for
 		// safety's sake...
-		if (items.length != classes.length)
+		if (items.length != classes.length) {
 			return 0;
-		
+		}
+
 		for (int i = 0; i < classes.length; i++) {
 			// HACK!! cant find anonyous classes
-			if (classes[i] == null)
+			if (classes[i] == null) {
 				continue;
+			}
 
 			// minor upgrade ... if the item is an instanceof the class we're
 			// good
@@ -130,16 +135,18 @@ public class MenuTestCase extends UITestCase {
 		// Test cases should check this independently so they can issue the
 		// correct error (i.e. "Not enough items...wanted 6 got 5") but for
 		// safety's sake...
-		if (menuItems.length != expectedLabels.length)
+		if (menuItems.length != expectedLabels.length) {
 			return 0;
-		
+		}
+
 		for (int i = 0; i < expectedLabels.length; i++) {
-			if (!expectedLabels[i].equals(menuItems[i].getText()))
+			if (!expectedLabels[i].equals(menuItems[i].getText())) {
 				return i;
+			}
 		}
 		return ALL_OK;
 	}
-	
+
 	protected static void printIds(IContributionItem[] items) {
 		System.out.println("String[] expectedIds = {");
 		for (int i = 0; i < items.length; i++) {
@@ -148,7 +155,7 @@ public class MenuTestCase extends UITestCase {
 		}
 		System.out.println("};");
 	}
-	
+
 	protected static void printClasses(IContributionItem[] items) {
 		System.out.println("Class[] expectedClasses = {");
 		for (int i = 0; i < items.length; i++) {
@@ -157,7 +164,7 @@ public class MenuTestCase extends UITestCase {
 		}
 		System.out.println("};");
 	}
-	
+
 	protected static void printMenuItemLabels(MenuItem[] items) {
 		System.out.println("String[] expectedMenuItemLabels = {");
 		for (int i = 0; i < items.length; i++) {

@@ -43,84 +43,84 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class ExportArchiveFileOperationTest extends UITestCase implements
 		IOverwriteQuery {
-	
+
 	private static final String FILE_NAME = "test";
 	private static final String ZIP_FILE_EXT = "zip";
 	private static final String TAR_FILE_EXT = "tar";
     private static final String[] directoryNames = { "dir1", "dir2" };
     private static final String[] emptyDirectoryNames = { "dir3" };
     private static final String[] fileNames = { "file1.txt", "file2.txt" };
-    
+
     private String localDirectory;
-    
+
     private String filePath;
 
     private IProject project;
-    
+
     private boolean flattenPaths = false;
     private boolean excludeProjectPath = false;
-    
+
 	public ExportArchiveFileOperationTest(String testName) {
 		super(testName);
 	}
-	
+
 	@Override
 	public String queryOverwrite(String pathString) {
 		return "";
 	}
-	
+
 	public void testExportStatus(){
 		List resources = new ArrayList();
 		resources.add(project);
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, localDirectory);
 
-        assertTrue(operation.getStatus().getCode() == IStatus.OK);		
+        assertTrue(operation.getStatus().getCode() == IStatus.OK);
 	}
-	
+
 	public void testExportZip() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List resources = new ArrayList();
 		resources.add(project);
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setUseCompression(false);
         operation.setUseTarFormat(false);
         operation.run(new NullProgressMonitor());
-        
-        verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);	
-        
+
+        verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
+
 	}
-	
+
 	public void testExportZipCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List resources = new ArrayList();
 		resources.add(project);
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setUseCompression(true);
         operation.setUseTarFormat(false);
-        operation.run(new NullProgressMonitor());	
+        operation.run(new NullProgressMonitor());
 		verifyCompressed(ZIP_FILE_EXT);
 	}
-	
+
 	public void testExportZipCreateSelectedDirectories() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List resources = new ArrayList();
 		IResource[] members = project.members();
-		for (int i = 0; i < members.length; i++){
-			if (isDirectory(members[i])){
-				IResource[] folderMembers = ((IFolder)members[i]).members();
-				for (int k = 0; k < folderMembers.length; k++){
-					if (isFile(folderMembers[k])){
-						resources.add(folderMembers[k]);
+		for (IResource member : members) {
+			if (isDirectory(member)){
+				IResource[] folderMembers = ((IFolder)member).members();
+				for (IResource folderMember : folderMembers) {
+					if (isFile(folderMember)){
+						resources.add(folderMember);
 					}
 				}
 			}
 		}
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setCreateLeadupStructure(false);
@@ -128,18 +128,19 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(false);
         operation.run(new NullProgressMonitor());
         flattenPaths = true;
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);		
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
-	
+
 	public void testExportZipCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List resources = new ArrayList();
 		IResource[] members = project.members();
-		for (int i = 0; i < members.length; i++){
-			if (isDirectory(members[i]))
-				resources.add(members[i]);
+		for (IResource member : members) {
+			if (isDirectory(member)) {
+				resources.add(member);
+			}
 		}
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setCreateLeadupStructure(false);
@@ -147,24 +148,24 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(false);
         operation.run(new NullProgressMonitor());
         excludeProjectPath = true;
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);				
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
-	
+
 	public void testExportZipCreateSelectedDirectoriesCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List resources = new ArrayList();
 		IResource[] members = project.members();
-		for (int i = 0; i < members.length; i++){
-			if (isDirectory(members[i])){
-				IResource[] folderMembers = ((IFolder)members[i]).members();
-				for (int k = 0; k < folderMembers.length; k++){
-					if (isFile(folderMembers[k])){
-						resources.add(folderMembers[k]);
+		for (IResource member : members) {
+			if (isDirectory(member)){
+				IResource[] folderMembers = ((IFolder)member).members();
+				for (IResource folderMember : folderMembers) {
+					if (isFile(folderMember)){
+						resources.add(folderMember);
 					}
 				}
 			}
 		}
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setCreateLeadupStructure(false);
@@ -172,52 +173,52 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(false);
         operation.run(new NullProgressMonitor());
         flattenPaths = true;
-		verifyCompressed(ZIP_FILE_EXT);	
+		verifyCompressed(ZIP_FILE_EXT);
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
-	
+
 	public void testExportTar() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List resources = new ArrayList();
 		resources.add(project);
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
         operation.setUseTarFormat(true);
         operation.setUseCompression(false);
 
         operation.run(new NullProgressMonitor());
-        
-        verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);	
+
+        verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
 	}
-	
+
 	public void testExportTarCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List resources = new ArrayList();
 		resources.add(project);
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setUseTarFormat(true);
         operation.setUseCompression(true);
-        operation.run(new NullProgressMonitor());		
-		verifyCompressed(TAR_FILE_EXT);		
+        operation.run(new NullProgressMonitor());
+		verifyCompressed(TAR_FILE_EXT);
 	}
-	
+
 	public void testExportTarCreateSelectedDirectories() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List resources = new ArrayList();
 		IResource[] members = project.members();
-		for (int i = 0; i < members.length; i++){
-			if (isDirectory(members[i])){
-				IResource[] folderMembers = ((IFolder)members[i]).members();
-				for (int k = 0; k < folderMembers.length; k++){
-					if (isFile(folderMembers[k])){
-						resources.add(folderMembers[k]);
+		for (IResource member : members) {
+			if (isDirectory(member)){
+				IResource[] folderMembers = ((IFolder)member).members();
+				for (IResource folderMember : folderMembers) {
+					if (isFile(folderMember)){
+						resources.add(folderMember);
 					}
 				}
 			}
 		}
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setCreateLeadupStructure(false);
@@ -225,18 +226,19 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(true);
         operation.run(new NullProgressMonitor());
         flattenPaths = true;
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);			
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
 	}
-	
+
 	public void testExportTarCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List resources = new ArrayList();
 		IResource[] members = project.members();
-		for (int i = 0; i < members.length; i++){
-			if (isDirectory(members[i]))
-				resources.add(members[i]);
+		for (IResource member : members) {
+			if (isDirectory(member)) {
+				resources.add(member);
+			}
 		}
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setCreateLeadupStructure(false);
@@ -244,25 +246,25 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(true);
         operation.run(new NullProgressMonitor());
         excludeProjectPath = true;
-		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);				
-		
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
+
 	}
-	
+
 	public void testExportTarCreateSelectedDirectoriesCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List resources = new ArrayList();
 		IResource[] members = project.members();
-		for (int i = 0; i < members.length; i++){
-			if (isDirectory(members[i])){
-				IResource[] folderMembers = ((IFolder)members[i]).members();
-				for (int k = 0; k < folderMembers.length; k++){
-					if (isFile(folderMembers[k])){
-						resources.add(folderMembers[k]);
+		for (IResource member : members) {
+			if (isDirectory(member)){
+				IResource[] folderMembers = ((IFolder)member).members();
+				for (IResource folderMember : folderMembers) {
+					if (isFile(folderMember)){
+						resources.add(folderMember);
 					}
 				}
 			}
 		}
-        ArchiveFileExportOperation operation = 
+        ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
 
         operation.setCreateLeadupStructure(false);
@@ -270,26 +272,27 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(true);
         operation.run(new NullProgressMonitor());
         flattenPaths = true;
-		verifyCompressed(TAR_FILE_EXT);	
+		verifyCompressed(TAR_FILE_EXT);
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
-		
+
 	}
 
     @Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		project = FileUtil.createProject("Export" + getName());
-		File destination = 
+		File destination =
 			new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir())
     			.toOSString());
 		localDirectory = destination.getAbsolutePath();
-		if (!destination.mkdirs())
+		if (!destination.mkdirs()) {
 			fail("Could not set up destination directory for " + getName());
+		}
 	    setUpData();
 	    flattenPaths = false;
 	    excludeProjectPath = false;
 	}
-    
+
 	@Override
 	protected void doTearDown() throws Exception {
         super.doTearDown();
@@ -298,9 +301,11 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         if (root.exists()){
         	File[] files = root.listFiles();
         	if (files != null){
-        		for (int i = 0; i < files.length; i++)
-        			if (!files[i].delete())
-        				fail("Could not delete " + files[i].getAbsolutePath());
+        		for (int i = 0; i < files.length; i++) {
+					if (!files[i].delete()) {
+						fail("Could not delete " + files[i].getAbsolutePath());
+					}
+				}
         	}
         	root.delete();
         }
@@ -313,26 +318,26 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         	project = null;
         	localDirectory = null;
         	filePath = null;
-        }        
+        }
 	}
-	
+
     private void setUpData(){
     	try{
-	    	for(int i = 0; i < directoryNames.length; i++){
-	    		IFolder folder = project.getFolder(directoryNames[i]);
+	    	for (String directoryName : directoryNames) {
+	    		IFolder folder = project.getFolder(directoryName);
 	    		folder.create(false, true, new NullProgressMonitor());
-	    		for (int k = 0; k < fileNames.length; k++){
-	    			IFile file = folder.getFile(fileNames[k]);
+	    		for (String fileName : fileNames) {
+	    			IFile file = folder.getFile(fileName);
 	    			String contents =
-	    				directoryNames[i] + ", " + fileNames[k];		
-	    			file.create(new ByteArrayInputStream(contents.getBytes()), 
+	    				directoryName + ", " + fileName;
+	    			file.create(new ByteArrayInputStream(contents.getBytes()),
 	    				true, new NullProgressMonitor());
 	    		}
 	    	}
 
 	    	// create empty folders to test bug 278402
-	    	for(int i = 0; i < emptyDirectoryNames.length; i++){
-	    		IFolder folder = project.getFolder(emptyDirectoryNames[i]);
+	    	for (String emptyDirectoryName : emptyDirectoryNames) {
+	    		IFolder folder = project.getFolder(emptyDirectoryName);
 	    		folder.create(false, true, new NullProgressMonitor());
 	    	}
     	}
@@ -340,7 +345,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     		fail(e.toString());
     	}
     }
-    
+
     private void verifyCompressed(String type){
     	String fileName = "";
 		boolean compressed = false;
@@ -374,7 +379,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     	}
     	assertTrue(fileName + " does not appear to be compressed.", compressed);
     }
-    
+
     private void verifyFolders(int folderCount, String type){
     	try{
     		List allEntries = new ArrayList();
@@ -396,10 +401,11 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	    		}
 	    		tarFile.close();
 	    	}
-	    	if (flattenPaths)
-	    		verifyFiles(allEntries);
-	    	else
-	    		verifyArchive(folderCount, allEntries);
+	    	if (flattenPaths) {
+				verifyFiles(allEntries);
+			} else {
+				verifyArchive(folderCount, allEntries);
+			}
     	}
     	catch (IOException e){
     		fail(e.getMessage());
@@ -408,7 +414,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     		fail(e.getMessage());
     	}
     }
-    
+
     private void verifyArchive(int folderCount, List entries){
     	int count = 0;
     	Set folderNames = new HashSet();
@@ -421,28 +427,29 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 			String fileName = entryName.substring(idx+1, entryName.length());
 			// we get empty strings for folder entries, don't add them as a file name
 			if (fileName.length() != 0) {
-				files.add(fileName);	
+				files.add(fileName);
 			}
 			int idx2 = folderPath.lastIndexOf("/");
 			if (idx2 != -1){
     			String folderName = folderPath.substring(idx2 + 1, folderPath.length());
     			folderNames.add(folderName);
-			}
-			else 
+			} else {
 				folderNames.add(folderPath);
+			}
 
     	}
     	verifyFolders(folderNames);
     	verifyFiles(files);
     	count += folderNames.size();
-    	if (!flattenPaths && !excludeProjectPath)
-    		folderCount++;
+    	if (!flattenPaths && !excludeProjectPath) {
+			folderCount++;
+		}
     	assertTrue(
-    			"Number of folders expected and found not equal: expected=" + folderCount + ", actual=" + count, 
+    			"Number of folders expected and found not equal: expected=" + folderCount + ", actual=" + count,
     			folderCount == count);
 
     }
-    
+
     private void verifyFiles(List files){
     	Iterator iter = files.iterator();
     	while (iter.hasNext()){
@@ -450,51 +457,56 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     		verifyFile(file);
     	}
     }
-    
+
     private void verifyFile(String entryName){
-    	for (int i = 0; i < fileNames.length; i++){
+    	for (String fileName : fileNames) {
     		boolean dotProjectFileShouldBePresent = ".project".equals(entryName) && !flattenPaths && !excludeProjectPath;
-    		if (fileNames[i].equals(entryName) || dotProjectFileShouldBePresent)
-    			return;
+    		if (fileName.equals(entryName) || dotProjectFileShouldBePresent) {
+				return;
+			}
     	}
     	fail("Could not find file named: " + entryName);
     }
-    
+
     private void verifyFolders(Set folderNames){
     	Iterator folders = folderNames.iterator();
     	while (folders.hasNext()){
     		String folderName = (String)folders.next();
     		if (!isDirectory(folderName)){
-    			if (flattenPaths)
-    				fail(folderName + " is not an expected folder");
-    			else if (!project.getName().equals(folderName))
-    				fail(folderName + " is not an expected folder");
+    			if (flattenPaths) {
+					fail(folderName + " is not an expected folder");
+				} else if (!project.getName().equals(folderName)) {
+					fail(folderName + " is not an expected folder");
+				}
     		}
     	}
     }
-    
+
     private boolean isDirectory(String name){
-    	for (int i = 0; i < directoryNames.length; i++){
-    		if (directoryNames[i].equals(name))
-    			return true;
+    	for (String directoryName : directoryNames) {
+    		if (directoryName.equals(name)) {
+				return true;
+			}
     	}
-    	for (int i = 0; i < emptyDirectoryNames.length; i++){
-    		if (emptyDirectoryNames[i].equals(name))
-    			return true;
+    	for (String emptyDirectoryName : emptyDirectoryNames) {
+    		if (emptyDirectoryName.equals(name)) {
+				return true;
+			}
     	}
     	return false;
     }
-    
+
 	private boolean isDirectory(IResource resource){
 		return isDirectory(resource.getName());
 	}
-	
+
 	private boolean isFile(IResource resource){
-		for (int i = 0; i < fileNames.length; i++){
-			if (fileNames[i].equals(resource.getName()))
+		for (String fileName : fileNames) {
+			if (fileName.equals(resource.getName())) {
 				return true;
+			}
 		}
-		return false;		
+		return false;
 	}
-	
+
 }

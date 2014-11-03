@@ -27,8 +27,9 @@ public class ListElementActionFilter implements IActionFilter {
     private static ListElementActionFilter singleton;
 
     public static ListElementActionFilter getSingleton() {
-        if (singleton == null)
-            singleton = new ListElementActionFilter();
+        if (singleton == null) {
+			singleton = new ListElementActionFilter();
+		}
         return singleton;
     }
 
@@ -47,8 +48,9 @@ public class ListElementActionFilter implements IActionFilter {
             return value.equals(le.getName());
         } else if (name.equals(ATTR_FLAG)) {
             boolean flag = le.getFlag();
-            if (flag)
-                return value.equals(VAL_TRUE);
+            if (flag) {
+				return value.equals(VAL_TRUE);
+			}
 			return value.equals(VAL_FALSE);
         }
         return false;

@@ -102,7 +102,7 @@ public class PerspectiveSwitcherTest extends UITestCase {
 				"The perspective bar should have been created successfully", //$NON-NLS-1$
 				getPerspectiveSwitcher(window));
 	}
-	
+
 	private static Object getPerspectiveSwitcher(WorkbenchWindow window) {
 		EModelService modelService = (EModelService) window.getService(EModelService.class);
 		return modelService.find("PerspectiveSwitcher", window.getModel());

@@ -46,7 +46,7 @@ public class TitleTestEditor extends EditorPart {
     Label cdLabel;
 
     /**
-     * 
+     *
      */
     public TitleTestEditor() {
         super();
@@ -66,9 +66,10 @@ public class TitleTestEditor extends EditorPart {
 	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
 
-        if (!(input instanceof IFileEditorInput))
-            throw new PartInitException(
+        if (!(input instanceof IFileEditorInput)) {
+			throw new PartInitException(
                     "Invalid Input: Must be IFileEditorInput");
+		}
         setSite(site);
         setInput(input);
     }

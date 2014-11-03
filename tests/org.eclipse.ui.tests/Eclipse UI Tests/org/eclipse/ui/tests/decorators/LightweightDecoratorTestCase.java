@@ -21,7 +21,7 @@ public class LightweightDecoratorTestCase extends DecoratorEnablementTestCase
 
 	/**
 	 * Constructor for DecoratorTestCase.
-	 * 
+	 *
 	 * @param testName
 	 */
 	public LightweightDecoratorTestCase(String testName) {

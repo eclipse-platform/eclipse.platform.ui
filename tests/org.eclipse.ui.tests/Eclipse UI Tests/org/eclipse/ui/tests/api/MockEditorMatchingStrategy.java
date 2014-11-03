@@ -22,7 +22,7 @@ import org.eclipse.ui.ide.ResourceUtil;
 /**
  * An editor matching strategy to support the IEditorMatchingStrategyTest tests.
  * This models the scenario for PDE manifest editors described in bug 53700.
- * 
+ *
  * @since 3.1
  */
 public class MockEditorMatchingStrategy implements IEditorMatchingStrategy {

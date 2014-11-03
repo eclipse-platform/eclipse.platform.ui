@@ -28,7 +28,7 @@ public class FontDecorator implements ILightweightLabelDecorator {
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
-		
+
 		if(font == null){
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
@@ -39,7 +39,7 @@ public class FontDecorator implements ILightweightLabelDecorator {
 			});
 
 		}
-		
+
 		decoration.setFont(font);
 	}
 

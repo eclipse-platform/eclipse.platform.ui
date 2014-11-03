@@ -28,14 +28,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 41931.
- * 
+ *
  * @since 3.0
  */
 public class Bug41931Test extends UITestCase {
 
     /**
      * Constructs a new instance of this test case.
-     * 
+     *
      * @param testName
      *            The name of the test
      */
@@ -46,7 +46,7 @@ public class Bug41931Test extends UITestCase {
     /**
      * Tests that the <code>bringToTop(IWorkbenchPart)</code> correctly
      * updates the activation list.
-     * 
+     *
      * @throws CoreException
      *             If the test project cannot be created or opened.
      */

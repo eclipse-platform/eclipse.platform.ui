@@ -20,12 +20,12 @@ public class UnredoableTestOperation extends TestOperation {
 	}
 
 	boolean disposed = false;
-	
+
 	@Override
 	public boolean canRedo() {
 		return false;
 	}
-	
+
 	@Override
 	public void dispose() {
 		disposed = true;

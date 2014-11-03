@@ -23,7 +23,7 @@ public class IntroTestSuite extends TestSuite {
     }
 
     /**
-     * 
+     *
      */
     public IntroTestSuite() {
         addTest(new TestSuite(IntroPartTest.class));

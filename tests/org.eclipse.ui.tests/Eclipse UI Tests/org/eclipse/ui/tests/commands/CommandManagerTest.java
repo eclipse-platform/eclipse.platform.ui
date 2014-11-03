@@ -22,7 +22,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests some of the API on command manager.
- * 
+ *
  * @since 3.1
  */
 public final class CommandManagerTest extends UITestCase {
@@ -30,7 +30,7 @@ public final class CommandManagerTest extends UITestCase {
 	/**
 	 * An execution listener that can be attached to the command manager. It
 	 * will track which events it last heard.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private final class ExecutionListener implements IExecutionListener {
@@ -87,7 +87,7 @@ public final class CommandManagerTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandManagerTest</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */

@@ -40,14 +40,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 44460.
- * 
+ *
  * @since 3.0
  */
 public class Bug44460Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of this test case.
-	 * 
+	 *
 	 * @param testName
 	 *            The name of the test
 	 */
@@ -58,7 +58,7 @@ public class Bug44460Test extends UITestCase {
 	/**
 	 * Test that pressing "Ctrl+Shift+T" in the Team Synchronizing perspective
 	 * does not match anything.
-	 * 
+	 *
 	 * @throws CommandException
 	 *             If execution of the handler fails.
 	 * @throws CoreException

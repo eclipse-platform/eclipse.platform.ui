@@ -20,7 +20,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test for Bug 42035.
- * 
+ *
  * @since 3.0
  */
 public class Bug42035Test extends UITestCase {
@@ -28,7 +28,7 @@ public class Bug42035Test extends UITestCase {
     /**
      * Tests the given key event to see if generates the three key strokes
      * represented by the strings.
-     * 
+     *
      * @param keyEvent
      *            The key event to generate key strokes from; must not be
      *            <code>null</code>
@@ -73,7 +73,7 @@ public class Bug42035Test extends UITestCase {
 
     /**
      * Constructs a new instance of this test case.
-     * 
+     *
      * @param testName
      *            The name of the test
      */
@@ -83,7 +83,7 @@ public class Bug42035Test extends UITestCase {
 
     /**
      * Tests that "Ctrl+" generates "Ctrl+", "Ctrl+" and "Ctrl+".
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+" cannot be processed.
      */
@@ -104,7 +104,7 @@ public class Bug42035Test extends UITestCase {
     /**
      * Tests that "Ctrl+Enter" generates "Ctrl+Enter", "Ctrl+Enter" and
      * "Ctrl+Enter".
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+ENTER" cannot be processed.
      */
@@ -119,7 +119,7 @@ public class Bug42035Test extends UITestCase {
 
     /**
      * Tests that "Ctrl+J" generates "Ctrl+M", "Ctrl+M" and "Ctrl+M".
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+M" cannot be processed.
      */
@@ -135,7 +135,7 @@ public class Bug42035Test extends UITestCase {
     /**
      * Tests that "Ctrl+Shift+2" generates "Ctrl+Shift+2", "Ctrl+@" and
      * "Ctrl+Shift+@". This simulates a U.S. keyboard layout.
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+SHIFT+2", "CTRL+@" or "CTRL+SHIFT+@" cannot be
      *             processed.
@@ -152,7 +152,7 @@ public class Bug42035Test extends UITestCase {
     /**
      * Tests that "Ctrl+Shift+7" generates "Ctrl+Shift+7", "Ctrl+/" and
      * "Ctrl+Shift+/". This simulates a Swiss-German keyboard layout.
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+SHIFT+7", "CTRL+/" or "CTRL+SHIFT+/" cannot be
      *             processed.
@@ -169,7 +169,7 @@ public class Bug42035Test extends UITestCase {
     /**
      * Tests that "Ctrl+Shift+7" generates "Ctrl+Shift+7", "Ctrl+&" and
      * "Ctrl+Shift+&". This simulates a US keyboard layout.
-     * 
+     *
      * @throws ParseException
      *             If "CTRL+SHIFT+7", "CTRL+&" or "CTRL+SHIFT+&" cannot be
      *             processed.

@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
 public abstract class WorkbenchWindowDropTarget implements TestDropLocation {
 
     private IWorkbenchWindowProvider window;
-    
+
     @Override
 	public abstract String toString();
 
@@ -32,19 +32,19 @@ public abstract class WorkbenchWindowDropTarget implements TestDropLocation {
     public WorkbenchWindowDropTarget(IWorkbenchWindowProvider window) {
         this.window = window;
     }
-    
+
     public IWorkbenchWindow getWindow() {
         return window.getWorkbenchWindow();
     }
-    
+
     public Shell getShell() {
         return getWindow().getShell();
     }
-    
+
     public WorkbenchPage getPage() {
         return (WorkbenchPage)getWindow().getActivePage();
     }
-    
+
     @Override
 	public Shell[] getShells() {
         return new Shell[] {getShell()};

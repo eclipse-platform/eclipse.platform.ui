@@ -35,7 +35,7 @@ public class EditorWithInitException extends EditorPart {
     @Override
 	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
-        
+
         throw new PartInitException("This exception was thrown intentionally as part of an error handling test");
     }
 
@@ -53,7 +53,7 @@ public class EditorWithInitException extends EditorPart {
 	public void createPartControl(Composite parent) {
 
         parent.setLayout(new FillLayout());
-        
+
         Label message = new Label(parent, SWT.NONE);
         message.setText("This editor threw an exception on init. You should not be able to read this");
     }

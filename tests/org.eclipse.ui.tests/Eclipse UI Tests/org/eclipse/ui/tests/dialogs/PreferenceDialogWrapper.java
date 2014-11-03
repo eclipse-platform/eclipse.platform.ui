@@ -33,15 +33,18 @@ public class PreferenceDialogWrapper extends PreferenceDialog implements IWorkbe
 
     @Override
 	public IPreferencePage getPage(IPreferenceNode node) {
-        if (node == null)
-            return null;
+        if (node == null) {
+			return null;
+		}
 
         // Create the page if nessessary
-        if (node.getPage() == null)
-            node.createPage();
+        if (node.getPage() == null) {
+			node.createPage();
+		}
 
-        if (node.getPage() == null)
-            return null;
+        if (node.getPage() == null) {
+			return null;
+		}
 
         return node.getPage();
     }
@@ -60,6 +63,6 @@ public class PreferenceDialogWrapper extends PreferenceDialog implements IWorkbe
 	public void registerUpdateJob(Job job) {
 		//Do nothing as we are not testing this.
 	}
-    
-  
+
+
 }

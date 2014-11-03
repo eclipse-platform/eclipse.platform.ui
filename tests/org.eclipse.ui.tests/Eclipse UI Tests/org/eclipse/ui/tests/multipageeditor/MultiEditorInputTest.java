@@ -21,14 +21,14 @@ import org.eclipse.ui.part.MultiEditorInput;
 
 /**
  * Tests the API of <code>MultiPageEditorInput</code>.
- * 
+ *
  * @since 3.1
  */
 public class MultiEditorInputTest extends TestCase {
 
     /**
      * Constructs a new instance of <code>MultiPageEditorInputTest</code>.
-     * 
+     *
      * @param name
      *            The name of the test to be run.
      */
@@ -60,10 +60,10 @@ public class MultiEditorInputTest extends TestCase {
         assertTrue(a.hashCode() == a2.hashCode());
 
         assertFalse(a.equals(b));
-        
+
         assertTrue(abc.equals(abc2));
         assertTrue(abc.hashCode() == abc2.hashCode());
-        
+
         // check that differing array lengths are handled properly
         assertFalse(a.equals(abc));
         assertFalse(abc.equals(a));

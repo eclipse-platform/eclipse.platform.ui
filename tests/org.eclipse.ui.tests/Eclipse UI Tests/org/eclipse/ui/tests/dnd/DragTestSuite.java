@@ -36,13 +36,13 @@ public class DragTestSuite extends AutoTestSuite {
     }
 
     /**
-     * Whether the platform we're running on supports the detaching of views.  
+     * Whether the platform we're running on supports the detaching of views.
      * This is initialized in the following static block.
-     * 
+     *
      * @since 3.2
      */
 	private static final boolean isDetachingSupported;
-	
+
 	static {
 		Shell shell = new Shell();
 		Composite c = new Composite(shell, SWT.NONE);
@@ -52,7 +52,7 @@ public class DragTestSuite extends AutoTestSuite {
 
     public DragTestSuite() {
         super(Platform.find(TestPlugin.getDefault().getBundle(), new Path("data/dragtests.xml")));
-        
+
         String resNav = IPageLayout.ID_RES_NAV;
         String probView = IPageLayout.ID_PROBLEM_VIEW;
 
@@ -78,28 +78,22 @@ public class DragTestSuite extends AutoTestSuite {
                 new ViewDragSource(probView, true, true) };
 
         // Now generate all test cases
-        for (int i = 0; i < maximizedViewDragSources.length; i++) {
-            TestDragSource source = maximizedViewDragSources[i];
-            
+        for (TestDragSource source : maximizedViewDragSources) {
             addAllCombinations(source, getMaximizedViewDropTargets(source));
         }
-        
-        for (int i = 0; i < viewDragSources.length; i++) {
-            TestDragSource source = viewDragSources[i];
-            
+
+        for (TestDragSource source : viewDragSources) {
             addAllCombinations(source, getViewDropTargets(source));
             addAllCombinations(source, getCommonDropTargets(source));
-            
+
             // Test dragging onto a detached window
             addAllCombinationsDetached(source, getDetachedWindowDropTargets(source));
         }
-      
-        for (int i = 0; i < editorDragSources.length; i++) {
-            TestDragSource source = editorDragSources[i];
-            
+
+        for (TestDragSource source : editorDragSources) {
             addAllCombinations(source, getEditorDropTargets(source));
             addAllCombinations(source, getCommonDropTargets(source));
-            
+
             // Test dragging onto a detached window
             addAllCombinationsDetached(source, getDetachedWindowDropTargets(source));
         }
@@ -111,39 +105,39 @@ public class DragTestSuite extends AutoTestSuite {
      * that the view will become un-maximized -- the regular view test cases will excercise
      * the remainder of the view dragging code). We need to drag each kind of maximized view
      * to something that couldn't be seen while the view is maximized -- like the editor area).
-     * 
+     *
      * @param dragSource
      * @return
      * @since 3.1
      */
     private TestDropLocation[] getMaximizedViewDropTargets(IWorkbenchWindowProvider originatingWindow) {
-        return new TestDropLocation[] { 
-                new EditorAreaDropTarget(originatingWindow, SWT.RIGHT) };        
+        return new TestDropLocation[] {
+                new EditorAreaDropTarget(originatingWindow, SWT.RIGHT) };
     }
-    
+
     private TestDropLocation[] getCommonDropTargets(IWorkbenchWindowProvider dragSource) {
-        TestDropLocation[] targets = { 
+        TestDropLocation[] targets = {
             // Test dragging to the edges of the workbench window
             new WindowDropTarget(dragSource, SWT.TOP),
             new WindowDropTarget(dragSource, SWT.BOTTOM),
-            new WindowDropTarget(dragSource, SWT.LEFT), 
+            new WindowDropTarget(dragSource, SWT.LEFT),
             new WindowDropTarget(dragSource, SWT.RIGHT) };
-        	
+
 		return targets;
     }
-    
+
     /**
      * Return all drop targets that only apply to views, given the window being dragged from.
-     * 
+     *
      * @param provider
      * @return
      * @since 3.1
      */
     private TestDropLocation[] getViewDropTargets(IWorkbenchWindowProvider dragSource) {
-        
+
         String resNav = IPageLayout.ID_RES_NAV;
         String probView = IPageLayout.ID_PROBLEM_VIEW;
-        
+
         TestDropLocation[] targets = new TestDropLocation[] {
             // Editor area
             new EditorAreaDropTarget(dragSource, SWT.LEFT),
@@ -159,7 +153,7 @@ public class DragTestSuite extends AutoTestSuite {
             new ViewDropTarget(dragSource, resNav, SWT.TOP),
 
             // Problems view (a view that is in a stack)
-            // Omit the top from this test, since the meaning of dropping on the top border of 
+            // Omit the top from this test, since the meaning of dropping on the top border of
             // a stack may change in the near future
             new ViewDropTarget(dragSource, probView, SWT.LEFT),
             new ViewDropTarget(dragSource, probView, SWT.RIGHT),
@@ -171,17 +165,17 @@ public class DragTestSuite extends AutoTestSuite {
             null, //new FastViewBarDropTarget(dragSource),
 
             // View tabs
-            new ViewTabDropTarget(dragSource, resNav), 
+            new ViewTabDropTarget(dragSource, resNav),
             new ViewTabDropTarget(dragSource, probView),
             new ViewTitleDropTarget(dragSource, probView),
             };
-        	
+
 		return targets;
     }
-    
+
     /**
      * Return all drop targets that apply to detached windows, given the window being dragged from.
-     * 
+     *
      * @param provider
      * @return
      * @since 3.1
@@ -194,7 +188,7 @@ public class DragTestSuite extends AutoTestSuite {
             new ViewTabDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId1),
             new DetachedDropTarget()
         };
-        
+
 		return targets;
     }
 
@@ -204,42 +198,43 @@ public class DragTestSuite extends AutoTestSuite {
         return new TestDropLocation[] {
         // A view
                 new ViewDropTarget(originatingWindow, resNav, SWT.CENTER),
-    
+
                 // A stand-alone editor
                 new EditorDropTarget(originatingWindow, 2, SWT.LEFT),
                 new EditorDropTarget(originatingWindow, 2, SWT.RIGHT),
                 new EditorDropTarget(originatingWindow, 2, SWT.TOP),
                 new EditorDropTarget(originatingWindow, 2, SWT.BOTTOM),
                 new EditorDropTarget(originatingWindow, 2, SWT.CENTER),
-    
+
                 // Editors (a stack of editors)
                 new EditorDropTarget(originatingWindow, 0, SWT.LEFT),
                 new EditorDropTarget(originatingWindow, 0, SWT.RIGHT),
                 new EditorDropTarget(originatingWindow, 0, SWT.BOTTOM),
                 new EditorDropTarget(originatingWindow, 0, SWT.CENTER),
                 new EditorTabDropTarget(originatingWindow, 0),
-                new EditorTitleDropTarget(originatingWindow, 0), 
+                new EditorTitleDropTarget(originatingWindow, 0),
                 };
     }
-    
+
     private void addAllCombinations(TestDragSource dragSource,
             TestDropLocation[] dropTargets) {
 
-        for (int destId = 0; destId < dropTargets.length; destId++) {
-        	if (dropTargets[destId] == null)
-        		continue;
-        	
-            DragTest newTest = new DragTest(dragSource, dropTargets[destId], getLog());
+        for (TestDropLocation dropTarget : dropTargets) {
+        	if (dropTarget == null) {
+				continue;
+			}
+
+            DragTest newTest = new DragTest(dragSource, dropTarget, getLog());
             addTest(newTest);
         }
     }
-    
+
     private void addAllCombinationsDetached(TestDragSource dragSource,
             TestDropLocation[] dropTargets) {
 
     	if (isDetachingSupported) {
-	        for (int destId = 0; destId < dropTargets.length; destId++) {
-	            DragTest newTest = new DetachedWindowDragTest(dragSource, dropTargets[destId], getLog());
+	        for (TestDropLocation dropTarget : dropTargets) {
+	            DragTest newTest = new DetachedWindowDragTest(dragSource, dropTarget, getLog());
 	            addTest(newTest);
 	        }
     	}

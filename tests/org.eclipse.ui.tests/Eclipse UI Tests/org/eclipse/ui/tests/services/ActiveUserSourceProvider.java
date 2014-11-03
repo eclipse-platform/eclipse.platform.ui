@@ -20,7 +20,7 @@ import org.eclipse.ui.ISources;
 /**
  * A registered source provider that can update variables for the
  * IEvaluationService.
- * 
+ *
  * @since 3.4
  */
 public class ActiveUserSourceProvider extends AbstractSourceProvider {

@@ -35,7 +35,7 @@ public class EditorTabDropTarget extends WorkbenchWindowDropTarget {
 	public String toString() {
         return "editor " + editorIdx + " tab area";
     }
-    
+
     @Override
 	public Shell getShell() {
     	return getPart().getSite().getShell();

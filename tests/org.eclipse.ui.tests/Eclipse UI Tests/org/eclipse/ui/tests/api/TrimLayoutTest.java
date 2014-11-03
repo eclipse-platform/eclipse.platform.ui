@@ -29,7 +29,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Test to exercise the trim layout save/restore/modify support.
- * 
+ *
  * @since 3.2
  */
 public class TrimLayoutTest extends UITestCase {
@@ -55,7 +55,7 @@ public class TrimLayoutTest extends UITestCase {
 
 	/**
 	 * Will test that the trim area IDs are returned.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testGetIDs() throws Throwable {
@@ -67,30 +67,30 @@ public class TrimLayoutTest extends UITestCase {
 
 	/**
 	 * Test the basic trim layout of a workbench window.
-	 * 
+	 *
 	 * @throws Throwable
 	 *             on error
 	 */
 	public void testTrimInformation() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();		
+		ITrimManager trimManager = window.getTrimManager();
 		validateDefaultBottomLayout(trimManager);
 	}
 
 	/**
 	 * Swap the status line with the ProgressRegion, and check that the control
 	 * order has been updated.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMoveStatusLine() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();		
+		ITrimManager trimManager = window.getTrimManager();
 		validateDefaultBottomLayout(trimManager);
-		
+
 		// Capture the ids of the 1st and 3rd elements
 		@SuppressWarnings("rawtypes")
-		List trim = trimManager.getAreaTrim(SWT.BOTTOM);		
+		List trim = trimManager.getAreaTrim(SWT.BOTTOM);
 		String id1 = ((IWindowTrim) trim.get(1)).getId();
 		String id3 = ((IWindowTrim) trim.get(3)).getId();
 
@@ -108,17 +108,17 @@ public class TrimLayoutTest extends UITestCase {
 	/**
 	 * Swap the fast view bar and the progress region, and then check that the
 	 * controls have been updated.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testMoveFastViewBar() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();				
+		ITrimManager trimManager = window.getTrimManager();
 		validateDefaultBottomLayout(trimManager);
-		
+
 		// Capture the ids of the 1st and 3rd elements
 		@SuppressWarnings("rawtypes")
-		List trim = trimManager.getAreaTrim(SWT.BOTTOM);		
+		List trim = trimManager.getAreaTrim(SWT.BOTTOM);
 		String id0 = ((IWindowTrim) trim.get(0)).getId();
 		String id3 = ((IWindowTrim) trim.get(3)).getId();
 
@@ -137,13 +137,13 @@ public class TrimLayoutTest extends UITestCase {
 	 * This test isn't really about removing trim, just testing that the if the
 	 * heap status trim is not in the trim list, it's removed from the bottom
 	 * trim area.
-	 * 
+	 *
 	 * @throws Throwable
 	 *             on error
 	 */
 	public void testRemoveHeapStatus() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();		
+		ITrimManager trimManager = window.getTrimManager();
 		validateDefaultBottomLayout(trimManager);
 
 		// Remove the Heap Status
@@ -162,7 +162,7 @@ public class TrimLayoutTest extends UITestCase {
 
 	/**
 	 * Test the public API to add a piece of trim to the end of the trim area.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testAddExtraTrim() throws Throwable {
@@ -172,7 +172,7 @@ public class TrimLayoutTest extends UITestCase {
 				"The window should have it's top banner in place",
 				trimManager
 						.getTrim("org.eclipse.ui.internal.WorkbenchWindow.topBar") != null);
-		
+
 		TrimList trimList = new TrimList(window.getShell());
 		trimManager.addTrim(ITrimManager.TOP, trimList);
 		window.getShell().layout();
@@ -185,7 +185,7 @@ public class TrimLayoutTest extends UITestCase {
 	/**
 	 * Test the public API to add a piece of trim before an existing piece of
 	 * trim.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testPlaceExtraTrim() throws Throwable {
@@ -200,7 +200,7 @@ public class TrimLayoutTest extends UITestCase {
 		b.setText("B");
 		IWindowTrim buttonTrim = new WindowTrimProxy(b, BUTTON_B_ID,
 				"Button B", SWT.TOP | SWT.BOTTOM, false);
-		
+
 		// find an existing piece of trim to use as a reference
 		IWindowTrim trim = trimManager.getTrim(TrimList.TRIM_LIST_ID);
 		assertTrue(trimList == trim);
@@ -214,7 +214,7 @@ public class TrimLayoutTest extends UITestCase {
 
 	/**
 	 * Test that the save-state is recording trim layout.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testSaveWorkbenchWindow() throws Throwable {
@@ -239,24 +239,24 @@ public class TrimLayoutTest extends UITestCase {
 	/**
 	 * Test that the workbench window can restore trim state from an
 	 * <code>IMemento</code>.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRestoreStateWithChange() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
 		ITrimManager trimManager = window.getTrimManager();
 		validateDefaultBottomLayout(trimManager);
-		
+
 		int bottomTrimCount = trimManager.getAreaTrim(SWT.BOTTOM).size();
-		
+
 		// Create a memento and write the state to it...
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
 //		IStatus rc = window.saveState(state);
-		
+
 		// Did the save work?
 //		assertEquals(IStatus.OK, rc.getSeverity());
-		
+
 		// Does it have the right info?
 		IMemento trimMemento = state.getChild(IWorkbenchConstants.TAG_TRIM);
 		assertNotNull(trimMemento);
@@ -303,24 +303,24 @@ public class TrimLayoutTest extends UITestCase {
 	/**
 	 * Test that the workbench window can restore trim state from an
 	 * <code>IMemento</code> where a trim item has moved sides.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRestoreStateWithLocationChange() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
 		ITrimManager trimManager = window.getTrimManager();
 		validateDefaultBottomLayout(trimManager);
-		
+
 		int bottomTrimCount = trimManager.getAreaTrim(SWT.BOTTOM).size();
 
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
-		
+
 //		IStatus rc = window.saveState(state);
-		
+
 		// FIXME: window.saveState() was a compile error
 		fail("window.saveState() was a compile error");
-		
+
 //		assertEquals(IStatus.OK, rc.getSeverity());
 		IMemento trim = state.getChild(IWorkbenchConstants.TAG_TRIM);
 		assertNotNull(trim);
@@ -340,7 +340,7 @@ public class TrimLayoutTest extends UITestCase {
 
 		children = bottomTrim.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
 		assertEquals(bottomTrimCount, children.length);
-		
+
 		// kinda fake to remove the fast view bar from the bottom
 		String id = children[0].getID();
 		children[0].putString(IMemento.TAG_ID, children[3].getID());
@@ -348,9 +348,9 @@ public class TrimLayoutTest extends UITestCase {
 		IMemento left = trim.createChild(IWorkbenchConstants.TAG_TRIM_AREA,
 				new Integer(SWT.LEFT).toString());
 		left.createChild(IWorkbenchConstants.TAG_TRIM_ITEM, id);
-		
+
 //		window.restoreState(state, window.getActivePage().getPerspective());
-		
+
 		// FIXME: window.restoreState() was a compile error
 		fail("window.restoreState() was a compile error");
 
@@ -368,19 +368,19 @@ public class TrimLayoutTest extends UITestCase {
 	 * These tests use 'internal' methods from the <code>WorkbenchWindow</code>.
 	 * This method ensures that the tests will fail if the <code>openTestWindow</code>
 	 * ever returns anything else
-	 * 
-	 * @return The type-safe WorkbenchWindow 
+	 *
+	 * @return The type-safe WorkbenchWindow
 	 */
 	private WorkbenchWindow openWorkbenchWindow() {
 		IWorkbenchWindow iw = openTestWindow();
 		assertTrue("Window must be a WorkbenchWindow", (iw instanceof WorkbenchWindow));
-		
+
 		return (WorkbenchWindow)iw;
 	}
-	
+
 	/**
 	 * Swap 2 IDs in the description.
-	 * 
+	 *
 	 * @param descs
 	 *            the description array
 	 * @param pos1
@@ -397,7 +397,7 @@ public class TrimLayoutTest extends UITestCase {
 
 	/**
 	 * Get the position of the given trim element from the trim
-	 * 
+	 *
 	 * @param trimIds The list of ids returned by the TrimManager
 	 * @param id The id of the trim to get the index of
 	 * @return The zero-based index or -1 if not found
@@ -407,18 +407,19 @@ public class TrimLayoutTest extends UITestCase {
 		int index = 0;
 		for (Iterator iterator = trimIds.iterator(); iterator.hasNext();) {
 			IWindowTrim trim = (IWindowTrim) iterator.next();
-			if (id.equals(trim.getId()))
+			if (id.equals(trim.getId())) {
 				return index;
+			}
 			index++;
 		}
-		
+
 		return -1;
 	}
-	
+
 	/**
 	 * Ensure that all the base trim is there and has
 	 * the correct -relative- positions
-	 * 
+	 *
 	 * @param descs The ordered list of trim descriptors
 	 * for the bottom trim area
 	 */
@@ -439,15 +440,15 @@ public class TrimLayoutTest extends UITestCase {
 		assertTrue("Heap Status not found", hsIndex != -1);
 		int prIndex = getIndexOf(descs, "org.eclipse.ui.internal.progress.ProgressRegion");
 		assertTrue("Progress Region not found", prIndex != -1);
-		
+
 		assertTrue("Fast View out of position", fvbIndex < slIndex);
 		assertTrue("Status Line out of position", slIndex < hsIndex);
 		assertTrue("Heap Status out of position", hsIndex < prIndex);
 	}
-	
+
 	/**
 	 * Match the returned set of IDs exactly with expected IDs.
-	 * 
+	 *
 	 * @param expectedIDs
 	 *            the string IDs in order.
 	 * @param retrievedIDs
@@ -467,7 +468,7 @@ public class TrimLayoutTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		
+
 		// Ensure that the HeapStatus is showing
 		fHeapStatusPref = PrefUtil.getAPIPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR);

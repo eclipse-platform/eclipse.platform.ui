@@ -22,7 +22,7 @@ public class DragDropPerspectiveFactory implements IPerspectiveFactory {
 
 	// Id's needed by the 'Detached Window' Drag / Drop tests
 	public static final String viewFolderId = "oorg.eclipse.ui.test.dnd.detached.MockFolder1";
-	
+
 	public static final String dropViewId1 = "org.eclipse.ui.tests.api.MockViewPart";
 	public static final String dropViewId2 = "org.eclipse.ui.tests.api.MockViewPart2";
 	public static final String dropViewId3 = "org.eclipse.ui.tests.api.MockViewPart3";
@@ -45,7 +45,7 @@ public class DragDropPerspectiveFactory implements IPerspectiveFactory {
                 IPageLayout.RIGHT, 0.5f, IPageLayout.ID_EDITOR_AREA);
         folder2.addPlaceholder(dropViewId1);
         folder2.addPlaceholder(dropViewId2);
-        
+
         layout.addPlaceholder(dropViewId3, IPageLayout.BOTTOM, 0.5f, viewFolderId);
     }
 }

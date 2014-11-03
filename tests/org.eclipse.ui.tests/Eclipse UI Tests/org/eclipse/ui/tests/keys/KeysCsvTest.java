@@ -27,7 +27,7 @@ public class KeysCsvTest extends TestCase {
 		String val = Util.replaceAll(src, "\"", "\"\"");
 		assertEquals(dest, val);
 	}
-	
+
 	public void testReplaceFirst() throws Exception {
 		final String src = "\"Hello world!";
 		final String dest = "\"\"Hello world!";

@@ -37,11 +37,11 @@ import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
  * Tests the Operations Framework API.
- * 
+ *
  * @since 3.1
  */
 public class OperationsAPITest extends TestCase {
-	
+
 	// number of operations to perform a stress test
 	static int STRESS_NUM = 5000;
 
@@ -50,7 +50,7 @@ public class OperationsAPITest extends TestCase {
 
 	IUndoableOperation op1, op2, op3, op4, op5, op6, localA, localB, localC;
 	ICompositeOperation refactor;
-	
+
 	int preExec, postExec, preUndo, postUndo, preRedo, postRedo, add, remove, notOK, changed = 0;
 	IOperationHistoryListener listener;
 
@@ -92,7 +92,7 @@ public class OperationsAPITest extends TestCase {
 		history.execute(op5, null, null);
 		history.execute(op6, null, null);
 		preExec = 0; postExec = 0;
-		preUndo = 0; postUndo = 0; 
+		preUndo = 0; postUndo = 0;
 		preRedo = 0; postRedo = 0;
 		add = 0; remove = 0; notOK = 0;
 		listener = new IOperationHistoryListener() {
@@ -192,14 +192,14 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getRedoHistory(contextB).length == 0);
 		assertTrue(history.getUndoHistory(contextB).length == 1);
 	}
-	
+
 	public void testLocalHistoryLimits() throws ExecutionException {
 		history.setLimit(contextC, 2);
 		assertTrue(history.getUndoHistory(contextC).length == 2);
 		// op2 should have context c3 removed as part of forcing the limit
 		assertFalse(op2.hasContext(contextC));
 		assertTrue(history.getUndoHistory(contextB).length == 2);
-		
+
 		history.setLimit(contextB, 1);
 		assertTrue(history.getUndoHistory(contextB).length == 1);
 		history.undo(contextB, null, null);
@@ -207,13 +207,13 @@ public class OperationsAPITest extends TestCase {
 		history.add(op2);
 		assertSame(history.getUndoOperation(contextB), op2);
 		assertTrue(history.getUndoHistory(contextB).length == 1);
-		
+
 		history.setLimit(contextA, 0);
 		assertTrue(history.getUndoHistory(contextA).length == 0);
 		history.add(op1);
-		assertTrue(history.getUndoHistory(contextA).length == 0);		
+		assertTrue(history.getUndoHistory(contextA).length == 0);
 	}
-	
+
 	public void testOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -231,7 +231,7 @@ public class OperationsAPITest extends TestCase {
 		op.removeContext(contextB);
 		assertFalse("Operation should not have context", op.hasContext(contextB));
 	}
-	
+
 	public void testExceptionDuringOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -257,15 +257,15 @@ public class OperationsAPITest extends TestCase {
 		history.add(op1);
 		history.execute(op2, null, null);
 		history.closeOperation(true, true, IOperationHistory.EXECUTE);
-		// when we undo the batch operation, the triggering op will throw the 
-		// ForcedException.  This is expected. 
+		// when we undo the batch operation, the triggering op will throw the
+		// ForcedException.  This is expected.
 		try {
 			batch.undo(null, null);
 		} catch (ForcedException e) {
 			// expected, no cause for panic.
 		}
-		
-		// See bug #134238.  Before this bug was fixed, we would get an 
+
+		// See bug #134238.  Before this bug was fixed, we would get an
 		// IllegalStateException upon trying to open a composite.  If cleanup
 		// after the above exception is done, then we shouldn't get an
 		// IllegalStateException.
@@ -276,7 +276,7 @@ public class OperationsAPITest extends TestCase {
 			assertTrue("IllegalStateException - trying to open an operation before a close", false);
 		}
 	}
-	
+
 	public void test94459() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -291,7 +291,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Operation should be batching", op == batch);
 		assertFalse("Operation should not have context", op.hasContext(contextA));
 	}
-	
+
 	public void test94459AllContextsEmpty() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -309,7 +309,7 @@ public class OperationsAPITest extends TestCase {
 	}
 
 	/*
-	 * Test updated for 3.2 in light of 
+	 * Test updated for 3.2 in light of
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123316
 	 * The expected behavior has changed.
 	 */
@@ -322,7 +322,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Operation should still be in redo history", history.getRedoOperation(contextA) == op);
 		assertFalse("Operation should not be disposed", op.disposed);
 	}
-	
+
 	/*
 	 * Similar to the test above, except that we are going to change the
 	 * operation history limit and check that we disposed the operation properly.
@@ -335,8 +335,8 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Should be nothing to undo", history.canUndo(contextA));
 		assertTrue("Operation should be disposed", op.disposed);
 	}
-	
-	
+
+
 	public void testUnsuccessfulOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -355,7 +355,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("DONE should not be sent while batching", postExec == 0);
 		assertTrue("ADDED should not have been sent while batching", add == 0);
 	}
-	
+
 	public void testNotAddedOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -373,7 +373,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("DONE notification should have been received", postExec == 1);
 		assertTrue("ADDED should not have occurred or be sent while batching", add == 0);
 	}
-	
+
 	public void testMultipleOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		boolean failure = false;
@@ -397,7 +397,7 @@ public class OperationsAPITest extends TestCase {
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertSame("First operation should be closed", op, comp1);
 	}
-	
+
 	public void testAbortedOpenOperation() throws ExecutionException {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(new TriggeredOperations(op1, history), IOperationHistory.EXECUTE);
@@ -462,10 +462,12 @@ public class OperationsAPITest extends TestCase {
 			}
 			@Override
 			public IStatus proceedUndoing(IUndoableOperation o, IOperationHistory h, IAdaptable a) {
-				if (o == op6)
+				if (o == op6) {
 					return Status.CANCEL_STATUS;
-				if (o == op5)
+				}
+				if (o == op5) {
 					return new OperationStatus(IStatus.ERROR, "org.eclipse.ui.tests", 0, "Error", null);
+				}
 				return Status.OK_STATUS;
 			}
 		});
@@ -513,19 +515,19 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Should be able to undo in c2", history.canUndo(contextB));
 		assertTrue("Should be able to undo in c3", history.canUndo(contextC));
 	}
-	
+
 	public void testHistoryFactory() {
 		IOperationHistory anotherHistory = OperationHistoryFactory.getOperationHistory();
 		assertNotNull(anotherHistory);
 	}
-	
+
 	public void testOperationChanged() {
 		history.operationChanged(op1);
 		history.operationChanged(op2);
 		history.operationChanged(new TestOperation("New op"));
 		assertTrue("should not notify about changes if not in the history", changed == 2);
 	}
-	
+
 	// the setup for the infamous (local conflict on top of composite and composite gets pruned) case
 	private void setup87675() throws ExecutionException {
 		// clear everything out.  special setup for this test case
@@ -535,7 +537,7 @@ public class OperationsAPITest extends TestCase {
 		contextC = new ObjectUndoContext("C");
 		contextW = new ObjectUndoContext("W");
 		history.addOperationApprover(new LinearUndoEnforcer());
-		
+
 		// local edits on A, B, C are added first
 		IUndoableOperation op = new TestOperation("op1a");
 		op.addContext(contextA);
@@ -546,7 +548,7 @@ public class OperationsAPITest extends TestCase {
 		op = new TestOperation("op1c");
 		op.addContext(contextC);
 		history.execute(op, null, null);
-		
+
 		// now we create the "refactoring op" which touches them all
 		op = new TestOperation("Refactoring");
 		op.addContext(contextW);
@@ -562,20 +564,20 @@ public class OperationsAPITest extends TestCase {
 		localC = new TestOperation("op2c");
 		localC.addContext(contextC);
 		history.execute(localC, null, null);
-		
+
 		// close off the composite
 		history.closeOperation(true, true, IOperationHistory.EXECUTE);
-		
+
 		// subsequent local edit to C
 		op = new TestOperation("op3c");
 		op.addContext(contextC);
 		history.execute(op, null, null);
 	}
-	
+
 	public void test87675_split() throws ExecutionException {
 		setup87675();
 		IUndoableOperation op;
-		
+
 		// check setup
 		op = history.getUndoOperation(contextA);
 		assertTrue("Refactoring should be next op for context A", op == refactor);
@@ -589,10 +591,10 @@ public class OperationsAPITest extends TestCase {
 		// try a bogus undo
 		IStatus status = history.undo(contextW, null, null);
 		assertFalse("Undo should not be permitted due to linear conflict", status.isOK());
-		
+
 		// prune the history for contextW
 		history.dispose(contextW, true, true, false);
-		
+
 		// refactoring op should have been broken up into pieces
 		op = history.getUndoOperation(contextA);
 		assertTrue("Local edit A should be atomic", op == localA);
@@ -600,23 +602,23 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Local edit B should be atomic", op == localB);
 		op = history.getUndoOperation(contextC);
 		assertFalse("Local edit C should not be refactoring edit", op == localC);
-		
+
 		// now the refactoring C edit should be the next one
 		history.undo(contextC, null, null);
 		op = history.getUndoOperation(contextC);
 		assertTrue("Local edit C should be refactoring edit", op == localC);
 	}
-	
+
 	public void test87675_undoredo() throws ExecutionException {
 		setup87675();
 		IUndoableOperation op;
-		
+
 		// undo the local edit to C
 		history.undo(contextC, null, null);
-		
+
 		// undo the refactoring operation via context C
 		history.undo(contextC, null, null);
-		
+
 		// check that there are no new operations in the undo list for A, B, C
 		op = history.getUndoOperation(contextC);
 		assertTrue("Local edit C should be original edit", op.getLabel().equals("op1c"));
@@ -626,20 +628,20 @@ public class OperationsAPITest extends TestCase {
 
 		op = history.getUndoOperation(contextA);
 		assertTrue("Local edit A should be original edit", op.getLabel().equals("op1a"));
-		
+
 		// test that the redo operation has all contexts
 		op = history.getRedoOperation(contextW);
 		assertTrue("operation should have context A", op.hasContext(contextA));
 		assertTrue("operation should have context B", op.hasContext(contextB));
 		assertTrue("operation should have context C", op.hasContext(contextC));
-		
+
 		// now redo the operation
 		history.redo(contextA, null, null);
-		
+
 		// test that the next undo is our refactoring operation
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("operation should have context W", op.hasContext(contextW));
-		
+
 		// undo again and check that no side effect ops were left on the undo stack
 		history.undo(contextW, null, null);
 
@@ -651,9 +653,9 @@ public class OperationsAPITest extends TestCase {
 
 		op = history.getUndoOperation(contextA);
 		assertTrue("Local edit A should be original edit", op.getLabel().equals("op1a"));
-		
+
 	}
-	
+
 	public void testOperationApprover2() throws ExecutionException {
 		// clear out the history
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -666,8 +668,9 @@ public class OperationsAPITest extends TestCase {
 			}
 			@Override
 			public IStatus proceedExecuting(IUndoableOperation o, IOperationHistory h, IAdaptable a) {
-				if (o == op6)
+				if (o == op6) {
 					return Status.CANCEL_STATUS;
+				}
 				return Status.OK_STATUS;
 			}
 			@Override
@@ -678,13 +681,13 @@ public class OperationsAPITest extends TestCase {
 		IStatus status = history.execute(op1, null, null);
 		assertTrue(status.isOK());
 		assertTrue(preExec == 1 && postExec == 1);
-		
+
 		status = history.execute(op6, null, null);
 		assertFalse(status.isOK());
 		// listener counts should not have changed
 		assertTrue(preExec == 1 && postExec == 1);
 	}
-	
+
 	public void testReplaceContext() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -710,9 +713,9 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should not have context", op1.hasContext(contextC));
 		assertTrue("Operation should have context", op2.hasContext(contextC));
 		assertTrue("Operation should have context", op3.hasContext(contextC));
-	
+
 	}
-	
+
 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=128117
 	// Test that context is removed from a triggered operations.
 	public void test128117simple() throws ExecutionException {
@@ -734,7 +737,7 @@ public class OperationsAPITest extends TestCase {
 		op.removeContext(context);
 		assertFalse("Operation should have removed top level context", op.hasContext(context));
 	}
-	
+
 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=128117
 	// Test that context is removed from a triggered operations after recompute of contexts.
 	public void test128117complex() throws ExecutionException {
@@ -758,7 +761,7 @@ public class OperationsAPITest extends TestCase {
 		op.removeContext(context);
 		assertFalse("Operation should have removed top level context", op.hasContext(context));
 	}
-	
+
 	public void testStressTestAPI() throws ExecutionException {
 		history.setLimit(contextA, STRESS_NUM);
 		for (int i=0; i < STRESS_NUM; i++) {
@@ -778,7 +781,7 @@ public class OperationsAPITest extends TestCase {
 			}
 		}
 	}
-	
+
 	public void test159305() throws ExecutionException {
 		final int [] approvalCount = new int[1];
 		IOperationApprover approver;
@@ -800,13 +803,13 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Operation approver should run only once for linear undo", approvalCount[0] == 1);
 		history.redo(contextB, null, null);
 		assertTrue("Operation approver should run only once for linear redo", approvalCount[0] == 0);
-		
+
 		// approval should have only run once for direct undo
 		history.undoOperation(op5, null, null);
 		assertTrue("Operation approver should run only once for direct undo", approvalCount[0]== 1);
 		history.redoOperation(op5, null, null);
 		assertTrue("Operation approver should run only once for direct redo", approvalCount[0]== 0);
-		
+
 		// cleanup
 		history.removeOperationApprover(approver);
 	}

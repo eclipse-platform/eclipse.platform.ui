@@ -48,10 +48,11 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
 
         DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
                 .getDecoratorManager().getAllDecoratorDefinitions();
-        for (int i = 0; i < definitions.length; i++) {
-            if (definitions[i].getId().equals(
-                    "org.eclipse.ui.tests.decorators.lightweightdecorator"))
-                definition = definitions[i];
+        for (DecoratorDefinition definition2 : definitions) {
+            if (definition2.getId().equals(
+                    "org.eclipse.ui.tests.decorators.lightweightdecorator")) {
+				definition = definition2;
+			}
         }
     }
 

@@ -47,8 +47,8 @@ public class IEditorActionBarContributorTest extends UITestCase {
     }
 
     public void testInit() throws Throwable {
-        // From javadoc: "Initializes this contributor, which is expected to 
-        // add contributions as required to the given action bars and global 
+        // From javadoc: "Initializes this contributor, which is expected to
+        // add contributions as required to the given action bars and global
         // action handlers."
 
         // Open a part.

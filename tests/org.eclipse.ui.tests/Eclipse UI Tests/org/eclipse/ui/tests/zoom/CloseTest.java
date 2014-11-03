@@ -22,40 +22,40 @@ public abstract class CloseTest extends ZoomTestCase {
     public CloseTest(String name) {
         super(name);
     }
-    
+
     public abstract IWorkbenchPart getStackedPart1();
     public abstract IWorkbenchPart getStackedPart2();
     public abstract IWorkbenchPart getUnstackedPart();
-    
+
     /**
      * <p>Test: Zoom a part and hide an inactive fast view</p>
      * <p>Expected result: Part remains zoomed</p>
      */
     public void testCloseInactiveFastView() {
         IWorkbenchPart zoomPart = getStackedPart1();
-        
+
         zoom(zoomPart);
         close(fastView);
-        
+
         assertZoomed(zoomPart);
         assertActive(zoomPart);
     }
-    
+
     /**
      * <p>Test: Zoom a part, activate a fast view, then hide the fast view</p>
      * <p>Expected result: Part remains zoomed</p>
      */
     public void testCloseActiveFastView() {
         IWorkbenchPart zoomPart = getStackedPart1();
-        
+
         zoom(zoomPart);
         page.activate(fastView);
         close(fastView);
-        
+
         assertZoomed(zoomPart);
         assertActive(zoomPart);
     }
-    
+
     /**
      * <p>Test: Activate an unstacked view, zoom and activate a stacked part, then close the active part.</p>
      * <p>Expected result: Stack remains zoomed, another part in the zoomed stack is active</p>
@@ -66,11 +66,11 @@ public abstract class CloseTest extends ZoomTestCase {
         IWorkbenchPart zoomPart = getStackedPart1();
         IWorkbenchPart otherStackedPart = getStackedPart2();
         IWorkbenchPart unstackedPart = unstackedView;
-        
+
         page.activate(unstackedPart);
         zoom(zoomPart);
         close(zoomPart);
-                
+
         assertZoomed(otherStackedPart);
         assertActive(otherStackedPart);
     }
@@ -85,11 +85,11 @@ public abstract class CloseTest extends ZoomTestCase {
         IWorkbenchPart zoomPart = getStackedPart1();
         IWorkbenchPart otherStackedPart = getStackedPart2();
         IWorkbenchPart unstackedPart = editor3;
-        
+
         page.activate(unstackedPart);
         zoom(zoomPart);
         close(zoomPart);
-        
+
         assertZoomed(otherStackedPart);
         assertActive(otherStackedPart);
     }
@@ -97,21 +97,21 @@ public abstract class CloseTest extends ZoomTestCase {
     /**
      * <p>Test: Activate an unstacked editor, activate a stacked part, then close the active part.</p>
      * <p>Expected result: The unstacked part becomes active</p>
-     * <p>Note: This isn't really a zoom test, but it ensures that the behavior tested by 
+     * <p>Note: This isn't really a zoom test, but it ensures that the behavior tested by
      *    testHideZoomedStackedPartAfterActivatingEditor does not affect activation when there is no zoom.</p>
      */
     public void testCloseUnzoomedStackedPartAfterActivatingEditor() {
         IWorkbenchPart activePart = getStackedPart1();
         IWorkbenchPart unstackedPart = editor3;
-        
+
         page.activate(unstackedPart);
         page.activate(activePart);
         close(activePart);
-        
+
         assertZoomed(null);
         assertActive(unstackedPart);
     }
-        
+
     /**
      * <p>Test: Zoom an unstacked part and close it.</p>
      * <p>Expected result: The page is unzoomed and the previously active part becomes active</p>
@@ -121,7 +121,7 @@ public abstract class CloseTest extends ZoomTestCase {
     public void testCloseZoomedUnstackedPartAfterActivatingEditor() {
         IWorkbenchPart previousActive = editor1;
         IWorkbenchPart zoomedPart = getUnstackedPart();
-        
+
         page.activate(previousActive);
         zoom(zoomedPart);
         close(zoomedPart);
@@ -136,7 +136,7 @@ public abstract class CloseTest extends ZoomTestCase {
      */
     public void testCloseHiddenUnstackedEditor() {
         IWorkbenchPart zoomedPart = getStackedPart1();
-        
+
         // Activate another editor to ensure that we aren't closing the active editor
         page.activate(editor1);
         zoom(zoomedPart);
@@ -145,19 +145,19 @@ public abstract class CloseTest extends ZoomTestCase {
         assertZoomed(zoomedPart);
         assertActive(zoomedPart);
     }
-    
+
     /**
      * <p>Test: Zoom a stacked part and close an inactive, unstacked view.</p>
      * <p>Expected result: No change in activation or zoom</p>
      */
     public void testCloseHiddenUnstackedView() {
         IWorkbenchPart zoomedPart = getStackedPart1();
-        
+
         zoom(zoomedPart);
         close(unstackedView);
-        
+
         assertZoomed(zoomedPart);
         assertActive(zoomedPart);
     }
-    
+
 }

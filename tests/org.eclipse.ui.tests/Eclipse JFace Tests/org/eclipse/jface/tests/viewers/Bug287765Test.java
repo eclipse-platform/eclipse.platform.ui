@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class Bug287765Test extends TestCase {
 	private TreeViewer treeViewer;

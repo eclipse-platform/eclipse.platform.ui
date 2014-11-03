@@ -87,8 +87,9 @@ public class TestModelContentProvider implements ITestModelListener,
         TestElement testElement = (TestElement) element;
         int count = testElement.getChildCount();
         TestElement[] children = new TestElement[count];
-        for (int i = 0; i < count; ++i)
-            children[i] = testElement.getChildAt(i);
+        for (int i = 0; i < count; ++i) {
+			children[i] = testElement.getChildAt(i);
+		}
         return children;
     }
 

@@ -20,10 +20,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
- * 
+ *
  * @since 3.5
  * @author Prakash G.R.
- * 
+ *
  */
 public class DynamicMenuTest extends MenuTestCase {
 
@@ -79,38 +79,38 @@ public class DynamicMenuTest extends MenuTestCase {
 					"popup:org.eclipse.ui.tests.dynamicMenuContribution");
 			IContributionItem[] contributionItems = manager.getItems();
 			assertEquals(1, contributionItems.length);
-	
+
 			contextMenu = manager.createContextMenu(window.getShell());
 			contextMenu.notifyListeners(SWT.Show, null);
 			processEvents();
-	
+
 			int itemCount = contextMenu.getItemCount();
 			assertEquals(3, itemCount); // we created 3 items in the code
-	
+
 			MenuItem[] menuItems = contextMenu.getItems();
 			// check the labels
 			assertEquals("something 1", menuItems[0].getText());
 			assertEquals("something 2", menuItems[1].getText());
 			assertEquals("something 3", menuItems[2].getText());
-	
+
 			contextMenu.notifyListeners(SWT.Hide, null);
 			processEvents();
 			contextMenu.notifyListeners(SWT.Show, null);
 			processEvents();
 			menuItems = contextMenu.getItems();
 			assertEquals(3, menuItems.length);
-			
+
 			assertEquals("something 4", menuItems[0].getText());
 			assertEquals("something 5", menuItems[1].getText());
 			assertEquals("something 6", menuItems[2].getText());
-	
+
 		} finally {
 			menus.releaseContributions(manager);
 			if (contextMenu != null) {
 				contextMenu.dispose();
 			}
 		}
-	
+
 	}
 
 }

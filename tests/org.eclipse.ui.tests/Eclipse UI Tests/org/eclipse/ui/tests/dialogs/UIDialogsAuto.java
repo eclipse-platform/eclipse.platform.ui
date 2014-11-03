@@ -65,7 +65,7 @@ public class UIDialogsAuto extends TestCase {
         dialog = new AboutDialog(getShell());
         DialogCheck.assertDialogTexts(dialog, this);
     }
-    
+
      public void testAboutPlugins() {
         Dialog dialog = null;
         dialog = new AboutPluginsDialog(

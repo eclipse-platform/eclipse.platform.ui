@@ -48,9 +48,9 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Most of the setup has been taken from
  * org.eclipse.jface.snippets.viewers.Snippet010OwnerDraw.java
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
@@ -377,7 +377,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
+		 *
 		 * @param countryName
 		 * @param worldCupYear
 		 */
@@ -432,7 +432,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Draw the flag in bounds.
-		 * 
+		 *
 		 * @param event
 		 */
 		protected void drawFlag(Event event) {
@@ -446,7 +446,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Draw the cup year
-		 * 
+		 *
 		 * @param event
 		 */
 		private void drawCupYear(Event event) {
@@ -456,7 +456,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 
 		/**
 		 * Draw the name of the receiver.
-		 * 
+		 *
 		 * @param event
 		 */
 		protected void drawName(Event event) {
@@ -481,7 +481,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 			layout.setStyle(italic, name.length(), buffer.length() - 1);
 
 			layout.draw(event.gc, event.x, event.y);
-			
+
 			layout.dispose();
 
 		}

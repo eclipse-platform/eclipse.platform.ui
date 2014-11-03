@@ -23,7 +23,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * Stress tests the Operations Framework API to find any interaction problems
  * with the workbench.
- * 
+ *
  * @since 3.1
  */
 public class WorkbenchOperationStressTests extends UITestCase {
@@ -42,7 +42,7 @@ public class WorkbenchOperationStressTests extends UITestCase {
 	/*
 	 * Exercise the operations history just before closing the workbench. This
 	 * can find problems with the action handlers assuming a workbench is open.
-	 * 
+	 *
 	 * In progress - this still isn't catching the case from the bug, but is a good
 	 * start.
 	 */
@@ -75,7 +75,7 @@ public class WorkbenchOperationStressTests extends UITestCase {
 			boolean go = true;
 			while (go) {
 				go = display.readAndDispatch();
-				
+
 			}
 		}
 	}

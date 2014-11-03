@@ -20,13 +20,13 @@ public class DynamicContributionItemPopup extends CompoundContributionItem {
 
 	public DynamicContributionItemPopup() {
 	}
-	
+
 	public DynamicContributionItemPopup(String id) {
 		super(id);
 	}
-	
+
 	private int count = 1;
-	
+
 	@Override
 	protected IContributionItem[] getContributionItems() {
 		// set the labels here, which will be verified in the test case
@@ -35,9 +35,9 @@ public class DynamicContributionItemPopup extends CompoundContributionItem {
 		ContributionItem contributionItem3 = new ActionContributionItem(new DoNothingAction("something " + (count++)));
 		return new IContributionItem[] {contributionItem1, contributionItem2, contributionItem3};
 	}
-	
+
 	class DoNothingAction extends Action{
-		
+
 		public DoNothingAction(String text){
 			setText(text);
 		}

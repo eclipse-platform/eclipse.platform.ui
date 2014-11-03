@@ -32,12 +32,12 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class ArbitraryPropertyTest extends UITestCase {
 	/**
-	 * 
+	 *
 	 */
 	private static final String EDITOR_ID = "org.eclipse.ui.tests.TitleTestEditor";
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String USER_PROP = "org.eclipse.ui.test.user";
 
@@ -147,7 +147,7 @@ public class ArbitraryPropertyTest extends UITestCase {
 
 			/**
 			 * {@inheritDoc}
-			 * 
+			 *
 			 * @throws CoreException
 			 */
 			@Override

@@ -22,7 +22,7 @@ public class KeywordTests extends DynamicTestCase {
 	public KeywordTests(String testName) {
 		super(testName);
 	}
-	
+
 	public void testKeywords() {
 		KeywordRegistry registry = KeywordRegistry.getInstance();
 		assertNull(registry.getKeywordLabel(ID_KEYWORD));

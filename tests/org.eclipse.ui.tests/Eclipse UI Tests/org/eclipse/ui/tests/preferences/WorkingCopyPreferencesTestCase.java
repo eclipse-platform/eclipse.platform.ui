@@ -61,7 +61,7 @@ public class WorkingCopyPreferencesTestCase extends UITestCase {
 		// create a working copy
 		WorkingCopyManager manager = new WorkingCopyManager();
 		IEclipsePreferences prefs = manager.getWorkingCopy(eNode);
-		
+
 		// remove the node
 		try {
 			prefs.removeNode();

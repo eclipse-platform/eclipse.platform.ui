@@ -34,8 +34,8 @@ public class IPerspectiveDescriptorTest extends TestCase {
      * Tests that the ids for all perspective descriptors are non-null and non-empty.
      */
     public void testGetId() {
-        for (int i = 0; i < fPerspectives.length; i++) {
-            String id = fPerspectives[i].getId();
+        for (IPerspectiveDescriptor fPerspective : fPerspectives) {
+            String id = fPerspective.getId();
             assertNotNull(id);
             assertTrue(id.length() > 0);
         }
@@ -45,8 +45,8 @@ public class IPerspectiveDescriptorTest extends TestCase {
      * Tests that the labels for all perspective descriptors are non-null and non-empty.
      */
     public void testGetLabel() {
-        for (int i = 0; i < fPerspectives.length; i++) {
-            String label = fPerspectives[i].getLabel();
+        for (IPerspectiveDescriptor fPerspective : fPerspectives) {
+            String label = fPerspective.getLabel();
             assertNotNull(label);
             assertTrue(label.length() > 0);
         }
@@ -61,11 +61,11 @@ public class IPerspectiveDescriptorTest extends TestCase {
      * </p>
      */
     public void testGetImageDescriptor() {
-        for (int i = 0; i < fPerspectives.length; i++) {
-            ImageDescriptor image = fPerspectives[i].getImageDescriptor();
+        for (IPerspectiveDescriptor fPerspective : fPerspectives) {
+            ImageDescriptor image = fPerspective.getImageDescriptor();
             assertNotNull(image);
         }
     }
-    
+
 }
 

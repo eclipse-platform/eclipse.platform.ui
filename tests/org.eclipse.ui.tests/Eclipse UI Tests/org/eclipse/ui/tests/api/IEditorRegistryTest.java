@@ -77,11 +77,11 @@ public class IEditorRegistryTest extends TestCase {
 
 		proj = FileUtil.createProject("testProject");
 
-		for (int i = 0; i < maps.length; i++) {
-			editors = fReg.getEditors(maps[i][0]);
+		for (String[] map : maps) {
+			editors = fReg.getEditors(map[0]);
 			assertEquals(editors.length, 1);
-			assertEquals(editors[0].getId(), maps[i][1]);
-			editors2 = fReg.getEditors(FileUtil.createFile(maps[i][0], proj)
+			assertEquals(editors[0].getId(), map[1]);
+			editors2 = fReg.getEditors(FileUtil.createFile(map[0], proj)
 					.getName());
 			assertEquals(ArrayUtil.equals(editors, editors2), true);
 		}
@@ -222,7 +222,7 @@ public class IEditorRegistryTest extends TestCase {
 		}
 		assertEquals(image1, image2);
 		assertEquals(image2, fReg.getImageDescriptor(file.getName()));
-		
+
 	}
 
 	public void testAddPropertyListener() throws Throwable {
@@ -400,12 +400,13 @@ public class IEditorRegistryTest extends TestCase {
 		try {
 			fReg.setDefaultEditor("*.txt", null);
 			IEditorDescriptor[] descriptors = fReg.getEditors("bogusfile.txt");
-			for (int i = 0; i < descriptors.length; i++) {
-				assertNotNull(descriptors[i]);
+			for (IEditorDescriptor descriptor : descriptors) {
+				assertNotNull(descriptor);
 			}
 		} finally {
-			if (desc != null)
+			if (desc != null) {
 				fReg.setDefaultEditor("*.txt", desc.getId());
+			}
 		}
 
 	}
@@ -420,9 +421,9 @@ public class IEditorRegistryTest extends TestCase {
 		System.arraycopy(src, 0, maps, 0, src.length);
 		FileEditorMapping map = null;
 
-		for (int i = 0; i < maps.length; i++) {
-			if (maps[i].getExtension().equals("html")) {
-				map = maps[i];
+		for (FileEditorMapping map2 : maps) {
+			if (map2.getExtension().equals("html")) {
+				map = map2;
 				break;
 			}
 		}
@@ -455,9 +456,9 @@ public class IEditorRegistryTest extends TestCase {
 			System.arraycopy(src, 0, maps, 0, src.length);
 			map = null;
 
-			for (int i = 0; i < maps.length; i++) {
-				if (maps[i].getExtension().equals("html")) {
-					map = maps[i];
+			for (FileEditorMapping map2 : maps) {
+				if (map2.getExtension().equals("html")) {
+					map = map2;
 					break;
 				}
 			}
@@ -476,7 +477,7 @@ public class IEditorRegistryTest extends TestCase {
 	public void testBug308894() throws Throwable {
 		FileEditorMapping newMapping = new FileEditorMapping("*.abc");
 		assertNull(newMapping.getDefaultEditor());
-		
+
 		FileEditorMapping[] src = (FileEditorMapping[]) fReg.getFileEditorMappings();
 		FileEditorMapping[] maps = new FileEditorMapping[src.length + 1];
 		System.arraycopy(src, 0, maps, 0, src.length);
@@ -508,7 +509,7 @@ public class IEditorRegistryTest extends TestCase {
 			PrefUtil.savePrefs();
 
 			Platform.removeLogListener(listener);
-			
+
 			if (thrownException[0] != null) {
 				throw thrownException[0];
 			}

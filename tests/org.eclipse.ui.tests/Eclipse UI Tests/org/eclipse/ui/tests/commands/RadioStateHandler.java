@@ -24,10 +24,12 @@ public class RadioStateHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		if(HandlerUtil.matchesRadioState(event))
+		 {
 			return null; // do nothing when we are in right state
-		
+		}
+
 		// else update the state
 		String currentState = event.getParameter(RadioState.PARAMETER_ID);
 		HandlerUtil.updateRadioState(event.getCommand(), currentState);

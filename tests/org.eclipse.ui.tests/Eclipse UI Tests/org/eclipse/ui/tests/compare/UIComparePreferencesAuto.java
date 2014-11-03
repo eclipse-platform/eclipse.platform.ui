@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.compare;
 
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -45,14 +43,14 @@ public class UIComparePreferencesAuto extends TestCase {
             WorkbenchHelp.setHelp(dialog.getShell(),
                     IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
 
-            for (Iterator iterator = manager.getElements(
-                    PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
-                IPreferenceNode node = (IPreferenceNode) iterator.next();
-                if (node.getId().equals(id)) {
-                    dialog.showPage(node);
-                    break;
-                }
+            for (Object element : manager.getElements(
+                    PreferenceManager.PRE_ORDER)) {
+            IPreferenceNode node = (IPreferenceNode) element;
+            if (node.getId().equals(id)) {
+			dialog.showPage(node);
+			break;
             }
+         }
         }
         return dialog;
     }

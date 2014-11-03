@@ -35,7 +35,7 @@ public class EditorTitleDropTarget extends WorkbenchWindowDropTarget {
 	public String toString() {
         return "editor " + editorIdx + " title area";
     }
-    
+
     @Override
 	public Shell getShell() {
     	return getPart().getSite().getShell();

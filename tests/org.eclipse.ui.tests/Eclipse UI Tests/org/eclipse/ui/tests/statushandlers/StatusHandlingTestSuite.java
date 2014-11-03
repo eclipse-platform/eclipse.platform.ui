@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 
 /**
  * Tests the status handling facility
- * 
+ *
  * @since 3.3
  */
 public class StatusHandlingTestSuite extends TestSuite {

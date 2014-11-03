@@ -26,7 +26,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
 /**
  * The secondary property sheets should be closed so there aren't restored in
  * the next workbench session.
- * 
+ *
  * @since 3.4
  */
 public class NonRestorablePropertySheetTest extends TestCase {
@@ -44,7 +44,7 @@ public class NonRestorablePropertySheetTest extends TestCase {
 
 	/**
 	 * This is the first part instantiates a bunch of property sheets
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public void test01ActivateView() throws PartInitException {
@@ -70,7 +70,7 @@ public class NonRestorablePropertySheetTest extends TestCase {
 	/**
 	 * In the second session the property sheet views with secondary ids
 	 * shouldn't be instantiated.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public void test02SecondOpening() throws PartInitException {
@@ -85,8 +85,7 @@ public class NonRestorablePropertySheetTest extends TestCase {
 	private int countPropertySheetViews(final IWorkbenchPage page) {
 		int count = 0;
 		IViewReference[] views = page.getViewReferences();
-		for (int i = 0; i < views.length; i++) {
-			IViewReference ref = views[i];
+		for (IViewReference ref : views) {
 			if (ref.getId().equals(IPageLayout.ID_PROP_SHEET)) {
 				count++;
 			}

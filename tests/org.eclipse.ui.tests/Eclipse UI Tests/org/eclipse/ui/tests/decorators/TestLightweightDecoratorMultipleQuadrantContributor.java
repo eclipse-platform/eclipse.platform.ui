@@ -77,7 +77,7 @@ public class TestLightweightDecoratorMultipleQuadrantContributor implements
     }
 
     /**
-     * Refresh the listeners to update the decorators for 
+     * Refresh the listeners to update the decorators for
      * element.
      */
 

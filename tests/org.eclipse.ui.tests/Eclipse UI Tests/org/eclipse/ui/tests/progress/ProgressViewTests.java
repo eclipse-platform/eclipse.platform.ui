@@ -32,26 +32,26 @@ public class ProgressViewTests extends ProgressTestCase {
 	public ProgressViewTests(String testName) {
 		super(testName);
 	}
-	
-	
+
+
 	public void testClearTaskInfo() throws Exception {
-		
-		// test for 
+
+		// test for
 		openProgressView();
-		
+
 		// run the jobs, hide & show the view
 		Job job1 = runDummyJob();
 		Job job2 = runDummyJob();
-		
+
 		hideProgressView();
 		openProgressView();
-		
+
 		// now check the items in the view. The job should be listed only once
 		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
 		boolean job1Found = false;
 		boolean job2Found = false;
-		for (int i = 0; i < progressInfoItems.length; i++) {
-			JobTreeElement info = progressInfoItems[i].getInfo();
+		for (ProgressInfoItem progressInfoItem : progressInfoItems) {
+			JobTreeElement info = progressInfoItem.getInfo();
 			if(info instanceof TaskInfo) {
 				// if task info then get the parent and check
 				Object parent = info.getParent();
@@ -61,10 +61,10 @@ public class ProgressViewTests extends ProgressTestCase {
 					job2Found = checkJob(job2, job2Found, jobInfo);
 				}
 			}else {
-				JobInfo[] jobInfos = progressInfoItems[i].getJobInfos();
-				for (int j = 0; j < jobInfos.length; j++) {
-					job1Found = checkJob(job1, job1Found, jobInfos[j]);
-					job2Found = checkJob(job2, job2Found, jobInfos[j]);
+				JobInfo[] jobInfos = progressInfoItem.getJobInfos();
+				for (JobInfo jobInfo : jobInfos) {
+					job1Found = checkJob(job1, job1Found, jobInfo);
+					job2Found = checkJob(job2, job2Found, jobInfo);
 				}
 			}
 		}
@@ -72,25 +72,26 @@ public class ProgressViewTests extends ProgressTestCase {
 
 	protected boolean checkJob(Job job, boolean found, JobInfo jobInfo) {
 		if(job.equals(jobInfo.getJob())) {
-			if(found)
+			if(found) {
 				fail("The job is listed twice");
-			else
+			} else {
 				found = true;
+			}
 		}
 		return found;
 	}
 
 	protected Job runDummyJob() throws InterruptedException {
-		
+
 		DummyJob dummyJob = new DummyJob("Dummy Job", Status.OK_STATUS);
 		dummyJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
-		
+
 		dummyJob.schedule();
 		processEvents();
 
 		dummyJob.join();
 		processEvents();
-		
+
 		return dummyJob;
 
 	}

@@ -35,7 +35,7 @@ import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 /**
  * Tests whether the errors in wizards are handled properly
- * 
+ *
  * @since 3.3
  */
 public class WizardsStatusHandlingTestCase extends TestCase {

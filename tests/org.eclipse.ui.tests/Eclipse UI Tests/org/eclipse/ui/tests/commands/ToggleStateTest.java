@@ -49,24 +49,24 @@ public class ToggleStateTest extends UITestCase {
 	public ToggleStateTest(String testName) {
 		super(testName);
 	}
-	
-	
+
+
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		commandService = fWorkbench.getService(ICommandService.class);
 		handlerService = fWorkbench.getService(IHandlerService.class);
 	}
-	
+
 	public void testDefaultValues() throws Exception {
-		
+
 		Command command1 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand1");
 		Command command2 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand2");
 
 		// check the initial values
 		assertState(command1, true);
 		assertState(command2, false);
-		
+
 		// execute and check the values have changed or not
 		handlerService.executeCommand(command1.getId(), null);
 		handlerService.executeCommand(command2.getId(), null);
@@ -75,16 +75,17 @@ public class ToggleStateTest extends UITestCase {
 		assertState(command2, true);
 
 	}
-	
+
 	public void testExceptionThrown() throws Exception {
-		
+
 		Command command3 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand3");
 		try {
 			handlerService.executeCommand(command3.getId(), null);
 			fail("Command3 doesn't have any state. An exception must be thrown from the handler, when trying to change that");
 		} catch (Exception e) {
-			if(!(e instanceof ExecutionException))
+			if(!(e instanceof ExecutionException)) {
 				throw e;
+			}
 		}
 	}
 
@@ -110,40 +111,40 @@ public class ToggleStateTest extends UITestCase {
 		public void setChecked(boolean checked) {
 			this.checked = checked;
 		}
-		
+
 		public boolean isChecked() {
 			return checked;
 		}
 
 	}
-	
+
 	public void testMultipleContributions() throws Exception{
-		
+
 		Command command1 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand1");
 		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command1, new Parameterization[0]);
-		
+
 		MyUIElement element1 = new MyUIElement(fWorkbench);
 		MyUIElement element2 = new MyUIElement(fWorkbench);
-		
+
 		IElementReference reference1 = commandService.registerElementForCommand(parameterizedCommand, element1);
 		IElementReference reference2 = commandService.registerElementForCommand(parameterizedCommand, element2);
-		
+
 		try{
-		
+
 			commandService.refreshElements(command1.getId(), null);
 			assertEquals(element1.isChecked(), element2.isChecked());
-			
+
 			Boolean oldValue = (Boolean) handlerService.executeCommand(command1.getId(), null);
 			//value should have changed
 			assertEquals(!oldValue.booleanValue(), element1.isChecked());
 			//and changed in both places
 			assertEquals(element1.isChecked(), element2.isChecked());
-			
+
 		}finally {
 			commandService.unregisterElement(reference1);
 			commandService.unregisterElement(reference2);
 		}
-		
+
 	}
 
 	private void assertState(Command command1, boolean expectedValue) {
@@ -152,5 +153,5 @@ public class ToggleStateTest extends UITestCase {
 		assertTrue(value instanceof Boolean);
 		assertEquals(expectedValue, ((Boolean)value).booleanValue());
 	}
-	
+
 }

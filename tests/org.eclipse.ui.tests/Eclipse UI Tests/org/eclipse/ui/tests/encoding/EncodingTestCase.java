@@ -20,7 +20,7 @@ import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
- * The EncodingTestCase is the suite that tests the 3.1 
+ * The EncodingTestCase is the suite that tests the 3.1
  * encoding support.
  */
 public class EncodingTestCase extends UITestCase {
@@ -46,11 +46,11 @@ public class EncodingTestCase extends UITestCase {
 			String nextEncoding = (String) iterator.next();
 			try {
 				Assert.isTrue(Charset.isSupported(nextEncoding), "Unsupported charset " + nextEncoding);
-				
+
 			} catch (IllegalCharsetNameException e) {
 				Assert.isTrue(false, "Unsupported charset " + nextEncoding);
 			}
-			
+
 
 		}
 	}

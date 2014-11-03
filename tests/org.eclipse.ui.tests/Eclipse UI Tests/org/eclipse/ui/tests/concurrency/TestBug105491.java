@@ -29,7 +29,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * 5) After passing the rule back to the UI thread, but before MC1 dies, the asyncExec is run.
  * 6) The asyncExec forks another model context (MC2), and blocks the UI thread in another event loop.
  * 7) MC2 tries to acquire the workspace lock and deadlocks, because at this point it has been transferred to the UI thread
- * 
+ *
  * NOTE: This bug has not yet been fixed.  This test illustrates the problem, but must
  * not be added to the parent test suite until the problem has been fixed.
  */

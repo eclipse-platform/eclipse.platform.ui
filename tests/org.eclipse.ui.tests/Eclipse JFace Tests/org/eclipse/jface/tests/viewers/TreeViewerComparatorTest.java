@@ -30,15 +30,15 @@ import org.eclipse.swt.widgets.TreeItem;
  *
  */
 public class TreeViewerComparatorTest extends ViewerComparatorTest{
-	
-	protected class TeamModelTreeContentProvider extends TeamModelContentProvider 
+
+	protected class TeamModelTreeContentProvider extends TeamModelContentProvider
 				implements ITreeContentProvider{
 
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
-		
+
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof List){
@@ -56,7 +56,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 			else if (parentElement instanceof Team){
 				return ((Team)parentElement).members;
 			}
-			return null; 
+			return null;
 		}
 
 		@Override
@@ -76,7 +76,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 	        }
 	        return false;
 		}
-		
+
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			List oldElement = (List) oldInput;
@@ -92,24 +92,24 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 	        	while (iter.hasNext()){
 	        		((Team)iter.next()).addListener(this);
 	        	}
-	        }			
+	        }
 		}
 	}
-	
+
 	/**
 	 * constructor
 	 */
 	public TreeViewerComparatorTest(String name) {
 		super(name);
 	}
-	
+
 	public void testViewerSorter(){
 		fViewer.setSorter(new ViewerSorter());
 		getTreeViewer().expandAll();
 		String[][] expected = {TEAM3_SORTED, TEAM2_SORTED, TEAM1_SORTED};
 		assertSortedResult(expected);
 	}
-	
+
 	public void testViewerSorterInsertElement(){
 		fViewer.setSorter(new ViewerSorter());
 		getTreeViewer().expandAll();
@@ -117,14 +117,14 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 		String[][] expected = {TEAM3_SORTED, TEAM2_SORTED, TEAM1_SORTED_WITH_INSERT};
 		assertSortedResult(expected);
 	}
-	
+
 	public void testViewerComparator(){
 		fViewer.setComparator(new ViewerComparator());
 		getTreeViewer().expandAll();
 		String[][] expected = {TEAM3_SORTED, TEAM2_SORTED, TEAM1_SORTED};
 		assertSortedResult(expected);
 	}
-	
+
 	public void testViewerComparatorInsertElement(){
 		fViewer.setComparator(new ViewerComparator());
 		getTreeViewer().expandAll();
@@ -132,41 +132,41 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 		String[][] expected = {TEAM3_SORTED, TEAM2_SORTED, TEAM1_SORTED_WITH_INSERT};
 		assertSortedResult(expected);
 	}
-	
+
 	private void assertSortedResult(String[][] resultArrays){
 		TreeItem[] rootItems = getTreeViewer().getTree().getItems();
 		assertEquals("Number of root items in tree not correct (actual=" + rootItems.length + ")", 3, rootItems.length);
 		TreeItem item = rootItems[0];
-		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + CORE, CORE, item.getText());	
+		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + CORE, CORE, item.getText());
 		item = rootItems[1];
-		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + RUNTIME, RUNTIME, item.getText());	
+		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + RUNTIME, RUNTIME, item.getText());
 		item = rootItems[2];
-		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + UI, UI, item.getText());	
-		
+		assertEquals("Item not expected.  actual=" + item.getText() + " expected=" + UI, UI, item.getText());
+
 		TreeItem[] childItems = rootItems[0].getItems();
 		for (int i = 0; i < childItems.length; i++){
 			TreeItem child = childItems[i];
 			String result = child.getText();
-			assertEquals("", resultArrays[0][i], result);		
+			assertEquals("", resultArrays[0][i], result);
 		}
 		childItems = rootItems[1].getItems();
 		for (int i = 0; i < childItems.length; i++){
 			TreeItem child = childItems[i];
 			String result = child.getText();
-			assertEquals("", resultArrays[1][i], result);		
+			assertEquals("", resultArrays[1][i], result);
 		}
 		childItems = rootItems[2].getItems();
 		for (int i = 0; i < childItems.length; i++){
 			TreeItem child = childItems[i];
 			String result = child.getText();
-			assertEquals("", resultArrays[2][i], result);		
+			assertEquals("", resultArrays[2][i], result);
 		}
 	}
 
 	protected TreeViewer getTreeViewer(){
 		return (TreeViewer)fViewer;
 	}
-	
+
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Tree tree = new Tree(fShell, SWT.SINGLE | SWT.H_SCROLL
@@ -185,7 +185,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 		input.add(team3);
 		fViewer.setInput(input);
 	}
-	
+
 	/**
 	 * @param args
 	 */

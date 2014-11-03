@@ -38,7 +38,7 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
  * @since 3.0
  */
 public class StickyViewTest extends UITestCase {
-	
+
 	/**
 	 * Allow tests to run just in this class.
 	 * @return the TestSuite to run.
@@ -46,7 +46,7 @@ public class StickyViewTest extends UITestCase {
 	public static TestSuite suite() {
 		return new TestSuite(StickyViewTest.class);
 	}
-	
+
     private IWorkbenchWindow window;
 
     private IWorkbenchPage page;
@@ -109,8 +109,8 @@ public class StickyViewTest extends UITestCase {
 
             IViewPart[] stack = page.getViewStack(part1);
 
-            for (int i = 0; i < stack.length; i++) {
-                assertTrue(stack[i].getTitle(), ViewUtils.isSticky(stack[i]));
+            for (IViewPart element : stack) {
+                assertTrue(element.getTitle(), ViewUtils.isSticky(element));
             }
         } catch (PartInitException e) {
             fail(e.getMessage());
@@ -139,9 +139,9 @@ public class StickyViewTest extends UITestCase {
         testMoveable("org.eclipse.ui.tests.api.StickyViewLeft1", true);
     }
 
-    /** 
+    /**
      * Tests whether a sticky view with the given id is moveable or not.
-     * 
+     *
      * @param id the id
      * @param expectation the expected moveable state
      */
@@ -151,12 +151,12 @@ public class StickyViewTest extends UITestCase {
             assertNotNull(part);
             assertTrue(ViewUtils.isSticky(part));
 
-            //tests to ensure that the XML was read correctly            
+            //tests to ensure that the XML was read correctly
             IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
                     .getViewRegistry().getStickyViews();
-            for (int i = 0; i < descs.length; i++) {
-                if (descs[i].getId().equals(id)) {
-                    assertEquals(expectation, descs[i].isMoveable());
+            for (IStickyViewDescriptor desc : descs) {
+                if (desc.getId().equals(id)) {
+                    assertEquals(expectation, desc.isMoveable());
                 }
             }
 
@@ -167,9 +167,9 @@ public class StickyViewTest extends UITestCase {
         }
     }
 
-    /** 
+    /**
      * Tests whether a sticky view with the given id is closeable or not.
-     * 
+     *
      * @param id the id
      * @param expectation the expected closeable state
      */
@@ -179,12 +179,12 @@ public class StickyViewTest extends UITestCase {
             assertNotNull(part);
             assertTrue(ViewUtils.isSticky(part));
 
-            //tests to ensure that the XML was read correctly            
+            //tests to ensure that the XML was read correctly
             IStickyViewDescriptor[] descs = PlatformUI.getWorkbench()
                     .getViewRegistry().getStickyViews();
-            for (int i = 0; i < descs.length; i++) {
-                if (descs[i].getId().equals(id)) {
-                    assertEquals(expectation, descs[i].isCloseable());
+            for (IStickyViewDescriptor desc : descs) {
+                if (desc.getId().equals(id)) {
+                    assertEquals(expectation, desc.isCloseable());
                 }
             }
 
@@ -224,11 +224,11 @@ public class StickyViewTest extends UITestCase {
             fail(e.getMessage());
         }
     }
-    
+
     /**
      * Test that closing a stand-alone view remove the editor stack and
      * doesn't throw an NPE.
-     * 
+     *
      * @throws Throwable on error
      * @since 3.2
      */
@@ -247,10 +247,10 @@ public class StickyViewTest extends UITestCase {
 			page.closePerspective(page.getPerspective(), false, false);
 		}
     }
-    
+
 	/**
 	 * Test that a view marked as non-closable cannot be closed as a fast view.
-	 * 
+	 *
 	 * @throws Throwable
 	 * @since 3.1.1
 	 */
@@ -275,7 +275,7 @@ public class StickyViewTest extends UITestCase {
 
 			// FIXME: No implementation
 			fail("facade.addFastView() had no implementation");
-			
+
 			assertTrue(APITestUtils.isFastView(stickyRef));
 
 //			facade.addFastView(page, viewRef);
@@ -284,8 +284,8 @@ public class StickyViewTest extends UITestCase {
 
 			assertTrue(APITestUtils.isFastView(viewRef));
 
-			
-			
+
+
 //			IContributionItem menuContribution = facade.getFVBContribution(page);
 			// FIXME: No implementation
 			fail("facade.getFVBContribution() not implemented");
@@ -303,10 +303,10 @@ public class StickyViewTest extends UITestCase {
 			page.closePerspective(page.getPerspective(), false, false);
 		}
 	}
-	
+
 	/**
 	 * Test that a fast view marked as non-moveable cannot be docked.
-	 * 
+	 *
 	 * @throws Throwable
 	 * @since 3.1.1
 	 */
@@ -333,7 +333,7 @@ public class StickyViewTest extends UITestCase {
 			assertTrue(APITestUtils.isFastView(viewRef));
 
 //			IContributionItem menuContribution = facade.getFVBContribution(page);
-			
+
 			// FIXME: No implementation
 			fail("facade.addFastView() had no implementation");
 
@@ -354,7 +354,7 @@ public class StickyViewTest extends UITestCase {
 
 	/**
 	 * Find the supplied menu item and make sure it's enabled/disabled.
-	 * 
+	 *
 	 * @param wpage the workbench page
 	 * @param menuContribution the fast bar menu contribution item
 	 * @param isEnabled should the item be enabled
@@ -386,7 +386,7 @@ public class StickyViewTest extends UITestCase {
 	/**
 	 * Test that the view toolbar visibility matches the presentation
 	 * visibility for a view.
-	 * 
+	 *
 	 * @throws Throwable on an error
 	 * @since 3.2
 	 */
@@ -396,7 +396,7 @@ public class StickyViewTest extends UITestCase {
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
         boolean oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
-        
+
 		IPerspectiveDescriptor perspective = WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(
 						PerspectiveViewsBug88345.PERSP_ID);
@@ -420,7 +420,7 @@ public class StickyViewTest extends UITestCase {
 			assertNotNull("The view must exist", viewRef.getPart(true));
 			page.activate(viewRef.getPart(true));
 
-			
+
 //			assertTrue(facade.isViewPaneVisible(viewRef));
 			// FIXME: No implementation
 			fail("facade.isViewPaneVisible() had no implementation");

@@ -30,12 +30,12 @@ import org.eclipse.ui.internal.DefaultSaveable;
 /**
  * Mock view part that implements ISaveablePart.
  * Used for testing hideView and other view lifecycle on saveable views.
- * 
+ *
  * @since 3.0.1
  */
 public class SaveableMockViewPart extends MockViewPart implements
 		ISaveablePart, ISaveablesSource {
-	
+
 	public static String ID = "org.eclipse.ui.tests.api.SaveableMockViewPart";
 
 	private boolean isDirty = false;
@@ -68,7 +68,7 @@ public class SaveableMockViewPart extends MockViewPart implements
         		setAdapt(adaptToggle.getSelection());
         	}
         });
-        
+
         final Button saveNeededToggle = new Button(parent, SWT.CHECK);
         saveNeededToggle.setText("Save on close");
         saveNeededToggle.addSelectionListener(new SelectionAdapter() {
@@ -78,7 +78,7 @@ public class SaveableMockViewPart extends MockViewPart implements
             }
         });
         saveNeededToggle.setSelection(saveNeeded);
-        
+
         final Button saveAsToggle = new Button(parent, SWT.CHECK);
         saveAsToggle.setText("Save as allowed");
         saveAsToggle.addSelectionListener(new SelectionAdapter() {
@@ -89,14 +89,14 @@ public class SaveableMockViewPart extends MockViewPart implements
         });
         saveAsToggle.setSelection(saveAsAllowed);
     }
-    
+
 	/**
 	 * @param selection
 	 */
 	protected void setAdapt(boolean selection) {
 		this.adapt = selection;
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		callTrace.add("doSave" );
@@ -129,11 +129,11 @@ public class SaveableMockViewPart extends MockViewPart implements
 		this.isDirty = isDirty;
         firePropertyChange(PROP_DIRTY);
 	}
-    
+
     public void setSaveAsAllowed(boolean isSaveAsAllowed) {
         this.saveAsAllowed = isSaveAsAllowed;
     }
-    
+
     public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
         this.saveNeeded = isSaveOnCloseNeeded;
     }
@@ -153,7 +153,7 @@ public class SaveableMockViewPart extends MockViewPart implements
 				final IFile[] someFile = {null};
 				try {
 					ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
-						
+
 						@Override
 						public boolean visit(IResource resource) {
 							if (someFile[0] != null) {

@@ -57,7 +57,7 @@ public class ListViewerRefreshTest extends TestCase {
 		shell.layout();
 		shell.open();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		shell.dispose();
@@ -67,7 +67,7 @@ public class ListViewerRefreshTest extends TestCase {
 	/**
 	 * Asserts the ability to refresh without a selection and preserve the
 	 * scrolled to position.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoSelectionRefresh() throws Exception {
@@ -95,7 +95,7 @@ public class ListViewerRefreshTest extends TestCase {
 	/**
 	 * Asserts the ability to refresh with a selection and preserve the scrolled
 	 * to position.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSelectionRefresh() throws Exception {
@@ -109,28 +109,28 @@ public class ListViewerRefreshTest extends TestCase {
 								.get(30)));
 					}
 				});
-		
+
 		// Ensure that to index is 0
 		viewer.getList().setTopIndex(0);
-		
+
 		run("Refreshed viewer with selection.", new Runnable() { //$NON-NLS-1$
 					@Override
 					public void run() {
 						viewer.refresh();
 					}
 				});
-		
+
 		// Checking that the viewer is not scrolling
 		assertTrue(viewer.getList().getTopIndex() == 0);
-		
+
 		viewer.getList().showSelection();
-		
+
 		assertTrue(viewer.getList().getTopIndex() != 0);
 	}
-	
+
 	/**
 	 * Runs the runnable and displays the description.
-	 * 
+	 *
 	 * @param description
 	 * @param runnable
 	 */
@@ -146,7 +146,9 @@ public class ListViewerRefreshTest extends TestCase {
 	 */
 	private void readAndDispatch() {
 		Display display = Display.getCurrent();
-		while(display.readAndDispatch());
+		while(display.readAndDispatch()) {
+			;
+		}
 
 		try {
 			Thread.sleep(DELAY);

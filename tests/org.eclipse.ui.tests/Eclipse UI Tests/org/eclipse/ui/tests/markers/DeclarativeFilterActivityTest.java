@@ -23,7 +23,7 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 
 	/**
 	 * The DeclarativeProblemTest is a test of the declarative filters.
-	 * 
+	 *
 	 * @param testName
 	 */
 	public DeclarativeFilterActivityTest(String testName) {
@@ -35,9 +35,9 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 	 */
 	public void testActivityEnablement() {
 		enableFilterActivity();
-		
+
 		checkFilteredOut(false);
-		
+
 		disableFilterActivity();
 		checkFilteredOut(true);
 		enableFilterActivity();
@@ -51,16 +51,16 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 	private void checkFilteredOut(boolean filteredOut) {
 		String[] allFilterNames = getAllFilterNames();
 		String failureMessage = filteredOut ? " should be filtered out" : " should not be filtered out";
-		for (int i = 0; i < allFilterNames.length; i++) {
-			ProblemFilter filter = getFilter(allFilterNames[i]);
-			if(filteredOut)
-				assertNull("Should filter out " + allFilterNames[i] ,filter);
-			else{
-			assertNotNull("No filter for " + allFilterNames[i] ,filter);
-			assertTrue(allFilterNames[i] + failureMessage, filter.isFilteredOutByActivity() == filteredOut);
+		for (String allFilterName : allFilterNames) {
+			ProblemFilter filter = getFilter(allFilterName);
+			if(filteredOut) {
+				assertNull("Should filter out " + allFilterName ,filter);
+			} else{
+			assertNotNull("No filter for " + allFilterName ,filter);
+			assertTrue(allFilterName + failureMessage, filter.isFilteredOutByActivity() == filteredOut);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -72,14 +72,15 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 		Set enabledActivityIds = new HashSet(PlatformUI.getWorkbench()
 				.getActivitySupport().getActivityManager()
 				.getEnabledActivityIds());
-		
-		if (!enabledActivityIds.contains(activity.getId()))
+
+		if (!enabledActivityIds.contains(activity.getId())) {
 			enabledActivityIds.add(activity.getId());
-		
+		}
+
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				enabledActivityIds);
 	}
-	
+
 	/**
 	 * Disable the activity for the declarative filters.
 	 */
@@ -89,10 +90,11 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 		Set enabledActivityIds = new HashSet(PlatformUI.getWorkbench()
 				.getActivitySupport().getActivityManager()
 				.getEnabledActivityIds());
-		
-		if (enabledActivityIds.contains(activity.getId()))
+
+		if (enabledActivityIds.contains(activity.getId())) {
 			enabledActivityIds.remove(activity.getId());
-		
+		}
+
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				enabledActivityIds);
 	}

@@ -19,7 +19,7 @@ import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Tests various persistent theme properties.
- * 
+ *
  * @since 3.4
  */
 public class ThemeStateTest extends TestCase {

@@ -19,7 +19,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ListenerRemovalTestCase extends UITestCase {
 
@@ -27,7 +27,7 @@ public class ListenerRemovalTestCase extends UITestCase {
 		boolean listened = false;
 
 		/**
-		 * 
+		 *
 		 */
 		public TestPropertyListener() {
 			super();
@@ -71,7 +71,7 @@ public class ListenerRemovalTestCase extends UITestCase {
 		preferenceStore.setValue(TestPreferenceInitializer.TEST_LISTENER_KEY,
 				TestPreferenceInitializer.TEST_SET_VALUE);
 		assertFalse("Listener hit when removed", testListener.listened);
-		
+
 //		 Check it is found when set to default
 		preferenceStore
 				.setToDefault(TestPreferenceInitializer.TEST_LISTENER_KEY);

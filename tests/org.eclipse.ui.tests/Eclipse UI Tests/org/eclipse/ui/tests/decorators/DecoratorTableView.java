@@ -50,6 +50,6 @@ public class DecoratorTableView extends DecoratorTestPart {
 
 	}
 
-	
+
 
 }

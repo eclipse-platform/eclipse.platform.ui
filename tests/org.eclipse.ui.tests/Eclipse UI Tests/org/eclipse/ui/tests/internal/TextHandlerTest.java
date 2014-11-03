@@ -21,7 +21,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class TextHandlerTest extends UITestCase {
 
@@ -45,7 +45,7 @@ public class TextHandlerTest extends UITestCase {
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
 			assertFalse(view.getSelectAllAction().isEnabled());
-			
+
 			view.editableText.setText("Hello");
 			processEvents();
 			view.updateEnabledState();
@@ -53,7 +53,7 @@ public class TextHandlerTest extends UITestCase {
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
 			assertTrue(view.getSelectAllAction().isEnabled());
-			
+
 			view.editableText.setSelection(0, 3);
 			processEvents();
 			view.updateEnabledState();
@@ -61,12 +61,12 @@ public class TextHandlerTest extends UITestCase {
 			assertTrue(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
 			assertTrue(view.getSelectAllAction().isEnabled());
-			
+
 			clipboard.setContents(new Object[] { "http://www.google.ca" },
 					new Transfer[] { TextTransfer.getInstance() });
 			processEvents();
 			view.updateEnabledState();
-			
+
 			assertTrue(view.getCopyAction().isEnabled());
 			assertTrue(view.getCutAction().isEnabled());
 			assertTrue(view.getPasteAction().isEnabled());
@@ -77,7 +77,7 @@ public class TextHandlerTest extends UITestCase {
 			clipboard.dispose();
 		}
 	}
-	
+
 	public void testNonEditableText() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		TextControlView view = (TextControlView) window.getActivePage()
@@ -95,7 +95,7 @@ public class TextHandlerTest extends UITestCase {
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
 			assertFalse(view.getSelectAllAction().isEnabled());
-			
+
 			view.nonEditableText.setText("Hello");
 			processEvents();
 			view.updateEnabledState();
@@ -103,7 +103,7 @@ public class TextHandlerTest extends UITestCase {
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
 			assertTrue(view.getSelectAllAction().isEnabled());
-			
+
 			view.nonEditableText.setSelection(0, 3);
 			processEvents();
 			view.updateEnabledState();
@@ -116,7 +116,7 @@ public class TextHandlerTest extends UITestCase {
 					new Transfer[] { TextTransfer.getInstance() });
 			processEvents();
 			view.updateEnabledState();
-			
+
 			assertTrue(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());

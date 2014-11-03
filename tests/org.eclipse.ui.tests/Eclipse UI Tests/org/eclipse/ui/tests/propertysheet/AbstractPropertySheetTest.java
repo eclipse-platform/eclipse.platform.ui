@@ -25,7 +25,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public abstract class AbstractPropertySheetTest extends UITestCase {
 
@@ -43,7 +43,7 @@ public abstract class AbstractPropertySheetTest extends UITestCase {
 		IWorkbenchWindow workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
 	}
-	
+
 	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
@@ -57,8 +57,7 @@ public abstract class AbstractPropertySheetTest extends UITestCase {
 	protected int countPropertySheetViews() {
 		int count = 0;
 		IViewReference[] views = activePage.getViewReferences();
-		for (int i = 0; i < views.length; i++) {
-			IViewReference ref = views[i];
+		for (IViewReference ref : views) {
 			if (ref.getId().equals(IPageLayout.ID_PROP_SHEET)) {
 				count++;
 			}
@@ -70,8 +69,7 @@ public abstract class AbstractPropertySheetTest extends UITestCase {
 		IActionBars actionBars = propertySheet.getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		IContributionItem[] items = toolBarManager.getItems();
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem contributionItem = items[i];
+		for (IContributionItem contributionItem : items) {
 			if (contributionItem.getId() != null
 					&& contributionItem.getId().startsWith(
 							PIN_PROPERTY_SHEET_ACTION_ID_PREFIX)) {

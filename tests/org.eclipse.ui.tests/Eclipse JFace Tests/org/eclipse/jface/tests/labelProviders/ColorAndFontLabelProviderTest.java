@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * ColorAndFontProviderTest is a test of a color and font provider but not an
  * IViewerLabelProvider.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 
@@ -63,7 +63,7 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	public ColorAndFontLabelProviderTest(String name) {
@@ -94,7 +94,7 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 		assertTrue("Foreground was not set", item.getForeground(0).equals(
 				foreground));
 		assertTrue("Font was not set", item.getFont(0).equals(font));
-		
+
 		Font oldFont = font;
 
 		clearColors();

@@ -21,7 +21,7 @@ import org.eclipse.ui.part.PageBookView;
 /**
  * A special view that manages pages. It is based on text editors, and adds a
  * ContextPage for files ending in ".xml", but just a MessagePage otherwise.
- * 
+ *
  * @since 3.2
  */
 public class MockPageView extends PageBookView {

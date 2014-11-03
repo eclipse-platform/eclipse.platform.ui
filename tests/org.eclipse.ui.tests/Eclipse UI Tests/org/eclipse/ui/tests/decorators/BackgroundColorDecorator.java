@@ -71,5 +71,5 @@ public class BackgroundColorDecorator implements ILightweightLabelDecorator {
 		color = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_CYAN);
 	}
 
-	
+
 }

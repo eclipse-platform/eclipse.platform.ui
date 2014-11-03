@@ -25,7 +25,7 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
 
 /**
  * A test to verify the persistence of handler state between sessions.
- * 
+ *
  * @since 3.2
  */
 public class EditorWithStateTest extends TestCase {
@@ -39,7 +39,7 @@ public class EditorWithStateTest extends TestCase {
 
 	/**
 	 * Constructs a new instance of <code>EditorWithStateTest</code>.
-	 * 
+	 *
 	 * @param testName
 	 *            The name of the test; may be <code>null</code>.
 	 */
@@ -57,7 +57,7 @@ public class EditorWithStateTest extends TestCase {
 				new FileEditorInput(file), MockEditorWithState.ID);
 		assertFalse(editor.getCallHistory().contains("saveState"));
 		assertFalse(editor.getCallHistory().contains("restoreState"));
-		
+
 		assertTrue(editor.isSaveOnCloseNeeded());
 		editor.setSaveNeeded(false);
 	}

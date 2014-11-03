@@ -71,10 +71,10 @@ public class ViewDragSource extends TestDragSource {
         if (maximized) {
             page.toggleZoom(page.getReference(part));
         }
-        
+
         DragUtil.forceDropLocation(target);
 //        ViewStack parent = ((ViewStack) (pane.getContainer()));
-//        
+//
 //        PartPane presentablePart = wholeFolder ? null : pane;
 //        parent.paneDragStart(presentablePart, Display.getDefault()
 //                .getCursorLocation(), false);

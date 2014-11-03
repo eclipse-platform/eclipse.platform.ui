@@ -21,9 +21,9 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * If a view is set to non restorable during a session, it's part is not instantiated.
- * This tests that case, and the outcome should be that the view doesn't get 
+ * This tests that case, and the outcome should be that the view doesn't get
  * instanciated in the second session.
- * 
+ *
  * @since 3.4
  */
 public class NonRestorableViewTest extends TestCase {
@@ -43,7 +43,7 @@ public class NonRestorableViewTest extends TestCase {
 
 	/**
 	 * This is the first part  instantiates a non restorable view
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void test01ActivateView() throws Throwable {
@@ -59,7 +59,7 @@ public class NonRestorableViewTest extends TestCase {
 	/**
 	 * In the second session the view shouldn't be
 	 * instantiated.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void test02SecondOpening() throws Throwable {
@@ -68,8 +68,7 @@ public class NonRestorableViewTest extends TestCase {
 				.getActivePage();
 
 		IViewReference[] views = page.getViewReferences();
-		for (int i = 0; i < views.length; i++) {
-			IViewReference ref = views[i];
+		for (IViewReference ref : views) {
 			if (ref.getId().equals(NON_RESTORABLE_VIEW_ID)) {
 				fail("Should not find this view");
 			}

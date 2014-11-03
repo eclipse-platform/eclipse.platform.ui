@@ -30,7 +30,7 @@ public class IWorkingSetManagerTest extends UITestCase {
     final static String WORKING_SET_NAME_1 = "ws1";
 
     final static String WORKING_SET_NAME_2 = "ws2";
-    
+
     final static String WORKING_SET_NAME_3 = "ws3";
 
     IWorkingSetManager fWorkingSetManager;
@@ -67,8 +67,8 @@ public class IWorkingSetManagerTest extends UITestCase {
                 new IAdaptable[] { fWorkspace.getRoot() });
 
         IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
-        for (int i = 0; i < workingSets.length; i++) {
-            fWorkingSetManager.removeWorkingSet(workingSets[i]);
+        for (IWorkingSet workingSet : workingSets) {
+            fWorkingSetManager.removeWorkingSet(workingSet);
         }
     }
 
@@ -77,13 +77,13 @@ public class IWorkingSetManagerTest extends UITestCase {
         fChangeNewValue = null;
         fChangeOldValue = null;
     }
-    
+
     /**
      * Tests the utility method found on the WorkingSetConfigurationBlock.
      */
     public void testConfigBlockFilter() {
-    	final String [] setIds = new String[] {"5", "2", "4", "1", "3" }; 
-    	
+    	final String [] setIds = new String[] {"5", "2", "4", "1", "3" };
+
     	IWorkingSet [] sets = new IWorkingSet[setIds.length * 3];
     	for (int i = 0; i < setIds.length; i++) {
 			sets[i * 3] = createSet(setIds, i);
@@ -92,15 +92,15 @@ public class IWorkingSetManagerTest extends UITestCase {
 		}
     	IWorkingSet [] newSets = WorkingSetConfigurationBlock.filter(sets, setIds);
     	assertEquals(sets.length, newSets.length);
-    	
-    	for (int j = 0; j < setIds.length; j++) {
-    		newSets = WorkingSetConfigurationBlock.filter(sets, new String [] {setIds[j]});	
+
+    	for (String setId : setIds) {
+    		newSets = WorkingSetConfigurationBlock.filter(sets, new String [] {setId});
     		assertEquals(3, newSets.length);
-    		assertEquals(setIds[j], newSets[0].getId());
-    		assertEquals(setIds[j], newSets[1].getId());
-    		assertEquals(setIds[j], newSets[2].getId());
+    		assertEquals(setId, newSets[0].getId());
+    		assertEquals(setId, newSets[1].getId());
+    		assertEquals(setId, newSets[2].getId());
 		}
-    	
+
     }
 
     public void testAddPropertyChangeListener() throws Throwable {
@@ -232,12 +232,12 @@ public class IWorkingSetManagerTest extends UITestCase {
         assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
                 fWorkingSetManager.getRecentWorkingSets()));
     }
-    
+
     public void testRecentWorkingSetsLength() throws Throwable {
         int oldMRULength =  fWorkingSetManager.getRecentWorkingSetsLength();
         try {
 	        fWorkingSetManager.setRecentWorkingSetsLength(10);
-	        
+
 	        IWorkingSet[] workingSets = new IWorkingSet[10];
 	        for (int i = 0 ; i < 10; i++) {
 	            IWorkingSet workingSet = fWorkingSetManager.createWorkingSet(
@@ -247,16 +247,16 @@ public class IWorkingSetManagerTest extends UITestCase {
 	            workingSets[9 - i] = workingSet;
 	        }
 	        assertTrue(ArrayUtil.equals(workingSets, fWorkingSetManager.getRecentWorkingSets()));
-	        
+
 	        fWorkingSetManager.setRecentWorkingSetsLength(7);
 	        IWorkingSet[] workingSets7 = new IWorkingSet[7];
 	        System.arraycopy(workingSets, 0, workingSets7, 0, 7);
 	        assertTrue(ArrayUtil.equals(workingSets7, fWorkingSetManager.getRecentWorkingSets()));
-	        
+
 	        fWorkingSetManager.setRecentWorkingSetsLength(9);
 	        IWorkingSet[] workingSets9 = new IWorkingSet[9];
 	        System.arraycopy(workingSets, 0, workingSets9, 2, 7);
-	        
+
 	        for (int i = 7 ; i < 9; i++) {
 	            IWorkingSet workingSet = fWorkingSetManager.createWorkingSet(
 	                    "ws_addded_" + Integer.toString(i + 1), new IAdaptable[] { fWorkspace.getRoot() });
@@ -264,11 +264,12 @@ public class IWorkingSetManagerTest extends UITestCase {
 	            fWorkingSetManager.addWorkingSet(workingSet);
 	            workingSets9[8 - i] = workingSet;
 	        }
-	        
+
 	        assertTrue(ArrayUtil.equals(workingSets9, fWorkingSetManager.getRecentWorkingSets()));
         } finally {
-        	if (oldMRULength > 0)
-        		fWorkingSetManager.setRecentWorkingSetsLength(oldMRULength);
+        	if (oldMRULength > 0) {
+				fWorkingSetManager.setRecentWorkingSetsLength(oldMRULength);
+			}
         }
     }
 
@@ -321,17 +322,17 @@ public class IWorkingSetManagerTest extends UITestCase {
 		assertEquals(fWorkingSet, sets[0]);
 		assertEquals(workingSet2, sets[2]);
 		assertEquals(workingSet3, sets[1]);
-		
+
 		IWorkingSet workingSet3a = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2 + "\u200b", new IAdaptable[] { fWorkspace.getRoot() });
 		workingSet3.setLabel(WORKING_SET_NAME_2); // reset the label - it
 
 		fWorkingSetManager.addWorkingSet(workingSet3a);
 		assertFalse(workingSet3a.equals(workingSet3));
-		
+
 		sets = fWorkingSetManager.getWorkingSets();
 		assertEquals(4, sets.length);
-		
+
     }
 
     public void testRemovePropertyChangeListener() throws Throwable {
@@ -360,10 +361,10 @@ public class IWorkingSetManagerTest extends UITestCase {
         assertTrue(ArrayUtil.equals(new IWorkingSet[] { workingSet2 },
                 fWorkingSetManager.getWorkingSets()));
     }
-    
+
     public void testRemoveWorkingSetAfterRename() throws Throwable {
     	/* get workingSetManager */
-    	IWorkingSetManager workingSetManager = 
+    	IWorkingSetManager workingSetManager =
     		fWorkbench.getWorkingSetManager();
 
     	workingSetManager.addWorkingSet(fWorkingSet);
@@ -392,7 +393,7 @@ public class IWorkingSetManagerTest extends UITestCase {
     }
     /**
      * Tests to ensure that a misbehaving listener does not bring down the manager.
-     * 
+     *
      * @throws Throwable
      */
     public void testListenerSafety() throws Throwable {
@@ -525,12 +526,12 @@ public class IWorkingSetManagerTest extends UITestCase {
 			public Object getAdapter(Class adapter) {
 				return null;
 			}
-			
+
 			@Override
 			public String toString() {
 				return getId();
 			}
 		};
-			
+
 	}
 }

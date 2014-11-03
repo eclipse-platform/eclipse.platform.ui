@@ -15,15 +15,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The DecoratorTreeView is a TreeView that tests the 
+ * The DecoratorTreeView is a TreeView that tests the
  * font and color decorations.
  */
 public class DecoratorTreeView extends DecoratorTestPart {
-	
+
 	TreeViewer viewer;
 
 	/**
-	 * 
+	 *
 	 */
 	public DecoratorTreeView() {
 		super();
@@ -46,7 +46,7 @@ public class DecoratorTreeView extends DecoratorTestPart {
 
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
 				| GridData.FILL_BOTH);
-		
+
 		viewer.getControl().setLayoutData(data);
 
 	}

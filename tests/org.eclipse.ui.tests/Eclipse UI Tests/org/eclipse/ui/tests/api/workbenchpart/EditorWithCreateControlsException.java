@@ -35,8 +35,9 @@ public class EditorWithCreateControlsException extends EditorPart {
     @Override
 	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
-        if (!(input instanceof IFileEditorInput))
-            throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+        if (!(input instanceof IFileEditorInput)) {
+			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+		}
         setSite(site);
         setInput(input);
     }
@@ -54,9 +55,9 @@ public class EditorWithCreateControlsException extends EditorPart {
     @Override
 	public void createPartControl(Composite parent) {
         Label testLabel = new Label(parent, SWT.NONE);
-        
+
         testLabel.setText("If you can read this, widgets are not being disposed properly when errors occur in createPartControl");
-        
+
         throw new RuntimeException("This exception was thrown intentionally as part of an error handling test");
 
     }

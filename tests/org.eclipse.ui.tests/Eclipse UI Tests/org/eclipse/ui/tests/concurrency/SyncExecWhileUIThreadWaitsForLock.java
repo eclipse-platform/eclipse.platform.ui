@@ -79,11 +79,13 @@ public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
 		Display display = Display.getDefault();
 		while (!lockAcquired[0]) {
 			//spin event loop so that asyncExed above gets run
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 			//if we waited too long, fail the test
-			if (System.currentTimeMillis()-waitStart > 60000)
+			if (System.currentTimeMillis()-waitStart > 60000) {
 				assertTrue("Deadlock occurred", false);
+			}
 		}
 		//if we get here, the test succeeded
 	}

@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test the workbench. This suite was created as a 
+ * Test the workbench. This suite was created as a
  * workaround for problems running the suites from the
  * command line.
  */

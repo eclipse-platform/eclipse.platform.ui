@@ -49,19 +49,19 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
         NullImageDecorator.fail = true;
         DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
                 .getDecoratorManager().getAllDecoratorDefinitions();
-        for (int i = 0; i < definitions.length; i++) {
-            String id = definitions[i].getId();
+        for (DecoratorDefinition definition2 : definitions) {
+            String id = definition2.getId();
             if (id.equals("org.eclipse.ui.tests.heavyNullImageDecorator")
                     || id.equals("org.eclipse.ui.tests.heavyNullTextDecorator")) {
-                definitions[i].setEnabled(true);
-                problemDecorators.add(definitions[i]);
+                definition2.setEnabled(true);
+                problemDecorators.add(definition2);
             }
 
             //Do not cache the light one - the disabling issues
             //still need to be worked out.
             if (id.equals("org.eclipse.ui.tests.lightNullImageDecorator")) {
-                definitions[i].setEnabled(true);
-                light = definitions[i];
+                definition2.setEnabled(true);
+                light = definition2;
             }
         }
         super.doSetUp();
@@ -71,7 +71,7 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
 	protected void doTearDown() throws Exception {
         super.doTearDown();
 
-        //Need to wait for decoration to end to allow for all 
+        //Need to wait for decoration to end to allow for all
         //errors to occur
         try {
             Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE,

@@ -27,14 +27,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * This tests whether we are leaking handlers after their submission has been
  * removed.
- * 
+ *
  * @since 3.1
  */
 public class Bug87856Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug87856Test</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */

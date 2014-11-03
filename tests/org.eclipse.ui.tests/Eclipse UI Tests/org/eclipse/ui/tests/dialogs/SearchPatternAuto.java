@@ -20,22 +20,22 @@ import junit.framework.TestCase;
 import org.eclipse.ui.dialogs.SearchPattern;
 
 /**
- * Test case for tests SearchPattern match functionality 
- * 
+ * Test case for tests SearchPattern match functionality
+ *
  * @since 3.3
  *
  */
 public class SearchPatternAuto extends TestCase {
-	
+
 	private static ArrayList resources = new ArrayList();
-	
-	
+
+
 	static {
-		
+
 		generateRescourcesTestCases('A', 'C', 8, "");
-		
+
 		generateRescourcesTestCases('A', 'C', 4, "");
-		
+
 	}
 	/**
 	 * @param name
@@ -48,10 +48,10 @@ public class SearchPatternAuto extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	/**
 	 * Generates strings data for match test cases.
-	 * 
+	 *
 	 * @param startChar
 	 * @param endChar
 	 * @param lenght
@@ -60,12 +60,13 @@ public class SearchPatternAuto extends TestCase {
 	private static void generateRescourcesTestCases(char startChar, char endChar, int lenght, String resource){
 		for (char ch = startChar; ch <= endChar; ch++) {
 			String res = resource + String.valueOf(ch);
-			if (lenght == res.length()) 
+			if (lenght == res.length()) {
 				resources.add(res);
-			else if ((res.trim().length() % 2) == 0)
-					generateRescourcesTestCases(Character.toUpperCase((char)(startChar + 1)), Character.toUpperCase((char)(endChar + 1)), lenght, res);
-				else 
-					generateRescourcesTestCases(Character.toLowerCase((char)(startChar + 1)), Character.toLowerCase((char)(endChar + 1)), lenght, res);
+			} else if ((res.trim().length() % 2) == 0) {
+				generateRescourcesTestCases(Character.toUpperCase((char)(startChar + 1)), Character.toUpperCase((char)(endChar + 1)), lenght, res);
+			} else {
+				generateRescourcesTestCases(Character.toLowerCase((char)(startChar + 1)), Character.toLowerCase((char)(endChar + 1)), lenght, res);
+			}
 		}
 	}
 
@@ -73,7 +74,7 @@ public class SearchPatternAuto extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	/**
 	 * Tests exact match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
 	 * Result for "abcd " pattern should be similar to regexp pattern "abcd" with case insensitive.
@@ -89,7 +90,7 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
 	 * Tests exact match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
 	 * Result for "abcdefgh " pattern should be similar to regexp pattern "abcdefgh" with case insensitive.
@@ -105,7 +106,7 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
 	 * Tests prefix match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
 	 * Result for "ab" pattern should be similar to regexp pattern "ab.*" with case insensitive.
@@ -121,7 +122,7 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
 	 * Tests pattern match functionality. It's similar to regexp patterns.
 	 * Result for "**cDe" pattern should be similar to regexp pattern ".*cde.*" with case insensitive.
@@ -137,7 +138,7 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
 	 * Tests pattern match functionality. It's similar to regexp patterns.
 	 * Result for "**c*e*i" pattern should be similar to regexp pattern ".*c.*e.*i.*" with case insensitive.
@@ -153,7 +154,7 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
 	 * Tests camelCase match functionality.
 	 * Every string starts with upperCase characters should be recognize as camelCase pattern match rule.
@@ -174,7 +175,7 @@ public class SearchPatternAuto extends TestCase {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests camelCase match functionality.
 	 * Every string starts with upperCase characters should be recognize as camelCase pattern match rule.
@@ -191,7 +192,7 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
 	 * Tests camelCase match functionality.
 	 * Every string starts with upperCase characters should be recognize as camelCase pattern match rule.
@@ -208,9 +209,9 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 	/**
-	 * Tests blank match functionality. 
+	 * Tests blank match functionality.
 	 * Blank string should be recognize as blank pattern match rule.
 	 * It should match with all resources.
 	 * Result for SearchPattern should be similar to regexp pattern ".*"
@@ -226,5 +227,5 @@ public class SearchPatternAuto extends TestCase {
 			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
 		}
 	}
-	
+
 }

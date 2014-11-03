@@ -24,7 +24,7 @@ import org.eclipse.ui.part.EditorPart;
 /**
  * A test editor that does pretty-well nothing.  Activating it will
  * update the coolbar, and possibly eventually the outline as well.
- * 
+ *
  * @since 3.1
  *
  */
@@ -52,9 +52,10 @@ public class TestEditor extends EditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		if (!(input instanceof IFileEditorInput))
+		if (!(input instanceof IFileEditorInput)) {
 			throw new PartInitException(
 					"Invalid Input: Must be IFileEditorInput");
+		}
 		setSite(site);
 		setInput(input);
 

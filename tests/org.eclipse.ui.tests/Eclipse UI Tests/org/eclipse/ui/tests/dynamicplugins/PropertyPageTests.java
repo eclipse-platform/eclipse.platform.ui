@@ -37,12 +37,12 @@ public class PropertyPageTests extends DynamicTestCase {
 		removeBundle();
 		assertEquals(size, manager.getContributors().size());
 	}
-	
+
 	public void testPropertyPageContribution() {
 		PropertyPageContributorManager cManager = PropertyPageContributorManager.getManager();
-		PropertyPageManager manager; 
+		PropertyPageManager manager;
 		DynamicTestType type = new DynamicTestType();
-			
+
 		cManager.contribute(manager = new PropertyPageManager(), type);
 		assertNull(manager.find(PROPERTYPAGE));
 		getBundle();
@@ -55,7 +55,7 @@ public class PropertyPageTests extends DynamicTestCase {
 		cManager.contribute(manager = new PropertyPageManager(), type);
 		assertNull(manager.find(PROPERTYPAGE));
 	}
-	
+
 	@Override
 	protected String getExtensionId() {
 		return "newPropertyPage1.testDynamicPropertyPageAddition";

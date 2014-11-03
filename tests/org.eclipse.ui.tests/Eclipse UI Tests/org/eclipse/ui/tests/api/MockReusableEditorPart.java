@@ -72,7 +72,7 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
             }
         });
         saveNeededToggle.setSelection(saveNeeded);
-        
+
         final Button saveAsToggle = new Button(parent, SWT.CHECK);
         saveAsToggle.setText("Save as allowed");
         saveAsToggle.addSelectionListener(new SelectionAdapter() {
@@ -169,7 +169,7 @@ public class MockReusableEditorPart extends MockWorkbenchPart implements IEditor
     public void setSaveAsAllowed(boolean isSaveAsAllowed) {
         this.saveAsAllowed = isSaveAsAllowed;
     }
-    
+
     public void setSaveNeeded(boolean value) {
         saveNeeded = value;
     }

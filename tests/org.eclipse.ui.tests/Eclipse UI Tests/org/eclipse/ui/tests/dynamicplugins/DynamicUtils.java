@@ -24,9 +24,10 @@ public class DynamicUtils {
             throws IOException, BundleException {
         // Programmatically install a new plugin
         TestPlugin plugin = TestPlugin.getDefault();
-        if (plugin == null)
-            throw new IllegalStateException(
+        if (plugin == null) {
+			throw new IllegalStateException(
                     "TestPlugin default reference is null");
+		}
         String pluginLocation = null;
         URL dataURL = Platform.resolve(plugin.getBundle().getEntry(pluginName));
         pluginLocation = "reference:" + dataURL.toExternalForm();

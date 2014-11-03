@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Test case to assert proper styles have been set for ProgressIndicator.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class ProgressIndicatorStyleTest extends TestCase {
 
@@ -45,11 +45,11 @@ public class ProgressIndicatorStyleTest extends TestCase {
 		verifyIndicator();
 
 		style = SWT.VERTICAL;
-		verifyIndicator();		
+		verifyIndicator();
 
 		style = SWT.HORIZONTAL;
 		verifyIndicator();
-		
+
 	}
 
 	/**

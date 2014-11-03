@@ -21,7 +21,8 @@ public class ChangeChildLabelAction extends TestSelectionAction {
 	@Override
 	public void run(TestElement element) {
 		TestElement child = element.getFirstChild();
-		if (child != null)
+		if (child != null) {
 			child.setLabel(child.getLabel() + " renamed child");
+		}
 	}
 }

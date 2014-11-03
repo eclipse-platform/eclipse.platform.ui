@@ -21,11 +21,11 @@ public class TestTableContentProvider implements IStructuredContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		TableElement[] elements = new TableElement[100];
-		
+
 		for (int i = 0; i < elements.length; i++) {
-			elements[i] = new TableElement(i);			
+			elements[i] = new TableElement(i);
 		}
-		
+
 		return elements;
 	}
 	@Override

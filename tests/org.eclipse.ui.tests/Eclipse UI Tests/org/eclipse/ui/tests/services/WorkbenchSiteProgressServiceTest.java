@@ -36,11 +36,11 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class WorkbenchSiteProgressServiceTest extends UITestCase{
 
-	
+
 	public WorkbenchSiteProgressServiceTest(String testName) {
 		super(testName);
 	}
-	
+
     private IWorkbenchPart activePart;
 	private IWorkbenchWindow window;
 	private SiteUpdateJob updateJob;
@@ -48,7 +48,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 	private IWorkbenchPartSite site;
 
 	private SimpleDateFormat dateFormat;
-    
+
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
@@ -62,12 +62,12 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z");
 	}
-	
+
 	public void forceUpdate() {
 		// ugly trick, but keeps the test going ...
 		updateJob.run(new NullProgressMonitor());
 	}
-	
+
 	public void testWaitCursor() throws Exception {
 		// Fire a job with cursor set to true and check the cursor
 
@@ -212,10 +212,10 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		public LongJob() {
 			super("LongJob");
 		}
-		
+
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			
+
 			monitor.beginTask("job starts", 1000);
 			for (int i = 0; i < 1000; i++) {
 				try {

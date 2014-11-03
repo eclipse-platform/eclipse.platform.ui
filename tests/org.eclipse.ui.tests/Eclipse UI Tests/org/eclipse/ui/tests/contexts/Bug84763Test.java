@@ -36,7 +36,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * that the context manager was exposing its internal data structures, and the
  * binding manager was mangling them. Debug then responded to bad information in
  * the <code>previouslyEnabledContextIds</code> property on the context event.
- * 
+ *
  * @since 3.1
  */
 public final class Bug84763Test extends UITestCase {
@@ -69,7 +69,7 @@ public final class Bug84763Test extends UITestCase {
 
 	/**
 	 * Constructor for <code>Bug84763Test</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
@@ -119,7 +119,7 @@ public final class Bug84763Test extends UITestCase {
 	 * context manager. In particular, whether the list of previous enabled
 	 * context identifiers will be changed.
 	 * </p>
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 * @throws ParseException

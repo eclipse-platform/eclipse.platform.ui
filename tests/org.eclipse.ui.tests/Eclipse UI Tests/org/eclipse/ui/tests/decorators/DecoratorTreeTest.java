@@ -16,7 +16,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
 /**
- * The DecoratorTreeTest tests the font and color support on 
+ * The DecoratorTreeTest tests the font and color support on
  * tree viewers.
  */
 public class DecoratorTreeTest extends DecoratorViewerTest {

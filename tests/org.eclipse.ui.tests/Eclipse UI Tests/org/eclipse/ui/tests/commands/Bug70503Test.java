@@ -18,7 +18,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * This test whether an ActionHandler will update its internal cache of
  * properties when a RetargetAction changes only its handler.
- * 
+ *
  * @since 3.0.1
  */
 public class Bug70503Test extends UITestCase {
@@ -26,7 +26,7 @@ public class Bug70503Test extends UITestCase {
 	private class PubliclyRetargettableAction extends RetargetAction {
 		/**
 		 * Constructs a new instance of <code>PubliclyRetargettableAction</code>.
-		 * 
+		 *
 		 * @param actionID
 		 *            The action identifier to pass to the
 		 *            <code>RetargetAction</code>; should not be
@@ -41,7 +41,7 @@ public class Bug70503Test extends UITestCase {
 
 		/**
 		 * A public version of the <code>setActionHandler</code> method.
-		 * 
+		 *
 		 * @param handler
 		 *            The new action handler; may be <code>null</code> if
 		 *            there is no handler currently.
@@ -53,7 +53,7 @@ public class Bug70503Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug70503Test.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
@@ -66,7 +66,7 @@ public class Bug70503Test extends UITestCase {
 	 * The set up is a <code>RetargetAction</code> wrapped in an
 	 * <code>ActionHandler</code>. The test verifies a switch back and forth
 	 * to make sure that the updates are happening.
-	 *  
+	 *
 	 */
 	public final void testHandlerChangeCausesUpdate() {
 		final PubliclyRetargettableAction retargetAction = new PubliclyRetargettableAction(

@@ -37,7 +37,7 @@ public class ActionSetTests extends DynamicTestCase implements
         IRegistryChangeListener {
 
     /**
-     * 
+     *
      */
     private static final String ACTION_SET_ID = "org.eclipse.newActionSet1.newActionSet1";
     private static final String PART_ID = "org.eclipse.ui.tests.part1";
@@ -50,37 +50,37 @@ public class ActionSetTests extends DynamicTestCase implements
         WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
         boolean [] found = new boolean[] {false};
         WWinPluginAction [] action = new WWinPluginAction[1];
-        
+
         assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
         assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
         findInPresentation(window, action, found);
         assertFalse("Action set found", found[0]);
         assertNull("Action found", action[0]);
-        
+
         action[0] = null;
         found[0] = false;
         getBundle();
-        
+
         assertNotNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
         assertNotNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
         findInPresentation(window, action, found);
         assertTrue("Action set not found", found[0]);
         assertNotNull("Action not found", action[0]);
-        
+
         ReferenceQueue queue = new ReferenceQueue();
         WeakReference ref = new WeakReference(action[0], queue);
-        
+
         action[0] = null;
         found[0] = false;
         removeBundle();
-        
+
         assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
         assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
         LeakTests.checkRef(queue, ref);
         findInPresentation(window, action, found);
         assertFalse("Action set found", found[0]);
         assertNull("Action found", action[0]);
-        
+
     }
 
     private void findInPresentation(WorkbenchWindow window,
@@ -96,8 +96,7 @@ public class ActionSetTests extends DynamicTestCase implements
 
 		ContributionRecord[] records = ((MenuManagerRenderer) obj)
 				.getContributionRecords();
-		for (int i = 0; i < records.length; i++) {
-			ContributionRecord rec = records[i];
+		for (ContributionRecord rec : records) {
 			String id = rec.getMenuContribution().getElementId();
 			if (id != null
 					&& id.startsWith("org.eclipse.newActionSet1.newActionSet2")) {

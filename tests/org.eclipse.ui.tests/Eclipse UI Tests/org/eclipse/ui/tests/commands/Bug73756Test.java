@@ -24,7 +24,7 @@ import org.eclipse.ui.tests.statushandlers.TestStatusHandler;
 /**
  * A tests whether is active will log an exception if the command is not
  * defined.
- * 
+ *
  * @since 3.1
  */
 public final class Bug73756Test extends UITestCase {
@@ -44,7 +44,7 @@ public final class Bug73756Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug73756Test</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */

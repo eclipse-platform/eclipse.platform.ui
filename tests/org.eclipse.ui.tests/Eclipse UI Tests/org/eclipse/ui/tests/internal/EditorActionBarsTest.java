@@ -65,7 +65,7 @@ public class EditorActionBarsTest extends UITestCase {
      * Test action enablement / disablement when a
      * part is active.
      * <p>
-     * Created for PR 1GJNB52: ToolItems in EditorToolBarManager can get 
+     * Created for PR 1GJNB52: ToolItems in EditorToolBarManager can get
      * out of synch with the state of the IAction
      * </p>
      */
@@ -88,7 +88,7 @@ public class EditorActionBarsTest extends UITestCase {
      * Test action enablement / disablement when a
      * part is inactive.
      * <p>
-     * Created for PR 1GJNB52: ToolItems in EditorToolBarManager can get 
+     * Created for PR 1GJNB52: ToolItems in EditorToolBarManager can get
      * out of synch with the state of the IAction
      * </p>
      */
@@ -116,16 +116,16 @@ public class EditorActionBarsTest extends UITestCase {
         fPage.activate(editor);
         verifyToolItemState(contributor, true);
     }
-    
+
     public void testCoolBarContribution() throws Throwable {
-    	
+
         MockEditorPart editor = openEditor(fPage, "3");
         MockEditorActionBarContributor contributor = (MockEditorActionBarContributor) editor
                 .getEditorSite().getActionBarContributor();
-        
+
         assertTrue(contributor.getActionBars() instanceof IActionBars2);
         IActionBars2 actionBars = (IActionBars2) contributor.getActionBars();
-        
+
         assertTrue(actionBars.getCoolBarManager() instanceof SubCoolBarManager);
         SubCoolBarManager coolBarManager = (SubCoolBarManager) actionBars.getCoolBarManager();
         assertTrue("Coolbar should be visible", coolBarManager.isVisible());
@@ -150,8 +150,9 @@ public class EditorActionBarsTest extends UITestCase {
     protected void verifyToolItemState(MockEditorActionBarContributor ctr,
             boolean enabled) {
         MockAction[] actions = ctr.getActions();
-        for (int nX = 0; nX < actions.length; nX++)
-            verifyToolItemState(actions[nX], enabled);
+        for (MockAction action : actions) {
+			verifyToolItemState(action, enabled);
+		}
     }
 
     /**
@@ -161,18 +162,18 @@ public class EditorActionBarsTest extends UITestCase {
         String actionText = action.getText();
         ICoolBarManager tbm = ((WorkbenchWindow) fWindow).getCoolBarManager();
         IContributionItem[] coolItems = tbm.getItems();
-        for (int i = 0; i < coolItems.length; ++i) {
-            if (coolItems[i] instanceof ToolBarContributionItem) {
-                ToolBarContributionItem coolItem = (ToolBarContributionItem) coolItems[i];
+        for (IContributionItem coolItem2 : coolItems) {
+            if (coolItem2 instanceof ToolBarContributionItem) {
+                ToolBarContributionItem coolItem = (ToolBarContributionItem) coolItem2;
                 IToolBarManager citbm = coolItem.getToolBarManager();
                 ToolBar tb = ((ToolBarManager) citbm).getControl();
                 verifyNullToolbar(tb, actionText, citbm);
                 if (tb != null && !tb.isDisposed()) {
                     ToolItem[] items = tb.getItems();
-                    for (int j = 0; j < items.length; j++) {
-                        String itemText = items[j].getToolTipText();
+                    for (ToolItem item : items) {
+                        String itemText = item.getToolTipText();
                         if (actionText.equals(itemText)) {
-                            assertEquals(enabled, items[j].getEnabled());
+                            assertEquals(enabled, item.getEnabled());
                             return;
                         }
                     }
@@ -183,14 +184,14 @@ public class EditorActionBarsTest extends UITestCase {
     }
 
     /**
-     * Confirms that a ToolBar is not null when you're looking a manager that 
-     * is a CoolItemToolBarManager and it has non-separator/non-invisible 
+     * Confirms that a ToolBar is not null when you're looking a manager that
+     * is a CoolItemToolBarManager and it has non-separator/non-invisible
      * contributions.
-     * This is a consequence of the changes made to 
+     * This is a consequence of the changes made to
      * CoolItemToolBarManager.update() that hides the a bar if it does not
-     * contain anything as per the above mentioned criteria.  Under this 
+     * contain anything as per the above mentioned criteria.  Under this
      * circumstance, the underlying ToolBar is not created.
-     * 
+     *
      * @param tb the ToolBar to check
      * @param actionText the action text
      * @param manager the IToolBarManager containing items
@@ -199,8 +200,8 @@ public class EditorActionBarsTest extends UITestCase {
     private void verifyNullToolbar(ToolBar tb, String actionText,
             IToolBarManager manager) {
         if (tb == null) { // toolbar should only be null if the given manager is
-            // a CoolBarManager and it contains only separators or invisible 
-            // objects.  
+            // a CoolBarManager and it contains only separators or invisible
+            // objects.
             IContributionItem[] items = manager.getItems();
             for (int i = 0; i < items.length; i++) {
                 if (!(items[i] instanceof Separator) && items[i].isVisible()) {
@@ -213,8 +214,8 @@ public class EditorActionBarsTest extends UITestCase {
     }
 
     /**
-     * Tests an edge case in cool bar updating when the cool bar has a single separator 
-     * and no other contents (or multiple separators and no other contents). 
+     * Tests an edge case in cool bar updating when the cool bar has a single separator
+     * and no other contents (or multiple separators and no other contents).
      * See bug 239945 for details.
      * @throws Throwable
      */

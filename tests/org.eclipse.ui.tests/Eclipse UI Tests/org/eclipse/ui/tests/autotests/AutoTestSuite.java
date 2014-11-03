@@ -26,7 +26,7 @@ import org.eclipse.ui.tests.TestPlugin;
  */
 public class AutoTestSuite extends TestSuite {
     private AutoTestLogger logger;
-    
+
     public AutoTestSuite(URL expectedResults) {
         if (expectedResults == null) {
             logger = new AutoTestLogger();
@@ -39,29 +39,29 @@ public class AutoTestSuite extends TestSuite {
             }
         }
     }
-    
+
     protected AutoTestLogger getLog() {
         return logger;
     }
-    
+
     public void addWrapper(AutoTest test) {
         addTest(new AutoTestWrapper(test, logger));
     }
-    
+
     @Override
 	public void run(TestResult result) {
         super.run(result);
 
         IPath statePath = Platform.getStateLocation(TestPlugin.getDefault().getBundle());
-        
+
         String testName = this.getName();
         if (testName == null) {
             testName = this.getClass().getName();
         }
-        
+
         if (!logger.getErrors().isEmpty()) {
             IPath errorsPath = statePath.append(testName).append("errors.xml");
-            
+
             System.out.println("Errors detected. Results written to " + errorsPath.toString());
 
             XMLMemento output = XMLMemento.createWriteRoot("errors");
@@ -72,11 +72,11 @@ public class AutoTestSuite extends TestSuite {
                 e.printStackTrace();
             }
         }
-        
+
         if (!logger.getUnknownTests().isEmpty()) {
 
             IPath unknownPath = statePath.append(testName).append("newtests.xml");
-            
+
             System.out.println("New tests detected. Results written to " + unknownPath.toString());
 
             XMLMemento output = XMLMemento.createWriteRoot("unknown");

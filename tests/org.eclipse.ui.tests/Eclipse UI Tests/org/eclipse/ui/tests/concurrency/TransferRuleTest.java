@@ -53,8 +53,9 @@ public class TransferRuleTest extends UITestCase {
 		@Override
 		public void run(IProgressMonitor monitor) {
 			//if we already have an error don't run the rest of the test
-			if (error != null)
+			if (error != null) {
 				return;
+			}
 			try {
 				try {
 					//acquire the rule that was transferred (will hang if the rule transfer failed)

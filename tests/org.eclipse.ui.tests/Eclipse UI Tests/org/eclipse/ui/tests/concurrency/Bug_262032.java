@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Test for an issue where a lock, held by the UI thread
- * is released while the UI thread is actually performing work 
+ * is released while the UI thread is actually performing work
  * having acquired it...
  */
 public class Bug_262032 extends TestCase {
@@ -44,27 +44,27 @@ public class Bug_262032 extends TestCase {
 	public static Test suite() {
 		return new TestSuite(Bug_262032.class);
 	}
-	
+
 	volatile boolean concurrentAccess = false;
 
 	/**
 	 * Threads: UI(+asyncExec), j
 	 * Locks: lock, IDRule
-	 * 
+	 *
 	 * j holds identity Rule
 	 * ui tries to acquire rule => block and performs asyncMessages
 	 * asyncExec run and acquire()s lock
 	 * j then attempts to acquire lock.
-	 * 
+	 *
 	 * Deadlock manager believes that UI is waiting for IDrule while holding
 	 * lock, and Job holds IDRule while attempting lock.  Scheduling rules
 	 * are never released by the Deadlock detector, so the lock is yielded!
-	 * 
+	 *
 	 * The expectation is that when threads are 'waiting' they're sat
 	 * in the ordered lock acquire which can give the locks safely to whoever
 	 * is deemed to need it.  In this case that's not true as the UI
-	 * is running an async exec. 
-	 * 
+	 * is running an async exec.
+	 *
 	 * The result is concurrent running in a locked region.
 	 */
 	public void testBug262032() {

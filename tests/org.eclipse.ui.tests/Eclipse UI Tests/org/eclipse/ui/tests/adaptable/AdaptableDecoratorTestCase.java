@@ -61,7 +61,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 
 	/**
 	 * Constructor for DecoratorTestCase.
-	 * 
+	 *
 	 * @param testName
 	 */
 	public AdaptableDecoratorTestCase(String testName) {
@@ -78,13 +78,15 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 
 		DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
 				.getDecoratorManager().getAllDecoratorDefinitions();
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].getId().equals(
-					"org.eclipse.ui.tests.adaptable.decorator"))
-				fullDefinition = definitions[i];
-			if (definitions[i].getId().equals(
-					"org.eclipse.ui.tests.decorators.lightweightdecorator"))
-				lightDefinition = definitions[i];
+		for (DecoratorDefinition definition : definitions) {
+			if (definition.getId().equals(
+					"org.eclipse.ui.tests.adaptable.decorator")) {
+				fullDefinition = definition;
+			}
+			if (definition.getId().equals(
+					"org.eclipse.ui.tests.decorators.lightweightdecorator")) {
+				lightDefinition = definition;
+			}
 		}
 	}
 

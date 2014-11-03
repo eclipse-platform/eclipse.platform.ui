@@ -40,10 +40,10 @@ public class IntroTest2 extends UITestCase {
     public IntroTest2(String testName) {
         super(testName);
     }
-    
+
     /**
-     * Open the intro, change perspective, close the intro 
-     * and ensure that the intro has been closed in the 
+     * Open the intro, change perspective, close the intro
+     * and ensure that the intro has been closed in the
      * other perspective.
      * See bug 174213
      */
@@ -56,31 +56,31 @@ public class IntroTest2 extends UITestCase {
         activePage.setPerspective(WorkbenchPlugin.getDefault()
                 .getPerspectiveRegistry().findPerspectiveWithId(
                         "org.eclipse.ui.tests.api.SessionPerspective"));
-       
+
         IViewPart viewPart = window.getActivePage().findView(
 				IIntroConstants.INTRO_VIEW_ID);
         assertNotNull(viewPart);
-        
+
         window.getActivePage().hideView(viewPart);
         viewPart = window.getActivePage().findView(
 				IIntroConstants.INTRO_VIEW_ID);
         assertNull(viewPart);
-        
+
         activePage.setPerspective(oldDesc);
         viewPart = window.getActivePage().findView(
 				IIntroConstants.INTRO_VIEW_ID);
         assertNull(viewPart);
-        
+
     }
 
     @Override
 	protected void doSetUp() throws Exception {
         super.doSetUp();
-        
+
         // these tests rely on the 3.3 behavior for sticky views
     	IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
     	preferenceStore.putValue(IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, "false");
-    	
+
         oldDesc = Workbench.getInstance().getIntroDescriptor();
         IntroDescriptor testDesc = (IntroDescriptor) WorkbenchPlugin
                 .getDefault().getIntroRegistry().getIntro(

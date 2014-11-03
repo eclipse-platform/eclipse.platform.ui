@@ -24,7 +24,7 @@ import org.eclipse.ui.tests.session.NonRestorableView;
 /**
  * Perspective which distributes selection source views to different stacks
  * relative to the Properties view.
- * 
+ *
  * @since 3.5
  */
 public class PropertySheetPerspectiveFactory implements IPerspectiveFactory {
@@ -55,7 +55,8 @@ public class PropertySheetPerspectiveFactory implements IPerspectiveFactory {
                 .getPerspectiveRegistry().findPerspectiveWithId(
                         PropertySheetPerspectiveFactory.class.getName());
         activePage.setPerspective(desc);
-        while (Display.getCurrent().readAndDispatch())
-            ;
+        while (Display.getCurrent().readAndDispatch()) {
+			;
+		}
     }
 }

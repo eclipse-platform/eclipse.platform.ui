@@ -30,17 +30,17 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public abstract class ViewerComparatorTest extends ViewerTestCase {
 	protected String UI = "UI";
-	protected String[] TEAM1 = {"Karice", "Tod", "Eric", "Paul", 
+	protected String[] TEAM1 = {"Karice", "Tod", "Eric", "Paul",
 				"Mike", "Michael", "Andrea", "Kim", "Boris", "Susan"};
-	protected String[] TEAM1_SORTED = {"Andrea", "Boris", "Eric", "Karice", "Kim", 
+	protected String[] TEAM1_SORTED = {"Andrea", "Boris", "Eric", "Karice", "Kim",
 			"Michael", "Mike", "Paul", "Susan", "Tod"};
-	protected String[] TEAM1_SORTED_WITH_INSERT = {"Andrea", "Boris", "Duong", "Eric", "Karice", "Kim", 
+	protected String[] TEAM1_SORTED_WITH_INSERT = {"Andrea", "Boris", "Duong", "Eric", "Karice", "Kim",
 			"Michael", "Mike", "Paul", "Susan", "Tod"};
-	
+
 	protected String RUNTIME = "Runtime";
 	protected String[] TEAM2 = {"Pascal", "DJ", "Jeff", "Andrew", "Oleg"};
 	protected String[] TEAM2_SORTED = {"Andrew", "DJ", "Jeff", "Oleg", "Pascal"};
-	
+
 	protected String CORE = "Core";
 	protected String[] TEAM3 = {"John", "Michael", "Bogdan"};
 	protected String[] TEAM3_SORTED = {"Bogdan", "John", "Michael"};
@@ -48,23 +48,24 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	protected Team team1 = new Team(UI, TEAM1);
 	protected Team team2 = new Team(RUNTIME, TEAM2);
 	protected Team team3 = new Team(CORE, TEAM3);
-	
+
 	/*
 	 * model object - parent
 	 */
 	protected class Team {
 		Vector fListeners = new Vector();
-		
+
 		TeamMember[] members;
 		String name;
-		
+
 		public Team(String name, String[] members){
 			this.name = name;
 			this.members = new TeamMember[members.length];
-			for (int i = 0; i < members.length; i++)
+			for (int i = 0; i < members.length; i++) {
 				this.members[i] = new TeamMember(members[i], this);
+			}
 		}
-		
+
 		public void addMember(String person){
 			TeamMember newMember = new TeamMember(person, this);
 			TeamMember[] newMembers = new TeamMember[members.length + 1];
@@ -77,7 +78,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 			newMembers = null;
 			fireModelChanged(new ComparatorModelChange(TestModelChange.INSERT, this, newMember));
 		}
-		
+
 	    public void addListener(IComparatorModelListener listener) {
 	        fListeners.addElement(listener);
 	    }
@@ -97,35 +98,35 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	        fListeners.removeElement(listener);
 	    }
 	}
-	
+
 	/*
 	 * model object - child
 	 */
 	protected class TeamMember {
 		String name;
 		Team team;
-		
+
 		public TeamMember(String name, Team team){
 			this.name = name;
 			this.team = team;
 		}
 	}
-	
+
 	/*
 	 * label provider
 	 */
 	protected class TeamModelLabelProvider extends LabelProvider{
 		@Override
 		public String getText(Object element) {
-			if (element instanceof Team)
+			if (element instanceof Team) {
 				return ((Team)element).name;
-			else if (element instanceof TeamMember){
+			} else if (element instanceof TeamMember){
 				return ((TeamMember)element).name;
 			}
 			return element.toString();
-		}			
+		}
 	}
-	
+
 	/*
 	 * content provider
 	 */
@@ -147,7 +148,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 			if (oldInput != null){
 				((Team) oldInput).removeListener(this);;
 			}
-	       
+
 	        if (newInput != null){
 	        	((Team) newInput).addListener(this);
 	        }
@@ -184,7 +185,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	            }
 	        }
 	    }
-	    
+
 	    protected void doInsert(ComparatorModelChange change) {
 	        if (fViewer instanceof ListViewer) {
 	            if (change.getParent() != null
@@ -228,9 +229,9 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	    protected void doStructureChange(ComparatorModelChange change) {
             fViewer.refresh(change.getParent());
 	    }
-	    
+
 	}
-	
+
 	public ViewerComparatorTest(String name) {
 		super(name);
 	}

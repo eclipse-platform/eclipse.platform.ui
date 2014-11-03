@@ -32,18 +32,18 @@ import org.eclipse.ui.tests.harness.util.FileTool;
 
 /**
  * Wrapper for workbench session tests.
- * 
+ *
  * @since 3.1
  */
 public class WorkbenchSessionTest extends SessionTestSuite {
-	
+
 	private Map arguments;
 
 	private String dataLocation;
-	
+
 	/**
 	 * Create a new workbench session test.
-	 * 
+	 *
 	 * @param dataLocation
 	 *            the location of the workspace to test, relative to
 	 *            data/workspaces
@@ -54,10 +54,10 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 		this(dataLocation, clazz);
 		this.arguments = arguments;
 	}
-	
+
 	/**
 	 * Create a new workbench session test.
-	 * 
+	 *
 	 * @param dataLocation
 	 *            the location of the workspace to test, relative to
 	 *            data/workspaces
@@ -68,10 +68,10 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 		this(dataLocation);
 		this.arguments = arguments;
 	}
-	
+
 	/**
 	 * Create a new workbench session test.
-	 * 
+	 *
 	 * @param dataLocation
 	 *            the location of the workspace to test, relative to
 	 *            data/workspaces
@@ -80,13 +80,13 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 */
 	public WorkbenchSessionTest(String dataLocation, Class clazz) {
 		super("org.eclipse.ui.tests", clazz);
-		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);		
+		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);
 		this.dataLocation = dataLocation;
 	}
-	
+
 	/**
 	 * Create a new workbench session test.
-	 * 
+	 *
 	 * @param dataLocation
 	 *            the location of the workspace to test, relative to
 	 *            data/workspaces
@@ -94,15 +94,16 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 */
 	public WorkbenchSessionTest(String dataLocation) {
 		super("org.eclipse.ui.tests");
-		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);		
+		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);
 		this.dataLocation = dataLocation;
 	}
 
 	/**
 	 * Ensures setup uses this suite's instance location.
-	 * 
+	 *
 	 * @throws SetupException
 	 */
+	@Override
 	protected Setup newSetup() throws SetupException {
 		Setup base = super.newSetup();
 		try {
@@ -115,7 +116,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 					base.setEclipseArgument(key, value);
 				}
 			}
-			
+
 			// <== Kludge for the bug 345127. Force spawned VM to be 32 bit
 			// if we are in a 32bit Eclipse
 			if (Util.isCocoa()) {
@@ -136,29 +137,32 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 
 	/**
 	 * Copies the data to a temporary directory and returns the new location.
-	 * 
+	 *
 	 * @return the location
 	 */
 	private String copyDataLocation() throws IOException {
         TestPlugin plugin = TestPlugin.getDefault();
-        if (plugin == null)
-            throw new IllegalStateException(
+        if (plugin == null) {
+			throw new IllegalStateException(
                     "TestPlugin default reference is null");
-        
+		}
+
         URL fullPathString = plugin.getDescriptor().find(
 				new Path("data/workspaces/" + dataLocation + ".zip"));
-        
-        if (fullPathString == null) 
-        	throw new IllegalArgumentException();
-        
+
+        if (fullPathString == null) {
+			throw new IllegalArgumentException();
+		}
+
         IPath path = new Path(fullPathString.getPath());
 
         File origin = path.toFile();
-        if (!origin.exists())
+        if (!origin.exists()) {
 			throw new IllegalArgumentException();
-        
-        ZipFile zFile = new ZipFile(origin);        
-		
+		}
+
+        ZipFile zFile = new ZipFile(origin);
+
 		File destination = new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir()).toOSString());
 		FileTool.unzip(zFile, destination);
 		return destination.getAbsolutePath();

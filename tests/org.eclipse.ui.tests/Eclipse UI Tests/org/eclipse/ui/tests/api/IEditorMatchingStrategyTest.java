@@ -21,7 +21,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests the <code>IEditorMatchingStrategyTest</code> API and behaviour.
- * 
+ *
  * @since 3.1
  */
 public class IEditorMatchingStrategyTest extends UITestCase {
@@ -38,7 +38,7 @@ public class IEditorMatchingStrategyTest extends UITestCase {
         IFile file2 = FileUtil.createFile("MANIFEST.MF", proj);
         IFile file3 = FileUtil.createFile("build.properties", proj);
         IFile file4 = FileUtil.createFile("something.txt", proj);
-        
+
         IWorkbenchPage page = openTestWindow().getActivePage();
         IEditorPart editor1 = page.openEditor(new FileEditorInput(file1), MATCHING_EDITOR_ID);
         IEditorPart editor1b = page.openEditor(new FileEditorInput(file1), MATCHING_EDITOR_ID);
@@ -57,7 +57,7 @@ public class IEditorMatchingStrategyTest extends UITestCase {
         IFile file2 = FileUtil.createFile("MANIFEST.MF", proj);
         IFile file3 = FileUtil.createFile("build.properties", proj);
         IFile file4 = FileUtil.createFile("something.txt", proj);
-        
+
         IWorkbenchPage page = openTestWindow().getActivePage();
         IEditorPart editor = page.openEditor(new FileEditorInput(file1), MATCHING_EDITOR_ID);
         assertEquals(editor, page.findEditor(new FileEditorInput(file1)));
@@ -65,6 +65,6 @@ public class IEditorMatchingStrategyTest extends UITestCase {
         assertEquals(editor, page.findEditor(new FileEditorInput(file3)));
         assertEquals(null, page.findEditor(new FileEditorInput(file4)));
     }
-    
+
 }
 

@@ -43,10 +43,10 @@ import org.eclipse.ui.part.ViewPart;
  * This view acts as a test harness for the new 3.3 menu contribution story. It
  * read the additions and uses the mechanism to construct its various menus and
  * toolbars.
- * 
+ *
  * Right now it's under development but will act as a primary testing point for
  * the development.
- * 
+ *
  * Currently reads the additions when the control is created and only handles
  * the popup menu contributions...
  */
@@ -258,13 +258,13 @@ public class MenuContributionHarness extends ViewPart {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-	
+
 	int callCount = 0;
-	
+
 	public void updateCount() {
 		callCount++;
 	}
-	
+
 	public int getCount() {
 		return callCount;
 	}

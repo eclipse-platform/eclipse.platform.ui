@@ -18,13 +18,13 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * MarkerSupportTests are tests for the markerSupport extension
  * point.
  * @since 3.2
- * 
+ *
  */
 public class MarkerSupportRegistryTests extends UITestCase {
 
 	/**
 	 * Create an instance of the receiver.
-	 * 
+	 *
 	 * @param testName
 	 */
 	public MarkerSupportRegistryTests(String testName) {
@@ -43,7 +43,7 @@ public class MarkerSupportRegistryTests extends UITestCase {
 
 	/**
 	 * Test that the marker type specified is in a category.
-	 * 
+	 *
 	 * @param string
 	 */
 	private void doTestCategory(String string) {

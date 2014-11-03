@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
@@ -71,7 +71,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getProjectName() {
@@ -80,7 +80,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getFirstFolderName() {
@@ -89,7 +89,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getSecondFolderName() {
@@ -98,7 +98,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String[] getHistoryFiles() {
@@ -107,7 +107,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String[] getNonHistoryFiles() {
@@ -138,8 +138,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 
 		IMemento historyMemento = memento.createChild(DEFAULT_ROOT_NODE_NAME);
 
-		for (int i = 0; i < historyResources.length; i++) {
-			IResource item = historyResources[i];
+		for (IResource item : historyResources) {
 			IMemento elementMemento = historyMemento
 					.createChild(DEFAULT_INFO_NODE_NAME);
 			ResourceFactory resourceFactory = new ResourceFactory(item);
@@ -164,8 +163,8 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 		project = root.getProject(getProjectName());
 
 		IProject[] projects = root.getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			projects[i].delete(true, null);
+		for (IProject project2 : projects) {
+			project2.delete(true, null);
 		}
 
 		project.create(null);

@@ -14,7 +14,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 
 /**
- * 
+ *
  * @author Prakash G.R.
  * @since 3.6
  *

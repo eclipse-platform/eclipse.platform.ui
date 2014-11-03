@@ -26,7 +26,7 @@ public class IntegerConverter extends AbstractParameterValueConverter {
 					"Error parsing value: " + parameterValue, ex);
 		}
 	}
-	
+
 	@Override
 	public String convertToString(Object parameterValue)
 			throws ParameterValueConversionException {

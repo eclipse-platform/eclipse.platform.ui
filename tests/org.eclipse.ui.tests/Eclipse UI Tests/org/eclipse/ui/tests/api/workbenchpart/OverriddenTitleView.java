@@ -21,7 +21,7 @@ public class OverriddenTitleView extends EmptyView {
     String overriddenTitle = "OverriddenTitle";
 
     /**
-     * 
+     *
      */
     public OverriddenTitleView() {
         super();

@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 
 /**
  * The suite of tests for multi-page editors.
- * 
+ *
  * @since 3.0
  */
 public class MultiPageEditorTestSuite extends TestSuite {

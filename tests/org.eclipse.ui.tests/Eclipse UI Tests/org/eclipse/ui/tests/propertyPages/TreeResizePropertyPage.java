@@ -26,9 +26,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * The TreeResizePropertyPage is an example of a property page with this resize
  * capability
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class TreeResizePropertyPage extends PropertyPage {
 
@@ -55,7 +55,7 @@ public class TreeResizePropertyPage extends PropertyPage {
 		tree.setLinesVisible(true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(data);
-		
+
 		TreeColumnLayout treeLayout = new TreeColumnLayout();
 
 		tree.setHeaderVisible(true);

@@ -54,7 +54,7 @@ import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
  * <code>plugin.xml</code> file containing certain values. Please see the
  * appropriate section in that file for more information about the initial
  * set-up.
- * 
+ *
  * @since 3.0
  */
 public final class ObjectContributionTest extends UITestCase {
@@ -62,7 +62,7 @@ public final class ObjectContributionTest extends UITestCase {
 	/**
 	 * Constructs a new instance of <code>ObjectContributionTest</code> with
 	 * the name of the test.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test; may be <code>null</code>.
 	 */
@@ -74,7 +74,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 * Tests whether the content-type object contribution works. This is testing
 	 * a use care familiar to Ant UI. The content-type scans an XML file to see
 	 * if its root element is <code>&lt;project&gt;</code>.
-	 * 
+	 *
 	 * @throws CoreException
 	 *             If a problem occurs when creating the project or file, or if
 	 *             the project can't be opened.
@@ -103,7 +103,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 * objectContributions. This allows IResource adaptable contributions
 	 * without an adapter factory and using the IContributorResourceAdapter
 	 * factory. In addition, test the ResourceMapping adaptations.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public final void testContributorResourceAdapter() throws CoreException {
@@ -170,7 +170,7 @@ public final class ObjectContributionTest extends UITestCase {
 
 	/**
 	 * This tests adaptable contributions that are not IResource.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public final void testAdaptables() {
@@ -227,7 +227,7 @@ public final class ObjectContributionTest extends UITestCase {
 
 	/**
 	 * Ensure that there are no duplicate contributions.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public final void testDuplicateAdaptables() {
@@ -264,7 +264,7 @@ public final class ObjectContributionTest extends UITestCase {
 
 	/**
 	 * Test non-adaptable contributions
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public final void testNonAdaptableContributions() {
@@ -296,7 +296,7 @@ public final class ObjectContributionTest extends UITestCase {
 	/**
 	 * Helper class that will create a popup menu based on the given selection
 	 * and then ensure that the provided commandIds are added to the menu.
-	 * 
+	 *
 	 * @param commandIds
 	 *            the command ids that should appear in the menu
 	 * @param selection
@@ -341,7 +341,7 @@ public final class ObjectContributionTest extends UITestCase {
 		/*
 		 * Pretend to show the pop-up menu -- looking to motivate the extender
 		 * to fill the menu based on the selection provider.
-		 * 
+		 *
 		 * TODO This causes a big delay (in the order of a minute or more) while
 		 * trying to fill this menu. It seems to be loading a bunch of plug-ins,
 		 * and doing class loading.
@@ -367,8 +367,7 @@ public final class ObjectContributionTest extends UITestCase {
 			final IContributionItem[] items = fakeMenuManager.getItems();
 			Set seenCommands = new HashSet(Arrays.asList(commandIds));
 			List commands = new ArrayList(Arrays.asList(commandIds));
-			for (int i = 0; i < items.length; i++) {
-				IContributionItem contributionItem = items[i];
+			for (IContributionItem contributionItem : items) {
 				// Step 1: test the selection
 				if (selectionType != null) {
 					IContributionItem item = contributionItem;

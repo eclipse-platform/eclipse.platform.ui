@@ -27,14 +27,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A test for whether part identifiers work properly for HandlerSubmissions.
- * 
+ *
  * @since 3.1
  */
 public final class Bug74990Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug74990Test</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
@@ -47,11 +47,11 @@ public final class Bug74990Test extends UITestCase {
 	 * matched properly. This is only using the part id. The test verifies that
 	 * it is active when the part is active, and not active when the part is not
 	 * active.
-	 * 
+	 *
 	 * @throws PartInitException
 	 *             If something goes wrong creating the part to which this
 	 *             handler is tied.
-	 * 
+	 *
 	 */
 	public final void testPartIdSubmission() throws PartInitException {
 		// Define a command.
@@ -90,7 +90,7 @@ public final class Bug74990Test extends UITestCase {
 			while (fWorkbench.getDisplay().readAndDispatch()) {
 				((Workbench)fWorkbench).getContext().processWaiting();
 			}
-			
+
 			assertTrue("The MockViewPart command should be handled",
 					testCommand.isHandled());
 

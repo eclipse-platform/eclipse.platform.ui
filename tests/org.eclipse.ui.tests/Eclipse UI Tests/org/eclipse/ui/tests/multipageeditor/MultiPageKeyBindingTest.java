@@ -33,14 +33,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Tests that key bindings are treated correctly in a multi-page editor. This
  * ensures that key bindings are switched at the granularity of a page in a
  * multi-page editor. See Bug 37612 for references.
- * 
+ *
  * @since 3.0
  */
 public class MultiPageKeyBindingTest extends UITestCase {
 
     /**
      * Constructs a new instance of <code>MultiPageKeyBindingTest</code>.
-     * 
+     *
      * @param name
      *            The name of the test to be run.
      */
@@ -51,7 +51,7 @@ public class MultiPageKeyBindingTest extends UITestCase {
     /**
      * Tests that the key bindings are updated when the page is switched in a
      * multi-page editor part.
-     * 
+     *
      * @throws CoreException
      *             If the project or file cannot be created.
      * @throws ParseException
@@ -83,8 +83,9 @@ public class MultiPageKeyBindingTest extends UITestCase {
         // Switch to the second tab
         window.getShell().forceActive();
         Display display = Display.getCurrent();
-        while (display.readAndDispatch())
-            ;
+        while (display.readAndDispatch()) {
+			;
+		}
         multiPageEditorPart.setPage(1);
 
         // Check that "Ctrl+Shift+5" is the bound key.

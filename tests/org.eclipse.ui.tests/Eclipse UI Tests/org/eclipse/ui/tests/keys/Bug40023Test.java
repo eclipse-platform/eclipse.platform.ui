@@ -31,7 +31,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 40023
- * 
+ *
  * @since 3.0
  */
 public class Bug40023Test extends UITestCase {
@@ -39,7 +39,7 @@ public class Bug40023Test extends UITestCase {
     /**
      * Retrieves a menu item matching or starting with the given name from an
      * array of menu items.
-     * 
+     *
      * @param menuItems
      *            The array of menu items to search; must not be <code>null</code>
      * @param text
@@ -47,9 +47,9 @@ public class Bug40023Test extends UITestCase {
      * @return The menu item, if any is found; <code>null</code> otherwise.
      */
     public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
-        for (int i = 0; i < menuItems.length; i++) {
-            if (menuItems[i].getText().startsWith(text)) {
-                return menuItems[i];
+        for (MenuItem menuItem : menuItems) {
+            if (menuItem.getText().startsWith(text)) {
+                return menuItem;
             }
         }
 
@@ -58,7 +58,7 @@ public class Bug40023Test extends UITestCase {
 
     /**
      * Constructor for Bug40023Test.
-     * 
+     *
      * @param name
      *            The name of the test
      */
@@ -69,7 +69,7 @@ public class Bug40023Test extends UITestCase {
     /**
      * Tests that check box items on the menu are checked when activated from
      * the keyboard.
-     * 
+     *
      * @throws CommandException
      *             If execution of the handler fails.
      * @throws CoreException

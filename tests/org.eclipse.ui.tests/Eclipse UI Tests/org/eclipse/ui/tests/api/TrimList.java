@@ -35,15 +35,14 @@ public class TrimList implements IWindowTrim {
 	private Combo fCombo;
 
 	/**
-	 * The trim objects must all have the same parent.  After 3.2M4 
+	 * The trim objects must all have the same parent.  After 3.2M4
 	 * the IWindowTrim interface will be updated so that the workbench
 	 * window can give each piece of trim the correct parent.
 	 * @param shell the parent of this trim
 	 */
 	public TrimList(Shell shell) {
 		fCombo = new Combo(shell, SWT.DROP_DOWN|SWT.READ_ONLY);
-		for (int i = 0; i < INIT_LIST.length; i++) {
-			String value = INIT_LIST[i];
+		for (String value : INIT_LIST) {
 			fCombo.add(value);
 		}
 		fCombo.select(0);

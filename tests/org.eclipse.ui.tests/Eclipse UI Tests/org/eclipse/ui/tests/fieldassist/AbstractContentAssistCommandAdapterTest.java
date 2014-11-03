@@ -28,7 +28,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 		handlerService.executeCommand(
 				IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST, null);
 	}
-	
+
 	public void testHandlerPromptsPopup() throws Exception {
 		getFieldAssistWindow().open();
 
@@ -79,7 +79,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 
 		sendFocusInToControl();
 		sendKeyDownToControl('o');
-		
+
 		assertOneShellUp();
 	}
 

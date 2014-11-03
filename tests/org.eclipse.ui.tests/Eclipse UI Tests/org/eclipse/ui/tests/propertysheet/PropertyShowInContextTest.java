@@ -21,7 +21,7 @@ import org.eclipse.ui.views.properties.PropertyShowInContext;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 
@@ -54,7 +54,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testHashCode3() throws PartInitException {
@@ -71,7 +71,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testHashCode4() throws PartInitException {
@@ -89,7 +89,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testHashCode5() throws PartInitException {
@@ -103,7 +103,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testHashCode6() throws PartInitException {
@@ -118,7 +118,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testHashCode7() throws PartInitException {
@@ -162,7 +162,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEquals3() throws PartInitException {
@@ -180,7 +180,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEquals4() throws PartInitException {
@@ -199,7 +199,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEquals5() throws PartInitException {
@@ -214,7 +214,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEqualsNullInput() throws PartInitException {
@@ -226,12 +226,12 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 		assertTrue(psc1.equals(psc2));
 		assertTrue(psc2.equals(psc1));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEqualsNullInputBoth() throws PartInitException {
@@ -243,12 +243,12 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 		assertTrue(psc2.equals(psc1));
 		assertTrue(psc1.equals(psc2));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEqualsNonNullInput() throws PartInitException {
@@ -260,12 +260,12 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 		assertFalse(psc1.equals(psc2));
 		assertFalse(psc2.equals(psc1));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 * 
+	 *
 	 * @throws PartInitException
 	 */
 	public final void testEquals7() throws PartInitException {

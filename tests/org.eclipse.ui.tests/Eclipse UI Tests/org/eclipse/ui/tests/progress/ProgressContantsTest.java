@@ -31,9 +31,9 @@ import org.eclipse.ui.progress.IProgressConstants2;
 public class ProgressContantsTest extends ProgressTestCase {
 
 	/**
-	 * 
+	 *
 	 * @param testName
-	 * 
+	 *
 	 */
 	public ProgressContantsTest(String testName) {
 		super(testName);
@@ -63,12 +63,12 @@ public class ProgressContantsTest extends ProgressTestCase {
 		processEvents();
 
 		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
-		for (int i = 0; i < progressInfoItems.length; i++) {
-			JobInfo[] jobInfos = progressInfoItems[i].getJobInfos();
-			for (int j = 0; j < jobInfos.length; j++) {
-				Job job = jobInfos[j].getJob();
+		for (ProgressInfoItem progressInfoItem : progressInfoItems) {
+			JobInfo[] jobInfos = progressInfoItem.getJobInfos();
+			for (JobInfo jobInfo : jobInfos) {
+				Job job = jobInfo.getJob();
 				if (job.equals(okJob)) {
-					progressInfoItems[i].executeTrigger();
+					progressInfoItem.executeTrigger();
 				}
 			}
 		}
@@ -77,7 +77,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 	}
 
 	// Commented out due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=288358
-	
+
 //	public void testKeepProperty() throws Exception {
 //
 //		openProgressView();

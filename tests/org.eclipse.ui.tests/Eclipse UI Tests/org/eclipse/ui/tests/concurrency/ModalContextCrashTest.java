@@ -45,10 +45,11 @@ public class ModalContextCrashTest extends TestCase {
 
 		@Override
 		public void threadChange(Thread thread) {
-			// only throw the exception in the finally block 
+			// only throw the exception in the finally block
 			// of ModalContextThread
-			if (Display.findDisplay(thread) != null)
+			if (Display.findDisplay(thread) != null) {
 				throw new RuntimeException("Simulated exception during threadChange");
+			}
 		}
 	}
 

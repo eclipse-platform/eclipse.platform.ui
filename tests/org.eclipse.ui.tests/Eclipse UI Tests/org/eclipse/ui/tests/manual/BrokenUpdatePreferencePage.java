@@ -116,7 +116,7 @@ public class BrokenUpdatePreferencePage extends PreferencePage implements
 
     }
 
-    /**	
+    /**
      * see@DialogPage.dispose();
      */
     @Override

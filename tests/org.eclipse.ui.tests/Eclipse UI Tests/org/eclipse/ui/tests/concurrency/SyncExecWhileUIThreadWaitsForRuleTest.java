@@ -103,8 +103,9 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 		while (!lockAcquired[0]) {
 			//spin event loop so that asyncExed above gets run
 			try {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			} catch (SWTException e) {
 				fail("Deadlock occurred");
 			}

@@ -31,7 +31,7 @@ public class TextEditorTestStub {
      */
     /**
      * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
-     * 
+     *
      public static FindReplaceDialog newFindReplaceDialog(Shell parentShell) {
      return new FindReplaceDialog(parentShell);
      }

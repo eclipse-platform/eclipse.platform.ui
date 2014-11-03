@@ -38,8 +38,8 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     // This boolean should only be true if the earlyStartup() method
     // has been called.
     private static boolean earlyStartupCalled = false;
-    
-    public static final String PLUGIN_ID = "org.eclipse.ui.tests"; 
+
+    public static final String PLUGIN_ID = "org.eclipse.ui.tests";
 
     /**
      * The constructor.

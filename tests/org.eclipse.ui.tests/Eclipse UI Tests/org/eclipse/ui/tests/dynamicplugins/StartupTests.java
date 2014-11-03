@@ -30,7 +30,7 @@ public class StartupTests extends DynamicTestCase {
 	/**
 	 * Tests to ensure that the IStartup implementation in the bundle is run
 	 * when the bundle is loaded.
-	 * 
+	 *
 	 * @throws ClassNotFoundException
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException

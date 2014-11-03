@@ -15,10 +15,10 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 /**
- * A layout that can trigger an problem interaction between 
+ * A layout that can trigger an problem interaction between
  * {@link org.eclipse.ui.internal.presentations.util.PresentablePartFolder}
  * and {@link org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder}.
- * 
+ *
  * @since 3.2
  */
 public class PerspectiveViewsBug120934 implements IPerspectiveFactory {

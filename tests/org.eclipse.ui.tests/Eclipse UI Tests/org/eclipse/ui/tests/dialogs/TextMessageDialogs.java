@@ -58,7 +58,7 @@ public class TextMessageDialogs extends TestCase {
                         IDialogConstants.CANCEL_LABEL }, 0);
     }
 
- 
+
 
     /*
      * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openQuestion.
@@ -88,7 +88,7 @@ public class TextMessageDialogs extends TestCase {
         DialogCheck.assertDialog(dialog, this);
     }
 
-  
+
     public void testSaveFileDeleted() {
         MessageDialog dialog = new MessageDialog(
                 getShell(),

@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 public class Bug75118Test extends TestCase {
 
 	/**
-	 * 
+	 *
 	 */
 	public Bug75118Test() {
 		super();
@@ -45,7 +45,7 @@ public class Bug75118Test extends TestCase {
 				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_NEW);
 		WorkbenchWizardElement [] primaryWizards = reader.getPrimaryWizards();
 		Set wizardSet = new HashSet(Arrays.asList(primaryWizards));
-		
+
 		//any duplicates would have been removed by adding it to the set
 		//so if the sizes are different something has been removed - ie:
 		//a duplicate

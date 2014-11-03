@@ -25,13 +25,13 @@ public class RestoreSessionTest extends TestCase {
 		ts.addTest(new RestoreSessionTest("testDisplayAccess"));
 		return ts;
 	}
-	
+
 	public RestoreSessionTest(String name) {
 		super(name);
 	}
 
 	/**
-	 * Checks various combinations of Thread + DisplayAccess + [a]sync execs. 
+	 * Checks various combinations of Thread + DisplayAccess + [a]sync execs.
 	 * Anything without a call to DisplayAccess should be deferred until after startup.
 	 * @see RCPTestWorkbenchAdvisor#preStartup()
 	 */
@@ -39,23 +39,23 @@ public class RestoreSessionTest extends TestCase {
 		// check that there was a display during startup
 		assertNotNull(RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
 		assertNotNull(RCPTestWorkbenchAdvisor.syncWithDisplayAccess);
-		
+
 		assertNotNull(RCPTestWorkbenchAdvisor.asyncWithDisplayAccess);
 		assertNotNull(RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
-		
+
 		assertNotNull(RCPTestWorkbenchAdvisor.asyncDuringStartup);
-		
+
 		// test startup threading - async run during startup
 		assertEquals(Boolean.FALSE, RCPTestWorkbenchAdvisor.asyncDuringStartup);
-		
+
 		// sync & async from qualified thread should have run during the startup
 		assertEquals(Boolean.TRUE, RCPTestWorkbenchAdvisor.syncWithDisplayAccess);
 		assertEquals(Boolean.TRUE, RCPTestWorkbenchAdvisor.asyncWithDisplayAccess);
-		
+
 		// sync & async from a non-qualified thread should not have run during the startup
 		assertEquals(Boolean.FALSE, RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
 		assertEquals(Boolean.FALSE, RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
-		
+
 		// display access during startup in UI thread should not cause an exception
 		assertFalse(RCPTestWorkbenchAdvisor.displayAccessInUIThreadAllowed);
 	}

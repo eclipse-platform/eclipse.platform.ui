@@ -21,11 +21,11 @@ public class ComboContentAssistCommandAdapterTest extends
 	protected AbstractFieldAssistWindow createFieldAssistWindow() {
 		return new ComboCommandFieldAssistWindow();
 	}
-	
+
 	private Combo getCombo() {
 		return (Combo)getFieldAssistWindow().getFieldAssistControl();
 	}
-	
+
 	public void testBug243612() throws Exception {
 		getFieldAssistWindow().open();
 
@@ -33,7 +33,7 @@ public class ComboContentAssistCommandAdapterTest extends
 		executeContentAssistHandler();
 
 		assertTwoShellsUp();
-		
+
 		assertFalse(getCombo().getListVisible());
 	}
 

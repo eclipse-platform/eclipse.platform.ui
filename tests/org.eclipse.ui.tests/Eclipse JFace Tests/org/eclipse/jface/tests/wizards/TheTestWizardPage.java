@@ -27,7 +27,7 @@ public class TheTestWizardPage extends WizardPage {
 	public static final String BAD_TEXT_FIELD_STATUS = "A bad value was entered";
 	public static final String GOOD_TEXT_FIELD_CONTENTS = "GOOD VALUE";
 	public Text textInputField;
-	private boolean throwExceptionOnDispose; 
+	private boolean throwExceptionOnDispose;
 
 	public TheTestWizardPage(String name) {
 		super(name);
@@ -52,7 +52,7 @@ public class TheTestWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});
-		
+
 		initialize();
 		dialogChanged();
 		setControl(container);
@@ -79,19 +79,20 @@ public class TheTestWizardPage extends WizardPage {
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}
-	
+
 	/**
 	 * @param throwExceptionOnDispose The throwExceptionOnDispose to set.
 	 */
 	public void setThrowExceptionOnDispose(boolean throwExceptionOnDispose) {
 		this.throwExceptionOnDispose = throwExceptionOnDispose;
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
-		if(throwExceptionOnDispose)
+		if(throwExceptionOnDispose) {
 			throw new NullPointerException();
+		}
 	}
 
 }

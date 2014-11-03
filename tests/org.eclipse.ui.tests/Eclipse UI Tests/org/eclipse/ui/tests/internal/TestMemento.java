@@ -19,13 +19,13 @@ import java.util.Set;
 import org.eclipse.ui.IMemento;
 
 public class TestMemento implements IMemento {
-	
+
 	String typeName;
 	String id;
 	HashSet children = new HashSet();
 	Hashtable values = new Hashtable();
 	String textData;
-	
+
 	public TestMemento(String type, String id){
 		typeName = type;
 		this.id = id;
@@ -48,8 +48,9 @@ public class TestMemento implements IMemento {
 		Iterator iterator = children.iterator();
 		while(iterator.hasNext()){
 			TestMemento next = (TestMemento) iterator.next();
-			if(next.typeName.equals(type))
+			if(next.typeName.equals(type)) {
 				return next;
+			}
 		}
 		return null;
 	}
@@ -71,7 +72,7 @@ public class TestMemento implements IMemento {
 				matches.add(next);
 			}
 		}
-		
+
 		IMemento[] returnValue = new IMemento[matches.size()];
 		matches.toArray(returnValue);
 		return returnValue;
@@ -79,8 +80,9 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public Float getFloat(String key) {
-		if(values.containsKey(key))
+		if(values.containsKey(key)) {
 			return (Float) values.get(key);
+		}
 		return null;
 	}
 
@@ -91,15 +93,17 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public Integer getInteger(String key) {
-		if(values.containsKey(key))
+		if(values.containsKey(key)) {
 			return (Integer) values.get(key);
+		}
 		return null;
 	}
 
 	@Override
 	public String getString(String key) {
-		if(values.containsKey(key))
+		if(values.containsKey(key)) {
 			return (String) values.get(key);
+		}
 		return null;
 	}
 
@@ -149,8 +153,9 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public Boolean getBoolean(String key) {
-		if(values.containsKey(key))
+		if(values.containsKey(key)) {
 			return (Boolean) values.get(key);
+		}
 		return null;
 	}
 

@@ -35,8 +35,9 @@ public class EditorWithInputException extends EditorPart {
     @Override
 	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
-        if (!(input instanceof IFileEditorInput))
-            throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+        if (!(input instanceof IFileEditorInput)) {
+			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+		}
         setSite(site);
         setInput(input);
     }
@@ -50,7 +51,7 @@ public class EditorWithInputException extends EditorPart {
 	public boolean isSaveAsAllowed() {
         return false;
     }
-    
+
     @Override
 	public IEditorInput getEditorInput() {
         IllegalStateException exception = new IllegalStateException("This exception was thrown intentionally as part of an error handling test");
@@ -60,7 +61,7 @@ public class EditorWithInputException extends EditorPart {
     @Override
 	public void createPartControl(Composite parent) {
         Label testLabel = new Label(parent, SWT.NONE);
-        
+
         testLabel.setText("This throws an exception in getEditorInput");
     }
 

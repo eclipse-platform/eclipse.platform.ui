@@ -22,7 +22,7 @@ import org.eclipse.ui.tests.internal.ForcedException;
  * This is a broken pulldown delegate that throws exceptions if you try to get
  * the menu. The purpose of this is simply sanity. Eclipse should be able to
  * start in the face of code broken like this.
- * 
+ *
  * @since 3.0
  */
 public final class BrokenWorkbenchWindowPulldownDelegate implements
@@ -71,11 +71,13 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
      */
     @Override
 	public void dispose() {
-        if (menuControl != null)
-            menuControl.dispose();
+        if (menuControl != null) {
+			menuControl.dispose();
+		}
 
-        if (menuMenu != null)
-            menuMenu.dispose();
+        if (menuMenu != null) {
+			menuMenu.dispose();
+		}
     }
 
     /**

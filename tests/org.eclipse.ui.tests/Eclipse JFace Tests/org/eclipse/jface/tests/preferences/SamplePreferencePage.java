@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 public class SamplePreferencePage extends PreferencePage {
-	
+
 	private String text;
-	
+
 	public SamplePreferencePage(String title, String text) {
 		super(title);
 		this.text = text;
@@ -34,7 +34,7 @@ public class SamplePreferencePage extends PreferencePage {
         GridData data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         label.setLayoutData(data);
-        
+
         return new Composite(parent, SWT.NULL);
 	}
 

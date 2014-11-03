@@ -15,7 +15,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests Bug 42627
- * 
+ *
  * @since 3.0
  */
 public class Bug42627Test extends UITestCase {
@@ -25,7 +25,7 @@ public class Bug42627Test extends UITestCase {
     //		public void createPartControl(Composite composite) {
     //			// Do nothing
     //		}
-    //		
+    //
     //		public void setFocus() {
     //			// Do nothing
     //		}
@@ -33,7 +33,7 @@ public class Bug42627Test extends UITestCase {
 
     /**
      * A dummy implementation of an <code>Action</code>.
-     * 
+     *
      * @since 3.0
      */
     //	private class DummyAction extends Action {
@@ -42,7 +42,7 @@ public class Bug42627Test extends UITestCase {
     //	private boolean logged;
     /**
      * Constructor for Bug42627Test.
-     * 
+     *
      * @param name
      *           The name of the test
      */
@@ -58,7 +58,7 @@ public class Bug42627Test extends UITestCase {
 
     /**
      * Tests that actions with no defined command ID are logged.
-     * 
+     *
      * @throws CoreException
      *            If something fails when trying to open a new project.
      */

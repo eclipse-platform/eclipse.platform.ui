@@ -20,14 +20,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * A test for whether part identifiers work properly for EnabledSubmissions.
- * 
+ *
  * @since 3.1
  */
 public final class Bug74990Test extends UITestCase {
 
     /**
      * Constructs a new instance of <code>Bug74990Test</code>.
-     * 
+     *
      * @param name
      *            The name of the test
      */
@@ -40,11 +40,11 @@ public final class Bug74990Test extends UITestCase {
      * matched properly. This is only using the part id. The test verifies that
      * it is active when the part is active, and not active when the part is not
      * active.
-     * 
+     *
      * @throws PartInitException
      *             If something goes wrong creating the part to which this
      *             handler is tied.
-     *  
+     *
      */
     public final void testPartIdSubmission() throws PartInitException {
         // Define a command.
@@ -73,15 +73,17 @@ public final class Bug74990Test extends UITestCase {
             final IViewPart openedView = page
                     .showView("org.eclipse.ui.tests.api.MockViewPart");
             page.activate(openedView);
-            while (fWorkbench.getDisplay().readAndDispatch())
-                ;
+            while (fWorkbench.getDisplay().readAndDispatch()) {
+				;
+			}
             assertTrue("The MockViewPart context should be enabled",
                     testContext.isEnabled());
 
             // Hide the view, and test that is becomes disabled again.
             page.hideView(openedView);
-            while (fWorkbench.getDisplay().readAndDispatch())
-                ;
+            while (fWorkbench.getDisplay().readAndDispatch()) {
+				;
+			}
             assertTrue("The MockViewPart context should not be enabled",
                     !testContext.isEnabled());
 

@@ -26,13 +26,13 @@ public class WindowlessSessionTest extends UITestCase {
 		ts.addTest(new WindowlessSessionTest("testWindowlessWorkbench"));
 		return ts;
 	}
-	
+
 	public WindowlessSessionTest(String name) {
 		super(name);
 	}
 
 	public void testWindowlessWorkbench() throws Exception {
-		
+
 		// There should not be any windows in this app
 		assertTrue(fWorkbench.getWorkbenchWindowCount() == 0);
 

@@ -24,14 +24,14 @@ import org.eclipse.ui.keys.IBindingService;
 /**
  * Tests whether the "org.eclipse.ui.bindings" extension point can be added and
  * removed dynamically.
- * 
+ *
  * @since 3.1.1
  */
 public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of <code>BindingsExtensionDynamicTest</code>.
-	 * 
+	 *
 	 * @param testName
 	 *            The name of the test; may be <code>null</code>.
 	 */
@@ -41,7 +41,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Returns the full-qualified identifier of the extension to be tested.
-	 * 
+	 *
 	 * @return The extension identifier; never <code>null</code>.
 	 */
 	@Override
@@ -51,7 +51,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Returns the unqualified identifier of the extension point to be tested.
-	 * 
+	 *
 	 * @return The extension point identifier; never <code>null</code>.
 	 */
 	@Override
@@ -62,7 +62,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 	/**
 	 * Returns the relative location of the folder on disk containing the
 	 * plugin.xml file.
-	 * 
+	 *
 	 * @return The relative install location; never <code>null</code>.
 	 */
 	@Override
@@ -75,7 +75,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 	 * removed dynamically. It tests that the data doesn't exist, and then loads
 	 * the extension. It tests that the data then exists, and unloads the
 	 * extension. It tests that the data then doesn't exist.
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "M1+W" can't be parsed by the extension point.
 	 */
@@ -90,8 +90,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 		found = false;
 		bindings = bindingService.getBindings();
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				final Binding binding = bindings[i];
+			for (final Binding binding : bindings) {
 				if ("monkey".equals(binding.getSchemeId())
 						&& IContextIds.CONTEXT_ID_WINDOW.equals(binding
 								.getContextId())
@@ -123,8 +122,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 		found = false;
 		bindings = bindingService.getBindings();
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				final Binding binding = bindings[i];
+			for (final Binding binding : bindings) {
 				if ("monkey".equals(binding.getSchemeId())
 						&& IContextIds.CONTEXT_ID_WINDOW.equals(binding
 								.getContextId())
@@ -155,8 +153,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 		found = false;
 		bindings = bindingService.getBindings();
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				final Binding binding = bindings[i];
+			for (final Binding binding : bindings) {
 				if ("monkey".equals(binding.getSchemeId())
 						&& IContextIds.CONTEXT_ID_WINDOW.equals(binding
 								.getContextId())

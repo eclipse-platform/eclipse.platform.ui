@@ -24,7 +24,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * <code>StackOverflowError</code> when dealing with commands that have
  * several optional parameters for which there are no
  * <code>IParameterValues</code>.
- * 
+ *
  * @since 3.2
  */
 public class Bug125792Test extends UITestCase {

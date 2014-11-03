@@ -25,9 +25,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * This class parses the structure of the Shell and finds necessary widgets.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class StatusDialogUtil {
 
@@ -38,7 +38,7 @@ public class StatusDialogUtil {
 		}
 		return null;
 	}
-	
+
 	public static Label getTitleLabel(){
 		Composite c = getTitleAreaComposite();
 		if (c == null || c.isDisposed()) {
@@ -46,7 +46,7 @@ public class StatusDialogUtil {
 		}
 		return (Label) c.getChildren()[1];
 	}
-	
+
 	public static Label getSingleStatusLabel(){
 		Composite c = getTitleAreaComposite();
 		if (c == null || c.isDisposed() || c.getChildren().length < 3){
@@ -55,7 +55,7 @@ public class StatusDialogUtil {
 		Composite d = (Composite) c.getChildren()[2];
 		return (Label) d.getChildren()[0];
 	}
-	
+
 	public static Shell getStatusShell(){
 		Shell[] shells = Display.getDefault().getShells();
 		for (int i = 0; i < shells.length; i++) {
@@ -78,7 +78,7 @@ public class StatusDialogUtil {
 		Control controls[] = shell.getChildren();
 		return (Composite)((Composite)controls[0]).getChildren()[0];
 	}
-	
+
 	private static Composite getListAreaComposite(){
 		Shell shell = getStatusShell();
 		if(shell == null || shell.isDisposed()){
@@ -87,7 +87,7 @@ public class StatusDialogUtil {
 		Control controls[] = shell.getChildren();
 		return (Composite)((Composite)controls[0]).getChildren()[1];
 	}
-	
+
 	private static Composite getButtonBar(){
 		Shell shell = getStatusShell();
 		if(shell == null || shell.isDisposed()){
@@ -96,7 +96,7 @@ public class StatusDialogUtil {
 		Control controls[] = shell.getChildren();
 		return (Composite)((Composite)controls[0]).getChildren()[2];
 	}
-	
+
 	public static Link getSupportLink() {
 		Composite c = getButtonBar();
 		if (c == null || c.isDisposed()) {
@@ -116,7 +116,7 @@ public class StatusDialogUtil {
 		}
 		return null;
 	}
-	
+
 	public static Link getErrorLogLink() {
 		Composite c = getButtonBar();
 		if (c == null || c.isDisposed()) {
@@ -136,7 +136,7 @@ public class StatusDialogUtil {
 		}
 		return null;
 	}
-	
+
 	public static Button getActionButton(){
 		Composite c = getButtonBar();
 		if(c == null || c.isDisposed()){
@@ -144,7 +144,7 @@ public class StatusDialogUtil {
 		}
 		return (Button) c.getChildren()[1];
 	}
-	
+
 	public static Button getOkButton(){
 		Composite c = getButtonBar();
 		if(c == null || c.isDisposed()){
@@ -156,7 +156,7 @@ public class StatusDialogUtil {
 		}
 		return (Button) c.getChildren()[2];
 	}
-	
+
 	public static Button getDetailsButton(){
 		Composite c = getButtonBar();
 		if(c == null || c.isDisposed()){
@@ -168,7 +168,7 @@ public class StatusDialogUtil {
 		}
 		return (Button) c.getChildren()[3];
 	}
-	
+
 	public static Table getTable(){
 		Composite c = getListAreaComposite();
 		if(c == null || c.getChildren().length == 0){
@@ -176,5 +176,5 @@ public class StatusDialogUtil {
 		}
 		return (Table) c.getChildren()[0];
 	}
-	
+
 }

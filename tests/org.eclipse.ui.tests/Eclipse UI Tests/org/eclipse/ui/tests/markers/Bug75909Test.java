@@ -31,12 +31,12 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
 /**
  * Testing for https://bugs.eclipse.org/bugs/show_bug.cgi?id=75909 .
  * Only the marker IDs of the selected filters are saved for the Problems view.
- * If a new plugin is deployed with a new MarkerType, when the session 
+ * If a new plugin is deployed with a new MarkerType, when the session
  * restarts it looks like it was "unselected" from the filter list, and
  * so it doesn't show up.
- * 
+ *
  * These tests cover restoring state from old and new settings files.
- * 
+ *
  * @since 3.1
  *
  */
@@ -60,7 +60,7 @@ public class Bug75909Test extends TestCase {
 	 * MarkerFilter.resetState() should make all of the available
 	 * MarkerTypes selected.  The just tests that the environment
 	 * has some datafill in it.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testBasicFilter() throws Throwable {
@@ -85,7 +85,7 @@ public class Bug75909Test extends TestCase {
 	 * Settings can be restored (at least once :-) from the old settings
 	 * attribute format.  Any marker type not listed in the attribute
 	 * will appear as not selected.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRestoreOldState() throws Throwable {
@@ -112,7 +112,7 @@ public class Bug75909Test extends TestCase {
 	 * When restoring settings from the new attribute, a marker type
 	 * id that is not true or false has just been introduced.  Test that
 	 * the new marker type shows up as selected.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRestoreNewStateMissingId() throws Throwable {
@@ -123,7 +123,7 @@ public class Bug75909Test extends TestCase {
 
 		List included = new ArrayList();
 		filter.addAllSubTypes(included);
-		
+
 		List selected = filter.getSelectedTypes();
 		assertEquals(included.size() - 1, selected.size());
 
@@ -139,7 +139,7 @@ public class Bug75909Test extends TestCase {
 		// was missing from the file, so it should be selected.
 		assertTrue(selected.contains(missing));
 	}
-	
+
 	/**
 	 * Create a missing memento that is missing it's name.
 	 * @return IMemento
@@ -170,7 +170,7 @@ public class Bug75909Test extends TestCase {
 	 * MarkerFilter.saveState(IDialogSettings) should now save selected
 	 * types with <b>true</b> and unselected types are now saved to the
 	 * list with <b>false</b>.  This is an "identity transform" test.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testSaveState() throws Throwable {
@@ -181,7 +181,7 @@ public class Bug75909Test extends TestCase {
 		filter.addAllSubTypes(allTypes);
 
 		MarkerType removed = getType(filter, Bug75909Test.REMOVED_MARKER_ID);
-		
+
 		filter.getSelectedTypes().remove(removed);
 		// there should be one less select type than all of the types.
 		assertEquals(allTypes.size() - 1, filter.getSelectedTypes().size());
@@ -191,7 +191,7 @@ public class Bug75909Test extends TestCase {
 
 		ProblemFilter f2 = new ProblemFilter("Bug75909Test");
 		f2.restoreState(settings);
-		
+
 		assertEquals(filter.getSelectedTypes().size(),
 				f2.getSelectedTypes().size());
 		assertFalse(f2.getSelectedTypes().contains(removed));

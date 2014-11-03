@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.activities.CategoryActivityBindingDefinition;
 import org.eclipse.ui.internal.activities.CategoryDefinition;
 
 /**
- * 
+ *
  * The dynamic activity registry populated activities with dummy definitions for
  * testing purposes.
  */
@@ -38,7 +38,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate definitions.
-     *  
+     *
      */
     private void load() {
         categoryDefinitions = new ArrayList();
@@ -57,7 +57,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate the default enabled activties.
-     *  
+     *
      */
     private void populateDefaultEnabledActivities() {
         defaultEnabledActivities.add(((ActivityDefinition) activityDefinitions
@@ -70,7 +70,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate the activity activity binding definitions.
-     *  
+     *
      */
     private void populateActivityRequirementBindingDefinitions() {
         activityRequirementBindingDefinitions
@@ -89,7 +89,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate the activity pattern binding definitions.
-     *  
+     *
      */
     private void populateActivityPatternBindingDefinitions() {
         for (int index = 0; index < activityDefinitions.size(); index++) {
@@ -103,7 +103,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate the category activity binding definitions.
-     *  
+     *
      */
     private void populateCategoryActivityBindingDefinitions() {
         int counter = 1;
@@ -131,7 +131,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate the activity definitions.
-     *  
+     *
      */
     private void populateActivityDefinitions() {
         String stringToAppend = null;
@@ -145,7 +145,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Populate the category definitions.
-     *  
+     *
      */
     private void populateCategoryDefinitions() {
         String stringToAppend = null;
@@ -159,7 +159,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Add an activity.
-     * 
+     *
      * @param activityId
      *            The activity's id.
      * @param activityName
@@ -173,7 +173,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Remove adn activity.
-     * 
+     *
      * @param activityId
      *            The activity's id.
      * @param activityName
@@ -187,7 +187,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Add a category.
-     * 
+     *
      * @param categoryId
      *            The category's id.
      * @param categoryName
@@ -201,7 +201,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Remove a category.
-     * 
+     *
      * @param categoryId
      *            The category's id.
      * @param categoryName
@@ -215,7 +215,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Add an activity activity binding.
-     * 
+     *
      * @param parentId
      *            The parent id.
      * @param childId
@@ -230,7 +230,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Reomve an activity activity binding.
-     * 
+     *
      * @param parentId
      *            The parent id.
      * @param childId
@@ -245,7 +245,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Add a category activity binding.
-     * 
+     *
      * @param activityId
      *            The activity id.
      * @param categoryId
@@ -260,7 +260,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Remove a category activity binding.
-     * 
+     *
      * @param activityId
      *            The activity id.
      * @param categoryId
@@ -276,7 +276,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Update the category's description.
-     * 
+     *
      * @param categoryId
      *            The category Id.
      * @param categoryDescription
@@ -300,7 +300,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Update the activity's description.
-     * 
+     *
      * @param activityId
      *            The activity id.
      * @param activityDescription
@@ -324,7 +324,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Update the activity's name.
-     * 
+     *
      * @param activityId
      *            The activity id.
      * @param activityName
@@ -347,7 +347,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Update the category's name.
-     * 
+     *
      * @param categoryId
      *            The category id.
      * @param categoryName
@@ -370,7 +370,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Remove an activity pattern binding.
-     * 
+     *
      * @param pattern
      *            The pattern binding.
      */
@@ -389,7 +389,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 
     /**
      * Add an activity pattern binding.
-     * 
+     *
      * @param activityId
      *            The actvity Id.
      * @param pattern
@@ -403,7 +403,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
             return;
         }
     }
-    
+
     /**
      * Add default enablement to the provided activity
      * @param activityId the activity id
@@ -413,11 +413,11 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
             fireActivityRegistryChanged();
         }
     }
-    
-    
+
+
     /**
      * Remove default enablement to the provided activity
-     * 
+     *
      * @param activityId the activity id.
      */
     public void removeDefaultEnabledActivity(String activityId) {

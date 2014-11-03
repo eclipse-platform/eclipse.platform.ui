@@ -34,8 +34,9 @@ public class ResourceAction implements IObjectActionDelegate {
     @Override
 	public void run(IAction action) {
 
-        if (selectedItem != null)
-            TestDecoratorContributor.contributor.refreshListeners(selectedItem);
+        if (selectedItem != null) {
+			TestDecoratorContributor.contributor.refreshListeners(selectedItem);
+		}
 
     }
 
@@ -46,10 +47,11 @@ public class ResourceAction implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection structured = (IStructuredSelection) selection;
-            if (structured.isEmpty())
-                selectedItem = null;
-            else
-                selectedItem = structured.getFirstElement();
+            if (structured.isEmpty()) {
+				selectedItem = null;
+			} else {
+				selectedItem = structured.getFirstElement();
+			}
         }
     }
 

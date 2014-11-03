@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class GeometryTest extends TestCase {
 

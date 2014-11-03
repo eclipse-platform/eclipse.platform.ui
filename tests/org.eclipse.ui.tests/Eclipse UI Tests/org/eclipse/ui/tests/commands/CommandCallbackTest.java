@@ -36,7 +36,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CommandCallbackTest extends UITestCase {
 

@@ -43,11 +43,11 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
     //	public void testDispose() throws Throwable {
     //		// Run the action.
     //		testRun();
-    //		
+    //
     //		// Get the action.
     //		MockActionDelegate delegate = getDelegate();
     //		assertNotNull(delegate);
-    //		
+    //
     //		// Dispose action.
     //		// Verify that the dispose method is called.
     //		delegate.callHistory.clear();
@@ -65,7 +65,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
         fPage.showActionSet(id);
         MockWorkbenchWindowActionDelegate mockWWinActionDelegate = MockWorkbenchWindowActionDelegate.lastDelegate;
         // hide (from the compiler) the fact that the interfaces are implemented
-        Object mockAsObject = mockWWinActionDelegate; 
+        Object mockAsObject = mockWWinActionDelegate;
         // asserts that the mock object actually implements both interfaces mentioned in the PR
         assertTrue(mockAsObject instanceof IActionDelegate2);
         assertTrue(mockAsObject instanceof IWorkbenchWindowActionDelegate);

@@ -16,7 +16,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 /**
  * Supplies an arrangement of views to test various forms of view activation.
- * 
+ *
  * @since 3.0
  */
 public class ViewPerspective implements IPerspectiveFactory {

@@ -24,7 +24,7 @@ public class TestAdaptableDecoratorContributor extends TestLightweightDecoratorC
 
     public static final String SUFFIX = "ICommon.1";
     public static final String ID = "org.eclipse.ui.tests.decorators.generalAdaptabilityOn";
-    
+
     private Class clazz;
     private String suffix;
 
@@ -34,13 +34,13 @@ public class TestAdaptableDecoratorContributor extends TestLightweightDecoratorC
     }
 
     protected void setSuffix(String suffix) {
-        this.suffix = suffix;    
+        this.suffix = suffix;
     }
 
     protected void setExpectedElementType(Class clazz) {
-        this.clazz = clazz;    
+        this.clazz = clazz;
     }
-    
+
     @Override
 	public void decorate(Object element, IDecoration decoration) {
         Assert.assertTrue(clazz.isInstance(element));

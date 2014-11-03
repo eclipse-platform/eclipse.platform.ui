@@ -56,7 +56,7 @@ public class IEditorSiteTest extends IWorkbenchPartSiteTest {
     }
 
     public void testGetActionBarContributor() throws Throwable {
-        // From Javadoc: "Returns the editor action bar contributor for 
+        // From Javadoc: "Returns the editor action bar contributor for
         // this editor.
 
         IEditorPart editor = (IEditorPart) createTestPart(fPage);

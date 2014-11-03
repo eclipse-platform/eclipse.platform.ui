@@ -32,7 +32,7 @@ final class TestBinding extends Binding {
 
 		/**
 		 * Constructs a new instance of <code>TestTriggerSequence</code>.
-		 * 
+		 *
 		 * @param myTriggers
 		 *            The triggers to use in constructing this sequence; must
 		 *            not be <code>null</code>.
@@ -65,7 +65,7 @@ final class TestBinding extends Binding {
 
 	/**
 	 * Constructs a new instance of <code>TestBinding</code>
-	 * 
+	 *
 	 * @param commandId
 	 *            The command id
 	 * @param schemeId

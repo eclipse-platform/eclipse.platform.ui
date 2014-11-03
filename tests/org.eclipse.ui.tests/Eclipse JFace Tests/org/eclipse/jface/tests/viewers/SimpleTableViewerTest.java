@@ -28,7 +28,7 @@ import org.eclipse.ui.tests.harness.util.Mocks;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class SimpleTableViewerTest extends ViewerTestCase {
 
@@ -162,7 +162,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		assertEquals(0, listenerCounter[0]);
 		assertEquals(1, disposeCounter[0]);
 	}
-	
+
 	public void testCellLabelProviderDispose() {
 		final int[] disposeCounter = { 0 };
 		tableViewer.setLabelProvider(new ColumnLabelProvider() {

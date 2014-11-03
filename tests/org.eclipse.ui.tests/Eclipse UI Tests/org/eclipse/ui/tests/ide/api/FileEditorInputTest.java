@@ -29,7 +29,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Tests [I]FileEditorInput API.
- * 
+ *
  * @since 3.1
  */
 public class FileEditorInputTest extends UITestCase {
@@ -40,7 +40,7 @@ public class FileEditorInputTest extends UITestCase {
     public FileEditorInputTest(String testName) {
         super(testName);
     }
-    
+
     /**
      * Regression test for bug 72337 - [IDE] FileEditorInput .equals() not implemented against interface
      */
@@ -53,14 +53,14 @@ public class FileEditorInputTest extends UITestCase {
         assertTrue(inputA1.equals(inputA2));
         assertTrue(inputA2.equals(inputA1));
     }
-    
+
     class OtherFileEditorInput implements IFileEditorInput {
         private IFile file;
-        
+
         public OtherFileEditorInput(IFile file) {
             this.file = file;
         }
-        
+
         @Override
 		public IFile getFile() {
             return file;
@@ -101,21 +101,24 @@ public class FileEditorInputTest extends UITestCase {
 
         @Override
 		public Object getAdapter(Class adapter) {
-            if (adapter == IResource.class)
-                return file;
-            if (adapter == IFile.class)
-                return file;
+            if (adapter == IResource.class) {
+				return file;
+			}
+            if (adapter == IFile.class) {
+				return file;
+			}
             return null;
         }
-        
+
         @Override
 		public boolean equals(Object obj) {
-            if (!(obj instanceof IFileEditorInput))
-                return false;
+            if (!(obj instanceof IFileEditorInput)) {
+				return false;
+			}
             IFileEditorInput other = (IFileEditorInput) obj;
             return file.equals(other.getFile());
         }
-        
+
         @Override
 		public int hashCode() {
             return file.hashCode();

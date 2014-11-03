@@ -25,7 +25,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CommandActionTest extends UITestCase {
 	// you can find these commands in org.eclipse.ui.tests/plugin.xml

@@ -20,15 +20,15 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * MarkerViewTests are the tests for the marker view.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerViewTests extends UITestCase {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param testName
 	 */
 	public MarkerViewTests(String testName) {

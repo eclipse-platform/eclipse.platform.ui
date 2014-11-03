@@ -21,9 +21,9 @@ public class ViewWithDisposeException extends ViewPart {
     @Override
 	public void createPartControl(Composite parent) {
         parent.setLayout(new FillLayout());
-        
+
         Label testLabel = new Label(parent, SWT.NONE);
-        
+
         testLabel.setText("This view is supposed to throw an exception when closed");
     }
 

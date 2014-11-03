@@ -23,9 +23,9 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 /**
  * TestResolutionGenerator is a marker resolution generator for testing
  * {@link org.eclipse.ui.views.markers.WorkbenchMarkerResolution}
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
@@ -63,9 +63,7 @@ public class TestResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 		@Override
 		public void run(IMarker[] markers, IProgressMonitor monitor) {
-			for (int i = 0; i < markers.length; i++) {
-				IMarker marker = markers[i];
-
+			for (IMarker marker : markers) {
 				try {
 					System.out.println(marker
 							.getAttribute(MarkerViewUtil.NAME_ATTRIBUTE));

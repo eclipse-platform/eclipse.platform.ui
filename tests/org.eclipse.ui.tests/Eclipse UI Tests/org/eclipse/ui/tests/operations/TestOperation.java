@@ -42,7 +42,7 @@ public class TestOperation extends AbstractOperation {
 		fExecutionCount++;
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 		return execute(monitor, uiInfo);
@@ -53,7 +53,7 @@ public class TestOperation extends AbstractOperation {
 		fExecutionCount--;
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
 	public void dispose() {
 		fExecutionCount = 0;

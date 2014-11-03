@@ -14,10 +14,10 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 /**
- * This perspective is used for testing api. It defines an initial layout with 
+ * This perspective is used for testing api. It defines an initial layout with
  * placeholders for multi-instance views, including wildcards.
  * The placeholders are added at top level (not in any folder).
- * 
+ *
  * @since 3.1
  */
 public class PerspectiveWithMultiViewPlaceholdersAtTopLevel implements IPerspectiveFactory {

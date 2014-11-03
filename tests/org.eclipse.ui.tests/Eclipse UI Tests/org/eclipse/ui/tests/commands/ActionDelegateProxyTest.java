@@ -34,7 +34,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class ActionDelegateProxyTest extends UITestCase {
 	/**
-	 * 
+	 *
 	 */
 	private static final String DELEGATE_ACTION_SET_ID = "org.eclipse.ui.tests.delegateActionSet";
 	private static final String INC_COMMAND = "org.eclipse.ui.tests.incMenuHarness";
@@ -64,7 +64,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 		assertEquals(1, mch.getCount());
 		service.executeCommand(INC_COMMAND, null);
 		assertEquals(2, mch.getCount());
-		
+
 		page.hideView(view);
 		IViewPart view2 = page.showView(VIEW_ID);
 		assertFalse(view==view2);
@@ -78,7 +78,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 		service.executeCommand(INC_COMMAND, null);
 		assertEquals(2, mch.getCount());
 	}
-	
+
 	public void testWWActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().showActionSet(DELEGATE_ACTION_SET_ID);
@@ -87,9 +87,9 @@ public class ActionDelegateProxyTest extends UITestCase {
 		service.executeCommand(GO_COMMAND, null);
 		assertTrue(SimplyGoActionDelegate.executed);
 	}
-	
+
 	private static final String contents = "one\ntwo\nthree\n";
-	
+
 	public void testEditorActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().closeAllEditors(false);
@@ -112,23 +112,23 @@ public class ActionDelegateProxyTest extends UITestCase {
 		IEditorPart editor1 = IDE.openEditor(window.getActivePage(), file);
 		assertNotNull(editor1);
 		assertEquals("org.eclipse.ui.DefaultTextEditor", editor1.getSite().getId());
-		
+
 		file = FileUtil.createFile("test2.txt", proj);
 		in = new ByteArrayInputStream(contents.getBytes());
 		file.setContents(in, true, false, new NullProgressMonitor());
 		IEditorPart editor2 = IDE.openEditor(window.getActivePage(), file);
 		assertNotNull(editor2);
 		assertEquals("org.eclipse.ui.DefaultTextEditor", editor2.getSite().getId());
-		
+
 		service.executeCommand(STAY_COMMAND, null);
 		assertTrue(EditorActionDelegate.executed);
 		assertEquals(editor2, EditorActionDelegate.part);
-		
+
 		window.getActivePage().activate(editor1);
 		processEvents();
 		service.executeCommand(STAY_COMMAND, null);
 		assertTrue(EditorActionDelegate.executed);
 		assertEquals(editor1, EditorActionDelegate.part);
-		
+
 	}
 }

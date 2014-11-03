@@ -16,10 +16,10 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite for the Progress View and related API
- * 
+ *
  * @since 3.6
  * @author Prakash G.R. (grprakash@in.ibm.com)
- * 
+ *
  */
 public class ProgressTestSuite extends TestSuite {
 

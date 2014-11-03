@@ -22,26 +22,26 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * Test serialization and deserialization of ParameterizedCommands. See <a
  * href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=120523">bug 120523</a>.
- * 
+ *
  * @since 3.2
  */
 public class CommandSerializationTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandSerializationTest</code>.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the test
 	 */
 	public CommandSerializationTest(String testName) {
 		super(testName);
 	}
-	
+
 	private final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
-	
+
 	/**
 	 * Test a serialization of the show perspective command with no parameters.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testSerializeShowPerspective() throws CommandException {
@@ -53,15 +53,15 @@ public class CommandSerializationTest extends UITestCase {
 		testDeserializeAndSerialize(showPerspectiveCommandId+"()",
 				showPerspectiveCommandId, 0, null, null);
 	}
-	
-	
+
+
 	/**
 	 * Test a serialization of the show perspective command with a parameter.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testSerializeShowResourcePerspective() throws CommandException {
-		
+
 		final String serializedShowResourcePerspectiveCommand = "org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.ui.resourcePerspective)";
 		final String showPerspectiveParameterId = "org.eclipse.ui.perspectives.showPerspective.perspectiveId";
 		final String resourcePerspectiveId = "org.eclipse.ui.resourcePerspective";
@@ -70,12 +70,12 @@ public class CommandSerializationTest extends UITestCase {
 				showPerspectiveCommandId, 1,
 				new String[] { showPerspectiveParameterId },
 				new String[] { resourcePerspectiveId });
-		
+
 	}
-	
+
 	/**
 	 * Test serialization of a command with zero parameters.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testZeroParameterCommand() throws CommandException {
@@ -84,15 +84,15 @@ public class CommandSerializationTest extends UITestCase {
 		// basic test
 		testDeserializeAndSerialize(zeroParameterCommandId,
 				zeroParameterCommandId, 0, null, null);
-		
+
 		// test with a bogus parameter
 		testDeserializeAndSerialize(zeroParameterCommandId
 				+ "(bogus.param=hello)", zeroParameterCommandId, 1, null, null);
 	}
-	
+
 	/**
 	 * Test serialization of a command with one parameter.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testOneParameterCommand() throws CommandException {
@@ -112,20 +112,20 @@ public class CommandSerializationTest extends UITestCase {
 		// try it without the param
 		testDeserializeAndSerialize(oneParameterCommandId,
 				oneParameterCommandId, 0, null, null);
-		
+
 		// test with a bogus parameter
 		testDeserializeAndSerialize(oneParameterCommandId
 				+ "(bogus.param=hello)", oneParameterCommandId, 1, null, null);
-		
+
 		// test with a bogus parameter and the real one
 		testDeserializeAndSerialize(oneParameterCommandId
 				+ "(bogus.param=hello,param1.1=foo)", oneParameterCommandId, 2,
 				new String[] { paramId1 }, new String[] { "foo" });
 	}
-	
+
 	/**
 	 * Test serialization of a command with two parameters.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testTwoParameterCommand() throws CommandException {
@@ -138,13 +138,13 @@ public class CommandSerializationTest extends UITestCase {
 				+ "(param2.1=hello,param2.2=goodbye)", twoParameterCommandId, 2,
 				new String[] { paramId1, paramId2 }, new String[] { "hello",
 						"goodbye" });
-		
+
 		// re-order parameters
 		testDeserializeAndSerialize(twoParameterCommandId
 				+ "(param2.2=goodbye,param2.1=hello)", twoParameterCommandId, 2,
 				new String[] { paramId1, paramId2 }, new String[] { "hello",
 						"goodbye" });
-		
+
 		// parameter values that need escaping
 		final String value1Escaped = "hello%(%)%%%=%,";
 		final String value2Escaped = "%%%=%(%)%,world";
@@ -153,10 +153,10 @@ public class CommandSerializationTest extends UITestCase {
 				twoParameterCommandId, 2, new String[] { paramId1, paramId2 },
 				new String[] { "hello()%=,", "%=(),world" });
 	}
-	
+
 	/**
 	 * Test serialization of a command with three parameters.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testThreeParameterCommand() throws CommandException {
@@ -170,19 +170,19 @@ public class CommandSerializationTest extends UITestCase {
 				+ "(param3.1=foo,param3.2=bar,param3.3=baz)",
 				threeParameterCommandId, 3, new String[] { paramId1, paramId2,
 						paramId3 }, new String[] { "foo", "bar", "baz" });
-		
+
 		// test with a null parameter
 		testDeserializeAndSerialize(threeParameterCommandId
 				+ "(param3.1,param3.2=bar,param3.3=baz)",
 				threeParameterCommandId, 3, new String[] { paramId1, paramId2,
 						paramId3 }, new String[] { null, "bar", "baz" });
-		
+
 		// test with all null parameters
 		testDeserializeAndSerialize(threeParameterCommandId
 				+ "(param3.1,param3.2,param3.3)",
 				threeParameterCommandId, 3, new String[] { paramId1, paramId2,
 						paramId3 }, new String[] { null, null, null });
-		
+
 		// test with a missing parameter
 		testDeserializeAndSerialize(threeParameterCommandId
 				+ "(param3.1=foo,param3.3=baz)", threeParameterCommandId, 2,
@@ -190,10 +190,10 @@ public class CommandSerializationTest extends UITestCase {
 						"baz" });
 	}
 
-	
+
 	/**
 	 * Test serialization of a command with names that need UTF-8 encoding.
-	 * 
+	 *
 	 * @throws CommandException
 	 */
 	public void testFunnyNamesCommand() throws CommandException {
@@ -214,19 +214,19 @@ public class CommandSerializationTest extends UITestCase {
 				funnyNamesCommandId, 1, new String[] { funnyNamesParamId },
 				new String[] { funnyValue });
 	}
-	
+
 	public void testMalformedSerializationStrings() {
 		// try a missing closing ')'
 		expectSerializationException(showPerspectiveCommandId + "(");
-		
+
 		// try a bad escape sequence
 		expectSerializationException("some.command.foo%bar");
 	}
-	
+
 	public void testUndefinedCommands() {
 		expectNotDefinedException("this.command.ain't.defined(i.hope)");
 	}
-	
+
 	/**
 	 * Test deserializing a stored command and then serializing it back into a
 	 * string. The <code>serializedParameterizedCommand</code> may contain
@@ -234,7 +234,7 @@ public class CommandSerializationTest extends UITestCase {
 	 * command). The <code>paramIds</code> and <code>paramValues</code>
 	 * arrays represent only the ids and values of the non-bogus serialized
 	 * parameters.
-	 * 
+	 *
 	 * @param serializedParameterizedCommand
 	 *            a command serialization string
 	 * @param commandId
@@ -253,9 +253,9 @@ public class CommandSerializationTest extends UITestCase {
 			String serializedParameterizedCommand, String commandId,
 			int serializedParamCount, String[] paramIds, String[] paramValues)
 			throws CommandException {
-		
+
 		ICommandService commandService = getCommandService();
-		
+
 		int realParamCount = (paramIds == null) ? 0 : paramIds.length;
 
 		// first convert the serialized string to a ParameterizedCommand and
@@ -277,7 +277,7 @@ public class CommandSerializationTest extends UITestCase {
 
 		// now convert the ParameterizedCommand back to a serialized string
 		String serialization = pCommand.serialize();
-		
+
 		if ((realParamCount == serializedParamCount) && (realParamCount < 2)) {
 			if ((realParamCount == 0)
 					&& (serializedParameterizedCommand.endsWith("()"))) {
@@ -291,15 +291,15 @@ public class CommandSerializationTest extends UITestCase {
 		} else {
 			// params may have been re-ordered so we can't compare
 		}
-		
+
 		// deserialize again and use .equals() on the ParameterizedCommands
 		ParameterizedCommand pCommand2 = commandService.deserialize(serialization);
 		assertEquals(pCommand, pCommand2);
 	}
-	
+
 	private void expectSerializationException(String serializedParameterizedCommand) {
 		ICommandService commandService = getCommandService();
-		
+
 		try {
 			commandService.deserialize(serializedParameterizedCommand);
 			fail("expected SerializationException");
@@ -309,10 +309,10 @@ public class CommandSerializationTest extends UITestCase {
 			fail("expected SerializationException");
 		}
 	}
-	
+
 	private void expectNotDefinedException(String serializedParameterizedCommand) {
 		ICommandService commandService = getCommandService();
-		
+
 		try {
 			commandService.deserialize(serializedParameterizedCommand);
 			fail("expected NotDefinedException");
@@ -322,7 +322,7 @@ public class CommandSerializationTest extends UITestCase {
 			// passed
 		}
 	}
-	
+
 	private ICommandService getCommandService() {
 		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {
@@ -331,5 +331,5 @@ public class CommandSerializationTest extends UITestCase {
 		}
 		return null;
 	}
-	
+
 }

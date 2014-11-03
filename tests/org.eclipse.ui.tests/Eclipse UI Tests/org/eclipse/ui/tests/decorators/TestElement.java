@@ -15,7 +15,7 @@ package org.eclipse.ui.tests.decorators;
  * for the table and tree decorator testing.
  */
 public abstract class TestElement {
-	
+
 	String name;
 
 }

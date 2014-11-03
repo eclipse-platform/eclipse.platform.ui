@@ -42,8 +42,9 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 			UIJob updateJob = new UIJob("Update") {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (viewer.getControl().isDisposed())
+					if (viewer.getControl().isDisposed()) {
 						return Status.CANCEL_STATUS;
+					}
 					int rangeLength = rangeEnd - rangeStart;
 					for (int i = 0; i <= rangeLength; i++) {
 						int index = i + rangeStart;
@@ -70,8 +71,9 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 				}
 
 				// Are we in the range already being worked on?
-				if (index >= rangeStart && index <= rangeEnd)
+				if (index >= rangeStart && index <= rangeEnd) {
 					return;
+				}
 
 				// Are we outside of the old range?
 				if (begin > rangeEnd || end < rangeStart) {

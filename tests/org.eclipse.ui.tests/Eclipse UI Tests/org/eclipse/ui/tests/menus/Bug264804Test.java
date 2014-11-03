@@ -28,7 +28,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * @since 3.5
  * @author Prakash G.R.
- * 
+ *
  */
 public class Bug264804Test extends UITestCase {
 
@@ -86,9 +86,9 @@ public class Bug264804Test extends UITestCase {
 	 * @param items
 	 */
 	private void find(String id, IContributionItem[] items) throws Exception {
-		for (int i = 0; i < items.length; i++) {
-			if (id.equals(items[i].getId())) {
-				assertTrue("Should be visible", items[i].isVisible());
+		for (IContributionItem item : items) {
+			if (id.equals(item.getId())) {
+				assertTrue("Should be visible", item.isVisible());
 				return;
 			}
 		}

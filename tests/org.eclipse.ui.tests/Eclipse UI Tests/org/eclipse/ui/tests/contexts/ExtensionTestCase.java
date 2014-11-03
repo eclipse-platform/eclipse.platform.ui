@@ -21,7 +21,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * that contexts defined in this test plug-in's extensions are all properly read
  * in. This includes extensions read from deprecated locations, as well as the
  * currently preferred way of specifying contexts.
- * 
+ *
  * @since 3.0
  */
 public class ExtensionTestCase extends UITestCase {
@@ -29,7 +29,7 @@ public class ExtensionTestCase extends UITestCase {
     /**
      * Constructs a new instance of <code>ExtensionTestCase</code> with the
      * given name.
-     * 
+     *
      * @param testName
      *            The name of the test; may be <code>null</code>.
      */
@@ -40,7 +40,7 @@ public class ExtensionTestCase extends UITestCase {
     /**
      * Tests that the "org.eclipse.ui.acceleratorScopes" extension point can be
      * read in by Eclipse. This extension point is currently deprecated.
-     * 
+     *
      * @throws NotDefinedException
      *             This shouldn't really be possible, as the test should fail
      *             gracefully before this could happen.
@@ -78,7 +78,7 @@ public class ExtensionTestCase extends UITestCase {
      * Tests that the "scopes" element in the "org.eclipse.ui.commands"
      * extension point can be read in as a context by Eclipse. This element is
      * currently deprecated.
-     * 
+     *
      * @throws NotDefinedException
      *             This shouldn't really be possible, as the test should fail
      *             gracefully before this could happen.
@@ -115,7 +115,7 @@ public class ExtensionTestCase extends UITestCase {
      * Tests that the currently preferred way of specifiying contexts can be
      * read in properly by Eclipse. This uses all of the non-deprecated
      * attributes.
-     * 
+     *
      * @throws NotDefinedException
      *             This shouldn't really be possible, as the test should fail
      *             gracefully before this could happen.

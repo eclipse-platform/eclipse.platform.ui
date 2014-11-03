@@ -21,16 +21,16 @@ import org.eclipse.ui.PartInitException;
 /**
  * The implementation of the multi-instance mock view.
  * Has a button to open another.
- * 
+ *
  * @since 3.1
  */
 public class MockViewPartMult extends MockViewPart {
 	static int counter = 1;
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		
+
 		Button button = new Button(parent, SWT.NONE);
 		button.setText("Open Another");
 		button.addSelectionListener(new SelectionAdapter() {
@@ -50,8 +50,8 @@ public class MockViewPartMult extends MockViewPart {
 		}
 		return title;
 	}
-	
-	
+
+
 	private void openAnother() {
 		String secondaryId = String.valueOf(++counter);
 		try {

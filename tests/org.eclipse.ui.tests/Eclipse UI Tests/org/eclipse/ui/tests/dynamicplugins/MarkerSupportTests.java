@@ -19,7 +19,7 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * Test the loading and unloading of the marker support components.
- * 
+ *
  * @since 3.2
  */
 public class MarkerSupportTests extends DynamicTestCase {
@@ -89,7 +89,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 	/**
 	 * Return whether or not there is a hierarchy for the dynamic type or if it
 	 * is using the default.
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean hasHierarchy() {
@@ -101,19 +101,20 @@ public class MarkerSupportTests extends DynamicTestCase {
 	private boolean hasMarkerGroup() {
 		Iterator groups = MarkerSupportRegistry.getInstance()
 		.getMarkerGroups().iterator();
-		
+
 		while (groups.hasNext()) {
 			MarkerGroup element = (MarkerGroup) groups.next();
-			if(element.getField().getDescription().equals("Dynamic Test Grouping"))
+			if(element.getField().getDescription().equals("Dynamic Test Grouping")) {
 				return true;
+			}
 		}
-		
+
 		return false;
 	}
 
 	/**
 	 * Return whether or not there is a filter for the dynamic category
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean hasCategory() {
@@ -123,7 +124,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 
 	/**
 	 * Return whether or not there is a filter for id.
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -132,8 +133,9 @@ public class MarkerSupportTests extends DynamicTestCase {
 				.getRegisteredFilters().iterator();
 		while (filters.hasNext()) {
 			ProblemFilter filter = (ProblemFilter) filters.next();
-			if (id.equals(filter.getId()))
+			if (id.equals(filter.getId())) {
 				return true;
+			}
 		}
 		return false;
 	}

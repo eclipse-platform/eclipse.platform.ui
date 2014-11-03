@@ -21,10 +21,10 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
- * 
+ *
  * @since 3.5
  * @author Prakash G.R.
- * 
+ *
  */
 public class Bug231304Test extends UITestCase {
 

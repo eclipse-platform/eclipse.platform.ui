@@ -25,7 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class LifecycleView extends ViewPart {
 

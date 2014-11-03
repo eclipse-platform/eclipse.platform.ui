@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class SimpleTreeViewerTest extends ViewerTestCase {
 
@@ -56,7 +56,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		treeViewer.setInput(null);
 		treeViewer.setSorter(new TreePathViewerSorter());
 	}
-	
+
 	public void testNullLabel() {
 		treeViewer.setLabelProvider(new ITableLabelProvider(){
 
@@ -156,8 +156,9 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		ViewerFilter filter= new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element == children[0] || element == children[1] || element == children[2] || element == children[4])
+				if (element == children[0] || element == children[1] || element == children[2] || element == children[4]) {
 					return false;
+				}
 				return true;
 			}
 		};

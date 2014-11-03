@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * The EncodingTestSuite is the suite for encoding tests.
  */
 public class EncodingTestSuite extends TestSuite {
-	
+
 	/**
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
@@ -35,6 +35,6 @@ public class EncodingTestSuite extends TestSuite {
 		addTest(new TestSuite(EncodingTestCase.class));
 	}
 
-	
+
 
 }

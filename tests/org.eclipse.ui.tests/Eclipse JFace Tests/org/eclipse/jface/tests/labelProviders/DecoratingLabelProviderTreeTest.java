@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class DecoratingLabelProviderTreeTest extends CompositeLabelProviderTest {
 
@@ -69,7 +69,7 @@ public class DecoratingLabelProviderTreeTest extends CompositeLabelProviderTest 
 				new IntListLabelProvider(), null));
 		return viewer;
 	}
-	
+
 	/**
 	 * Test that all of the colours and fonts from the label provider are
 	 * applied.
