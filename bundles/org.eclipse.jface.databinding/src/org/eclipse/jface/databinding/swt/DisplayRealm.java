@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * This class is used to get a {@link Realm} for a certain {@link Display}.
  *
- * @since 1.6
+ * @since 1.7
  *
  */
 public class DisplayRealm extends Realm {
