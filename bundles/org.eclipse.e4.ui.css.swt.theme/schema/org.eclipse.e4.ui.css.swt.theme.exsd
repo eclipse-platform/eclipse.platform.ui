@@ -130,7 +130,7 @@
          <attribute name="os_version" type="string">
             <annotation>
                <documentation>
-                  the version the operating system  the theme is applicable for or empty to apply on all
+                  the version the operating system  the theme is applicable for or empty to apply on all. The value can be a comma-separated string to specify multiple versions.
                </documentation>
             </annotation>
          </attribute>

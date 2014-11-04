@@ -59,30 +59,9 @@
       <theme
             basestylesheeturi="css/e4_default_win7.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.winvista"
+            label="%theme.win"
             os="win32"
-            os_version="6.0">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default_win7.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.win7"
-            os="win32"
-            os_version="6.1">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default_win7.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.win8"
-            os="win32"
-            os_version="6.2">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default_win7.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.win8.1"
-            os="win32"
-            os_version="6.3">
+            os_version="6.0,6.1,6.2,6.3">
       </theme>
       <theme
             basestylesheeturi="css/e4_default_winxp_blu.css"
@@ -101,30 +80,9 @@
    <theme
          basestylesheeturi="css/e4_classic_win7.css"
          id="org.eclipse.e4.ui.css.theme.e4_classic"
-         label="%theme.winvistaClassic"
+         label="%theme.winClassic"
          os="win32"
-         os_version="6.0">
-   </theme>
-   <theme
-         basestylesheeturi="css/e4_classic_win7.css"
-         id="org.eclipse.e4.ui.css.theme.e4_classic"
-         label="%theme.win7Classic"
-         os="win32"
-         os_version="6.1">
-   </theme>
-   <theme
-         basestylesheeturi="css/e4_classic_win7.css"
-         id="org.eclipse.e4.ui.css.theme.e4_classic"
-         label="%theme.win8Classic"
-         os="win32"
-         os_version="6.2">
-   </theme>
-   <theme
-         basestylesheeturi="css/e4_classic_win7.css"
-         id="org.eclipse.e4.ui.css.theme.e4_classic"
-         label="%theme.win8.1Classic"
-         os="win32"
-         os_version="6.3">
+         os_version="6.0,6.1,6.2,6.3">
    </theme>
    <theme
 		basestylesheeturi="css/high-contrast.css"
