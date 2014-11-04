@@ -34,7 +34,7 @@ public class URIHelper {
 	/**
 	 * The schema identifier used for Eclipse bundlesclass reference
 	 */
-	final private static String BUNDLECLASS_SCHEMA = "bundleclass:/"; //$NON-NLS-1$
+	final private static String BUNDLECLASS_SCHEMA = "bundleclass://"; //$NON-NLS-1$
 
 	/**
 	 * The schema identifier used for EMF platform references
