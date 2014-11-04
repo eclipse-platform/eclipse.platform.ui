@@ -39,7 +39,7 @@ import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTes
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
 
@@ -66,7 +66,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 				propertyName)).getPropertyDescriptor();
 		bean = new Bean(new HashSet());
 
-		set = BeansObservables.observeSet(SWTObservables.getRealm(Display
+		set = BeansObservables.observeSet(DisplayRealm.getRealm(Display
 				.getDefault()), bean, propertyName);
 		beanObservable = (IBeanObservable) set;
 	}

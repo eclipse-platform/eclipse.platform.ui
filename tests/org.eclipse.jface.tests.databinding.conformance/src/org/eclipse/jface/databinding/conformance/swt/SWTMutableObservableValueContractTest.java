@@ -20,7 +20,7 @@ import org.eclipse.jface.databinding.conformance.MutableObservableValueContractT
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.DelegatingRealm;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -67,7 +67,7 @@ public class SWTMutableObservableValueContractTest extends
 			display = new Display();
 		}
 		DelegatingRealm delegateRealm = new DelegatingRealm(
-				SWTObservables.getRealm(display));
+				DisplayRealm.getRealm(display));
 		delegateRealm.setCurrent(true);
 
 		return delegate.createObservable(delegateRealm);

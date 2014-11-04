@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -73,7 +74,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		// be edited in a text widget. There is always a selected Lodging
 		// object.
 		ListViewer listViewer = new ListViewer(getComposite(), SWT.BORDER);
-		Realm realm = SWTObservables.getRealm(listViewer.getControl()
+		Realm realm = DisplayRealm.getRealm(listViewer.getControl()
 				.getDisplay());
 		listViewer.getList().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, false, false));

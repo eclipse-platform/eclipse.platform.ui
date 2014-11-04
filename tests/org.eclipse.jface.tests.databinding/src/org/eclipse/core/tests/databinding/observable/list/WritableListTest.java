@@ -31,7 +31,7 @@ import org.eclipse.jface.databinding.conformance.MutableObservableListContractTe
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -156,7 +156,7 @@ public class WritableListTest extends TestCase {
 	}
 
 	public void testNullElementType() throws Exception {
-		RealmTester.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		RealmTester.setDefault(DisplayRealm.getRealm(Display.getDefault()));
 		WritableList writableList = new WritableList();
 		assertNull(writableList.getElementType());
 
@@ -165,7 +165,7 @@ public class WritableListTest extends TestCase {
 	}
 
 	public void testWithElementType() throws Exception {
-		RealmTester.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		RealmTester.setDefault(DisplayRealm.getRealm(Display.getDefault()));
 
 		Object elementType = String.class;
 		WritableList list = WritableList.withElementType(elementType);

@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -44,7 +44,7 @@ public class CLabelObservableValueTest extends TestCase {
 		delegate = new Delegate();
 		delegate.setUp();
 		label = delegate.label;
-		observable = delegate.createObservableValue(SWTObservables
+		observable = delegate.createObservableValue(DisplayRealm
 				.getRealm(Display.getDefault()));
 	}
 

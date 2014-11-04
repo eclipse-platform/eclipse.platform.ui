@@ -15,7 +15,7 @@ package org.eclipse.jface.tests.databinding.viewers;
 import org.eclipse.core.databinding.observable.IDecoratingObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.internal.databinding.viewers.ViewerInputProperty;
@@ -37,7 +37,7 @@ public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		realm = SWTObservables.getRealm(Display.getCurrent());
+		realm = DisplayRealm.getRealm(Display.getCurrent());
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.NONE);
 	}

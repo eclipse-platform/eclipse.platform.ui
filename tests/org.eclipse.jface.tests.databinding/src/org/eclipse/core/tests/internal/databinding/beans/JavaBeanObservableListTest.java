@@ -41,7 +41,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableColl
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
 
@@ -72,7 +72,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 				propertyName)).getPropertyDescriptor();
 		bean = new Bean(new ArrayList());
 
-		list = BeansObservables.observeList(SWTObservables.getRealm(Display
+		list = BeansObservables.observeList(DisplayRealm.getRealm(Display
 				.getDefault()), bean, propertyName);
 		beanObservable = (IBeanObservable) list;
 	}

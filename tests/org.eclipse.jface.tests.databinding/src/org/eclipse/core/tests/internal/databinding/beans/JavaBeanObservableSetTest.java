@@ -38,7 +38,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableColl
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
 
@@ -63,7 +63,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 				propertyName)).getPropertyDescriptor();
 
 		observableSet = BeansObservables
-				.observeSet(SWTObservables.getRealm(Display.getDefault()),
+				.observeSet(DisplayRealm.getRealm(Display.getDefault()),
 						bean, propertyName, Bean.class);
 		beanObservable = (IBeanObservable) observableSet;
 		listener = new SetChangeEventTracker();

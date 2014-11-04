@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -42,12 +42,12 @@ public class BeanObservableListDecoratorTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor(
 				"list", Bean.class,"getList","setList");
 		observableList = BeansObservables.observeList(
-				SWTObservables.getRealm(Display.getDefault()), bean, "list");
+				DisplayRealm.getRealm(Display.getDefault()), bean, "list");
 		decorator = new BeanObservableListDecorator(observableList, propertyDescriptor);
 	}
 

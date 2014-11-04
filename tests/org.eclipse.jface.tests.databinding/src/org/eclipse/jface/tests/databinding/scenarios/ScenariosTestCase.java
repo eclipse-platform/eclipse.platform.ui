@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -108,7 +108,7 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		realm = SWTObservables.getRealm(Display.getDefault());
+		realm = DisplayRealm.getRealm(Display.getDefault());
 		RealmTester.setDefault(realm);
 
 		composite = new Composite(getShell(), SWT.NONE);

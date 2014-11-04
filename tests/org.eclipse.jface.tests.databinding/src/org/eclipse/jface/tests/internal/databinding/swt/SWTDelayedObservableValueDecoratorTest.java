@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
@@ -51,7 +52,7 @@ public class SWTDelayedObservableValueDecoratorTest extends
 		display = Display.getCurrent();
 		shell = new Shell(display);
 		target = new SWTObservableValueDecorator(new WritableValue(
-				SWTObservables.getRealm(display)), shell);
+				DisplayRealm.getRealm(display)), shell);
 		oldValue = new Object();
 		newValue = new Object();
 		target.setValue(oldValue);

@@ -25,7 +25,7 @@ import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.tests.Activator;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -134,7 +134,7 @@ public class InjectionEventTest extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		final Display d = Display.getDefault();
 
-		context.set(Realm.class, SWTObservables.getRealm(d));
+		context.set(Realm.class, DisplayRealm.getRealm(d));
 		context.set(UISynchronize.class, new UISynchronize() {
 
 			public void syncExec(Runnable runnable) {
@@ -223,7 +223,7 @@ public class InjectionEventTest extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		final Display d = Display.getDefault();
 
-		context.set(Realm.class, SWTObservables.getRealm(d));
+		context.set(Realm.class, DisplayRealm.getRealm(d));
 		context.set(UISynchronize.class, new UISynchronize() {
 
 			public void syncExec(Runnable runnable) {

@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.TableViewer;
@@ -58,13 +58,13 @@ public class ObservableListContentProviderTest extends
 
 	public void testKnownElements_Realm() throws Exception {
 		assertSame("realm for the known elements should be the SWT realm",
-				SWTObservables.getRealm(Display.getDefault()), contentProvider
+				DisplayRealm.getRealm(Display.getDefault()), contentProvider
 						.getKnownElements().getRealm());
 	}
 
 	public void testRealizedElements_Realm() {
 		assertSame("realm for the realized elements should be the SWT realm",
-				SWTObservables.getRealm(Display.getDefault()), contentProvider
+				DisplayRealm.getRealm(Display.getDefault()), contentProvider
 						.getRealizedElements().getRealm());
 	}
 

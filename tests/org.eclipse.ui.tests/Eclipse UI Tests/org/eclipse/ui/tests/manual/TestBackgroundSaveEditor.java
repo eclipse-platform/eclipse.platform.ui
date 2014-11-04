@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -205,7 +206,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 
 	@Override
 	public void createPartControl(Composite parent) {
-		Realm realm = SWTObservables.getRealm(parent.getDisplay());
+		Realm realm = DisplayRealm.getRealm(parent.getDisplay());
 		final DataBindingContext dbc = new DataBindingContext(realm);
 		parent.addDisposeListener(new DisposeListener() {
 			@Override

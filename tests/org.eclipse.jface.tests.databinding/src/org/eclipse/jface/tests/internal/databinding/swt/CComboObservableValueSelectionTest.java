@@ -22,8 +22,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -56,7 +56,7 @@ public class CComboObservableValueSelectionTest extends TestCase {
 
 	public void testSelection_NotifiesObservable() throws Exception {
 		IObservableValue observable = (IObservableValue) delegate
-				.createObservable(SWTObservables.getRealm(Display.getDefault()));
+				.createObservable(DisplayRealm.getRealm(Display.getDefault()));
 
 		ValueChangeEventTracker listener = ValueChangeEventTracker
 				.observe(observable);
