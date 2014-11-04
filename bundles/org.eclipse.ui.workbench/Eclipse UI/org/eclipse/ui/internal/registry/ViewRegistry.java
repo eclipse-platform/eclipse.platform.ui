@@ -28,7 +28,6 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -121,13 +120,6 @@ public class ViewRegistry implements IViewRegistry {
 		}
 		// ==> Update descriptor
 		descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
-		if (id.equals(IPageLayout.ID_RES_NAV) || id.equals(IPageLayout.ID_PROJECT_EXPLORER)) {
-			descriptor.setCategory("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-		} else if (id.equals(IPageLayout.ID_OUTLINE)) {
-			descriptor.setCategory("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
-		} else {
-			descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
-		}
 
 		List<String> tags = descriptor.getTags();
 		tags.add("View"); //$NON-NLS-1$
@@ -163,6 +155,7 @@ public class ViewRegistry implements IViewRegistry {
 		}
 		if (category != null) {
 			tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
+			descriptor.setCategory(category.getLabel());
 		}
 		// ==> End of update descriptor
 
