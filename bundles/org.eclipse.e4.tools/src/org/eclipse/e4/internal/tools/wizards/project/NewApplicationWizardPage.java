@@ -53,6 +53,7 @@ import org.eclipse.ui.branding.IProductConstants;
 /**
  * @author jin.liu (jin.liu@soyatec.com)
  */
+@SuppressWarnings("restriction")
 public class NewApplicationWizardPage extends WizardPage {
 	private static final String TRUE = "TRUE"; //$NON-NLS-1$
 	private static final String TRUESMALL = "true"; //$NON-NLS-1$
@@ -328,7 +329,7 @@ public class NewApplicationWizardPage extends WizardPage {
 	 * exchange the color pattern of hex numeric
 	 *
 	 * @param color
-	 * @return
+	 * @return the converted hex color
 	 */
 	public String hexColorConvert(String color) {
 		if (color.length() == 1) {
@@ -342,7 +343,7 @@ public class NewApplicationWizardPage extends WizardPage {
 	 *
 	 * @param parent
 	 * @param valueText
-	 * @return
+	 * @return a rect dialog
 	 */
 	public Dialog createRectDialog(final Composite parent, final Text valueText) {
 		return new Dialog(parent.getShell()) {
@@ -415,7 +416,7 @@ public class NewApplicationWizardPage extends WizardPage {
 	 * create verify Listener
 	 *
 	 * @param shell
-	 * @return
+	 * @return a new verify listener
 	 */
 	public VerifyListener createVerifyListener(final Shell shell) {
 		return new VerifyListener() {

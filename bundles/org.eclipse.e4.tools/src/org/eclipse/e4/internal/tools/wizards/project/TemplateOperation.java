@@ -41,8 +41,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
+@SuppressWarnings("restriction")
 public class TemplateOperation extends WorkspaceModifyOperation implements
-IVariableProvider {
+	IVariableProvider {
 
 	private final URL templateDirectory;
 	private final IContainer target;
@@ -61,7 +62,7 @@ IVariableProvider {
 
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException,
-	InvocationTargetException, InterruptedException {
+		InvocationTargetException, InterruptedException {
 		monitor.setTaskName(PDEUIMessages.AbstractTemplateSection_generating);
 
 		if ("jar".equals(templateDirectory.getProtocol())) { //$NON-NLS-1$
@@ -122,10 +123,8 @@ IVariableProvider {
 				}
 				IContainer dstContainer = null;
 
-				if (dstContainer == null) {
-					final String folderName = getProcessedString(name, name);
-					dstContainer = dst.getFolder(new Path(folderName));
-				}
+				final String folderName = getProcessedString(name, name);
+				dstContainer = dst.getFolder(new Path(folderName));
 				if (dstContainer != null && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
 				}
@@ -162,11 +161,11 @@ IVariableProvider {
 		IProgressMonitor monitor) throws CoreException {
 		final int pathLength = path.segmentCount();
 		// Immidiate children
-		final Map childZipEntries = new HashMap(); // "dir/" or "dir/file.java"
+		final Map<String, ZipEntry> childZipEntries = new HashMap<String, ZipEntry>(); // "dir/" or "dir/file.java"
 
-		for (final Enumeration zipEntries = zipFile.entries(); zipEntries
+		for (final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries
 			.hasMoreElements();) {
-			final ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+			final ZipEntry zipEntry = zipEntries.nextElement();
 			final IPath entryPath = new Path(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
 				// ancestor or current directory
@@ -188,16 +187,14 @@ IVariableProvider {
 			}
 		}
 
-		for (final Iterator it = childZipEntries.values().iterator(); it.hasNext();) {
-			final ZipEntry zipEnry = (ZipEntry) it.next();
+		for (final Iterator<ZipEntry> it = childZipEntries.values().iterator(); it.hasNext();) {
+			final ZipEntry zipEnry = it.next();
 			final String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;
 
-				if (dstContainer == null) {
-					final String folderName = getProcessedString(name, name);
-					dstContainer = dst.getFolder(new Path(folderName));
-				}
+				final String folderName = getProcessedString(name, name);
+				dstContainer = dst.getFolder(new Path(folderName));
 				if (dstContainer != null && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
 				}
@@ -243,7 +240,7 @@ IVariableProvider {
 
 	protected void copyFile(String fileName, InputStream input, IContainer dst,
 		final String destPath, IProgressMonitor monitor)
-			throws CoreException {
+		throws CoreException {
 		String targetFileName = null;
 		if (destPath == null) {
 			targetFileName = getProcessedString(fileName, fileName);

@@ -29,26 +29,22 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.wizards.plugin.PluginFieldData;
 import org.osgi.framework.FrameworkUtil;
 
+@SuppressWarnings("restriction")
 public class LifeCycleClassCodeGenerator {
 	private static final String PACKAGE_DECLARATION = "PACKAGE_DECLARATION"; //$NON-NLS-1$
 	private final PluginFieldData fPluginData;
 	private final IProject fProject;
 	private final String fQualifiedClassName;
-	private final boolean fGenerateTemplate;
-	private final IWizardContainer fWizardContainer;
 
-	public LifeCycleClassCodeGenerator(IProject project, String qualifiedClassName, PluginFieldData data,
-		boolean generateTemplate, IWizardContainer wizardContainer) {
+	public LifeCycleClassCodeGenerator(IProject project, String qualifiedClassName, PluginFieldData data) {
 		fProject = project;
 		fQualifiedClassName = qualifiedClassName;
 		fPluginData = data;
-		fGenerateTemplate = generateTemplate;
-		fWizardContainer = wizardContainer;
+
 	}
 
 	public IFile generate(IProgressMonitor monitor) throws CoreException {

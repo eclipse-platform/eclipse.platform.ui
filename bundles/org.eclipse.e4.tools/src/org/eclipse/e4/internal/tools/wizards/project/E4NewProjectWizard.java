@@ -180,17 +180,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 				false,
 				true,
 				new NewProjectCreationOperation(fPluginData,
-					fProjectProvider, new ContentWizard()) {
-					private WorkspacePluginModelBase model;
-
-					@Override
-					protected void setPluginLibraries(
-						WorkspacePluginModelBase model)
-						throws CoreException {
-						this.model = model;
-						super.setPluginLibraries(model);
-					}
-				});
+					fProjectProvider, new ContentWizard()));
 
 			// Add Project to working set
 			final IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
@@ -340,14 +330,14 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 							NewApplicationWizardPage.PRODUCT_NAME)
 							|| entry.getKey().equals(
 								NewApplicationWizardPage.APPLICATION)
-							|| entry.getKey().equals(
-								NewApplicationWizardPage.richSample)
-							|| entry.getKey().equals(
-								NewApplicationWizardPage.generateLifecycle)
-							|| entry.getKey().equals(
-								NewApplicationWizardPage.generateLifecycleName)
-							|| entry.getKey()
-								.equals(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) {
+								|| entry.getKey().equals(
+									NewApplicationWizardPage.richSample)
+									|| entry.getKey().equals(
+										NewApplicationWizardPage.generateLifecycle)
+										|| entry.getKey().equals(
+											NewApplicationWizardPage.generateLifecycleName)
+											|| entry.getKey()
+											.equals(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) {
 							continue;
 						}
 						final IPluginElement element = fmodel.getFactory()
@@ -376,12 +366,12 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 	public void createApplicationResources(IProject project,
 		IProgressMonitor monitor) {
 		final Map<String, String> map = fApplicationPage.getData();
-		isMinimalist = !map.get(NewApplicationWizardPage.richSample)
-			.equalsIgnoreCase(TRUE);
 		if (map == null
 			|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null) {
 			return;
 		}
+		isMinimalist = !map.get(NewApplicationWizardPage.richSample)
+			.equalsIgnoreCase(TRUE);
 
 		// If the project has invalid characters, the plug-in name would replace
 		// them with underscores, product name does the same
@@ -393,7 +383,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			final String classname = fPluginData.getId() + "." //$NON-NLS-1$
 				+ map.get(NewApplicationWizardPage.generateLifecycleName);
 			final LifeCycleClassCodeGenerator fGenerator = new LifeCycleClassCodeGenerator(project, classname,
-				fPluginData, false, getContainer());
+				fPluginData);
 			try {
 				fGenerator.generate(new NullProgressMonitor());
 			} catch (final CoreException e2) {
@@ -468,7 +458,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		keys.put("programArgs", //$NON-NLS-1$
 			"true".equalsIgnoreCase(map //$NON-NLS-1$
 				.get(NewApplicationWizardPage.CLEAR_PERSISTED_STATE)) ? "-clearPersistedState" //$NON-NLS-1$
-				: ""); //$NON-NLS-1$
+					: ""); //$NON-NLS-1$
 		try {
 			final URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
 			final IRunnableWithProgress op = new TemplateOperation(corePath, project,
@@ -518,43 +508,43 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			MAddon addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.core.commands.service"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.contexts.service"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.bindings.service"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.commands.model"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.handler.model"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model"); //$NON-NLS-1$
 			addon
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"); //$NON-NLS-1$
+			.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"); //$NON-NLS-1$
 			application.getAddons().add(addon);
 			final MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
 				.createTrimmedWindow();
@@ -732,7 +722,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					rootContext = MCommandsFactory.INSTANCE
 						.createBindingContext();
 					rootContext
-						.setElementId("org.eclipse.ui.contexts.dialogAndWindow"); //$NON-NLS-1$
+					.setElementId("org.eclipse.ui.contexts.dialogAndWindow"); //$NON-NLS-1$
 					rootContext.setName(Messages.E4NewProjectWizard_InDialogsAndWindows);
 					application.getRootContext().add(rootContext);
 				}

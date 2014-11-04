@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Soyatec - port to e4
- *     Lars Vogel, vogella GmbH - ongoing enhancements
+ * IBM Corporation - initial API and implementation
+ * Soyatec - port to e4
+ * Lars Vogel, vogella GmbH - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -56,6 +56,7 @@ import org.osgi.framework.Version;
 /**
  * Content wizard page for the New Plugin Project wizard (page 2)
  */
+@SuppressWarnings("restriction")
 public class PluginContentPage extends ContentPage {
 	private Text fClassText;
 	protected Button fGenerateActivator;
@@ -84,32 +85,38 @@ public class PluginContentPage extends ContentPage {
 	/**
 	 * default tText modify listener
 	 */
-	private ModifyListener classListener = new ModifyListener() {
+	private final ModifyListener classListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
-			if (fInitialized)
+			if (fInitialized) {
 				fChangedGroups |= P_CLASS_GROUP;
+			}
 			validatePage();
 		}
 	};
 
 	/**
 	 * Constructor
+	 *
 	 * @param pageName
 	 * @param provider
 	 * @param page
 	 * @param data
 	 */
-	public PluginContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
+	public PluginContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page,
+		AbstractFieldData data) {
 		super(pageName, provider, page, data);
 		setTitle(PDEUIMessages.ContentPage_title);
 		setDescription(PDEUIMessages.ContentPage_desc);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+		final Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 
 		createPluginPropertiesGroup(container);
@@ -122,10 +129,12 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Creates all of the plugin properties widgets
+	 *
 	 * @param container
 	 */
 	private void createPluginPropertiesGroup(Composite container) {
-		Group propertiesGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pGroup, 3, 1, GridData.FILL_HORIZONTAL);
+		final Group propertiesGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pGroup, 3, 1,
+			GridData.FILL_HORIZONTAL);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pid);
@@ -148,6 +157,7 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Creates all of the EE widgets
+	 *
 	 * @param container
 	 */
 	private void createExecutionEnvironmentControls(Composite container) {
@@ -159,16 +169,16 @@ public class PluginContentPage extends ContentPage {
 		fEEChoice = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		// Gather EEs 
-		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
-		TreeSet availableEEs = new TreeSet();
+		// Gather EEs
+		final IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
+		final TreeSet<String> availableEEs = new TreeSet<String>();
 		for (int i = 0; i < exeEnvs.length; i++) {
 			availableEEs.add(exeEnvs[i].getId());
 		}
 		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 
-		// Set data 
-		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size() - 1]));
+		// Set data
+		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -177,8 +187,8 @@ public class PluginContentPage extends ContentPage {
 		});
 
 		// Set default EE based on strict match to default VM
-		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
-		String[] EEChoices = fEEChoice.getItems();
+		final IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+		final String[] EEChoices = fEEChoice.getItems();
 		for (int i = 0; i < EEChoices.length; i++) {
 			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)) {
 				if (VMUtil.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
@@ -193,23 +203,27 @@ public class PluginContentPage extends ContentPage {
 		fExeEnvButton.setLayoutData(new GridData());
 		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
 		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
+					new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$
 			}
 		});
 	}
 
 	/**
 	 * Creates all of the plugin options widgets
+	 *
 	 * @param container
 	 */
 	protected void createPluginClassGroup(Composite container) {
-		Group classGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pClassGroup, 2, 1, GridData.FILL_HORIZONTAL);
+		final Group classGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pClassGroup, 2, 1,
+			GridData.FILL_HORIZONTAL);
 
-		IDialogSettings settings = getDialogSettings();
+		final IDialogSettings settings = getDialogSettings();
 
-		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, false, 2);
+		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, false,
+			2);
 		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,12 +236,13 @@ public class PluginContentPage extends ContentPage {
 
 		fClassLabel = new Label(classGroup, SWT.NONE);
 		fClassLabel.setText(PDEUIMessages.ContentPage_classname);
-		GridData gd = new GridData();
+		final GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		fClassLabel.setLayoutData(gd);
 		fClassText = createText(classGroup, classListener);
 
-		fUIPlugin = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_uicontribution, null, (settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true, 2);
+		fUIPlugin = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_uicontribution, null,
+			settings != null ? !settings.getBoolean(S_UI_PLUGIN) : true, 2);
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -236,8 +251,9 @@ public class PluginContentPage extends ContentPage {
 			}
 		});
 
-		fApiAnalysisButton = SWTFactory.createCheckButton(classGroup, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
-		fApiAnalysisButton.setSelection((settings != null) ? settings.getBoolean(S_API_ANALYSIS) : false);
+		fApiAnalysisButton = SWTFactory.createCheckButton(classGroup,
+			PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
+		fApiAnalysisButton.setSelection(settings != null ? settings.getBoolean(S_API_ANALYSIS) : false);
 		fApiAnalysisButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -247,13 +263,14 @@ public class PluginContentPage extends ContentPage {
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#updateData()
 	 */
 	@Override
 	public void updateData() {
 		super.updateData();
-		PluginFieldData data = (PluginFieldData) fData;
+		final PluginFieldData data = (PluginFieldData) fData;
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateActivator.getSelection());
@@ -266,15 +283,16 @@ public class PluginContentPage extends ContentPage {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
 	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
-			
-			boolean wasGenActivatorEnabled = fGenerateActivator.isEnabled();
+
+			final boolean wasGenActivatorEnabled = fGenerateActivator.isEnabled();
 			fGenerateActivator.setEnabled(!fData.isSimple());
 			// if fGenerateActivator is disabled, set selection to false
 			if (!fGenerateActivator.isEnabled()) {
@@ -286,7 +304,7 @@ public class PluginContentPage extends ContentPage {
 			}
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
-			boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
+			final boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
 			fUIPlugin.setEnabled(!fData.isSimple() && !isPureOSGi());
 			// if fUIPlugin is disabled, set selection to false
 			if (!fUIPlugin.isEnabled()) {
@@ -298,13 +316,13 @@ public class PluginContentPage extends ContentPage {
 			}
 
 			// plugin class group
-			if (((fChangedGroups & P_CLASS_GROUP) == 0)) {
-				int oldfChanged = fChangedGroups;
+			if ((fChangedGroups & P_CLASS_GROUP) == 0) {
+				final int oldfChanged = fChangedGroups;
 				fClassText.setText(computeId().replaceAll("-", "_").toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				fChangedGroups = oldfChanged;
 			}
 
-			boolean allowEESelection = !fData.isSimple() && fData.hasBundleStructure();
+			final boolean allowEESelection = !fData.isSimple() && fData.hasBundleStructure();
 			fEELabel.setEnabled(allowEESelection);
 			fEEChoice.setEnabled(allowEESelection);
 			fExeEnvButton.setEnabled(allowEESelection);
@@ -326,14 +344,16 @@ public class PluginContentPage extends ContentPage {
 		return ((PluginFieldData) fData).getOSGiFramework() != null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
 	@Override
 	protected void validatePage() {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && fGenerateActivator.getSelection()) {
-			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim(), PDEJavaHelper.getJavaSourceLevel(null), PDEJavaHelper.getJavaComplianceLevel(null));
+			final IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim(),
+				PDEJavaHelper.getJavaSourceLevel(null), PDEJavaHelper.getJavaComplianceLevel(null));
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
 			} else if (status.getSeverity() == IStatus.WARNING) {
@@ -341,9 +361,9 @@ public class PluginContentPage extends ContentPage {
 			}
 		}
 		if (errorMessage == null) {
-			String eeid = fEEChoice.getText();
+			final String eeid = fEEChoice.getText();
 			if (fEEChoice.isEnabled()) {
-				IExecutionEnvironment ee = VMUtil.getExecutionEnvironment(eeid);
+				final IExecutionEnvironment ee = VMUtil.getExecutionEnvironment(eeid);
 				if (ee != null && ee.getCompatibleVMs().length == 0) {
 					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
 				}
@@ -355,6 +375,7 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Saves the current state of widgets of interest in the dialog settings for the wizard
+	 *
 	 * @param settings
 	 */
 	@Override
@@ -371,38 +392,40 @@ public class PluginContentPage extends ContentPage {
 		settings.put(S_RCP_PLUGIN, true);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
 	@Override
 	public boolean canFlipToNextPage() {
 		if (getNextPage() instanceof TemplateListSelectionPage) {
-			TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();
+			final TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();
 			return super.canFlipToNextPage() && templatePage.isAnyTemplateAvailable();
 		}
 		return super.canFlipToNextPage();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#computeId()
 	 */
 	@Override
 	protected String computeId() {
 		String id = super.computeId();
-		// In addition to removed illegal characters, the xmi model does not recognize plug-in uris if they end in a version number
+		// In addition to removed illegal characters, the xmi model does not recognize plug-in uris if they end in a
+		// version number
 		// See PlatformURLPluginConnection.parse()
 		int underScore = id.lastIndexOf('_');
-		Version version;
 		while (underScore >= 0) {
 			try {
-				version = Version.parseVersion(id.substring(underScore + 1));
+				Version.parseVersion(id.substring(underScore + 1));
 				// name cannot end with a valid version, remove it
 				id = id.substring(0, underScore);
-			} catch (IllegalArgumentException iae) {
+			} catch (final IllegalArgumentException iae) {
 				// valid name so far, continue to next underscore
 			}
 			underScore = id.lastIndexOf('_', underScore - 1);
-			
+
 		}
 		return id;
 	}
