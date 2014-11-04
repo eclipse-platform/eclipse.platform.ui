@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,74 +7,57 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430603
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.ViewRegistry;
-import org.eclipse.ui.views.IViewCategory;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * This is used to sort views in a ShowViewDialog.
  */
 public class ViewComparator extends ViewerComparator {
 
+	private final static String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	/**
-	 * General view category id
+	 * Returns a negative, zero, or positive number depending on whether the
+	 * first element is less than, equal to, or greater than the second element.
 	 */
-	private static String GENERAL_VIEW_ID = "org.eclipse.ui"; //$NON-NLS-1$
-
-    private ViewRegistry viewReg;
-
-    /**
-     * ViewSorter constructor comment.
-     * 
-     * @param reg an IViewRegistry
-     */
-    public ViewComparator(ViewRegistry reg) {
-        super();
-        viewReg = reg;
-    }
-
-    /**
-     * Returns a negative, zero, or positive number depending on whether
-     * the first element is less than, equal to, or greater than
-     * the second element.
-     */
-    @Override
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-        if (e1 instanceof IViewDescriptor) {
-            String str1 = DialogUtil.removeAccel(((IViewDescriptor) e1)
-                    .getLabel());
-            String str2 = DialogUtil.removeAccel(((IViewDescriptor) e2)
-                    .getLabel());
-            return getComparator().compare(str1, str2);
-        } else if (e1 instanceof IViewCategory) {
-			IViewCategory generalCategory = viewReg.findCategory(GENERAL_VIEW_ID);
-        	if (generalCategory != null){
-        		if (((IViewCategory)e1).getId().equals(generalCategory.getId())) {
-					return -1;
-				}
-        		if (((IViewCategory)e2).getId().equals(generalCategory.getId())) {
-					return 1;
-				}
-        	}
-			Category miscCategory = viewReg.getMiscCategory();
-			if(miscCategory != null){
-				if (((IViewCategory)e1).getId().equals(miscCategory.getId())) {
-					return 1;
-				}
-				if (((IViewCategory)e2).getId().equals(miscCategory.getId())) {
-					return -1;
-				}
-			}
-            String str1 = DialogUtil.removeAccel(((IViewCategory) e1).getLabel());
-            String str2 = DialogUtil.removeAccel(((IViewCategory) e2).getLabel());
-            return getComparator().compare(str1, str2);
-        }
-        return 0;
-    }
+		// place "General" category first
+		if (WorkbenchMessages.ICategory_other.equals(e1)) {
+			return -1;
+		}
+		if (WorkbenchMessages.ICategory_general.equals(e2)) {
+			return 1;
+		}
+
+		String str1;
+		if (e1 instanceof MPartDescriptor) {
+			str1 = ((MPartDescriptor) e1).getLocalizedLabel();
+		} else {
+			str1 = e1.toString();
+		}
+
+		String str2;
+		if (e2 instanceof MPartDescriptor) {
+			str2 = ((MPartDescriptor) e2).getLocalizedLabel();
+		} else {
+			str2 = e2.toString();
+		}
+		if (str1 == null) {
+			str1 = EMPTY_STRING;
+		}
+		if (str2 == null) {
+			str2 = EMPTY_STRING;
+		}
+		String s1 = DialogUtil.removeAccel(str1);
+		String s2 = DialogUtil.removeAccel(str2);
+		return getComparator().compare(s1, s2);
+	}
 }
