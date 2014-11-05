@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431667, 440893
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 450209
  *******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
@@ -30,6 +31,7 @@ public class TestActivator implements BundleActivator {
 		return plugin;
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		plugin = this;
 		serviceContext = EclipseContextFactory.getServiceContext(context);
@@ -40,10 +42,12 @@ public class TestActivator implements BundleActivator {
 	private void addLogService(IEclipseContext context) {
 		context.set(LogService.class, new LogService() {
 
+			@Override
 			public void log(int level, String message) {
 				System.out.println(level + ": " + message);
 			}
 
+			@Override
 			public void log(int level, String message, Throwable exception) {
 				System.out.println(level + ": " + message);
 				if (exception != null) {
@@ -51,19 +55,21 @@ public class TestActivator implements BundleActivator {
 				}
 			}
 
+			@SuppressWarnings("rawtypes")
+			@Override
 			public void log(ServiceReference sr, int level, String message) {
-				// TODO Auto-generated method stub
-
+				// Nothing
 			}
 
-			public void log(ServiceReference sr, int level, String message,
-					Throwable exception) {
-				// TODO Auto-generated method stub
-
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void log(ServiceReference sr, int level, String message, Throwable exception) {
+				// Nothing
 			}
 		});
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		serviceContext.dispose();
 		plugin = null;
