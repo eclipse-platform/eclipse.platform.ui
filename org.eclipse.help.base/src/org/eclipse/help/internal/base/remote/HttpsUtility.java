@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
@@ -29,7 +30,7 @@ public class HttpsUtility {
 	{
 		try
 		{
-			SSLContext sc = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+			SSLContext sc = SSLContext.getInstance("TLS"); //$NON-NLS-1$
 			sc.init( null, null, new java.security.SecureRandom() );
 			HttpsURLConnection con = (HttpsURLConnection)httpsURL.openConnection();
 			con.setSSLSocketFactory(sc.getSocketFactory());
