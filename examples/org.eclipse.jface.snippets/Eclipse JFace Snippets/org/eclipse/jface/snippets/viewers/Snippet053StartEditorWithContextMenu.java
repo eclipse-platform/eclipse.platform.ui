@@ -8,7 +8,7 @@
  * Contributors:
  *     Marcel <emmpeegee@gmail.com> - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343, 442747
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 442278
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
@@ -17,30 +17,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.TreeViewerEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  *
  */
-public class Snippet053StartEditorWithContextMenu implements SelectionListener {
+public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 
 	private TreeViewer viewer;
 
@@ -103,31 +106,44 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		}
 	}
 
+	public class MyEditingSupport extends EditingSupport {
+
+		public MyEditingSupport(ColumnViewer viewer) {
+			super(viewer);
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			return new TextCellEditor((Composite) getViewer().getControl());
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			return true;
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			return ((MyModel) element).counter + "";
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			((MyModel) element).counter = Integer.parseInt(value.toString());
+			getViewer().update(element, null);
+		}
+
+	}
+
 	public Snippet053StartEditorWithContextMenu(Shell shell) {
 		viewer = new TreeViewer(shell, SWT.BORDER);
 		viewer.setContentProvider(new MyContentProvider());
-		viewer.setCellEditors(new CellEditor[] { new TextCellEditor(viewer.getTree()) });
-		viewer.setColumnProperties(new String[] { "name" });
-		viewer.setCellModifier(new ICellModifier() {
 
-			@Override
-			public boolean canModify(Object element, String property) {
-				return true;
-			}
+		TreeViewerColumn viewerColumn = new TreeViewerColumn(viewer, SWT.NONE);
+		viewerColumn.getColumn().setWidth(200);
 
-			@Override
-			public Object getValue(Object element, String property) {
-				return ((MyModel) element).counter + "";
-			}
-
-			@Override
-			public void modify(Object element, String property, Object value) {
-				TreeItem item = (TreeItem) element;
-				((MyModel) item.getData()).counter = Integer.parseInt(value.toString());
-				viewer.update(item.getData(), null);
-			}
-
-		});
+		viewerColumn.setEditingSupport(new MyEditingSupport(viewer));
+		viewerColumn.setLabelProvider(new ColumnLabelProvider());
 
 		TreeViewerEditor.create(viewer, new ColumnViewerEditorActivationStrategy(viewer) {
 			@Override
@@ -143,10 +159,6 @@ public class Snippet053StartEditorWithContextMenu implements SelectionListener {
 		viewer.getTree().setMenu(menu);
 
 		viewer.setInput(createModel());
-	}
-
-	@Override
-	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
 	@Override

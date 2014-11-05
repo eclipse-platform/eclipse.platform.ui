@@ -9,6 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442747
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -16,29 +17,25 @@ package org.eclipse.jface.snippets.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TableViewerEditor;
 import org.eclipse.jface.viewers.TableViewerFocusCellManager;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Table;
 
 /**
  * Example of a different focus cell rendering with a simply focus border
@@ -48,7 +45,7 @@ public class Snippet036FocusBorderCellHighlighter {
 
 	public static boolean flag = true;
 
-	public class MyModel {
+	private class MyModel {
 		public int counter;
 
 		public MyModel(int counter) {
@@ -61,66 +58,57 @@ public class Snippet036FocusBorderCellHighlighter {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements
-			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
-		FontRegistry registry = new FontRegistry();
+	private class MyEditingSupport extends EditingSupport {
 
-		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
+		private String property;
+
+		public MyEditingSupport(ColumnViewer viewer, String property) {
+			super(viewer);
+			this.property = property;
 		}
 
 		@Override
-		public String getColumnText(Object element, int columnIndex) {
-			return "Column " + columnIndex + " => " + element.toString();
+		protected CellEditor getCellEditor(Object element) {
+			return new TextCellEditor((Composite) getViewer().getControl());
 		}
 
 		@Override
-		public Font getFont(Object element, int columnIndex) {
-			return null;
+		protected boolean canEdit(Object element) {
+			return true;
 		}
 
 		@Override
-		public Color getBackground(Object element, int columnIndex) {
-			return null;
+		protected Object getValue(Object element) {
+			return "Column " + property + " => " + element.toString();
 		}
 
 		@Override
-		public Color getForeground(Object element, int columnIndex) {
-			return null;
+		protected void setValue(Object element, Object value) {
+
 		}
 
+	}
+
+	private class MyColumnLabelProvider extends ColumnLabelProvider {
+
+		private int columnIndex;
+		private Table table;
+
+		public MyColumnLabelProvider(Table table, int columnIndex) {
+			this.table = table;
+			this.columnIndex = columnIndex;
+		}
+
+		@Override
+		public String getText(Object element) {
+			return "Column " + table.getColumnOrder()[columnIndex] + " => " + element.toString();
+		}
 	}
 
 	public Snippet036FocusBorderCellHighlighter(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
-		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(ArrayContentProvider.getInstance());
-
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()),
-				new TextCellEditor(v.getTable()),
-				new TextCellEditor(v.getTable()) });
-		v.setCellModifier(new ICellModifier() {
-
-			@Override
-			public boolean canModify(Object element, String property) {
-				return true;
-			}
-
-			@Override
-			public Object getValue(Object element, String property) {
-				return "Column " + property + " => " + element.toString();
-			}
-
-			@Override
-			public void modify(Object element, String property, Object value) {
-
-			}
-
-		});
-
-		v.setColumnProperties(new String[] { "1", "2", "3" });
 
 		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(
 				v, new FocusBorderCellHighlighter(v));
@@ -144,19 +132,24 @@ public class Snippet036FocusBorderCellHighlighter {
 		TableViewerEditor.create(v, focusCellManager, actSupport, feature);
 
 		String[] columLabels = { "Column 1", "Column 2", "Column 3" };
+		int property = 0;
 		for (String label : columLabels) {
-			createColumnFor(v, label);
+			createColumnFor(v, label, property++);
 		}
 		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
 	}
 
-	private void createColumnFor(TableViewer v, String label) {
-		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
-		column.setWidth(200);
-		column.setMoveable(true);
-		column.setText(label);
+	private void createColumnFor(TableViewer v, String label, int columnIndex) {
+
+		TableViewerColumn viewerColumn = new TableViewerColumn(v, SWT.NONE);
+		viewerColumn.getColumn().setWidth(200);
+		viewerColumn.getColumn().setMoveable(true);
+		viewerColumn.getColumn().setText(label);
+
+		viewerColumn.setEditingSupport(new MyEditingSupport(v, columnIndex + ""));
+		viewerColumn.setLabelProvider(new MyColumnLabelProvider(v.getTable(), columnIndex));
 	}
 
 	private List<MyModel> createModel() {
