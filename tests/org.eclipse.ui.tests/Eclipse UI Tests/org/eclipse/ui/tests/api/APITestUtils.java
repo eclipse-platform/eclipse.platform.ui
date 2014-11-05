@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewReference;
@@ -77,8 +78,7 @@ public class APITestUtils {
 
 		if (parent != null) {
 			List<String> tags = parent.getTags();
-			return tags.contains("Minimized") //$NON-NLS-1$
-					|| tags.contains("MinimizedByZoom"); //$NON-NLS-1$
+			return tags.contains(IPresentationEngine.MINIMIZED) || tags.contains(IPresentationEngine.MINIMIZED_BY_ZOOM);
 		}
 		return false;
 	}
