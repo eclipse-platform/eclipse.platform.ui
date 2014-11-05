@@ -24,3 +24,4 @@ Export-Package: org.eclipse.ui.internal.ide.application;x-internal:=true,
  org.eclipse.ui.internal.ide.application.dialogs;x-internal:=true
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
