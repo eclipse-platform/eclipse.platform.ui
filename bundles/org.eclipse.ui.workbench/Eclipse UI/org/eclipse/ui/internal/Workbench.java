@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobGroup;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -285,6 +286,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 		org.eclipse.e4.ui.workbench.IWorkbench {
 
 	public static String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
+
+	private static final String WORKBENCH_AUTO_SAVE_BACKGROUND_JOB = "Workbench Auto-Save Background Job"; //$NON-NLS-1$
+
+	private JobGroup jobGroupWorkbenchAutoSave = new JobGroup(WORKBENCH_AUTO_SAVE_JOB, 1, 1);
 
 	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
 
@@ -1273,7 +1278,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		}
 		final IModelResourceHandler handler = e4Context.get(IModelResourceHandler.class);
 
-		Job cleanAndSaveJob = new Job("Workbench Auto-Save Background Job") { //$NON-NLS-1$
+		Job cleanAndSaveJob = new Job(WORKBENCH_AUTO_SAVE_BACKGROUND_JOB) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				final Resource res = handler.createResourceWithApp(appCopy);
@@ -1294,6 +1299,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		};
 		cleanAndSaveJob.setPriority(Job.SHORT);
 		cleanAndSaveJob.setSystem(true);
+		cleanAndSaveJob.setJobGroup(jobGroupWorkbenchAutoSave);
 		cleanAndSaveJob.schedule();
 	}
 
@@ -3003,10 +3009,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 							return Status.OK_STATUS;
 						}
 
-						@Override
-						public boolean belongsTo(Object family) {
-							return WORKBENCH_AUTO_SAVE_JOB == family;
-						}
 					};
 					autoSaveJob.setSystem(true);
 					autoSaveJob.schedule(millisecondInterval);
