@@ -158,6 +158,9 @@ public class EventLoopMonitorThread extends Thread {
 			 */
 			switch (event.type) {
 			case SWT.PreEvent:
+				if (event.data instanceof Event && ((Event) event.data).type == SWT.Skin) {
+					break;  // Ignore Skin events since they may be produced during a UI freeze.
+				}
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type);
 				}
@@ -166,6 +169,9 @@ public class EventLoopMonitorThread extends Thread {
 				handleEventTransition(true, true);
 				break;
 			case SWT.PostEvent:
+				if (event.data instanceof Event && ((Event) event.data).type == SWT.Skin) {
+					break;  // Ignore Skin events since they may be produced during a UI freeze.
+				}
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type);
 				}
@@ -190,6 +196,7 @@ public class EventLoopMonitorThread extends Thread {
 				handleEventTransition(false, nestingLevel > 0);
 				break;
 			default:
+				break;
 			}
 		}
 
