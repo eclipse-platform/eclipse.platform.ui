@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.modeling;
 
@@ -344,4 +345,18 @@ public interface EPartService {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void switchPerspective(MPerspective perspective);
+
+	/**
+	 * Indicates whether a part with a certain elementId is currently rendered in a certain
+	 * perspective or not.
+	 *
+	 * @param elementId
+	 *            the id of the part, which should be checked
+	 * @param perspective
+	 *            the perspective, which may contain the part with the given elementId
+	 * @return <code>true</code> if the part with the given elementId is rendered in the given
+	 *         perspective and <code>false</code> otherwise
+	 * @since 1.3
+	 */
+	public boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective);
 }

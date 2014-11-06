@@ -58,6 +58,11 @@ public class ApplicationPartServiceImpl implements EPartService {
 	}
 
 	@Override
+	public boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective) {
+		return getActiveWindowService().isPartOrPlaceholderInPerspective(elementId, perspective);
+	}
+
+	@Override
 	public void switchPerspective(MPerspective perspective) {
 		getActiveWindowService().switchPerspective(perspective);
 	}

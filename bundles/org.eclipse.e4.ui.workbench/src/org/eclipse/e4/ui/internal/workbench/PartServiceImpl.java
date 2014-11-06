@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel (Lars.Vogel@gmail.com) - Bug 416082
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
@@ -546,6 +547,29 @@ public class PartServiceImpl implements EPartService {
 
 	MPlaceholder getLocalPlaceholder(MUIElement part) {
 		return modelService.findPlaceholderFor(getWindow(), part);
+	}
+
+	@Override
+	public boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective) {
+		List<MPart> findElements = modelService.findElements(perspective, elementId, MPart.class, null);
+		if (!findElements.isEmpty()) {
+			MPart part = findElements.get(0);
+
+			// if that is a shared part, check the placeholders
+			if (workbenchWindow.getSharedElements().contains(part)) {
+				List<MPlaceholder> placeholders = modelService.findElements(perspective, elementId,
+						MPlaceholder.class, null);
+				for (MPlaceholder mPlaceholder : placeholders) {
+					if (mPlaceholder.isVisible() && mPlaceholder.isToBeRendered()) {
+						return true;
+					}
+				}
+				return false;
+			}
+			// not a shared part
+			return part.isVisible() && part.isToBeRendered();
+		}
+		return false;
 	}
 
 	@Override
