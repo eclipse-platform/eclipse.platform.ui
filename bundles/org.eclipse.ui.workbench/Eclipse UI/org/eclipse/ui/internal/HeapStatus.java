@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -589,42 +589,6 @@ public class HeapStatus extends Composite {
 			}
     	}
     }
-
-//    /**
-//     * Returns whether the Kyrsoft memory monitor view is available.
-//     * 
-//     * @return <code>true</code> if available, <code>false</code> otherwise
-//     */
-//    private boolean isKyrsoftViewAvailable() {
-//        return (Platform.getBundle(IHeapStatusConstants.KYRSOFT_PLUGIN_ID) != null) && PlatformUI.getWorkbench().getViewRegistry().find(IHeapStatusConstants.KYRSOFT_VIEW_ID) != null; 
-//    }
-//    
-//    class ShowKyrsoftViewAction extends Action {
-//        ShowKyrsoftViewAction() {
-//            super(WorkbenchMessages.ShowKyrsoftViewAction_text);
-//        }
-//        public void run() {
-//            if (!isKyrsoftViewAvailable()) { 
-//                MessageDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, WorkbenchMessages.ShowKyrsoftViewAction_KyrsoftNotInstalled);
-//                return;
-//            }
-//			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//            IWorkbenchPage page = window == null ? null : window.getActivePage();
-//            if (page == null) {
-//                MessageDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, WorkbenchMessages.ShowKyrsoftViewAction_OpenPerspectiveFirst);
-//                return;
-//            }
-//            try {
-//                page.showView(IHeapStatusConstants.KYRSOFT_VIEW_ID);
-//            }
-//            catch (PartInitException e) {
-//                String msg = WorkbenchMessages.ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
-//                IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e);
-//                ErrorDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, msg, status);
-//            }
-//            
-//        }
-//    }
 
 }
 

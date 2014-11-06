@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,16 +27,5 @@ public interface IHeapStatusConstants {
      * Preference key for whether to show max heap, if available (value is boolean).
      */
     String PREF_SHOW_MAX = "HeapStatus.showMax";   //$NON-NLS-1$
-    	
-//    /**
-//     * ID for the Kyrsoft Memory Monitor plug-in.
-//     */
-//    String KYRSOFT_PLUGIN_ID = "de.kyrsoft.memmonitor"; //$NON-NLS-1$
-//
-//    /**
-//     * ID for the Kyrsoft Memory Monitor view.
-//     */
-//    String KYRSOFT_VIEW_ID = "de.kyrsoft.memmonitor.views.MemoryView"; //$NON-NLS-1$
-//
 
 }
