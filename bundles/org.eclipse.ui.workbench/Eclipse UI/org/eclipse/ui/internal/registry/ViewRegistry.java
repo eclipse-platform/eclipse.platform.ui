@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267, 441282, 445609
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267, 441282, 445609, 441280
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -96,7 +96,7 @@ public class ViewRegistry implements IViewRegistry {
 				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
 					createDescriptor(element, false);
 				}
-				if (element.getName().equals("e4view")) { //$NON-NLS-1$
+				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_E4VIEW)) {
 					createDescriptor(element, true);
 				}
 			}

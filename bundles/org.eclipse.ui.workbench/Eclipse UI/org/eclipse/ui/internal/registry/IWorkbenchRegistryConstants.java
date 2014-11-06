@@ -11,7 +11,7 @@
  *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml    
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184, 441280
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -1263,6 +1263,12 @@ public interface IWorkbenchRegistryConstants {
 	 * View tag. Value <code>view</code>.
 	 */
 	public static String TAG_VIEW = "view";//$NON-NLS-1$
+
+	/**
+	 * E4 view tag, used in the <code>org.eclipse.ui.view</code> extension point
+	 * to point to a POJO class. Value <code>e4view</code>.
+	 */
+	public static String TAG_E4VIEW = "e4view";//$NON-NLS-1$
 
 	/**
 	 * View shortcut tag. Value <code>viewShortcut</code>.
