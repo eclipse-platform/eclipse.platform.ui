@@ -146,9 +146,6 @@ public class StackRenderer extends LazyStackRenderer {
 	@Inject
 	IPresentationEngine renderer;
 
-	@Inject
-	EModelService modelService;
-
 	private EventHandler itemUpdater;
 
 	private EventHandler dirtyUpdater;
@@ -507,10 +504,12 @@ public class StackRenderer extends LazyStackRenderer {
 				MPartStack pStack = (MPartStack) (partParent instanceof MPartStack ? partParent
 						: null);
 
+				EModelService ms = newActivePart.getContext().get(
+						EModelService.class);
 				List<String> tags = new ArrayList<String>();
 				tags.add(CSSConstants.CSS_ACTIVE_CLASS);
-				List<MUIElement> activeElements = modelService.findElements(
-						modelService.getTopLevelWindowFor(newActivePart), null,
+				List<MUIElement> activeElements = ms.findElements(
+						ms.getTopLevelWindowFor(newActivePart), null,
 						MUIElement.class, tags);
 				for (MUIElement element : activeElements) {
 					if (element instanceof MPartStack && element != pStack) {

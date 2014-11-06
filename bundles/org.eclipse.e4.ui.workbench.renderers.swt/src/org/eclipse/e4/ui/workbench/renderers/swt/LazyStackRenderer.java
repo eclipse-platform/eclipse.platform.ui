@@ -91,9 +91,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 	@Override
 	public void postProcess(MUIElement element) {
-		if (!(element instanceof MGenericStack<?>) || isMinimizedStack(element)) {
+		if (!(element instanceof MGenericStack<?>))
 			return;
-		}
 
 		MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
 		MUIElement selPart = stack.getSelectedElement();
@@ -298,10 +297,5 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (layoutShellLater != null) {
 			layoutShellLater.layout(true, true);
 		}
-	}
-
-	private boolean isMinimizedStack(MUIElement stack) {
-		return stack.getTags().contains(IPresentationEngine.MINIMIZED)
-				&& !stack.getTags().contains(IPresentationEngine.ACTIVE);
 	}
 }
