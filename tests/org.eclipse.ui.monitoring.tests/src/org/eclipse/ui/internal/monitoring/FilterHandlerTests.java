@@ -30,7 +30,9 @@ import org.junit.Test;
  */
 public class FilterHandlerTests {
 	private static final String FILTER_TRACES =
-			"org.eclipse.ui.internal.monitoring.FilterHandlerTests.createFilteredStackSamples";
+			"org.eclipse.ui.internal.monitoring.FilterHandlerTests.createFilteredStackSamples"
+			+ ",org.eclipse.ui.internal.monitoring.SomeClass.someMethod"
+			+ ",org.eclipse.ui.internal.monitoring.OtherClass.otherMethod";
 	private static final long THREAD_ID = Thread.currentThread().getId();
 
 	private StackSample[] createStackSamples() throws Exception {
@@ -74,5 +76,20 @@ public class FilterHandlerTests {
 		FilterHandler filterHandler = new FilterHandler(FILTER_TRACES);
 		StackSample[] samples = createFilteredStackSamples();
 		assertFalse(filterHandler.shouldLogEvent(samples, samples.length, THREAD_ID));
+	}
+
+	@Test
+	public void testWildcardFilter() throws Exception {
+		FilterHandler filterHandler = new FilterHandler("*.FilterHandlerTests.testW?ld*Filter");
+		ThreadMXBean jvmThreadManager = ManagementFactory.getThreadMXBean();
+		ThreadInfo threadInfo =
+				jvmThreadManager.getThreadInfo(Thread.currentThread().getId(), Integer.MAX_VALUE);
+		boolean matched = false;
+		for (StackTraceElement element : threadInfo.getStackTrace()) {
+			if (filterHandler.matchesFilter(element)) {
+				matched = true;
+			}
+		}
+		assertTrue(matched);
 	}
 }
