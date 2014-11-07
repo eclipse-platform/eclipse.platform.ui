@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.examples.widgetsample.rcp.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="org.eclipse.examples.widgetsample.rcp.Perspective"
+            id="WidgetSampleRCP.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="org.eclipse.examples.widgetsample.rcp.View"
+            icon="icons/insert-chart-pie-2.ico"
+            id="WidgetSampleRCP.View"
+            name="Chart with trends">
+      </view>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="WidgetSampleRCP_firstStage.application"
+            name="Sample of Chart">
+         <property
+               name="cssTheme"
+               value="org.eclipse.examples.widgetsample.defaultTheme">
+         </property>
+      </product>
+   </extension>
+  <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               id="WidgetSampleRCP.View"
+               minimized="false"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+  
+  <extension
+         point="org.eclipse.ui.themes">
+      <themeElementCategory
+            id="org.eclipse.examples.widgetsample.theme"
+            label="Chart widget sample theme">
+      </themeElementCategory>
+      <colorDefinition
+            categoryId="org.eclipse.examples.widgetsample.theme"
+            id="org.eclipse.examples.widgetsample.theme.fontColor"
+            label="Font color"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.examples.widgetsample.theme"
+            id="org.eclipse.examples.widgetsample.theme.chartGradBgColor"
+            label="Chart gradient start color"
+            value="255, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.examples.widgetsample.theme.chartGradEndColor"
+            label="Chart gradient end color"
+            value="0, 255, 0">
+      </colorDefinition>
+   </extension>
+  <extension
+        point="org.eclipse.e4.ui.css.swt.theme">
+     <theme
+           basestylesheeturi="css/default.css"
+           id="org.eclipse.examples.widgetsample.defaultTheme"
+           label="Default theme">
+     </theme>
+  </extension>
+
+</plugin>

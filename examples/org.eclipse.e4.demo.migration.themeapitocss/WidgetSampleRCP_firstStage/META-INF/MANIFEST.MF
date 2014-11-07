@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: WidgetSampleRCP_firstStage
+Bundle-SymbolicName: WidgetSampleRCP_firstStage;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.examples.widgetsample.rcp.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ WidgetSample;bundle-version="1.0.0",
+ org.eclipse.ui.themes,
+ org.eclipse.e4.ui.css.swt.theme,
+ org.eclipse.e4.ui.css.core,
+ org.eclipse.e4.ui.css.swt,
+ org.eclipse.e4.ui.services
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

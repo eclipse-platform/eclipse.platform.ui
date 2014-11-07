@@ -1,0 +1,13 @@
+@import url("e4_default_winxp_olv_fixed.css");
+
+ColorDefinition#org-eclipse-examples-widgetsample-theme-fontColor {
+	color: #635c5c;
+}
+
+ColorDefinition#org-eclipse-examples-widgetsample-theme-chartGradBgColor {
+	color: #ff523b;	
+}
+
+ColorDefinition#org-eclipse-examples-widgetsample-theme-chartGradEndColor {
+	color: #ffd045;
+}
