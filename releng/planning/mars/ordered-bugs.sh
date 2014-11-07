@@ -34,29 +34,25 @@ FILE="$1"
 		TARGET=$( echo $line | csvtool col 2 - )
 		ASSIGNED_TO=$( echo $line | csvtool col 3 - )
 		STATUS=$( echo $line | csvtool col 4 - )
-		if [ RESOLVED = "$STATUS" -o VERIFIED = "$STATUS" ]; then
-			STATUS=$( echo $line | csvtool col 5 - )
-			PRE="<strike>"
-			POST="</strike>"
-		fi
-		TITLE=$( echo $line | csvtool col 6 - )
-		SEV=$( echo $line | csvtool col 7 - )
-		QA=$( echo $line | csvtool col 8 - )
-		if [ "platform-ui-triaged" = "$ASSIGNED_TO" -a ! -z "$QA" ]; then
-			ASSIGNED_TO="$QA"
-		fi
+		if [ FIXED != "$STATUS" -a CLOSED != "$STATUS" -a RESOLVED != "$STATUS" -a VERIFIED != "$STATUS" ]; then
+		    TITLE=$( echo $line | csvtool col 6 - )
+		    SEV=$( echo $line | csvtool col 7 - )
+		    QA=$( echo $line | csvtool col 8 - )
+		    if [ "platform-ui-triaged" = "$ASSIGNED_TO" -a ! -z "$QA" ]; then
+				ASSIGNED_TO="$QA"
+		    fi
 
-		echo '|-'
-		echo "| $NUM || $PRE{{bug|$BUG}}$POST || $TARGET || $SEV || $ASSIGNED_TO || $STATUS || $PRE$TITLE$POST"
+		    echo '|-'
+		    echo "| $NUM || {{bug|$BUG}} || $TARGET || $SEV || $ASSIGNED_TO || $STATUS || $PRE$TITLE$POST"
+            	    (( NUM = NUM + 1 ))
+            	fi
 		BUG=""
 		TARGET=""
 		TITLE=""
 		STATUS=""
 		ASSIGNED_TO=""
 		SEV=""
-		PRE=""
-		POST=""
-		(( NUM = NUM + 1 ))
+		
 	done < ${FILE}
 }
 
@@ -65,6 +61,8 @@ gen_wiki () {
 NUM=1
 
 echo "== Bugs for Planning =="
+echo "[https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=${BUGS}&bug_id_type=anyexact&list_id=9354617&query_format=advanced&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Cqa_contact&human=1 Display bugs in Bugzilla]"
+
 echo ""
 echo '{| class="wikitable" border="1"'
 echo '|-'
@@ -83,6 +81,8 @@ gen_other_wiki () {
 NUM=1
 
 echo "== Other 4.4.1 and 4.5 bugs for Planning =="
+echo "[https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=${BUGS}&bug_id_type=nowords&classification=Eclipse&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Cqa_contact&component=IDE&component=UI&list_id=9455933&product=Platform&query_format=advanced&target_milestone=4.4.2&target_milestone=4.5&target_milestone=4.5%20M1&human=1 Display bugs in Bugzilla]"
+
 echo ""
 echo '{| class="wikitable" border="1"'
 echo '|-'
