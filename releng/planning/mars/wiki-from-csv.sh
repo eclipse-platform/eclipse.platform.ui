@@ -1,5 +1,6 @@
 #!/bin/bash
 
+MILESTONE="$1"
 
 create_wiki_section () {
 F_TARGET="$1" ; shift
@@ -54,23 +55,9 @@ echo ""
 
 }
 
-create_wiki_section "4.4 RC4" 4.4%20RC4
-create_wiki_section "4.4 - unscheduled" 4.4
-
 echo "= Completed milestones ="
-
 echo ""
 
-create_wiki_section 4.3.1 4.3.1
-create_wiki_section 4.3.2 4.3.2
-create_wiki_section "4.4 M1" 4.4%20M1
-create_wiki_section "4.4 M2" 4.4%20M2
-create_wiki_section "4.4 M3" 4.4%20M3
-create_wiki_section "4.4 M4" 4.4%20M4
-create_wiki_section "4.4 M5" 4.4%20M5
-create_wiki_section "4.4 M6" 4.4%20M6
-create_wiki_section "4.4 M7" 4.4%20M7
-create_wiki_section "4.4 RC1" 4.4%20RC1
-create_wiki_section "4.4 RC2" 4.4%20RC2
-create_wiki_section "4.4 RC3" 4.4%20RC3
+create_wiki_section "${MILESTONE}" `echo ${MILESTONE} | sed -r 's/[ ]+/%20/g'`
+
 
