@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 12116 [Contributions] widgets: MenuManager.setImageDescriptor() method needed
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440252
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 436225
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -232,13 +233,14 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         }
 
         disposeOldImages();
-
+		// remember items for disposal before removing them all
         IContributionItem[] items = getItems();
+		removeAll();
         for (IContributionItem item : items) {
             item.dispose();
         }
-
         markDirty();
+		parent = null;
     }
 
     @Override
