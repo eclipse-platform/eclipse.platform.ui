@@ -311,7 +311,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         URL url = null;
         do {
         	// okay to use the shell now - this is the splash shell
-            new ChooseWorkspaceDialog(shell, launchData, false, true).prompt(force);
+			new ChooseWorkspaceDialog(shell, launchData, false, true) {
+				protected Shell getParentShell() {
+					return null;
+				}
+			}.prompt(force);
             String instancePath = launchData.getSelection();
             if (instancePath == null) {
 				return null;
