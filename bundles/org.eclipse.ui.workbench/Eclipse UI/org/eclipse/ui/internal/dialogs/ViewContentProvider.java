@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430603
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430603, 450817
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -30,9 +30,6 @@ import org.eclipse.ui.views.IViewRegistry;
  * Provides content for viewers that wish to show Views.
  */
 public class ViewContentProvider implements ITreeContentProvider {
-
-	final private static String CATEGORY_TAG = "categoryTag:"; //$NON-NLS-1$
-	final private static int CATEGORY_TAG_LENGTH = CATEGORY_TAG.length();
 
 	/**
 	 * Child cache. Map from Object->Object[]. Our hasChildren() method is
@@ -115,8 +112,8 @@ public class ViewContentProvider implements ITreeContentProvider {
 			if (isFilteredByActivity(descriptor.getElementId()) || isIntroView(descriptor.getElementId())) {
 				continue;
 			}
-			String categoryTag = getCategory(descriptor);
-			if (categoryDescription.equals(categoryTag)) {
+			String category = descriptor.getCategory();
+			if (categoryDescription.equals(category)) {
 				categoryDescriptors.add(descriptor);
 			}
 		}
@@ -128,7 +125,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 */
 	private Set<Object> determineTopLevelElements(Object element) {
 		List<MPartDescriptor> descriptors = ((MApplication) element).getDescriptors();
-		Set<String> categoryTags = new HashSet<String>();
+		Set<String> categories = new HashSet<String>();
 		Set<MPartDescriptor> visibleViews = new HashSet<MPartDescriptor>();
 		for (MPartDescriptor descriptor : descriptors) {
 			// only process views and hide views which are filtered by
@@ -138,38 +135,23 @@ public class ViewContentProvider implements ITreeContentProvider {
 			}
 
 			// determine the categories
-			String category = getCategory(descriptor);
+			String category = descriptor.getCategory();
 
 			// if view has not category show it directly
 			if (category == null) {
 				visibleViews.add(descriptor);
 				// otherwise just show the category
 			} else {
-				categoryTags.add(category);
+				categories.add(category);
 			}
 		}
 
 		Set<Object> combinedTopElements = new HashSet<Object>();
-		combinedTopElements.addAll(categoryTags);
+		combinedTopElements.addAll(categories);
 		combinedTopElements.addAll(visibleViews);
 		return combinedTopElements;
 	}
 
-	/**
-	 * Determines the category of the part descriptor
-	 *
-	 * @param descriptor
-	 */
-	private String getCategory(MPartDescriptor descriptor) {
-		List<String> tags = descriptor.getTags();
-		String category = null;
-		for (String tag : tags) {
-			if (tag.startsWith(CATEGORY_TAG)) {
-				category = tag.substring(CATEGORY_TAG_LENGTH);
-			}
-		}
-		return category;
-	}
 
 	/**
 	 * Determines if the part is a view or and editor
