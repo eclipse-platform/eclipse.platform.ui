@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
 import org.eclipse.e4.ui.css.swt.dom.CTabFolderElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -21,6 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class CTabFolderTest extends CSSSWTTestCase {
 
@@ -28,10 +33,8 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
 	static final RGB WHITE = new RGB(255, 255, 255);
-	static public CSSEngine engine;
-	
+
 	protected CTabFolder createTestCTabFolder(String styleSheet) {
-		Display display = Display.getDefault();
 		engine = createEngine(styleSheet, display);
 
 		// Create widgets
@@ -44,16 +47,15 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		CTabFolder folderToTest = new CTabFolder(panel, SWT.NONE);
 		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
 		tab1.setText("A TAB ITEM");
-		
+
 		engine.applyStyles(shell, true);
 
 		shell.pack();
 		return folderToTest;
 	}
-	
+
 	protected ToolBar[] createTestToolBars(String styleSheet) {
 
-		Display display = Display.getDefault();
 		engine = createEngine(styleSheet, display);
 
 		// Create widgets
@@ -81,70 +83,77 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		engine.applyStyles(shell, true);
 		return new ToolBar[] {toolbarA, toolbarB, toolbarC};
 	}
-	
+
 	protected Shell createShell(String styleSheet) {
 		Display display = Display.getDefault();
 		engine = createEngine(styleSheet, display);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.NONE);
-		
+
 		engine.applyStyles(shell, true);
 
 		shell.pack();
 		return shell;
 	}
-	
-	public void testBackgroundColor() throws Exception {
+
+	@Test
+	public void testBackgroundColor() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { background-color: #0000FF }");
 		assertEquals(BLUE, folderToTest.getBackground().getRGB());
 	}
 
-	public void testTextColor() throws Exception {
+	@Test
+	public void testTextColor() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { color: #0000FF }");
 		assertEquals(BLUE, folderToTest.getForeground().getRGB());
 	}
 
 	//See GradientTest for testing background gradient
 
-	public void testFontRegular() throws Exception {
+	@Test
+	public void testFontRegular() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Verdana 16px }");
 		assertEquals(1, folderToTest.getFont().getFontData().length);
 		FontData fontData = folderToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
 		assertEquals(16, fontData.getHeight());
-		assertEquals(SWT.NORMAL, fontData.getStyle());		
+		assertEquals(SWT.NORMAL, fontData.getStyle());
 	}
 
-	public void testFontBold() throws Exception {
+	@Test
+	public void testFontBold() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Arial 12px; font-weight: bold }");
 		assertEquals(1, folderToTest.getFont().getFontData().length);
 		FontData fontData = folderToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());
 		assertEquals(12, fontData.getHeight());
-		assertEquals(SWT.BOLD, fontData.getStyle());		
+		assertEquals(SWT.BOLD, fontData.getStyle());
 	}
 
-	public void testFontItalic() throws Exception {
+	@Test
+	public void testFontItalic() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { font: Arial 12px; font-style: italic }");
 		assertEquals(1, folderToTest.getFont().getFontData().length);
 		FontData fontData = folderToTest.getFont().getFontData()[0];
 		assertEquals("Arial", fontData.getName());
 		assertEquals(12, fontData.getHeight());
-		assertEquals(SWT.ITALIC, fontData.getStyle());		
+		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 
-//	public void testBorderVisible() throws Exception {
-//		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { border-visible: true}");
-//		assertEquals(true, folderToTest.getBorderVisible());
-//		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "border-visible", null));
-//		folderToTest.getShell().close();
-//		folderToTest = createTestCTabFolder("CTabFolder { border-visible: false}");
-//		assertEquals(false, folderToTest.getBorderVisible());
-//		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "border-visible", null));
-//	}
-//	
-	public void testSimple() throws Exception {
+	@Ignore("this test was commented before bug 443094")
+	@Test
+	public void testBorderVisible() {
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { border-visible: true}");
+		assertEquals(true, folderToTest.getBorderVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "border-visible", null));
+		folderToTest.getShell().close();
+		folderToTest = createTestCTabFolder("CTabFolder { border-visible: false}");
+		assertEquals(false, folderToTest.getBorderVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "border-visible", null));
+	}
+	@Test
+	public void testSimple() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { simple: true}");
 		assertEquals(true, folderToTest.getSimple());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "simple", null));
@@ -153,8 +162,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getSimple());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "simple", null));
 	}
-	
-	public void testMaximizeVisible() throws Exception {
+
+	@Test
+	public void testMaximizeVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { maximize-visible: true}");
 		assertEquals(true, folderToTest.getMaximizeVisible());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "maximize-visible", null));
@@ -163,8 +173,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getMaximizeVisible());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximize-visible", null));
 	}
-	
-	public void testMinimizeVisible() throws Exception {
+
+	@Test
+	public void testMinimizeVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { minimize-visible: true}");
 		assertEquals(true, folderToTest.getMinimizeVisible());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "minimize-visible", null));
@@ -173,8 +184,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getMinimizeVisible());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimize-visible", null));
 	}
-	
-	public void testMRUVisible() throws Exception {
+
+	@Test
+	public void testMRUVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { mru-visible: true}");
 		assertEquals(true, folderToTest.getMRUVisible());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
@@ -183,8 +195,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
 		assertEquals(false, folderToTest.getMRUVisible());
 	}
-	
-	public void testMaximized() throws Exception {
+
+	@Test
+	public void testMaximized() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { maximized: true}");
 		assertEquals(true, folderToTest.getMaximized());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "maximized", null));
@@ -192,8 +205,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getMaximized());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximized", null));
 	}
-	
-	public void testMinimized() throws Exception {
+
+	@Test
+	public void testMinimized() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { minimized: true}");
 		assertEquals(true, folderToTest.getMinimized());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "minimized", null));
@@ -201,25 +215,27 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getMinimized());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimized", null));
 	}
-	
-	public void testTabHeight() throws Exception {
+
+	@Test
+	public void testTabHeight() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { tab-height: 30px }");
 		assertEquals(30, folderToTest.getTabHeight());
 		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40px }");
 		assertEquals(40, folderToTest.getTabHeight());
-		
+
 		//negative test to ensure we don't try to interpret a list
 		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40px 50px }");
 		assertNotSame(40, folderToTest.getTabHeight());
 		assertNotSame(50, folderToTest.getTabHeight());
-		
+
 		//negative test for ambiguous unit value
 		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 }");
 		assertNotSame(40, folderToTest.getTabHeight());
 
 	}
 
-	public void testSingle() throws Exception {
+	@Test
+	public void testSingle() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { single: true}");
 		assertEquals(true, folderToTest.getSingle());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "single", null));
@@ -227,8 +243,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getSingle());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "single", null));
 	}
-	
-	public void testUnselectedCloseVisible() throws Exception {
+
+	@Test
+	public void testUnselectedCloseVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { unselected-close-visible: true}");
 		assertEquals(true, folderToTest.getUnselectedCloseVisible());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "unselected-close-visible", null));
@@ -236,8 +253,9 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getUnselectedCloseVisible());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "unselected-close-visible", null));
 	}
-	
-	public void testUnselectedImageVisible() throws Exception {
+
+	@Test
+	public void testUnselectedImageVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { unselected-image-visible: true}");
 		assertEquals(true, folderToTest.getUnselectedImageVisible());
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "unselected-image-visible", null));
@@ -245,7 +263,8 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(false, folderToTest.getUnselectedImageVisible());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "unselected-image-visible", null));
 	}
-	
+
+	@Test
 	public void testRetrievePropertyNull() {
 		Shell shell = createShell("Shell {color:red}");
 		assertEquals(null, engine.retrieveCSSProperty(shell, "border-visible", null));
@@ -258,26 +277,27 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(null, engine.retrieveCSSProperty(shell, "single", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-close-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-image-visible", null));
-	}	
-	
-	public void testTopRightAsDescendentChild() throws Exception {
+	}
+
+	@Test
+	public void testTopRightAsDescendentChild() {
 		ToolBar[] toolBars = createTestToolBars(
 				"CTabFolder.special ToolBar { background: #FF0000}\n" +
-				"CTabFolder ToolBar { background: #00FF00}\n" +
-				"CTabFolder.extraordinary ToolBar { background: #FFFFFF}\n" +
+						"CTabFolder ToolBar { background: #00FF00}\n" +
+						"CTabFolder.extraordinary ToolBar { background: #FFFFFF}\n" +
 				"ToolBar { background: #0000FF}");
-				
+
 		ToolBar barA = toolBars[0];
 		ToolBar barB = toolBars[1];
 		ToolBar barC = toolBars[2];
-		
-		CTabFolderElement.setCSSClass(barA.getParent(), "special");		
+
+		CTabFolderElement.setCSSClass(barA.getParent(), "special");
 		engine.applyStyles(barA.getShell(), true);
-		
+
 		assertEquals(RED, barA.getBackground().getRGB());
 		assertEquals(GREEN, barB.getBackground().getRGB());
 		assertEquals(BLUE, barC.getBackground().getRGB());
-		
+
 		CTabFolderElement.setCSSClass(barA.getParent(), "extraordinary");
 		engine.applyStyles(barA.getShell(), true);
 

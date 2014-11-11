@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
+ *******************************************************************************/
+
 package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.PROPS_OVERRIDDEN_BY_CSS_PROP;
@@ -7,19 +18,24 @@ import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.getOver
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.getPreferenceChangeListener;
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.removeOverriddenByCssProperty;
 import static org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.removeOverriddenPropertyNames;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.junit.Test;
 
-public class EclipsePreferencesHelperTest extends TestCase {
-	public void testAppendOverriddenPropertyName() throws Exception {
+@SuppressWarnings("restriction")
+public class EclipsePreferencesHelperTest {
+	@Test
+	public void testAppendOverriddenPropertyName() {
 		// given
 		IEclipsePreferences preferences = spy(new EclipsePreferences());
 
@@ -43,7 +59,8 @@ public class EclipsePreferencesHelperTest extends TestCase {
 				getPreferenceChangeListener());
 	}
 
-	public void testGetOverriddenPropertyNames() throws Exception {
+	@Test
+	public void testGetOverriddenPropertyNames() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 		appendOverriddenPropertyName(preferences, "prop1");
@@ -60,7 +77,8 @@ public class EclipsePreferencesHelperTest extends TestCase {
 		assertTrue(propertyNames.add("prop3"));
 	}
 
-	public void testRemoveOverriddenPropertyNames() throws Exception {
+	@Test
+	public void testRemoveOverriddenPropertyNames() {
 		// given
 		IEclipsePreferences preferences = spy(new EclipsePreferences());
 		appendOverriddenPropertyName(preferences, "prop1");
@@ -75,7 +93,8 @@ public class EclipsePreferencesHelperTest extends TestCase {
 				getPreferenceChangeListener());
 	}
 
-	public void testRemoveOverriddenByCssProperty() throws Exception {
+	@Test
+	public void testRemoveOverriddenByCssProperty() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 

@@ -7,9 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -18,21 +23,17 @@ import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.ColorDefinition;
+import org.junit.Test;
 
 @SuppressWarnings("restriction")
 public class ColorDefinitionTest extends CSSSWTTestCase {
-	private Display display;
 
-	@Override
-	protected void setUp() throws Exception {
-		display = Display.getDefault();
-	}
 
-	public void testColorDefinition() throws Exception {
+	@Test
+	public void testColorDefinition() {
 		//given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}", display);
 		ColorDefinition definition = colorDefinition("ACTIVE_HYPERLINK_COLOR", "name", "categoryId", "description");
@@ -49,10 +50,11 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 		assertEquals("categoryId", definition.getCategoryId());
 		assertTrue(definition.getDescription().startsWith("description"));
 		assertTrue(definition.isOverridden());
+		engine.dispose();
 	}
 
-	public void testColorDefinitionWhenNameCategoryIdAndDescriptionOverridden()
-			throws Exception {
+	@Test
+	public void testColorDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
 		// given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green;" +
 				"label:'nameOverridden'; category:'#categoryIdOverridden'; description: 'descriptionOverridden'}", display);
@@ -70,9 +72,11 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 		assertEquals("categoryIdOverridden", definition.getCategoryId());
 		assertTrue(definition.getDescription().startsWith("descriptionOverridden"));
 		assertTrue(definition.isOverridden());
+		engine.dispose();
 	}
 
-	public void testColorDefinitionWhenDefinitionStylesheetNotFound() throws Exception{
+	@Test
+	public void testColorDefinitionWhenDefinitionStylesheetNotFound() {
 		//given
 		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: green}", display);
 		ColorDefinition definition = colorDefinition("color definition uniqueId without matching stylesheet",
@@ -87,9 +91,11 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 		//then
 		assertEquals(new RGB(0, 0, 0), definition.getValue());
 		assertFalse(definition.isOverridden());
+		engine.dispose();
 	}
 
-	public void testWidgetWithColorDefinitionAsBackgroundColor() throws Exception {
+	@Test
+	public void testWidgetWithColorDefinitionAsBackgroundColor() {
 		//given
 		registerColorProviderWith("ACTIVE_HYPERLINK_COLOR", new RGB(255, 0, 0));
 
@@ -105,6 +111,7 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 		//then
 		assertEquals(new RGB(255, 0, 0), label.getBackground().getRGB());
 
+		engine.dispose();
 		shell.dispose();
 	}
 
@@ -114,14 +121,18 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 				categoryId, true, description, "pluginId");
 	}
 
-	private void registerColorProviderWith(final String symbolicName, final RGB rgb) throws Exception {
-		new CSSActivator() {
-			@Override
-			public IColorAndFontProvider getColorAndFontProvider() {
-				IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
-				doReturn(rgb).when(provider).getColor(symbolicName);
-				return provider;
-			};
-		}.start(null);
+	private void registerColorProviderWith(final String symbolicName, final RGB rgb) {
+		try {
+			new CSSActivator() {
+				@Override
+				public IColorAndFontProvider getColorAndFontProvider() {
+					IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
+					doReturn(rgb).when(provider).getColor(symbolicName);
+					return provider;
+				};
+			}.start(null);
+		} catch (Exception e) {
+			fail("Register color provider should not fail");
+		}
 	}
 }

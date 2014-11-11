@@ -1,14 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2013, 2014 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.resources;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -18,16 +21,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.ui.css.swt.resources.ResourceByDefinitionKey;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Resource;
+import org.junit.Test;
 
 @SuppressWarnings("restriction")
-public class SWTResourcesRegistryTest extends TestCase {
-	public void testRemoveResourcesByKeyTypeAndType() throws Exception {
+public class SWTResourcesRegistryTest {
+	@Test
+	public void testRemoveResourcesByKeyTypeAndType() {
 		//given
 		final Resource resource1 = mock(Resource.class);
 		final Resource resource2 = mock(Resource.class);

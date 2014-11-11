@@ -1,19 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2013, 2014 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper.COLOR_DEFINITION_MARKER;
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper.FONT_DEFINITION_MARKER;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import junit.framework.TestCase;
 
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
@@ -26,9 +27,9 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 @SuppressWarnings("restriction")
-public abstract class CSSSWTHelperTestCase extends TestCase {
+public abstract class CSSSWTHelperTestCase {
 	protected void registerFontProviderWith(String expectedSymbolicName,
-			String family, int size, int style) throws Exception {
+ String family, int size, int style) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(new FontData[] { new FontData(family, size, style) }).when(
 				provider).getFont(expectedSymbolicName);
@@ -36,27 +37,33 @@ public abstract class CSSSWTHelperTestCase extends TestCase {
 	}
 
 	protected void registerColorProviderWith(String expectedSymbolicName,
-			RGB rgb) throws Exception {
+			RGB rgb) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(rgb).when(provider).getColor(expectedSymbolicName);
 		registerProvider(provider);
+
 	}
 
-	private void registerProvider(final IColorAndFontProvider provider) throws Exception {
-		new CSSActivator() {
-			@Override
-			public IColorAndFontProvider getColorAndFontProvider() {
-				return provider;
-			};
-		}.start(null);
+	private void registerProvider(final IColorAndFontProvider provider) {
+		try {
+			new CSSActivator() {
+				@Override
+				public IColorAndFontProvider getColorAndFontProvider() {
+					return provider;
+				};
+			}.start(null);
+		} catch (Exception e) {
+			fail();
+		}
+
 	}
 
-	protected CSS2FontProperties fontProperties(String family) throws Exception {
+	protected CSS2FontProperties fontProperties(String family) {
 		return fontProperties(family, null, null);
 	}
 
 	protected CSS2FontProperties fontProperties(String family, Object size,
-			Object style) throws Exception {
+			Object style) {
 		CSS2FontProperties result = mock(CSS2FontProperties.class);
 		doReturn(valueImpl(family)).when(result).getFamily();
 		if (size != null) {

@@ -6,39 +6,44 @@
  *
  * Contributors:
  *     Stefan Winkler - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class InheritTest extends CSSSWTTestCase {
 
-	private CSSEngine engine;
-	private Display display;
+
 	private Color redColor;
 
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
 	static final RGB RED = new RGB(255, 0, 0);
 
+	@Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() {
 		super.setUp();
 
-		display = Display.getDefault();
+
 		redColor = new Color(display, RED);
 	}
 
+	@After
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() {
 		redColor.dispose();
 		super.tearDown();
 	}
@@ -48,7 +53,8 @@ public class InheritTest extends CSSSWTTestCase {
 	 * to widgets matching more specific rules with specify no explicit
 	 * backgound-color.
 	 */
-	public void testBackgroundNoInherit() throws Exception {
+	@Test
+	public void testBackgroundNoInherit() {
 		Label labelToTest = createTestLabel(
 				"Label { background-color: #00FF00; }\n"
 						+ "Composite Label { color: #0000FF; }", true);
@@ -62,6 +68,7 @@ public class InheritTest extends CSSSWTTestCase {
 	 * 'background-color: inherit;' Instead, the background-color is set to the
 	 * background-color of the parent widget.
 	 */
+	@Test
 	public void testBackgroundInherit() throws Exception {
 		Label labelToTest = createTestLabel(
 				"Label { background-color: #00FF00; }\n"
@@ -78,6 +85,7 @@ public class InheritTest extends CSSSWTTestCase {
 	 * 'background-color: inherit;' Instead, the background-color is set to the
 	 * background-color of the parent widget.
 	 */
+	@Test
 	public void testBackgroundInheritsAlsoExplicitlySetColors()
 			throws Exception {
 		Label labelToTest = createTestLabel(
