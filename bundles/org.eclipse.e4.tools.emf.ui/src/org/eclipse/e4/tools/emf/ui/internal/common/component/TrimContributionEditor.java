@@ -53,7 +53,6 @@ import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -231,7 +230,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+					EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 					handleAddChild(eClass);
 				}
 			};
@@ -244,16 +243,15 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
-			final ComboViewer typeViewer = pickList.getPicker();
-			typeViewer.setContentProvider(new ArrayContentProvider());
-			typeViewer.setLabelProvider(new LabelProvider() {
+			pickList.setContentProvider(new ArrayContentProvider());
+			pickList.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
 					return ((EClass) element).getName();
 				}
 			});
-			typeViewer.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
-			typeViewer.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
+			pickList.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
+			pickList.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));

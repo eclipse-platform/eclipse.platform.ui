@@ -274,15 +274,14 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = ((FeatureClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement()).eClass;
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 					handleAddChild(eClass);
 				}
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			pickList.setText(Messages.PartSashContainerEditor_Controls);
 
-			final ComboViewer childrenDropDown = pickList.getPicker();
-			childrenDropDown.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
+			pickList.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
 
 			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
 			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER)); //$NON-NLS-1$
@@ -292,8 +291,8 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			eClassList.add(new FeatureClass("Area", AdvancedPackageImpl.Literals.AREA)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER)); //$NON-NLS-1$
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_SASH_CONTAINER, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
-			childrenDropDown.setInput(eClassList);
-			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));
+			pickList.setInput(eClassList);
+			pickList.setSelection(new StructuredSelection(eClassList.get(0)));
 
 			final TableViewer viewer = pickList.getList();
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);

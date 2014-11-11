@@ -31,9 +31,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -103,14 +103,20 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
-				EClass eClass = ((FeatureClass) ((IStructuredSelection) picker.getSelection()).getFirstElement()).eClass;
-				EObject eObject = EcoreUtil.create(eClass);
 
-				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+				Object firstElement = ((IStructuredSelection) getSelection()).getFirstElement();
 
-				if (cmd.canExecute()) {
-					getEditingDomain().getCommandStack().execute(cmd);
-					getEditor().setSelection(eObject);
+				if (firstElement != null) {
+					FeatureClass featureClass = (FeatureClass) firstElement;
+					EClass eClass = featureClass.eClass;
+					EObject eObject = EcoreUtil.create(eClass);
+
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+
+					if (cmd.canExecute()) {
+						getEditingDomain().getCommandStack().execute(cmd);
+						getEditor().setSelection(eObject);
+					}
 				}
 			}
 
@@ -123,9 +129,8 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		pickList.setText(""); //$NON-NLS-1$
-		ComboViewer picker = pickList.getPicker();
 
-		picker.setLabelProvider(new LabelProvider() {
+		pickList.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				FeatureClass eclass = (FeatureClass) element;
@@ -133,7 +138,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		picker.setComparator(new ViewerComparator() {
+		pickList.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				FeatureClass eClass1 = (FeatureClass) e1;
@@ -146,8 +151,10 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 
-		picker.setInput(list);
-		picker.getCombo().select(0);
+		pickList.setInput(list);
+		if (list.size() > 0) {
+			pickList.setSelection(new StructuredSelection(list.get(0)));
+		}
 
 		folder.setSelection(0);
 

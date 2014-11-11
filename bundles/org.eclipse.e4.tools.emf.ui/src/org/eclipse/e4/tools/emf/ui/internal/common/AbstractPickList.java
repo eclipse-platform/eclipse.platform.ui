@@ -11,24 +11,37 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -57,6 +70,8 @@ public abstract class AbstractPickList extends Composite {
 	private ToolItem tiUp;
 	private ToolItem tiDown;
 	private ToolItem tiAdd;
+	private AutoCompleteField autoCompleteField;
+	private Map<String, Object> proposals;
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages, AbstractComponentEditor componentEditor) {
 		super(parent, style);
@@ -83,7 +98,7 @@ public abstract class AbstractPickList extends Composite {
 			}
 		});
 
-		new ToolItem(toolBar, SWT.SEPARATOR_FILL);
+		// new ToolItem(toolBar, SWT.SEPARATOR_FILL);
 
 		tiDown = new ToolItem(toolBar, SWT.PUSH);
 		tiDown.setText(messages.ModelTooling_Common_Down);
@@ -114,17 +129,27 @@ public abstract class AbstractPickList extends Composite {
 			}
 		});
 
-		picker = new ComboViewer(group, SWT.SIMPLE);
-		picker.getControl().setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		picker = new ComboViewer(group, SWT.DROP_DOWN);
+		Combo control = picker.getCombo();
+		control.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-		Autocomplete.installOn(picker);
-
-		picker.getCombo().addKeyListener(new KeyAdapter() {
+		ComboContentAdapter controlContentAdapter = new ComboContentAdapter() {
 			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR) {
-					addPressed();
+			public void setControlContents(Control control, String text1, int cursorPosition) {
+				super.setControlContents(control, text1, cursorPosition);
+				Object valueInModel = proposals.get(text1);
+				if (valueInModel != null) {
+					getPicker().setSelection(new StructuredSelection(valueInModel));
 				}
+			}
+		};
+		autoCompleteField = new AutoCompleteField(control, controlContentAdapter, new String[0]);
+
+		picker.addOpenListener(new IOpenListener() {
+
+			@Override
+			public void open(OpenEvent event) {
+				addPressed();
 			}
 		});
 
@@ -165,8 +190,59 @@ public abstract class AbstractPickList extends Composite {
 		return viewer;
 	}
 
-	public ComboViewer getPicker() {
+	public void setInput(Object input) {
+		getPicker().setInput(input);
+
+		proposals = toProposals(input);
+		Set<String> keySet = proposals.keySet();
+		autoCompleteField.setProposals(keySet.toArray(new String[keySet.size()]));
+	}
+
+	public ISelection getSelection() {
+		return getPicker().getSelection();
+	}
+
+	public void setSelection(ISelection selection) {
+		getPicker().setSelection(selection);
+	}
+
+	private Map<String, Object> toProposals(Object inputElement) {
+
+		Map<String, Object> props = new TreeMap<String, Object>();
+
+		if (inputElement instanceof Object[]) {
+			for (Object value : (Object[]) inputElement) {
+				props.put(getTextualValue(value), value);
+			}
+		}
+		if (inputElement instanceof Collection) {
+			for (Object value : (Collection<Object>) inputElement) {
+				props.put(getTextualValue(value), value);
+			}
+
+		}
+
+		return props;
+	}
+
+	private String getTextualValue(Object value) {
+		return ((ILabelProvider) getPicker().getLabelProvider()).getText(value);
+	}
+
+	public void setContentProvider(IContentProvider contentProvider) {
+		getPicker().setContentProvider(contentProvider);
+	}
+
+	public void setLabelProvider(ILabelProvider labelProvider) {
+		getPicker().setLabelProvider(labelProvider);
+	}
+
+	private ComboViewer getPicker() {
 		return picker;
+	}
+
+	public void setComparator(ViewerComparator comparator) {
+		getPicker().setComparator(comparator);
 	}
 
 	protected ToolBar getToolBar() {
@@ -196,5 +272,4 @@ public abstract class AbstractPickList extends Composite {
 		}
 		tiRemove.setEnabled(selected);
 	}
-
 }

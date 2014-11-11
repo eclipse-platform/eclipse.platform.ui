@@ -46,9 +46,9 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -232,7 +232,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = ((FeatureClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement()).eClass;
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 					handleAdd(eClass, false);
 				}
 
@@ -245,8 +245,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			pickList.setText(""); //$NON-NLS-1$
 
-			ComboViewer picker = pickList.getPicker();
-			picker.setLabelProvider(new LabelProvider() {
+			pickList.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
 					FeatureClass eclass = (FeatureClass) element;
@@ -254,7 +253,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			});
 
-			picker.setComparator(new ViewerComparator() {
+			pickList.setComparator(new ViewerComparator() {
 				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					FeatureClass eClass1 = (FeatureClass) e1;
@@ -267,8 +266,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 
-			picker.setInput(list);
-			picker.getCombo().select(0);
+			pickList.setInput(list);
+			if (list.size() > 0) {
+				pickList.setSelection(new StructuredSelection(list.get(0)));
+			}
 
 			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 			pickList.getList().setInput(prop.observeDetail(getMaster()));

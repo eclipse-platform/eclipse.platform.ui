@@ -49,7 +49,6 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -228,7 +227,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = ((FeatureClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement()).eClass;
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 					handleAddChild(eClass);
 				}
 			};
@@ -239,16 +238,15 @@ public class PartStackEditor extends AbstractComponentEditor {
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
-			final ComboViewer childrenDropDown = pickList.getPicker();
-			childrenDropDown.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
+			pickList.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
 
 			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
 			eClassList.add(new FeatureClass(Messages.PartStackEditor_Part, BasicPackageImpl.Literals.PART));
 			eClassList.add(new FeatureClass(Messages.PartStackEditor_CompositePart, BasicPackageImpl.Literals.COMPOSITE_PART));
 			eClassList.add(new FeatureClass(Messages.PartStackEditor_Placeholder, AdvancedPackageImpl.Literals.PLACEHOLDER));
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
-			childrenDropDown.setInput(eClassList);
-			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));
+			pickList.setInput(eClassList);
+			pickList.setSelection(new StructuredSelection(eClassList.get(0)));
 
 		}
 

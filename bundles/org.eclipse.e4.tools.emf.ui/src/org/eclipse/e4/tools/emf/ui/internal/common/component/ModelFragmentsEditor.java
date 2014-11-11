@@ -42,9 +42,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -159,7 +159,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
-				EClass eClass = ((FeatureClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement()).eClass;
+				EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 				EObject eObject = EcoreUtil.create(eClass);
 
 				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
@@ -181,9 +181,8 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		pickList.setText(Messages.PartSashContainerEditor_Controls);
 
 		TableViewer viewer = pickList.getList();
-		ComboViewer picker = pickList.getPicker();
 
-		picker.setLabelProvider(new LabelProvider() {
+		pickList.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				FeatureClass eclass = (FeatureClass) element;
@@ -191,7 +190,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		picker.setComparator(new ViewerComparator() {
+		pickList.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				FeatureClass eClass1 = (FeatureClass) e1;
@@ -204,8 +203,10 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 
-		picker.setInput(list);
-		picker.getCombo().select(0);
+		pickList.setInput(list);
+		if (list.size() > 0) {
+			pickList.setSelection(new StructuredSelection(list.get(0)));
+		}
 
 		IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
 		viewer.setInput(prop.observeDetail(getMaster()));

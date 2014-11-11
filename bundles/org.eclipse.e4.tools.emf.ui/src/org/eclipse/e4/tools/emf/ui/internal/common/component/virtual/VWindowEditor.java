@@ -32,7 +32,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -128,7 +127,7 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 		AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, targetFeature) {
 			@Override
 			protected void addPressed() {
-				EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+				EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 				handleAdd(eClass);
 			}
 
@@ -140,10 +139,9 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		viewer = pickList.getList();
 
-		final ComboViewer childrenDropDown = pickList.getPicker();
-		childrenDropDown.setLabelProvider(new EClassLabelProvider(getEditor()));
-		childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.DIALOG, BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, BasicPackageImpl.Literals.WIZARD_DIALOG });
-		childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.TRIMMED_WINDOW));
+		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
+		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.DIALOG, BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, BasicPackageImpl.Literals.WIZARD_DIALOG });
+		pickList.setSelection(new StructuredSelection(BasicPackageImpl.Literals.TRIMMED_WINDOW));
 
 		// @SuppressWarnings("unchecked")
 		// @Override

@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -168,7 +167,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+					EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 					handleAdd(eClass);
 				}
 
@@ -183,10 +182,9 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
-			final ComboViewer tableElement = pickList.getPicker();
-			tableElement.setLabelProvider(new EClassLabelProvider(getEditor()));
-			tableElement.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
-			tableElement.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
+			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
+			pickList.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
+			pickList.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
 		}
 
 		folder.setSelection(0);

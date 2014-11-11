@@ -52,7 +52,6 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -241,7 +240,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					Struct struct = (Struct) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+					Struct struct = (Struct) ((IStructuredSelection) getSelection()).getFirstElement();
 					EClass eClass = struct.eClass;
 					MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
 					setElementId(eObject);
@@ -263,10 +262,9 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(master));
 
-			ComboViewer childrenDropDown = pickList.getPicker();
 			Struct defaultStruct = new Struct(Messages.ToolBarEditor_HandledToolItem, MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
-			childrenDropDown.setInput(new Struct[] { defaultStruct, new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false), new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false), new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
-			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
+			pickList.setInput(new Struct[] { defaultStruct, new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false), new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false), new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
+			pickList.setSelection(new StructuredSelection(defaultStruct));
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));

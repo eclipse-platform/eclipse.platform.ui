@@ -37,7 +37,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -137,7 +136,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 		AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, feature) {
 			@Override
 			protected void addPressed() {
-				Types t = (Types) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+				Types t = (Types) ((IStructuredSelection) getSelection()).getFirstElement();
 				if (t == Types.MENU) {
 					handleAdd(MenuPackageImpl.Literals.MENU);
 				} else if (t == Types.POPUP_MENU) {
@@ -161,9 +160,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		viewer = pickList.getList();
 
-		ComboViewer picker = pickList.getPicker();
-		picker.setContentProvider(new ArrayContentProvider());
-		picker.setLabelProvider(new LabelProvider() {
+		pickList.setContentProvider(ArrayContentProvider.getInstance());
+		pickList.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element == Types.MENU) {
@@ -174,8 +172,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 				return Messages.MenuEditor_Label_ViewMenu;
 			}
 		});
-		picker.setInput(Types.values());
-		picker.setSelection(new StructuredSelection(Types.MENU));
+		pickList.setInput(Types.values());
+		pickList.setSelection(new StructuredSelection(Types.MENU));
 
 		folder.setSelection(0);
 

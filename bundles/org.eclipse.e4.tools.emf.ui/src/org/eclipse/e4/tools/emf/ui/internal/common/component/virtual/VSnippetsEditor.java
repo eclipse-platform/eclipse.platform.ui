@@ -187,7 +187,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, targetFeature) {
 			@Override
 			protected void addPressed() {
-				EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+				EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 				handleAdd(eClass);
 			};
 
@@ -199,9 +199,9 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		viewer = pickList.getList();
 
-		pickList.getPicker().setLabelProvider(new EClassLabelProvider(getEditor()));
-		pickList.getPicker().setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE, AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
-		pickList.getPicker().setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
+		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
+		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE, AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
+		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
 		folder.setSelection(0);
 

@@ -215,7 +215,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = (EClass) ((IStructuredSelection) getPicker().getSelection()).getFirstElement();
+					EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 					handleAddChild(eClass);
 				}
 			};
@@ -224,10 +224,9 @@ public class TrimBarEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 
-			final ComboViewer typeViewer = pickList.getPicker();
-			typeViewer.setLabelProvider(new EClassLabelProvider(getEditor()));
-			typeViewer.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
-			typeViewer.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
+			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
+			pickList.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
+			pickList.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
 
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
