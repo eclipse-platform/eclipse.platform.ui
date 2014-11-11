@@ -42,6 +42,7 @@ import org.eclipse.debug.internal.ui.views.launch.Decoration;
 import org.eclipse.debug.internal.ui.views.launch.DecorationManager;
 import org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.views.launch.StandardDecoration;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -439,7 +440,9 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 					positionEditor(textEditor, frame);
 					InstructionPointerManager.getDefault().removeAnnotations(textEditor); 
 					Annotation annotation = fPresentation.getInstructionPointerAnnotation(textEditor, frame);
-					InstructionPointerManager.getDefault().addAnnotation(textEditor, frame, annotation);
+					if (annotation != null) {
+						InstructionPointerManager.getDefault().addAnnotation(textEditor, frame, annotation);
+					}
 				}
 			}
 		}        
