@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285
+ *     Mickael Istria (Red Hat Inc.) - Bug 450872
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -649,7 +650,7 @@ public class StackRenderer extends LazyStackRenderer {
 		menuTB.setData(TAG_VIEW_MENU);
 		RowData rd = new RowData();
 		menuTB.setLayoutData(rd);
-		ToolItem ti = new ToolItem(menuTB, SWT.PUSH);
+		ToolItem ti = new ToolItem(menuTB, SWT.DROP_DOWN);
 		ti.setImage(getViewMenuImage());
 		ti.setHotImage(null);
 		ti.setToolTipText(SWTRenderersMessages.viewMenu);
