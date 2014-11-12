@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 BestSolution.at and others.
+ * Copyright (c) 2009, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,6 +199,14 @@ public interface IPresentationEngine {
 	 * @since 1.1
 	 */
 	public static final String DRAGGABLE = "Draggable"; //$NON-NLS-1$
+
+	/**
+	 * This is the tag name that indicates that model element is active.
+	 * 
+	 * @since 1.2
+	 *
+	 */
+	public static final String ACTIVE = "active"; //$NON-NLS-1$
 
 	/**
 	 * Creates and returns the UI element for the given model element.
