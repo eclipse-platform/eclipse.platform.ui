@@ -10,8 +10,6 @@
 
 The class specified by the startup element&apos;s class attribute will be instantiated and earlyStartup() will be called on the result. Do not specify the plug-in class as the value of the class attribute, or it will be instantiated twice (once by regular plug-in activation, and once by this mechanism).
 
-If the extension does not provide a class as an attribute on the startup element, the plug-in&apos;s activator (plug-in class) must implement &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Note that this form is deprecated and should no longer be used. Its functioning relies on the availability of the org.eclipse.core.runtime.compatibility plug-in and the org.eclipse.core.runtime.compatibility.registry fragment.
-
 Plug-ins that provide an extension to this extension point are listed in the workbench preferences and the user may disable any plug-in from early startup.
       </documentation>
    </annotation>
