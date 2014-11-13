@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
  *******************************************************************************/
 package org.eclipse.core.runtime.jobs;
 
@@ -346,6 +347,20 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
+	 * Returns the job group this job belongs to, or <code>null</code> if this
+	 * job does not belongs to any group.
+	 *
+	 * @return the job group this job belongs to, or <code>null</null>.
+	 * @see JobGroup
+	 * @see #setJobGroup(JobGroup)
+	 * @since 3.7
+	 */
+	@Override
+	public final JobGroup getJobGroup() {
+		return super.getJobGroup();
+	}
+
+	/**
 	 * Returns whether this job is blocking a higher priority non-system job from 
 	 * starting due to a conflicting scheduling rule.  Returns <code>false</code> 
 	 * if this job is not running, or is not blocking a higher priority non-system job.
@@ -410,8 +425,22 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * a lock or object monitor that the joined thread is waiting for, deadlock 
 	 * will occur.
 	 * </p>
+	 * <p>
+	 * Joining on another job belonging to the same group is not allowed if the
+	 * group enforces throttling due to the potential for deadlock. For example,
+	 * when the maximum threads allowed is set to 1 and a currently running Job A
+	 * issues a join on another Job B belonging to its own job group, A waits
+	 * indefinitely for its join to finish, but B never gets to run. To avoid that
+	 * an IllegalStateException is thrown when a job tries to join another job
+	 * belonging to the same job group. Joining another job belonging to the
+	 * same group is allowed when the job group does not enforce throttling
+	 * (JobGroup#getMaxThreads is zero).
+	 * </p>
 	 * 
 	 * @exception InterruptedException if this thread is interrupted while waiting
+	 * @exception IllegalStateException when a job tries to join another job belonging
+	 * to the same job group and the group is configured with non zero maximum threads allowed.
+	 * @see #setJobGroup(JobGroup)
 	 * @see ILock
 	 * @see IJobManager#suspend()
 	 */
@@ -632,6 +661,20 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	@Override
 	public final void setThread(Thread thread) {
 		super.setThread(thread);
+	}
+
+	/**
+	 * Sets the job group to which this job belongs. This method must be called before
+	 * the job is scheduled, otherwise an <code>IllegalStateException</code> is thrown.
+	 *
+	 * @param jobGroup the group to which this job belongs to, or <code>null</code> if
+	 * this job does not belongs to any group.
+	 * @see JobGroup
+	 * @since 3.7
+	 */
+	@Override
+	public final void setJobGroup(JobGroup jobGroup) {
+		super.setJobGroup(jobGroup);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,13 +7,16 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.io.*;
 import junit.framework.TestCase;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Common superclass for all tests of the org.eclipse.core.runtime.jobs API. Provides
@@ -82,6 +85,43 @@ public class AbstractJobTest extends TestCase {
 				write(children[i], indent + 1);
 			}
 		}
+	}
+
+	/**
+	 * Ensures job completes within the given time.
+	 * @param job
+	 * @param waitTime time in milliseconds
+	 */
+	protected void waitForCompletion(Job job, int waitTime) {
+		int i = 0;
+		int tickLength = 10;
+		int ticks = waitTime / tickLength;
+		while (job.getState() != Job.NONE) {
+			sleep(tickLength);
+			// sanity test to avoid hanging tests
+			if (i++ > ticks) {
+				dumpState();
+				assertTrue("Timeout waiting for job to complete", false);
+			}
+		}
+	}
+
+	/**
+	 * Ensures given job completes within a second.
+	 */
+	protected void waitForCompletion(Job job) {
+		waitForCompletion(job, 1000);
+	}
+
+	/**
+	 * Extra debugging for bug 109898
+	 */
+	protected void dumpState() {
+		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****");
+		Job[] jobs = Job.getJobManager().find(null);
+		for (int j = 0; j < jobs.length; j++)
+			System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j]));
+		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
 	}
 
 }

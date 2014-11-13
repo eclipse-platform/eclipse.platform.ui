@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Stephan Wahlbrink  - Fix for bug 200997.
+ *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -84,6 +85,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	private volatile IProgressMonitor monitor;
 	private String name;
+	private JobGroup jobGroup;
 	/**
 	 * The job ahead of me in a queue or list.
 	 * @GuardedBy("manager.lock")
@@ -299,6 +301,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	protected Thread getThread() {
 		return thread;
+	}
+
+	/* (non-Javadoc)
+	 * @see Job#getJobGroup()
+	 */
+	protected JobGroup getJobGroup() {
+		return jobGroup;
 	}
 
 	/**
@@ -580,6 +589,15 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		if (getState() != Job.NONE)
 			throw new IllegalStateException();
 		flags = value ? flags | M_USER : flags & ~M_USER;
+	}
+
+	/* (non-Javadoc)
+	 * @see Job#setJobGroup(JobGroup)
+	 */
+	protected void setJobGroup(JobGroup jobGroup) {
+		if (getState() != Job.NONE)
+			throw new IllegalStateException("Setting job group of an already scheduled job is not allowed"); //$NON-NLS-1$
+		this.jobGroup = jobGroup;
 	}
 
 	/* (Non-javadoc)

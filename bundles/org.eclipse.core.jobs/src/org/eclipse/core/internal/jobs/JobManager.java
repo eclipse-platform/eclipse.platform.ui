@@ -11,6 +11,7 @@
  *     Danail Nachev - Fix for bug 109898
  *     Mike Moreaty - Fix for bug 289790
  *     Oracle Corporation - Fix for bug 316839
+ *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -38,7 +39,7 @@ import org.eclipse.osgi.util.NLS;
  * order that locks must be acquired.
  * 
  * WorkerPool -> JobManager.implicitJobs -> JobManager.lock -> 
- * InternalJob.jobStateLock
+ * InternalJob.jobStateLock or InternalJobGroup.jobGroupStateLock
  * 
  * @ThreadSafe
  */
@@ -54,6 +55,12 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * For backward compatibility with Platform.PLUGIN_ERROR left at (value = 2).
 	 */
 	public static final int PLUGIN_ERROR = 2;
+
+	/**
+	 * The maximum amount of time to wait on {@link InternalJobGroup#jobGroupStateLock}.
+	 * Determines how often the progress monitor is checked for cancellation.
+	 */
+	private static final long MAX_WAIT_INTERVAL = 200;
 
 	private static final String OPTION_DEADLOCK_ERROR = PI_JOBS + "/jobs/errorondeadlock"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_BEGIN_END = PI_JOBS + "/jobs/beginend"; //$NON-NLS-1$
@@ -112,6 +119,11 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * @GuardedBy("itself")
 	 */
 	private final Object lock = new Object();
+
+	/**
+	 * A job listener to check for the cancellation and completion of the job groups.
+	 */
+	private final IJobChangeListener jobGroupUpdater = new JobGroupUpdater(lock);
 
 	private final LockManager lockManager = new LockManager();
 
@@ -272,6 +284,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		internalWorker = new InternalWorker(this);
 		internalWorker.setDaemon(JobOSGiUtils.getDefault().useDaemonThreads());
 		internalWorker.start();
+		jobListeners.add(jobGroupUpdater);
 	}
 
 	/* (non-Javadoc)
@@ -341,6 +354,38 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			cancel(it.next());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.JobGroup#cancel()
+	 */
+	void cancel(InternalJobGroup jobGroup) {
+		cancel(jobGroup, false);
+	}
+
+	void cancel(InternalJobGroup jobGroup, boolean cancelDueToError) {
+		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
+		Job[] jobs;
+		synchronized (lock) {
+			switch (jobGroup.getState()) {
+				case JobGroup.NONE :
+					return;
+				case JobGroup.CANCELING :
+					if (!cancelDueToError) {
+						// User cancellation takes precedence over the cancel due to error.
+						jobGroup.cancelJobGroup(cancelDueToError);
+					}
+					return;
+				default :
+					synchronized (jobGroup.jobGroupStateLock) {
+						jobGroup.cancelJobGroup(cancelDueToError);
+						jobGroup.jobGroupStateLock.notifyAll();
+					}
+					jobs = jobGroup.internalGetActiveJobs();
+			}
+		}
+		for (Job job : jobs)
+			cancel(job);
+	}
+
 	/**
 	 * Atomically updates the state of a job, adding or removing from the
 	 * necessary queues or sets.
@@ -348,8 +393,10 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	private void changeState(InternalJob job, int newState) {
 		boolean blockedJobs = false;
 		synchronized (lock) {
+			int oldJobState;
 			synchronized (job.jobStateLock) {
 				job.jobStateLock.notifyAll();
+				oldJobState = job.getState();
 				int oldState = job.internalGetState();
 				switch (oldState) {
 					case InternalJob.YIELDING :
@@ -424,7 +471,19 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 						Assert.isLegal(false, "Invalid job state: " + job + ", state: " + newState); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
+
+			InternalJobGroup jobGroup = job.getJobGroup();
+			if (jobGroup != null) {
+				jobGroup.jobStateChanged(job, oldJobState, job.getState());
+				if (jobGroup.getState() == JobGroup.NONE && jobGroup.getActiveJobsCount() > 0) {
+					synchronized (jobGroup.jobGroupStateLock) {
+						jobGroup.startJobGroup();
+						jobGroup.jobGroupStateLock.notifyAll();
+					}
+				}
+			}
 		}
+
 		//notify queue outside sync block
 		if (blockedJobs)
 			pool.jobQueued();
@@ -626,6 +685,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		}
 
 		pool.shutdown();
+		jobListeners.remove(jobGroupUpdater);
 	}
 
 	/**
@@ -657,8 +717,9 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		//reschedule the job if requested and we are still active
 		if (reschedule)
 			schedule(job, rescheduleDelay, reschedule);
-		//log result if it is warning or error
-		if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
+		//log result if it is warning or error. When the job belongs to a job group defer the logging
+		//until the whole group is completed (see JobManager#updateJobGroup).
+		if (job.getJobGroup() == null && result.matches(IStatus.ERROR | IStatus.WARNING))
 			RuntimeLog.log(result);
 	}
 
@@ -677,6 +738,16 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	public Job[] find(Object family) {
 		List<InternalJob> members = select(family);
 		return members.toArray(new Job[members.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.JobGroup#getActiveJobs()
+	 */
+	Job[] find(InternalJobGroup jobGroup) {
+		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
+		synchronized (lock) {
+			return jobGroup.internalGetActiveJobs();
+		}
 	}
 
 	/**
@@ -817,6 +888,13 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
 	protected void join(InternalJob job) throws InterruptedException {
+		Job currentJob = currentJob();
+		if (currentJob != null) {
+			JobGroup jobGroup = currentJob.getJobGroup();
+			if (jobGroup != null && jobGroup.getMaxThreads() != 0 && jobGroup == job.getJobGroup())
+				throw new IllegalStateException("Joining on a job belonging to the same group is not allowed"); //$NON-NLS-1$
+		}
+
 		final IJobChangeListener listener;
 		final Semaphore barrier;
 		synchronized (lock) {
@@ -864,7 +942,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see IJobManager#join(String, IProgressMonitor)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#join(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void join(final Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
@@ -953,6 +1031,77 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.JobGroup#join(long, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	boolean join(InternalJobGroup jobGroup, long timeout, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
+		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
+		Assert.isLegal(timeout >= 0, "timeout should not be negative"); //$NON-NLS-1$
+		long startTime = System.currentTimeMillis();
+		int jobCount;
+		synchronized (lock) {
+			jobCount = jobGroup.getActiveJobsCount();
+		}
+
+		if (jobCount == 0) {
+			if (monitor != null) {
+				// Call monitor methods outside synchronized block because monitors may call untrusted code.
+				monitor.beginTask(JobMessages.jobs_blocked0, 1);
+				monitor.done();
+			}
+			return true;
+		}
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, JobMessages.jobs_blocked0, jobCount);
+		try {
+			int jobsLeft;
+			while (true) {
+				if (subMonitor.isCanceled())
+					throw new OperationCanceledException();
+				long remainingTime;
+				long spentTime = System.currentTimeMillis() - startTime;
+				if (timeout == 0) {
+					remainingTime = 0;
+				} else if (spentTime < timeout) {
+					remainingTime = timeout - spentTime;
+				} else {
+					return false;
+				}
+				synchronized (lock) {
+					if ((suspended && jobGroup.getRunningJobsCount() == 0))
+						break;
+				}
+				synchronized (jobGroup.jobGroupStateLock) {
+					if (jobGroup.getState() == JobGroup.NONE)
+						break;
+					// If remaining time is greater than MAX_WAIT_INTERVAL, sleep only for
+					// MAX_WAIT_INTERVAL instead to be more responsive to monitor cancellation.
+					long sleepTime = remainingTime != 0 && remainingTime <= MAX_WAIT_INTERVAL ? remainingTime : MAX_WAIT_INTERVAL;
+					jobGroup.jobGroupStateLock.wait(sleepTime);
+
+					// Check again to see if the JobGroup is completed.
+					if (jobGroup.getState() == JobGroup.NONE)
+						break;
+				}
+				synchronized (lock) {
+					jobsLeft = jobGroup.getActiveJobsCount();
+				}
+				if (jobsLeft < jobCount) {
+					subMonitor.worked(jobCount - jobsLeft);
+				} else {
+					jobCount = jobsLeft;
+					subMonitor.setWorkRemaining(jobCount);
+				}
+				subMonitor.subTask(getWaitMessage(jobsLeft));
+			}
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Returns a non-null progress monitor instance.  If the monitor is null,
 	 * returns the default monitor supplied by the progress provider, or a 
@@ -984,16 +1133,16 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/**
-	 * Removes and returns the first waiting job in the queue. Returns null if there
-	 * are no items waiting in the queue.  If an item is removed from the queue,
-	 * it is moved to the running jobs list.
+	 * Removes and returns the first waiting job in the queue which is ready to run.
+	 * Returns null if there are no items waiting in the queue.  If an item is
+	 * removed from the queue, it is moved to the running jobs list.
 	 */
 	private Job nextJob() {
 		synchronized (lock) {
-			//do nothing if the job manager is suspended
+			// do nothing if the job manager is suspended
 			if (suspended)
 				return null;
-			//tickle the sleep queue to see if anyone wakes up
+			// tickle the sleep queue to see if anyone wakes up
 			long now = System.currentTimeMillis();
 			InternalJob job = sleeping.peek();
 			while (job != null && job.getStartTime() < now) {
@@ -1002,20 +1151,31 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				changeState(job, Job.WAITING);
 				job = sleeping.peek();
 			}
-			//process the wait queue until we find a job whose rules are satisfied.
-			while ((job = waiting.peek()) != null) {
+			InternalJobGroup jobGroup = null;
+			// process the wait queue until we find a job whose rules are satisfied.
+			job = waiting.peek();
+			while (job != null) {
 				InternalJob blocker = findBlockingJob(job);
-				if (blocker == null)
+				jobGroup = job.getJobGroup();
+				// previous() method returns the next job in the queue.
+				InternalJob nextWaitingJob = job.previous();
+				if (blocker != null) {
+					// queue this job after the job that's blocking it
+					changeState(job, InternalJob.BLOCKED);
+					// assert job does not already belong to some other data structure
+					Assert.isTrue(job.next() == null);
+					Assert.isTrue(job.previous() == null);
+					blocker.addLast(job);
+
+				} else if (jobGroup == null || jobGroup.getMaxThreads() == 0 || (jobGroup.getState() != JobGroup.CANCELING && jobGroup.getRunningJobsCount() < jobGroup.getMaxThreads())) {
 					break;
-				//queue this job after the job that's blocking it
-				changeState(job, InternalJob.BLOCKED);
-				//assert job does not already belong to some other data structure
-				Assert.isTrue(job.next() == null);
-				Assert.isTrue(job.previous() == null);
-				blocker.addLast(job);
+				}
+				// skip this job as either this job is blocked on another job or
+				// the maximum number of jobs from the same group are already running.
+				job = nextWaitingJob == waiting.dummy ? null : nextWaitingJob;
 			}
-			//the job to run must be in the running list before we exit
-			//the sync block, otherwise two jobs with conflicting rules could start at once
+			// the job to run must be in the running list before we exit
+			// the sync block, otherwise two jobs with conflicting rules could start at once
 			if (job != null) {
 				changeState(job, InternalJob.ABOUT_TO_RUN);
 				if (JobManager.DEBUG)
@@ -1388,7 +1548,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 				if ((job.getRule() != null) && !(job instanceof ThreadJob))
 					getLockManager().removeLockThread(currentThread, job.getRule());
-
 			}
 		}
 		// To prevent this job from immediately re-grabbing the scheduling rule wait until 
@@ -1529,6 +1688,9 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			//listeners may have canceled or put the job to sleep
 			boolean endJob = false;
 			synchronized (lock) {
+				JobGroup jobGroup = job.getJobGroup();
+				if (jobGroup != null && jobGroup.getState() == JobGroup.CANCELING)
+					shouldRun = false;
 				InternalJob internal = job;
 				synchronized (internal.jobStateLock) {
 					if (internal.internalGetState() == InternalJob.ABOUT_TO_RUN) {
@@ -1658,6 +1820,73 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		synchronized (monitorStack) {
 			monitorStack.add(new Object[] {threadJob, monitor});
 			monitorStack.notifyAll();
+		}
+	}
+
+	/**
+	 * Listens for the job completion events and checks for the job group cancellation,
+	 * computes and logs the group result.
+	 */
+	private class JobGroupUpdater extends JobChangeAdapter {
+		Object jobManagerLock;
+
+		public JobGroupUpdater(Object jobManagerLock) {
+			this.jobManagerLock = jobManagerLock;
+		}
+
+		@Override
+		public void done(IJobChangeEvent event) {
+			InternalJob job = event.getJob();
+			InternalJobGroup jobGroup = job.getJobGroup();
+			if (jobGroup == null)
+				return;
+			IStatus jobResult = event.getResult();
+			boolean reschedule = ((JobChangeEvent) event).reschedule;
+
+			int jobGroupState;
+			int activeJobsCount;
+			int failedJobsCount;
+			int canceledJobsCount;
+			int seedJobsRemainingCount;
+			IStatus[] jobResults = new IStatus[0];
+			synchronized (jobManagerLock) {
+				// Collect the required details to check for the group cancellation and completion
+				// outside the synchronized block.
+				jobGroupState = jobGroup.getState();
+				activeJobsCount = jobGroup.getActiveJobsCount();
+				failedJobsCount = jobGroup.getFailedJobsCount();
+				canceledJobsCount = jobGroup.getCanceledJobsCount();
+				seedJobsRemainingCount = jobGroup.getseedJobsRemainingCount();
+				if (activeJobsCount == 0)
+					jobResults = jobGroup.getCompletedJobResults();
+			}
+
+			// Check for the group completion.
+			if (!reschedule && jobGroupState != JobGroup.NONE && activeJobsCount == 0 && (seedJobsRemainingCount <= 0 || jobGroupState == JobGroup.CANCELING)) {
+				// Must perform this outside the sync block to avoid a potential deadlock
+				MultiStatus jobGroupResult = jobGroup.computeGroupResult(jobResults);
+				Assert.isLegal(jobGroupResult != null, "The group result should not be null"); //$NON-NLS-1$
+				boolean isJobGroupCompleted = false;
+				synchronized (jobManagerLock) {
+					// If more jobs were added to the group while were computing the result, the job group
+					// remains in the ACTIVE state and the computed result is discarded to be recomputed later,
+					// after the new jobs finish.
+					if (jobGroup.getState() != JobGroup.NONE && jobGroup.getActiveJobsCount() == 0) {
+						synchronized (jobGroup.jobGroupStateLock) {
+							jobGroup.endJobGroup(jobGroupResult);
+							jobGroup.jobGroupStateLock.notifyAll();
+						}
+						isJobGroupCompleted = true;
+					}
+				}
+				// Log the group result when the job group is completed.
+				if (isJobGroupCompleted && jobGroupResult.matches(IStatus.ERROR | IStatus.WARNING))
+					RuntimeLog.log(jobGroupResult);
+				return;
+			}
+
+			if (jobGroupState != JobGroup.CANCELING && jobGroup.shouldCancel(jobResult, failedJobsCount, canceledJobsCount))
+				cancel(jobGroup, true);
 		}
 	}
 }
