@@ -16,7 +16,7 @@ import org.eclipse.jface.action.Action;
 public class PasteAction extends Action {
 	private IClipboardService service;
 	public PasteAction(IClipboardService service) {
-		super("Paste");
+		super(Messages.PasteAction);
 		this.service = service;
 	}
 	

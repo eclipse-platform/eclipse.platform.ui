@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
@@ -14,13 +14,13 @@ import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.jface.action.Action;
 
 public class CopyAction extends Action {
-	private IClipboardService service;
-	
+	private final IClipboardService service;
+
 	public CopyAction(IClipboardService service) {
-		super("Copy");
+		super(Messages.CopyAction);
 		this.service = service;
 	}
-	
+
 	@Override
 	public void run() {
 		service.copy();

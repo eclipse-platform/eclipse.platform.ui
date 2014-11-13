@@ -8,13 +8,14 @@ import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.osgi.framework.FrameworkUtil;
 
+@SuppressWarnings("restriction")
 public class DefaultLoggerProvider implements ILoggerProvider {
 	@Inject
 	private IEclipseContext context;
 
 	@Override
 	public Logger getClassLogger(Class<?> clazz) {
-		IEclipseContext childContext = context.createChild();
+		final IEclipseContext childContext = context.createChild();
 		childContext.set("logger.bundlename", FrameworkUtil.getBundle(clazz).getSymbolicName()); //$NON-NLS-1$
 		return ContextInjectionFactory.make(WorkbenchLogger.class, childContext);
 	}

@@ -17,7 +17,7 @@ public class CutAction extends Action {
 	private IClipboardService service;
 	
 	public CutAction(IClipboardService service) {
-		super("Cut");
+		super(Messages.CutAction);
 		this.service = service;
 	}
 	

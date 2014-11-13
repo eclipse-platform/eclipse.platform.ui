@@ -18,10 +18,11 @@ import org.osgi.framework.FrameworkUtil;
 /**
  * The workbench implementation of the logger service.
  */
+@SuppressWarnings("restriction")
 public final class WorkbenchLogger extends Logger {
 	protected DebugTrace trace;
 	protected FrameworkLog log;
-	private Bundle bundle = FrameworkUtil.getBundle(WorkbenchLogger.class);
+	private final Bundle bundle = FrameworkUtil.getBundle(WorkbenchLogger.class);
 
 	/**
 	 * Creates a new workbench logger
@@ -43,43 +44,43 @@ public final class WorkbenchLogger extends Logger {
 	@Override
 	public void error(Throwable t, String message) {
 		log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
-				message, t));
+			message, t));
 	}
 
 	/**
 	 * Copied from PlatformLogWriter in core runtime.
 	 */
 	private static FrameworkLogEntry getLog(IStatus status) {
-		Throwable t = status.getException();
-		ArrayList childlist = new ArrayList();
+		final Throwable t = status.getException();
+		final ArrayList<FrameworkLogEntry> childlist = new ArrayList<FrameworkLogEntry>();
 
-		int stackCode = t instanceof CoreException ? 1 : 0;
+		final int stackCode = t instanceof CoreException ? 1 : 0;
 		// ensure a substatus inside a CoreException is properly logged
 		if (stackCode == 1) {
-			IStatus coreStatus = ((CoreException) t).getStatus();
+			final IStatus coreStatus = ((CoreException) t).getStatus();
 			if (coreStatus != null) {
 				childlist.add(getLog(coreStatus));
 			}
 		}
 
 		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
+			final IStatus[] children = status.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				childlist.add(getLog(children[i]));
 			}
 		}
 
-		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null
-				: childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+		final FrameworkLogEntry[] children = childlist.size() == 0 ? null
+			: childlist.toArray(new FrameworkLogEntry[childlist.size()]);
 
 		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(),
-				status.getMessage(), stackCode, t, children);
+			status.getMessage(), stackCode, t, children);
 	}
 
 	@Override
 	public void info(Throwable t, String message) {
 		log(new Status(IStatus.INFO, bundle.getSymbolicName(), message,
-				t));
+			t));
 	}
 
 	@Override
@@ -112,21 +113,22 @@ public final class WorkbenchLogger extends Logger {
 			log.log(getLog(status));
 		} else {
 			System.out.println(status.getMessage());
-			if (status.getException() != null)
+			if (status.getException() != null) {
 				status.getException().printStackTrace();
+			}
 		}
 	}
 
 	/**
 	 * Sets the debug options service for this logger.
-	 * 
+	 *
 	 * @param options
 	 *            The debug options to be used by this logger
 	 */
 	@Inject
 	public void setDebugOptions(DebugOptions options) {
 		if (options != null) {
-			this.trace = options.newDebugTrace(bundle.getSymbolicName(), WorkbenchLogger.class);
+			trace = options.newDebugTrace(bundle.getSymbolicName(), WorkbenchLogger.class);
 		}
 	}
 
@@ -151,6 +153,6 @@ public final class WorkbenchLogger extends Logger {
 	@Override
 	public void warn(Throwable t, String message) {
 		log(new Status(IStatus.WARNING, bundle.getSymbolicName(),
-				message, t));
+			message, t));
 	}
 }

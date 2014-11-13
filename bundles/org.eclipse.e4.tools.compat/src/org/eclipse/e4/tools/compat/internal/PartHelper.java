@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
@@ -30,82 +30,84 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.WorkbenchPart;
 
 public class PartHelper {
+	private static final String ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE = "org.eclipse.e4.ui.workbench.IPresentationEngine"; //$NON-NLS-1$
+
 	public static IEclipseContext createPartContext(WorkbenchPart part) throws PartInitException {
-		IWorkbenchPartSite site = part.getSite();
-		IEclipseContext parentContext = (IEclipseContext) site.getService(IEclipseContext.class);
-		
+		final IWorkbenchPartSite site = part.getSite();
+		final IEclipseContext parentContext = (IEclipseContext) site.getService(IEclipseContext.class);
+
 		// Check if running in 4.x
-		if( parentContext.get("org.eclipse.e4.ui.workbench.IPresentationEngine") != null ) {
+		if (parentContext.get(ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE) != null) {
 			// Hack to get the MPart-Context
 			try {
-				Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass("org.eclipse.e4.ui.model.application.ui.basic.MPart");
-				Object instance = site.getService(clazz);
-				Method m = clazz.getMethod("getContext", new Class[0]);
+				final Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass( //$NON-NLS-1$
+					"org.eclipse.e4.ui.model.application.ui.basic.MPart"); //$NON-NLS-1$
+				final Object instance = site.getService(clazz);
+				final Method m = clazz.getMethod("getContext", new Class[0]); //$NON-NLS-1$
 				IEclipseContext ctx = (IEclipseContext) m.invoke(instance);
-				IEclipseContext rv = ctx;
-				while( ctx.getParent() != null ) {
+				final IEclipseContext rv = ctx;
+				while (ctx.getParent() != null) {
 					ctx = ctx.getParent();
 				}
 				ctx.set(IClipboardService.class, new ClipboardServiceImpl());
 				return rv;
-			} catch (Exception e) {
-				throw new PartInitException("Could not create context",e);
+			} catch (final Exception e) {
+				throw new PartInitException("Could not create context", e); //$NON-NLS-1$
 			}
-		} else {
-			return parentContext.createChild("EditPart('"+part.getPartName()+"')"); //$NON-NLS-1$	
 		}
+		return parentContext.createChild("EditPart('" + part.getPartName() + "')"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
-	
+
 	public static <C> C createComponent(Composite parent, IEclipseContext context, Class<C> clazz, WorkbenchPart part) {
-		ISelectionProvider s = new SelectionProviderImpl();
+		final ISelectionProvider s = new SelectionProviderImpl();
 		context.set(ISelectionProvider.class, s);
 		part.getSite().setSelectionProvider(s);
-		
-		IStylingEngine styleEngine = context.get(IStylingEngine.class);
-		Composite comp = new Composite(parent, SWT.NONE);
+
+		final IStylingEngine styleEngine = context.get(IStylingEngine.class);
+		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		
-		//FIXME This should be read from the CSS
-		FillLayout layout = new FillLayout();
+
+		// FIXME This should be read from the CSS
+		final FillLayout layout = new FillLayout();
 		layout.marginWidth = 10;
 		layout.marginHeight = 10;
 		comp.setLayout(layout);
-		
+
 		context.set(Composite.class.getName(), comp);
-		C component = ContextInjectionFactory.make(clazz, context);
-		
+		final C component = ContextInjectionFactory.make(clazz, context);
+
 		styleEngine.setClassname(comp, part.getClass().getSimpleName());
-		
+
 		return component;
 	}
-	
+
 	static class SelectionProviderImpl implements ISelectionProvider {
 		private ISelection currentSelection = StructuredSelection.EMPTY;
-		
-		private ListenerList listeners = new ListenerList();
-		
+
+		private final ListenerList listeners = new ListenerList();
+
 		@Override
 		public void setSelection(ISelection selection) {
 			currentSelection = selection;
-			SelectionChangedEvent evt = new SelectionChangedEvent(this, selection);
-			
-			for( Object l : listeners.getListeners() ) {
-				((ISelectionChangedListener)l).selectionChanged(evt);
+			final SelectionChangedEvent evt = new SelectionChangedEvent(this, selection);
+
+			for (final Object l : listeners.getListeners()) {
+				((ISelectionChangedListener) l).selectionChanged(evt);
 			}
 		}
-				
+
 		@Override
 		public void removeSelectionChangedListener(
-				ISelectionChangedListener listener) {
+			ISelectionChangedListener listener) {
 			listeners.remove(listener);
 		}
-		
+
 		@Override
 		public ISelection getSelection() {
 			return currentSelection;
 		}
-		
+
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			listeners.add(listener);
@@ -113,14 +115,14 @@ public class PartHelper {
 	}
 
 	public static void disposeContextIfE3(IEclipseContext parentContext,
-			IEclipseContext context) {
-			// Check if running in 3.x, otherwise there was no dedicated context
-			// created
-			if (parentContext
-					.get("org.eclipse.e4.ui.workbench.IPresentationEngine") == null) {
-				context.dispose();
-				context = null;
+		IEclipseContext context) {
+		// Check if running in 3.x, otherwise there was no dedicated context
+		// created
+		if (parentContext
+			.get(ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE) == null) {
+			context.dispose();
+			context = null;
 		}
-		
+
 	}
 }

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Lars Vogel <Lars.Vogel@gmail.com> - Bug 421453
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
@@ -46,25 +46,24 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 	@Override
 	public Object create(@SuppressWarnings("rawtypes") Class serviceInterface, IServiceLocator parentLocator,
-			IServiceLocator locator) {
-		if( ! IEclipseContext.class.equals(serviceInterface) ) {
+		IServiceLocator locator) {
+		if (!IEclipseContext.class.equals(serviceInterface)) {
 			return null;
 		}
 
-
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator.getService(IWorkbenchLocationService.class);
+		final IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+			.getService(IWorkbenchLocationService.class);
 		final IWorkbenchWindow window = wls.getWorkbenchWindow();
 		final IWorkbenchPartSite site = wls.getPartSite();
 
-		Object o = parentLocator.getService(serviceInterface);
+		final Object o = parentLocator.getService(serviceInterface);
 
 		// This happens when we run in plain 3.x
 		// We need to create a parent service context
-		if( window == null && site == null ) {
-			Bundle bundle = FrameworkUtil.getBundle(ContextServiceFactory.class);
-			BundleContext bundleContext = bundle.getBundleContext();
-			IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(bundleContext);
-
+		if (window == null && site == null) {
+			final Bundle bundle = FrameworkUtil.getBundle(ContextServiceFactory.class);
+			final BundleContext bundleContext = bundle.getBundleContext();
+			final IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(bundleContext);
 
 			final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
 			appContext.set(Display.class, Display.getCurrent());
@@ -86,10 +85,11 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 				}
 			});
 
-			IContributionFactory contributionFactory = ContextInjectionFactory.make(ReflectionContributionFactory.class, appContext);
-			appContext.set(IContributionFactory.class.getName(),contributionFactory);
+			final IContributionFactory contributionFactory = ContextInjectionFactory.make(
+				ReflectionContributionFactory.class, appContext);
+			appContext.set(IContributionFactory.class.getName(), contributionFactory);
 
-			IThemeManager manager = serviceContext.get(IThemeManager.class);
+			final IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
 			appContext.set(IThemeEngine.class, engine);
 
@@ -97,8 +97,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 				@Override
 				public void setClassname(Object widget, String classname) {
-					((Widget) widget).setData(
-							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					((Widget) widget).setData("org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
 					engine.applyStyles(widget, true);
 				}
 
@@ -120,21 +119,21 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 				@Override
 				public void setClassnameAndId(Object widget, String classname,
-						String id) {
-					((Widget) widget).setData(
-							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					String id) {
+					((Widget) widget).setData("org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
 					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
 					engine.applyStyles(widget, true);
 				}
 			});
 
-			if( appContext.get(ILoggerProvider.class) == null ) {
-				appContext.set(ILoggerProvider.class, ContextInjectionFactory.make(DefaultLoggerProvider.class, appContext));
+			if (appContext.get(ILoggerProvider.class) == null) {
+				appContext.set(ILoggerProvider.class,
+					ContextInjectionFactory.make(DefaultLoggerProvider.class, appContext));
 			}
 
 			return appContext;
-		} else if( o != null && site == null ) {
-			final IEclipseContext windowContext = ((IEclipseContext)o).createChild("WindowContext("+window+")");
+		} else if (o != null && site == null) {
+			final IEclipseContext windowContext = ((IEclipseContext) o).createChild("WindowContext(" + window + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			windowContext.set(ISelectionService.class, window.getSelectionService());
 
 			windowContext.declareModifiable(IServiceConstants.ACTIVE_SELECTION);
@@ -142,10 +141,10 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 				@Override
 				public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-					if( ! selection.isEmpty() ) {
-						if( selection instanceof IStructuredSelection ) {
-							IStructuredSelection s = (IStructuredSelection) selection;
-							if( s.size() == 1 ) {
+					if (!selection.isEmpty()) {
+						if (selection instanceof IStructuredSelection) {
+							final IStructuredSelection s = (IStructuredSelection) selection;
+							if (s.size() == 1) {
 								windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.getFirstElement());
 							} else {
 								windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.toList());
