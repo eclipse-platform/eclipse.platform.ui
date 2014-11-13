@@ -10,6 +10,8 @@
  *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866, Bug 405471
  *     Sopot Cela <sopotcela@gmail.com>
  *     Steven Spungin <steven@spungin.tv> - Bug 437747
+ *     Alan Staves <alan.staves@microfocus.com> - Bug 435274
+ *     Patrick Naish <patrick.naish@microfocus.com> - Bug 435274
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -392,6 +394,11 @@ MenuManagerEventHelper.getInstance()
 	 * @param menuModel
 	 */
 	public void cleanUp(MMenu menuModel) {
+		for (MMenuElement childElement : menuModel.getChildren()) {
+			if (childElement instanceof MMenu) {
+				cleanUp((MMenu) childElement);
+			}
+		}
 		Collection<ContributionRecord> vals = modelContributionToRecord
 				.values();
 		List<ContributionRecord> disposedRecords = new ArrayList<ContributionRecord>();
@@ -845,6 +852,10 @@ MenuManagerEventHelper.getInstance()
 	}
 
 	public void clearModelToManager(MMenu model, MenuManager manager) {
+		for (MMenuElement element : model.getChildren()) {
+			IContributionItem ici = getContribution(element);
+			clearModelToContribution(element, ici);
+		}
 		modelToManager.remove(model);
 		managerToModel.remove(manager);
 	}
