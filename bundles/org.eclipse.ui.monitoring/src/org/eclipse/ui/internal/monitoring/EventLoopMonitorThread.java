@@ -160,8 +160,8 @@ public class EventLoopMonitorThread extends Thread {
 			 */
 			switch (event.type) {
 			case SWT.PreEvent:
-				if (event.data instanceof Event && ((Event) event.data).type == SWT.Skin) {
-					break;  // Ignore Skin events since they may be produced during a UI freeze.
+				if (!doesEventIndicateResponsiveUI(event.detail)) {
+					break;  // Ignore events that may be produced during a UI freeze.
 				}
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type);
@@ -171,8 +171,8 @@ public class EventLoopMonitorThread extends Thread {
 				handleEventTransition(true, true);
 				break;
 			case SWT.PostEvent:
-				if (event.data instanceof Event && ((Event) event.data).type == SWT.Skin) {
-					break;  // Ignore Skin events since they may be produced during a UI freeze.
+				if (!doesEventIndicateResponsiveUI(event.detail)) {
+					break;  // Ignore events that may be produced during a UI freeze.
 				}
 				if (eventHistory != null) {
 					eventHistory.recordEvent(event.type);
@@ -194,11 +194,27 @@ public class EventLoopMonitorThread extends Thread {
 					eventHistory.recordEvent(event.type);
 				}
 				restoreNestingLevel();
-				// Don't log a long interval, start the timer if inside another event.
-				handleEventTransition(false, nestingLevel > 0);
+				// Don't log a long interval, start the timer.
+				handleEventTransition(false, true);
 				break;
 			default:
 				break;
+			}
+		}
+
+		/**
+		 * Returns {@code true} if dispatching of an event of the given type indicates that the UI
+		 * is responsive. Events that may be produced during UI freezes are irrelevant to UI
+		 * responsiveness monitoring.
+		 */
+		private boolean doesEventIndicateResponsiveUI(int eventType) {
+			switch (eventType) {
+			case SWT.Skin:
+			case SWT.MeasureItem:
+			case SWT.Dispose:
+				return false;
+			default:
+				return true;
 			}
 		}
 
