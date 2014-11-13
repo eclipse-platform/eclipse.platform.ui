@@ -57,8 +57,8 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 				? Messages.DefaultUiFreezeEventLogger_ui_delay_header_running_2
 				: Messages.DefaultUiFreezeEventLogger_ui_delay_header_non_running_2;
 		long duration = event.getTotalDuration();
-		String header = NLS.bind(pattern,
-				String.format(duration >= 10 ? "%.2g" : "%.1g", duration / 1000.0), startTime); //$NON-NLS-1$ //$NON-NLS-2$
+		String format = duration >= 100000 ? "%.0f" : duration >= 10 ? "%.2g" : "%.1g"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String header = NLS.bind(pattern, String.format(format, duration / 1000.0), startTime);
 
 		int severity = duration >= longEventErrorThresholdMillis ?
 				IStatus.ERROR : IStatus.WARNING;
