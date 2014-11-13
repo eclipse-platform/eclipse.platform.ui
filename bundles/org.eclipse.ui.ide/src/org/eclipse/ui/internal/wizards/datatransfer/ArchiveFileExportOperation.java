@@ -173,8 +173,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
         if (createLeadupStructure) {
         	return fullPath.makeRelative().toString();
         }
-		return fullPath.removeFirstSegments(
-                fullPath.segmentCount() - leadupDepth).toString();
+		return fullPath.removeFirstSegments(fullPath.segmentCount() - leadupDepth).makeRelative().toString();
     }
 
     /**

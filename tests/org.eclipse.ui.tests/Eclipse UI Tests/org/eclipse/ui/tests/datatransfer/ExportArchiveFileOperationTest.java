@@ -131,6 +131,27 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
 
+	public void testExportZipCreateSelectedDirectoriesProject() throws Exception {
+		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
+		ArchiveFileExportOperation operation = new ArchiveFileExportOperation(project, filePath);
+
+		operation.setCreateLeadupStructure(false);
+		operation.setUseCompression(false);
+		operation.setUseTarFormat(false);
+		operation.run(new NullProgressMonitor());
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
+
+		ZipFile zipFile = new ZipFile(filePath);
+		Enumeration entries = zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = (ZipEntry) entries.nextElement();
+			String name = entry.getName();
+			assertTrue(name, name.startsWith(project.getName() + "/"));
+		}
+		zipFile.close();
+
+	}
+
 	public void testExportZipCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List resources = new ArrayList();
