@@ -32,9 +32,9 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A PickList for creating a string list. Action include ordering, adding,
@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.ToolItem;
 public class E4StringPickList extends AbstractPickList {
 
 	private Text text;
-	private ToolItem tiReplace;
+	private Button tiReplace;
 	private AbstractComponentEditor editor;
 	private EStructuralFeature feature;
 
@@ -58,13 +58,12 @@ public class E4StringPickList extends AbstractPickList {
 
 		// TODO does not respect NO_ORDER yet
 
-		tiReplace = new ToolItem(getToolBar(), SWT.PUSH, 2);
+		tiReplace = new Button(getToolBar(), SWT.PUSH);
 		tiReplace.setText(messages.E4StringPickList_Replace);
 		tiReplace.setImage(editor.createImage(ResourceProvider.IMG_Obj16_world_edit));
 
 		text = new Text(getToolBar().getParent(), SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		text.moveBelow(getToolBar());
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		tiReplace.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -170,7 +169,7 @@ public class E4StringPickList extends AbstractPickList {
 		return ((ObservableListContentProvider) viewer.getContentProvider()).getElements(viewer.getInput()).length;
 	}
 
-	protected ToolItem getReplaceWidget() {
+	protected Button getReplaceWidget() {
 		return tiReplace;
 	}
 

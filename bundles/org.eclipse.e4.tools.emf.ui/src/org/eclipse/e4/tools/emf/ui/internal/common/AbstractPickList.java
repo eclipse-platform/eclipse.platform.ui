@@ -14,14 +14,11 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.jface.fieldassist.AutoCompleteField;
-import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -31,7 +28,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -40,12 +36,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * <p>
@@ -66,12 +60,12 @@ public abstract class AbstractPickList extends Composite {
 	protected TableViewer viewer;
 
 	private final Group group;
-	private final ToolBar toolBar;
-	private final ToolItem tiRemove;
-	private final ToolItem tiUp;
-	private final ToolItem tiDown;
-	private final ToolItem tiAdd;
-	private final AutoCompleteField autoCompleteField;
+	private final Composite toolBar;
+	private final Button tiRemove;
+	private final Button tiUp;
+	private final Button tiDown;
+	private final Button tiAdd;
+	// private final AutoCompleteField autoCompleteField;
 	private Map<String, Object> proposals;
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
@@ -87,11 +81,51 @@ public abstract class AbstractPickList extends Composite {
 		// gridData.horizontalIndent = 30;
 		group.setLayout(new GridLayout(1, false));
 
-		toolBar = new ToolBar(group, SWT.FLAT);
+		final Composite comp = new Composite(group, SWT.NONE);
+
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+
+		picker = new ComboViewer(comp, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		final Combo control = picker.getCombo();
+		control.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+
+		// ComboContentAdapter controlContentAdapter = new ComboContentAdapter()
+		// {
+		// @Override
+		// public void setControlContents(Control control, String text1, int
+		// cursorPosition) {
+		// super.setControlContents(control, text1, cursorPosition);
+		// Object valueInModel = proposals.get(text1);
+		// if (valueInModel != null) {
+		// getPicker().setSelection(new StructuredSelection(valueInModel));
+		// }
+		// }
+		// };
+		// autoCompleteField = new AutoCompleteField(control,
+		// controlContentAdapter, new String[0]);
+
+		toolBar = new Composite(comp, SWT.NONE);
+		layout = new GridLayout(5, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		toolBar.setLayout(layout);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-		tiAdd = new ToolItem(toolBar, SWT.PUSH);
+		picker.addOpenListener(new IOpenListener() {
+
+			@Override
+			public void open(OpenEvent event) {
+				addPressed();
+			}
+		});
+
+		tiAdd = new Button(toolBar, SWT.PUSH);
 		tiAdd.setText(messages.ModelTooling_Common_AddEllipsis);
+		tiAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiAdd.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		tiAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -100,28 +134,8 @@ public abstract class AbstractPickList extends Composite {
 			}
 		});
 
-		// new ToolItem(toolBar, SWT.SEPARATOR_FILL);
-
-		tiDown = new ToolItem(toolBar, SWT.PUSH);
-		tiDown.setText(messages.ModelTooling_Common_Down);
-		tiDown.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
-		tiDown.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				moveDownPressed();
-			}
-		});
-
-		tiUp = new ToolItem(toolBar, SWT.PUSH);
-		tiUp.setText(messages.ModelTooling_Common_Up);
-		tiUp.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
-		tiUp.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				moveUpPressed();
-			}
-		});
-		tiRemove = new ToolItem(toolBar, SWT.PUSH);
+		tiRemove = new Button(toolBar, SWT.PUSH);
+		tiRemove.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiRemove.setText(messages.ModelTooling_Common_Remove);
 		tiRemove.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_delete));
 		tiRemove.addSelectionListener(new SelectionAdapter() {
@@ -131,27 +145,25 @@ public abstract class AbstractPickList extends Composite {
 			}
 		});
 
-		picker = new ComboViewer(group, SWT.DROP_DOWN);
-		final Combo control = picker.getCombo();
-		control.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-
-		final ComboContentAdapter controlContentAdapter = new ComboContentAdapter() {
+		tiDown = new Button(toolBar, SWT.PUSH);
+		tiDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		tiDown.setText(messages.ModelTooling_Common_Down);
+		tiDown.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
+		tiDown.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void setControlContents(Control control, String text1, int cursorPosition) {
-				super.setControlContents(control, text1, cursorPosition);
-				final Object valueInModel = proposals.get(text1);
-				if (valueInModel != null) {
-					getPicker().setSelection(new StructuredSelection(valueInModel));
-				}
+			public void widgetSelected(SelectionEvent e) {
+				moveDownPressed();
 			}
-		};
-		autoCompleteField = new AutoCompleteField(control, controlContentAdapter, new String[0]);
+		});
 
-		picker.addOpenListener(new IOpenListener() {
-
+		tiUp = new Button(toolBar, SWT.PUSH);
+		tiUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		tiUp.setText(messages.ModelTooling_Common_Up);
+		tiUp.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
+		tiUp.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void open(OpenEvent event) {
-				addPressed();
+			public void widgetSelected(SelectionEvent e) {
+				moveUpPressed();
 			}
 		});
 
@@ -195,9 +207,9 @@ public abstract class AbstractPickList extends Composite {
 	public void setInput(Object input) {
 		getPicker().setInput(input);
 
-		proposals = toProposals(input);
-		final Set<String> keySet = proposals.keySet();
-		autoCompleteField.setProposals(keySet.toArray(new String[keySet.size()]));
+		// proposals = toProposals(input);
+		// final Set<String> keySet = proposals.keySet();
+		// autoCompleteField.setProposals(keySet.toArray(new String[keySet.size()]));
 	}
 
 	public ISelection getSelection() {
@@ -247,7 +259,7 @@ public abstract class AbstractPickList extends Composite {
 		getPicker().setComparator(comparator);
 	}
 
-	protected ToolBar getToolBar() {
+	protected Composite getToolBar() {
 		return toolBar;
 	}
 
