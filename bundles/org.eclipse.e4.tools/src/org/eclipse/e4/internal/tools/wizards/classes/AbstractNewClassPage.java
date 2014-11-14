@@ -278,11 +278,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		final int iSecondSlash = initialString2.lastIndexOf('/');
 		if (
 
-			initialString2.length() == 0 || // empty
+		initialString2.length() == 0 || // empty
 			ioBC == -1 || // no bundle class
 			iSecondSlash == -1 || // no package &| class name
 			initialString2.indexOf('.') == -1// no package
-			) {
+		) {
 			return null;
 		}
 
@@ -299,11 +299,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		final int iSecondSlash = initialString.lastIndexOf('/');
 		if (
 
-			initialString.length() == 0 || // empty
+		initialString.length() == 0 || // empty
 			ioBC == -1 || // no bundle class
 			iSecondSlash == -1 || // no package &| class name
 			initialString.indexOf('.') == -1// no package
-			) {
+		) {
 			return null;
 		}
 		final int lastDot = initialString.lastIndexOf('.');
@@ -315,7 +315,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 	private IPackageFragmentRoot choosePackageRoot() {
 		final IJavaElement initElement = clazz.getFragmentRoot();
-		Class[] acceptedClasses = new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
+		Class<?>[] acceptedClasses = new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
 		final TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false) {
 			@Override
 			public boolean isSelectedValid(Object element) {
