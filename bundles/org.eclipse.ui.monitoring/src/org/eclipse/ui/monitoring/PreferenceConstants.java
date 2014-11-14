@@ -44,10 +44,17 @@ public class PreferenceConstants {
 	 */
 	public static final String LOG_TO_ERROR_LOG = "log_to_error_log"; //$NON-NLS-1$
 	/**
-	 * Comma separated fully qualified method names of stack frames to filter out.
-	 * Long events containing this method in a stack trace of the UI thread are ignored.
+	 * Comma separated fully qualified method names of stack frames. The names may contain
+	 * '*' and '?' wildcard characters. A UI freeze is not logged if any of the stack traces
+	 * of the UI thread contains at least one method matching the filter.
 	 */
-	public static final String FILTER_TRACES = "filter_traces"; //$NON-NLS-1$
+	public static final String UI_THREAD_FILTER = "ui_thread_filter"; //$NON-NLS-1$
+	/**
+	 * Comma separated fully qualified method names of stack frames. The names may contain
+	 * '*' and '?' wildcard characters. A non-UI thread is not included in the logged UI freeze
+	 * message if all stack frames of the thread match the filter.
+	 */
+	public static final String NONINTERESTING_THREAD_FILTER = "noninteresting_thread_filter"; //$NON-NLS-1$
 
 	private PreferenceConstants() {}
 }

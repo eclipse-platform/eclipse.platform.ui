@@ -64,9 +64,15 @@ public class EventLoopMonitorThreadTests {
 		}
 	}
 
-	private static final String FILTER_TRACES =
-			"org.eclipse.swt.internal.gtk.OS.gtk_dialog_run,"
-					+ "org.eclipse.e4.ui.workbench.addons.dndaddon.DnDManager.startDrag";
+	private static final String UI_THREAD_FILTER =
+			"org.eclipse.swt.internal.gtk.OS.gtk_dialog_run"
+			+ ",org.eclipse.e4.ui.workbench.addons.dndaddon.DnDManager.startDrag";
+	private static final String NONINTERESTING_THREAD_FILTER =
+			"java.*"
+			+ ",sun.*"
+			+ ",org.eclipse.core.internal.jobs.WorkerPool.sleep"
+			+ ",org.eclipse.core.internal.jobs.WorkerPool.startJob"
+			+ ",org.eclipse.core.internal.jobs.Worker.run";
 	/* NOTE: All time-related values in this class are in milliseconds. */
 	private static final long MAX_TIMEOUT_MS = 1 * 1000; // 1 second
 	private static final int THRESHOLD_MS = 100;
@@ -116,7 +122,8 @@ public class EventLoopMonitorThreadTests {
 		args.longEventErrorThreshold = threshold - 1;
 		args.maxStackSamples = MIN_STACK_TRACES;
 		args.deadlockThreshold = FORCE_DEADLOCK_LOG_TIME_MILLIS;
-		args.filterTraces = FILTER_TRACES;
+		args.uiThreadFilter = UI_THREAD_FILTER;
+		args.noninterestingThreadFilter = NONINTERESTING_THREAD_FILTER;
 
 		return new MockEventLoopMonitorThread(args);
 	}

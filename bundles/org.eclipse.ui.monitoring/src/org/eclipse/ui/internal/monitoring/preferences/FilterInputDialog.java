@@ -33,51 +33,37 @@ import org.eclipse.swt.widgets.Text;
  */
 public class FilterInputDialog extends TitleAreaDialog {
 	private static final Pattern methodNamePattern =
-			Pattern.compile("([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)+[\\p{L}_$][\\p{L}\\p{N}_$]*"); //$NON-NLS-1$
+			Pattern.compile("([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)+[\\p{L}_$][\\p{L}\\p{N}_$]*" //$NON-NLS-1$
+					+ "|([\\p{L}_$][\\p{L}\\p{N}_$]*\\.?)*([\\?\\*][\\p{L}\\p{N}_$\\.]*)+"); //$NON-NLS-1$
 
 	private Text textFilter;
 	private String filter;
 
-	public FilterInputDialog(Shell parentShell) {
+	public FilterInputDialog(Shell parentShell, String message) {
 		super(parentShell);
-		this.create();
+		create();
+		setMessage(message, IMessageProvider.INFORMATION);
 	}
 
 	@Override
 	public void create() {
 		super.create();
-		setTitle(Messages.FilterInputDialog_filter_input_header);
-		setMessage(Messages.FilterInputDialog_filter_input_message, IMessageProvider.INFORMATION);
+		setTitle(Messages.FilterInputDialog_header);
 	}
 
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
-		shell.setText(Messages.FilterInputDialog_filter_input_title);
+		shell.setText(Messages.FilterInputDialog_title);
     }
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout layout = new GridLayout(2, false);
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		container.setLayout(layout);
+		container.setLayout(new GridLayout(2, false));
 
-		createFilterText(container);
-
-		return area;
-	}
-
-	@Override
-	protected Control createContents(Composite parent) {
-		Control contents = super.createContents(parent);
-		checkInput();
-		return contents;
-	}
-
-	private void createFilterText(Composite container) {
 		Label filterLabel = new Label(container, SWT.NONE);
 		filterLabel.setText(Messages.FilterInputDialog_filter_input_label);
 
@@ -89,6 +75,18 @@ public class FilterInputDialog extends TitleAreaDialog {
 				checkInput();
 			}
 		});
+		new Label(container, SWT.NONE); // Placeholder to push noteLabel to the second column.
+		Label noteLabel = new Label(container, SWT.NONE);
+		noteLabel.setText(Messages.FilterInputDialog_note_label);
+
+		return area;
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
+		checkInput();
+		return contents;
 	}
 
 	private void checkInput() {

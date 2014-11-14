@@ -20,9 +20,6 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
  * Initializes the default values of the monitoring plug-in preferences.
  */
 public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializer {
-	/** Force a logged event for a possible deadlock when an event hangs for longer than this */
-	private static final int DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS = 10 * 60 * 1000; // 10 minutes
-
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = MonitoringPlugin.getDefault().getPreferenceStore();
@@ -32,8 +29,18 @@ public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS, 2000); // 2 sec
 		store.setDefault(PreferenceConstants.MAX_STACK_SAMPLES, 3);
 		store.setDefault(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
-				DEFAULT_FORCE_DEADLOCK_LOG_TIME_MILLIS);
+				5 * 60 * 1000); // 5 min
 		store.setDefault(PreferenceConstants.LOG_TO_ERROR_LOG, true);
-		store.setDefault(PreferenceConstants.FILTER_TRACES, ""); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.UI_THREAD_FILTER, ""); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.NONINTERESTING_THREAD_FILTER,
+				"java.*" //$NON-NLS-1$
+				+ ",sun.*" //$NON-NLS-1$
+				+ ",org.eclipse.core.internal.jobs.WorkerPool.sleep" //$NON-NLS-1$
+				+ ",org.eclipse.core.internal.jobs.WorkerPool.startJob" //$NON-NLS-1$
+				+ ",org.eclipse.core.internal.jobs.Worker.run" //$NON-NLS-1$
+				+ ",org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.getNextEvent" //$NON-NLS-1$
+				+ ",org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run" //$NON-NLS-1$
+				+ ",org.eclipse.equinox.internal.util.impl.tpt.timer.TimerImpl.run" //$NON-NLS-1$
+				+ ",org.eclipse.equinox.internal.util.impl.tpt.threadpool.Executor.run"); //$NON-NLS-1$
 	}
 }

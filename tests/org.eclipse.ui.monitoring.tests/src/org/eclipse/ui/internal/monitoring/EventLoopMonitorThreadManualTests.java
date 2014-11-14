@@ -413,14 +413,16 @@ public class EventLoopMonitorThreadManualTests {
 		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
 		EventLoopMonitorThread.Parameters params = new EventLoopMonitorThread.Parameters();
 
-		params.longEventWarningThreshold = preferences.getInt(
-				PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
-		params.longEventErrorThreshold = preferences.getInt(
-				PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
+		params.longEventWarningThreshold =
+				preferences.getInt(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS);
+		params.longEventErrorThreshold =
+				preferences.getInt(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS);
 		params.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
-		params.deadlockThreshold = preferences.getInt(
-				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
-		params.filterTraces = preferences.getString(PreferenceConstants.FILTER_TRACES);
+		params.deadlockThreshold =
+				preferences.getInt(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
+		params.uiThreadFilter = preferences.getString(PreferenceConstants.UI_THREAD_FILTER);
+		params.noninterestingThreadFilter =
+				preferences.getString(PreferenceConstants.NONINTERESTING_THREAD_FILTER);
 
 		params.checkParameters();
 		return params;

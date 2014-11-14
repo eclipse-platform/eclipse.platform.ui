@@ -83,7 +83,9 @@ public class MonitoringStartup implements IStartup {
 		args.deadlockThreshold =
 				preferences.getInt(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS);
 		args.maxStackSamples = preferences.getInt(PreferenceConstants.MAX_STACK_SAMPLES);
-		args.filterTraces = preferences.getString(PreferenceConstants.FILTER_TRACES);
+		args.uiThreadFilter = preferences.getString(PreferenceConstants.UI_THREAD_FILTER);
+		args.noninterestingThreadFilter =
+				preferences.getString(PreferenceConstants.NONINTERESTING_THREAD_FILTER);
 		args.logToErrorLog = preferences.getBoolean(PreferenceConstants.LOG_TO_ERROR_LOG);
 
 		return args;
