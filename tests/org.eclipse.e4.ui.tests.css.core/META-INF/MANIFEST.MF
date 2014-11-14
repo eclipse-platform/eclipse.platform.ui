@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: e4 css core tests (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.tests.css.core
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.100.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.swt,
@@ -12,4 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-BundleShape: dir
+Export-Package: org.eclipse.e4.ui.tests.css.core;x-internal:=true,
+ org.eclipse.e4.ui.tests.css.core.parser;x-internal:=true,
+ org.eclipse.e4.ui.tests.css.core.util;x-internal:=true
 

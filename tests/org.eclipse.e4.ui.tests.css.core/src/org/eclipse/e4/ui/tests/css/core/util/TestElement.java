@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource and others. All rights reserved.
+ * Copyright (c) 2009, 2014 EclipseSource and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,11 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 
 /**
  * Dummy DOM Element implementation for testing.
@@ -30,7 +31,7 @@ public class TestElement extends ElementAdapter {
 	private final String typeName;
 	private String className;
 	private String id;
-	private Map attrs = new HashMap();
+	private Map<String, String> attrs = new HashMap<String, String>();
 	private Node parentNode = null;
 	private List<Node> children = null;
 
@@ -60,7 +61,7 @@ public class TestElement extends ElementAdapter {
 
 	@Override
 	public String getAttribute(String name) {
-		String value = (String) attrs.get(name);
+		String value = attrs.get(name);
 		return value == null ? "" : value;
 	}
 

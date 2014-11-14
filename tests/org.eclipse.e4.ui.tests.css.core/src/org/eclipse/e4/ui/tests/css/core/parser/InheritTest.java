@@ -33,7 +33,6 @@ import org.w3c.dom.css.CSSValue;
  *
  * @author Stefan Winkler
  */
-@SuppressWarnings("restriction")
 public class InheritTest extends TestCase {
 
 	public void testInheritFromParent() throws Exception {
