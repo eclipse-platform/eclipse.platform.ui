@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -284,6 +287,13 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public static String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
 
 	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
+
+	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
+	private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
+	private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
+	private static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
+	private static final String CMD_DATA = "-data"; //$NON-NLS-1$
+	private static final String CMD_VMARGS = "-vmargs"; //$NON-NLS-1$
 
 	private final class StartupProgressBundleListener implements SynchronousBundleListener {
 
@@ -2617,7 +2627,96 @@ UIEvents.Context.TOPIC_CONTEXT,
 		return close(PlatformUI.RETURN_RESTART, false);
 	}
 
+	@Override
+	public boolean restart(boolean useCurrrentWorkspace) {
+		if (useCurrrentWorkspace) {
+			URL instanceUrl = Platform.getInstanceLocation().getURL();
+			if (instanceUrl != null) {
+				try {
+					URI uri = instanceUrl.toURI();
+					String command_line = buildCommandLine(uri.toString());
+					if (command_line != null) {
+						System.setProperty(PROP_EXIT_CODE, IApplication.EXIT_RELAUNCH.toString());
+						System.setProperty(IApplicationContext.EXIT_DATA_PROPERTY, command_line);
+					}
+				} catch (URISyntaxException e) {
+					// do nothing; workbench will be restarted with the same
+					// command line as used for the previous launch
+				}
+			}
+		}
+		return close(PlatformUI.RETURN_RESTART, false);
+	}
 
+	/**
+	 * Create and return a string with command line options for eclipse.exe that
+	 * will launch a new workbench that is the same as the currently running
+	 * one, but using the argument directory as its workspace.
+	 * <p>
+	 * Note that this method has been copied from
+	 * OpenWorkspaceAction.buildCommandLine(String workspace)
+	 * </p>
+	 * 
+	 * @param workspace
+	 *            the directory to use as the new workspace
+	 * @return a string of command line options or <code>null</code> if
+	 *         'eclipse.vm' is not set
+	 */
+	private String buildCommandLine(String workspace) {
+		String property = System.getProperty(PROP_VM);
+		if (property == null) {
+			if (!Platform.inDevelopmentMode()) {
+				// Don't log this when in development mode, since 'eclipse.vm'
+				// is never set in this case
+				WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.Workbench_missingPropertyMessage, PROP_VM));
+			}
+			return null;
+		}
+
+		StringBuffer result = new StringBuffer(512);
+		result.append(property);
+		result.append('\n');
+
+		// append the vmargs and commands. Assume that these already end in \n
+		String vmargs = System.getProperty(PROP_VMARGS);
+		if (vmargs != null) {
+			result.append(vmargs);
+		}
+
+		// append the rest of the args, replacing or adding -data as required
+		property = System.getProperty(PROP_COMMANDS);
+		if (property == null) {
+			result.append(CMD_DATA);
+			result.append('\n');
+			result.append(workspace);
+			result.append('\n');
+		} else {
+			// find the index of the arg to replace its value
+			int cmd_data_pos = property.lastIndexOf(CMD_DATA);
+			if (cmd_data_pos != -1) {
+				cmd_data_pos += CMD_DATA.length() + 1;
+				result.append(property.substring(0, cmd_data_pos));
+				result.append(workspace);
+				result.append(property.substring(property.indexOf('\n', cmd_data_pos)));
+			} else {
+				result.append(CMD_DATA);
+				result.append('\n');
+				result.append(workspace);
+				result.append('\n');
+				result.append(property);
+			}
+		}
+
+		// put the vmargs back at the very end (the eclipse.commands property
+		// already contains the -vm arg)
+		if (vmargs != null) {
+			result.append(CMD_VMARGS);
+			result.append('\n');
+			result.append(vmargs);
+		}
+
+		return result.toString();
+	}
 
 	/**
 	 * Returns the ids of all plug-ins that extend the

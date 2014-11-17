@@ -88,6 +88,7 @@ public class WorkbenchMessages extends NLS {
 	public static String SaveAll_toolTip;
 	public static String Workbench_revert;
 	public static String Workbench_revertToolTip;
+	public static String Workbench_missingPropertyMessage;
 	public static String Workbench_move;
 
 	public static String Workbench_moveToolTip;

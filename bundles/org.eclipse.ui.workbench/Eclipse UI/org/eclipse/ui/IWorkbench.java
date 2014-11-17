@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -312,7 +312,8 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 			throws WorkbenchException;
 
 	/**
-	 * Closes then restarts this workbench.
+	 * Closes then restarts the workbench with the same command line as used for
+	 * the previous launch.
 	 * <p>
 	 * If the workbench has an open editor with unsaved content, the user will
 	 * be given the opportunity to save it.
@@ -324,6 +325,28 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @since 2.0
 	 */
 	public boolean restart();
+
+	/**
+	 * Closes then restarts this workbench using the current workspace if
+	 * <code>useCurrentWorkspace</code> is <code>true</code>. Otherwise, works
+	 * as {@link IWorkbench#restart()}.
+	 * <p>
+	 * If the workbench has an open editor with unsaved content, the user will
+	 * be given the opportunity to save it.
+	 * </p>
+	 * 
+	 * @param useCurrentWorkspace
+	 *            <code>true</code> to use the current workspace while
+	 *            restarting this workbench, and <code>false</code> to restart
+	 *            the workbench with the same command line as used for the
+	 *            previous launch
+	 * 
+	 * @return <code>true</code> if the workbench was successfully closed, and
+	 *         <code>false</code> if it could not be closed
+	 * 
+	 * @since 3.107
+	 */
+	public boolean restart(boolean useCurrentWorkspace);
 
 	/**
 	 * Shows the specified perspective to the user. The caller should use this
