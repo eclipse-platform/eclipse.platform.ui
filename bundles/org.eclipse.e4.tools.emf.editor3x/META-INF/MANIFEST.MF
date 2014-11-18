@@ -31,10 +31,10 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.search;bundle-version="3.7.0",
  org.eclipse.text;bundle-version="3.5.100",
  org.eclipse.e4.ui.model.workbench;bundle-version="1.0.0",
- org.eclipse.pde.ui
+ org.eclipse.pde.ui;bundle-version="3.8.0"
 Service-Component: OSGI-INF/pdecontributionprovider.xml, OSGI-INF/xmiresourcecontextfunction.xml, OSGI-INF/projectfunction.xml, OSGI-INF/pdee4xmiprovider.xml, OSGI-INF/pdeextensionlookup.xml, OSGI-INF/modelextractor.xml 
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
-Export-Package: org.eclipse.e4.tools.emf.editor3x;x-internal:=true,
- org.eclipse.e4.tools.emf.editor3x.emf;x-internal:=true,
- org.eclipse.e4.tools.emf.editor3x.extension;x-internal:=true
+Export-Package: org.eclipse.e4.tools.emf.editor3x;version="0.12.0.qualifier";x-internal:=true,
+ org.eclipse.e4.tools.emf.editor3x.emf;version="0.12.0.qualifier";x-internal:=true,
+ org.eclipse.e4.tools.emf.editor3x.extension;version="0.12.0.qualifier";x-internal:=true
