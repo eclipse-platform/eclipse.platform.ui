@@ -30,7 +30,7 @@ This extension point allows three distinct extensions:
             <element ref="virtualeditor" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="editorfeature" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="contributionClassCreator" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="editorTab" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="editorTab" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
