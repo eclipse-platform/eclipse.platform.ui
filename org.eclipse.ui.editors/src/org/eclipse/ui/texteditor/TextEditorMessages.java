@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,8 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractMarkerAnnotationModel_connected;
 	public static String AbstractMarkerAnnotationModel_createMarkerUpdater;
 	public static String AbstractMarkerAnnotationModel_removeAnnotations;
+	public static String AbstractMarkerAnnotationModel_updaterInvalidDefinition;
+	public static String AbstractMarkerAnnotationModel_markerUpdaterCyclicDefinition;
 	public static String DocumentProviderRegistry_error_extension_point_not_found;
 	public static String ChangeEncodingAction_message_noEncodingSupport;
 	public static String ChangeEncodingAction_button_apply_label;

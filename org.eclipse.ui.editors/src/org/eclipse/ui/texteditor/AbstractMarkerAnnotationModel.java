@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -38,6 +40,8 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationMap;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -72,6 +76,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	/** List of registered but not yet instantiated marker updaters */
 	private List fMarkerUpdaterSpecifications= null;
 
+	private static final String ID= "id"; //$NON-NLS-1$
 
 	/**
 	 * Retrieves all markers from this model.
@@ -256,15 +261,71 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	private void installMarkerUpdaters() {
 
 		// initialize lists - indicates that the initialization happened
-		fMarkerUpdaterSpecifications= new ArrayList(2);
 		fInstantiatedMarkerUpdaters= new ArrayList(2);
+		HashMap markerUpdaterOrderMap = new HashMap(2);
+		LinkedList markerUpdaterSpecificationsLinkedList= new LinkedList();
 
 		// populate list
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-			for (int i= 0; i < elements.length; i++)
-				fMarkerUpdaterSpecifications.add(elements[i]);
+			for (int i= 0; i < elements.length; i++) {
+				markerUpdaterSpecificationsLinkedList.add(elements[i]);
+				markerUpdaterOrderMap.put(elements[i].getAttribute(ID), new Integer(i));
+			}
+			//start sorting based on required-updater definition
+			HashMap markerUpdaterRequiredByOrderMap= new HashMap(2);
+			for (int i= 0; i < elements.length; i++) {
+				// Required marker should execute before other updater markers
+				IConfigurationElement[] requiredUpdaters= elements[i].getChildren("required-updater"); //$NON-NLS-1$
+				if (requiredUpdaters.length > 0) {
+					//ArrayList requiredUpdaters= new ArrayList(2);
+					for (int j= 0; j < requiredUpdaters.length; j++) { // If required updaters have been defined
+						String requiredID= requiredUpdaters[j].getAttribute(ID);
+						// If required ID is not a valid id
+						if (requiredID == null || (markerUpdaterOrderMap.get(requiredID) == null)) { // ID missing or invalid - log the message and move to next contribution
+							String msg= NLSUtility.format(TextEditorMessages.AbstractMarkerAnnotationModel_updaterInvalidDefinition, new Object[] { elements[i].getAttribute(ID), requiredID });
+							EditorsPlugin.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, msg));
+							continue;
+						}
+						// Updating requiredByUpdaters to identify and log error for cyclic Dependency like A required B, B required C, C required D and D required A
+						// or A requires B and B requires A
+
+						ArrayList requiredByUpdaters;
+						if (markerUpdaterRequiredByOrderMap.get(requiredID) == null) {
+							requiredByUpdaters= new ArrayList(2);
+						}
+						else {
+							requiredByUpdaters= (ArrayList)markerUpdaterRequiredByOrderMap.get(requiredID);
+						}
+						// Build up extended required id list to identify Case 2
+						if (markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID)) != null) {
+							ArrayList requiredByList= (ArrayList)markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID));
+							requiredByUpdaters.addAll(requiredByList);
+						}
+						if (requiredByUpdaters.contains(requiredID)) { //log error if marker ID is in the required list of required ID
+							String msg= NLSUtility.format(TextEditorMessages.AbstractMarkerAnnotationModel_markerUpdaterCyclicDefinition, new Object[] { elements[i].getAttribute(ID), requiredID });
+							EditorsPlugin.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, msg));
+							continue;
+						}
+						requiredByUpdaters.add(elements[i].getAttribute(ID));
+						markerUpdaterRequiredByOrderMap.put(requiredID, requiredByUpdaters);
+
+						Integer requiredLocation= (Integer)markerUpdaterOrderMap.get(requiredID);
+						if (requiredLocation.intValue() > ((Integer)markerUpdaterOrderMap.get(elements[i].getAttribute(ID))).intValue()) { // If required marker is not ordered before
+							int newLocation= (((Integer)markerUpdaterOrderMap.get(elements[i].getAttribute(ID))).intValue() == 0) ? 0 : (((Integer)markerUpdaterOrderMap.get(elements[i]
+									.getAttribute(ID))).intValue() - 1);
+							Object requiredMarker= markerUpdaterSpecificationsLinkedList.remove(requiredLocation.intValue());
+							markerUpdaterSpecificationsLinkedList.add(newLocation, requiredMarker); // Put the required location before the marker
+							markerUpdaterOrderMap.put(requiredID, new Integer(newLocation));
+							markerUpdaterOrderMap.put(elements[i].getAttribute(ID), new Integer(newLocation + 1));
+						}
+					}
+				}
+			}
+			fMarkerUpdaterSpecifications= new ArrayList(markerUpdaterSpecificationsLinkedList);
+			//end sorting
+
 		}
 	}
 
