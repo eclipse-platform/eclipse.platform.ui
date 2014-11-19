@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -325,14 +325,17 @@ public class OpenWorkspaceAction extends Action implements
 			result.append(workspace);
 			result.append(NEW_LINE);
 		} else {
-			// find the index of the arg to replace its value
+			// find the index of the arg to add/replace its value
 			int cmd_data_pos = property.lastIndexOf(CMD_DATA);
 			if (cmd_data_pos != -1) {
 				cmd_data_pos += CMD_DATA.length() + 1;
 				result.append(property.substring(0, cmd_data_pos));
 				result.append(workspace);
-				result.append(property.substring(property.indexOf('\n',
-						cmd_data_pos)));
+				// append from the next arg
+				int nextArg = property.indexOf("\n-", cmd_data_pos - 1); //$NON-NLS-1$
+				if (nextArg != -1) {
+					result.append(property.substring(nextArg));
+				}
 			} else {
 				result.append(CMD_DATA);
 				result.append(NEW_LINE);

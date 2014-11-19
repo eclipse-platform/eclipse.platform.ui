@@ -2691,13 +2691,17 @@ UIEvents.Context.TOPIC_CONTEXT,
 			result.append(workspace);
 			result.append('\n');
 		} else {
-			// find the index of the arg to replace its value
+			// find the index of the arg to add/replace its value
 			int cmd_data_pos = property.lastIndexOf(CMD_DATA);
 			if (cmd_data_pos != -1) {
 				cmd_data_pos += CMD_DATA.length() + 1;
 				result.append(property.substring(0, cmd_data_pos));
 				result.append(workspace);
-				result.append(property.substring(property.indexOf('\n', cmd_data_pos)));
+				// append from the next arg
+				int nextArg = property.indexOf("\n-", cmd_data_pos - 1); //$NON-NLS-1$
+				if (nextArg != -1) {
+					result.append(property.substring(nextArg));
+				}
 			} else {
 				result.append(CMD_DATA);
 				result.append('\n');
