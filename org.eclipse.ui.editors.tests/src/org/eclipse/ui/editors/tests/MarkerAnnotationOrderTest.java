@@ -65,11 +65,11 @@ public class MarkerAnnotationOrderTest extends TestCase {
 		assertEquals("Wrong number of messages", 2, list.size());
 		assertEquals(
 				"Wrong Message for first status",
-				"Marker Updater org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2 and org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1 depend on each other, org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2 will run before org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1",
+				"Marker Updater 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2' and 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1' depend on each other, 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest2' will run before 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1'",
 				((Status)list.get(0)).getMessage());
 		assertEquals(
 				"Wrong Message for second status",
-				"Marker Updater org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4 and org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1 depend on each other, org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4 will run before org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1",
+				"Marker Updater 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4' and 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1' depend on each other, 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest4' will run before 'org.eclipse.ui.texteditor.BasicMarkerUpdaterTest1'",
 				((Status)list.get(1)).getMessage());
 
 	}
