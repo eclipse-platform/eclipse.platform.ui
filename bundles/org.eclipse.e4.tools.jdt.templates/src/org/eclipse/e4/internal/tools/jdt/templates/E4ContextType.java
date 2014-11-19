@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation (adapted from JDT's SWTContextType)
+ * IBM Corporation - initial API and implementation (adapted from JDT's SWTContextType)
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.jdt.templates;
 
@@ -22,25 +22,28 @@ import org.eclipse.jdt.internal.corext.template.java.JavaContext;
  * <li>templates for statement locations</li>
  * </dl>
  */
+@SuppressWarnings("restriction")
 public class E4ContextType extends AbstractJavaContextType {
 
 	/**
 	 * The context type id for templates working on all Java code locations in e4 projects
 	 */
-	public static final String ID_ALL= "e4"; //$NON-NLS-1$
+	public static final String ID_ALL = "e4"; //$NON-NLS-1$
 
 	/**
 	 * The context type id for templates working on member locations in e4 projects
 	 */
-	public static final String ID_MEMBERS= "e4-members"; //$NON-NLS-1$
+	public static final String ID_MEMBERS = "e4-members"; //$NON-NLS-1$
 
 	/**
 	 * The context type id for templates working on statement locations in e4 projects
 	 */
-	public static final String ID_STATEMENTS= "e4-statements"; //$NON-NLS-1$
+	public static final String ID_STATEMENTS = "e4-statements"; //$NON-NLS-1$
 
+	@Override
 	protected void initializeContext(JavaContext context) {
-		if (!getId().equals(E4ContextType.ID_ALL)) { // a specific context must also allow the templates that work everywhere
+		if (!getId().equals(E4ContextType.ID_ALL)) { // a specific context must also allow the templates that work
+			// everywhere
 			context.addCompatibleContextType(E4ContextType.ID_ALL);
 		}
 	}

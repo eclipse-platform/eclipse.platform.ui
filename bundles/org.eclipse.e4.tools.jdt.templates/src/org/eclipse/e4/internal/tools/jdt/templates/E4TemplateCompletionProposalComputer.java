@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation (adapted from JDT's SWTTemplateCompletionProposalComputer)
+ * IBM Corporation - initial API and implementation (adapted from JDT's SWTTemplateCompletionProposalComputer)
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.jdt.templates;
 
@@ -31,28 +31,30 @@ import org.eclipse.jface.text.templates.TemplateContextType;
  * Computer that computes the template proposals for the E4 context type.
  *
  */
+@SuppressWarnings("restriction")
 public class E4TemplateCompletionProposalComputer extends AbstractTemplateCompletionProposalComputer {
 
 	/**
 	 * The name of <code>javax.inject.Inject</code> used to detect
 	 * if a project uses e4.
 	 */
-	private static final String E4_TYPE_NAME= "org.eclipse.e4.ui.di.Focus"; //$NON-NLS-1$
-
+	private static final String E4_TYPE_NAME = "org.eclipse.e4.ui.di.Focus"; //$NON-NLS-1$
 
 	/**
 	 * Listener that resets the cached java project if its build path changes.
 	 */
 	private final class BuildPathChangeListener implements IElementChangedListener {
 
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
-			IJavaProject javaProject= getCachedJavaProject();
-			if (javaProject == null)
+			final IJavaProject javaProject = getCachedJavaProject();
+			if (javaProject == null) {
 				return;
+			}
 
-			IJavaElementDelta[] children= event.getDelta().getChangedChildren();
-			for (int i= 0; i < children.length; i++) {
-				IJavaElementDelta child= children[i];
+			final IJavaElementDelta[] children = event.getDelta().getChangedChildren();
+			for (int i = 0; i < children.length; i++) {
+				final IJavaElementDelta child = children[i];
 				if (javaProject.equals(child.getElement())) {
 					if (isClasspathChange(child)) {
 						setCachedJavaProject(null);
@@ -63,19 +65,22 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 
 		/**
 		 * Does the delta indicate a classpath change?
+		 * 
 		 * @param delta the delta to inspect
 		 * @return true if classpath has changed
 		 */
 		private boolean isClasspathChange(IJavaElementDelta delta) {
-			int flags= delta.getFlags();
-			if (isClasspathChangeFlag(flags))
+			final int flags = delta.getFlags();
+			if (isClasspathChangeFlag(flags)) {
 				return true;
+			}
 
 			if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-				IJavaElementDelta[] children= delta.getAffectedChildren();
-				for (int i= 0; i < children.length; i++) {
-					if (isClasspathChangeFlag(children[i].getFlags()))
+				final IJavaElementDelta[] children = delta.getAffectedChildren();
+				for (int i = 0; i < children.length; i++) {
+					if (isClasspathChangeFlag(children[i].getFlags())) {
 						return true;
+					}
 				}
 			}
 
@@ -84,26 +89,30 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 
 		/**
 		 * Do the flags indicate a classpath change?
+		 * 
 		 * @param flags the flags to inspect
 		 * @return true if the flag flags a classpath change
 		 */
 		private boolean isClasspathChangeFlag(int flags) {
-			if ((flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0)
+			if ((flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0) {
 				return true;
+			}
 
-			if ((flags & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0)
+			if ((flags & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0) {
 				return true;
+			}
 
-			if ((flags & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0)
+			if ((flags & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) {
 				return true;
+			}
 
-			if ((flags & IJavaElementDelta.F_ARCHIVE_CONTENT_CHANGED) != 0)
+			if ((flags & IJavaElementDelta.F_ARCHIVE_CONTENT_CHANGED) != 0) {
 				return true;
+			}
 
 			return false;
 		}
 	}
-
 
 	/**
 	 * Engine used to compute the proposals for this computer
@@ -124,33 +133,36 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 	private boolean fIsE4OnClasspath;
 
 	public E4TemplateCompletionProposalComputer() {
-		ContextTypeRegistry templateContextRegistry= JavaPlugin.getDefault().getTemplateContextRegistry();
-		fE4TemplateEngine= createTemplateEngine(templateContextRegistry, E4ContextType.ID_ALL);
-		fE4MembersTemplateEngine= createTemplateEngine(templateContextRegistry, E4ContextType.ID_MEMBERS);
-		fE4StatementsTemplateEngine= createTemplateEngine(templateContextRegistry, E4ContextType.ID_STATEMENTS);
+		final ContextTypeRegistry templateContextRegistry = JavaPlugin.getDefault().getTemplateContextRegistry();
+		fE4TemplateEngine = createTemplateEngine(templateContextRegistry, E4ContextType.ID_ALL);
+		fE4MembersTemplateEngine = createTemplateEngine(templateContextRegistry, E4ContextType.ID_MEMBERS);
+		fE4StatementsTemplateEngine = createTemplateEngine(templateContextRegistry, E4ContextType.ID_STATEMENTS);
 
 		JavaCore.addElementChangedListener(new BuildPathChangeListener());
 	}
 
 	private static TemplateEngine createTemplateEngine(ContextTypeRegistry templateContextRegistry, String contextTypeId) {
-		TemplateContextType contextType= templateContextRegistry.getContextType(contextTypeId);
+		final TemplateContextType contextType = templateContextRegistry.getContextType(contextTypeId);
 		Assert.isNotNull(contextType);
 		return new TemplateEngine(contextType);
 	}
 
+	@Override
 	protected TemplateEngine computeCompletionEngine(JavaContentAssistInvocationContext context) {
-		ICompilationUnit unit= context.getCompilationUnit();
-		if (unit == null)
+		final ICompilationUnit unit = context.getCompilationUnit();
+		if (unit == null) {
 			return null;
+		}
 
-		IJavaProject javaProject= unit.getJavaProject();
-		if (javaProject == null)
+		final IJavaProject javaProject = unit.getJavaProject();
+		if (javaProject == null) {
 			return null;
+		}
 
 		if (isE4OnClasspath(javaProject)) {
-			CompletionContext coreContext= context.getCoreContext();
+			final CompletionContext coreContext = context.getCoreContext();
 			if (coreContext != null) {
-				int tokenLocation= coreContext.getTokenLocation();
+				final int tokenLocation = coreContext.getTokenLocation();
 				if ((tokenLocation & CompletionContext.TL_MEMBER_START) != 0) {
 					return fE4MembersTemplateEngine;
 				}
@@ -166,18 +178,18 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 
 	/**
 	 * Tells whether E4 is on the given project's class path.
-	 * 
+	 *
 	 * @param javaProject the Java project
 	 * @return <code>true</code> if the given project's class path
 	 */
 	private synchronized boolean isE4OnClasspath(IJavaProject javaProject) {
 		if (!javaProject.equals(fCachedJavaProject)) {
-			fCachedJavaProject= javaProject;
+			fCachedJavaProject = javaProject;
 			try {
-				IType type= javaProject.findType(E4_TYPE_NAME);
-				fIsE4OnClasspath= type != null;
-			} catch (JavaModelException e) {
-				fIsE4OnClasspath= false;
+				final IType type = javaProject.findType(E4_TYPE_NAME);
+				fIsE4OnClasspath = type != null;
+			} catch (final JavaModelException e) {
+				fIsE4OnClasspath = false;
 			}
 		}
 		return fIsE4OnClasspath;
@@ -198,7 +210,7 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 	 * @param project or <code>null</code> to reset the cache
 	 */
 	private synchronized void setCachedJavaProject(IJavaProject project) {
-		fCachedJavaProject= project;
+		fCachedJavaProject = project;
 	}
 
 }
