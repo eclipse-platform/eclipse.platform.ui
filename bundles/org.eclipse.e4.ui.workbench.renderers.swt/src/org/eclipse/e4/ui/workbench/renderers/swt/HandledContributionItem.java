@@ -11,7 +11,7 @@
  *     Snjezana Peco <snjezana.peco@redhat.com> - Memory leaks in Juno when opening and closing XML Editor - http://bugs.eclipse.org/397909
  *     Marco Descher <marco@descher.at> - Bug 397677
  *     Dmitry Spiridenok - Bug 429756
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723, 450863
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -232,6 +232,11 @@ public class HandledContributionItem extends ContributionItem {
 	private void generateCommand() {
 		if (model.getCommand() != null && model.getWbCommand() == null) {
 			String cmdId = model.getCommand().getElementId();
+			if (cmdId == null) {
+				Activator.log(IStatus.ERROR, "Unable to generate parameterized command for " + model //$NON-NLS-1$
+						+ ". ElementId is not allowed to be null."); //$NON-NLS-1$
+				return;
+			}
 			List<MParameter> modelParms = model.getParameters();
 			Map<String, Object> parameters = new HashMap<String, Object>(4);
 			for (MParameter mParm : modelParms) {
