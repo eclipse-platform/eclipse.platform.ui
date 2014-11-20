@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 436281
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 436281
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
 import java.util.EnumSet;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -82,11 +83,6 @@ public interface IClassContributionProvider {
 			return bundles;
 		}
 
-		/**
-		 * Sets the packages to filter on
-		 *
-		 * @return
-		 */
 		public List<String> getPackages() {
 			return packages;
 		}

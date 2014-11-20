@@ -1,5 +1,5 @@
 /*******************************************************************************
-
+ *
  * Copyright (c) 2010 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 404136, Bug 424730, Bug 436281
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Bug 404136, Bug 424730, Bug 436281
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -62,19 +63,18 @@ import org.eclipse.swt.widgets.Shell;
  * A FilteredContributionDialog with additional options for icon resources.
  * Features in include
  * <ul>
- * <li>Rebuilding the viewer when row height decreases. (Workaround for an SWT
- * limitation)
+ * <li>Rebuilding the viewer when row height decreases. (Workaround for an SWT limitation)
  * <li>Icon previews are displace in the first column.
  * <li>Limited the maximum image size.
  * </ul>
  *
  * @author "Steven Spungin"
  *
- * @see @FilteredContributionDialog
+ * @see FilteredContributionDialog
  */
 public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContributionDialog {
-	private IProject project;
-	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
+	private final IProject project;
+	private final Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
 
 	static public class Entry {
 		IFile file;
@@ -87,7 +87,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 	public AbstractIconDialogWithScopeAndFilter(Shell parentShell, IEclipseContext context) {
 		super(parentShell, context);
-		this.project = context.get(IProject.class);
+		project = context.get(IProject.class);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 	protected void createOptions(Composite compOptions) {
 		super.createOptions(compOptions);
 
-		Label lblMaxSize = new Label(compOptions, SWT.NONE);
+		final Label lblMaxSize = new Label(compOptions, SWT.NONE);
 		lblMaxSize.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		lblMaxSize.setText(Messages.AbstractIconDialogWithScopeAndFilter_maxDisplayedImageSize);
 
@@ -148,9 +148,9 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 		((GridData) getViewer().getTable().getLayoutData()).minimumHeight = 100;
 
-		TableViewerColumn colIcon = new TableViewerColumn(getViewer(), SWT.NONE);
+		final TableViewerColumn colIcon = new TableViewerColumn(getViewer(), SWT.NONE);
 		colIcon.getColumn().setText(Messages.AbstractIconDialogWithScopeAndFilter_icon);
-		TableViewerColumn colText = new TableViewerColumn(getViewer(), SWT.NONE);
+		final TableViewerColumn colText = new TableViewerColumn(getViewer(), SWT.NONE);
 		colText.getColumn().setText(Messages.AbstractIconDialogWithScopeAndFilter_details);
 
 		// resize the row height using a MeasureItem listener
@@ -181,14 +181,14 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 						in = file.getContents();
 						img = new Image(cell.getControl().getDisplay(), in);
 						icons.put(file, img);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						// e.printStackTrace();
 						return;
 					} finally {
 						if (in != null) {
 							try {
 								in.close();
-							} catch (IOException e) {
+							} catch (final IOException e) {
 								// TODO Auto-generated catch block
 								// e.printStackTrace();
 							}
@@ -198,32 +198,35 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 				// scale image if larger then max height
 				// also remember max width for column resizing
-				if (img != null) {
-					double scale1 = ((double) maxDisplayedImageSize) / img.getImageData().height;
-					double scale2 = ((double) maxDisplayedImageSize) / img.getImageData().width;
-					if (scale2 < scale1) {
-						scale1 = scale2;
+
+				double scale1 = (double) maxDisplayedImageSize / img.getImageData().height;
+				final double scale2 = (double) maxDisplayedImageSize / img.getImageData().width;
+				if (scale2 < scale1) {
+					scale1 = scale2;
+				}
+				if (scale1 < 1) {
+					int width = (int) (img.getImageData().width * scale1);
+					if (width == 0) {
+						width = 1;
 					}
-					if (scale1 < 1) {
-						int width = (int) (img.getImageData().width * scale1);
-						if (width == 0)
-							width = 1;
-						int height = (int) (img.getImageData().height * scale1);
-						if (height == 0)
-							height = 1;
-						Image img2 = new Image(img.getDevice(), img.getImageData().scaledTo(width, height));
-						img.dispose();
-						img = img2;
-						icons.put(file, img);
+					int height = (int) (img.getImageData().height * scale1);
+					if (height == 0) {
+						height = 1;
 					}
-					int width = AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0).getWidth();
-					if (img.getImageData().width > width) {
-						AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0).setWidth(img.getImageData().width);
-					}
-					int height = img.getImageData().height;
-					if (height > maxImageHeight) {
-						maxImageHeight = height;
-					}
+					final Image img2 = new Image(img.getDevice(), img.getImageData().scaledTo(width, height));
+					img.dispose();
+					img = img2;
+					icons.put(file, img);
+				}
+				final int width = AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0)
+					.getWidth();
+				if (img.getImageData().width > width) {
+					AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0)
+					.setWidth(img.getImageData().width);
+				}
+				final int height = img.getImageData().height;
+				if (height > maxImageHeight) {
+					maxImageHeight = height;
 				}
 
 				cell.setImage(img);
@@ -237,7 +240,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 				IFile file;
 				String installLocation = null;
 				if (cell.getElement() instanceof ContributionData) {
-					ContributionData contributionData = (ContributionData) cell.getElement();
+					final ContributionData contributionData = (ContributionData) cell.getElement();
 					file = new ContributionDataFile(contributionData);
 					installLocation = contributionData.installLocation;
 				} else if (cell.getElement() instanceof Entry) {
@@ -246,8 +249,8 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 				} else {
 					file = (IFile) cell.getElement();
 				}
-				StyledString styledString = new StyledString(file.getProjectRelativePath().toString(), null);
-				String bundle = FilteredContributionDialog.getBundle(file);
+				final StyledString styledString = new StyledString(file.getProjectRelativePath().toString(), null);
+				final String bundle = FilteredContributionDialog.getBundle(file);
 				if (bundle != null) {
 					styledString.append(" - " + bundle, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				} else if (installLocation != null) {
@@ -271,7 +274,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite comp = (Composite) super.createDialogArea(parent);
+		final Composite comp = (Composite) super.createDialogArea(parent);
 		maxDisplayedImageSize = 20;
 		rebuildViewer();
 
@@ -289,35 +292,34 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		// getSearchScopes().contains(SearchScope.WORKSPACE)) {
 		if (getSearchScopes().contains(ResourceSearchScope.TARGET_PLATFORM)) {
 			return false;
-		} else {
-			Timer timer = new Timer(true);
-
-			if (callback != null) {
-				callback.cancel = true;
-			}
-			if (task != null) {
-				task.cancel();
-			}
-			task = null;
-
-			clearImages();
-
-			callback = new IconMatchCallback((IObservableList) getViewer().getInput());
-			Filter filter = new Filter(project, getFilterTextBox().getText());
-			filter.setSearchScope(getSearchScopes());
-			filter.setBundles(getFilterBundles());
-			filter.setLocations(getFilterLocations());
-			filter.setPackages(getFilterPackages());
-			filter.setIncludeNonBundles(includeNonBundles);
-			task = new SearchThread(callback, filter);
-			timer.schedule(task, 500);
-			// }
-			return true;
 		}
+		final Timer timer = new Timer(true);
+
+		if (callback != null) {
+			callback.cancel = true;
+		}
+		if (task != null) {
+			task.cancel();
+		}
+		task = null;
+
+		clearImages();
+
+		callback = new IconMatchCallback((IObservableList) getViewer().getInput());
+		final Filter filter = new Filter(project, getFilterTextBox().getText());
+		filter.setSearchScope(getSearchScopes());
+		filter.setBundles(getFilterBundles());
+		filter.setLocations(getFilterLocations());
+		filter.setPackages(getFilterPackages());
+		filter.setIncludeNonBundles(includeNonBundles);
+		task = new SearchThread(callback, filter);
+		timer.schedule(task, 500);
+		// }
+		return true;
 	}
 
 	private void clearImages() {
-		for (Image img : icons.values()) {
+		for (final Image img : icons.values()) {
 			img.dispose();
 		}
 		icons.clear();
@@ -330,13 +332,13 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		if (file != null) {
 			String installLocation = null;
 			if (file instanceof ContributionDataFile) {
-				ContributionDataFile cdf = (ContributionDataFile) file;
+				final ContributionDataFile cdf = (ContributionDataFile) file;
 				installLocation = cdf.getContributionData().installLocation;
 
 			}
 			file = checkResourceAccessible(file, installLocation);
 			if (file != null) {
-				String bundle = getBundle(file);
+				final String bundle = getBundle(file);
 				String uri;
 				uri = "platform:/plugin/" + bundle + "/" + file.getProjectRelativePath().toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				returnValue = uri;
@@ -347,7 +349,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 	private class IconMatchCallback {
 		private volatile boolean cancel;
-		private IObservableList list;
+		private final IObservableList list;
 
 		private IconMatchCallback(IObservableList list) {
 			this.list = list;
@@ -359,7 +361,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 					@Override
 					public void run() {
-						Entry entry = new Entry();
+						final Entry entry = new Entry();
 						entry.file = file;
 						entry.installLocation = installLocation;
 						list.add(entry);
@@ -374,13 +376,13 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		private final StringMatcher matcherGif;
 		private final StringMatcher matcherJpg;
 		private final StringMatcher matcherPng;
-		private Filter filter;
+		private final Filter filter;
 		private boolean includeNonBundles;
 
 		public SearchThread(IconMatchCallback callback, Filter filter) {
-			this.matcherGif = new StringMatcher("*" + filter.namePattern + "*.gif", true, false); //$NON-NLS-1$//$NON-NLS-2$
-			this.matcherJpg = new StringMatcher("*" + filter.namePattern + "*.jpg", true, false); //$NON-NLS-1$//$NON-NLS-2$
-			this.matcherPng = new StringMatcher("*" + filter.namePattern + "*.png", true, false); //$NON-NLS-1$//$NON-NLS-2$
+			matcherGif = new StringMatcher("*" + filter.namePattern + "*.gif", true, false); //$NON-NLS-1$//$NON-NLS-2$
+			matcherJpg = new StringMatcher("*" + filter.namePattern + "*.jpg", true, false); //$NON-NLS-1$//$NON-NLS-2$
+			matcherPng = new StringMatcher("*" + filter.namePattern + "*.png", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			this.callback = callback;
 			this.filter = filter;
 		}
@@ -399,10 +401,10 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 					projects = new ArrayList<IProject>();
 					projects.add(filter.project);
 					try {
-						for (IProject ref : filter.project.getReferencedProjects()) {
+						for (final IProject ref : filter.project.getReferencedProjects()) {
 							projects.add(ref);
 						}
-					} catch (CoreException e) {
+					} catch (final CoreException e) {
 						e.printStackTrace();
 					}
 				} else {
@@ -429,10 +431,11 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 							if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
 								return true;
 							} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
-								String path = resource.getProjectRelativePath().toString();
+								final String path = resource.getProjectRelativePath().toString();
 								if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
 									if (E.notEmpty(filter.getPackages())) {
-										if (!filter.getPackages().contains(resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
+										if (!filter.getPackages().contains(
+											resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
 											return false;
 										}
 									}
@@ -442,13 +445,13 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 										}
 									}
 									if (E.notEmpty(filter.getBundles())) {
-										String bundle = getBundle(project);
+										final String bundle = getBundle(project);
 										if (bundle == null || !filter.getBundles().contains(bundle)) {
 											return false;
 										}
 									}
 									if (!filter.isIncludeNonBundles()) {
-										String bundle = getBundle(project);
+										final String bundle = getBundle(project);
 										if (bundle == null) {
 											return false;
 										}
@@ -462,7 +465,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 					});
 				}
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				e.printStackTrace();
 			}
 		}

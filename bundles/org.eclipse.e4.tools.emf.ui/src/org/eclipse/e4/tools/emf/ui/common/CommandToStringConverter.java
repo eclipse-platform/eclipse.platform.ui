@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
@@ -17,8 +17,9 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
+@SuppressWarnings("restriction")
 public class CommandToStringConverter extends Converter {
-	private Messages Messages;
+	private final Messages Messages;
 
 	public CommandToStringConverter(Messages Messages) {
 		super(MCommand.class, String.class);
@@ -27,7 +28,7 @@ public class CommandToStringConverter extends Converter {
 
 	@Override
 	public Object convert(Object fromObject) {
-		MCommand cmd = (MCommand) fromObject;
+		final MCommand cmd = (MCommand) fromObject;
 		String elementId = null;
 		if (cmd != null && cmd.getElementId() != null && cmd.getElementId().trim().length() > 0) {
 			elementId = cmd.getElementId();
@@ -39,9 +40,9 @@ public class CommandToStringConverter extends Converter {
 		} else if (elementId != null) {
 			return elementId;
 		} else {
-			Resource res = ((EObject) cmd).eResource();
+			final Resource res = ((EObject) cmd).eResource();
 			if (res instanceof E4XMIResource) {
-				String v = ((E4XMIResource) res).getID((EObject) cmd);
+				final String v = ((E4XMIResource) res).getID((EObject) cmd);
 				if (v != null && v.trim().length() > 0) {
 					return v;
 				}

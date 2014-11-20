@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Nicolaj Hoess <nicohoess@gmail.com> - initial implementation (Bug 396975)
- *     Andrej Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 396975, 395283
- *     Adrian Alcaide - initial implementation (Bug 396975)
+ * Nicolaj Hoess <nicohoess@gmail.com> - initial implementation (Bug 396975)
+ * Andrej Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 396975, 395283
+ * Adrian Alcaide - initial implementation (Bug 396975)
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
@@ -43,7 +44,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends SaveDialogBoundsSettingsDialog {
+public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends
+	SaveDialogBoundsSettingsDialog {
 
 	protected EModelService modelService;
 
@@ -53,7 +55,8 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 	protected ContributionClass contribution;
 	protected Messages messages;
 
-	public AbstractIdDialog(Shell parentShell, IModelResource resource, ContributionClass toolbarContribution, EditingDomain domain, EModelService modelService, Messages Messages) {
+	public AbstractIdDialog(Shell parentShell, IModelResource resource, ContributionClass toolbarContribution,
+		EditingDomain domain, EModelService modelService, Messages Messages) {
 		super(parentShell);
 		this.resource = resource;
 		this.modelService = modelService;
@@ -86,13 +89,16 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 
 			@Override
 			public void update(ViewerCell cell) {
-				ElementClass el = (ElementClass) cell.getElement();
-				String elementId = (el.getElementId() != null && el.getElementId().trim().length() > 0) ? el.getElementId() : "(Id missing)"; //$NON-NLS-1$
-				StyledString str = new StyledString(elementId);
+				final ElementClass el = (ElementClass) cell.getElement();
+				final String elementId = el.getElementId() != null && el.getElementId().trim().length() > 0 ? el
+					.getElementId() : "(Id missing)"; //$NON-NLS-1$
+				final StyledString str = new StyledString(elementId);
 
-				String infoString = getListItemInformation(el);
+				final String infoString = getListItemInformation(el);
 				if (infoString != null && infoString.trim().length() > 0)
+				{
 					str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				}
 
 				cell.setText(str.getString());
 				cell.setStyleRanges(str.getStyleRanges());
@@ -105,18 +111,19 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 		getShell().setText(getShellTitle());
 		setTitle(getDialogTitle());
 		setMessage(getDialogMessage());
-		Composite comp = (Composite) super.createDialogArea(parent);
-		Composite container = new Composite(comp, SWT.NONE);
+		final Composite comp = (Composite) super.createDialogArea(parent);
+		final Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
 		l.setText(getLabelText());
 
-		Text idField = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+		final Text idField = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		idField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final PatternFilter filter = new PatternFilter() {
+			@SuppressWarnings("restriction")
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);
@@ -146,8 +153,8 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 	@Override
 	protected void okPressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			ElementClass el = (ElementClass) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-			Command cmd = SetCommand.create(domain, contribution, getFeatureLiteral(), el.getElementId());
+			final ElementClass el = (ElementClass) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+			final Command cmd = SetCommand.create(domain, contribution, getFeatureLiteral(), el.getElementId());
 			if (cmd.canExecute()) {
 				domain.getCommandStack().execute(cmd);
 				super.okPressed();

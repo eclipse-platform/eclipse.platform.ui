@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -44,6 +45,7 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
+@SuppressWarnings("restriction")
 public class Util {
 	public static final boolean isNullOrEmpty(String element) {
 		return element == null || element.trim().length() == 0;
@@ -54,16 +56,18 @@ public class Util {
 	}
 
 	public static final void addClasses(EPackage ePackage, List<FeatureClass> list) {
-		for (EClassifier c : ePackage.getEClassifiers()) {
+		for (final EClassifier c : ePackage.getEClassifiers()) {
 			if (c instanceof EClass) {
-				EClass eclass = (EClass) c;
-				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+				final EClass eclass = (EClass) c;
+				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
+					&& !eclass.isInterface()
+					&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
 					list.add(new FeatureClass(eclass.getName(), eclass));
 				}
 			}
 		}
 
-		for (EPackage eSubPackage : ePackage.getESubpackages()) {
+		for (final EPackage eSubPackage : ePackage.getESubpackages()) {
 			addClasses(eSubPackage, list);
 		}
 	}
@@ -72,25 +76,25 @@ public class Util {
 	// ${project}.${classname}.${counter}
 	public static final String getDefaultElementId(Resource resource, MApplicationElement element, IProject project) {
 		try {
-			EObject o = (EObject) element;
-			String className = o.eClass().getName();
-			String projectName = project.getName();
+			final EObject o = (EObject) element;
+			final String className = o.eClass().getName();
+			final String projectName = project.getName();
 
-			String prefix = (projectName + "." + className).toLowerCase(); //$NON-NLS-1$
+			final String prefix = (projectName + "." + className).toLowerCase(); //$NON-NLS-1$
 
-			TreeIterator<EObject> it = resource.getAllContents();
-			SortedSet<Integer> numbers = new TreeSet<Integer>();
+			final TreeIterator<EObject> it = resource.getAllContents();
+			final SortedSet<Integer> numbers = new TreeSet<Integer>();
 
 			while (it.hasNext()) {
-				EObject tmp = it.next();
+				final EObject tmp = it.next();
 				if (tmp instanceof MApplicationElement) {
-					String elementId = ((MApplicationElement) tmp).getElementId();
+					final String elementId = ((MApplicationElement) tmp).getElementId();
 					if (elementId != null && elementId.length() > prefix.length() && elementId.startsWith(prefix)) {
-						String suffix = elementId.substring(prefix.length());
+						final String suffix = elementId.substring(prefix.length());
 						if (suffix.startsWith(".") && suffix.length() > 1) { //$NON-NLS-1$
 							try {
 								numbers.add(Integer.parseInt(suffix.substring(1)));
-							} catch (Exception e) {
+							} catch (final Exception e) {
 								// TODO: handle exception
 							}
 						}
@@ -99,15 +103,15 @@ public class Util {
 			}
 
 			int lastNumber = -1;
-			for (Integer number : numbers) {
-				if ((lastNumber + 1) != number) {
+			for (final Integer number : numbers) {
+				if (lastNumber + 1 != number) {
 					break;
 				}
 				lastNumber = number;
 			}
 
 			return (prefix + "." + ++lastNumber).toLowerCase(); //$NON-NLS-1$
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -115,22 +119,22 @@ public class Util {
 	}
 
 	public static List<InternalPackage> loadPackages() {
-		List<InternalPackage> packs = new ArrayList<InternalPackage>();
+		final List<InternalPackage> packs = new ArrayList<InternalPackage>();
 
-		for (Entry<String, Object> regEntry : EPackage.Registry.INSTANCE.entrySet()) {
+		for (final Entry<String, Object> regEntry : EPackage.Registry.INSTANCE.entrySet()) {
 			if (regEntry.getValue() instanceof EPackage) {
-				EPackage ePackage = (EPackage) regEntry.getValue();
-				InternalPackage iePackage = new InternalPackage(ePackage);
+				final EPackage ePackage = (EPackage) regEntry.getValue();
+				final InternalPackage iePackage = new InternalPackage(ePackage);
 				boolean found = false;
-				for (EClassifier cl : ePackage.getEClassifiers()) {
+				for (final EClassifier cl : ePackage.getEClassifiers()) {
 					if (cl instanceof EClass) {
-						EClass eClass = (EClass) cl;
+						final EClass eClass = (EClass) cl;
 						if (eClass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
 							if (!eClass.isInterface() && !eClass.isAbstract()) {
 								found = true;
-								InternalClass ieClass = new InternalClass(iePackage, eClass);
+								final InternalClass ieClass = new InternalClass(iePackage, eClass);
 								iePackage.classes.add(ieClass);
-								for (EReference f : eClass.getEAllReferences()) {
+								for (final EReference f : eClass.getEAllReferences()) {
 									ieClass.features.add(new InternalFeature(ieClass, f));
 								}
 							}
@@ -146,10 +150,11 @@ public class Util {
 		return packs;
 	}
 
-	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel, int index, EStructuralFeature feature) {
+	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
+		int index, EStructuralFeature feature) {
 		if (liveModel) {
-			EObject container = ((EObject) element).eContainer();
-			List<Object> l = (List<Object>) container.eGet(feature);
+			final EObject container = ((EObject) element).eContainer();
+			final List<Object> l = (List<Object>) container.eGet(feature);
 			l.remove(element);
 
 			if (index >= 0) {
@@ -159,21 +164,21 @@ public class Util {
 			}
 
 			return true;
-		} else {
-			EObject container = ((EObject) element).eContainer();
-			Command cmd = MoveCommand.create(editingDomain, container, feature, element, index);
-
-			if (cmd.canExecute()) {
-				editingDomain.getCommandStack().execute(cmd);
-				return true;
-			}
-			return false;
 		}
+		final EObject container = ((EObject) element).eContainer();
+		final Command cmd = MoveCommand.create(editingDomain, container, feature, element, index);
+
+		if (cmd.canExecute()) {
+			editingDomain.getCommandStack().execute(cmd);
+			return true;
+		}
+		return false;
 	}
 
-	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel, int index) {
+	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
+		int index) {
 		if (liveModel) {
-			MElementContainer<MUIElement> container = element.getParent();
+			final MElementContainer<MUIElement> container = element.getParent();
 			container.getChildren().remove(element);
 
 			if (index >= 0) {
@@ -184,16 +189,16 @@ public class Util {
 
 			container.setSelectedElement(element);
 			return true;
-		} else {
-			MElementContainer<MUIElement> container = element.getParent();
-			Command cmd = MoveCommand.create(editingDomain, container, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, element, index);
-
-			if (cmd.canExecute()) {
-				editingDomain.getCommandStack().execute(cmd);
-				return true;
-			}
-			return false;
 		}
+		final MElementContainer<MUIElement> container = element.getParent();
+		final Command cmd = MoveCommand.create(editingDomain, container,
+			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, element, index);
+
+		if (cmd.canExecute()) {
+			editingDomain.getCommandStack().execute(cmd);
+			return true;
+		}
+		return false;
 	}
 
 	public static final void addDecoration(Control control, Binding binding) {
@@ -202,7 +207,7 @@ public class Util {
 
 			@Override
 			public void handleValueChange(ValueChangeEvent event) {
-				IStatus s = (IStatus) event.getObservableValue().getValue();
+				final IStatus s = (IStatus) event.getObservableValue().getValue();
 				if (s.isOK()) {
 					dec.setDescriptionText(null);
 					dec.setImage(null);
@@ -222,7 +227,8 @@ public class Util {
 						fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
 						break;
 					}
-					FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(fieldDecorationID);
+					final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
+						fieldDecorationID);
 					dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
 				}
 			}
@@ -243,8 +249,8 @@ public class Util {
 		}
 
 		public List<EClass> getAllClasses() {
-			ArrayList<EClass> rv = new ArrayList<EClass>(classes.size());
-			for (InternalClass c : classes) {
+			final ArrayList<EClass> rv = new ArrayList<EClass>(classes.size());
+			for (final InternalClass c : classes) {
 				rv.add(c.eClass);
 			}
 			return rv;

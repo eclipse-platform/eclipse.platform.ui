@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,19 +42,21 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 
+@SuppressWarnings("restriction")
 public class XMIModelResource implements IModelResource {
-	private EditingDomain editingDomain;
-	private Resource resource;
-	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
+	private final EditingDomain editingDomain;
+	private final Resource resource;
+	private final List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
 
 	private IObservableList list;
 
 	public XMIModelResource(URI uri) {
-		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+		final ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
+			ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 		adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 
-		ResourceSet resourceSet = new ResourceSetImpl();
-		BasicCommandStack commandStack = new BasicCommandStack();
+		final ResourceSet resourceSet = new ResourceSetImpl();
+		final BasicCommandStack commandStack = new BasicCommandStack();
 		commandStack.addCommandStackListener(new CommandStackListener() {
 
 			@Override
@@ -63,7 +66,8 @@ public class XMIModelResource implements IModelResource {
 			}
 		});
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, commandStack, resourceSet);
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
+			.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
 		resource = resourceSet.getResource(uri, true);
 	}
 
@@ -81,24 +85,24 @@ public class XMIModelResource implements IModelResource {
 	@Override
 	public void replaceRoot(EObject eObject) {
 		E4XMIResource resource = (E4XMIResource) eObject.eResource();
-		Map<EObject, String> idMap = new HashMap<EObject, String>();
+		final Map<EObject, String> idMap = new HashMap<EObject, String>();
 		idMap.put(eObject, resource.getID(eObject));
 
-		TreeIterator<EObject> it = EcoreUtil.getAllContents(eObject, true);
+		final TreeIterator<EObject> it = EcoreUtil.getAllContents(eObject, true);
 		while (it.hasNext()) {
-			EObject o = it.next();
+			final EObject o = it.next();
 			resource = (E4XMIResource) o.eResource();
 			idMap.put(o, resource.getID(o));
 		}
 
 		resource = (E4XMIResource) ((EObject) list.get(0)).eResource();
 
-		Command cmdRemove = new RemoveCommand(getEditingDomain(), resource.getContents(), list.get(0));
-		Command cmdAdd = new AddCommand(getEditingDomain(), resource.getContents(), eObject);
-		CompoundCommand cmd = new CompoundCommand(Arrays.asList(cmdRemove, cmdAdd));
+		final Command cmdRemove = new RemoveCommand(getEditingDomain(), resource.getContents(), list.get(0));
+		final Command cmdAdd = new AddCommand(getEditingDomain(), resource.getContents(), eObject);
+		final CompoundCommand cmd = new CompoundCommand(Arrays.asList(cmdRemove, cmdAdd));
 		getEditingDomain().getCommandStack().execute(cmd);
 
-		for (Entry<EObject, String> e : idMap.entrySet()) {
+		for (final Entry<EObject, String> e : idMap.entrySet()) {
 			resource.setID(e.getKey(), e.getValue());
 		}
 	}
@@ -129,30 +133,30 @@ public class XMIModelResource implements IModelResource {
 	}
 
 	private void fireDirtyChanged() {
-		for (ModelListener listener : listeners) {
+		for (final ModelListener listener : listeners) {
 			listener.dirtyChanged();
 		}
 	}
 
 	private void fireCommandStackChanged() {
-		for (ModelListener listener : listeners) {
+		for (final ModelListener listener : listeners) {
 			listener.commandStackChanged();
 		}
 	}
 
 	@Override
 	public IStatus save() {
-		Map<String, String> map = new HashMap<String, String>();
+		final Map<String, String> map = new HashMap<String, String>();
 		try {
 			resource.save(map);
 
-			BasicCommandStack commandStack = (BasicCommandStack) getEditingDomain().getCommandStack();
+			final BasicCommandStack commandStack = (BasicCommandStack) getEditingDomain().getCommandStack();
 			commandStack.saveIsDone();
 
 			fireDirtyChanged();
 			fireCommandStackChanged();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}

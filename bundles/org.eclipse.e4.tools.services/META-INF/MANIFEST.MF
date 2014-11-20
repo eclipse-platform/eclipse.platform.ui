@@ -4,7 +4,7 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.tools.services
 Bundle-Version: 0.12.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.e4.tools.services;version="0.12.0.qualifier";x-friends:="org.eclipse.e4.tools.compat,org.eclipse.e4.tools.emf.editor3x",
+Export-Package: org.eclipse.e4.tools.services;version="0.12.0.qualifier";x-friends:="org.eclipse.e4.tools.compat,org.eclipse.e4.tools.emf.editor3x,org.eclipse.e4.tools.emf.ui",
  org.eclipse.e4.tools.services.impl;version="0.12.0.qualifier";x-friends:="org.eclipse.e4.tools.emf.ui"
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.swt;bundle-version="3.7.0",

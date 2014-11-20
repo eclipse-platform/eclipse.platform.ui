@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
@@ -47,8 +48,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSettingsDialog {
-	private IModelResource resource;
+	private final IModelResource resource;
 	private TableViewer viewer;
 	protected Messages Messages;
 
@@ -66,12 +68,13 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
+		final Composite composite = (Composite) super.createDialogArea(parent);
 		getShell().setText(getShellTitle());
 		setTitle(getDialogTitle());
 		setMessage(getDialogMessage());
 
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
+		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -81,14 +84,14 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 			}
 		});
 
-		Composite container = new Composite(composite, SWT.NONE);
+		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
-		Label l = new Label(container, SWT.NONE);
+		final Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.AbstractCommandSelectionDialog_Label_CommandId);
 
-		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		new Label(container, SWT.NONE);
@@ -104,10 +107,10 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 			}
 		});
 
-		List<EObject> commands = new ArrayList<EObject>();
-		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
+		final List<EObject> commands = new ArrayList<EObject>();
+		final TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
 		while (it.hasNext()) {
-			EObject o = it.next();
+			final EObject o = it.next();
 			if (o.eClass() == CommandsPackageImpl.Literals.COMMAND) {
 				commands.add(o);
 			}
@@ -129,9 +132,9 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 
 	@Override
 	protected void okPressed() {
-		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+		final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if (!s.isEmpty()) {
-			Command cmd = createStoreCommand(resource.getEditingDomain(), (MCommand) s.getFirstElement());
+			final Command cmd = createStoreCommand(resource.getEditingDomain(), (MCommand) s.getFirstElement());
 			if (cmd.canExecute()) {
 				resource.getEditingDomain().getCommandStack().execute(cmd);
 				super.okPressed();
@@ -150,9 +153,9 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 
 		@Override
 		public void update(final ViewerCell cell) {
-			MCommand cmd = (MCommand) cell.getElement();
+			final MCommand cmd = (MCommand) cell.getElement();
 
-			StyledString styledString = new StyledString();
+			final StyledString styledString = new StyledString();
 			if (cmd.getCommandName() != null) {
 				styledString.append(cmd.getCommandName());
 			}
@@ -173,7 +176,7 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 
 		@Override
 		public String getText(Object element) {
-			MCommand command = (MCommand) element;
+			final MCommand command = (MCommand) element;
 			String s = ""; //$NON-NLS-1$
 			if (command.getCommandName() != null) {
 				s += command.getCommandName();

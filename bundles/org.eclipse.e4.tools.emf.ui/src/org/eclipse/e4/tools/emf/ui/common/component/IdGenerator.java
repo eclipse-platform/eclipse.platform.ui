@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 437951
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 437951
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.common.component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -41,14 +42,15 @@ public class IdGenerator {
 	/**
 	 * Bind must be called AFTER the master observable value is set in order to
 	 * properly initialize.
-	 * 
+	 *
 	 * @param master
 	 * @param ebpLabel
 	 * @param evpId
 	 * @param control
 	 *            Optional control.
 	 */
-	public void bind(final IObservableValue master, final IEMFEditValueProperty ebpLabel, final IEMFEditValueProperty evpId, Control control) {
+	public void bind(final IObservableValue master, final IEMFEditValueProperty ebpLabel,
+		final IEMFEditValueProperty evpId, Control control) {
 
 		// RULES
 		// Only start generating if the label is initially empty and the id ends
@@ -66,7 +68,7 @@ public class IdGenerator {
 		if (origId == null) {
 			origId = "id.0"; //$NON-NLS-1$
 		}
-		Matcher m = patternId.matcher(origId);
+		final Matcher m = patternId.matcher(origId);
 		if (!m.matches()) {
 			stopGenerating();
 			return;
@@ -78,7 +80,7 @@ public class IdGenerator {
 				@Override
 				public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 					stopGenerating();
-				};
+				}
 			});
 
 			control.addDisposeListener(new DisposeListener() {
@@ -110,7 +112,7 @@ public class IdGenerator {
 				if (labelValue == null) {
 					labelValue = ""; //$NON-NLS-1$
 				}
-				String camelCase = camelCase(labelValue);
+				final String camelCase = camelCase(labelValue);
 				ignore = true;
 				evpId.setValue(master.getValue(), baseId + camelCase);
 				ignore = false;
@@ -126,7 +128,7 @@ public class IdGenerator {
 	 * @return
 	 */
 	protected static String camelCase(String value) {
-		String[] parts = value.split("\\s+"); //$NON-NLS-1$
+		final String[] parts = value.split("\\s+"); //$NON-NLS-1$
 		String ret = ""; //$NON-NLS-1$
 		boolean first = true;
 		for (String part : parts) {
