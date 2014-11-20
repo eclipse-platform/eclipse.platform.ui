@@ -260,7 +260,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		IWorkingSet otherWorkingSet = (IWorkingSet) this.viewer.getTable().getItem(otherIdx)
 				.getData();
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-		manager.swapIndex(currentWorkingSet, otherWorkingSet);
+		manager.swapWorkingSets(currentWorkingSet, otherWorkingSet);
 		availableWorkingSetsChanged();
 	}
 

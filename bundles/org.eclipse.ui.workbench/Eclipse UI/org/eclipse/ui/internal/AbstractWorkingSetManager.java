@@ -912,7 +912,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	}
 
 	@Override
-	public void swapIndex(IWorkingSet one, IWorkingSet other) {
+	public void swapWorkingSets(IWorkingSet one, IWorkingSet other) {
 		int indexOne = this.workingSets.indexOf(one);
 		int indexOther = this.workingSets.indexOf(other);
 		if (indexOne < 0) {

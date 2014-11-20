@@ -569,7 +569,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			int otherIdx = selectedIndex + diffLocation;
 			if (otherIdx >= 0 && otherIdx < listViewer.getTable().getItemCount()) {
 				IWorkingSet otherWorkingSet = (IWorkingSet) this.listViewer.getTable().getItem(otherIdx).getData();
-				manager.swapIndex(currentWorkingSet, otherWorkingSet);
+				manager.swapWorkingSets(currentWorkingSet, otherWorkingSet);
 			}
 		}
 		availableWorkingSetsChanged();

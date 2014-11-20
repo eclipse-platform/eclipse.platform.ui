@@ -187,8 +187,8 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 	}
 
 	@Override
-	public void swapIndex(IWorkingSet one, IWorkingSet other) {
-		super.swapIndex(one, other);
+	public void swapWorkingSets(IWorkingSet one, IWorkingSet other) {
+		super.swapWorkingSets(one, other);
 		saveState();
 	}
 }
