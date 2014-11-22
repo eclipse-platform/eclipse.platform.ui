@@ -1,6 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2014 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 452764
+ *******************************************************************************/
+
 package org.eclipse.e4.ui.menu.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -37,8 +52,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.menus.MenuPersistence;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public class MToolItemTest extends TestCase {
+public class MToolItemTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
 
@@ -51,8 +70,8 @@ public class MToolItemTest extends TestCase {
 		return null;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
@@ -61,15 +80,16 @@ public class MToolItemTest extends TestCase {
 				PartRenderingEngine.engineURI);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		if (wb != null) {
 			wb.close();
 		}
 		appContext.dispose();
 	}
 
-	public void test01Children() throws Exception {
+	@Test
+	public void test01Children() {
 		MToolBar toolbarModel = MenuFactoryImpl.eINSTANCE.createToolBar();
 		toolbarModel.setElementId("p2.tb1");
 
@@ -88,7 +108,9 @@ public class MToolItemTest extends TestCase {
 		assertEquals(1, toolbarModel2.getChildren().size());
 	}
 
-	public void testFileItemContributionVisibility() throws Exception {
+	@Test
+	@Ignore("See bug 452765")
+	public void testFileItemContributionVisibility() {
 		MApplication application = TestUtil.setupRenderer(appContext);
 		// MenuManagerRenderer renderer = appContext
 		// .get(MenuManagerRenderer.class);
@@ -159,7 +181,9 @@ public class MToolItemTest extends TestCase {
 		assertFalse(p4InvOne.isVisible());
 	}
 
-	public void testFileItemGeneration() throws Exception {
+	@Ignore("See bug 452765")
+	@Test
+	public void testFileItemGeneration() {
 		MApplication application = TestUtil.setupRenderer(appContext);
 		// MenuManagerRenderer renderer = appContext
 		// .get(MenuManagerRenderer.class);
@@ -209,7 +233,9 @@ public class MToolItemTest extends TestCase {
 		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne", cmdOne.getId());
 	}
 
-	public void testFileToolbarRendered() throws Exception {
+	@Test
+	@Ignore("See bug 452765")
+	public void testFileToolbarRendered() {
 		MApplication application = TestUtil.setupRenderer(appContext);
 		// MenuManagerRenderer renderer = appContext
 		// .get(MenuManagerRenderer.class);
@@ -250,6 +276,7 @@ public class MToolItemTest extends TestCase {
 		assertTrue(saveAll instanceof DirectContributionItem);
 	}
 
+	@Test
 	public void testMToolItem_RadioItems() {
 		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
 				.createTrimmedWindow();
@@ -346,42 +373,52 @@ public class MToolItemTest extends TestCase {
 		assertEquals(afterExpected, toolItemWidget.getText());
 	}
 
+	@Test
 	public void testMToolItem_Text_EmptyEmpty() {
 		testMToolItem_Text("", "", "", "");
 	}
 
+	@Test
 	public void testMToolItem_Text_EmptyNull() {
 		testMToolItem_Text("", "", null, "");
 	}
 
+	@Test
 	public void testMToolItem_Text_EmptyString() {
 		testMToolItem_Text("", "", "label", "label");
 	}
 
+	@Test
 	public void testMToolItem_Text_NullEmpty() {
 		testMToolItem_Text(null, "", "", "");
 	}
 
+	@Test
 	public void testMToolItem_Text_NullNull() {
 		testMToolItem_Text(null, "", null, "");
 	}
 
+	@Test
 	public void testMToolItem_Text_NullString() {
 		testMToolItem_Text(null, "", "label", "label");
 	}
 
+	@Test
 	public void testMToolItem_Text_StringEmpty() {
 		testMToolItem_Text("label", "label", "", "");
 	}
 
+	@Test
 	public void testMToolItem_Text_StringNull() {
 		testMToolItem_Text("label", "label", null, "");
 	}
 
+	@Test
 	public void testMToolItem_Text_StringStringChanged() {
 		testMToolItem_Text("label", "label", "label2", "label2");
 	}
 
+	@Test
 	public void testMToolItem_Text_StringStringUnchanged() {
 		testMToolItem_Text("label", "label", "label", "label");
 	}
@@ -422,48 +459,59 @@ public class MToolItemTest extends TestCase {
 		assertEquals(afterExpected, toolItemWidget.getToolTipText());
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_EmptyEmpty() {
 		testMToolItem_Tooltip("", "", "", "");
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_EmptyNull() {
 		testMToolItem_Tooltip("", "", null, null);
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_EmptyString() {
 		testMToolItem_Tooltip("", "", "toolTip", "toolTip");
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_NullEmpty() {
 		testMToolItem_Tooltip(null, null, "", "");
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_NullNull() {
 		testMToolItem_Tooltip(null, null, null, null);
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_NullString() {
 		testMToolItem_Tooltip(null, null, "toolTip", "toolTip");
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_StringEmpty() {
 		testMToolItem_Tooltip("toolTip", "toolTip", "", "");
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_StringNull() {
 		testMToolItem_Tooltip("toolTip", "toolTip", null, null);
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_StringStringChanged() {
 		testMToolItem_Tooltip("toolTip", "toolTip", "toolTip2", "toolTip2");
 	}
 
+	@Test
 	public void testMToolItem_Tooltip_StringStringUnchanged() {
 		testMToolItem_Tooltip("toolTip", "toolTip", "toolTip", "toolTip");
 	}
 
-	// MenuPersistence no longer processes actionSets
-	public void XXXXtestActionSetAddedToFile() throws Exception {
+	@Test
+	@Ignore("MenuPersistence no longer processes actionSets")
+	public void XXXXtestActionSetAddedToFile() {
 		MApplication application = TestUtil.setupRenderer(appContext);
 		// MenuManagerRenderer renderer = appContext
 		// .get(MenuManagerRenderer.class);
@@ -518,8 +566,9 @@ public class MToolItemTest extends TestCase {
 		assertFalse(actionSetAction.isVisible());
 	}
 
-	// MenuPersistence no longer processes actionSets
-	public void XXXXtestActionSetAddedToMyToolbar() throws Exception {
+	@Test
+	@Ignore("MenuPersistence no longer processes actionSets")
+	public void XXXXtestActionSetAddedToMyToolbar() {
 		MApplication application = TestUtil.setupRenderer(appContext);
 		// MenuManagerRenderer renderer = appContext
 		// .get(MenuManagerRenderer.class);
