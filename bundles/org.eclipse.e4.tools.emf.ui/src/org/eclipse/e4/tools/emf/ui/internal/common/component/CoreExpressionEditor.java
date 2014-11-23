@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class CoreExpressionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
@@ -59,7 +61,8 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		if (((MCoreExpression) element).getCoreExpressionId() != null && ((MCoreExpression) element).getCoreExpressionId().trim().length() > 0) {
+		if (((MCoreExpression) element).getCoreExpressionId() != null
+			&& ((MCoreExpression) element).getCoreExpressionId().trim().length() > 0) {
 			return ((MCoreExpression) element).getCoreExpressionId();
 		}
 		return null;
@@ -83,7 +86,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -95,29 +98,33 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CoreExpressionEditor_ExpressionId);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID)
+					.observeDetail(getMaster()));
 
 			if (getEditor().getExtensionLookup() == null) {
 				gd.horizontalSpan = 2;
 			} else {
-				Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+				final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 				b.setText(Messages.ModelTooling_Common_FindEllipsis);
 				b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 				b.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor().getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain(), getEditor().isLiveModel(), Messages);
+						final ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor()
+							.getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain(),
+							getEditor().isLiveModel(), Messages);
 						dialog.open();
 					}
 				});
@@ -130,8 +137,10 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MCoreExpression.class);
 

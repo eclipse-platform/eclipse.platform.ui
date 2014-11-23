@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 437951
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Steven Spungin <steven@spungin.tv> - Bug 437951
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -16,8 +16,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -58,15 +60,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class CommandEditor extends AbstractComponentEditor {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 	private MessageFormat newCommandParameterName;
 
-	private IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
+	private final IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
+		CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 
 	@Inject
 	public CommandEditor() {
@@ -75,7 +79,8 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.CommandEditor_AddCommandParameter, createImageDescriptor(ResourceProvider.IMG_CommandParameter)) {
+		actions.add(new Action(Messages.CommandEditor_AddCommandParameter,
+			createImageDescriptor(ResourceProvider.IMG_CommandParameter)) {
 			@Override
 			public void run() {
 				handleAddCommandParameter();
@@ -130,12 +135,14 @@ public class CommandEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
-		enableIdGenerator(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+		enableIdGenerator(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
+		boolean isImport) {
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -143,7 +150,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -155,22 +162,32 @@ public class CommandEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, Messages.ModelTooling_CommandId_tooltip, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID), Messages.ModelTooling_Empty_Warning);
-		ControlFactory.createTextField(parent, Messages.CommandEditor_Name, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME));
-		ControlFactory.createTextField(parent, Messages.CommandEditor_LabelDescription, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__DESCRIPTION));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id,
+			Messages.ModelTooling_CommandId_tooltip, master, context, textProp, EMFEditProperties.value(
+				getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
+			Messages.ModelTooling_Empty_Warning);
+		ControlFactory.createTextField(parent, Messages.CommandEditor_Name, master, context, textProp,
+			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME));
+		ControlFactory.createTextField(parent, Messages.CommandEditor_LabelDescription, master, context, textProp,
+			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__DESCRIPTION));
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Category);
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			t.setEditable(false);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__CATEGORY, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(
+					getEditingDomain(),
+					FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__CATEGORY,
+						ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -179,7 +196,8 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					CommandCategorySelectionDialog dialog = new CommandCategorySelectionDialog(b.getShell(), getEditor().getModelProvider(), (MCommand) getMaster().getValue(), Messages);
+					final CommandCategorySelectionDialog dialog = new CommandCategorySelectionDialog(b.getShell(),
+						getEditor().getModelProvider(), (MCommand) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -187,7 +205,8 @@ public class CommandEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, CommandsPackageImpl.Literals.COMMAND__PARAMETERS) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
+				Messages, this, CommandsPackageImpl.Literals.COMMAND__PARAMETERS) {
 				@Override
 				protected void addPressed() {
 					handleAddCommandParameter();
@@ -204,7 +223,8 @@ public class CommandEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 
-			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
+			final IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(),
+				CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 			viewer.setInput(mProp.observeDetail(getMaster()));
 		}
 
@@ -214,8 +234,10 @@ public class CommandEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MCommand.class);
 
@@ -231,7 +253,7 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MCommand cmd = (MCommand) element;
+		final MCommand cmd = (MCommand) element;
 		if (cmd.getCommandName() != null && cmd.getCommandName().trim().length() > 0) {
 			return translate(cmd.getCommandName());
 		}
@@ -244,11 +266,12 @@ public class CommandEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAddCommandParameter() {
-		MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
+		final MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
 		setElementId(param);
 		param.setName(newCommandParameterName.format(new Object[] { getParameterCount() }));
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -258,23 +281,21 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	/**
-	 * Returns the current amount of {@link MCommandParameter}s the edited
-	 * {@link MCommand} has.
+	 * Returns the current amount of {@link MCommandParameter}s the edited {@link MCommand} has.
 	 *
-	 * @return the amount of {@link MCommandParameter}s of the edited
-	 *         {@link MCommand}
+	 * @return the amount of {@link MCommandParameter}s of the edited {@link MCommand}
 	 */
 	private int getParameterCount() {
 		// getChildList() will always create a new IObservableList and
 		// this method uses the normal EMF way to retrieve the count manually.
-		EObject command = (EObject) getMaster().getValue();
-		List<?> commandParameters = (List<?>) command.eGet(CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
+		final EObject command = (EObject) getMaster().getValue();
+		final List<?> commandParameters = (List<?>) command.eGet(CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 		return commandParameters.size();
 	}
 }

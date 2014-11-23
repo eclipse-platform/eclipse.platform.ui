@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -82,32 +84,45 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class ApplicationEditor extends AbstractComponentEditor {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
-	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
-	private IListProperty APPLICATION__COMMANDS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
+	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
+		.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+	private final IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties
+		.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
+	private final IListProperty APPLICATION__COMMANDS = EMFProperties
+		.list(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
 	// private IListProperty APPLICATION__DIALOGS =
 	// EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__DIALOGS);
-	private IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
-	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private IListProperty APPLICATION__ADDONS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
-	private IListProperty MENU_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
-	private IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
-	private IListProperty TRIM_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
-	private IListProperty APPLICATION__SNIPPETS = EMFProperties.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
-	private IListProperty APPLICATION__CATEGORIES = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
+	private final IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties
+		.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
+		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private final IListProperty APPLICATION__ADDONS = EMFProperties
+		.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
+	private final IListProperty MENU_CONTRIBUTIONS = EMFProperties
+		.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
+	private final IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties
+		.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
+	private final IListProperty TRIM_CONTRIBUTIONS = EMFProperties
+		.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
+	private final IListProperty APPLICATION__SNIPPETS = EMFProperties
+		.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
+	private final IListProperty APPLICATION__CATEGORIES = EMFProperties
+		.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
 
-	private IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
+	private final IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties
+		.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 
 	@Inject
 	@Optional
 	private IProject project;
 
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	public ApplicationEditor() {
@@ -130,7 +145,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	void doCreateCommandWizard() {
-		WizardDialog dialog = new WizardDialog(composite.getShell(), new CommandWizard((MApplication) getMaster().getValue()));
+		final WizardDialog dialog = new WizardDialog(composite.getShell(), new CommandWizard((MApplication) getMaster()
+			.getValue()));
 		dialog.open();
 	}
 
@@ -139,9 +155,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
 				return createImage(ResourceProvider.IMG_Application);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_Application);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_Application);
 		}
 		return null;
 	}
@@ -168,7 +183,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -176,18 +191,24 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp,
+			EMFEditProperties
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
 
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -195,10 +216,15 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+			context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables,
+			UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -212,21 +238,23 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	@Override
 	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ADDONS, APPLICATION__ADDONS, element, Messages.ApplicationEditor_Addons) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ADDONS, APPLICATION__ADDONS, element,
+			Messages.ApplicationEditor_Addons) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -235,7 +263,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT, element, Messages.ApplicationEditor_RootContexts) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
+			element, Messages.ApplicationEditor_RootContexts) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -244,7 +273,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, Messages.ApplicationEditor_BindingTables) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element,
+			Messages.ApplicationEditor_BindingTables) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -253,7 +283,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, Messages.ApplicationEditor_Handlers) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element,
+			Messages.ApplicationEditor_Handlers) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -262,7 +293,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_COMMAND, APPLICATION__COMMANDS, element, Messages.ApplicationEditor_Commands) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_COMMAND, APPLICATION__COMMANDS, element,
+			Messages.ApplicationEditor_Commands) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -270,7 +302,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_CATEGORIES, APPLICATION__CATEGORIES, element, Messages.ApplicationEditor_Categories) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_CATEGORIES, APPLICATION__CATEGORIES, element,
+			Messages.ApplicationEditor_Categories) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -278,16 +311,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_APPLICATION_WINDOWS, ELEMENT_CONTAINER__CHILDREN, element, Messages.ApplicationEditor_Windows) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, element, Messages.ApplicationEditor_PartDescriptors) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_APPLICATION_WINDOWS, ELEMENT_CONTAINER__CHILDREN,
+			element, Messages.ApplicationEditor_Windows) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -296,27 +321,41 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, MENU_CONTRIBUTIONS, element, Messages.ApplicationEditor_MenuContributions) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
+			element, Messages.ApplicationEditor_PartDescriptors) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, MENU_CONTRIBUTIONS, element,
+			Messages.ApplicationEditor_MenuContributions) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, TOOLBAR_CONTRIBUTIONS, element, Messages.ApplicationEditor_ToolBarContributions) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, TOOLBAR_CONTRIBUTIONS, element,
+			Messages.ApplicationEditor_ToolBarContributions) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, TRIM_CONTRIBUTIONS, element, Messages.ApplicationEditor_TrimContributions) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, TRIM_CONTRIBUTIONS, element,
+			Messages.ApplicationEditor_TrimContributions) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_SNIPPETS, APPLICATION__SNIPPETS, element, Messages.ApplicationEditor_Snippets) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_SNIPPETS, APPLICATION__SNIPPETS, element,
+			Messages.ApplicationEditor_Snippets) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
@@ -362,7 +401,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	class CommandWizard extends Wizard {
-		private MApplication application;
+		private final MApplication application;
 
 		private HandlerCommandPage handlerPage;
 		private KeybindingPage keyPage;
@@ -376,7 +415,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		@Override
 		public void addPages() {
 			getShell().setText(Messages.CommandWizard_ShellTitle);
-			setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Wizban16_newexp_wiz)));
+			setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool
+				.getImageUnchecked(ResourceProvider.IMG_Wizban16_newexp_wiz)));
 			handlerPage = new HandlerCommandPage(Messages.ApplicationEditor_HandlerAndCommand);
 			addPage(handlerPage);
 
@@ -393,13 +433,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		@Override
 		public boolean performFinish() {
 
-			MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
-			MHandler handler = CommandsFactoryImpl.eINSTANCE.createHandler();
+			final MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+			final MHandler handler = CommandsFactoryImpl.eINSTANCE.createHandler();
 			MKeyBinding keyBinding = null;
 
-			String parentId = application.getElementId();
+			final String parentId = application.getElementId();
 
-			String prefix = parentId != null && parentId.trim().length() > 0 ? parentId + "." : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			final String prefix = parentId != null && parentId.trim().length() > 0 ? parentId + "." : ""; //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (handlerPage.idField.getText().trim().length() > 0) {
 				command.setElementId(prefix + "commands." + handlerPage.idField.getText().trim()); //$NON-NLS-1$
@@ -418,12 +458,16 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			command.setCommandName(handlerPage.nameField.getText());
 			handler.setCommand(command);
 
-			CompoundCommand cmd = new CompoundCommand();
-			cmd.append(AddCommand.create(getEditingDomain(), application, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS, command));
-			cmd.append(AddCommand.create(getEditingDomain(), application, CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler));
+			final CompoundCommand cmd = new CompoundCommand();
+			cmd.append(AddCommand.create(getEditingDomain(), application,
+				ApplicationPackageImpl.Literals.APPLICATION__COMMANDS, command));
+			cmd.append(AddCommand.create(getEditingDomain(), application,
+				CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler));
 
 			if (keyBinding != null) {
-				cmd.append(AddCommand.create(getEditingDomain(), ((IStructuredSelection) keyPage.bindtableViewer.getSelection()).getFirstElement(), CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, keyBinding));
+				cmd.append(AddCommand.create(getEditingDomain(),
+					((IStructuredSelection) keyPage.bindtableViewer.getSelection()).getFirstElement(),
+					CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, keyBinding));
 			}
 
 			if (cmd.canExecute()) {
@@ -448,12 +492,12 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			setTitle(Messages.ApplicationEditor_Command_Slash_Handler);
 			setMessage(Messages.ApplicationEditor_InsertInfosForCommandAndHandler);
 
-			Composite group = new Composite(parent, SWT.NONE);
+			final Composite group = new Composite(parent, SWT.NONE);
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			group.setLayout(new GridLayout(3, false));
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Id);
 
 				idField = new Text(group, SWT.BORDER);
@@ -461,7 +505,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Name + "*"); //$NON-NLS-1$
 
 				nameField = new Text(group, SWT.BORDER);
@@ -476,13 +520,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Class);
 
-				Text t = new Text(group, SWT.BORDER);
+				final Text t = new Text(group, SWT.BORDER);
 				t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-				Button b = new Button(group, SWT.PUSH | SWT.FLAT);
+				final Button b = new Button(group, SWT.PUSH | SWT.FLAT);
 				b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			}
 
@@ -499,7 +543,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		private Text keyField;
 		private TableViewer bindtableViewer;
-		private MApplication application;
+		private final MApplication application;
 
 		public KeybindingPage(String pageName, MApplication application) {
 			super(pageName);
@@ -511,12 +555,12 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			setTitle(Messages.ApplicationEditor_Keybinding);
 			setMessage(Messages.ApplicationEditor_InsertInfosForKeybinding);
 
-			Composite group = new Composite(parent, SWT.NONE);
+			final Composite group = new Composite(parent, SWT.NONE);
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			group.setLayout(new GridLayout(2, false));
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Sequence);
 
 				keyField = new Text(group, SWT.BORDER);
@@ -532,7 +576,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_BindingTable);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
@@ -548,7 +592,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 					}
 				});
 				bindtableViewer.setSelection(new StructuredSelection(application.getBindingTables().get(0)));
-				GridData gd = new GridData(GridData.FILL_BOTH);
+				final GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = bindtableViewer.getTable().getItemHeight() * 5;
 				bindtableViewer.getControl().setLayoutData(gd);
 				bindtableViewer.getControl().setEnabled(false);
@@ -561,14 +605,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		public boolean isPageComplete() {
 			if (keyField.getText().trim().length() == 0) {
 				return true;
-			} else {
-				return !bindtableViewer.getSelection().isEmpty();
 			}
+			return !bindtableViewer.getSelection().isEmpty();
 		}
 	}
 
 	class MenuWizardPage extends WizardPage {
-		private MApplication application;
+		private final MApplication application;
 		private Text labelField;
 		private Text iconField;
 		private ComboViewer typeViewer;
@@ -584,12 +627,12 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			setTitle(Messages.ApplicationEditor_HandledMenuItem);
 			setMessage(Messages.ApplicationEditor_InertInfosForAHandledMenuItem);
 
-			Composite group = new Composite(parent, SWT.NONE);
+			final Composite group = new Composite(parent, SWT.NONE);
 			group.setLayout(new GridLayout(2, false));
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Label);
 
 				labelField = new Text(group, SWT.BORDER);
@@ -597,7 +640,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Icon);
 
 				iconField = new Text(group, SWT.BORDER);
@@ -605,7 +648,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Type);
 
 				typeViewer = new ComboViewer(group, SWT.READ_ONLY);
@@ -615,7 +658,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Parent);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
@@ -623,10 +666,10 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				menuViewer.setLabelProvider(new HiearchyLabelProvider());
 				menuViewer.setContentProvider(new ArrayContentProvider());
 
-				List<MMenu> menuList = new ArrayList<MMenu>();
-				Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
+				final List<MMenu> menuList = new ArrayList<MMenu>();
+				final Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
 				while (it.hasNext()) {
-					EObject o = it.next();
+					final EObject o = it.next();
 					if (MenuPackageImpl.Literals.MENU.isSuperTypeOf(o.eClass())) {
 						menuList.add((MMenu) o);
 					}
@@ -639,7 +682,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 						setPageComplete(isPageComplete());
 					}
 				});
-				GridData gd = new GridData(GridData.FILL_BOTH);
+				final GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = menuViewer.getTable().getItemHeight() * 5;
 				menuViewer.getControl().setLayoutData(gd);
 				menuViewer.setSelection(new StructuredSelection(menuList.get(0)));
@@ -652,14 +695,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		public boolean isPageComplete() {
 			if (labelField.getText().trim().length() == 0 && iconField.getText().trim().length() == 0) {
 				return true;
-			} else {
-				return !menuViewer.getSelection().isEmpty();
 			}
+			return !menuViewer.getSelection().isEmpty();
 		}
 	}
 
 	class ToolbarWizardPage extends WizardPage {
-		private MApplication application;
+		private final MApplication application;
 		private Text labelField;
 		private Text iconField;
 		private ComboViewer typeViewer;
@@ -675,12 +717,12 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			setTitle(Messages.ApplicationEditor_HandledToolbarItem);
 			setMessage(Messages.ApplicationEditor_InsertInfosForAToolbarItem);
 
-			Composite group = new Composite(parent, SWT.NONE);
+			final Composite group = new Composite(parent, SWT.NONE);
 			group.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
 			group.setLayout(new GridLayout(2, false));
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Label);
 
 				labelField = new Text(group, SWT.BORDER);
@@ -688,7 +730,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Icon);
 
 				iconField = new Text(group, SWT.BORDER);
@@ -696,7 +738,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Type);
 
 				typeViewer = new ComboViewer(group, SWT.READ_ONLY);
@@ -706,7 +748,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			{
-				Label l = new Label(group, SWT.NONE);
+				final Label l = new Label(group, SWT.NONE);
 				l.setText(Messages.ApplicationEditor_Parent);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
@@ -714,10 +756,10 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				toolbarViewer.setLabelProvider(new HiearchyLabelProvider());
 				toolbarViewer.setContentProvider(new ArrayContentProvider());
 
-				List<MToolBar> toolbarList = new ArrayList<MToolBar>();
-				Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
+				final List<MToolBar> toolbarList = new ArrayList<MToolBar>();
+				final Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
 				while (it.hasNext()) {
-					EObject o = it.next();
+					final EObject o = it.next();
 					if (MenuPackageImpl.Literals.TOOL_BAR.isSuperTypeOf(o.eClass())) {
 						toolbarList.add((MToolBar) o);
 					}
@@ -730,7 +772,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 						setPageComplete(isPageComplete());
 					}
 				});
-				GridData gd = new GridData(GridData.FILL_BOTH);
+				final GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = toolbarViewer.getTable().getItemHeight() * 5;
 				toolbarViewer.getControl().setLayoutData(gd);
 				toolbarViewer.setSelection(new StructuredSelection(toolbarList.get(0)));
@@ -743,9 +785,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		public boolean isPageComplete() {
 			if (labelField.getText().trim().length() == 0 && iconField.getText().trim().length() == 0) {
 				return true;
-			} else {
-				return !toolbarViewer.getSelection().isEmpty();
 			}
+			return !toolbarViewer.getSelection().isEmpty();
 		}
 	}
 
@@ -764,7 +805,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				img = elementEditor.getImage(o, composite.getDisplay());
 			}
 
-			List<String> parentPath = new ArrayList<String>();
+			final List<String> parentPath = new ArrayList<String>();
 			while (o.eContainer() != null) {
 				o = o.eContainer();
 				elementEditor = getEditor().getEditor(o.eClass());
@@ -774,11 +815,11 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			}
 
 			String parentString = ""; //$NON-NLS-1$
-			for (String p : parentPath) {
+			for (final String p : parentPath) {
 				parentString += "/" + p; //$NON-NLS-1$
 			}
 
-			StyledString s = new StyledString(label);
+			final StyledString s = new StyledString(label);
 			s.append(" - " + parentString, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			cell.setStyleRanges(s.getStyleRanges());
 			cell.setText(s.getString());

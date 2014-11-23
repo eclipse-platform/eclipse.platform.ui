@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
@@ -24,12 +25,11 @@ public class DialogEditor extends WindowEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) element;
+			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
 				return createImage(ResourceProvider.IMG_Dialog);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_Dialog);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_Dialog);
 		}
 
 		return null;
@@ -42,9 +42,9 @@ public class DialogEditor extends WindowEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		List<Action> actions = new ArrayList<Action>();
+		final List<Action> actions = new ArrayList<Action>();
 
-		MDialog dialog = (MDialog) element;
+		final MDialog dialog = (MDialog) element;
 		if (dialog.getMainMenu() == null) {
 			actions.add(getActionAddMainMenu());
 		}
