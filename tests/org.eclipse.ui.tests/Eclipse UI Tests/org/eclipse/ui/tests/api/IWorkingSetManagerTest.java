@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -316,12 +316,15 @@ public class IWorkingSetManagerTest extends UITestCase {
 													// the above call.
 		fWorkingSetManager.addWorkingSet(workingSet3);
 
-		// asserts the order is correct - the name of set three should push it
-		// above set two even though their labels are the same
+		/*
+		 * asserts the order is correct - working sets are initially sorted by
+		 * adding order. It can get modified manually by the proper 'Up' and
+		 * 'Down' buttons or the DND operations
+		 */
 		IWorkingSet[] sets = fWorkingSetManager.getWorkingSets();
 		assertEquals(fWorkingSet, sets[0]);
-		assertEquals(workingSet2, sets[2]);
-		assertEquals(workingSet3, sets[1]);
+		assertEquals(workingSet2, sets[1]);
+		assertEquals(workingSet3, sets[2]);
 
 		IWorkingSet workingSet3a = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2 + "\u200b", new IAdaptable[] { fWorkspace.getRoot() });
