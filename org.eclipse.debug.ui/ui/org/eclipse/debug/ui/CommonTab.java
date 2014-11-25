@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -74,6 +76,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -123,13 +126,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private Button fDefaultEncodingButton;
     private Button fAltEncodingButton;
     private Combo fEncodingCombo;
-    private Button fConsoleOutput;
+	private Button fConsoleOutput;
     private Button fFileOutput;
     private Button fFileBrowse;
     private Text fFileText;
     private Button fVariables;
     private Button fAppend;
     private Button fWorkspaceBrowse;
+
+	private Button fInputFileCheckButton;
+	private Text fInputFileLocationText;
+	private Button fInputFileBrowse;
+	private Button fInputVariables;
+	private Button fInputWorkspaceBrowse;
 	
 	/**
 	 * Check box list for specifying favorites
@@ -253,24 +262,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      * Creates the component set for the capture output composite
      * @param parent the parent to add this component to
      */
-    private void createOutputCaptureComponent(Composite parent) {
+	private void createOutputCaptureComponent(Composite parent) {
         Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
+		createInputCaptureComponent(group);
         Composite comp = SWTFactory.createComposite(group, 5, 5, GridData.FILL_BOTH);
-        GridLayout ld = (GridLayout)comp.getLayout();
-        ld.marginWidth = 1;
-        ld.marginHeight = 1;
-        fConsoleOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_5); 
-        GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
-        gd.horizontalSpan = 5;
-        fConsoleOutput.setLayoutData(gd);
-        fConsoleOutput.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                updateLaunchConfigurationDialog();
-            }
-        });
-        
-        fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6); 
+
+
+		fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6);
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
         fFileOutput.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -289,7 +287,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fFileText.addModifyListener(fBasicModifyListener);
         
         Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
-        ld = (GridLayout)bcomp.getLayout();
+		GridLayout ld = (GridLayout)bcomp.getLayout();
         ld.marginHeight = 1;
         ld.marginWidth = 0;
         fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null); 
@@ -339,7 +337,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			public void widgetDefaultSelected(SelectionEvent e) {}
         });
         fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11); 
-        gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
+
+		GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
         gd.horizontalSpan = 4;
         fAppend.setLayoutData(gd);
 		fAppend.addSelectionListener(new SelectionAdapter() {
@@ -350,6 +349,102 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		});   
     }
 
+    private void createInputCaptureComponent(Composite parent){
+		Composite comp1 = SWTFactory.createComposite(parent, parent.getFont(), 3, 3, GridData.FILL_BOTH, 0, 0);
+		fConsoleOutput = createCheckButton(comp1, LaunchConfigurationsMessages.CommonTab_5);
+
+		Composite comp = SWTFactory.createComposite(comp1, 5, 5, GridData.FILL_BOTH);
+		fInputFileCheckButton = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_17);
+		GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, false, false);
+		gd.horizontalSpan = 3;
+
+		fInputFileCheckButton.setLayoutData(gd);
+		fInputFileCheckButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleInputFileButtonSelected();
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		fInputFileLocationText = SWTFactory.createSingleText(comp, 1);
+		fInputFileLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = LaunchConfigurationsMessages.CommonTab_17;
+			}
+		});
+		fInputFileLocationText.addModifyListener(fBasicModifyListener);
+		Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
+		GridLayout ld = (GridLayout) bcomp.getLayout();
+		ld.marginHeight = 1;
+		ld.marginWidth = 0;
+		fInputWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_16, null);
+		fInputWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+				dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
+				dialog.setValidator(new ISelectionStatusValidator() {
+
+					@Override
+					public IStatus validate(Object[] selection) {
+						if (selection.length == 0) {
+							return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
+						}
+						for (int i = 0; i < selection.length; i++) {
+							if (!(selection[i] instanceof IFile)) {
+								return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
+							}
+						}
+						return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
+					}
+				});
+				dialog.setMessage(LaunchConfigurationsMessages.CommonTab_18);
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+				dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
+				if (dialog.open() == IDialogConstants.OK_ID) {
+					IResource resource = (IResource) dialog.getFirstResult();
+					if (resource != null) {
+						String arg = resource.getFullPath().toString();
+						String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+						fInputFileLocationText.setText(fileLoc);
+					}
+				}
+			}
+		});
+		fInputFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_19, null);
+		fInputFileBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String filePath = fInputFileLocationText.getText();
+				FileDialog dialog = new FileDialog(getShell(), SWT.OK);
+				filePath = dialog.open();
+				if (filePath != null) {
+					fInputFileLocationText.setText(filePath);
+				}
+			}
+		});
+		fInputVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_20, null);
+		fInputVariables.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+				dialog.open();
+				String variable = dialog.getVariableExpression();
+				if (variable != null) {
+					fInputFileLocationText.insert(variable);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		setInputFileEnabled(false);
+    }
     /**
      * Enables or disables the output capture widgets based on the the specified enablement
      * @param enable if the output capture widgets should be enabled or not
@@ -496,6 +591,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * handles the input file  being selected
+	 */
+	private void handleInputFileButtonSelected() {
+		setInputFileEnabled(isInputFile());
+		updateLaunchConfigurationDialog();
+	}
+
+	/**
 	 * Sets the widgets for specifying that a launch configuration is to be shared to the enable value
 	 * @param enable the enabled value for 
 	 */
@@ -504,6 +607,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fSharedLocationButton.setEnabled(enable);
 	}
 	
+	private void setInputFileEnabled(boolean enable) {
+		fInputFileLocationText.setEnabled(enable);
+		fInputFileBrowse.setEnabled(enable);
+		fInputWorkspaceBrowse.setEnabled(enable);
+		fInputVariables.setEnabled(enable);
+	}
+
 	private String getDefaultSharedConfigLocation(ILaunchConfiguration config) {
 		String path = IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
@@ -530,6 +640,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return fSharedRadioButton.getSelection();
 	}
 	
+	/**
+	 * if the input file button is selected, indicating that the launch will
+	 * take input file as stdin
+	 * 
+	 * @return true if the check button is selected, false otherwise
+	 */
+	private boolean isInputFile() {
+		return fInputFileCheckButton.getSelection();
+	}
+
 	/**
 	 * Handles the shared location button being selected
 	 */
@@ -594,17 +714,20 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      */
     private void updateConsoleOutput(ILaunchConfiguration configuration) {
         boolean outputToConsole = true;
+		String stdinFromFile = null;
         String outputFile = null;
         boolean append = false;
         
         try {
             outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+			stdinFromFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
+
             outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
             append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
         } catch (CoreException e) {
         }
         
-        fConsoleOutput.setSelection(outputToConsole);
+		fConsoleOutput.setSelection(outputToConsole);
         fAppend.setSelection(append);
         boolean haveOutputFile= outputFile != null;
         if (haveOutputFile) {
@@ -612,6 +735,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         }
         fFileOutput.setSelection(haveOutputFile);
         enableOuputCaptureWidgets(haveOutputFile);
+
+		boolean haveInputFile = stdinFromFile != null;
+		if (haveInputFile) {
+			fInputFileLocationText.setText(stdinFromFile);
+		}
+		fInputFileCheckButton.setSelection(haveInputFile);
+		setInputFileEnabled(haveInputFile);
     }
 
     /**
@@ -797,7 +927,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		setErrorMessage(null);
 		
-		return validateLocalShared() && validateRedirectFile() && validateEncoding();
+		return validateLocalShared() && validateRedirectFile() && validateEncoding() && validateStdinFile();
 	}
 	
     /**
@@ -850,6 +980,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return true;		
 	}
 
+	/**
+	 * validates the stdin file location
+	 * 
+	 * @return true if the stdin file exists, false otherwise
+	 */
+	private boolean validateStdinFile() {
+		if (isInputFile()) {
+			int len = fInputFileLocationText.getText().trim().length();
+			if (len == 0) {
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_stdin_file_location_15);
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -875,9 +1021,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		boolean captureOutput = false;
 		if (fConsoleOutput.getSelection()) {
 		    captureOutput = true;
-		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, (String)null);
+			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, (String) null);
 		} else {
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+		}
+		if (fInputFileCheckButton.getSelection()) {
+			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, fInputFileLocationText.getText());
+		} else {
+			configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
 		}
 		if (fFileOutput.getSelection()) {
 		    captureOutput = true;

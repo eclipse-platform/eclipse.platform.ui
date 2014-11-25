@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -961,10 +961,20 @@ public interface IDebugUIConstants {
 	public static final String ATTR_CAPTURE_IN_CONSOLE = PLUGIN_ID + ".ATTR_CONSOLE_OUTPUT_ON"; //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration attribute specifying a file name that console output should
-	 * be written to or <code>null</code> if none. Default value is <code>null</code>.
-	 * When specified, all output from the launched process will be written to the file.
-	 * The file name attribute may contain variables which will be resolved by the
+	 * Launch configuration boolean attribute specifying whether input for the
+	 * launched process will be captured from file. Default value is
+	 * <code>null</code>.
+	 * 
+	 * @since 3.11
+	 */
+	public static final String ATTR_CAPTURE_STDIN_FILE = PLUGIN_ID + ".ATTR_CAPTURE_STDIN_FILE"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute specifying a file name that console output
+	 * should be written to or <code>null</code> if none. Default value is
+	 * <code>null</code>. When specified, all output from the launched process
+	 * will be written to the file. The file name attribute may contain
+	 * variables which will be resolved by the
 	 * {@link org.eclipse.core.variables.IStringVariableManager}.
 	 * 
 	 * @since 3.1

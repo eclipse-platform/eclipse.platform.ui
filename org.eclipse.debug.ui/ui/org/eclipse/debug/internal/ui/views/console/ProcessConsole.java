@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,9 +12,11 @@ package org.eclipse.debug.internal.ui.views.console;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,11 +98,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
     private IConsoleColorProvider fColorProvider;
 
-    private IOConsoleInputStream fInput;
+	private InputStream fInput;
 
     private FileOutputStream fFileOutputStream;
 
     private boolean fAllocateConsole = true;
+	private String fStdInFile = null;
 
     private boolean fStreamsClosed = false;
     
@@ -126,11 +129,18 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         boolean append = false;
         if (configuration != null) {
             try {
-                file = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
-                if (file != null) {
-                    IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
-                    file = stringVariableManager.performStringSubstitution(file);
-                    append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+				file = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
+				fStdInFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
+				if (file != null || fStdInFile != null) {
+					IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
+					if (file != null) {
+						file = stringVariableManager.performStringSubstitution(file);
+						append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+					}
+
+					if (fStdInFile != null) {
+						fStdInFile = stringVariableManager.performStringSubstitution(fStdInFile);
+					}
                 }
             } catch (CoreException e) {
             }
@@ -181,15 +191,41 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             } catch (CoreException e) {
             }
         }
+		if (fStdInFile != null && configuration != null) {
+			String message = null;
+			try {
+				fInput = new FileInputStream(new File(fStdInFile));
+				if (fInput != null) {
+					setInputStream(fInput);
+				}
 
+			} catch (FileNotFoundException e) {
+				message = MessageFormat.format(ConsoleMessages.ProcessConsole_3, new Object[] { fStdInFile });
+			}
+			if (message != null) {
+				try {
+					IOConsoleOutputStream stream = newOutputStream();
+					stream.write(message);
+					stream.close();
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+		}
         fColorProvider = colorProvider;
-        fInput = getInputStream();
+		if (fInput == null) {
+			fInput = getInputStream();
+		}
+
+
         colorProvider.connect(fProcess, this);
 
         setName(computeName());
 
         Color color = fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM);
-        fInput.setColor(color);
+		if (fInput instanceof IOConsoleInputStream) {
+			((IOConsoleInputStream)fInput).setColor(color);
+		}
 
         IConsoleLineTracker[] lineTrackers = DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(process);
         if (lineTrackers.length > 0) {
@@ -315,8 +351,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 stream.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_ERROR_STREAM));
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR)) {
-            if (fInput != null) {
-                fInput.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM));
+			if (fInput != null && fInput instanceof IOConsoleInputStream) {
+				((IOConsoleInputStream) fInput).setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM));
             }
         } else if (property.equals(IDebugUIConstants.PREF_CONSOLE_FONT)) {
             setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
@@ -521,10 +557,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	private void connect(IStreamMonitor streamMonitor, String streamIdentifier, boolean activateOnWrite) {
         IOConsoleOutputStream stream = null;
         if (fAllocateConsole) {
-            stream = newOutputStream();
-            Color color = fColorProvider.getColor(streamIdentifier);
-            stream.setColor(color);
-            stream.setActivateOnWrite(activateOnWrite);
+
+			stream = newOutputStream();
+			Color color = fColorProvider.getColor(streamIdentifier);
+			stream.setColor(color);
+			stream.setActivateOnWrite(activateOnWrite);
         }
         synchronized (streamMonitor) {
             StreamListener listener = new StreamListener(streamIdentifier, streamMonitor, stream);

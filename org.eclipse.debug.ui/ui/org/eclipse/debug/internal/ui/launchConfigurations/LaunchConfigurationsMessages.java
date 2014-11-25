@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,9 +19,11 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CommonTab__Common_15;
 	public static String CommonTab_Display_in_favorites_menu__10;
 	public static String CommonTab_Invalid_shared_configuration_location_14;
+	public static String CommonTab_Invalid_stdin_file_location_15;
 	public static String CommonTab_L_ocal_3;
 	public static String CommonTab_S_hared_4;
 	public static String CommonTab_Select_a_location_for_the_launch_configuration_13;
+	public static String CommonTab_Select_a_location_for_the_Input_File_15;
 	public static String CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1;
 	public static String CommonTab_10;
 	public static String CommonTab_11;
@@ -32,7 +34,12 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CommonTab_1;
 
 	public static String CommonTab_15;
+	public static String CommonTab_16;
+	public static String CommonTab_17;
+	public static String CommonTab_18;
+	public static String CommonTab_19;
 	public static String CommonTab_2;
+	public static String CommonTab_20;
 	public static String CommonTab_3;
 	public static String CommonTab_4;
 	public static String CommonTab_5;

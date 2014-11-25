@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ui.console;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class IOConsole extends TextConsole {
     /**
      * The stream from which user input may be read
      */
-    private IOConsoleInputStream inputStream;
+	private InputStream inputStream;
 
     /**
      * A collection of open streams connected to this console.
@@ -90,8 +91,10 @@ public class IOConsole extends TextConsole {
         	openStreams.add(inputStream);
 		}
 
-        partitioner = new IOConsolePartitioner(inputStream, this);
-        partitioner.connect(getDocument());
+		if (inputStream instanceof IOConsoleInputStream) {
+			partitioner = new IOConsolePartitioner((IOConsoleInputStream) inputStream, this);
+			partitioner.connect(getDocument());
+		}
     }
 
     /**
@@ -154,8 +157,21 @@ public class IOConsole extends TextConsole {
      * @return the input stream connected to the keyboard.
      */
     public IOConsoleInputStream getInputStream() {
-        return inputStream;
+		if (inputStream instanceof IOConsoleInputStream) {
+			return (IOConsoleInputStream) inputStream;
+		}
+		return null;
     }
+
+	/**
+	 * Sets the new input stream .
+	 *
+	 * @return void.
+	 * @since 3.6
+	 */
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
 
     /**
      * Returns this console's document partitioner.
