@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -186,13 +185,11 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			if (fQueue == null) {
 				return null;
 			}
-			ILabelUpdate update = null;
-			try {
-				update = fQueue.removeFirst();
-			} catch (NoSuchElementException e) {
+			if (fQueue.isEmpty()) {
 				fQueue = null;
+				return null;
 			}
-			return update;
+			return fQueue.removeFirst();
 		}
 		
 		public boolean shouldRun() {
