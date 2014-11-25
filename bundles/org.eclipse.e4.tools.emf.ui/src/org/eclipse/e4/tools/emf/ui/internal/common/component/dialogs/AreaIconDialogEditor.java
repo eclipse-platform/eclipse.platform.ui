@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Bug 433408, 424730
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Bug 433408, 424730
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -19,10 +19,13 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
+@SuppressWarnings("restriction")
 public class AreaIconDialogEditor extends AbstractIconDialog {
 
-	public AreaIconDialogEditor(Shell parentShell, IEclipseContext context, IProject project, EditingDomain editingDomain, MApplicationElement element, Messages Messages) {
-		super(parentShell, context, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI, Messages);
+	public AreaIconDialogEditor(Shell parentShell, IEclipseContext context, IProject project,
+		EditingDomain editingDomain, MApplicationElement element, Messages Messages) {
+		super(parentShell, context, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI,
+			Messages);
 	}
 
 	@Override

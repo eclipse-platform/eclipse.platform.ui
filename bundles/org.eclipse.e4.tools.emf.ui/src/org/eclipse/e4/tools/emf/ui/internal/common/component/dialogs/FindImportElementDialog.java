@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -53,11 +53,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
+@SuppressWarnings("restriction")
 public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
-	private EObject element;
-	private AbstractComponentEditor editor;
+	private final EObject element;
+	private final AbstractComponentEditor editor;
 	private TableViewer viewer;
-	private Messages Messages;
+	private final Messages Messages;
 
 	public FindImportElementDialog(Shell parentShell, AbstractComponentEditor editor, EObject element, Messages Messages) {
 		super(parentShell);
@@ -68,9 +69,10 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite comp = (Composite) super.createDialogArea(parent);
+		final Composite comp = (Composite) super.createDialogArea(parent);
 
-		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
+		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -84,7 +86,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		setTitle(Messages.FindImportElementDialog_Title);
 		setMessage(Messages.FindImportElementDialog_Message);
 
-		Composite container = new Composite(comp, SWT.NONE);
+		final Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
@@ -104,12 +106,14 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				EObject o = (EObject) cell.getElement();
+				final EObject o = (EObject) cell.getElement();
 				cell.setImage(editor.getImage(o, searchText.getDisplay()));
 
-				MApplicationElement appEl = (MApplicationElement) o;
-				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + (appEl.getElementId() == null ? "<" + Messages.FindImportElementDialog_noId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				String detailLabel = editor.getDetailLabel(o);
+				final MApplicationElement appEl = (MApplicationElement) o;
+				final StyledString styledString = new StyledString(
+					editor.getLabel(o)
+					+ " (" + (appEl.getElementId() == null ? "<" + Messages.FindImportElementDialog_noId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				final String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
@@ -142,13 +146,13 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 					currentResultHandler.cancled = true;
 				}
 				list.clear();
-				Filter filter = new Filter(element.eClass(), searchText.getText());
+				final Filter filter = new Filter(element.eClass(), searchText.getText());
 				currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, element.eResource());
 				collector.findModelElements(filter, currentResultHandler);
 			}
 		});
 
-		Button button = new Button(container, SWT.PUSH);
+		final Button button = new Button(container, SWT.PUSH);
 		button.setText(Messages.FindImportElementDialog_ClearCache);
 		button.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false, 2, 1));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -163,11 +167,12 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 
 	@Override
 	protected void okPressed() {
-		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+		final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if (!s.isEmpty()) {
-			MApplicationElement el = (MApplicationElement) s.getFirstElement();
+			final MApplicationElement el = (MApplicationElement) s.getFirstElement();
 			if (el.getElementId() != null && el.getElementId().trim().length() > 0) {
-				Command cmd = SetCommand.create(editor.getEditingDomain(), element, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, el.getElementId());
+				final Command cmd = SetCommand.create(editor.getEditingDomain(), element,
+					ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, el.getElementId());
 				if (cmd.canExecute()) {
 					editor.getEditingDomain().getCommandStack().execute(cmd);
 					super.okPressed();
@@ -179,9 +184,9 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 	}
 
 	private ClassContributionCollector getCollector() {
-		Bundle bundle = FrameworkUtil.getBundle(FindImportElementDialog.class);
-		BundleContext context = bundle.getBundleContext();
-		ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
+		final Bundle bundle = FrameworkUtil.getBundle(FindImportElementDialog.class);
+		final BundleContext context = bundle.getBundleContext();
+		final ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
 		if (ref != null) {
 			return (ClassContributionCollector) context.getService(ref);
 		}
@@ -190,12 +195,13 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 
 	private static class ModelResultHandlerImpl implements ModelResultHandler {
 		private boolean cancled = false;
-		private IObservableList list;
-		private Filter filter;
-		private AbstractComponentEditor editor;
-		private Resource resource;
+		private final IObservableList list;
+		private final Filter filter;
+		private final AbstractComponentEditor editor;
+		private final Resource resource;
 
-		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor, Resource resource) {
+		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor,
+			Resource resource) {
 			this.list = list;
 			this.filter = filter;
 			this.editor = editor;
@@ -205,28 +211,29 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		@Override
 		public void result(EObject data) {
 			if (!cancled) {
-				if (!resource.getURI().equals(data.eResource().getURI()))
+				if (!resource.getURI().equals(data.eResource().getURI())) {
 					if (data instanceof MApplicationElement) {
-						String elementId = ((MApplicationElement) data).getElementId();
+						final String elementId = ((MApplicationElement) data).getElementId();
 						if (elementId == null) {
 							list.add(data);
 							return;
 						}
 
-						if (elementId != null && elementId.trim().length() > 0) {
+						if (elementId.trim().length() > 0) {
 							if (filter.elementIdPattern.matcher(elementId).matches()) {
 								list.add(data);
 								return;
 							}
 						}
 
-						String label = editor.getDetailLabel(data);
-						if (elementId != null && label != null && label.trim().length() > 0) {
+						final String label = editor.getDetailLabel(data);
+						if (label != null && label.trim().length() > 0) {
 							if (filter.elementIdPattern.matcher(label).matches()) {
 								list.add(data);
 							}
 						}
 					}
+				}
 			}
 		}
 	}

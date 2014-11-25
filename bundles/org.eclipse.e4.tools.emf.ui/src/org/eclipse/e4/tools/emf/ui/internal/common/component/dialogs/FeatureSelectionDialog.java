@@ -6,14 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalClass;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalFeature;
@@ -58,14 +59,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 	private TreeViewer viewer;
-	private MStringModelFragment fragment;
-	private EditingDomain editingDomain;
-	private Messages Messages;
+	private final MStringModelFragment fragment;
+	private final EditingDomain editingDomain;
+	private final Messages Messages;
 	private ViewerFilterImpl filter;
 
-	public FeatureSelectionDialog(Shell parentShell, EditingDomain editingDomain, MStringModelFragment fragment, Messages Messages) {
+	public FeatureSelectionDialog(Shell parentShell, EditingDomain editingDomain, MStringModelFragment fragment,
+		Messages Messages) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editingDomain = editingDomain;
@@ -83,12 +86,16 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		setTitle(Messages.FeatureSelectionDialog_DialogTitle);
 		setMessage(Messages.FeatureSelectionDialog_DialogMessage);
 
-		Composite composite = (Composite) super.createDialogArea(parent);
+		final Composite composite = (Composite) super.createDialogArea(parent);
 
-		final Image packageImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
-		final Image classImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
-		final Image featureImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
-		final Image newTitleImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/fieldrefact_wiz.png")); //$NON-NLS-1$
+		final Image packageImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
+		final Image classImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
+		final Image featureImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
+		final Image newTitleImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/wizban/fieldrefact_wiz.png")); //$NON-NLS-1$
 
 		setTitleImage(newTitleImage);
 
@@ -103,11 +110,11 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 			}
 		});
 
-		Composite container = new Composite(composite, SWT.NONE);
+		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
-		Label l = new Label(container, SWT.NONE);
+		final Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.FeatureSelectionDialog_Filter);
 
 		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
@@ -132,7 +139,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		});
 		new Label(container, SWT.NONE);
 		viewer = new TreeViewer(container);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		final GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 200;
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ContentProviderImpl());
@@ -148,7 +155,8 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1.getClass() == InternalPackage.class) {
-					return ((InternalPackage) e1).ePackage.getNsURI().compareTo(((InternalPackage) e2).ePackage.getNsURI());
+					return ((InternalPackage) e1).ePackage.getNsURI().compareTo(
+						((InternalPackage) e2).ePackage.getNsURI());
 				} else if (e1.getClass() == InternalClass.class) {
 					return ((InternalClass) e1).eClass.getName().compareTo(((InternalClass) e2).eClass.getName());
 				} else if (e1.getClass() == InternalFeature.class) {
@@ -160,12 +168,13 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				Button buttonOk = getButton(IDialogConstants.OK_ID);
-				if (!selection.isEmpty() && selection.getFirstElement().getClass() == InternalFeature.class)
+				final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				final Button buttonOk = getButton(IDialogConstants.OK_ID);
+				if (!selection.isEmpty() && selection.getFirstElement().getClass() == InternalFeature.class) {
 					buttonOk.setEnabled(true);
-				else
+				} else {
 					buttonOk.setEnabled(false);
+				}
 			}
 		});
 
@@ -180,10 +189,11 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 
 	@Override
 	protected void okPressed() {
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		final IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		if (!sel.isEmpty() && sel.getFirstElement().getClass() == InternalFeature.class) {
-			InternalFeature f = (InternalFeature) sel.getFirstElement();
-			Command cmd = SetCommand.create(editingDomain, fragment, FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME, f.feature.getName());
+			final InternalFeature f = (InternalFeature) sel.getFirstElement();
+			final Command cmd = SetCommand.create(editingDomain, fragment,
+				FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME, f.feature.getName());
 
 			if (cmd.canExecute()) {
 				editingDomain.getCommandStack().execute(cmd);
@@ -250,21 +260,21 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		@Override
 		public void update(final ViewerCell cell) {
 			if (cell.getElement().getClass() == InternalPackage.class) {
-				InternalPackage o = (InternalPackage) cell.getElement();
-				StyledString styledString = new StyledString(o.ePackage.getName());
+				final InternalPackage o = (InternalPackage) cell.getElement();
+				final StyledString styledString = new StyledString(o.ePackage.getName());
 				styledString.append(" - " + o.ePackage.getNsURI(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				cell.setText(styledString.getString());
 				cell.setStyleRanges(styledString.getStyleRanges());
 				cell.setImage(packageImage);
 			} else if (cell.getElement().getClass() == InternalClass.class) {
-				InternalClass o = (InternalClass) cell.getElement();
+				final InternalClass o = (InternalClass) cell.getElement();
 				cell.setText(o.eClass.getName());
 				cell.setImage(classImage);
 			} else {
-				InternalFeature o = (InternalFeature) cell.getElement();
-				StyledString styledString = new StyledString(o.feature.getName());
+				final InternalFeature o = (InternalFeature) cell.getElement();
+				final StyledString styledString = new StyledString(o.feature.getName());
 
-				EClassifier type = ModelUtils.getTypeArgument(o.clazz.eClass, o.feature.getEGenericType());
+				final EClassifier type = ModelUtils.getTypeArgument(o.clazz.eClass, o.feature.getEGenericType());
 				if (o.feature.isMany()) {
 					styledString.append(" : List<" + type.getName() + ">", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
@@ -285,13 +295,13 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		@Override
 		public String getText(Object element) {
 			if (element.getClass() == InternalPackage.class) {
-				InternalPackage o = (InternalPackage) element;
+				final InternalPackage o = (InternalPackage) element;
 				return o.ePackage.getName();
 			} else if (element.getClass() == InternalClass.class) {
-				InternalClass o = (InternalClass) element;
+				final InternalClass o = (InternalClass) element;
 				return o.eClass.getName();
 			} else {
-				InternalFeature o = (InternalFeature) element;
+				final InternalFeature o = (InternalFeature) element;
 				return o.feature.getName();
 			}
 		}
@@ -303,14 +313,14 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			ILabelProvider pv = (ILabelProvider) ((StructuredViewer) viewer).getLabelProvider();
+			final ILabelProvider pv = (ILabelProvider) ((StructuredViewer) viewer).getLabelProvider();
 
 			if (element.getClass() == InternalPackage.class) {
-				for (InternalClass c : ((InternalPackage) element).classes) {
+				for (final InternalClass c : ((InternalPackage) element).classes) {
 					if (match(pv.getText(c))) {
 						return true;
 					}
-					for (InternalFeature f : c.features) {
+					for (final InternalFeature f : c.features) {
 						if (match(pv.getText(f))) {
 							return true;
 						}
@@ -321,7 +331,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 				if (match(pv.getText(element))) {
 					return true;
 				}
-				for (InternalFeature f : ((InternalClass) element).features) {
+				for (final InternalFeature f : ((InternalClass) element).features) {
 					if (match(pv.getText(f))) {
 						return true;
 					}
@@ -344,9 +354,9 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 			}
 
 			// Otherwise check if any of the words of the text matches
-			String[] words = getWords(text);
+			final String[] words = getWords(text);
 			for (int i = 0; i < words.length; i++) {
-				String word = words[i];
+				final String word = words[i];
 				if (match(word)) {
 					return true;
 				}
@@ -357,10 +367,10 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 
 		/**
 		 * Answers whether the given String matches the pattern.
-		 * 
+		 *
 		 * @param string
 		 *            the String to test
-		 * 
+		 *
 		 * @return whether the string matches the pattern
 		 */
 		private boolean match(String string) {
@@ -373,7 +383,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		/**
 		 * The pattern string for which this filter should select elements in
 		 * the viewer.
-		 * 
+		 *
 		 * @param patternString
 		 */
 		public void setPattern(String patternString) {
@@ -392,12 +402,12 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		/**
 		 * Take the given filter text and break it down into words using a
 		 * BreakIterator.
-		 * 
+		 *
 		 * @param text
 		 * @return an array of words
 		 */
 		private String[] getWords(String text) {
-			List<String> words = new ArrayList<String>();
+			final List<String> words = new ArrayList<String>();
 			// Break the text up into words, separating based on whitespace and
 			// common punctuation.
 			// Previously used String.split(..., "\\W"), where "\W" is a regular
@@ -408,7 +418,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 			// Also need to do this in an NL-sensitive way. The use of
 			// BreakIterator
 			// was suggested in bug 90579.
-			BreakIterator iter = BreakIterator.getWordInstance();
+			final BreakIterator iter = BreakIterator.getWordInstance();
 			iter.setText(text);
 			int i = iter.first();
 			while (i != java.text.BreakIterator.DONE && i < text.length()) {
@@ -418,7 +428,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 				}
 				// match the word
 				if (Character.isLetterOrDigit(text.charAt(i))) {
-					String word = text.substring(i, j);
+					final String word = text.substring(i, j);
 					words.add(word);
 				}
 				i = j;

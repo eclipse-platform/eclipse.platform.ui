@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.swt.graphics.Image;
@@ -34,11 +35,11 @@ import org.eclipse.swt.widgets.Display;
  */
 public class BundleImageCache {
 
-	private Display display;
-	private ClassLoader classloader;
+	private final Display display;
+	private final ClassLoader classloader;
 	ArrayList<Image> images;
 	static private Image imgPlaceholder;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	public BundleImageCache(Display display, ClassLoader classloader) {
 		this(display, classloader, null);
@@ -55,14 +56,14 @@ public class BundleImageCache {
 	 * Creates the image, and tracks it for a bulk dispose operation.
 	 *
 	 * @param path
-	 * @return
+	 * @return the {@link Image}
 	 */
 	public Image create(String path) {
 		Image img;
 		try {
 			img = new Image(display, classloader.getResourceAsStream(path));
 			images.add(img);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			img = getPlaceholder();
 		}
@@ -71,15 +72,15 @@ public class BundleImageCache {
 
 	/**
 	 * Uses IResourcePool to obtain image. Does not track object.
-	 * 
+	 *
 	 * @param key
-	 * @return
+	 * @return The {@link Image}
 	 */
 	public Image loadFromKey(String key) {
 		Image ret = null;
 		try {
 			ret = context.get(IResourcePool.class).getImageUnchecked(key);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		if (ret == null) {
@@ -90,7 +91,8 @@ public class BundleImageCache {
 
 	protected Image getPlaceholder() {
 		if (imgPlaceholder == null) {
-			imgPlaceholder = new Image(Display.getDefault(), classloader.getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")); //$NON-NLS-1$
+			imgPlaceholder = new Image(Display.getDefault(),
+				classloader.getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")); //$NON-NLS-1$
 		}
 		return imgPlaceholder;
 	}
@@ -103,8 +105,8 @@ public class BundleImageCache {
 	}
 
 	public void dispose() {
-		for (Iterator<Image> it = images.iterator(); it.hasNext();) {
-			Image image = it.next();
+		for (final Iterator<Image> it = images.iterator(); it.hasNext();) {
+			final Image image = it.next();
 			if (image.isDisposed() == false) {
 				image.dispose();
 			}
@@ -120,7 +122,7 @@ public class BundleImageCache {
 		try {
 			img = new Image(display, new URL("platform:/plugin/" + bundleId + path).openStream()); //$NON-NLS-1$
 			images.add(img);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			img = getPlaceholder();
 		}

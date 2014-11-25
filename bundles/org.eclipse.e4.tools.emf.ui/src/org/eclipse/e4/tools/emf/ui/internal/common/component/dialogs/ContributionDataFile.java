@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -53,13 +54,13 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
  */
 public class ContributionDataFile implements IFile {
 
-	private ContributionData data;
+	private final ContributionData data;
 	private IPath path;
 
 	public ContributionDataFile(ContributionData data) {
 		this.data = data;
 		if (data.iconPath != null) {
-			this.path = Path.fromOSString(data.iconPath);
+			path = Path.fromOSString(data.iconPath);
 		}
 	}
 
@@ -75,9 +76,8 @@ public class ContributionDataFile implements IFile {
 	public IPath getProjectRelativePath() {
 		if (getContributionData().installLocation != null) {
 			return new Path(data.resourceRelativePath);
-		} else {
-			return new Path(data.iconPath);
 		}
+		return new Path(data.iconPath);
 	}
 
 	@Override
@@ -349,6 +349,7 @@ public class ContributionDataFile implements IFile {
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean isLocal(int depth) {
 		// TODO Auto-generated method stub
@@ -392,7 +393,8 @@ public class ContributionDataFile implements IFile {
 	}
 
 	@Override
-	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor)
+		throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -415,6 +417,7 @@ public class ContributionDataFile implements IFile {
 
 	}
 
+	@Deprecated
 	@Override
 	public void setDerived(boolean isDerived) throws CoreException {
 		// TODO Auto-generated method stub
@@ -433,6 +436,7 @@ public class ContributionDataFile implements IFile {
 
 	}
 
+	@Deprecated
 	@Override
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 		// TODO Auto-generated method stub
@@ -451,6 +455,7 @@ public class ContributionDataFile implements IFile {
 
 	}
 
+	@Deprecated
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		// TODO Auto-generated method stub
@@ -500,7 +505,8 @@ public class ContributionDataFile implements IFile {
 	}
 
 	@Override
-	public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor)
+		throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -579,20 +585,20 @@ public class ContributionDataFile implements IFile {
 					entry = zip.getEntry(data.iconPath);
 				}
 				return zip.getInputStream(entry);
-			} else {
-				url = new URL("platform:/plugin/" + data.bundleName + "/" + data.iconPath); //$NON-NLS-1$ //$NON-NLS-2$
-				InputStream ret;
-				try {
-					ret = url.openStream();
-				} catch (Exception e) {
-					return new BufferedInputStream(new FileInputStream(data.installLocation + "/" + data.resourceRelativePath)); //$NON-NLS-1$
-				}
-				return ret;
 			}
-		} catch (MalformedURLException e) {
+			url = new URL("platform:/plugin/" + data.bundleName + "/" + data.iconPath); //$NON-NLS-1$ //$NON-NLS-2$
+			InputStream ret;
+			try {
+				ret = url.openStream();
+			} catch (final Exception e) {
+				return new BufferedInputStream(new FileInputStream(data.installLocation
+					+ "/" + data.resourceRelativePath)); //$NON-NLS-1$
+			}
+			return ret;
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 			throw new CoreException(Status.CANCEL_STATUS);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// perhaps not a bundle
 			// e.printStackTrace();
 			throw new CoreException(Status.CANCEL_STATUS);
@@ -600,7 +606,7 @@ public class ContributionDataFile implements IFile {
 			if (zip != null) {
 				try {
 					zip.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 				}
 			}
 		}
@@ -612,6 +618,7 @@ public class ContributionDataFile implements IFile {
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public int getEncoding() throws CoreException {
 		// TODO Auto-generated method stub
@@ -642,11 +649,13 @@ public class ContributionDataFile implements IFile {
 	}
 
 	@Override
-	public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor)
+		throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Deprecated
 	@Override
 	public void setCharset(String newCharset) throws CoreException {
 		// TODO Auto-generated method stub
@@ -660,13 +669,15 @@ public class ContributionDataFile implements IFile {
 	}
 
 	@Override
-	public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor)
+		throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor)
+		throws CoreException {
 		// TODO Auto-generated method stub
 
 	}

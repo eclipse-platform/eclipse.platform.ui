@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -20,10 +20,12 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
+@SuppressWarnings("restriction")
 public class HandledMenuItemCommandSelectionDialog extends AbstractCommandSelectionDialog {
-	private MHandledItem handler;
+	private final MHandledItem handler;
 
-	public HandledMenuItemCommandSelectionDialog(Shell parentShell, MHandledItem handler, IModelResource resource, Messages Messages) {
+	public HandledMenuItemCommandSelectionDialog(Shell parentShell, MHandledItem handler, IModelResource resource,
+		Messages Messages) {
 		super(parentShell, resource, Messages);
 		this.handler = handler;
 	}

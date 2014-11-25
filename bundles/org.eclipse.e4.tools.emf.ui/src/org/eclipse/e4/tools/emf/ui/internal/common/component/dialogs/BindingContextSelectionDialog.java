@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
@@ -45,11 +46,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialog {
-	private IModelResource resource;
+	private final IModelResource resource;
 	private TableViewer viewer;
 	private MBindingContext selectedContext;
-	private Messages Messages;
+	private final Messages Messages;
 
 	public BindingContextSelectionDialog(Shell parentShell, IModelResource resource, Messages Messages) {
 		super(parentShell);
@@ -63,12 +65,13 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
+		final Composite composite = (Composite) super.createDialogArea(parent);
 		getShell().setText(Messages.BindingContextSelectionDialog_ShellTitle);
 		setTitle(Messages.BindingContextSelectionDialog_Title);
 		setMessage(Messages.BindingContextSelectionDialog_Message);
 
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
+		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream(
+			"/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -78,14 +81,14 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 			}
 		});
 
-		Composite container = new Composite(composite, SWT.NONE);
+		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
-		Label l = new Label(container, SWT.NONE);
+		final Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.BindingContextSelectionDialog_LabelContextId);
 
-		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		new Label(container, SWT.NONE);
@@ -101,10 +104,10 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 			}
 		});
 
-		List<EObject> categories = new ArrayList<EObject>();
-		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
+		final List<EObject> categories = new ArrayList<EObject>();
+		final TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
 		while (it.hasNext()) {
-			EObject o = it.next();
+			final EObject o = it.next();
 			if (o.eClass() == CommandsPackageImpl.Literals.BINDING_CONTEXT) {
 				categories.add(o);
 			}
@@ -126,9 +129,9 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 
 	@Override
 	protected void okPressed() {
-		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+		final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if (!s.isEmpty()) {
-			selectedContext = ((MBindingContext) s.getFirstElement());
+			selectedContext = (MBindingContext) s.getFirstElement();
 			if (selectedContext != null) {
 				super.okPressed();
 			} else {
@@ -141,9 +144,9 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 
 		@Override
 		public void update(final ViewerCell cell) {
-			MBindingContext cmd = (MBindingContext) cell.getElement();
+			final MBindingContext cmd = (MBindingContext) cell.getElement();
 
-			StyledString styledString = new StyledString();
+			final StyledString styledString = new StyledString();
 			if (cmd.getName() != null) {
 				styledString.append(cmd.getName());
 			}
@@ -169,7 +172,7 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 
 		@Override
 		public String getText(Object element) {
-			MBindingContext command = (MBindingContext) element;
+			final MBindingContext command = (MBindingContext) element;
 			String s = ""; //$NON-NLS-1$
 			if (command.getName() != null) {
 				s += command.getName();
