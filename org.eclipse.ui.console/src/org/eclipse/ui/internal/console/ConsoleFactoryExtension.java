@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,15 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleFactory;
@@ -93,9 +96,6 @@ public class ConsoleFactoryExtension implements IPluginContribution {
         return fLabel;
     }
 
-    /**
-     * @return
-     */
     public ImageDescriptor getImageDescriptor() {
         if (fImageDescriptor == null) {
             String path = fConfig.getAttribute("icon"); //$NON-NLS-1$
@@ -110,10 +110,6 @@ public class ConsoleFactoryExtension implements IPluginContribution {
         return fImageDescriptor;
     }
 
-    /**
-     * @return
-     * @throws CoreException
-     */
     public IConsoleFactory createFactory() throws CoreException {
         if (fFactory == null) {
             fFactory = (IConsoleFactory) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
