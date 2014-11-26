@@ -371,13 +371,11 @@ public interface IWorkingSetManager {
 	public int getRecentWorkingSetsLength();
 
 	/**
-	 * Allows to reorder working sets internally by swapping 2 of them
+	 * Allows to reorder workingSets internally by swapping 2 of them
 	 * 
-	 * @param first
-	 *            working set to swap
-	 * @param second
-	 *            working set to swap
-	 * @since 3.107
+	 * @param one
+	 * @param other
+	 * @since 3.106
 	 */
-	public void swapWorkingSets(IWorkingSet one, IWorkingSet other);
+	public void swapIndex(IWorkingSet one, IWorkingSet other);
 }
