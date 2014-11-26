@@ -379,5 +379,5 @@ public interface IWorkingSetManager {
 	 *            working set to swap
 	 * @since 3.107
 	 */
-	public void swapWorkingSets(IWorkingSet first, IWorkingSet second);
+	public void swapWorkingSets(IWorkingSet one, IWorkingSet other);
 }
