@@ -146,9 +146,6 @@ public class StackRenderer extends LazyStackRenderer {
 	@Inject
 	IPresentationEngine renderer;
 
-	@Inject
-	EModelService modelService;
-
 	private EventHandler itemUpdater;
 
 	private EventHandler dirtyUpdater;
