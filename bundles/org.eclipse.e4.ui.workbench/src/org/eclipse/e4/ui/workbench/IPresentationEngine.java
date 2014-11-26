@@ -203,7 +203,7 @@ public interface IPresentationEngine {
 	/**
 	 * This is the tag name that indicates that the model element is active.
 	 * 
-	 * @since 1.2
+	 * @since 1.3
 	 *
 	 */
 	public static final String ACTIVE = "active"; //$NON-NLS-1$

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench" version="2">
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Bug 319463 - Remove dead code" id="923795461">
             <message_arguments>
@@ -18,6 +19,15 @@
             <message_arguments>
                 <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
                 <message_argument value="org.eclipse.e4.ui.workbench_1.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/IPresentationEngine.java" type="org.eclipse.e4.ui.workbench.IPresentationEngine">
+        <filter id="1209008130">
+            <message_arguments>
+                <message_argument value="1.3"/>
+                <message_argument value="1.2"/>
+                <message_argument value="ACTIVE"/>
             </message_arguments>
         </filter>
     </resource>
