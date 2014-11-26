@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Mickael Istria (Red Hat Inc.) - 427887 Up/Down to order working sets
  ******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -32,10 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Base implementation for a simple working set dialog that doesn't contain
@@ -186,22 +183,6 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		super.availableWorkingSetsChanged();
 	}
 
-	@Override
-	protected void updateButtonAvailability() {
-		super.updateButtonAvailability();
-		if (this.upButton != null && !this.upButton.isDisposed()) {
-			if (!this.viewer.getSelection().isEmpty()) {
-				IStructuredSelection selection = (IStructuredSelection) this.viewer.getSelection();
-				if (selection.size() == 1) {
-					int selectionIndex = this.viewer.getTable().getSelectionIndex();
-					this.upButton.setEnabled(selectionIndex > 0);
-					this.downButton.setEnabled(selectionIndex < this.viewer.getTable()
-							.getItemCount() - 1);
-				}
-			}
-		}
-	}
-
 	/**
 	 * Called when the selection has changed.
 	 */
@@ -220,48 +201,6 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	protected void deselectAllSets() {
 		viewer.setCheckedElements(new Object[0]);
 		updateButtonAvailability();
-	}
-	
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.internal.dialogs.AbstractWorkingSetDialog#upSelectedWorkingSet
-	 * ()
-	 */
-	@Override
-	protected void upSelectedWorkingSet() {
-		moveSelectedWorkingSet(-1);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.dialogs.AbstractWorkingSetDialog#
-	 * downSelectedWorkingSet()
-	 */
-	@Override
-	protected void downSelectedWorkingSet() {
-		moveSelectedWorkingSet(+1);
-	}
-
-	private void moveSelectedWorkingSet(int diffLocation) {
-		if (this.viewer.getSelection().isEmpty()) {
-			return;
-		}
-		IStructuredSelection selection = (IStructuredSelection) this.viewer.getSelection();
-		if (selection.size() > 1) {
-			return;
-		}
-		IWorkingSet currentWorkingSet = (IWorkingSet) selection.getFirstElement();
-		int idx = this.viewer.getTable().getSelectionIndex();
-		int otherIdx = idx + diffLocation;
-		IWorkingSet otherWorkingSet = (IWorkingSet) this.viewer.getTable().getItem(otherIdx)
-				.getData();
-		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-		manager.swapIndex(currentWorkingSet, otherWorkingSet);
-		availableWorkingSetsChanged();
 	}
 
 }
