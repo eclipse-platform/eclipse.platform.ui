@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
@@ -164,9 +165,9 @@ public class IOConsole extends TextConsole {
     }
 
 	/**
-	 * Sets the new input stream .
+	 * Sets the new input stream.
 	 *
-	 * @return void.
+	 * @param inputStream the input stream
 	 * @since 3.6
 	 */
 	public void setInputStream(InputStream inputStream) {
