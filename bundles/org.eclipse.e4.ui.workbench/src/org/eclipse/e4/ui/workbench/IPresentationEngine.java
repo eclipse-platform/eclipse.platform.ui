@@ -201,7 +201,7 @@ public interface IPresentationEngine {
 	public static final String DRAGGABLE = "Draggable"; //$NON-NLS-1$
 
 	/**
-	 * This is the tag name that indicates that model element is active.
+	 * This is the tag name that indicates that the model element is active.
 	 * 
 	 * @since 1.2
 	 *
