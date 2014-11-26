@@ -348,6 +348,9 @@ public class OpenWorkspaceAction extends Action implements
 		// put the vmargs back at the very end (the eclipse.commands property
 		// already contains the -vm arg)
 		if (vmargs != null) {
+			if (result.charAt(result.length() - 1) != '\n') {
+				result.append('\n');
+			}
 			result.append(CMD_VMARGS);
 			result.append(NEW_LINE);
 			result.append(vmargs);
