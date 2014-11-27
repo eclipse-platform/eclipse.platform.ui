@@ -24,6 +24,11 @@ import org.eclipse.core.runtime.jobs.JobGroup;
  */
 public class InternalJobGroup {
 	/**
+	 * The maximum amount of time to wait on {@link #jobGroupStateLock}.
+	 * Determines how often the progress monitor is checked for cancellation.
+	 */
+	private static final long MAX_WAIT_INTERVAL = 200;
+	/**
 	 * This lock will be held while performing state changes on this job group. It is
 	 * also used as a notifier to wake up the threads waiting for this job group to complete.
 	 *
@@ -31,7 +36,7 @@ public class InternalJobGroup {
 	 *
 	 * @GuardedBy("itself")
 	 */
-	Object jobGroupStateLock = new Object();
+	private final Object jobGroupStateLock = new Object();
 
 	private static final JobManager manager = JobManager.getInstance();
 
@@ -110,7 +115,7 @@ public class InternalJobGroup {
 
 	/**
 	 * Called by the JobManager when the state of a job belonging to this group has changed.
-	 * Must be called from JobManager#updateJobGroup
+	 * Must be called from JobManager#changeState
 	 *
 	 * @param job a job belonging to this group
 	 * @param oldState the old state of the job
@@ -173,6 +178,14 @@ public class InternalJobGroup {
 				canceledJobsCount++;
 			}
 		}
+		//make sure this job group is running
+		if (getState() == JobGroup.NONE && getActiveJobsCount() > 0) {
+			synchronized (jobGroupStateLock) {
+				startJobGroup();
+				jobGroupStateLock.notifyAll();
+			}
+		}
+
 	}
 
 	/**
@@ -203,7 +216,6 @@ public class InternalJobGroup {
 	 * the <code>shouldCancel(IStatus, int, int)</code> method returned <code>true</code>,
 	 * <code>false</code> otherwise.
 	 * @GuardedBy("JobManager.lock")
-	 * @GuardedBy("jobGroupStateLock")
 	 */
 	final void cancelJobGroup(boolean cancelDueToError) {
 		state = JobGroup.CANCELING;
@@ -216,6 +228,26 @@ public class InternalJobGroup {
 	}
 
 	/**
+	 * Called by the JobManager to signify that the group is getting canceled.
+	 * Must be called from JobManager#updateJobGroup.
+	 *
+	 * @param cancelDueToError <code>true</code> if the group is getting canceled because
+	 * the <code>shouldCancel(IStatus, int, int)</code> method returned <code>true</code>,
+	 * <code>false</code> otherwise.
+	 * @GuardedBy("JobManager.lock")
+	 * @GuardedBy("jobGroupStateLock")
+	 */
+	final void cancelAndNotify(boolean cancelDueToError) {
+		synchronized (jobGroupStateLock) {
+			cancelJobGroup(cancelDueToError);
+			jobGroupStateLock.notifyAll();
+		}
+		for (Job job : internalGetActiveJobs())
+			job.cancel();
+
+	}
+
+	/**
 	 * Called by the JobManager to notify the group when the last job belonging
 	 * to the group has finished execution. Must be called from JobManager#updateJobGroup.
 	 *
@@ -224,15 +256,18 @@ public class InternalJobGroup {
 	 * @GuardedBy("jobGroupStateLock")
 	 */
 	final void endJobGroup(MultiStatus groupResult) {
-		if (seedJobsRemainingCount > 0 && !groupResult.matches(IStatus.CANCEL))
-			throw new IllegalStateException("Invalid initial jobs remaining count"); //$NON-NLS-1$
-		state = JobGroup.NONE;
-		result = groupResult;
-		results.clear();
-		cancelingDueToError = false;
-		failedJobsCount = 0;
-		canceledJobsCount = 0;
-		seedJobsRemainingCount = seedJobsCount;
+		synchronized (jobGroupStateLock) {
+			if (seedJobsRemainingCount > 0 && !groupResult.matches(IStatus.CANCEL))
+				throw new IllegalStateException("Invalid initial jobs remaining count"); //$NON-NLS-1$
+			state = JobGroup.NONE;
+			result = groupResult;
+			results.clear();
+			cancelingDueToError = false;
+			failedJobsCount = 0;
+			canceledJobsCount = 0;
+			seedJobsRemainingCount = seedJobsCount;
+			jobGroupStateLock.notifyAll();
+		}
 	}
 
 	final Job[] internalGetActiveJobs() {
@@ -298,5 +333,22 @@ public class InternalJobGroup {
 		String pluginId = importantResults.get(0).getPlugin();
 		IStatus[] groupResults = importantResults.toArray(new IStatus[importantResults.size()]);
 		return new MultiStatus(pluginId, 0, groupResults, name, null);
+	}
+
+	/**
+	 * Implementation of joining a job group.
+	 * @param remainingTime 
+	 * @return <code>true</code> if the join completed, and false otherwise (still waiting).
+	 */
+	boolean doJoin(long remainingTime) throws InterruptedException {
+		synchronized (jobGroupStateLock) {
+			if (getState() == JobGroup.NONE)
+				return true;
+			// If remaining time is greater than MAX_WAIT_INTERVAL, sleep only for
+			// MAX_WAIT_INTERVAL instead to be more responsive to monitor cancellation.
+			long sleepTime = remainingTime != 0 && remainingTime <= MAX_WAIT_INTERVAL ? remainingTime : MAX_WAIT_INTERVAL;
+			jobGroupStateLock.wait(sleepTime);
+			return getState() == JobGroup.NONE;
+		}
 	}
 }

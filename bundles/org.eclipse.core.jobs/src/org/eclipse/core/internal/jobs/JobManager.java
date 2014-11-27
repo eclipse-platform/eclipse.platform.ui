@@ -56,12 +56,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 */
 	public static final int PLUGIN_ERROR = 2;
 
-	/**
-	 * The maximum amount of time to wait on {@link InternalJobGroup#jobGroupStateLock}.
-	 * Determines how often the progress monitor is checked for cancellation.
-	 */
-	private static final long MAX_WAIT_INTERVAL = 200;
-
 	private static final String OPTION_DEADLOCK_ERROR = PI_JOBS + "/jobs/errorondeadlock"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_BEGIN_END = PI_JOBS + "/jobs/beginend"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_YIELDING = PI_JOBS + "/jobs/yielding"; //$NON-NLS-1$
@@ -363,7 +357,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	void cancel(InternalJobGroup jobGroup, boolean cancelDueToError) {
 		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
-		Job[] jobs;
 		synchronized (lock) {
 			switch (jobGroup.getState()) {
 				case JobGroup.NONE :
@@ -375,15 +368,9 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					}
 					return;
 				default :
-					synchronized (jobGroup.jobGroupStateLock) {
-						jobGroup.cancelJobGroup(cancelDueToError);
-						jobGroup.jobGroupStateLock.notifyAll();
-					}
-					jobs = jobGroup.internalGetActiveJobs();
+					jobGroup.cancelAndNotify(cancelDueToError);
 			}
 		}
-		for (Job job : jobs)
-			cancel(job);
 	}
 
 	/**
@@ -475,12 +462,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			InternalJobGroup jobGroup = job.getJobGroup();
 			if (jobGroup != null) {
 				jobGroup.jobStateChanged(job, oldJobState, job.getState());
-				if (jobGroup.getState() == JobGroup.NONE && jobGroup.getActiveJobsCount() > 0) {
-					synchronized (jobGroup.jobGroupStateLock) {
-						jobGroup.startJobGroup();
-						jobGroup.jobGroupStateLock.notifyAll();
-					}
-				}
 			}
 		}
 
@@ -1071,18 +1052,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					if ((suspended && jobGroup.getRunningJobsCount() == 0))
 						break;
 				}
-				synchronized (jobGroup.jobGroupStateLock) {
-					if (jobGroup.getState() == JobGroup.NONE)
-						break;
-					// If remaining time is greater than MAX_WAIT_INTERVAL, sleep only for
-					// MAX_WAIT_INTERVAL instead to be more responsive to monitor cancellation.
-					long sleepTime = remainingTime != 0 && remainingTime <= MAX_WAIT_INTERVAL ? remainingTime : MAX_WAIT_INTERVAL;
-					jobGroup.jobGroupStateLock.wait(sleepTime);
-
-					// Check again to see if the JobGroup is completed.
-					if (jobGroup.getState() == JobGroup.NONE)
-						break;
-				}
+				if (jobGroup.doJoin(remainingTime))
+					break;
 				synchronized (lock) {
 					jobsLeft = jobGroup.getActiveJobsCount();
 				}
@@ -1872,10 +1843,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					// remains in the ACTIVE state and the computed result is discarded to be recomputed later,
 					// after the new jobs finish.
 					if (jobGroup.getState() != JobGroup.NONE && jobGroup.getActiveJobsCount() == 0) {
-						synchronized (jobGroup.jobGroupStateLock) {
-							jobGroup.endJobGroup(jobGroupResult);
-							jobGroup.jobGroupStateLock.notifyAll();
-						}
+						jobGroup.endJobGroup(jobGroupResult);
 						isJobGroupCompleted = true;
 					}
 				}
