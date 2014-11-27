@@ -107,7 +107,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class ControlFactory {
 	public static final String COPY_HANDLER = ControlFactory.class.getName() + ".COPY_HANDLER"; //$NON-NLS-1$
 

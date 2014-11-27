@@ -60,7 +60,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class CommandEditor extends AbstractComponentEditor {
 
 	private Composite composite;
@@ -165,7 +164,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id,
 			Messages.ModelTooling_CommandId_tooltip, master, context, textProp, EMFEditProperties.value(
 				getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
-			Messages.ModelTooling_Empty_Warning);
+				Messages.ModelTooling_Empty_Warning);
 		ControlFactory.createTextField(parent, Messages.CommandEditor_Name, master, context, textProp,
 			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME));
 		ControlFactory.createTextField(parent, Messages.CommandEditor_LabelDescription, master, context, textProp,

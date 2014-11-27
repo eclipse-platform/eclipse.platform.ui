@@ -6,18 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 397650
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Nicolaj Hoess <nicohoess@gmail.com> - Bug 396975
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Marco Descher <marco@descher.at> - Bug 397650
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Nicolaj Hoess <nicohoess@gmail.com> - Bug 396975
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -78,9 +80,10 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
+		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -105,7 +108,8 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR);
 			}
 		});
-		actions.add(new Action(Messages.TrimBarEditor_AddToolControl, createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+		actions.add(new Action(Messages.TrimBarEditor_AddToolControl,
+			createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL);
@@ -116,12 +120,11 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) element;
+			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
 				return createImage(ResourceProvider.IMG_TrimContribution);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_TrimContribution);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_TrimContribution);
 		}
 
 		return null;
@@ -176,7 +179,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -188,7 +191,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -196,41 +199,52 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+			EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+			context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuContributionEditor_ParentId);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_CONTRIBUTION__PARENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_CONTRIBUTION__PARENT_ID)
+					.observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					TrimIdDialog dialog = new TrimIdDialog(t.getShell(), resource, (MTrimContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
+					final TrimIdDialog dialog = new TrimIdDialog(t.getShell(), resource,
+						(MTrimContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
 					dialog.open();
 				}
 			});
 
 		}
 
-		ControlFactory.createTextField(parent, Messages.TrimContributionEditor_Position, master, context, textProp, EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TRIM_CONTRIBUTION__POSITION_IN_PARENT));
+		ControlFactory
+			.createTextField(parent, Messages.TrimContributionEditor_Position, master, context, textProp,
+				EMFEditProperties.value(getEditingDomain(),
+					MenuPackageImpl.Literals.TRIM_CONTRIBUTION__POSITION_IN_PARENT));
 
 		// ------------------------------------------------------------
 		{
-			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 					handleAddChild(eClass);
 				}
 			};
@@ -240,7 +254,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			final TableViewer viewer = pickList.getList();
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 			viewer.setContentProvider(new ObservableListContentProvider());
-			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			final IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
 			pickList.setContentProvider(new ArrayContentProvider());
@@ -250,12 +264,17 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 					return ((EClass) element).getName();
 				}
 			});
-			pickList.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
+			pickList
+				.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
 			pickList.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
 		}
 
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -263,8 +282,10 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -278,14 +299,15 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -300,10 +322,11 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAddChild(EClass eClass) {
-		EObject toolbar = EcoreUtil.create(eClass);
+		final EObject toolbar = EcoreUtil.create(eClass);
 		setElementId(toolbar);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, toolbar);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, toolbar);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -313,7 +336,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

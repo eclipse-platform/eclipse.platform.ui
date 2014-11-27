@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -49,8 +50,10 @@ import org.eclipse.swt.widgets.Text;
 
 public class HandledToolItemEditor extends ToolItemEditor {
 
-	private IEMFEditListProperty HANDLED_ITEM__PARAMETERS = EMFEditProperties.list(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
-	private IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
+	private final IEMFEditListProperty HANDLED_ITEM__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
+		MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
+	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
+		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	@Inject
 	private IModelResource resource;
@@ -63,12 +66,11 @@ public class HandledToolItemEditor extends ToolItemEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) element;
+			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
 				return createImage(ResourceProvider.IMG_HandledToolItem);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_HandledToolItem);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_HandledToolItem);
 		}
 
 		return null;
@@ -76,18 +78,21 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 	@Override
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, final WritableValue master) {
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.HandledToolItemEditor_Command);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND).observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy().setConverter(new CommandToStringConverter(Messages)));
+			context.bindValue(textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
+					.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
+					.setConverter(new CommandToStringConverter(Messages)));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -96,7 +101,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					HandledToolItemCommandSelectionDialog dialog = new HandledToolItemCommandSelectionDialog(b.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
+					final HandledToolItemCommandSelectionDialog dialog = new HandledToolItemCommandSelectionDialog(b
+						.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
@@ -136,7 +142,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 			}
 		});
 
-		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element, Messages.HandledToolItemEditor_Parameters) {
+		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element,
+			Messages.HandledToolItemEditor_Parameters) {
 			@Override
 			protected boolean accepted(MParameter o) {
 				return true;

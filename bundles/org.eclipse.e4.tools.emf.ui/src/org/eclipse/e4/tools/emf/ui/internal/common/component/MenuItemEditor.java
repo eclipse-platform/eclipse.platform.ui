@@ -6,16 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 437951
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 437951
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -95,11 +97,13 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		addExpression = new Action(Messages.MenuItemEditor_AddCoreExpression, createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
+		addExpression = new Action(Messages.MenuItemEditor_AddCoreExpression,
+			createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
 			@Override
 			public void run() {
-				MUIElement e = (MUIElement) getMaster().getValue();
-				Command cmd = SetCommand.create(getEditingDomain(), e, UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
+				final MUIElement e = (MUIElement) getMaster().getValue();
+				final Command cmd = SetCommand.create(getEditingDomain(), e,
+					UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
 				}
@@ -112,9 +116,8 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
 				return createImage(ResourceProvider.IMG_MenuItem);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_MenuItem);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_MenuItem);
 		}
 
 		return null;
@@ -150,12 +153,14 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
-		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
-	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
+		boolean isImport) {
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -163,9 +168,9 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		IWidgetValueProperty checkProp = WidgetProperties.selection();
-		IWidgetValueProperty enabled = WidgetProperties.enabled();
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty checkProp = WidgetProperties.selection();
+		final IWidgetValueProperty enabled = WidgetProperties.enabled();
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -177,47 +182,57 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+			EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		if (this.getClass() != MenuItemEditor.class) {
 			// ------------------------------------------------------------
 			{
-				Label l = new Label(parent, SWT.NONE);
+				final Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.MenuItemEditor_Type);
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-				ComboViewer viewer = new ComboViewer(parent);
+				final ComboViewer viewer = new ComboViewer(parent);
 				viewer.setContentProvider(new ArrayContentProvider());
 				viewer.setInput(new ItemType[] { ItemType.CHECK, ItemType.PUSH, ItemType.RADIO });
-				GridData gd = new GridData();
+				final GridData gd = new GridData();
 				gd.horizontalSpan = 2;
 				viewer.getControl().setLayoutData(gd);
-				IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(master);
+				final IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(),
+					MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(master);
 				context.bindValue(ViewerProperties.singleSelection().observe(viewer), itemTypeObs);
 			}
 		}
 
-		ControlFactory.createTranslatedTextField(parent, Messages.MenuItemEditor_Label, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
-		ControlFactory.createTextField(parent, Messages.MenuItemEditor_Mnemonics, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
-		ControlFactory.createTranslatedTextField(parent, Messages.MenuItemEditor_Tooltip, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool, project);
+		ControlFactory.createTranslatedTextField(parent, Messages.MenuItemEditor_Label, master, context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
+		ControlFactory.createTextField(parent, Messages.MenuItemEditor_Mnemonics, getMaster(), context, textProp,
+			EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
+		ControlFactory.createTranslatedTextField(parent, Messages.MenuItemEditor_Tooltip, master, context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool,
+			project);
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_IconURI);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
+					master));
 
 			new ImageTooltip(t, Messages) {
 
 				@Override
 				protected URI getImageURI() {
-					MUILabel part = (MUILabel) getMaster().getValue();
-					String uri = part.getIconURI();
+					final MUILabel part = (MUILabel) getMaster().getValue();
+					final String uri = part.getIconURI();
 					if (uri == null || uri.trim().length() == 0) {
 						return null;
 					}
@@ -232,32 +247,39 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MenuItemIconDialogEditor dialog = new MenuItemIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MMenuItem) getMaster().getValue(), Messages);
+					final MenuItemIconDialogEditor dialog = new MenuItemIconDialogEditor(b.getShell(), eclipseContext,
+						project, getEditingDomain(), (MMenuItem) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Enabled);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Button b = new Button(parent, SWT.CHECK);
+			final Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
-			context.bindValue(checkProp.observe(b), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__ENABLED).observeDetail(getMaster()));
+			context.bindValue(
+				checkProp.observe(b),
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__ENABLED).observeDetail(
+					getMaster()));
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Selected);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Button b = new Button(parent, SWT.CHECK);
+			final Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
-			context.bindValue(checkProp.observe(b), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__SELECTED).observeDetail(getMaster()));
+			context.bindValue(
+				checkProp.observe(b),
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__SELECTED).observeDetail(
+					getMaster()));
 
-			UpdateValueStrategy t2m = new UpdateValueStrategy();
+			final UpdateValueStrategy t2m = new UpdateValueStrategy();
 			t2m.setConverter(new Converter(boolean.class, ItemType.class) {
 
 				@Override
@@ -265,7 +287,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 					return null;
 				}
 			});
-			UpdateValueStrategy m2t = new UpdateValueStrategy();
+			final UpdateValueStrategy m2t = new UpdateValueStrategy();
 			m2t.setConverter(new Converter(ItemType.class, boolean.class) {
 
 				@Override
@@ -274,41 +296,52 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 				}
 			});
 
-			context.bindValue(enabled.observe(b), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(getMaster()), t2m, m2t);
+			context.bindValue(
+				enabled.observe(b),
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(
+					getMaster()), t2m, m2t);
 
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelTooling_UIElement_VisibleWhen);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			ComboViewer combo = new ComboViewer(parent);
+			final ComboViewer combo = new ComboViewer(parent);
 			combo.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			combo.setContentProvider(new ArrayContentProvider());
 			combo.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
 					if (element instanceof EClass) {
-						EClass eClass = (EClass) element;
+						final EClass eClass = (EClass) element;
 						return eClass.getName();
 					}
 
 					return super.getText(element);
 				}
 			});
-			List<Object> list = new ArrayList<Object>();
+			final List<Object> list = new ArrayList<Object>();
 			list.add(Messages.MenuItemEditor_NoExpression);
 			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
-			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION, UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
+			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION,
+				UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
 			combo.setInput(list);
-			context.bindValue(ViewerProperties.singleSelection().observe(combo), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN).observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)), new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
+			context.bindValue(ViewerProperties.singleSelection().observe(combo),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN)
+					.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
+				new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
 		}
 
 		createFormSubTypeForm(parent, context, master);
 
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -316,10 +349,14 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+			context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -335,14 +372,15 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	protected abstract void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master);
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -358,12 +396,13 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL),
+			FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
 			l.add(addExpression);
 		}

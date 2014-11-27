@@ -81,7 +81,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class AreaEditor extends AbstractComponentEditor {
 
 	private Composite composite;
@@ -233,7 +232,7 @@ public class AreaEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.AreaEditor_LabelLabel, master, context, textProp,
 			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL));
 		ControlFactory.createTextField(parent, Messages.AreaEditor_Tooltip, master, context, textProp,
@@ -302,7 +301,7 @@ public class AreaEditor extends AbstractComponentEditor {
 			final IViewerValueProperty vProp = ViewerProperties.singleSelection();
 			context.bindValue(vProp.observe(viewer),
 				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL)
-					.observeDetail(getMaster()));
+				.observeDetail(getMaster()));
 		}
 
 		ControlFactory.createSelectedElement(parent, this, context, Messages.AreaEditor_SelectedElement);

@@ -6,15 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance, Bug 443945
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance, Bug 443945
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -58,8 +60,10 @@ import org.eclipse.swt.widgets.Display;
 
 public class ModelFragmentsEditor extends AbstractComponentEditor {
 
-	private IListProperty MODEL_FRAGMENTS__FRAGMENTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
-	private IListProperty MODEL_FRAGMENTS__IMPORTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
+	private final IListProperty MODEL_FRAGMENTS__FRAGMENTS = EMFProperties
+		.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
+	private final IListProperty MODEL_FRAGMENTS__IMPORTS = EMFProperties
+		.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
 
 	private Composite composite;
 
@@ -96,7 +100,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 		createFragmentsTab(folder);
 		createImportsTab(folder);
 		folder.setSelection(0);
@@ -105,20 +109,23 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 	private void createFragmentsTab(CTabFolder folder) {
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelFragmentsEditor_ModelFragments);
 
-		Composite parent = createScrollableContainer(folder);
+		final Composite parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
 
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
 				@Override
 				protected void addPressed() {
-					MModelFragment component = MFragmentFactory.INSTANCE.createStringModelFragment();
+					final MModelFragment component = MFragmentFactory.INSTANCE.createStringModelFragment();
 
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, component);
+					final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+						FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, component);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -130,15 +137,14 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 				protected List<?> getContainerChildren(Object container) {
 					if (container instanceof MModelFragments) {
 						return ((MModelFragments) container).getFragments();
-					} else {
-						return null;
 					}
+					return null;
 				}
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-			TableViewer viewer = pickList.getList();
+			final TableViewer viewer = pickList.getList();
 
-			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
+			final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
 			viewer.setInput(prop.observeDetail(getMaster()));
 		}
 
@@ -146,23 +152,25 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 	private void createImportsTab(CTabFolder folder) {
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelFragmentsEditor_Imports);
 
-		Composite parent = createScrollableContainer(folder);
+		final Composite parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
-				EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
-				EObject eObject = EcoreUtil.create(eClass);
+				final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
+				final EObject eObject = EcoreUtil.create(eClass);
 
-				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+				final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+					FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
 
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
@@ -180,12 +188,12 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		pickList.setText(Messages.PartSashContainerEditor_Controls);
 
-		TableViewer viewer = pickList.getList();
+		final TableViewer viewer = pickList.getList();
 
 		pickList.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				FeatureClass eclass = (FeatureClass) element;
+				final FeatureClass eclass = (FeatureClass) element;
 				return eclass.label;
 			}
 		});
@@ -193,50 +201,55 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		pickList.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				FeatureClass eClass1 = (FeatureClass) e1;
-				FeatureClass eClass2 = (FeatureClass) e2;
+				final FeatureClass eClass1 = (FeatureClass) e1;
+				final FeatureClass eClass2 = (FeatureClass) e2;
 				return eClass1.label.compareTo(eClass2.label);
 			}
 		});
 
-		List<FeatureClass> list = new ArrayList<FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<FeatureClass>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
-		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
+		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
+			FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 
 		pickList.setInput(list);
 		if (list.size() > 0) {
 			pickList.setSelection(new StructuredSelection(list.get(0)));
 		}
 
-		IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
+		final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
 		viewer.setInput(prop.observeDetail(getMaster()));
 	}
 
 	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
-		for (EClassifier c : ePackage.getEClassifiers()) {
+		for (final EClassifier c : ePackage.getEClassifiers()) {
 			if (c instanceof EClass) {
-				EClass eclass = (EClass) c;
-				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+				final EClass eclass = (EClass) c;
+				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
+					&& !eclass.isInterface()
+					&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
 					list.add(new FeatureClass(eclass.getName(), eclass));
 				}
 			}
 		}
 
-		for (EPackage eSubPackage : ePackage.getESubpackages()) {
+		for (final EPackage eSubPackage : ePackage.getESubpackages()) {
 			addClasses(eSubPackage, list);
 		}
 	}
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		WritableList list = new WritableList();
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_IMPORTS, MODEL_FRAGMENTS__IMPORTS, element, Messages.ModelFragmentsEditor_Imports) {
+		final WritableList list = new WritableList();
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_IMPORTS, MODEL_FRAGMENTS__IMPORTS, element,
+			Messages.ModelFragmentsEditor_Imports) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_FRAGEMENTS, MODEL_FRAGMENTS__FRAGMENTS, element, Messages.ModelFragmentsEditor_ModelFragments) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_FRAGEMENTS, MODEL_FRAGMENTS__FRAGMENTS, element,
+			Messages.ModelFragmentsEditor_ModelFragments) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;

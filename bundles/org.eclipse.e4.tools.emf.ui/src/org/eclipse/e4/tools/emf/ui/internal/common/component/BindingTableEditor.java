@@ -62,7 +62,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class BindingTableEditor extends AbstractComponentEditor {
 
 	private Composite composite;

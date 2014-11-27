@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
@@ -59,12 +60,11 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) element;
+			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
 				return createImage(ResourceProvider.IMG_ToolBarSeparator);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_ToolBarSeparator);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_ToolBarSeparator);
 		}
 
 		return null;
@@ -119,7 +119,7 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -131,7 +131,7 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -139,10 +139,18 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+			EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+			context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -150,8 +158,10 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -165,14 +175,15 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor {
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 

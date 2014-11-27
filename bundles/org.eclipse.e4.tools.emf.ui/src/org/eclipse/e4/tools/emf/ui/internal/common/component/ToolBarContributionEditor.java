@@ -6,18 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 397650
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Nicolaj Hoess <nicohoess@gmail.com> - Bug 396975
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Marco Descher <marco@descher.at> - Bug 397650
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Nicolaj Hoess <nicohoess@gmail.com> - Bug 396975
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -76,9 +78,10 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
+		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -97,25 +100,29 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem, createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
+		actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem,
+			createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
 			}
 		});
-		actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem, createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
+		actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem,
+			createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
 			}
 		});
-		actions.add(new Action(Messages.ToolBarEditor_AddToolControl, createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+		actions.add(new Action(Messages.ToolBarEditor_AddToolControl,
+			createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
 			}
 		});
-		actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator, createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
+		actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator,
+			createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
@@ -126,12 +133,11 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) element;
+			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
 				return createImage(ResourceProvider.IMG_ToolBarContribution);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_ToolBarContribution);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_ToolBarContribution);
 		}
 
 		return null;
@@ -186,7 +192,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -198,7 +204,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -206,46 +212,57 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+			EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+			context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuContributionEditor_ParentId);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__PARENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__PARENT_ID)
+					.observeDetail(getMaster()));
 
-			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ToolBarIdDialog dialog = new ToolBarIdDialog(t.getShell(), resource, (MToolBarContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
+					final ToolBarIdDialog dialog = new ToolBarIdDialog(t.getShell(), resource,
+						(MToolBarContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
 					dialog.open();
 				}
 			});
 		}
 
-		ControlFactory.createTextField(parent, Messages.MenuContributionEditor_Position, master, context, textProp, EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT));
+		ControlFactory.createTextField(parent, Messages.MenuContributionEditor_Position, master, context, textProp,
+			EMFEditProperties.value(getEditingDomain(),
+				MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT));
 
 		// ------------------------------------------------------------
 		{
-			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					Struct struct = (Struct) ((IStructuredSelection) getSelection()).getFirstElement();
-					EClass eClass = struct.eClass;
-					MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
+					final Struct struct = (Struct) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = struct.eClass;
+					final MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
 					setElementId(eObject);
 
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+					final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+						UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -257,18 +274,27 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			pickList.setText(Messages.ToolBarEditor_ToolbarItems);
-			TableViewer viewer = pickList.getList();
+			final TableViewer viewer = pickList.getList();
 
-			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(master));
 
-			Struct defaultStruct = new Struct(Messages.ToolBarEditor_HandledToolItem, MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
-			pickList.setInput(new Struct[] { defaultStruct, new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false), new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false), new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
+			final Struct defaultStruct = new Struct(Messages.ToolBarEditor_HandledToolItem,
+				MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
+			pickList.setInput(new Struct[] { defaultStruct,
+				new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false),
+				new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false),
+				new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 		}
 
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -276,8 +302,10 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -291,14 +319,15 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -314,16 +343,17 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	protected void handleAddChild(EClass eClass, boolean separator) {
-		MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
+		final MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
 		setElementId(eObject);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

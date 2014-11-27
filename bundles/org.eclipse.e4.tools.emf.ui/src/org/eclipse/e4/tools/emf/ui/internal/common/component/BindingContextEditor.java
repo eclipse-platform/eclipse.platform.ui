@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-@SuppressWarnings("restriction")
 public class BindingContextEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
@@ -170,7 +169,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Name, master, context, textProp,
 			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME),
 			Messages.BindingContextEditor_NameWarning);

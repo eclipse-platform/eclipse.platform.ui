@@ -6,16 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 437951
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Steven Spungin <steven@spungin.tv> - Bug 424730, Bug 437951
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -76,11 +78,13 @@ public class WindowEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
-	private IListProperty WINDOW__WINDOWS = EMFProperties.list(BasicPackageImpl.Literals.WINDOW__WINDOWS);
-	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private IListProperty SHARED_ELEMENTS = EMFProperties.list(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
-	private IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
+	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
+		.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+	private final IListProperty WINDOW__WINDOWS = EMFProperties.list(BasicPackageImpl.Literals.WINDOW__WINDOWS);
+	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
+		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private final IListProperty SHARED_ELEMENTS = EMFProperties.list(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
+	private final IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 
 	private Action addMainMenu;
 	private Button createRemoveMainMenu;
@@ -111,12 +115,11 @@ public class WindowEditor extends AbstractComponentEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) element;
+			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
 				return createImage(ResourceProvider.IMG_Window);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_Window);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_Window);
 		}
 
 		return null;
@@ -166,13 +169,14 @@ public class WindowEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
-		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -184,7 +188,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -192,59 +196,79 @@ public class WindowEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp,
+			EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.WindowEditor_Bounds);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Composite comp = new Composite(parent, SWT.NONE);
-			GridLayout layout = new GridLayout(4, true);
+			final Composite comp = new Composite(parent, SWT.NONE);
+			final GridLayout layout = new GridLayout(4, true);
 			layout.marginWidth = 0;
 			layout.marginHeight = 0;
 			comp.setLayout(layout);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
 
 			Text t = new Text(comp, SWT.BORDER | SWT.TRAIL);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__X).observeDetail(getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__X).observeDetail(
+					getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
 
 			t = new Text(comp, SWT.BORDER | SWT.TRAIL);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__Y).observeDetail(getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__Y).observeDetail(
+					getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
 
 			t = new Text(comp, SWT.BORDER | SWT.TRAIL);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__WIDTH).observeDetail(getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__WIDTH).observeDetail(
+					getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
 
 			t = new Text(comp, SWT.BORDER | SWT.TRAIL);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__HEIGHT).observeDetail(getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__HEIGHT).observeDetail(
+					getMaster()), new UnsettableUpdateValueStrategy(), new UnsettableUpdateValueStrategy());
 		}
 
-		ControlFactory.createTranslatedTextField(parent, Messages.WindowEditor_Label, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
-		ControlFactory.createTranslatedTextField(parent, Messages.WindowEditor_Tooltip, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool, project);
+		ControlFactory.createTranslatedTextField(parent, Messages.WindowEditor_Label, getMaster(), context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
+		ControlFactory.createTranslatedTextField(parent, Messages.WindowEditor_Tooltip, getMaster(), context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool,
+			project);
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.WindowEditor_IconURI);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
+					master));
 
 			new ImageTooltip(t, Messages) {
 
 				@Override
 				protected URI getImageURI() {
-					MUILabel part = (MUILabel) getMaster().getValue();
-					String uri = part.getIconURI();
+					final MUILabel part = (MUILabel) getMaster().getValue();
+					final String uri = part.getIconURI();
 					if (uri == null || uri.trim().length() == 0) {
 						return null;
 					}
@@ -259,14 +283,15 @@ public class WindowEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					WindowIconDialogEditor dialog = new WindowIconDialogEditor(b.getShell(), eclipseContext, project, getEditingDomain(), (MWindow) getMaster().getValue(), Messages);
+					final WindowIconDialogEditor dialog = new WindowIconDialogEditor(b.getShell(), eclipseContext,
+						project, getEditingDomain(), (MWindow) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.WindowEditor_MainMenu);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
@@ -274,7 +299,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			createRemoveMainMenu.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MWindow window = (MWindow) getMaster().getValue();
+					final MWindow window = (MWindow) getMaster().getValue();
 					if (window.getMainMenu() == null) {
 						addMenu();
 					} else {
@@ -285,12 +310,19 @@ public class WindowEditor extends AbstractComponentEditor {
 			createRemoveMainMenu.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory
+			.createCheckBox(
+				parent,
+				"To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
+		ControlFactory
+			.createCheckBox(
+				parent,
+				"Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
 
 		ControlFactory.createSelectedElement(parent, this, context, Messages.WindowEditor_SelectedElement);
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.WindowEditor_BindingContexts);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Context_Properties,
+			UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -298,10 +330,16 @@ public class WindowEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createTranslatedTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE), resourcePool, project);
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createTranslatedTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase,
+			getMaster(), context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE),
+			resourcePool, project);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables,
+			UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -315,29 +353,32 @@ public class WindowEditor extends AbstractComponentEditor {
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	void removeMenu() {
-		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, null);
+		final Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(),
+			BasicPackageImpl.Literals.WINDOW__MAIN_MENU, null);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 		}
 	}
 
 	void addMenu() {
-		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		final MMenu menu = MMenuFactory.INSTANCE.createMenu();
 		setElementId(menu);
 
-		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, menu);
+		final Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(),
+			BasicPackageImpl.Literals.WINDOW__MAIN_MENU, menu);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 		}
@@ -350,7 +391,8 @@ public class WindowEditor extends AbstractComponentEditor {
 			return list;
 		}
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, Messages.WindowEditor_Handlers) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element,
+			Messages.WindowEditor_Handlers) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -359,7 +401,8 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_WINDOWS, WINDOW__WINDOWS, element, Messages.WindowEditor_Windows) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_WINDOWS, WINDOW__WINDOWS, element,
+			Messages.WindowEditor_Windows) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -368,7 +411,8 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_CONTROLS, ELEMENT_CONTAINER__CHILDREN, element, Messages.WindowEditor_Controls) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_CONTROLS, ELEMENT_CONTAINER__CHILDREN, element,
+			Messages.WindowEditor_Controls) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -377,14 +421,15 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SHARED_ELEMENTS, SHARED_ELEMENTS, element, Messages.WindowEditor_SharedElements) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SHARED_ELEMENTS, SHARED_ELEMENTS, element,
+			Messages.WindowEditor_SharedElements) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
 
-		MWindow window = (MWindow) element;
+		final MWindow window = (MWindow) element;
 		if (window.getMainMenu() != null) {
 			list.add(0, window.getMainMenu());
 		}
@@ -419,14 +464,15 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL),
+			FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 
 	@Override
 	public List<Action> getActions(Object element) {
-		List<Action> actions = new ArrayList<Action>();
+		final List<Action> actions = new ArrayList<Action>();
 
-		MWindow window = (MWindow) element;
+		final MWindow window = (MWindow) element;
 		if (window.getMainMenu() == null) {
 			actions.add(getActionAddMainMenu());
 		}

@@ -84,7 +84,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class ApplicationEditor extends AbstractComponentEditor {
 
 	private Composite composite;
@@ -199,7 +198,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp,
 			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
 

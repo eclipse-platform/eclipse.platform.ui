@@ -6,15 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -72,10 +74,11 @@ public class PartStackEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
+		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
-	private List<Action> actions = new ArrayList<Action>();
-	private List<Action> actionsImport = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -95,23 +98,26 @@ public class PartStackEditor extends AbstractComponentEditor {
 				handleAddChild(BasicPackageImpl.Literals.PART);
 			}
 		});
-		actions.add(new Action(Messages.PartStackEditor_AddCompositePart, createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
+		actions.add(new Action(Messages.PartStackEditor_AddCompositePart,
+			createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
 			@Override
 			public void run() {
 				handleAddChild(BasicPackageImpl.Literals.COMPOSITE_PART);
 			}
 		});
-		actions.add(new Action(Messages.PartStackEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+		actions.add(new Action(Messages.PartStackEditor_AddPlaceholder,
+			createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
 			@Override
 			public void run() {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
 			}
 		});
 
-		List<FeatureClass> list = getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+		final List<FeatureClass> list = getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK,
+			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 
 		if (!list.isEmpty()) {
-			for (FeatureClass c : list) {
+			for (final FeatureClass c : list) {
 				final EClass ec = c.eClass;
 				actions.add(new Action(c.label, createImageDescriptor(c.iconId)) {
 					@Override
@@ -129,12 +135,13 @@ public class PartStackEditor extends AbstractComponentEditor {
 				handleImportChild(BasicPackageImpl.Literals.PART);
 			}
 		});
-		actionsImport.add(new Action(Messages.PartStackEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.INPUT_PART);
-			}
-		});
+		actionsImport
+			.add(new Action(Messages.PartStackEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
+				@Override
+				public void run() {
+					handleImportChild(BasicPackageImpl.Literals.INPUT_PART);
+				}
+			});
 
 	}
 
@@ -143,9 +150,8 @@ public class PartStackEditor extends AbstractComponentEditor {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
 				return createImage(ResourceProvider.IMG_Part);
-			} else {
-				return createImage(ResourceProvider.IMG_Tbr_Part);
 			}
+			return createImage(ResourceProvider.IMG_Tbr_Part);
 		}
 
 		return null;
@@ -189,14 +195,15 @@ public class PartStackEditor extends AbstractComponentEditor {
 				composite.layout(true, true);
 			}
 		}
-		IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+		final IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 		viewer.setInput(prop.observeDetail(getMaster()));
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master,
+		boolean isImport) {
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -208,7 +215,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -216,18 +223,24 @@ public class PartStackEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+			EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+			context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PartStackEditor_SelectedElement);
-		ControlFactory.createTextField(parent, Messages.PartStackEditor_ContainerData, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
+		ControlFactory.createTextField(parent, Messages.PartStackEditor_ContainerData, master, context, textProp,
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
 
 		// ------------------------------------------------------------
 		{
 
-			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
+					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 					handleAddChild(eClass);
 				}
 			};
@@ -235,23 +248,30 @@ public class PartStackEditor extends AbstractComponentEditor {
 			pickList.setText(Messages.PartStackEditor_Parts);
 
 			viewer = pickList.getList();
-			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			final IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
 			pickList.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
 
-			List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
+			final List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
 			eClassList.add(new FeatureClass(Messages.PartStackEditor_Part, BasicPackageImpl.Literals.PART));
-			eClassList.add(new FeatureClass(Messages.PartStackEditor_CompositePart, BasicPackageImpl.Literals.COMPOSITE_PART));
-			eClassList.add(new FeatureClass(Messages.PartStackEditor_Placeholder, AdvancedPackageImpl.Literals.PLACEHOLDER));
-			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
+			eClassList.add(new FeatureClass(Messages.PartStackEditor_CompositePart,
+				BasicPackageImpl.Literals.COMPOSITE_PART));
+			eClassList.add(new FeatureClass(Messages.PartStackEditor_Placeholder,
+				AdvancedPackageImpl.Literals.PLACEHOLDER));
+			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK,
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
 			pickList.setInput(eClassList);
 			pickList.setSelection(new StructuredSelection(eClassList.get(0)));
 
 		}
 
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+			WidgetProperties.selection(),
+			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -259,8 +279,10 @@ public class PartStackEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
+			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -274,14 +296,15 @@ public class PartStackEditor extends AbstractComponentEditor {
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
-		Composite container = new Composite(folder, SWT.NONE);
+		final Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);
 
-		UIViewer objectViewer = new UIViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		final UIViewer objectViewer = new UIViewer();
+		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
+			getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -301,14 +324,15 @@ public class PartStackEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAddChild(EClass eClass) {
-		EObject eObject = EcoreUtil.create(eClass);
+		final EObject eObject = EcoreUtil.create(eClass);
 		addToModel(eObject);
 	}
 
 	private void addToModel(EObject eObject) {
 		setElementId(eObject);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -319,22 +343,22 @@ public class PartStackEditor extends AbstractComponentEditor {
 	protected void handleImportChild(EClass eClass) {
 
 		if (eClass == BasicPackageImpl.Literals.PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, resourcePool);
-			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			final ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, resourcePool);
+			final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 			if (wizardDialog.open() == Window.OK) {
-				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
-				for (MPart part : parts) {
+				final MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
+				for (final MPart part : parts) {
 					addToModel((EObject) part);
 				}
 			}
 		}
 
 		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this, resourcePool);
-			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			final ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this, resourcePool);
+			final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 			if (wizardDialog.open() == Window.OK) {
-				MPart[] parts = (MPart[]) wizard.getElements(MInputPart.class);
-				for (MPart part : parts) {
+				final MPart[] parts = (MPart[]) wizard.getElements(MInputPart.class);
+				for (final MPart part : parts) {
 					addToModel((EObject) part);
 				}
 			}
@@ -343,14 +367,14 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
 		l.addAll(actionsImport);
 		return l;
 	}

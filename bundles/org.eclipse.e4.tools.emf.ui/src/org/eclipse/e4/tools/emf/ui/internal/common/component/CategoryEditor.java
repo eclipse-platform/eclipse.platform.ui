@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-@SuppressWarnings("restriction")
 public class CategoryEditor extends AbstractComponentEditor {
 
 	private Composite composite;
@@ -127,7 +126,7 @@ public class CategoryEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.CategoryEditor_Name, master, context, textProp,
 			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.CATEGORY__NAME));
 		ControlFactory.createTextField(parent, Messages.CategoryEditor_Description, master, context, textProp,

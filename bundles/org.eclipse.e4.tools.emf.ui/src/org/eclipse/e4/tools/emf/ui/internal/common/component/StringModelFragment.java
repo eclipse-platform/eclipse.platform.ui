@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -69,9 +71,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
-	private IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
+	private final IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties
+		.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -83,9 +86,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@PostConstruct
 	public void init() {
-		List<FeatureClass> list = new ArrayList<FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<FeatureClass>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
-		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
+		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
+			FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 		for (final FeatureClass featureClass : list) {
 			actions.add(new Action(featureClass.label) {
 
@@ -109,13 +113,15 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] { FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME), FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID) };
+		return new FeaturePath[] {
+			FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME),
+			FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID) };
 	}
 
 	@Override
 	public String getDetailLabel(Object element) {
 		if (element instanceof StringModelFragmentImpl) {
-			StringModelFragmentImpl fragment = (StringModelFragmentImpl) element;
+			final StringModelFragmentImpl fragment = (StringModelFragmentImpl) element;
 			String ret = ""; //$NON-NLS-1$
 			if (E.notEmpty(fragment.getFeaturename())) {
 				ret += fragment.getFeaturename();
@@ -124,9 +130,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 				ret += " (" + fragment.getParentElementId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return ret;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -145,9 +150,9 @@ public class StringModelFragment extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
@@ -157,82 +162,93 @@ public class StringModelFragment extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_ParentId);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Composite comp = new Composite(parent, SWT.NONE);
+			final Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			GridLayout gl = new GridLayout(2, false);
+			final GridLayout gl = new GridLayout(2, false);
 			gl.marginWidth = gl.marginHeight = 0;
 			gl.verticalSpacing = 0;
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
 			comp.setLayout(gl);
 
-			Text t = new Text(comp, SWT.BORDER);
+			final Text t = new Text(comp, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			// t.setEditable(false);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(),
+					FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
 
 			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(), StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages);
+					final FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(),
+						StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_Featurename);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Composite comp = new Composite(parent, SWT.NONE);
+			final Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			GridLayout gl = new GridLayout(2, false);
+			final GridLayout gl = new GridLayout(2, false);
 			gl.marginWidth = gl.marginHeight = 0;
 			gl.verticalSpacing = 0;
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
 			comp.setLayout(gl);
 
-			Text t = new Text(comp, SWT.BORDER);
+			final Text t = new Text(comp, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
+			context.bindValue(
+				textProp.observeDelayed(200, t),
+				EMFEditProperties.value(getEditingDomain(),
+					FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.ModelTooling_Common_FindEllipsis);
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(), getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages);
+					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),
+						getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
 
 		}
 
-		ControlFactory.createTextField(parent, Messages.StringModelFragment_PositionInList, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST));
+		ControlFactory.createTextField(parent, Messages.StringModelFragment_PositionInList, getMaster(), context,
+			textProp, EMFEditProperties.value(getEditingDomain(),
+				FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST));
 
 		// ------------------------------------------------------------
 		{
 
-			E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
+					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 					handleAdd(eClass, false);
 				}
 
@@ -248,7 +264,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			pickList.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					FeatureClass eclass = (FeatureClass) element;
+					final FeatureClass eclass = (FeatureClass) element;
 					return eclass.label;
 				}
 			});
@@ -256,22 +272,23 @@ public class StringModelFragment extends AbstractComponentEditor {
 			pickList.setComparator(new ViewerComparator() {
 				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					FeatureClass eClass1 = (FeatureClass) e1;
-					FeatureClass eClass2 = (FeatureClass) e2;
+					final FeatureClass eClass1 = (FeatureClass) e1;
+					final FeatureClass eClass2 = (FeatureClass) e2;
 					return eClass1.label.compareTo(eClass2.label);
 				}
 			});
 
-			List<FeatureClass> list = new ArrayList<FeatureClass>();
+			final List<FeatureClass> list = new ArrayList<FeatureClass>();
 			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
-			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
+			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
+				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 
 			pickList.setInput(list);
 			if (list.size() > 0) {
 				pickList.setSelection(new StructuredSelection(list.get(0)));
 			}
 
-			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
+			final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 			pickList.getList().setInput(prop.observeDetail(getMaster()));
 
 		}
@@ -301,9 +318,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd(EClass eClass, boolean separator) {
-		EObject eObject = EcoreUtil.create(eClass);
+		final EObject eObject = EcoreUtil.create(eClass);
 		setElementId(eObject);
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -313,7 +331,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		Collections.sort(l, new Comparator<Action>() {
 			@Override

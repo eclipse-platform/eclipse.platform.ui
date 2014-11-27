@@ -58,7 +58,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class DirectMenuItemEditor extends MenuItemEditor {
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
 		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
@@ -162,8 +161,8 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 				textProp.observeDelayed(200, t),
 				EMFEditProperties.value(getEditingDomain(),
 					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
-				new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-				new UpdateValueStrategy());
+					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+					new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

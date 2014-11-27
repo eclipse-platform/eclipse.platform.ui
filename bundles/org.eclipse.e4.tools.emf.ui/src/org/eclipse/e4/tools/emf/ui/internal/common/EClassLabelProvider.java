@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.LabelProvider;
  *
  */
 public class EClassLabelProvider extends LabelProvider {
-	private ModelEditor editor;
+	private final ModelEditor editor;
 
 	public EClassLabelProvider(ModelEditor editor) {
 		this.editor = editor;
@@ -30,12 +30,11 @@ public class EClassLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		EClass eclass = (EClass) element;
-		AbstractComponentEditor elementEditor = editor.getEditor(eclass);
+		final EClass eclass = (EClass) element;
+		final AbstractComponentEditor elementEditor = editor.getEditor(eclass);
 		if (elementEditor != null) {
 			return elementEditor.getLabel(element);
-		} else {
-			return eclass.getName();
 		}
+		return eclass.getName();
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-@SuppressWarnings("restriction")
 public class CommandToStringConverter extends Converter {
 	private final Messages Messages;
 

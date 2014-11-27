@@ -14,8 +14,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.Bundl
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.IconDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.UriDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.UriDialogType;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DialogCellEditor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -46,10 +46,9 @@ public class ContributionUriCellEditor extends DialogCellEditor {
 	@Override
 	protected Object openDialogBox(Control cellEditorWindow) {
 		dlg.setUri((String) getValue());
-		if (dlg.open() == Dialog.OK) {
+		if (dlg.open() == Window.OK) {
 			return dlg.getUri();
-		} else {
-			return getValue();
 		}
+		return getValue();
 	}
 }

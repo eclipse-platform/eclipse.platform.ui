@@ -42,7 +42,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 
-@SuppressWarnings("restriction")
 public class XMIModelResource implements IModelResource {
 	private final EditingDomain editingDomain;
 	private final Resource resource;
@@ -67,7 +66,7 @@ public class XMIModelResource implements IModelResource {
 		});
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, commandStack, resourceSet);
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-			.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
+		.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
 		resource = resourceSet.getResource(uri, true);
 	}
 

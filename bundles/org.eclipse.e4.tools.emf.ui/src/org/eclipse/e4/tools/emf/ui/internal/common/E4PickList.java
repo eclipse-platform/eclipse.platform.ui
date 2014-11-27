@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -41,11 +42,9 @@ import org.eclipse.swt.widgets.Composite;
  * Pressing CR in the combo will execute the ADD command.
  * </p>
  * <p>
- * <em>E4 specific:</em> The default feature is
- * UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN. Other features must
- * override appropriate methods. The picker uses an Array Content Provider. The
- * list uses an ObservableListContentProvider and a Struct class to contain the
- * object and label.
+ * <em>E4 specific:</em> The default feature is UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN. Other features must
+ * override appropriate methods. The picker uses an Array Content Provider. The list uses an
+ * ObservableListContentProvider and a Struct class to contain the object and label.
  * </p>
  *
  * @author Steven Spungin
@@ -68,7 +67,8 @@ public class E4PickList extends AbstractPickList {
 		}
 	}
 
-	public E4PickList(Composite parent, int style, List<PickListFeatures> listFeatures, final Messages messages, final AbstractComponentEditor componentEditor, final EStructuralFeature feature) {
+	public E4PickList(Composite parent, int style, List<PickListFeatures> listFeatures, final Messages messages,
+		final AbstractComponentEditor componentEditor, final EStructuralFeature feature) {
 		super(parent, style, listFeatures, messages, componentEditor);
 
 		this.componentEditor = componentEditor;
@@ -78,13 +78,13 @@ public class E4PickList extends AbstractPickList {
 		picker.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				Struct struct = (Struct) element;
+				final Struct struct = (Struct) element;
 				return struct.label;
 			}
 		});
 
 		viewer.setLabelProvider(new ComponentLabelProvider(componentEditor.getEditor(), messages));
-		ObservableListContentProvider cp = new ObservableListContentProvider();
+		final ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
 	}
 
@@ -96,10 +96,11 @@ public class E4PickList extends AbstractPickList {
 	 * @param i
 	 */
 	protected void tryEObjectMove(Object obj, EObject container, int delta) {
-		List<?> l = (List<?>) container.eGet(feature);
-		int idx = l.indexOf(obj) + delta;
-		if ((delta > 0 && idx < l.size()) || (delta < 0 && idx >= 0)) {
-			Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, obj, idx);
+		final List<?> l = (List<?>) container.eGet(feature);
+		final int idx = l.indexOf(obj) + delta;
+		if (delta > 0 && idx < l.size() || delta < 0 && idx >= 0) {
+			final Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster()
+				.getValue(), feature, obj, idx);
 
 			if (cmd.canExecute()) {
 				componentEditor.getEditingDomain().getCommandStack().execute(cmd);
@@ -111,16 +112,17 @@ public class E4PickList extends AbstractPickList {
 	@Override
 	protected void addPressed() {
 		if (!picker.getSelection().isEmpty()) {
-			Struct struct = (Struct) ((IStructuredSelection) picker.getSelection()).getFirstElement();
-			EClass eClass = struct.eClass;
+			final Struct struct = (Struct) ((IStructuredSelection) picker.getSelection()).getFirstElement();
+			final EClass eClass = struct.eClass;
 			_handleAdd(eClass, struct.separator);
 		}
 	}
 
 	protected void _handleAdd(EClass eClass, boolean separator) {
-		MMenuElement eObject = (MMenuElement) EcoreUtil.create(eClass);
+		final MMenuElement eObject = (MMenuElement) EcoreUtil.create(eClass);
 		setElementId(eObject);
-		Command cmd = AddCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, eObject);
+		final Command cmd = AddCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster()
+			.getValue(), feature, eObject);
 
 		if (cmd.canExecute()) {
 			componentEditor.getEditingDomain().getCommandStack().execute(cmd);
@@ -132,9 +134,11 @@ public class E4PickList extends AbstractPickList {
 
 	protected void setElementId(Object element) {
 		if (componentEditor.getEditor().isAutoCreateElementId() && element instanceof MApplicationElement) {
-			MApplicationElement el = (MApplicationElement) element;
+			final MApplicationElement el = (MApplicationElement) element;
 			if (el.getElementId() == null || el.getElementId().trim().length() == 0) {
-				el.setElementId(Util.getDefaultElementId(((EObject) componentEditor.getMaster().getValue()).eResource(), el, componentEditor.getEditor().getProject()));
+				el.setElementId(Util.getDefaultElementId(
+					((EObject) componentEditor.getMaster().getValue()).eResource(), el, componentEditor.getEditor()
+						.getProject()));
 			}
 		}
 	}
@@ -142,34 +146,36 @@ public class E4PickList extends AbstractPickList {
 	protected List<?> getContainerChildren(Object master) {
 		if (master instanceof MElementContainer<?>) {
 			return ((MElementContainer<?>) master).getChildren();
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
 	protected void moveUpPressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 			if (s.size() == 1) {
-				Object obj = s.getFirstElement();
-				Object container = componentEditor.getMaster().getValue();
+				final Object obj = s.getFirstElement();
+				final Object container = componentEditor.getMaster().getValue();
 				if (feature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE) {
 					tryEObjectMove(obj, (EObject) container, -1);
 					return;
 				}
-				List<?> children = getContainerChildren(container);
+				final List<?> children = getContainerChildren(container);
 				if (children == null) {
 					return;
 				}
-				int idx = children.indexOf(obj) - 1;
+				final int idx = children.indexOf(obj) - 1;
 				if (idx >= 0) {
 					if (obj instanceof MUIElement && feature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
-						if (Util.moveElementByIndex(componentEditor.getEditingDomain(), (MUIElement) obj, componentEditor.getEditor().isLiveModel(), idx)) {
+						if (Util.moveElementByIndex(componentEditor.getEditingDomain(), (MUIElement) obj,
+							componentEditor.getEditor().isLiveModel(), idx)) {
 							viewer.setSelection(new StructuredSelection(obj));
 						}
-					} else if (obj instanceof MApplicationElement || obj instanceof org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container) {
-						Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, obj, idx);
+					} else if (obj instanceof MApplicationElement
+						|| obj instanceof org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container) {
+						final Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor
+							.getMaster().getValue(), feature, obj, idx);
 						if (cmd.canExecute()) {
 							componentEditor.getEditingDomain().getCommandStack().execute(cmd);
 							viewer.setSelection(new StructuredSelection(obj));
@@ -183,26 +189,29 @@ public class E4PickList extends AbstractPickList {
 	@Override
 	protected void moveDownPressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 			if (s.size() == 1) {
-				Object obj = s.getFirstElement();
-				Object container = componentEditor.getMaster().getValue();
+				final Object obj = s.getFirstElement();
+				final Object container = componentEditor.getMaster().getValue();
 				if (feature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE) {
 					tryEObjectMove(obj, (EObject) container, 1);
 					return;
 				}
-				List<?> children = getContainerChildren(container);
+				final List<?> children = getContainerChildren(container);
 				if (children == null) {
 					return;
 				}
-				int idx = children.indexOf(obj) + 1;
+				final int idx = children.indexOf(obj) + 1;
 				if (idx < children.size()) {
 					if (obj instanceof MUIElement && feature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
-						if (Util.moveElementByIndex(componentEditor.getEditingDomain(), (MUIElement) obj, componentEditor.getEditor().isLiveModel(), idx)) {
+						if (Util.moveElementByIndex(componentEditor.getEditingDomain(), (MUIElement) obj,
+							componentEditor.getEditor().isLiveModel(), idx)) {
 							viewer.setSelection(new StructuredSelection(obj));
 						}
-					} else if (obj instanceof MApplicationElement || obj instanceof org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container) {
-						Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, obj, idx);
+					} else if (obj instanceof MApplicationElement
+						|| obj instanceof org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container) {
+						final Command cmd = MoveCommand.create(componentEditor.getEditingDomain(), componentEditor
+							.getMaster().getValue(), feature, obj, idx);
 						if (cmd.canExecute()) {
 							componentEditor.getEditingDomain().getCommandStack().execute(cmd);
 							viewer.setSelection(new StructuredSelection(obj));
@@ -216,8 +225,9 @@ public class E4PickList extends AbstractPickList {
 	@Override
 	protected void removePressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			List<?> keybinding = ((IStructuredSelection) viewer.getSelection()).toList();
-			Command cmd = RemoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster().getValue(), feature, keybinding);
+			final List<?> keybinding = ((IStructuredSelection) viewer.getSelection()).toList();
+			final Command cmd = RemoveCommand.create(componentEditor.getEditingDomain(), componentEditor.getMaster()
+				.getValue(), feature, keybinding);
 			if (cmd.canExecute()) {
 				componentEditor.getEditingDomain().getCommandStack().execute(cmd);
 			}

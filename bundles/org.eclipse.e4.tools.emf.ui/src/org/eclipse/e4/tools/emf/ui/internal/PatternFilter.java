@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-@SuppressWarnings("restriction")
 public class PatternFilter extends org.eclipse.e4.ui.workbench.swt.internal.copy.PatternFilter {
 
 	/**

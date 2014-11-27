@@ -58,7 +58,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class AddonsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
@@ -158,7 +157,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		final Link lnk;
 		// ------------------------------------------------------------
 		{
@@ -198,8 +197,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 				textProp.observeDelayed(200, t),
 				EMFEditProperties.value(getEditingDomain(),
 					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()),
-				new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-				new UpdateValueStrategy());
+					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+					new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

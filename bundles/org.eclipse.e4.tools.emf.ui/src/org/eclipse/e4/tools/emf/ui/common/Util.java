@@ -45,7 +45,6 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
-@SuppressWarnings("restriction")
 public class Util {
 	public static final boolean isNullOrEmpty(String element) {
 		return element == null || element.trim().length() == 0;

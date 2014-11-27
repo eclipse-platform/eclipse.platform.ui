@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class CoreExpressionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
@@ -111,7 +110,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
 				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID)
-					.observeDetail(getMaster()));
+				.observeDetail(getMaster()));
 
 			if (getEditor().getExtensionLookup() == null) {
 				gd.horizontalSpan = 2;

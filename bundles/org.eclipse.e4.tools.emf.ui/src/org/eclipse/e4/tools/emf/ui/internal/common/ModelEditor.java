@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
- *     Marco Descher <marco@descher.at> - Bug395982, 426653, 422465, 429674
- *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
- *     Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing Maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
+ * Marco Descher <marco@descher.at> - Bug395982, 426653, 422465, 429674
+ * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing
+ * Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -20,9 +21,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -242,41 +245,48 @@ public class ModelEditor implements IGotoObject {
 	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
 	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
-	public static final String VIRTUAL_APPLICATION_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_APPLICATION_WINDOWS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PERSPECTIVE_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_PERSPECTIVE_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_APPLICATION_WINDOWS = ModelEditor.class.getName()
+		+ ".VIRTUAL_APPLICATION_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_WINDOWS = ModelEditor.class.getName()
+		+ ".VIRTUAL_PERSPECTIVE_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
-	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName()
+		+ ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
+	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName()
+		+ ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_ADDONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENU_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_MENU_CONTRIBUTIONS"; //$NON-NLS-1$
-	public static final String VIRTUAL_TOOLBAR_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_TOOLBAR_CONTRIBUTIONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_TOOLBAR_CONTRIBUTIONS = ModelEditor.class.getName()
+		+ ".VIRTUAL_TOOLBAR_CONTRIBUTIONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_TRIM_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_TRIM_CONTRIBUTIONS"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName()
+		+ ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MODEL_FRAGEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_FRAGEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MODEL_IMPORTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_IMPORTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_CATEGORIES = ModelEditor.class.getName() + ".VIRTUAL_CATEGORIES"; //$NON-NLS-1$
 	public static final String VIRTUAL_PARAMETERS = ModelEditor.class.getName() + ".VIRTUAL_PARAMETERS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENUELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ROOT_CONTEXTS = ModelEditor.class.getName() + ".VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = ModelEditor.class.getName() + "VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = ModelEditor.class.getName()
+		+ "VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_SNIPPETS = ModelEditor.class.getName() + "VIRTUAL_SNIPPETS"; //$NON-NLS-1$
 
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
 
-	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
-	private Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
-	private Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<Class<?>, List<AbstractElementEditorContribution>>();
-	private List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
-	private List<IEditorFeature> editorFeatures = new ArrayList<IEditorFeature>();
-	private List<IContributionClassCreator> contributionCreator = new ArrayList<IContributionClassCreator>();
+	private final Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
+	private final Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
+	private final Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<Class<?>, List<AbstractElementEditorContribution>>();
+	private final List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
+	private final List<IEditorFeature> editorFeatures = new ArrayList<IEditorFeature>();
+	private final List<IContributionClassCreator> contributionCreator = new ArrayList<IContributionClassCreator>();
 
 	private TreeViewer viewer;
-	private IModelResource modelProvider;
-	private IProject project;
+	private final IModelResource modelProvider;
+	private final IProject project;
 
 	@Inject
 	ESelectionService selectionService;
@@ -284,7 +294,7 @@ public class ModelEditor implements IGotoObject {
 	@Inject
 	MApplication app;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 	private boolean fragment;
 	private Handler clipboardHandler;
 
@@ -316,7 +326,7 @@ public class ModelEditor implements IGotoObject {
 	@Optional
 	private IModelExtractor modelExtractor;
 
-	private ObservablesManager obsManager;
+	private final ObservablesManager obsManager;
 
 	private final IResourcePool resourcePool;
 
@@ -342,23 +352,25 @@ public class ModelEditor implements IGotoObject {
 
 	private XmiTab xmiTab;
 
-	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
+	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project,
+		final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
 		this.project = project;
 		this.context = context;
 		this.context.set(ModelEditor.class, this);
-		this.obsManager = new ObservablesManager();
+		obsManager = new ObservablesManager();
 		if (project != null) {
 			String localeString = ""; //$NON-NLS-1$
-			Object object = this.context.get(TranslationService.LOCALE);
+			final Object object = this.context.get(TranslationService.LOCALE);
 			// TODO simplify once we break e4 tools
 			// compatibility with Luna, in Luna we representation has changed to
 			// be Locale instead of String
 			if (object != null) {
 				localeString = object.toString();
 			}
-			ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project, localeString) {
+			final ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project,
+				localeString) {
 				@Override
 				protected void updateResourceBundle() {
 					super.updateResourceBundle();
@@ -464,7 +476,7 @@ public class ModelEditor implements IGotoObject {
 				// This allows external commands to interact with the view.
 				// Eventually, all 3 tabs, or even the ModelEditor itself, could
 				// implement the interface.
-				String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
+				final String key = "org.eclipse.e4.tools.active-object-viewer"; //$NON-NLS-1$
 				if (listTab != null && editorTabFolder.getSelectionIndex() == getTabIndex(listTab.getTabItem())) {
 					app.getContext().set(key, listTab);
 				} else {
@@ -487,9 +499,9 @@ public class ModelEditor implements IGotoObject {
 	private void findAndHighlight(Control control) {
 		if (control != null) {
 			MApplicationElement m = findModelElement(control);
-			MApplicationElement o = m;
+			final MApplicationElement o = m;
 			if (m != null) {
-				List<MApplicationElement> l = new ArrayList<MApplicationElement>();
+				final List<MApplicationElement> l = new ArrayList<MApplicationElement>();
 				do {
 					l.add(m);
 					m = (MApplicationElement) ((EObject) m).eContainer();
@@ -497,7 +509,8 @@ public class ModelEditor implements IGotoObject {
 
 				if (o instanceof MPart) {
 					System.err.println(getClass().getName() + ".findAndHighLight: " + o); //$NON-NLS-1$
-					System.err.println(getClass().getName() + ".findAndHighLight: " + ((EObject) o).eContainingFeature()); //$NON-NLS-1$
+					System.err.println(getClass().getName()
+						+ ".findAndHighLight: " + ((EObject) o).eContainingFeature()); //$NON-NLS-1$
 				}
 
 				viewer.setSelection(new StructuredSelection(o));
@@ -517,30 +530,30 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private XmiTab createXMITab(Composite composite) {
-		IEclipseContext childContext = context.createChild();
+		final IEclipseContext childContext = context.createChild();
 		childContext.set(Composite.class, composite);
 		childContext.set(EMFDocumentResourceMediator.class, emfDocumentProvider);
 		childContext.set(IEclipsePreferences.class, preferences);
 		childContext.set(IResourcePool.class, resourcePool);
-		XmiTab ret = ContextInjectionFactory.make(XmiTab.class, childContext);
+		final XmiTab ret = ContextInjectionFactory.make(XmiTab.class, childContext);
 		return ret;
 	}
 
 	private Composite createFormTab(Composite composite) {
-		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
+		final SashForm form = new SashForm(composite, SWT.HORIZONTAL);
 		form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
 		viewer = createTreeViewerArea(form);
 
-		Composite parent = new Composite(form, SWT.NONE);
-		FillLayout l = new FillLayout();
+		final Composite parent = new Composite(form, SWT.NONE);
+		final FillLayout l = new FillLayout();
 		parent.setLayout(l);
 
-		Composite editingArea = new Composite(parent, SWT.BORDER);
-		GridLayout gl = new GridLayout();
+		final Composite editingArea = new Composite(parent, SWT.BORDER);
+		final GridLayout gl = new GridLayout();
 		editingArea.setLayout(gl);
 
-		Composite headerContainer = new Composite(editingArea, SWT.NONE);
+		final Composite headerContainer = new Composite(editingArea, SWT.NONE);
 		headerContainer.setLayout(new GridLayout(3, false));
 		headerContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -550,7 +563,7 @@ public class ModelEditor implements IGotoObject {
 		final Label sectionHeaderLabel = new Label(headerContainer, SWT.NONE);
 		sectionHeaderLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final Label separatorLabel = new Label(headerContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 		separatorLabel.setLayoutData(gridData);
 
@@ -564,17 +577,17 @@ public class ModelEditor implements IGotoObject {
 			@Override
 			public void keyReleased(final KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
-					List<EObject> list = new ArrayList<EObject>();
+					final List<EObject> list = new ArrayList<EObject>();
 					final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-					for (Object o : ((StructuredSelection) selection).toList()) {
+					for (final Object o : ((StructuredSelection) selection).toList()) {
 						if (o instanceof EObject) {
 							list.add((EObject) o);
 						}
 					}
 					if (list.isEmpty() == false) {
-						Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), list);
+						final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), list);
 						if (cmd.canExecute()) {
-							ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+							modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
 				}
@@ -587,7 +600,7 @@ public class ModelEditor implements IGotoObject {
 				if (!event.getSelection().isEmpty()) {
 					final IStructuredSelection s = (IStructuredSelection) event.getSelection();
 					if (s.getFirstElement() instanceof EObject) {
-						EObject obj = (EObject) s.getFirstElement();
+						final EObject obj = (EObject) s.getFirstElement();
 						final AbstractComponentEditor editor = getEditor(obj.eClass());
 						if (editor != null) {
 							currentEditor = editor;
@@ -597,7 +610,7 @@ public class ModelEditor implements IGotoObject {
 
 								@Override
 								public void run() {
-									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+									final Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 									layout.topControl = comp;
 									contentContainer.layout(true);
@@ -605,7 +618,7 @@ public class ModelEditor implements IGotoObject {
 							});
 						}
 					} else {
-						VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
+						final VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
 						final AbstractComponentEditor editor = virtualEditors.get(entry.getId());
 						if (editor != null) {
 							currentEditor = editor;
@@ -615,7 +628,7 @@ public class ModelEditor implements IGotoObject {
 
 								@Override
 								public void run() {
-									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+									final Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 									layout.topControl = comp;
 									contentContainer.layout(true);
@@ -641,7 +654,7 @@ public class ModelEditor implements IGotoObject {
 
 		form.setWeights(new int[] { 3, 4 });
 
-		MenuManager mgr = new MenuManager();
+		final MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 
@@ -649,39 +662,42 @@ public class ModelEditor implements IGotoObject {
 			public void menuAboutToShow(IMenuManager manager) {
 				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				final List<?> listOfSelections = s.toList();
-				int noSelected = listOfSelections.size();
+				final int noSelected = listOfSelections.size();
 
 				boolean addSeparator = false;
 				if (!s.isEmpty() && noSelected == 1) {
 					List<Action> actions;
 					if (s.getFirstElement() instanceof VirtualEntry<?>) {
-						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(s.getFirstElement());
+						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(
+							s.getFirstElement());
 						if (actions.size() > 0) {
-							MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
-							for (Action a : actions) {
+							final MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
+							for (final Action a : actions) {
 								addSeparator = true;
 								addMenu.add(a);
 							}
 							manager.add(addMenu);
 						}
 
-						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActionsImport(s.getFirstElement());
+						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActionsImport(
+							s.getFirstElement());
 						if (actions.size() > 0) {
-							MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
-							for (Action a : actions) {
+							final MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
+							for (final Action a : actions) {
 								addSeparator = true;
 								menu.add(a);
 							}
 							manager.add(menu);
 						}
 
-						if (addSeparator)
+						if (addSeparator) {
 							manager.add(new Separator());
+						}
 
 					} else {
 
 						final EObject o = (EObject) s.getFirstElement();
-						AbstractComponentEditor editor = getEditor(o.eClass());
+						final AbstractComponentEditor editor = getEditor(o.eClass());
 
 						// Build Add Child menu
 						if (editor != null) {
@@ -691,8 +707,8 @@ public class ModelEditor implements IGotoObject {
 						}
 
 						if (actions.size() > 0) {
-							MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
-							for (Action a : actions) {
+							final MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
+							for (final Action a : actions) {
 								addSeparator = true;
 								addMenu.add(a);
 							}
@@ -708,8 +724,8 @@ public class ModelEditor implements IGotoObject {
 
 						if (actions.size() > 0) {
 							// TODO WIM - extract nls
-							MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
-							for (Action a : actions) {
+							final MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
+							for (final Action a : actions) {
 								addSeparator = true;
 								menu.add(a);
 							}
@@ -718,12 +734,13 @@ public class ModelEditor implements IGotoObject {
 
 						if (o.eContainer() != null) {
 							addSeparator = true;
-							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
+							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor
+								.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
 								@Override
 								public void run() {
-									Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o);
+									final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), o);
 									if (cmd.canExecute()) {
-										ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+										modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 									}
 								}
 							});
@@ -732,38 +749,40 @@ public class ModelEditor implements IGotoObject {
 				}
 				// multi selection
 				if (noSelected > 0) {
-					if ((!isModelFragment()) && modelExtractor != null)
-						manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+					if (!isModelFragment() && modelExtractor != null) {
+						manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor
+							.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
 							@Override
 							public void run() {
-								ArrayList<MApplicationElement> maes = new ArrayList<MApplicationElement>();
-								for (Object objSelect : listOfSelections) {
+								final ArrayList<MApplicationElement> maes = new ArrayList<MApplicationElement>();
+								for (final Object objSelect : listOfSelections) {
 									EObject container = null;
 									if (objSelect instanceof VirtualEntry<?>) {
 
-										VirtualEntry<?> ve = (VirtualEntry<?>) objSelect;
+										final VirtualEntry<?> ve = (VirtualEntry<?>) objSelect;
 										container = (EObject) ve.getOriginalParent();
-										IObservableList list = ve.getList();
-										Iterator<?> iterator = list.iterator();
+										final IObservableList list = ve.getList();
+										final Iterator<?> iterator = list.iterator();
 										while (iterator.hasNext()) {
 											maes.add((MApplicationElement) iterator.next());
 										}
 
 									} else {
 										container = ((EObject) objSelect).eContainer();
-										MApplicationElement objSelect2 = (MApplicationElement) objSelect;
-										if (!(objSelect2 instanceof MApplication))
+										final MApplicationElement objSelect2 = (MApplicationElement) objSelect;
+										if (!(objSelect2 instanceof MApplication)) {
 											maes.add(objSelect2);
-										else {
+										} else {
 											// can't extract application
 											return;
 										}
 
 									}
 
-									String containerId = ((MApplicationElement) container).getElementId();
+									final String containerId = ((MApplicationElement) container).getElementId();
 									if (containerId == null || containerId.length() == 0) {
-										MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
+										MessageDialog.openError(viewer.getControl().getShell(), null,
+											messages.ModelEditor_ExtractFragment_NoParentId);
 
 										return;
 									}
@@ -771,54 +790,57 @@ public class ModelEditor implements IGotoObject {
 								}
 
 								if (modelExtractor.extract(viewer.getControl().getShell(), project, maes)) {
-									Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), maes);
+									final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), maes);
 									if (cmd.canExecute()) {
-										ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+										modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 									}
 								}
 
-							};
+							}
 						});
+					}
 
 				}
 
-				IExtensionRegistry registry = RegistryFactory.getRegistry();
-				IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
+				final IExtensionRegistry registry = RegistryFactory.getRegistry();
+				final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
 				final IConfigurationElement[] elements = extPoint.getConfigurationElements();
 
-				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement && noSelected == 1) {
+				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement
+					&& noSelected == 1) {
 					if (addSeparator) {
 						manager.add(new Separator());
 					}
 
 					addSeparator = false;
 
-					MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
+					final MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
 					manager.add(scriptExecute);
-					for (IConfigurationElement e : elements) {
+					for (final IConfigurationElement e : elements) {
 						final IConfigurationElement le = e;
 						scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
-							@Override
-							public void run() {
-								try {
-									MApplicationElement o = (MApplicationElement) s.getFirstElement();
-									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
-									IEclipseContext ctx = null;
-									if (project == null) {
-										if (o instanceof MContext) {
-											ctx = ((MContext) o).getContext();
-										} else {
-											ctx = ModelUtils.getContainingContext(o);
+								@Override
+								public void run() {
+									try {
+										final MApplicationElement o = (MApplicationElement) s.getFirstElement();
+										final IScriptingSupport support = (IScriptingSupport) le
+											.createExecutableExtension("class"); //$NON-NLS-1$
+										IEclipseContext ctx = null;
+										if (project == null) {
+											if (o instanceof MContext) {
+												ctx = ((MContext) o).getContext();
+											} else {
+												ctx = ModelUtils.getContainingContext(o);
+											}
 										}
-									}
 
-									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ctx);
-								} catch (CoreException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+										support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ctx);
+									} catch (final CoreException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 								}
-							}
-						});
+							});
 					}
 				}
 
@@ -828,18 +850,19 @@ public class ModelEditor implements IGotoObject {
 						manager.add(new Separator());
 					}
 
-					Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
+					final Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
 						@Override
 						public void run() {
-							ExternalizeStringHandler h = ContextInjectionFactory.make(ExternalizeStringHandler.class, context);
+							final ExternalizeStringHandler h = ContextInjectionFactory.make(
+								ExternalizeStringHandler.class, context);
 							ContextInjectionFactory.invoke(h, Execute.class, context);
 						}
 					};
 
-					Action extIdAction = new Action(messages.ModelEditor_ExportIds) {
+					final Action extIdAction = new Action(messages.ModelEditor_ExportIds) {
 						@Override
 						public void run() {
-							ExportIdsHandler h = ContextInjectionFactory.make(ExportIdsHandler.class, context);
+							final ExportIdsHandler h = ContextInjectionFactory.make(ExportIdsHandler.class, context);
 							ContextInjectionFactory.invoke(h, Execute.class, context);
 						}
 					};
@@ -871,7 +894,7 @@ public class ModelEditor implements IGotoObject {
 					manager.add(new Separator());
 				}
 
-				Action expandAction = new Action(messages.ModelEditor_ExpandSubtree) {
+				final Action expandAction = new Action(messages.ModelEditor_ExpandSubtree) {
 					@Override
 					public void run() {
 						if (!s.isEmpty()) {
@@ -889,7 +912,7 @@ public class ModelEditor implements IGotoObject {
 				if (s.getFirstElement() instanceof EObject) {
 					manager.add(new Separator());
 					final EObject el = (EObject) s.getFirstElement();
-					Action gotoXmiAction = new Action(messages.ModelEditor_goto_xmi) {
+					final Action gotoXmiAction = new Action(messages.ModelEditor_goto_xmi) {
 						@Override
 						public void run() {
 							gotoEObject(TAB_XMI, el);
@@ -899,7 +922,7 @@ public class ModelEditor implements IGotoObject {
 
 					if (listTab != null) {
 						if (EmfUtil.getAttribute(el, "elementId") != null) { //$NON-NLS-1$
-							Action gotoListAction = new Action(messages.ModelEditor_goto_list) {
+							final Action gotoListAction = new Action(messages.ModelEditor_goto_list) {
 								@Override
 								public void run() {
 									gotoEObject(TAB_LIST, el);
@@ -979,17 +1002,17 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void loadContributionCreators() {
-		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		final IExtensionRegistry registry = RegistryFactory.getRegistry();
+		final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 
-		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+		for (final IConfigurationElement el : extPoint.getConfigurationElements()) {
 			if (!"contributionClassCreator".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
 
 			try {
 				contributionCreator.add((IContributionClassCreator) el.createExecutableExtension("class")); //$NON-NLS-1$
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -997,7 +1020,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	public IContributionClassCreator getContributionCreator(EClass eClass) {
-		for (IContributionClassCreator c : contributionCreator) {
+		for (final IContributionClassCreator c : contributionCreator) {
 			if (c.isSupported(eClass)) {
 				return c;
 			}
@@ -1006,17 +1029,17 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void loadEditorFeatures() {
-		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		final IExtensionRegistry registry = RegistryFactory.getRegistry();
+		final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 
-		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+		for (final IConfigurationElement el : extPoint.getConfigurationElements()) {
 			if (!"editorfeature".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
 
 			try {
 				editorFeatures.add((IEditorFeature) el.createExecutableExtension("class")); //$NON-NLS-1$
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -1032,9 +1055,9 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	public List<FeatureClass> getFeatureClasses(EClass eClass, EStructuralFeature feature) {
-		List<FeatureClass> list = new ArrayList<IEditorFeature.FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<IEditorFeature.FeatureClass>();
 
-		for (IEditorFeature f : editorFeatures) {
+		for (final IEditorFeature f : editorFeatures) {
 			list.addAll(f.getFeatureClasses(eClass, feature));
 		}
 
@@ -1050,18 +1073,22 @@ public class ModelEditor implements IGotoObject {
 		treeArea.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
 		TreeViewer tempViewer = null;
-		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, false)) { //$NON-NLS-1$
-			FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), false);
+		final String property = System
+			.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
+		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, false)) {
+			final FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL
+				| SWT.V_SCROLL, new PatternFilter(), false);
 			tempViewer = viewParent.getViewer();
 		} else {
-			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, emfDocumentProvider, modelProvider);
+			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL,
+				emfDocumentProvider, modelProvider);
 		}
 		final TreeViewer viewer = tempViewer;
 
 		viewer.setLabelProvider(new ComponentLabelProvider(this, messages));
-		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new ObservableFactoryImpl(), new TreeStructureAdvisor() {
-		});
+		final ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
+			new ObservableFactoryImpl(), new TreeStructureAdvisor() {
+			});
 		viewer.setContentProvider(contentProvider);
 
 		final WritableSet clearedSet = new WritableSet();
@@ -1070,13 +1097,13 @@ public class ModelEditor implements IGotoObject {
 
 			@Override
 			public void handleSetChange(SetChangeEvent event) {
-				for (Object o : event.diff.getAdditions()) {
+				for (final Object o : event.diff.getAdditions()) {
 					if (o instanceof EObject) {
 						clearedSet.add(o);
 					}
 				}
 
-				for (Object o : event.diff.getRemovals()) {
+				for (final Object o : event.diff.getRemovals()) {
 					if (o instanceof EObject) {
 						clearedSet.remove(o);
 					}
@@ -1084,8 +1111,8 @@ public class ModelEditor implements IGotoObject {
 			}
 		});
 
-		for (FeaturePath p : labelFeaturePaths) {
-			IObservableMap map = EMFProperties.value(p).observeDetail(clearedSet);
+		for (final FeaturePath p : labelFeaturePaths) {
+			final IObservableMap map = EMFProperties.value(p).observeDetail(clearedSet);
 			map.addMapChangeListener(new IMapChangeListener() {
 
 				@Override
@@ -1102,14 +1129,15 @@ public class ModelEditor implements IGotoObject {
 
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				TreeViewer viewer = (TreeViewer) event.getViewer();
-				IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
-				Object selectedNode = thisSelection.getFirstElement();
+				final TreeViewer viewer = (TreeViewer) event.getViewer();
+				final IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
+				final Object selectedNode = thisSelection.getFirstElement();
 				if (mod1Down) {
-					if (viewer.getExpandedState(selectedNode))
+					if (viewer.getExpandedState(selectedNode)) {
 						viewer.setExpandedState(selectedNode, false);
-					else
+					} else {
 						viewer.expandToLevel(selectedNode, AbstractTreeViewer.ALL_LEVELS);
+					}
 				} else {
 					viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
 				}
@@ -1125,24 +1153,26 @@ public class ModelEditor implements IGotoObject {
 			}
 		});
 
-		int ops = DND.DROP_MOVE;
+		final int ops = DND.DROP_MOVE;
 		viewer.addDragSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DragListener(viewer));
-		viewer.addDropSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DropListener(viewer, modelProvider.getEditingDomain()));
+		viewer.addDropSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DropListener(viewer,
+			modelProvider.getEditingDomain()));
 
 		return viewer;
 	}
 
 	private void registerContributedVirtualEditors() {
-		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		final IExtensionRegistry registry = RegistryFactory.getRegistry();
+		final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 
-		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+		for (final IConfigurationElement el : extPoint.getConfigurationElements()) {
 			if (!"virtualeditor".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
 
-			IContributionFactory fact = context.get(IContributionFactory.class);
-			AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			final IContributionFactory fact = context.get(IContributionFactory.class);
+			final AbstractComponentEditor editor = (AbstractComponentEditor) fact.create(
+				"bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			registerVirtualEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
 		}
 	}
@@ -1152,24 +1182,36 @@ public class ModelEditor implements IGotoObject {
 		registerVirtualEditor(VIRTUAL_HANDLER, ContextInjectionFactory.make(VHandlerEditor.class, context));
 		registerVirtualEditor(VIRTUAL_BINDING_TABLE, ContextInjectionFactory.make(VBindingTableEditor.class, context));
 		registerVirtualEditor(VIRTUAL_COMMAND, ContextInjectionFactory.make(VCommandEditor.class, context));
-		registerVirtualEditor(VIRTUAL_APPLICATION_WINDOWS, ContextInjectionFactory.make(VApplicationWindowEditor.class, context));
+		registerVirtualEditor(VIRTUAL_APPLICATION_WINDOWS,
+			ContextInjectionFactory.make(VApplicationWindowEditor.class, context));
 		registerVirtualEditor(VIRTUAL_WINDOW_WINDOWS, ContextInjectionFactory.make(VWindowWindowsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_PERSPECTIVE_WINDOWS, ContextInjectionFactory.make(VPerspectiveWindowsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS, ContextInjectionFactory.make(VWindowControlEditor.class, context));
+		registerVirtualEditor(VIRTUAL_PERSPECTIVE_WINDOWS,
+			ContextInjectionFactory.make(VPerspectiveWindowsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS,
+			ContextInjectionFactory.make(VWindowControlEditor.class, context));
 		registerVirtualEditor(VIRTUAL_PART_DESCRIPTORS, ContextInjectionFactory.make(VPartDescriptor.class, context));
-		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU, ContextInjectionFactory.make(VPartDescriptorMenuEditor.class, context));
-		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, ContextInjectionFactory.make(VWindowTrimEditor.class, context));
+		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU,
+			ContextInjectionFactory.make(VPartDescriptorMenuEditor.class, context));
+		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS,
+			ContextInjectionFactory.make(VWindowTrimEditor.class, context));
 		registerVirtualEditor(VIRTUAL_ADDONS, ContextInjectionFactory.make(VApplicationAddons.class, context));
-		registerVirtualEditor(VIRTUAL_MENU_CONTRIBUTIONS, ContextInjectionFactory.make(VMenuContributionsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_TOOLBAR_CONTRIBUTIONS, ContextInjectionFactory.make(VToolBarContributionsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_TRIM_CONTRIBUTIONS, ContextInjectionFactory.make(VTrimContributionsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS, ContextInjectionFactory.make(VWindowSharedElementsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_MODEL_FRAGEMENTS, ContextInjectionFactory.make(VModelFragmentsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_MENU_CONTRIBUTIONS,
+			ContextInjectionFactory.make(VMenuContributionsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_TOOLBAR_CONTRIBUTIONS,
+			ContextInjectionFactory.make(VToolBarContributionsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_TRIM_CONTRIBUTIONS,
+			ContextInjectionFactory.make(VTrimContributionsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS,
+			ContextInjectionFactory.make(VWindowSharedElementsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_MODEL_FRAGEMENTS,
+			ContextInjectionFactory.make(VModelFragmentsEditor.class, context));
 		registerVirtualEditor(VIRTUAL_MODEL_IMPORTS, ContextInjectionFactory.make(VModelImportsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_CATEGORIES, ContextInjectionFactory.make(VApplicationCategoriesEditor.class, context));
+		registerVirtualEditor(VIRTUAL_CATEGORIES,
+			ContextInjectionFactory.make(VApplicationCategoriesEditor.class, context));
 		registerVirtualEditor(VIRTUAL_PARAMETERS, ContextInjectionFactory.make(VItemParametersEditor.class, context));
 		registerVirtualEditor(VIRTUAL_ROOT_CONTEXTS, ContextInjectionFactory.make(VRootBindingContexts.class, context));
-		registerVirtualEditor(VIRTUAL_PERSPECTIVE_CONTROLS, ContextInjectionFactory.make(VPerspectiveControlEditor.class, context));
+		registerVirtualEditor(VIRTUAL_PERSPECTIVE_CONTROLS,
+			ContextInjectionFactory.make(VPerspectiveControlEditor.class, context));
 		registerVirtualEditor(VIRTUAL_SNIPPETS, ContextInjectionFactory.make(VSnippetsEditor.class, context));
 	}
 
@@ -1182,30 +1224,31 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void registerContributedEditors() {
-		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		final IExtensionRegistry registry = RegistryFactory.getRegistry();
+		final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
 
-		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+		for (final IConfigurationElement el : extPoint.getConfigurationElements()) {
 			if (!"editor".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
 
 			try {
-				IEditorDescriptor desc = (IEditorDescriptor) el.createExecutableExtension("descriptorClass"); //$NON-NLS-1$
-				EClass eClass = desc.getEClass();
-				IContributionFactory fact = context.get(IContributionFactory.class);
-				AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
+				final IEditorDescriptor desc = (IEditorDescriptor) el.createExecutableExtension("descriptorClass"); //$NON-NLS-1$
+				final EClass eClass = desc.getEClass();
+				final IContributionFactory fact = context.get(IContributionFactory.class);
+				final AbstractComponentEditor editor = (AbstractComponentEditor) fact.create(
+					"bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
 				registerEditor(eClass, editor);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private void registerContributedEditorTabs() {
-		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
-		for (IConfigurationElement el : extPoint.getConfigurationElements()) {
+		final IExtensionRegistry registry = RegistryFactory.getRegistry();
+		final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.editors"); //$NON-NLS-1$
+		for (final IConfigurationElement el : extPoint.getConfigurationElements()) {
 			if (!"editorTab".equals(el.getName())) { //$NON-NLS-1$
 				continue;
 			}
@@ -1213,28 +1256,30 @@ public class ModelEditor implements IGotoObject {
 			try {
 				final Object o = el.createExecutableExtension("contribution"); //$NON-NLS-1$
 				if (o instanceof AbstractElementEditorContribution) {
-					AbstractElementEditorContribution contribution = (AbstractElementEditorContribution) o;
+					final AbstractElementEditorContribution contribution = (AbstractElementEditorContribution) o;
 					ContextInjectionFactory.inject(contribution, context);
-					Class<?> contribElem = contribution.getContributableTo();
-					if (contribElem == null)
+					final Class<?> contribElem = contribution.getContributableTo();
+					if (contribElem == null) {
 						continue;
+					}
 					if (!tabContributions.containsKey(contribElem)) {
 						tabContributions.put(contribElem, new ArrayList<AbstractElementEditorContribution>());
 					}
-					List<AbstractElementEditorContribution> res = tabContributions.get(contribElem);
+					final List<AbstractElementEditorContribution> res = tabContributions.get(contribElem);
 					res.add(contribution);
 				}
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	public List<AbstractElementEditorContribution> getTabContributionsForClass(Class<?> clazz) {
-		List<AbstractElementEditorContribution> ret = new ArrayList<AbstractElementEditorContribution>();
-		for (Class<?> clasz : tabContributions.keySet()) {
-			if (clasz.isAssignableFrom(clazz))
+		final List<AbstractElementEditorContribution> ret = new ArrayList<AbstractElementEditorContribution>();
+		for (final Class<?> clasz : tabContributions.keySet()) {
+			if (clasz.isAssignableFrom(clazz)) {
 				ret.addAll(tabContributions.get(clasz));
+			}
 		}
 		return ret;
 	}
@@ -1242,55 +1287,87 @@ public class ModelEditor implements IGotoObject {
 	private void registerDefaultEditors() {
 		System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool); //$NON-NLS-1$
 
-		registerEditor(ApplicationPackageImpl.Literals.APPLICATION, ContextInjectionFactory.make(ApplicationEditor.class, context));
+		registerEditor(ApplicationPackageImpl.Literals.APPLICATION,
+			ContextInjectionFactory.make(ApplicationEditor.class, context));
 		registerEditor(ApplicationPackageImpl.Literals.ADDON, ContextInjectionFactory.make(AddonsEditor.class, context));
 
-		registerEditor(CommandsPackageImpl.Literals.KEY_BINDING, ContextInjectionFactory.make(KeyBindingEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.KEY_BINDING,
+			ContextInjectionFactory.make(KeyBindingEditor.class, context));
 		registerEditor(CommandsPackageImpl.Literals.HANDLER, ContextInjectionFactory.make(HandlerEditor.class, context));
 		registerEditor(CommandsPackageImpl.Literals.COMMAND, ContextInjectionFactory.make(CommandEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.COMMAND_PARAMETER, ContextInjectionFactory.make(CommandParameterEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.PARAMETER, ContextInjectionFactory.make(ParameterEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.BINDING_TABLE, ContextInjectionFactory.make(BindingTableEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.BINDING_CONTEXT, ContextInjectionFactory.make(BindingContextEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.CATEGORY, ContextInjectionFactory.make(CategoryEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.COMMAND_PARAMETER,
+			ContextInjectionFactory.make(CommandParameterEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.PARAMETER,
+			ContextInjectionFactory.make(ParameterEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.BINDING_TABLE,
+			ContextInjectionFactory.make(BindingTableEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.BINDING_CONTEXT,
+			ContextInjectionFactory.make(BindingContextEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.CATEGORY,
+			ContextInjectionFactory.make(CategoryEditor.class, context));
 
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR, ContextInjectionFactory.make(ToolBarEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, ContextInjectionFactory.make(DirectToolItemEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, ContextInjectionFactory.make(HandledToolItemEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, ContextInjectionFactory.make(ToolBarSeparatorEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.TOOL_CONTROL, ContextInjectionFactory.make(ToolControlEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM,
+			ContextInjectionFactory.make(DirectToolItemEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM,
+			ContextInjectionFactory.make(HandledToolItemEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR,
+			ContextInjectionFactory.make(ToolBarSeparatorEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.TOOL_CONTROL,
+			ContextInjectionFactory.make(ToolControlEditor.class, context));
 
 		registerEditor(MenuPackageImpl.Literals.MENU, ContextInjectionFactory.make(MenuEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.POPUP_MENU, ContextInjectionFactory.make(PopupMenuEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.MENU_SEPARATOR, ContextInjectionFactory.make(MenuSeparatorEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, ContextInjectionFactory.make(HandledMenuItemEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, ContextInjectionFactory.make(DirectMenuItemEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION, ContextInjectionFactory.make(MenuContributionEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, ContextInjectionFactory.make(ToolBarContributionEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION, ContextInjectionFactory.make(TrimContributionEditor.class, context));
-		registerEditor(MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, ContextInjectionFactory.make(DynamicMenuContributionEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.POPUP_MENU,
+			ContextInjectionFactory.make(PopupMenuEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.MENU_SEPARATOR,
+			ContextInjectionFactory.make(MenuSeparatorEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM,
+			ContextInjectionFactory.make(HandledMenuItemEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM,
+			ContextInjectionFactory.make(DirectMenuItemEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION,
+			ContextInjectionFactory.make(MenuContributionEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION,
+			ContextInjectionFactory.make(ToolBarContributionEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION,
+			ContextInjectionFactory.make(TrimContributionEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION,
+			ContextInjectionFactory.make(DynamicMenuContributionEditor.class, context));
 
-		registerEditor(UiPackageImpl.Literals.CORE_EXPRESSION, ContextInjectionFactory.make(CoreExpressionEditor.class, context));
+		registerEditor(UiPackageImpl.Literals.CORE_EXPRESSION,
+			ContextInjectionFactory.make(CoreExpressionEditor.class, context));
 
-		registerEditor(BasicPackageImpl.Literals.COMPOSITE_PART, ContextInjectionFactory.make(CompositePartEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.COMPOSITE_PART,
+			ContextInjectionFactory.make(CompositePartEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.PART, ContextInjectionFactory.make(PartEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.WINDOW, ContextInjectionFactory.make(WindowEditor.class, context));
-		registerEditor(BasicPackageImpl.Literals.TRIMMED_WINDOW, ContextInjectionFactory.make(TrimmedWindowEditor.class, context));
-		registerEditor(BasicPackageImpl.Literals.PART_SASH_CONTAINER, ContextInjectionFactory.make(PartSashContainerEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.TRIMMED_WINDOW,
+			ContextInjectionFactory.make(TrimmedWindowEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.PART_SASH_CONTAINER,
+			ContextInjectionFactory.make(PartSashContainerEditor.class, context));
 		registerEditor(AdvancedPackageImpl.Literals.AREA, ContextInjectionFactory.make(AreaEditor.class, context));
-		registerEditor(BasicPackageImpl.Literals.PART_STACK, ContextInjectionFactory.make(PartStackEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.PART_STACK,
+			ContextInjectionFactory.make(PartStackEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.TRIM_BAR, ContextInjectionFactory.make(TrimBarEditor.class, context));
 		registerEditor(BasicPackageImpl.Literals.DIALOG, ContextInjectionFactory.make(DialogEditor.class, context));
-		registerEditor(BasicPackageImpl.Literals.WIZARD_DIALOG, ContextInjectionFactory.make(WizardDialogEditor.class, context));
+		registerEditor(BasicPackageImpl.Literals.WIZARD_DIALOG,
+			ContextInjectionFactory.make(WizardDialogEditor.class, context));
 
-		registerEditor(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR, ContextInjectionFactory.make(PartDescriptorEditor.class, context));
+		registerEditor(
+			org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR,
+			ContextInjectionFactory.make(PartDescriptorEditor.class, context));
 
-		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, ContextInjectionFactory.make(PerspectiveStackEditor.class, context));
-		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE, ContextInjectionFactory.make(PerspectiveEditor.class, context));
-		registerEditor(AdvancedPackageImpl.Literals.PLACEHOLDER, ContextInjectionFactory.make(PlaceholderEditor.class, context));
+		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
+			ContextInjectionFactory.make(PerspectiveStackEditor.class, context));
+		registerEditor(AdvancedPackageImpl.Literals.PERSPECTIVE,
+			ContextInjectionFactory.make(PerspectiveEditor.class, context));
+		registerEditor(AdvancedPackageImpl.Literals.PLACEHOLDER,
+			ContextInjectionFactory.make(PlaceholderEditor.class, context));
 
-		registerEditor(FragmentPackageImpl.Literals.MODEL_FRAGMENTS, ContextInjectionFactory.make(ModelFragmentsEditor.class, context));
-		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT, ContextInjectionFactory.make(StringModelFragment.class, context));
+		registerEditor(FragmentPackageImpl.Literals.MODEL_FRAGMENTS,
+			ContextInjectionFactory.make(ModelFragmentsEditor.class, context));
+		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT,
+			ContextInjectionFactory.make(StringModelFragment.class, context));
 	}
 
 	public void tab_list_show(Boolean show) {
@@ -1306,7 +1383,7 @@ public class ModelEditor implements IGotoObject {
 			}
 		} else {
 			if (listTab == null) {
-				IEclipseContext child = context.createChild();
+				final IEclipseContext child = context.createChild();
 				child.set(CTabFolder.class, editorTabFolder);
 				child.set(EMFDocumentResourceMediator.class, emfDocumentProvider);
 				child.set(IGotoObject.class, this);
@@ -1319,10 +1396,11 @@ public class ModelEditor implements IGotoObject {
 
 	@Inject
 	public void setNotVisibleColor(@Preference(ModelEditorPreferences.NOT_VISIBLE_COLOR) String color) {
-		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_KEY);
+		final RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_KEY);
 
 		if (current == null || !current.equals(color)) {
-			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_KEY, StringConverter.asRGB(color, new RGB(200, 200, 200)));
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_KEY,
+				StringConverter.asRGB(color, new RGB(200, 200, 200)));
 		}
 
 		if (viewer != null) {
@@ -1333,10 +1411,11 @@ public class ModelEditor implements IGotoObject {
 
 	@Inject
 	public void setNotRenderedColor(@Preference(ModelEditorPreferences.NOT_RENDERED_COLOR) String color) {
-		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_RENDERED_KEY);
+		final RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_RENDERED_KEY);
 
 		if (current == null || !current.equals(color)) {
-			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_RENDERED_KEY, StringConverter.asRGB(color, new RGB(200, 200, 200)));
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_RENDERED_KEY,
+				StringConverter.asRGB(color, new RGB(200, 200, 200)));
 		}
 
 		if (viewer != null) {
@@ -1346,11 +1425,14 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	@Inject
-	public void setNotVisibleRenderedColor(@Preference(ModelEditorPreferences.NOT_VISIBLE_AND_RENDERED_COLOR) String color) {
-		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
+	public void setNotVisibleRenderedColor(
+		@Preference(ModelEditorPreferences.NOT_VISIBLE_AND_RENDERED_COLOR) String color) {
+		final RGB current = JFaceResources.getColorRegistry().getRGB(
+			ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
 
 		if (current == null || !current.equals(color)) {
-			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY, StringConverter.asRGB(color, new RGB(200, 200, 200)));
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY,
+				StringConverter.asRGB(color, new RGB(200, 200, 200)));
 		}
 
 		if (viewer != null) {
@@ -1362,9 +1444,9 @@ public class ModelEditor implements IGotoObject {
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
 		editorMap.put(eClass, editor);
 
-		for (FeaturePath p : editor.getLabelProperties()) {
+		for (final FeaturePath p : editor.getLabelProperties()) {
 			boolean found = false;
-			for (FeaturePath tmp : labelFeaturePaths) {
+			for (final FeaturePath tmp : labelFeaturePaths) {
 				if (equalsPaths(p, tmp)) {
 					found = true;
 					break;
@@ -1394,14 +1476,15 @@ public class ModelEditor implements IGotoObject {
 	public AbstractComponentEditor getEditor(EClass eClass) {
 		AbstractComponentEditor editor = editorMap.get(eClass);
 		if (editor == null) {
-			for (EClass cl : eClass.getESuperTypes()) {
+			for (final EClass cl : eClass.getESuperTypes()) {
 				editor = getEditor(cl);
 				if (editor != null) {
 					return editor;
 				}
 			}
-			if (editor == null)
+			if (editor == null) {
 				editor = ContextInjectionFactory.make(DefaultEditor.class, context);
+			}
 		}
 		return editor;
 	}
@@ -1446,7 +1529,7 @@ public class ModelEditor implements IGotoObject {
 	void dispose() {
 		try {
 			obsManager.dispose();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -1477,7 +1560,7 @@ public class ModelEditor implements IGotoObject {
 
 		@SuppressWarnings("unchecked")
 		private void handleStructurePaste() {
-			Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
+			final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
 			Object o = clip.getContents(MemoryTransfer.getInstance());
 			clip.dispose();
 			if (o == null) {
@@ -1486,12 +1569,12 @@ public class ModelEditor implements IGotoObject {
 
 			o = EcoreUtil.copy((EObject) o);
 
-			Object parent = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+			final Object parent = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 
 			EStructuralFeature feature = null;
 			EObject container = null;
 			if (parent instanceof VirtualEntry<?>) {
-				VirtualEntry<?> v = (VirtualEntry<?>) parent;
+				final VirtualEntry<?> v = (VirtualEntry<?>) parent;
 				feature = ((IEMFProperty) v.getProperty()).getStructuralFeature();
 				container = (EObject) v.getOriginalParent();
 			} else {
@@ -1500,9 +1583,9 @@ public class ModelEditor implements IGotoObject {
 					container = (EObject) parent;
 				} else if (parent instanceof EObject) {
 					container = (EObject) parent;
-					EClass eClass = container.eClass();
+					final EClass eClass = container.eClass();
 
-					for (EStructuralFeature f : eClass.getEAllStructuralFeatures()) {
+					for (final EStructuralFeature f : eClass.getEAllStructuralFeatures()) {
 						if (ModelUtils.getTypeArgument(eClass, f.getEGenericType()).isInstance(o)) {
 							feature = f;
 							break;
@@ -1512,9 +1595,9 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && container != null) {
-				MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) o).eClass());
+				final MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) o).eClass());
 				el.setElementId(((MApplicationElement) o).getElementId());
-				Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, el);
+				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, el);
 				if (cmd.canExecute()) {
 					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
 				}
@@ -1522,7 +1605,7 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			if (feature != null && container != null) {
-				Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, o);
+				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, o);
 				if (cmd.canExecute()) {
 					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
 					if (isLiveModel()) {
@@ -1548,10 +1631,11 @@ public class ModelEditor implements IGotoObject {
 		}
 
 		private void handleStructureCopy() {
-			Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+			final Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 			if (o != null && o instanceof EObject) {
-				Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
-				clip.setContents(new Object[] { EcoreUtil.copy((EObject) o) }, new Transfer[] { MemoryTransfer.getInstance() });
+				final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
+				clip.setContents(new Object[] { EcoreUtil.copy((EObject) o) },
+					new Transfer[] { MemoryTransfer.getInstance() });
 				clip.dispose();
 			}
 		}
@@ -1570,13 +1654,14 @@ public class ModelEditor implements IGotoObject {
 		}
 
 		private void handleStructureCut() {
-			Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+			final Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 			if (o != null && o instanceof EObject) {
-				Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
+				final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
 				clip.setContents(new Object[] { o }, new Transfer[] { MemoryTransfer.getInstance() });
 				clip.dispose();
-				EObject eObj = (EObject) o;
-				Command cmd = RemoveCommand.create(getModelProvider().getEditingDomain(), eObj.eContainer(), eObj.eContainingFeature(), eObj);
+				final EObject eObj = (EObject) o;
+				final Command cmd = RemoveCommand.create(getModelProvider().getEditingDomain(), eObj.eContainer(),
+					eObj.eContainingFeature(), eObj);
 				if (cmd.canExecute()) {
 					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
 				}
@@ -1593,7 +1678,7 @@ public class ModelEditor implements IGotoObject {
 			} else if (target instanceof VirtualEntry<?>) {
 				return ((VirtualEntry<?>) target).getList();
 			} else {
-				AbstractComponentEditor editor = getEditor(((EObject) target).eClass());
+				final AbstractComponentEditor editor = getEditor(((EObject) target).eClass());
 				if (editor != null) {
 					return editor.getChildList(target);
 				}
@@ -1612,19 +1697,19 @@ public class ModelEditor implements IGotoObject {
 
 		@Override
 		public void dragStart(DragSourceEvent event) {
-			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+			final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 			event.doit = !selection.isEmpty() && selection.getFirstElement() instanceof MApplicationElement;
 		}
 
 		@Override
 		public void dragSetData(DragSourceEvent event) {
-			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+			final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 			event.data = selection.toArray();
 		}
 	}
 
 	class DropListener extends ViewerDropAdapter {
-		private EditingDomain domain;
+		private final EditingDomain domain;
 
 		protected DropListener(Viewer viewer, EditingDomain domain) {
 			super(viewer);
@@ -1633,11 +1718,12 @@ public class ModelEditor implements IGotoObject {
 
 		@Override
 		public boolean performDrop(Object data) {
-			Object[] dropDataArray = (Object[]) data;
-			for (Object object : dropDataArray) {
-				boolean result = performSingleDrop(object);
-				if (!result)
+			final Object[] dropDataArray = (Object[]) data;
+			for (final Object object : dropDataArray) {
+				final boolean result = performSingleDrop(object);
+				if (!result) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -1651,8 +1737,8 @@ public class ModelEditor implements IGotoObject {
 					feature = UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN;
 					parent = (EObject) getCurrentTarget();
 				} else if (getCurrentTarget() instanceof VirtualEntry<?>) {
-					VirtualEntry<?> entry = (VirtualEntry<?>) getCurrentTarget();
-					IListProperty prop = entry.getProperty();
+					final VirtualEntry<?> entry = (VirtualEntry<?>) getCurrentTarget();
+					final IListProperty prop = entry.getProperty();
 					if (prop instanceof IEMFProperty) {
 						feature = ((IEMFProperty) prop).getStructuralFeature();
 						parent = (EObject) entry.getOriginalParent();
@@ -1660,8 +1746,8 @@ public class ModelEditor implements IGotoObject {
 					}
 				} else if (getCurrentTarget() instanceof EObject) {
 					parent = (EObject) getCurrentTarget();
-					for (EStructuralFeature f : parent.eClass().getEAllStructuralFeatures()) {
-						EClassifier cl = ModelUtils.getTypeArgument(parent.eClass(), f.getEGenericType());
+					for (final EStructuralFeature f : parent.eClass().getEAllStructuralFeatures()) {
+						final EClassifier cl = ModelUtils.getTypeArgument(parent.eClass(), f.getEGenericType());
 						if (cl.isInstance(data)) {
 							feature = f;
 							break;
@@ -1670,7 +1756,7 @@ public class ModelEditor implements IGotoObject {
 				}
 
 				if (feature != null && parent != null) {
-					Command cmd = AddCommand.create(domain, parent, feature, data);
+					final Command cmd = AddCommand.create(domain, parent, feature, data);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 						if (isLiveModel()) {
@@ -1685,12 +1771,12 @@ public class ModelEditor implements IGotoObject {
 				EStructuralFeature feature = null;
 				EObject parent = null;
 
-				TreeItem item = (TreeItem) getCurrentEvent().item;
+				final TreeItem item = (TreeItem) getCurrentEvent().item;
 				if (item != null) {
-					TreeItem parentItem = item.getParentItem();
+					final TreeItem parentItem = item.getParentItem();
 					if (item != null) {
 						if (parentItem.getData() instanceof VirtualEntry<?>) {
-							VirtualEntry<?> vE = (VirtualEntry<?>) parentItem.getData();
+							final VirtualEntry<?> vE = (VirtualEntry<?>) parentItem.getData();
 							parent = (EObject) vE.getOriginalParent();
 							feature = ((IEMFProperty) vE.getProperty()).getStructuralFeature();
 						} else if (parentItem.getData() instanceof MElementContainer<?>) {
@@ -1698,8 +1784,8 @@ public class ModelEditor implements IGotoObject {
 							feature = UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN;
 						} else if (parentItem.getData() instanceof EObject) {
 							parent = (EObject) parentItem.getData();
-							for (EStructuralFeature f : parent.eClass().getEAllStructuralFeatures()) {
-								EClassifier cl = ModelUtils.getTypeArgument(parent.eClass(), f.getEGenericType());
+							for (final EStructuralFeature f : parent.eClass().getEAllStructuralFeatures()) {
+								final EClassifier cl = ModelUtils.getTypeArgument(parent.eClass(), f.getEGenericType());
 								if (cl.isInstance(data)) {
 									feature = f;
 									break;
@@ -1710,9 +1796,9 @@ public class ModelEditor implements IGotoObject {
 				}
 
 				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && parent != null) {
-					MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) data).eClass());
+					final MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) data).eClass());
 					el.setElementId(((MApplicationElement) data).getElementId());
-					Command cmd = AddCommand.create(domain, parent, feature, el);
+					final Command cmd = AddCommand.create(domain, parent, feature, el);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 					}
@@ -1720,7 +1806,7 @@ public class ModelEditor implements IGotoObject {
 				}
 
 				if (feature != null && parent != null && parent.eGet(feature) instanceof List<?>) {
-					List<Object> list = (List<Object>) parent.eGet(feature);
+					final List<Object> list = (List<Object>) parent.eGet(feature);
 					int index = list.indexOf(getCurrentTarget());
 
 					if (index >= list.size()) {
@@ -1731,7 +1817,7 @@ public class ModelEditor implements IGotoObject {
 						if (parent instanceof MElementContainer<?> && data instanceof MUIElement) {
 							Util.moveElementByIndex(domain, (MUIElement) data, isLiveModel(), index);
 						} else {
-							Command cmd = MoveCommand.create(domain, parent, feature, data, index);
+							final Command cmd = MoveCommand.create(domain, parent, feature, data, index);
 							if (cmd.canExecute()) {
 								domain.getCommandStack().execute(cmd);
 								return true;
@@ -1743,7 +1829,7 @@ public class ModelEditor implements IGotoObject {
 							data = EcoreUtil.copy((EObject) data);
 						}
 
-						Command cmd = AddCommand.create(domain, parent, feature, data, index);
+						final Command cmd = AddCommand.create(domain, parent, feature, data, index);
 						if (cmd.canExecute()) {
 							domain.getCommandStack().execute(cmd);
 							if (isLiveModel()) {
@@ -1784,28 +1870,31 @@ public class ModelEditor implements IGotoObject {
 		private boolean isValidDrop(Object target, MApplicationElement instance, boolean isIndex) {
 			if (target instanceof MElementContainer<?>) {
 				@SuppressWarnings("unchecked")
-				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) target;
+				final MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) target;
 
 				if (isIndex || !container.getChildren().contains(instance)) {
-					EClassifier classifier = ModelUtils.getTypeArgument(((EObject) container).eClass(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
+					final EClassifier classifier = ModelUtils.getTypeArgument(((EObject) container).eClass(),
+						UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
 					return classifier.isInstance(instance);
 				}
 			} else if (target instanceof VirtualEntry<?>) {
 				@SuppressWarnings("unchecked")
-				VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
+				final VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
 				if (isIndex || !vTarget.getList().contains(instance)) {
 					if (vTarget.getProperty() instanceof IEMFProperty) {
-						EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty()).getStructuralFeature();
-						EObject parent = (EObject) vTarget.getOriginalParent();
-						EClassifier classifier = ModelUtils.getTypeArgument(parent.eClass(), feature.getEGenericType());
+						final EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty())
+							.getStructuralFeature();
+						final EObject parent = (EObject) vTarget.getOriginalParent();
+						final EClassifier classifier = ModelUtils.getTypeArgument(parent.eClass(),
+							feature.getEGenericType());
 						return classifier.isInstance(instance);
 					}
 
 				}
 			} else if (target instanceof EObject) {
-				EObject eObj = (EObject) target;
-				for (EStructuralFeature f : eObj.eClass().getEAllStructuralFeatures()) {
-					EClassifier cl = ModelUtils.getTypeArgument(eObj.eClass(), f.getEGenericType());
+				final EObject eObj = (EObject) target;
+				for (final EStructuralFeature f : eObj.eClass().getEAllStructuralFeatures()) {
+					final EClassifier cl = ModelUtils.getTypeArgument(eObj.eClass(), f.getEGenericType());
 					if (cl.isInstance(instance)) {
 						return true;
 					}
@@ -1824,7 +1913,8 @@ public class ModelEditor implements IGotoObject {
 			switch (targetHint) {
 			case TAB_FORM:
 				// make sure tree node has been instantiated
-				ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) viewer.getContentProvider();
+				final ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) viewer
+					.getContentProvider();
 				getFirstMatchingItem(object, provider, provider.getChildren(viewer.getInput()));
 
 				viewer.reveal(object);
@@ -1839,7 +1929,7 @@ public class ModelEditor implements IGotoObject {
 
 				try {
 					xmiTab.gotoEObject(object);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 				}
 				break;
@@ -1863,7 +1953,7 @@ public class ModelEditor implements IGotoObject {
 			if (items[i] == target) {
 				return items[i];
 			}
-			Object found = getFirstMatchingItem(target, provider, provider.getChildren(items[i]));
+			final Object found = getFirstMatchingItem(target, provider, provider.getChildren(items[i]));
 			if (found != null) {
 				return found;
 			}
