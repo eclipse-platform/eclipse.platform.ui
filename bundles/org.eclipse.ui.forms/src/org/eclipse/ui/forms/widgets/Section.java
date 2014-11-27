@@ -1,14 +1,14 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545) 
- *       
+ *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545)
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -46,9 +46,9 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * Since 3.1, it is possible to set a control to be used for section
  * description. If used, <code>DESCRIPTION</code> style should not be set. A
  * typical way to take advantage of the new method is to set an instance of
- * <code>FormText</code> to provide for hyperlinks and images in the
- * description area.
- * 
+ * <code>FormText</code> to provide for hyperlinks and images in the description
+ * area.
+ *
  * @since 3.0
  */
 public class Section extends ExpandableComposite {
@@ -453,9 +453,10 @@ public class Section extends ExpandableComposite {
 		}
 	}
 
-	private void updateHeaderImage(Color bg, Rectangle bounds, int theight,
-			int realtheight) {
-		Image image = FormImages.getInstance().getGradient(getBackground(), bg, realtheight, theight, marginHeight, getDisplay());
+	private void updateHeaderImage(Color bg, Rectangle bounds, int theight, int realtheight) {
+		Color gradient = getTitleBarGradientBackground() != null ? getTitleBarGradientBackground() : getBackground();
+		Image image = FormImages.getInstance().getSectionGradientImage(getBackground(), gradient, bg, realtheight,
+				theight, marginHeight, getDisplay());
 		super.setBackgroundImage(image);
 	}
 
