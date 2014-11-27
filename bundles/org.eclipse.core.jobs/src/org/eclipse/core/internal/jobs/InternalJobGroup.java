@@ -45,9 +45,9 @@ public class InternalJobGroup {
 
 	private volatile int state = JobGroup.NONE;
 	private volatile MultiStatus result;
-	private Set<InternalJob> runningJobs = new HashSet<InternalJob>();
-	private Set<InternalJob> otherActiveJobs = new HashSet<InternalJob>();
-	private List<IStatus> results = new ArrayList<IStatus>();
+	private final Set<InternalJob> runningJobs = new HashSet<InternalJob>();
+	private final Set<InternalJob> otherActiveJobs = new HashSet<InternalJob>();
+	private final List<IStatus> results = new ArrayList<IStatus>();
 	private boolean cancelingDueToError;
 	private int failedJobsCount;
 	private int canceledJobsCount;
