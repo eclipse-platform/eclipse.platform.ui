@@ -32,7 +32,8 @@ public class InternalJobGroup {
 	 * This lock will be held while performing state changes on this job group. It is
 	 * also used as a notifier to wake up the threads waiting for this job group to complete.
 	 *
-	 * See also the lock ordering protocol explanation in JobManager's documentation.
+	 * External code is never called while holding this lock, thus removing the hold and wait
+	 * condition necessary for deadlock.
 	 *
 	 * @GuardedBy("itself")
 	 */
@@ -181,7 +182,7 @@ public class InternalJobGroup {
 		//make sure this job group is running
 		if (getState() == JobGroup.NONE && getActiveJobsCount() > 0) {
 			synchronized (jobGroupStateLock) {
-				startJobGroup();
+				state = JobGroup.ACTIVE;
 				jobGroupStateLock.notifyAll();
 			}
 		}
@@ -195,17 +196,6 @@ public class InternalJobGroup {
 	private JobGroup getGroupOfCurrentlyRunningJob() {
 		Job job = manager.currentJob();
 		return job == null ? null : job.getJobGroup();
-	}
-
-	/**
-	 * Called by the JobManager to notify the group when the first job belonging
-	 * to the group is scheduled to run. Must be called from JobManager#updateJobGroup.
-	 *
-	 * @GuardedBy("JobManager.lock")
-	 * @GuardedBy("jobGroupStateLock")
-	 */
-	final void startJobGroup() {
-		state = JobGroup.ACTIVE;
 	}
 
 	/**
