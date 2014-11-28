@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.internal.preferences.AbstractScope;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
  * Object representing the project scope in the Eclipse preferences
@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  * @see IProject#getLocation()
  * @since 3.0
  */
-public final class ProjectScope implements IScopeContext {
+public final class ProjectScope extends AbstractScope {
 
 	/**
 	 * String constant (value of <code>"project"</code>) used for the 
@@ -61,6 +61,7 @@ public final class ProjectScope implements IScopeContext {
 	/*
 	 * @see org.eclipse.core.runtime.IScopeContext#getNode(java.lang.String)
 	 */
+	@Override
 	public IEclipsePreferences getNode(String qualifier) {
 		if (qualifier == null)
 			throw new IllegalArgumentException();
@@ -70,6 +71,7 @@ public final class ProjectScope implements IScopeContext {
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getLocation()
 	 */
+	@Override
 	public IPath getLocation() {
 		IProject project = ((IResource) context).getProject();
 		IPath location = project.getLocation();
@@ -79,6 +81,7 @@ public final class ProjectScope implements IScopeContext {
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getName()
 	 */
+	@Override
 	public String getName() {
 		return SCOPE;
 	}
