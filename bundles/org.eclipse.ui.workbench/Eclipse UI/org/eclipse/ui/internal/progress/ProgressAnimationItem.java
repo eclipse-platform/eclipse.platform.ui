@@ -123,7 +123,12 @@ public class ProgressAnimationItem extends AnimationItem implements
 						removeTopElement(ji);
 					}
 
-					execute(ji, job);
+					// To fix a bug (335543) introduced in 3.6.1.
+					// doAction() should return if progress region button was
+					// selected to open a job result action or command.
+					if (execute(ji, job)) {
+						return;
+					}
 				}
 			}
 		}
@@ -135,14 +140,16 @@ public class ProgressAnimationItem extends AnimationItem implements
 	/**
 	 * @param ji
 	 * @param job
+	 * @return <code>true</code> if Action or Command is executed
 	 */
-	private void execute(JobInfo ji, Job job) {
+	private boolean execute(JobInfo ji, Job job) {
 
 		Object prop = job.getProperty(IProgressConstants.ACTION_PROPERTY);
 		if (prop instanceof IAction && ((IAction) prop).isEnabled()) {
 			IAction action = (IAction) prop;
 			action.run();
 			removeTopElement(ji);
+			return true;
 		}
 
 		prop = job.getProperty(IProgressConstants2.COMMAND_PROPERTY);
@@ -171,8 +178,9 @@ public class ProgressAnimationItem extends AnimationItem implements
 				StatusManager.getManager().handle(status,
 						StatusManager.LOG | StatusManager.SHOW);
 			}
-
+			return true;
 		}
+		return false;
 	}
 
 	/**
