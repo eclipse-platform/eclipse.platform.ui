@@ -60,15 +60,18 @@ public class EObjectAttributeIterator extends EStructuralFeatureIterator {
                 || name.getName().equals("*"));
     }
 
-    public NodePointer getNodePointer() {
+    @Override
+	public NodePointer getNodePointer() {
         return includeXmlLang && position == 1 ? new LangAttributePointer(parent) : super.getNodePointer();
     }
 
-    public int getPosition() {
+    @Override
+	public int getPosition() {
         return position;
     }
 
-    public boolean setPosition(int position) {
+    @Override
+	public boolean setPosition(int position) {
         this.position = position;
         if (includeXmlLang) {
             return position == 1 || super.setPosition(position - 1);

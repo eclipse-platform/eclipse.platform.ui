@@ -77,15 +77,18 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
         this.beanInfo = beanInfo;
     }
 
-    public EStructuralFeaturePointer getPropertyPointer() {
+    @Override
+	public EStructuralFeaturePointer getPropertyPointer() {
         return new EObjectPropertyPointer(this, beanInfo);
     }
 
-    public QName getName() {
+    @Override
+	public QName getName() {
         return name;
     }
 
-    public Object getBaseValue() {
+    @Override
+	public Object getBaseValue() {
         return bean;
     }
 
@@ -93,7 +96,8 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
      * {@inheritDoc}
      * @return false
      */
-    public boolean isCollection() {
+    @Override
+	public boolean isCollection() {
         return false;
     }
 
@@ -101,21 +105,25 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
      * {@inheritDoc}
      * @return 1
      */
-    public int getLength() {
+    @Override
+	public int getLength() {
         return 1;
     }
 
-    public boolean isLeaf() {
+    @Override
+	public boolean isLeaf() {
         Object value = getNode();
         return value == null
             || JXPathIntrospector.getBeanInfo(value.getClass()).isAtomic();
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return name == null ? 0 : name.hashCode();
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (object == this) {
             return true;
         }
@@ -155,7 +163,8 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
      * If the bean is a primitive value, the value itself.
      * Otherwise - an empty string.
      */
-    public String asPath() {
+    @Override
+	public String asPath() {
         if (parent != null) {
             return super.asPath();
         }

@@ -66,11 +66,13 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * This type of node is auxiliary.
      * @return true
      */
-    public boolean isContainer() {
+    @Override
+	public boolean isContainer() {
         return true;
     }
 
-    public int getPropertyCount() {
+    @Override
+	public int getPropertyCount() {
         if (beanInfo.isAtomic()) {
             return 0;
         }
@@ -81,7 +83,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * Get the names of all properties, sorted alphabetically
      * @return String[]
      */
-    public String[] getPropertyNames() {
+    @Override
+	public String[] getPropertyNames() {
         if (names == null) {
             EStructuralFeature[] pds = getPropertyDescriptors();
             names = new String[pds.length];
@@ -96,7 +99,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * Select a property by name.
      * @param propertyName String name
      */
-    public void setPropertyName(String propertyName) {
+    @Override
+	public void setPropertyName(String propertyName) {
         setPropertyIndex(UNSPECIFIED_PROPERTY);
         this.propertyName = propertyName;
     }
@@ -105,7 +109,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * Selects a property by its offset in the alphabetically sorted list.
      * @param index property index
      */
-    public void setPropertyIndex(int index) {
+    @Override
+	public void setPropertyIndex(int index) {
         if (propertyIndex != index) {
             super.setPropertyIndex(index);
             propertyName = null;
@@ -119,7 +124,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * Get the value of the currently selected property.
      * @return Object value
      */
-    public Object getBaseValue() {
+    @Override
+	public Object getBaseValue() {
         if (baseValue == UNINITIALIZED) {
             EStructuralFeature pd = getPropertyDescriptor();
             if (pd == null) {
@@ -130,7 +136,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
         return baseValue;
     }
 
-    public void setIndex(int index) {
+    @Override
+	public void setIndex(int index) {
         if (this.index == index) {
             return;
         }
@@ -151,7 +158,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * and the value will be the property itself.
      * @return Object
      */
-    public Object getImmediateNode() {
+    @Override
+	public Object getImmediateNode() {
         if (value == UNINITIALIZED) {
             if (index == WHOLE_COLLECTION) {
                 value = ValueUtils.getValue(getBaseValue());
@@ -169,11 +177,13 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
         return value;
     }
 
-    protected boolean isActualProperty() {
+    @Override
+	protected boolean isActualProperty() {
         return getPropertyDescriptor() != null;
     }
 
-    public boolean isCollection() {
+    @Override
+	public boolean isCollection() {
         EStructuralFeature pd = getPropertyDescriptor();
         
         if (pd == null) {
@@ -205,7 +215,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * collection, otherwise - 1.
      * @return int length
      */
-    public int getLength() {
+    @Override
+	public int getLength() {
         EStructuralFeature pd = getPropertyDescriptor();
         if (pd == null) {
             return 1;
@@ -234,7 +245,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * represented by the property.
      * @param value value to set
      */
-    public void setValue(Object value) {
+    @Override
+	public void setValue(Object value) {
         EStructuralFeature pd = getPropertyDescriptor();
         if (pd == null) {
             throw new JXPathInvalidAccessException(
@@ -250,7 +262,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
         this.value = value;
     }
 
-    public NodePointer createPath(JXPathContext context) {
+    @Override
+	public NodePointer createPath(JXPathContext context) {
         if (getImmediateNode() == null) {
             super.createPath(context);
             baseValue = UNINITIALIZED;
@@ -259,7 +272,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
         return this;
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
         if (index == WHOLE_COLLECTION) {
             setValue(null);
         }
@@ -280,7 +294,8 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
      * Get the name of the currently selected property.
      * @return String property name
      */
-    public String getPropertyName() {
+    @Override
+	public String getPropertyName() {
         if (propertyName == null) {
             EStructuralFeature pd = getPropertyDescriptor();
             if (pd != null) {

@@ -93,7 +93,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return (EObject) bean;
     }
 
-    public QName getName() {
+    @Override
+	public QName getName() {
         return new QName(null, getPropertyName());
     }
 
@@ -127,7 +128,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
      */
     protected abstract boolean isActualProperty();
 
-    public boolean isActual() {
+    @Override
+	public boolean isActual() {
         if (!isActualProperty()) {
             return false;
         }
@@ -139,7 +141,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
 
     private Object value = UNINITIALIZED;
 
-    public Object getImmediateNode() {
+    @Override
+	public Object getImmediateNode() {
         if (value == UNINITIALIZED) {
             value = index == WHOLE_COLLECTION ? ValueUtils.getValue(getBaseValue())
                     : ValueUtils.getValue(getBaseValue(), index);
@@ -147,12 +150,14 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return value;
     }
 
-    public boolean isCollection() {
+    @Override
+	public boolean isCollection() {
         Object value = getBaseValue();
         return value != null && ValueUtils.isCollection(value);
     }
 
-    public boolean isLeaf() {
+    @Override
+	public boolean isLeaf() {
         Object value = getNode();
         return value == null || JXPathIntrospector.getBeanInfo(value.getClass()).isAtomic();
     }
@@ -162,7 +167,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
      * collection, otherwise - 1.
      * @return int length
      */
-    public int getLength() {
+    @Override
+	public int getLength() {
         return ValueUtils.getLength(getBaseValue());
     }
 
@@ -171,14 +177,16 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
      * selected property value.
      * @return NodePointer
      */
-    public NodePointer getImmediateValuePointer() {
+    @Override
+	public NodePointer getImmediateValuePointer() {
         return NodePointer.newChildNodePointer(
             (NodePointer) this.clone(),
             getName(),
             getImmediateNode());
     }
 
-    public NodePointer createPath(JXPathContext context) {
+    @Override
+	public NodePointer createPath(JXPathContext context) {
         if (getImmediateNode() == null) {
             AbstractFactory factory = getAbstractFactory(context);
             int inx = (index == WHOLE_COLLECTION ? 0 : index);
@@ -197,7 +205,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return this;
     }
 
-    public NodePointer createPath(JXPathContext context, Object value) {
+    @Override
+	public NodePointer createPath(JXPathContext context, Object value) {
         // If neccessary, expand collection
         if (index != WHOLE_COLLECTION && index >= getLength()) {
             createPath(context);
@@ -206,7 +215,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return this;
     }
 
-    public NodePointer createChild(
+    @Override
+	public NodePointer createChild(
         JXPathContext context,
         QName name,
         int index,
@@ -219,7 +229,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return prop.createPath(context, value);
     }
 
-    public NodePointer createChild(
+    @Override
+	public NodePointer createChild(
         JXPathContext context,
         QName name,
         int index) {
@@ -231,11 +242,13 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return prop.createPath(context);
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return getImmediateParentPointer().hashCode() + propertyIndex + index;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (object == this) {
             return true;
         }
@@ -259,7 +272,8 @@ public abstract class EStructuralFeaturePointer extends NodePointer {
         return iThis == iOther;
     }
 
-    public int compareChildNodePointers(
+    @Override
+	public int compareChildNodePointers(
         NodePointer pointer1,
         NodePointer pointer2) {
         return getValuePointer().compareChildNodePointers(pointer1, pointer2);

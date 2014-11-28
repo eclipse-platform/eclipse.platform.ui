@@ -53,7 +53,8 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
 
     private Object value = UNINITIALIZED;
 
-    public NodeIterator childIterator(NodeTest test, boolean reverse,
+    @Override
+	public NodeIterator childIterator(NodeTest test, boolean reverse,
             NodePointer startWith) {
         if (test == null) {
             return createNodeIterator(null, reverse, startWith);
@@ -83,7 +84,8 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
         return new EStructuralFeatureIterator(this, property, reverse, startWith);
     }
 
-    public NodeIterator attributeIterator(QName name) {
+    @Override
+	public NodeIterator attributeIterator(QName name) {
         return new EObjectAttributeIterator(this, name);
     }
 
@@ -104,14 +106,16 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
         super(parent);
     }
 
-    public void setIndex(int index) {
+    @Override
+	public void setIndex(int index) {
         if (this.index != index) {
             super.setIndex(index);
             value = UNINITIALIZED;
         }
     }
 
-    public Object getImmediateNode() {
+    @Override
+	public Object getImmediateNode() {
         if (value == UNINITIALIZED) {
             value = index == WHOLE_COLLECTION ? ValueUtils.getValue(getBaseValue())
                     : ValueUtils.getValue(getBaseValue(), index);
@@ -119,7 +123,8 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
         return value;
     }
 
-    public abstract QName getName();
+    @Override
+	public abstract QName getName();
 
     /**
      * Learn whether <code>name</code> is a valid child name for this PropertyOwnerPointer.
@@ -136,7 +141,8 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
      * forwards the call to the parent pointer.
      * @param value to set
      */
-    public void setValue(Object value) {
+    @Override
+	public void setValue(Object value) {
         this.value = value;
         if (parent != null) {
             if (parent.isContainer()) {
@@ -162,7 +168,8 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
      * If this is a root node pointer, throws an exception; otherwise
      * forwards the call to the parent node.
      */
-    public void remove() {
+    @Override
+	public void remove() {
         this.value = null;
         if (parent != null) {
             parent.remove();
@@ -190,7 +197,8 @@ public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
         return false;
     }
 
-    public int compareChildNodePointers(NodePointer pointer1,
+    @Override
+	public int compareChildNodePointers(NodePointer pointer1,
             NodePointer pointer2) {
         int r = pointer1.getName().toString().compareTo(pointer2.getName().toString());
         return r == 0 ? pointer1.getIndex() - pointer2.getIndex() : r;

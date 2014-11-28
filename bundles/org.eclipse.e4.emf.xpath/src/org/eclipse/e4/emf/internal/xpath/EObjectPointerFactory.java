@@ -43,16 +43,19 @@ public class EObjectPointerFactory implements NodePointerFactory {
     /** factory order constant */
     public static final int BEAN_POINTER_FACTORY_ORDER = 900;
 
-    public int getOrder() {
+    @Override
+	public int getOrder() {
         return BEAN_POINTER_FACTORY_ORDER;
     }
 
-    public NodePointer createNodePointer(QName name, Object bean, Locale locale) {
+    @Override
+	public NodePointer createNodePointer(QName name, Object bean, Locale locale) {
         JXPathEObjectInfo bi = new JXPathEObjectInfo(((EObject)bean).eClass());
         return new EObjectPointer(name, bean, bi, locale);
     }
 
-    public NodePointer createNodePointer(NodePointer parent, QName name,
+    @Override
+	public NodePointer createNodePointer(NodePointer parent, QName name,
             Object bean) {
         if (bean == null) {
             return new NullPointer(parent, name);

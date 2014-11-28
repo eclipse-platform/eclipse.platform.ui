@@ -68,11 +68,13 @@ public abstract class CollectionNodeIterator implements NodeIterator {
     protected abstract NodeIterator
             getElementNodeIterator(NodePointer elementPointer);
 
-    public int getPosition() {
+    @Override
+	public int getPosition() {
         return position;
     }
 
-    public boolean setPosition(int position) {
+    @Override
+	public boolean setPosition(int position) {
         if (collection == null) {
             prepare();
         }
@@ -84,7 +86,8 @@ public abstract class CollectionNodeIterator implements NodeIterator {
         return true;
     }
 
-    public NodePointer getNodePointer() {
+    @Override
+	public NodePointer getNodePointer() {
         if (position == 0) {
             return null;
         }

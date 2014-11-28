@@ -48,31 +48,38 @@ public class LangAttributePointer extends NodePointer {
         super(parent);
     }
 
-    public QName getName() {
+    @Override
+	public QName getName() {
         return new QName("xml", "lang");
     }
 
-    public String getNamespaceURI() {
+    @Override
+	public String getNamespaceURI() {
         return null;
     }
 
-    public boolean isCollection() {
+    @Override
+	public boolean isCollection() {
         return false;
     }
 
-    public int getLength() {
+    @Override
+	public int getLength() {
         return 1;
     }
 
-    public Object getBaseValue() {
+    @Override
+	public Object getBaseValue() {
         return parent.getLocale().toString().replace('_', '-');
     }
 
-    public Object getImmediateNode() {
+    @Override
+	public Object getImmediateNode() {
         return getBaseValue();
     }
 
-    public boolean isLeaf() {
+    @Override
+	public boolean isLeaf() {
         return true;
     }
 
@@ -82,12 +89,14 @@ public class LangAttributePointer extends NodePointer {
      * Throws UnsupportedOperationException.
      * @param value Object
      */
-    public void setValue(Object value) {
+    @Override
+	public void setValue(Object value) {
         throw new UnsupportedOperationException(
                 "Cannot change locale using the 'lang' attribute");
     }
 
-    public String asPath() {
+    @Override
+	public String asPath() {
         StringBuffer buffer = new StringBuffer();
         if (parent != null) {
             buffer.append(parent.asPath());
@@ -100,19 +109,23 @@ public class LangAttributePointer extends NodePointer {
         return buffer.toString();
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return 0;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         return object instanceof LangAttributePointer;
     }
 
-    public boolean testNode(NodeTest test) {
+    @Override
+	public boolean testNode(NodeTest test) {
         return false;
     }
 
-    public int compareChildNodePointers(
+    @Override
+	public int compareChildNodePointers(
         NodePointer pointer1,
         NodePointer pointer2) {
         // Won't happen - lang attributes don't have children
