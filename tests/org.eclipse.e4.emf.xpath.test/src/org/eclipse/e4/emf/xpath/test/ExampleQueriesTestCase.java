@@ -37,7 +37,7 @@ public class ExampleQueriesTestCase extends TestCase {
 	private XPathContext xpathContext;
 	private Resource resource;
 
-	
+
 	public void testSimpleQuery() {
 
 		Object application = xpathContext.getValue("/");
@@ -60,22 +60,22 @@ public class ExampleQueriesTestCase extends TestCase {
 		application = xpathContext.getValue(".[@id='root']");
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
-		
+
 		assertEquals("element1",xpathContext.getValue("nodes[1]/@id"));
-		
+
 		assertEquals(NodeImpl.class, xpathContext.getValue("//.[@id='element2.2']").getClass());
 		assertEquals(ExtendedNodeImpl.class,xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']").getClass());
-		
+
 	}
-	
+
 	public void testMenuQuery() {
 		Object application = xpathContext.getValue("/");
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
-		
+
 		Object node = xpathContext.getValue("//.[@id='menuContainer.1']/menus[@id='menu.1']");
 		assertNotNull(node);
-		
+
 		Iterator<Object> i  = xpathContext.iterate("//.[@id='menu.1']");
 		assertTrue(i.hasNext());
 		assertSame(NodeImpl.class, i.next().getClass());
