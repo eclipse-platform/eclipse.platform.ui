@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,22 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - adjustment to EObject
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 450212
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath.test;
 
-import java.util.Collections;
-import java.util.Iterator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.util.Iterator;
 
 import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.MenuImpl;
@@ -31,13 +34,18 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ExampleQueriesTestCase extends TestCase {
+public class ExampleQueriesTestCase {
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
 	private Resource resource;
 
 
+
+	@Test
 	public void testSimpleQuery() {
 
 		Object application = xpathContext.getValue("/");
@@ -68,6 +76,8 @@ public class ExampleQueriesTestCase extends TestCase {
 
 	}
 
+
+	@Test
 	public void testMenuQuery() {
 		Object application = xpathContext.getValue("/");
 		assertNotNull(application);
@@ -85,9 +95,8 @@ public class ExampleQueriesTestCase extends TestCase {
 		//assertFalse(i.hasNext());
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() {
 		resourceSet = new ResourceSetImpl();
 		resourceSet
 				.getResourceFactoryRegistry()
@@ -96,7 +105,6 @@ public class ExampleQueriesTestCase extends TestCase {
 						new XMIResourceFactoryImpl());
 
 		// Register the package to ensure it is available during loading.
-		//
 		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI,
 				XpathtestPackage.eINSTANCE);
 		URI uri = URI.createPlatformPluginURI(
@@ -106,12 +114,11 @@ public class ExampleQueriesTestCase extends TestCase {
 		xpathContext = f.newContext(resource.getContents().get(0));
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		xpathContext = null;
 		resource.unload();
 		resourceSet.getResources().remove(resource);
-		super.tearDown();
 	}
 
 }
