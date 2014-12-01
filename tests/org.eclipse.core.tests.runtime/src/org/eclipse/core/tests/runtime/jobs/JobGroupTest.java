@@ -98,13 +98,13 @@ public class JobGroupTest extends AbstractJobTest {
 			job.schedule();
 			waitForStart(job);
 			// Job group should be in the ACTIVE state with one active job.
-			assertEquals("1." + i, 1, jobGroup.getActiveJobs().length);
+			assertEquals("1." + i, 1, jobGroup.getActiveJobs().size());
 			assertEquals("2." + i, JobGroup.ACTIVE, jobGroup.getState());
 			// Cancel the test job and wait for it to finish.
 			job.cancel();
 			waitForCompletion(job);
 			// Verify that the group does not contain any active jobs.
-			assertEquals("3." + i, 0, jobGroup.getActiveJobs().length);
+			assertEquals("3." + i, 0, jobGroup.getActiveJobs().size());
 			// Verify that the group will be in the ACTIVE state even when there are no active jobs
 			// and transitions to NONE state only after all the seed jobs are completed.
 			if (i < NUM_SEED_JOBS) {
@@ -139,7 +139,7 @@ public class JobGroupTest extends AbstractJobTest {
 			job.schedule();
 			waitForCompletion(job);
 			// Job group should be in the ACTIVE state with the active child jobs.
-			assertEquals("1." + i, NUM_CHILD_JOBS, jobGroup.getActiveJobs().length);
+			assertEquals("1." + i, NUM_CHILD_JOBS, jobGroup.getActiveJobs().size());
 			assertEquals("2." + i, JobGroup.ACTIVE, jobGroup.getState());
 			// Cancel all the active child jobs and wait for them to finish.
 			for (Job activeJob : jobGroup.getActiveJobs()) {
@@ -147,7 +147,7 @@ public class JobGroupTest extends AbstractJobTest {
 				waitForCompletion(activeJob);
 			}
 			// Verify that the group does not contain any active jobs.
-			assertEquals("3." + i, 0, jobGroup.getActiveJobs().length);
+			assertEquals("3." + i, 0, jobGroup.getActiveJobs().size());
 			// Verify that the group will be in the ACTIVE state even when there are no active jobs
 			// and transitions to NONE state only after all the seed jobs are completed.
 			if (i < NUM_SEED_JOBS) {
@@ -282,98 +282,94 @@ public class JobGroupTest extends AbstractJobTest {
 		// Try finding all jobs by supplying the NULL parameter.
 		// Note: Running the test framework may cause other system jobs to run,
 		// so check that the jobs started by this test are a subset of all running jobs.
-		HashSet<Job> allJobs = new HashSet<Job>();
-		allJobs.addAll(Arrays.asList(jobs));
-		Job[] result = manager.find(null);
-		assertTrue("1.0", result.length >= NUM_JOBS);
-		for (int i = 0; i < result.length; i++) {
+		HashSet<Job> testJobs = new HashSet<Job>();
+		testJobs.addAll(Arrays.asList(jobs));
+		Job[] allJobs = manager.find(null);
+		assertTrue("1.0", allJobs.length >= NUM_JOBS);
+		for (int i = 0; i < allJobs.length; i++) {
 			// Only test jobs that we know about.
-			if (allJobs.remove(result[i])) {
-				JobGroup group = result[i].getJobGroup();
+			if (testJobs.remove(allJobs[i])) {
+				JobGroup group = allJobs[i].getJobGroup();
 				assertTrue("1." + i, (group == firstJobGroup || group == secondJobGroup || group == thirdJobGroup || group == fourthJobGroup || group == fifthJobGroup));
 			}
 		}
-		assertEquals("1.2", 0, allJobs.size());
+		assertEquals("1.2", 0, testJobs.size());
+
+		List<Job> activeJobs;
 
 		// Try finding all jobs from the first job group.
-		result = firstJobGroup.getActiveJobs();
-		assertEquals("2.0", 4, result.length);
-		for (int i = 0; i < result.length; i++) {
-			assertEquals("2." + (i + 1), firstJobGroup, result[i].getJobGroup());
-		}
+		activeJobs = firstJobGroup.getActiveJobs();
+		assertEquals("2.0", 4, activeJobs.size());
+		for (int i = 0; i < activeJobs.size(); i++)
+			assertEquals("2." + (i + 1), firstJobGroup, activeJobs.get(i).getJobGroup());
 
 		// Try finding all jobs from the second job group.
-		result = secondJobGroup.getActiveJobs();
-		assertEquals("3.0", 4, result.length);
-		for (int i = 0; i < result.length; i++) {
-			assertEquals("3." + (i + 1), secondJobGroup, result[i].getJobGroup());
-		}
+		activeJobs = secondJobGroup.getActiveJobs();
+		assertEquals("3.0", 4, activeJobs.size());
+		for (int i = 0; i < activeJobs.size(); i++)
+			assertEquals("3." + (i + 1), secondJobGroup, activeJobs.get(i).getJobGroup());
 
 		// Try finding all jobs from the third job group.
-		result = thirdJobGroup.getActiveJobs();
-		assertEquals("4.0", 4, result.length);
-		for (int i = 0; i < result.length; i++) {
-			assertEquals("4." + (i + 1), thirdJobGroup, result[i].getJobGroup());
-		}
+		activeJobs = thirdJobGroup.getActiveJobs();
+		assertEquals("4.0", 4, activeJobs.size());
+		for (int i = 0; i < activeJobs.size(); i++)
+			assertEquals("4." + (i + 1), thirdJobGroup, activeJobs.get(i).getJobGroup());
 
 		// Try finding all jobs from the fourth job group.
-		result = fourthJobGroup.getActiveJobs();
-		assertEquals("5.0", 4, result.length);
-		for (int i = 0; i < result.length; i++) {
-			assertEquals("5." + (i + 1), fourthJobGroup, result[i].getJobGroup());
-		}
+		activeJobs = fourthJobGroup.getActiveJobs();
+		assertEquals("5.0", 4, activeJobs.size());
+		for (int i = 0; i < activeJobs.size(); i++)
+			assertEquals("5." + (i + 1), fourthJobGroup, activeJobs.get(i).getJobGroup());
 
 		// Try finding all jobs from the fifth job group.
-		result = fifthJobGroup.getActiveJobs();
-		assertEquals("6.0", 4, result.length);
-		for (int i = 0; i < result.length; i++) {
-			assertEquals("6." + (i + 1), fifthJobGroup, result[i].getJobGroup());
-		}
+		activeJobs = fifthJobGroup.getActiveJobs();
+		assertEquals("6.0", 4, activeJobs.size());
+		for (int i = 0; i < activeJobs.size(); i++)
+			assertEquals("6." + (i + 1), fifthJobGroup, activeJobs.get(i).getJobGroup());
 
 		// The first job should still be running.
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++)
 			assertState("7.0", jobs[i], Job.RUNNING);
-		}
 
 		// Cancel the first job group.
 		firstJobGroup.cancel();
 		waitForCompletion(firstJobGroup);
 
 		// First job group should not contain any active jobs.
-		result = firstJobGroup.getActiveJobs();
-		assertEquals("7.2", 0, result.length);
+		activeJobs = firstJobGroup.getActiveJobs();
+		assertEquals("7.2", 0, activeJobs.size());
 
 		// Cancel the second job group.
 		secondJobGroup.cancel();
 		waitForCompletion(secondJobGroup);
 		// Second job group should not contain any active jobs.
-		result = secondJobGroup.getActiveJobs();
-		assertEquals("9.0", 0, result.length);
+		activeJobs = secondJobGroup.getActiveJobs();
+		assertEquals("9.0", 0, activeJobs.size());
 
 		// Cancel the fourth job group.
 		fourthJobGroup.cancel();
 		waitForCompletion(fourthJobGroup);
 		// Fourth job group should not contain any active jobs.
-		result = fourthJobGroup.getActiveJobs();
-		assertEquals("9.1", 0, result.length);
+		activeJobs = fourthJobGroup.getActiveJobs();
+		assertEquals("9.1", 0, activeJobs.size());
 
 		// Finding all jobs by supplying the NULL parameter should return at least 8 jobs
 		// (4 from the 3rd family, and 4 from the 5th family)
 		// Note: Running the test framework may cause other system jobs to run,
 		// so check that the expected jobs started by this test are a subset of all running jobs.
-		allJobs.addAll(Arrays.asList(jobs));
-		result = manager.find(null);
-		assertTrue("11.0", result.length >= 8);
-		for (int i = 0; i < result.length; i++) {
+		testJobs.addAll(Arrays.asList(jobs));
+		allJobs = manager.find(null);
+		assertTrue("11.0", allJobs.length >= 8);
+		for (int i = 0; i < allJobs.length; i++) {
 			// Only test jobs that we know about.
-			if (allJobs.remove(result[i])) {
-				JobGroup group = result[i].getJobGroup();
+			if (testJobs.remove(allJobs[i])) {
+				JobGroup group = allJobs[i].getJobGroup();
 				assertTrue("11." + (i + 1), (group == thirdJobGroup || group == fifthJobGroup));
 			}
 		}
 
-		assertEquals("11.2", 12, allJobs.size());
-		allJobs.clear();
+		assertEquals("11.2", 12, testJobs.size());
+		testJobs.clear();
 
 		// Cancel the fifth and third job groups.
 		fifthJobGroup.cancel();
@@ -382,25 +378,24 @@ public class JobGroupTest extends AbstractJobTest {
 		waitForCompletion(thirdJobGroup);
 
 		// Verify that all jobs are canceled and moved to NONE state
-		for (int i = 0; i < NUM_JOBS; i++) {
+		for (int i = 0; i < NUM_JOBS; i++)
 			assertState("12." + i, jobs[i], Job.NONE);
-		}
 
 		// Finding all jobs should return no jobs from our job groups.
 		// Note: Running the test framework may cause other system jobs to run,
 		// so check that there no jobs started by this test are present in all running jobs.
-		allJobs.addAll(Arrays.asList(jobs));
-		result = manager.find(null);
-		for (int i = 0; i < result.length; i++) {
+		testJobs.addAll(Arrays.asList(jobs));
+		allJobs = manager.find(null);
+		for (int i = 0; i < allJobs.length; i++) {
 			// Verify that no jobs that we know about are found (they should have all been removed)
-			if (allJobs.remove(result[i]))
+			if (testJobs.remove(allJobs[i]))
 				assertTrue("14." + i, false);
 		}
-		assertEquals("15.0", NUM_JOBS, allJobs.size());
-		allJobs.clear();
+		assertEquals("15.0", NUM_JOBS, testJobs.size());
+		testJobs.clear();
 	}
 
-	public void testJoin() {
+	public void testJoinWithoutTimeout() {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
@@ -429,7 +424,7 @@ public class JobGroupTest extends AbstractJobTest {
 				try {
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 					status[0] = TestBarrier.STATUS_RUNNING;
-					firstJobGroup.join(null);
+					firstJobGroup.join(0, null);
 				} catch (OperationCanceledException e) {
 					//ignore
 				} catch (InterruptedException e) {
@@ -451,11 +446,11 @@ public class JobGroupTest extends AbstractJobTest {
 		int i = 0;
 		for (; i < 100; i++) {
 			int currentStatus = status[0];
-			Job[] result = firstJobGroup.getActiveJobs();
+			List<Job> result = firstJobGroup.getActiveJobs();
 
 			// Verify that when the thread is complete then all jobs must be done.
 			if (currentStatus == TestBarrier.STATUS_DONE) {
-				assertEquals("1." + i, 0, result.length);
+				assertEquals("1." + i, 0, result.size());
 				break;
 			}
 			sleep(100);
@@ -573,7 +568,7 @@ public class JobGroupTest extends AbstractJobTest {
 				try {
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 					status[0] = TestBarrier.STATUS_RUNNING;
-					firstJobGroup.join(null);
+					firstJobGroup.join(0, null);
 				} catch (OperationCanceledException e) {
 					//ignore
 				} catch (InterruptedException e) {
@@ -600,7 +595,7 @@ public class JobGroupTest extends AbstractJobTest {
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 
 		// Verify that there are no active jobs in the the first group.
-		assertEquals("2.2", 0, firstJobGroup.getActiveJobs().length);
+		assertEquals("2.2", 0, firstJobGroup.getActiveJobs().size());
 
 		// Cancel the second job group.
 		secondJobGroup.cancel();
@@ -645,7 +640,7 @@ public class JobGroupTest extends AbstractJobTest {
 				try {
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 					status[0] = TestBarrier.STATUS_RUNNING;
-					firstJobGroup.join(canceler);
+					firstJobGroup.join(0, canceler);
 				} catch (OperationCanceledException e) {
 					//ignore
 				} catch (InterruptedException e) {
@@ -673,7 +668,7 @@ public class JobGroupTest extends AbstractJobTest {
 		// The first job in the first group should still be running.
 		assertState("2.2", jobs[0], Job.RUNNING);
 		assertEquals("2.3", TestBarrier.STATUS_DONE, status[0]);
-		assertTrue("2.4", firstJobGroup.getActiveJobs().length > 0);
+		assertTrue("2.4", firstJobGroup.getActiveJobs().size() > 0);
 
 		// Cancel both job groups.
 		secondJobGroup.cancel();
@@ -697,7 +692,7 @@ public class JobGroupTest extends AbstractJobTest {
 		job.setJobGroup(jobGroup);
 		job.schedule();
 		try {
-			jobGroup.join(null);
+			jobGroup.join(0, null);
 		} catch (OperationCanceledException e) {
 			fail("1.0", e);
 		} catch (InterruptedException e) {
@@ -763,7 +758,7 @@ public class JobGroupTest extends AbstractJobTest {
 		FussyProgressMonitor monitor = new FussyProgressMonitor();
 		barrier.setStatus(TestBarrier.STATUS_START);
 		try {
-			jobGroup.join(monitor);
+			jobGroup.join(0, monitor);
 		} catch (OperationCanceledException e) {
 			// ignore
 		} catch (InterruptedException e) {
@@ -802,8 +797,8 @@ public class JobGroupTest extends AbstractJobTest {
 					manager.suspend();
 					waiting.schedule();
 					running.join();
-					jobGroup.join(null);
-					groupJobsCount[0] = jobGroup.getActiveJobs().length;
+					jobGroup.join(0, null);
+					groupJobsCount[0] = jobGroup.getActiveJobs().size();
 				} catch (InterruptedException e) {
 					// ignore
 				} finally {
@@ -857,7 +852,7 @@ public class JobGroupTest extends AbstractJobTest {
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {
-					jobGroup.join(null);
+					jobGroup.join(0, null);
 				} catch (OperationCanceledException e) {
 					//ignore
 				} catch (InterruptedException e) {
@@ -880,7 +875,7 @@ public class JobGroupTest extends AbstractJobTest {
 					waiting.schedule();
 					running.cancel();
 					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
-					groupJobsCount[0] = jobGroup.getActiveJobs().length;
+					groupJobsCount[0] = jobGroup.getActiveJobs().size();
 					barrier.setStatus(TestBarrier.STATUS_DONE);
 				} finally {
 					// clean up
@@ -933,7 +928,7 @@ public class JobGroupTest extends AbstractJobTest {
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {
-					jobGroup.join(null);
+					jobGroup.join(0, null);
 				} catch (OperationCanceledException e) {
 					// ignore
 				} catch (InterruptedException e) {
@@ -960,7 +955,7 @@ public class JobGroupTest extends AbstractJobTest {
 				waitForStart(waiting);
 				waiting.cancel();
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
-				groupJobsCount[0] = jobGroup.getActiveJobs().length;
+				groupJobsCount[0] = jobGroup.getActiveJobs().size();
 				barrier.setStatus(TestBarrier.STATUS_DONE);
 
 				return Status.OK_STATUS;
@@ -1003,10 +998,9 @@ public class JobGroupTest extends AbstractJobTest {
 		}
 		// Verify that all the test jobs are running.
 		assertEquals("1.0", JobGroup.ACTIVE, jobGroup.getState());
-		assertEquals("1.1", NUM_SEED_JOBS - 1, jobGroup.getActiveJobs().length);
-		for (int i = 0; i < NUM_SEED_JOBS - 1; i++) {
+		assertEquals("1.1", NUM_SEED_JOBS - 1, jobGroup.getActiveJobs().size());
+		for (int i = 0; i < NUM_SEED_JOBS - 1; i++)
 			assertState("2." + i, jobs[i], Job.RUNNING);
-		}
 
 		final TestBarrier barrier = new TestBarrier();
 		Job failedJob = new Job("FailedJob") {
@@ -1023,7 +1017,7 @@ public class JobGroupTest extends AbstractJobTest {
 		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
 
 		// Verify that the failing job also started running.
-		assertEquals("3.0", NUM_SEED_JOBS, jobGroup.getActiveJobs().length);
+		assertEquals("3.0", NUM_SEED_JOBS, jobGroup.getActiveJobs().size());
 		assertState("3.1", failedJob, Job.RUNNING);
 
 		for (int i = NUM_SEED_JOBS; i < NUM_SEED_JOBS + NUM_ADDITIONAL_JOBs; i++) {
@@ -1034,7 +1028,7 @@ public class JobGroupTest extends AbstractJobTest {
 		}
 
 		// Verify that all the jobs are active.
-		assertEquals("4.0", NUM_SEED_JOBS + NUM_ADDITIONAL_JOBs, jobGroup.getActiveJobs().length);
+		assertEquals("4.0", NUM_SEED_JOBS + NUM_ADDITIONAL_JOBs, jobGroup.getActiveJobs().size());
 		for (int i = NUM_SEED_JOBS; i < NUM_SEED_JOBS + NUM_ADDITIONAL_JOBs; i++) {
 			assertState("5." + i, jobs[i], Job.WAITING);
 		}
@@ -1053,9 +1047,8 @@ public class JobGroupTest extends AbstractJobTest {
 			} else if (i == NUM_SEED_JOBS) {
 				// This job might have been started running before the group gets canceled.
 				IStatus result = jobs[i].getResult();
-				if (result != null) {
+				if (result != null)
 					assertEquals("6." + i, IStatus.CANCEL, result.getSeverity());
-				}
 			} else {
 				assertEquals("6." + i, null, jobs[i].getResult());
 			}
@@ -1221,9 +1214,8 @@ public class JobGroupTest extends AbstractJobTest {
 		IStatus[] jobResults = jobGroup.getResult().getChildren();
 		// Verify that the group result contains all the job results except the OK statuses.
 		assertEquals("1.0", status.length - 1, jobResults.length);
-		for (int i = 1; i < status.length; i++) {
+		for (int i = 1; i < status.length; i++)
 			assertEquals("2." + i, status[i], jobResults[i - 1].getSeverity());
-		}
 	}
 
 	public void testCustomComputeGroupResult() {
@@ -1235,9 +1227,9 @@ public class JobGroupTest extends AbstractJobTest {
 				return false;
 			}
 
-			protected MultiStatus computeGroupResult(IStatus[] jobResults) {
+			protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
 				// Record the original job results and return a dummy groupresult.
-				originalJobResults[0] = jobResults;
+				originalJobResults[0] = jobResults.toArray(new IStatus[jobResults.size()]);
 				returnedGroupResult[0] = new MultiStatus("org.eclipse.core.jobs", 0, new IStatus[0], "custom result", null);
 				return returnedGroupResult[0];
 			}
@@ -1257,9 +1249,8 @@ public class JobGroupTest extends AbstractJobTest {
 		waitForCompletion(jobGroup);
 		// Verify that the compute group result is called with all the completed job results.
 		assertEquals("2.0", status.length, originalJobResults[0].length);
-		for (int i = 0; i < status.length; i++) {
+		for (int i = 0; i < status.length; i++)
 			assertEquals("3." + i, status[i], originalJobResults[0][i].getSeverity());
-		}
 		// Verify that JobGroup.getResult returns the status returned by JobGroup.computeGroupResult method.
 		assertEquals("4.0", returnedGroupResult[0], jobGroup.getResult());
 	}
@@ -1277,7 +1268,7 @@ public class JobGroupTest extends AbstractJobTest {
 			testJob.schedule();
 		}
 		assertEquals("1.0", JobGroup.ACTIVE, jobGroup.getState());
-		assertEquals("2.0", NUM_GROUP_JOBS, jobGroup.getActiveJobs().length);
+		assertEquals("2.0", NUM_GROUP_JOBS, jobGroup.getActiveJobs().size());
 
 		TestJob normalJobs[] = new TestJob[NUM_NORMAL_JOBS];
 		for (int i = 0; i < NUM_NORMAL_JOBS; i++) {
@@ -1285,13 +1276,12 @@ public class JobGroupTest extends AbstractJobTest {
 			normalJobs[i] = testJob;
 			testJob.schedule();
 		}
-		for (int i = 0; i < NUM_NORMAL_JOBS; i++) {
+		for (int i = 0; i < NUM_NORMAL_JOBS; i++)
 			waitForCompletion(normalJobs[i]);
-		}
 
 		// Tests that the normal jobs are completed fine while the group jobs are still running.
 		assertEquals("3.0", JobGroup.ACTIVE, jobGroup.getState());
-		assertEquals("4.0", NUM_GROUP_JOBS, jobGroup.getActiveJobs().length);
+		assertEquals("4.0", NUM_GROUP_JOBS, jobGroup.getActiveJobs().size());
 		jobGroup.cancel();
 		waitForCompletion(jobGroup);
 	}

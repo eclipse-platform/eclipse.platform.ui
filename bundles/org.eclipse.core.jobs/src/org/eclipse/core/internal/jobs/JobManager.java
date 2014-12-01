@@ -365,7 +365,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				case JobGroup.CANCELING :
 					if (!cancelDueToError) {
 						// User cancellation takes precedence over the cancel due to error.
-						jobGroup.cancelJobGroup(cancelDueToError);
+						jobGroup.updateCancelingReason(cancelDueToError);
 					}
 					return;
 				default :
@@ -725,7 +725,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.JobGroup#getActiveJobs()
 	 */
-	Job[] find(InternalJobGroup jobGroup) {
+	List<Job> find(InternalJobGroup jobGroup) {
 		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
 		synchronized (lock) {
 			return jobGroup.internalGetActiveJobs();
@@ -1025,7 +1025,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	boolean join(InternalJobGroup jobGroup, long timeout, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
 		Assert.isLegal(timeout >= 0, "timeout should not be negative"); //$NON-NLS-1$
-		long startTime = System.currentTimeMillis();
+		long deadline = timeout == 0 ? 0 : System.currentTimeMillis() + timeout;
 		int jobCount;
 		synchronized (lock) {
 			jobCount = jobGroup.getActiveJobsCount();
@@ -1046,14 +1046,12 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			while (true) {
 				if (subMonitor.isCanceled())
 					throw new OperationCanceledException();
-				long remainingTime;
-				long spentTime = System.currentTimeMillis() - startTime;
-				if (timeout == 0) {
-					remainingTime = 0;
-				} else if (spentTime < timeout) {
-					remainingTime = timeout - spentTime;
-				} else {
-					return false;
+				long remainingTime = deadline;
+				if (deadline != 0) {
+					remainingTime -= System.currentTimeMillis();
+					if (remainingTime <= 0) {
+						return false;
+					}
 				}
 				synchronized (lock) {
 					if ((suspended && jobGroup.getRunningJobsCount() == 0))
@@ -1826,7 +1824,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			int failedJobsCount;
 			int canceledJobsCount;
 			int seedJobsRemainingCount;
-			IStatus[] jobResults = new IStatus[0];
+			List<IStatus> jobResults = Collections.emptyList();
 			synchronized (jobManagerLock) {
 				// Collect the required details to check for the group cancellation and completion
 				// outside the synchronized block.

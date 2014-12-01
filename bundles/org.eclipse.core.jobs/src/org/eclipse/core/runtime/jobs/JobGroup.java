@@ -11,6 +11,7 @@
 
 package org.eclipse.core.runtime.jobs;
 
+import java.util.List;
 import org.eclipse.core.internal.jobs.InternalJobGroup;
 import org.eclipse.core.runtime.*;
 
@@ -84,10 +85,10 @@ public class JobGroup extends InternalJobGroup {
 	 * the job group. Those initial jobs may discover more work and add yet more jobs, but
 	 * those additional jobs should not be included in this initial "seed" count. If this
 	 * value is set too high, the job group will never transition to the done ({@link #NONE})
-	 * state, {@link #join(IProgressMonitor)} calls will hang, and {@link #getResult()} calls
-	 * will return invalid results. If this value is set too low, the job group may transition
-	 * to the ({@link #NONE}) state before all of the jobs have been scheduled, causing a
-	 * {@link #join(IProgressMonitor)} call to return too early.
+	 * state, {@link #join(long, IProgressMonitor)} calls will hang, and {@link #getResult()}
+	 * calls will return invalid results. If this value is set too low, the job group may
+	 * transition to the ({@link #NONE}) state before all of the jobs have been scheduled,
+	 * causing a {@link #join(long, IProgressMonitor)} call to return too early.
 	 */
 	public JobGroup(String name, int maxThreads, int seedJobsCount) {
 		super(name, maxThreads, seedJobsCount);
@@ -152,11 +153,11 @@ public class JobGroup extends InternalJobGroup {
 	 * Returns all waiting, executing and sleeping jobs belonging
 	 * to this job group. If no jobs are found, an empty array is returned.
 	 *
-	 * @return the job array
+	 * @return the list of active jobs
 	 * @see Job#setJobGroup(JobGroup)
 	 */
 	@Override
-	public final Job[] getActiveJobs() {
+	public final List<Job> getActiveJobs() {
 		return super.getActiveJobs();
 	}
 
@@ -178,53 +179,6 @@ public class JobGroup extends InternalJobGroup {
 	@Override
 	public final void cancel() {
 		super.cancel();
-	}
-
-	/**
-	 * Waits until all jobs belonging to this job group have finished. This method will
-	 * block the calling thread until all such jobs have finished executing, or the given
-	 * progress monitor is canceled by the user, or the calling thread is interrupted.
-	 * If there are no jobs belonging to the group that are currently waiting, running, or sleeping,
-	 * this method returns immediately. Feedback on how the join is progressing is provided
-	 * to the given progress monitor.
-	 * <p>
-	 * If this method is called while the job manager is suspended, only jobs
-	 * that are currently running will be joined. Once there are no jobs
-	 * belonging to the group in the {@link Job#RUNNING} state, the method returns.
-	 * </p>
-	 * <p>
-	 * Note that there is a deadlock risk when using join. If the calling thread owns
-	 * a lock or an object monitor that one of the jobs in the group is waiting for,
-	 * a deadlock will occur.
-	 * </p>
-	 * <p>
-	 * Jobs may be added to this job group after the initial set of jobs are scheduled,
-	 * and this method will wait for all newly added jobs to complete, even if they
-	 * are added to the group after this method is invoked. As a result, there is
-	 * no guarantee that this method will return, since other threads may continually
-	 * add new jobs to the group, never allowing the count of running/scheduled jobs
-	 * in the group to reach zero.
-	 * </p>
-	 * <p>
-	 * Throws an <code>OperationCanceledException</code> when the given progress monitor
-	 * is canceled. Canceling the monitor does not cancel the jobs belonging to the group and,
-	 * if required, the group may be canceled explicitly using the {@link #cancel()} method.
-	 * </p>
-	 * <p>
-	 * An invocation of this method behaves in exactly the same way as the invocation of
-	 * {@link #join(long, IProgressMonitor) join} with a zero timeout argument.
-	 * </p>
-	 *
-	 * @param monitor the progress monitor for reporting progress on how the wait is
-	 * progressing and to be able to cancel the join operation, or <code>null</code>
-	 * if no progress monitoring is required.
-	 * @exception InterruptedException if the calling thread is interrupted while waiting
-	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
-	 * @see Job#setJobGroup(JobGroup)
-	 * @see #cancel()
-	 */
-	public final void join(IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
-		join(0, monitor);
 	}
 
 	/**
@@ -305,7 +259,7 @@ public class JobGroup extends InternalJobGroup {
 	 * @see #getResult()
 	 */
 	@Override
-	protected MultiStatus computeGroupResult(IStatus[] jobResults) {
+	protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
 		return super.computeGroupResult(jobResults);
 	}
 }

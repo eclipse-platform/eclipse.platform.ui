@@ -27,7 +27,7 @@ public class InternalJobGroup {
 	 * The maximum amount of time to wait on {@link #jobGroupStateLock}.
 	 * Determines how often the progress monitor is checked for cancellation.
 	 */
-	private static final long MAX_WAIT_INTERVAL = 200;
+	private static final long MAX_WAIT_INTERVAL = 100;
 	/**
 	 * This lock will be held while performing state changes on this job group. It is
 	 * also used as a notifier to wake up the threads waiting for this job group to complete.
@@ -96,7 +96,7 @@ public class InternalJobGroup {
 	/* (non-Javadoc)
 	 * @see JobGroup#getActiveJobs()
 	 */
-	protected Job[] getActiveJobs() {
+	protected List<Job> getActiveJobs() {
 		return manager.find(this);
 	}
 
@@ -199,16 +199,15 @@ public class InternalJobGroup {
 	}
 
 	/**
-	 * Called by the JobManager to signify that the group is getting canceled.
-	 * Must be called from JobManager#updateJobGroup.
+	 * Called by the JobManager to signify that the group canceling reason is changed.
+	 * Must be called from JobManager#cancel(InternalJobGroup).
 	 *
 	 * @param cancelDueToError <code>true</code> if the group is getting canceled because
 	 * the <code>shouldCancel(IStatus, int, int)</code> method returned <code>true</code>,
 	 * <code>false</code> otherwise.
 	 * @GuardedBy("JobManager.lock")
 	 */
-	final void cancelJobGroup(boolean cancelDueToError) {
-		state = JobGroup.CANCELING;
+	final void updateCancelingReason(boolean cancelDueToError) {
 		cancelingDueToError = cancelDueToError;
 		if (!cancelDueToError) {
 			// add a dummy cancel status to the results to make sure the combined status
@@ -219,7 +218,7 @@ public class InternalJobGroup {
 
 	/**
 	 * Called by the JobManager to signify that the group is getting canceled.
-	 * Must be called from JobManager#updateJobGroup.
+	 * Must be called from JobManager#cancel(InternalJobGroup).
 	 *
 	 * @param cancelDueToError <code>true</code> if the group is getting canceled because
 	 * the <code>shouldCancel(IStatus, int, int)</code> method returned <code>true</code>,
@@ -229,7 +228,8 @@ public class InternalJobGroup {
 	 */
 	final void cancelAndNotify(boolean cancelDueToError) {
 		synchronized (jobGroupStateLock) {
-			cancelJobGroup(cancelDueToError);
+			state = JobGroup.CANCELING;
+			updateCancelingReason(cancelDueToError);
 			jobGroupStateLock.notifyAll();
 		}
 		for (Job job : internalGetActiveJobs())
@@ -260,13 +260,12 @@ public class InternalJobGroup {
 		}
 	}
 
-	final Job[] internalGetActiveJobs() {
-		Job[] activeJobs = new Job[runningJobs.size() + otherActiveJobs.size()];
-		int i = 0;
+	final List<Job> internalGetActiveJobs() {
+		List<Job> activeJobs = new ArrayList<Job>(runningJobs.size() + otherActiveJobs.size());
 		for (InternalJob job : runningJobs)
-			activeJobs[i++] = (Job) job;
+			activeJobs.add((Job) job);
 		for (InternalJob job : otherActiveJobs)
-			activeJobs[i++] = (Job) job;
+			activeJobs.add((Job) job);
 		return activeJobs;
 	}
 
@@ -297,8 +296,8 @@ public class InternalJobGroup {
 		return canceledJobsCount;
 	}
 
-	final IStatus[] getCompletedJobResults() {
-		return results.toArray(new IStatus[results.size()]);
+	final List<IStatus> getCompletedJobResults() {
+		return new ArrayList<IStatus>(results);
 	}
 
 	/* (non-Javadoc)
@@ -311,7 +310,7 @@ public class InternalJobGroup {
 	/* (non-Javadoc)
 	 * @see JobGroup#computeGroupResult(IStatus[])
 	 */
-	protected MultiStatus computeGroupResult(IStatus[] jobResults) {
+	protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
 		List<IStatus> importantResults = new ArrayList<IStatus>();
 		for (IStatus jobResult : jobResults) {
 			if (jobResult.getSeverity() != IStatus.OK)
