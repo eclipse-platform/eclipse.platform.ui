@@ -265,9 +265,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private void createOutputCaptureComponent(Composite parent) {
         Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
 		createInputCaptureComponent(group);
-        Composite comp = SWTFactory.createComposite(group, 5, 5, GridData.FILL_BOTH);
-
-
+		Composite comp = SWTFactory.createComposite(group, group.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6);
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
         fFileOutput.addSelectionListener(new SelectionAdapter() {
@@ -350,10 +348,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     }
 
     private void createInputCaptureComponent(Composite parent){
-		Composite comp1 = SWTFactory.createComposite(parent, parent.getFont(), 3, 3, GridData.FILL_BOTH, 0, 0);
+		Composite comp1 = SWTFactory.createComposite(parent, parent.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fConsoleOutput = createCheckButton(comp1, LaunchConfigurationsMessages.CommonTab_5);
 
-		Composite comp = SWTFactory.createComposite(comp1, 5, 5, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(comp1, comp1.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fInputFileCheckButton = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_17);
 		GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, false, false);
 		gd.horizontalSpan = 3;
@@ -367,7 +365,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-		fInputFileLocationText = SWTFactory.createSingleText(comp, 1);
+		fInputFileLocationText = SWTFactory.createSingleText(comp, 2);
 		fInputFileLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
