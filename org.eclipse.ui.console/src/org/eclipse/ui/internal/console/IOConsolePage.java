@@ -38,8 +38,11 @@ public class IOConsolePage extends TextConsolePage {
 
     private IPropertyChangeListener fPropertyChangeListener;
 
+	private IConsoleView fView;
+
     public IOConsolePage(TextConsole console, IConsoleView view) {
         super(console, view);
+		fView = view;
 
         fPropertyChangeListener = new IPropertyChangeListener() {
             @Override
@@ -64,7 +67,7 @@ public class IOConsolePage extends TextConsolePage {
 
     @Override
 	protected TextConsoleViewer createViewer(Composite parent) {
-        return new IOConsoleViewer(parent, (TextConsole)getConsole());
+		return new IOConsoleViewer(parent, (TextConsole) getConsole(), fView);
     }
 
     public void setAutoScroll(boolean scroll) {
@@ -132,6 +135,7 @@ public class IOConsolePage extends TextConsolePage {
             fWordWrapAction.dispose();
             fWordWrapAction = null;
         }
+        fView = null;
         getConsole().removePropertyChangeListener(fPropertyChangeListener);
         super.dispose();
     }

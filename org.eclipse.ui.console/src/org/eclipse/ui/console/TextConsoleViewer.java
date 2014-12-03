@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,25 +13,8 @@ package org.eclipse.ui.console;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentAdapter;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IPositionUpdater;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
@@ -39,10 +22,15 @@ import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.MouseWheelListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -52,6 +40,29 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentAdapter;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IPositionUpdater;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.SourceViewer;
+
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -82,6 +93,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
     private IPropertyChangeListener propertyChangeListener;
 
+	private IScrollLockStateProvider scrollLockStateProvider;
+
     private IDocumentListener documentListener = new IDocumentListener() {
         @Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
@@ -111,17 +124,47 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		}
 	};
 
+	// to store to user scroll lock action
+	private AtomicBoolean userHoldsScrollLock = new AtomicBoolean(false);
+
     WorkbenchJob revealJob = new WorkbenchJob("Reveal End of Document") {//$NON-NLS-1$
         @Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-            StyledText textWidget = getTextWidget();
-            if (textWidget != null && !textWidget.isDisposed()) {
-                int lineCount = textWidget.getLineCount();
-                textWidget.setTopIndex(lineCount - 1);
-            }
+			scrollToEndOfDocument();
             return Status.OK_STATUS;
         }
     };
+
+	// reveal the end of the document
+	private void scrollToEndOfDocument() {
+		StyledText textWidget = getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			int lineCount = textWidget.getLineCount();
+			textWidget.setTopIndex(lineCount - 1);
+		}
+
+	}
+
+	// set the scroll Lock setting for Console Viewer and Console View
+	private void setScrollLock(boolean lock) {
+		userHoldsScrollLock.set(lock);
+		if (scrollLockStateProvider != null && scrollLockStateProvider.getScrollLock() != lock) {
+			scrollLockStateProvider.setScrollLock(lock);
+		}
+	}
+
+	// set the scroll Lock setting for Console Viewer and Console View
+	private boolean checkEndOfDocument() {
+		StyledText textWidget = getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			int partialIndex = JFaceTextUtil.getPartialBottomIndex(textWidget);
+			int bottomLine = JFaceTextUtil.getLineIndex(textWidget, partialIndex);
+			int lineCount = textWidget.getLineCount();
+			int delta = textWidget.getVerticalBar().getIncrement() * 2;
+			return lineCount - bottomLine < delta;
+		}
+		return false;
+	}
 
     private IPositionUpdater positionUpdater = new IPositionUpdater() {
         @Override
@@ -146,13 +189,26 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
     };
 
     /**
-     * Constructs a new viewer in the given parent for the specified console.
-     *
-     * @param parent
-     *            containing widget
-     * @param console
-     *            text console
-     */
+	 * Constructs a new viewer in the given parent for the specified console.
+	 *
+	 * @param parent the containing composite
+	 * @param console the text console
+	 * @param scrollLockStateProvider the scroll lock state provider
+	 * @since 3.6
+	 */
+	public TextConsoleViewer(Composite parent, TextConsole console, IScrollLockStateProvider scrollLockStateProvider) {
+		this(parent, console);
+		this.scrollLockStateProvider = scrollLockStateProvider;
+
+
+	}
+
+	/**
+	 * Constructs a new viewer in the given parent for the specified console.
+	 *
+	 * @param parent containing widget
+	 * @param console text console
+	 */
     public TextConsoleViewer(Composite parent, TextConsole console) {
         super(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
         this.console = console;
@@ -169,6 +225,58 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         setFont(console.getFont());
         styledText.addMouseTrackListener(this);
         styledText.addListener(SWT.MouseUp, mouseUpListener);
+		// event listener used to send event to vertical scroll bar
+		styledText.getVerticalBar().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// scroll lock if vertical scroll bar dragged, OR selection on
+				// vertical bar used
+				if (e.detail == SWT.TOP || e.detail == SWT.HOME || e.detail == SWT.ARROW_UP || e.detail == SWT.PAGE_UP) {
+					// selecting TOP or HOME should lock
+					setScrollLock(true);
+				} else if (e.detail == SWT.END || e.detail == SWT.BOTTOM) {
+					// selecting BOTTOM or END from vertical scroll makes it
+					// reveal the end
+					setScrollLock(false);
+				} else if (e.detail == SWT.DRAG) {
+					if (checkEndOfDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
+				} else if ((e.detail == SWT.PAGE_DOWN || e.detail == SWT.ARROW_DOWN) && checkEndOfDocument()) {
+					// unlock if Down at the end of document
+					setScrollLock(false);
+				}
+			}
+		});
+		styledText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// lock the scroll if PAGE_UP ,HOME or TOP selected
+				if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.HOME || e.keyCode == SWT.TOP || e.keyCode == SWT.ARROW_UP) {
+					setScrollLock(true);
+				} else if (e.keyCode == SWT.END || e.keyCode == SWT.BOTTOM) {
+					setScrollLock(false);// selecting END makes it reveal the
+											// end
+				} else if ((e.keyCode == SWT.PAGE_DOWN || e.keyCode == SWT.ARROW_DOWN) && checkEndOfDocument()) {
+					// unlock if Down at the end of document
+					setScrollLock(false);
+				}
+			}
+		});
+		styledText.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseScrolled(MouseEvent e) {
+				if (e.count < 0) { // Mouse dragged down
+					if (checkEndOfDocument()) {
+						setScrollLock(false);
+					}
+				} else if (!userHoldsScrollLock.get()) {
+					setScrollLock(true);
+				}
+			}
+		});
 
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         propertyChangeListener = new HyperlinkColorChangeListener();
@@ -721,5 +829,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
         }
     }
+
 
 }

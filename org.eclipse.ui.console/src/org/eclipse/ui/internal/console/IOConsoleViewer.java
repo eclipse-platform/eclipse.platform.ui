@@ -20,6 +20,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.IScrollLockStateProvider;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.console.TextConsoleViewer;
 
@@ -41,6 +42,18 @@ public class IOConsoleViewer extends TextConsoleViewer {
     public IOConsoleViewer(Composite parent, TextConsole console) {
         super(parent, console);
     }
+
+	/**
+	 * Constructs a new viewer in the given parent for the specified console.
+	 *
+	 * @param parent the containing composite
+	 * @param console the IO console
+	 * @param scrollLockStateProvider the scroll lock state provider
+	 * @since 3.6
+	 */
+	public IOConsoleViewer(Composite parent, TextConsole console, IScrollLockStateProvider scrollLockStateProvider) {
+		super(parent, console, scrollLockStateProvider);
+	}
 
     public boolean isAutoScroll() {
         return fAutoScroll;

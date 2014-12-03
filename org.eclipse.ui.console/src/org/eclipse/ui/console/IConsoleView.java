@@ -19,7 +19,7 @@ import org.eclipse.ui.IViewPart;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IConsoleView extends IViewPart {
+public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 
 	/**
 	 * Displays the page for the given console in this console view.
@@ -82,7 +82,8 @@ public interface IConsoleView extends IViewPart {
      * @param scrollLock <code>true</code> to turn scroll lock on, otherwise <code>false</code>
      * @since 3.1
      */
-    public void setScrollLock(boolean scrollLock);
+    @Override
+	public void setScrollLock(boolean scrollLock);
 
     /**
      * Returns the scroll lock state of the currently active console.
@@ -90,7 +91,8 @@ public interface IConsoleView extends IViewPart {
      * @return <code>true</code> if scroll lock is on, <code>false</code> otherwise
      * @since 3.1
      */
-    public boolean getScrollLock();
+    @Override
+	public boolean getScrollLock();
 
 	/**
 	 * Sets the word wrap state of the currently active console.
