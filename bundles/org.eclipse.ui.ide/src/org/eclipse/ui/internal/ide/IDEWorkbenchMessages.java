@@ -16,6 +16,7 @@
  *     James Blackburn (Broadcom Corp.)   -  bug 340978
  * Christian Georgi (SAP) - Bug 423882 - Warn user if workspace is newer than IDE
  * Lars Vogel <Lars.Vogel@vogella.com> - Bug 431862
+ * Christian Georgi (SAP)              - Bug 432480 - Show workspace location
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -517,6 +518,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_relatedLink;
 	public static String IDEWorkspacePreference_openReferencedProjects;
 	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
+	public static String IDEWorkspacePreference_workspaceLocation;
+	public static String IDEWorkspacePreference_showLocationInWindowTitle;
 	public static String IDEWorkspacePreference_workspaceName;
 	public static String IDEWorkbenchPreference_workbenchSystemExplorer;
 

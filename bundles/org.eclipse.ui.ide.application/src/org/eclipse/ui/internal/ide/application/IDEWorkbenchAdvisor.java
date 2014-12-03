@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Christian Georgi (SAP)            - Bug 432480
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -18,21 +19,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.ibm.icu.text.Collator;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.Version;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.net.proxy.IProxyService;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -46,10 +38,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -59,6 +49,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -80,6 +78,11 @@ import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * IDE-specified workbench advisor which configures the workbench for use as an
@@ -101,12 +104,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private static final String INSTALLED_FEATURES = "installedFeatures"; //$NON-NLS-1$
 
 	private static IDEWorkbenchAdvisor workbenchAdvisor = null;
-
-	/**
-	 * Contains the workspace location if the -showlocation command line
-	 * argument is specified, or <code>null</code> if not specified.
-	 */
-	private String workspaceLocation = null;
 
 	/**
 	 * Ordered map of versioned feature ids -> info that are new for this
@@ -191,26 +188,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// register workspace adapters
 		IDE.registerAdapters();
-
-		// get the command line arguments
-		String[] cmdLineArgs = Platform.getCommandLineArgs();
-
-		// include the workspace location in the title
-		// if the command line option -showlocation is specified
-		for (int i = 0; i < cmdLineArgs.length; i++) {
-			if ("-showlocation".equalsIgnoreCase(cmdLineArgs[i])) { //$NON-NLS-1$
-				String name = null;
-				if (cmdLineArgs.length > i + 1) {
-					name = cmdLineArgs[i + 1];
-				}
-				if (name != null && name.indexOf("-") == -1) { //$NON-NLS-1$
-					workspaceLocation = name;
-				} else {
-					workspaceLocation = Platform.getLocation().toOSString();
-				}
-				break;
-			}
-		}
 
 		// register shared images
 		declareWorkbenchImages();
@@ -820,11 +797,25 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
-	 * @return the workspace location string, or <code>null</code> if the
-	 *         location is not being shown
+	 * Returns the location to show in the window title, depending on a
+	 * {@link IDEInternalPreferences#SHOW_LOCATION user preference}. Note that
+	 * this may be overridden by the '-showlocation' command line argument.
+	 *
+	 * @return the location string, or <code>null</code> if the location is not
+	 *         being shown
 	 */
 	public String getWorkspaceLocation() {
-		return workspaceLocation;
+		// read command line, which has priority
+		IEclipseContext context = getWorkbenchConfigurer().getWorkbench().getService(IEclipseContext.class);
+		String location = (String) context.get(E4Workbench.FORCED_SHOW_LOCATION);
+		if (location != null) {
+			return location;
+		}
+		// read the preference
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_LOCATION)) {
+			return Platform.getLocation().toOSString();
+		}
+		return null;
 	}
 
 	/**

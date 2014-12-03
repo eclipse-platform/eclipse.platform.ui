@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *     Markus Schorn (Wind River Systems) -  bug 284447
+ *     Christian Georgi (SAP)             -  bug 432480
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide;
@@ -121,8 +122,14 @@ public interface IDEInternalPreferences {
     public static final String WORKSPACE_NAME = "WORKSPACE_NAME"; //$NON-NLS-1$
 
     /**
-     * System explore command, used to launch file manager showing selected resource.
-     */
+	 * Whether to show the (workspace) location in the window title.
+	 */
+	public static final String SHOW_LOCATION = "SHOW_LOCATION"; //$NON-NLS-1$
+
+	/**
+	 * System explore command, used to launch file manager showing selected
+	 * resource.
+	 */
     public static final String WORKBENCH_SYSTEM_EXPLORER = "SYSTEM_EXPLORER"; //$NON-NLS-1$
 
     /**
