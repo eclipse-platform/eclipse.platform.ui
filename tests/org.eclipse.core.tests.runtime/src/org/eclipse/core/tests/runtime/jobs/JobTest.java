@@ -10,7 +10,12 @@
  *     Stephan Wahlbrink  - Test fix for bug 200997.
  *     Dmitry Karasik - Test cases for bug 255384
  *     Jan Koehnlein - Test case for bug 60964 (454698)
+<<<<<<< master
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
+=======
+ *     Thirumala Reddy Mutchukota (thirumala@google.com) -
+ *     		Bug 105821, Support for Job#join with timeout and progress monitor
+>>>>>>> d688b58 Bug 105821: Support Job#join with timeout and progress monitor.
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
@@ -20,8 +25,7 @@ import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.tests.harness.TestBarrier;
-import org.eclipse.core.tests.harness.TestJob;
+import org.eclipse.core.tests.harness.*;
 import org.junit.Assert;
 
 /**
@@ -856,6 +860,113 @@ public class JobTest extends AbstractJobTest {
 		//finally canceling the job will cause the join to return
 		longJob.cancel();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+	}
+
+	public void testJoinWithTimeout() {
+		longJob.schedule();
+		final long timeout = 1000;
+		final long duration[] = {-1};
+		// Create a thread that will join the test job
+		final int[] status = new int[1];
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = TestBarrier.STATUS_START;
+				try {
+					long start = System.currentTimeMillis();
+					longJob.join(timeout, null);
+					duration[0] = System.currentTimeMillis() - start;
+				} catch (InterruptedException e) {
+					Assert.fail("0.88");
+				} catch (OperationCanceledException e) {
+					Assert.fail("0.99");
+				}
+				status[0] = TestBarrier.STATUS_DONE;
+			}
+		});
+		t.start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
+		int i = 0;
+		for (; i < 11; i++) {
+			if (status[0] == TestBarrier.STATUS_DONE) {
+				// Verify that the join call is blocked for at least for the duration of given timeout
+				assertTrue("2.0 duration: " + duration + " timeout: " + timeout, duration[0] >= timeout);
+				break;
+			}
+			sleep(100);
+		}
+		// Verify that the join call is finished with in reasonable time of 1100 ms (given timeout + 100ms)
+		assertTrue("3.0", i < 11);
+		// Verify that the join call is still running
+		assertEquals("4.0", Job.RUNNING, longJob.getState());
+		// Finally cancel the job
+		longJob.cancel();
+		waitForCompletion(longJob);
+	}
+
+	public void testJoinWithProgressMonitor() {
+		shortJob.schedule(100000);
+		// Create a progress monitor for the join call
+		final FussyProgressMonitor monitor = new FussyProgressMonitor();
+		// Create a thread that will join the test job
+		final int[] status = new int[1];
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = TestBarrier.STATUS_START;
+				try {
+					shortJob.join(0, monitor);
+				} catch (InterruptedException e) {
+					Assert.fail("0.88");
+				} catch (OperationCanceledException e) {
+					Assert.fail("0.99");
+				}
+				status[0] = TestBarrier.STATUS_DONE;
+			}
+		});
+		t.start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
+		// Wakeup the job to get the join call to complete
+		shortJob.wakeUp();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+		monitor.sanityCheck();
+	}
+
+	public void testJoinWithCancelingMonitor() {
+		longJob.schedule();
+		// Create a progress monitor for the join call
+		final FussyProgressMonitor monitor = new FussyProgressMonitor();
+		// Create a thread that will join the test job
+		final int[] status = new int[1];
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = TestBarrier.STATUS_START;
+				try {
+					longJob.join(0, monitor);
+				} catch (InterruptedException e) {
+					Assert.fail("0.88");
+				} catch (OperationCanceledException e) {
+					// expected
+				}
+				status[0] = TestBarrier.STATUS_DONE;
+			}
+		});
+		t.start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
+
+		// Cancel the monitor that is attached to the join call
+		monitor.setCanceled(true);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
+		monitor.sanityCheck();
+		// Verify that the join call is still running
+		assertEquals("2.0", Job.RUNNING, longJob.getState());
+		// Finally cancel the job
+		longJob.cancel();
+		waitForCompletion(longJob);
 	}
 
 	public void testJoinInterruptNonUIThread() throws InterruptedException {

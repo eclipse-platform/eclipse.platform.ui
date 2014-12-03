@@ -7,7 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
+ *     Thirumala Reddy Mutchukota (thirumala@google.com) -
+ *     		Bug 432049, JobGroup API and implementation
+ *     		Bug 105821, Support for Job#join with timeout and progress monitor
  *******************************************************************************/
 package org.eclipse.core.runtime.jobs;
 
@@ -436,17 +438,88 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * same group is allowed when the job group does not enforce throttling
 	 * (JobGroup#getMaxThreads is zero).
 	 * </p>
-	 * 
+	 * <p>
+	 * Calling this method is equivalent to calling <code>join(0, null)</code> and
+	 * it is recommended to use the other join method with timeout and progress monitor
+	 * as that will provide more control over the join operation.
+	 * </p>
+	 *
 	 * @exception InterruptedException if this thread is interrupted while waiting
-	 * @exception IllegalStateException when a job tries to join another job belonging
-	 * to the same job group and the group is configured with non zero maximum threads allowed.
+	 * @exception IllegalStateException when a job tries to join on itself or join on
+	 * another job belonging to the same job group and the group is configured with
+	 * non zero maximum threads allowed.
 	 * @see #setJobGroup(JobGroup)
+	 * @see #join(long, IProgressMonitor)
 	 * @see ILock
 	 * @see IJobManager#suspend()
 	 */
 	@Override
 	public final void join() throws InterruptedException {
 		super.join();
+	}
+
+	/**
+	 * Waits until either the job is finished or the given timeout has expired.
+	 * This method will block the calling thread until the job has finished executing,
+	 * or the given timeout is expired, or the given progress monitor is canceled by the user
+	 * or the calling thread is interrupted. If the job has not been scheduled,
+	 * this method returns immediately. A job must not be joined from within the scope of
+	 * its run method.
+	 * <p>
+	 * If this method is called on a job that reschedules itself from within the
+	 * <tt>run</tt> method, the join will return at the end of the first execution.
+	 * In other words, join will return the first time this job exits the
+	 * {@link #RUNNING} state, or as soon as this job enters the {@link #NONE} state.
+	 * </p>
+	 * <p>
+	 * If this method is called while the job manager is suspended, this job
+	 * will only be joined if it is already running; if this job is waiting or sleeping,
+	 * this method returns immediately.
+	 * </p>
+	 * <p>
+	 * Note that there is a deadlock risk when using join. If the calling thread owns
+	 * a lock or object monitor that the joined thread is waiting for and the timeout
+	 * is set zero (i.e no timeout), deadlock will occur.
+	 * </p>
+	 * <p>
+	 * Joining on another job belonging to the same group is not allowed if the
+	 * timeout is set to zero and the group enforces throttling due to the potential
+	 * for deadlock. For example, when the maximum threads allowed is set to 1 and
+	 * a currently running Job A issues a join with no timeout on another Job B
+	 * belonging to its own job group, A waits indefinitely for its join to finish,
+	 * but B never gets to run. To avoid that an IllegalStateException is thrown when
+	 * a job tries to join (with no timeout) another job belonging to the same job group.
+	 * Joining another job belonging to the same group is allowed when either the job group
+	 * does not enforce throttling (JobGroup#getMaxThreads is zero) or a non zero timeout
+	 * value is provided.
+	 * </p>
+	 * <p>
+	 * Throws an <code>OperationCanceledException</code> when the given progress monitor
+	 * is canceled. Canceling the monitor does not cancel the job and, if required,
+	 * the job may be canceled explicitly using the {@link #cancel()} method.
+	 * </p>
+	 *
+	 * @param timeoutMillis the maximum amount of time to wait for the join to complete,
+	 * or <code>zero</code> for no timeout.
+	 * @param monitor the progress monitor that can be used to cancel the join operation,
+	 * or <code>null</code> if cancellation is not required. No progress is reported
+	 * on this monitor.
+	 * @return <code>true</code> when the job completes, or <code>false</code> when
+	 * the operation is not completed within the given time.
+	 * @exception InterruptedException if this thread is interrupted while waiting
+	 * @exception IllegalStateException when a job tries to join on itself or join with
+	 * no timeout on another job belonging to the same job group and the group is configured
+	 * with non-zero maximum threads allowed.
+	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
+	 * @see #setJobGroup(JobGroup)
+	 * @see #cancel()
+	 * @see ILock
+	 * @see IJobManager#suspend()
+	 * @since 3.7
+	 */
+	@Override
+	public final boolean join(long timeoutMillis, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
+		return super.join(timeoutMillis, monitor);
 	}
 
 	/**

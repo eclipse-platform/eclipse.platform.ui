@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Stephan Wahlbrink  - Fix for bug 200997.
- *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
+ *     Thirumala Reddy Mutchukota (thirumala@google.com) -
+ *     		Bug 432049, JobGroup API and implementation
+ *     		Bug 105821, Support for Job#join with timeout and progress monitor
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -390,7 +392,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job#join()
 	 */
 	protected void join() throws InterruptedException {
-		manager.join(this);
+		manager.join(this, 0, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see Job#join(long, IProgressMonitor)
+	 */
+	protected boolean join(long timeout, IProgressMonitor joinMonitor) throws InterruptedException, OperationCanceledException {
+		return manager.join(this, timeout, joinMonitor);
 	}
 
 	/**

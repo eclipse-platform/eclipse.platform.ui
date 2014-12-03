@@ -11,7 +11,9 @@
  *     Danail Nachev - Fix for bug 109898
  *     Mike Moreaty - Fix for bug 289790
  *     Oracle Corporation - Fix for bug 316839
- *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
+ *     Thirumala Reddy Mutchukota (thirumala@google.com) -
+ *              Bug 432049, JobGroup API and implementation
+ *              Bug 105821, Support for Job#join with timeout and progress monitor
  *     Jan Koehnlein - Fix for bug 60964 (454698)
  *     Terry Parker - Bug 457504, Publish a job group's final status to IJobChangeListeners
  *******************************************************************************/
@@ -57,6 +59,11 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * For backward compatibility with Platform.PLUGIN_ERROR left at (value = 2).
 	 */
 	public static final int PLUGIN_ERROR = 2;
+
+	/**
+	 * Determines how often the progress monitor is checked for cancellation during the join call.
+	 */
+	private static final long MAX_WAIT_INTERVAL = 100;
 
 	private static final String OPTION_DEADLOCK_ERROR = PI_JOBS + "/jobs/errorondeadlock"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_BEGIN_END = PI_JOBS + "/jobs/beginend"; //$NON-NLS-1$
@@ -880,13 +887,16 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
+	 * @see org.eclipse.core.runtime.jobs.Job#join(long, IProgressMonitor)
 	 */
-	protected void join(InternalJob job) throws InterruptedException {
+	protected boolean join(InternalJob job, long timeout, IProgressMonitor monitor) throws InterruptedException {
+		Assert.isLegal(timeout >= 0, "timeout should not be negative"); //$NON-NLS-1$
+		long deadline = timeout == 0 ? 0 : System.currentTimeMillis() + timeout;
+
 		Job currentJob = currentJob();
 		if (currentJob != null) {
 			JobGroup jobGroup = currentJob.getJobGroup();
-			if (jobGroup != null && jobGroup.getMaxThreads() != 0 && jobGroup == job.getJobGroup())
+			if (timeout == 0 && jobGroup != null && jobGroup.getMaxThreads() != 0 && jobGroup == job.getJobGroup())
 				throw new IllegalStateException("Joining on a job belonging to the same group is not allowed"); //$NON-NLS-1$
 		}
 
@@ -895,10 +905,10 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		synchronized (lock) {
 			int state = job.getState();
 			if (state == Job.NONE)
-				return;
+				return true;
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			if (suspended && state != Job.RUNNING)
-				return;
+				return true;
 			//it's an error for a job to join itself
 			if (state == Job.RUNNING && job.getThread() == Thread.currentThread())
 				throw new IllegalStateException("Job attempted to join itself"); //$NON-NLS-1$
@@ -911,17 +921,28 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				}
 			};
 			job.addJobChangeListener(listener);
-			//compute set of all jobs that must run before this one
-			//add a listener that removes jobs from the blocking set when they finish
 		}
+
 		//wait until listener notifies this thread.
 		try {
 			boolean canBlock = lockManager.canBlock();
 			while (true) {
+				if (monitor != null && monitor.isCanceled())
+					throw new OperationCanceledException();
+				long remainingTime = deadline;
+				if (deadline != 0) {
+					remainingTime -= System.currentTimeMillis();
+					if (remainingTime <= 0) {
+						return false;
+					}
+				}
 				//notify hook to service pending syncExecs before falling asleep
 				lockManager.aboutToWait(job.getThread());
 				try {
-					if (barrier.acquire(Long.MAX_VALUE))
+					// If remaining time is greater than MAX_WAIT_INTERVAL, sleep only for
+					// MAX_WAIT_INTERVAL instead to be more responsive to monitor cancellation.
+					long sleepTime = remainingTime != 0 && remainingTime <= MAX_WAIT_INTERVAL ? remainingTime : MAX_WAIT_INTERVAL;
+					if (barrier.acquire(sleepTime))
 						break;
 				} catch (InterruptedException e) {
 					// if non-UI thread, re-throw the exception
@@ -934,6 +955,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			lockManager.aboutToRelease();
 			job.removeJobChangeListener(listener);
 		}
+		return true;
 	}
 
 	/* (non-Javadoc)
