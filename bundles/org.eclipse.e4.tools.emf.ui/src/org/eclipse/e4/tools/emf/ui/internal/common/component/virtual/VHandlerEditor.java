@@ -6,16 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -48,8 +50,8 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
-	private List<Action> actions = new ArrayList<Action>();
-	private List<Action> actionsImport = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	public VHandlerEditor() {
@@ -58,15 +60,17 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.VHandlerEditor_AddHandler, createImageDescriptor(ResourceProvider.IMG_Handler)) {
-			@Override
-			public void run() {
-				handleAdd();
-			}
-		});
+		actions
+			.add(new Action(Messages.VHandlerEditor_AddHandler, createImageDescriptor(ResourceProvider.IMG_Handler)) {
+				@Override
+				public void run() {
+					handleAdd();
+				}
+			});
 
 		// -- import --
-		actionsImport.add(new Action(Messages.VHandlerEditor_AddHandler, createImageDescriptor(ResourceProvider.IMG_Handler)) {
+		actionsImport.add(new Action(Messages.VHandlerEditor_AddHandler,
+			createImageDescriptor(ResourceProvider.IMG_Handler)) {
 			@Override
 			public void run() {
 				handleImport();
@@ -100,23 +104,25 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+				CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -126,9 +132,8 @@ public class VHandlerEditor extends AbstractComponentEditor {
 				protected List<?> getContainerChildren(Object container) {
 					if (container instanceof MHandlerContainer) {
 						return ((MHandlerContainer) container).getHandlers();
-					} else {
-						return null;
 					}
+					return null;
 				}
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
@@ -146,13 +151,14 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd() {
-		MHandler handler = MCommandsFactory.INSTANCE.createHandler();
+		final MHandler handler = MCommandsFactory.INSTANCE.createHandler();
 		addToModel(handler);
 	}
 
 	private void addToModel(MHandler handler) {
 		setElementId(handler);
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(handler);
@@ -160,11 +166,11 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleImport() {
-		ModelImportWizard wizard = new ModelImportWizard(MHandler.class, this, resourcePool);
-		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+		final ModelImportWizard wizard = new ModelImportWizard(MHandler.class, this, resourcePool);
+		final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 		if (wizardDialog.open() == Window.OK) {
-			MHandler[] elements = (MHandler[]) wizard.getElements(MHandler.class);
-			for (MHandler handler : elements) {
+			final MHandler[] elements = (MHandler[]) wizard.getElements(MHandler.class);
+			for (final MHandler handler : elements) {
 				addToModel(handler);
 			}
 		}
@@ -172,14 +178,14 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
 		l.addAll(actionsImport);
 		return l;
 	}

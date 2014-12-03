@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty;
 
@@ -35,11 +35,11 @@ public class E {
 	}
 
 	public static boolean isEmpty(String object) {
-		return (object == null || object.isEmpty());
+		return object == null || object.isEmpty();
 	}
 
 	public static boolean isEmpty(Collection<?> object) {
-		return (object == null || object.isEmpty());
+		return object == null || object.isEmpty();
 	}
 
 	public static boolean isEmpty(Object object) {
@@ -65,9 +65,8 @@ public class E {
 		if (obj1 == null) {
 			if (obj2 == null) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} else if (obj2 == null) {
 			return false;
 		} else {
@@ -88,9 +87,8 @@ public class E {
 		if (obj1 == null) {
 			if (obj2 == null) {
 				return 0;
-			} else {
-				return -1;
 			}
+			return -1;
 		} else if (obj2 == null) {
 			return 1;
 		} else {

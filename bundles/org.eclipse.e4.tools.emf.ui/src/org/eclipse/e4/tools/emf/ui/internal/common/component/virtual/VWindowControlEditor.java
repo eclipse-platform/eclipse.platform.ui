@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -50,7 +52,7 @@ import org.eclipse.swt.widgets.Display;
 public class VWindowControlEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 	private TableViewer viewer;
 
 	@Inject
@@ -64,34 +66,39 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack, createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack,
+			createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer, createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer,
+			createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPartStack, createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPartStack,
+			createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_STACK);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.PART);
-			}
-		});
-		actions.add(new Action(Messages.VWindowControlEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
+		actions
+			.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.PART);
+				}
+			});
+		actions.add(new Action(Messages.VWindowControlEditor_AddArea,
+			createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.AREA);
@@ -132,28 +139,29 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 					handleAdd(eClass);
-				};
+				}
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			viewer = pickList.getList();
@@ -161,12 +169,16 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			pickList.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					EClass eclass = (EClass) element;
+					final EClass eclass = (EClass) element;
 					return eclass.getName();
 				}
 			});
 
-			pickList.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA });
+			pickList
+				.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
+					BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
+					BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
+					AdvancedPackageImpl.Literals.AREA });
 			pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
 		}
 
@@ -181,11 +193,12 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 	}
 
 	private void handleAdd(EClass eClass) {
-		EObject eObject = EcoreUtil.create(eClass);
+		final EObject eObject = EcoreUtil.create(eClass);
 
 		setElementId(eObject);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -195,7 +208,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

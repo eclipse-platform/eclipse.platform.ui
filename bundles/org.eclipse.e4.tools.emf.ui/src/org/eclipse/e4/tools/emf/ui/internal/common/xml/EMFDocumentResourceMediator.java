@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 391089
+ * Steven Spungin <steven@spungin.tv> - Bug 431735, Bug 391089
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
@@ -33,8 +34,8 @@ public class EMFDocumentResourceMediator {
 
 	public EMFDocumentResourceMediator(final IModelResource modelResource) {
 		this.modelResource = modelResource;
-		this.document = new Document();
-		this.document.addDocumentListener(new IDocumentListener() {
+		document = new Document();
+		document.addDocumentListener(new IDocumentListener() {
 
 			@Override
 			public void documentChanged(DocumentEvent event) {
@@ -42,8 +43,8 @@ public class EMFDocumentResourceMediator {
 					return;
 				}
 
-				String doc = document.get();
-				E4XMIResource res = new E4XMIResource();
+				final String doc = document.get();
+				final E4XMIResource res = new E4XMIResource();
 				try {
 					res.load(new InputSource(new StringReader(doc)), null);
 					modelResource.replaceRoot(res.getContents().get(0));
@@ -51,7 +52,7 @@ public class EMFDocumentResourceMediator {
 					if (documentValidationChanged != null) {
 						documentValidationChanged.run();
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					errorList = res.getErrors();
 					if (documentValidationChanged != null) {
 						documentValidationChanged.run();
@@ -79,7 +80,7 @@ public class EMFDocumentResourceMediator {
 	public void updateFromEMF() {
 		try {
 			updateFromEMF = true;
-			this.document.set(toXMI((EObject) modelResource.getRoot().get(0)));
+			document.set(toXMI((EObject) modelResource.getRoot().get(0)));
 		} finally {
 			updateFromEMF = false;
 		}
@@ -90,12 +91,12 @@ public class EMFDocumentResourceMediator {
 	}
 
 	private String toXMI(EObject root) {
-		E4XMIResource resource = (E4XMIResource) root.eResource();
+		final E4XMIResource resource = (E4XMIResource) root.eResource();
 		// resource.getContents().add(EcoreUtil.copy(root));
-		StringWriter writer = new StringWriter();
+		final StringWriter writer = new StringWriter();
 		try {
 			resource.save(writer, null);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -111,23 +112,23 @@ public class EMFDocumentResourceMediator {
 		if (object == null) {
 			return null;
 		}
-		E4XMIResource root = (E4XMIResource) ((EObject) modelResource.getRoot().get(0)).eResource();
-		String xmiId = root.getID(object);
+		final E4XMIResource root = (E4XMIResource) ((EObject) modelResource.getRoot().get(0)).eResource();
+		final String xmiId = root.getID(object);
 
-		FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
+		final FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
 		IRegion region;
 		try {
 			// TODO This will not work if the element has '<' or '>' in an
 			// attribute value
 			region = find.find(0, "<.*?" + xmiId + ".*?>", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			return region;
-		} catch (BadLocationException e) {
+		} catch (final BadLocationException e) {
 			return null;
 		}
 	}
 
 	/**
-	 * @param object
+	 * 
 	 * @return The region for the start of the text, or null if not found or the
 	 *         text is empty.
 	 */
@@ -136,12 +137,12 @@ public class EMFDocumentResourceMediator {
 			return null;
 		}
 
-		FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
+		final FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
 		IRegion region;
 		try {
 			region = find.find(startOffset, text, true, true, false, false);
 			return region;
-		} catch (BadLocationException e) {
+		} catch (final BadLocationException e) {
 			return null;
 		}
 	}

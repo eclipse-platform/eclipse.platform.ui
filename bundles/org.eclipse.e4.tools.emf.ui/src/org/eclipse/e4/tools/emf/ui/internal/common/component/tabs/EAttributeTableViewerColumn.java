@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -37,7 +37,8 @@ public class EAttributeTableViewerColumn {
 	private String attName;
 	private TableViewer tvResults;
 
-	public EAttributeTableViewerColumn(final TableViewer tvResults, String label, final String attName, final IEclipseContext context) {
+	public EAttributeTableViewerColumn(final TableViewer tvResults, String label, final String attName,
+		final IEclipseContext context) {
 		this.tvResults = tvResults;
 		this.attName = attName;
 		tableViewerColumn = new TableViewerColumn(tvResults, SWT.NONE);
@@ -49,8 +50,8 @@ public class EAttributeTableViewerColumn {
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				EObject eObject = (EObject) element;
-				EAttribute eAtt = EmfUtil.getAttribute(eObject, attName);
+				final EObject eObject = (EObject) element;
+				final EAttribute eAtt = EmfUtil.getAttribute(eObject, attName);
 				Object value;
 				if (eAtt != null) {
 					value = eObject.eGet(eAtt);
@@ -60,7 +61,7 @@ public class EAttributeTableViewerColumn {
 				switch (EAttributeEditingSupport.getAttributeType(element, attName)) {
 				case BOOLEAN:
 					// if no icons provided, use text instead of checkbox
-					return resourcePool == null && ((Boolean) value) ? "X" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+					return resourcePool == null && (Boolean) value ? "X" : ""; //$NON-NLS-1$ //$NON-NLS-2$
 				case STRING:
 				case NOT_AN_ATTRIBUTE:
 				case OTHER:
@@ -74,12 +75,13 @@ public class EAttributeTableViewerColumn {
 				switch (EAttributeEditingSupport.getAttributeType(element, attName)) {
 				case BOOLEAN:
 					if (resourcePool != null) {
-						Object value = EmfUtil.getAttributeValue((EObject) element, attName);
+						final Object value = EmfUtil.getAttributeValue((EObject) element, attName);
 						if (value != null && value.equals(true)) {
 							return resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_checkbox_obj);
 						}
 					}
 					// fall through
+					//$FALL-THROUGH$
 				case STRING:
 				case NOT_AN_ATTRIBUTE:
 				case OTHER:
@@ -97,13 +99,12 @@ public class EAttributeTableViewerColumn {
 	}
 
 	public Color getBackground(Object element) {
-		EObject eObject = (EObject) element;
-		EAttribute eAtt = EmfUtil.getAttribute(eObject, attName);
+		final EObject eObject = (EObject) element;
+		final EAttribute eAtt = EmfUtil.getAttribute(eObject, attName);
 		if (eAtt == null) {
 			return tvResults.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public void dispose() {

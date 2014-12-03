@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
@@ -38,12 +39,12 @@ import org.eclipse.swt.widgets.ToolItem;
 public class E4ToolItemMenu {
 
 	public static final String SEPARATOR = "~separator~"; //$NON-NLS-1$
-	private IEclipseContext context;
-	private ArrayList<String> commandIds = new ArrayList<String>();
-	private Menu menu;
-	private ECommandService commandService;
-	private EHandlerService handlerService;
-	private ToolItem toolItem;
+	private final IEclipseContext context;
+	private final ArrayList<String> commandIds = new ArrayList<String>();
+	private final Menu menu;
+	private final ECommandService commandService;
+	private final EHandlerService handlerService;
+	private final ToolItem toolItem;
 
 	public E4ToolItemMenu(final ToolBar parent, IEclipseContext context) {
 
@@ -58,35 +59,35 @@ public class E4ToolItemMenu {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				// if (event.detail == SWT.ARROW) {
-				Rectangle rect = toolItem.getBounds();
+				final Rectangle rect = toolItem.getBounds();
 				Point pt = new Point(rect.x, rect.y + rect.height);
 				pt = parent.toDisplay(pt);
 				menu.setLocation(pt.x, pt.y);
 				menu.setVisible(true);
-				for (MenuItem mi : menu.getItems()) {
+				for (final MenuItem mi : menu.getItems()) {
 					if (mi.getData() instanceof ParameterizedCommand) {
-						ParameterizedCommand cmd = (ParameterizedCommand) mi.getData();
+						final ParameterizedCommand cmd = (ParameterizedCommand) mi.getData();
 						mi.setEnabled(handlerService.canExecute(cmd));
 					}
 				}
 				// }
-			};
+			}
 		});
 	}
 
 	public void addCommands(Collection<String> commandIds) {
 		this.commandIds.addAll(commandIds);
 
-		for (String id : commandIds) {
+		for (final String id : commandIds) {
 			if (id.equals(SEPARATOR)) {
 				new MenuItem(menu, SWT.SEPARATOR);
 			} else {
-				ParameterizedCommand myCommand = commandService.createCommand(id, null);
+				final ParameterizedCommand myCommand = commandService.createCommand(id, null);
 				if (myCommand != null) {
 					final MenuItem item = new MenuItem(menu, SWT.PUSH);
 					try {
 						item.setText(myCommand.getName());
-					} catch (NotDefinedException e1) {
+					} catch (final NotDefinedException e1) {
 						item.setText(id);
 						e1.printStackTrace();
 					}
@@ -95,7 +96,7 @@ public class E4ToolItemMenu {
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							ParameterizedCommand cmd = (ParameterizedCommand) item.getData();
+							final ParameterizedCommand cmd = (ParameterizedCommand) item.getData();
 							handlerService.executeHandler(cmd);
 						}
 

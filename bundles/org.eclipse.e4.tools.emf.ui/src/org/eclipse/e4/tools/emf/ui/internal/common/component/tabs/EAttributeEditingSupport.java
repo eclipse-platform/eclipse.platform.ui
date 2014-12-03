@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -30,10 +30,10 @@ import org.eclipse.swt.SWT;
 // Restrictions: Only handles boolean and String types
 class EAttributeEditingSupport extends EditingSupport {
 
-	private String attName;
-	private TableViewer tableViewer;
+	private final String attName;
+	private final TableViewer tableViewer;
 	private boolean wasNull;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	static public enum ATT_TYPE {
 		STRING, BOOLEAN, INTEGER, NOT_AN_ATTRIBUTE, OTHER;
@@ -55,7 +55,8 @@ class EAttributeEditingSupport extends EditingSupport {
 		case INTEGER:
 		default:
 			if ("contributionURI".equals(attName)) { //$NON-NLS-1$
-				return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context, UriDialogType.BUNDLECLASS);
+				return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context,
+					UriDialogType.BUNDLECLASS);
 			}
 			if ("iconURI".equals(attName)) { //$NON-NLS-1$
 				return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context, UriDialogType.ICON);
@@ -65,11 +66,11 @@ class EAttributeEditingSupport extends EditingSupport {
 	}
 
 	static public ATT_TYPE getAttributeType(Object element, String attName) {
-		EAttribute att = EmfUtil.getAttribute((EObject) element, attName);
+		final EAttribute att = EmfUtil.getAttribute((EObject) element, attName);
 		if (att == null) {
 			return ATT_TYPE.NOT_AN_ATTRIBUTE;
 		}
-		String instanceTypeName = att.getEType().getInstanceTypeName();
+		final String instanceTypeName = att.getEType().getInstanceTypeName();
 		if (instanceTypeName.equals(String.class.getName())) {
 			return ATT_TYPE.STRING;
 		} else if (instanceTypeName.equals(boolean.class.getName())) {
@@ -83,26 +84,25 @@ class EAttributeEditingSupport extends EditingSupport {
 
 	@Override
 	protected boolean canEdit(Object element) {
-		EAttribute att = EmfUtil.getAttribute((EObject) element, attName);
+		final EAttribute att = EmfUtil.getAttribute((EObject) element, attName);
 		if (att == null) {
 			return false;
+		}
+		final String instanceTypeName = att.getEType().getInstanceTypeName();
+		if (instanceTypeName.equals(String.class.getName())) {
+			return true;
+		} else if (instanceTypeName.equals(boolean.class.getName())) {
+			return true;
+		} else if (instanceTypeName.equals(int.class.getName())) {
+			return true;
 		} else {
-			String instanceTypeName = att.getEType().getInstanceTypeName();
-			if (instanceTypeName.equals(String.class.getName())) {
-				return true;
-			} else if (instanceTypeName.equals(boolean.class.getName())) {
-				return true;
-			} else if (instanceTypeName.equals(int.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
+			return false;
 		}
 	}
 
 	@Override
 	protected Object getValue(Object element) {
-		EObject eObject = (EObject) element;
+		final EObject eObject = (EObject) element;
 		Object value = eObject.eGet(EmfUtil.getAttribute(eObject, attName));
 		switch (getAttributeType(element, attName)) {
 		case BOOLEAN:
@@ -131,7 +131,7 @@ class EAttributeEditingSupport extends EditingSupport {
 
 	@Override
 	protected void setValue(Object element, Object value) {
-		EObject eObject = (EObject) element;
+		final EObject eObject = (EObject) element;
 		switch (getAttributeType(element, attName)) {
 		case INTEGER:
 			if (value.equals("")) { //$NON-NLS-1$
@@ -139,7 +139,7 @@ class EAttributeEditingSupport extends EditingSupport {
 			} else {
 				try {
 					value = Integer.parseInt(value.toString());
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					return;
 				}
 			}
@@ -152,7 +152,8 @@ class EAttributeEditingSupport extends EditingSupport {
 			}
 			break;
 		}
-		Command cmd = SetCommand.create(context.get(EditingDomain.class), eObject, EmfUtil.getAttribute(eObject, attName), value);
+		final Command cmd = SetCommand.create(context.get(EditingDomain.class), eObject,
+			EmfUtil.getAttribute(eObject, attName), value);
 		context.get(EditingDomain.class).getCommandStack().execute(cmd);
 		TableViewerUtil.updateAndPack(tableViewer, eObject);
 	}

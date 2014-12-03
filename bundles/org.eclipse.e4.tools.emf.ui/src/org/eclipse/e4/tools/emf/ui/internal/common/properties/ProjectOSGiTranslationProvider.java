@@ -12,8 +12,10 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
+
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -76,7 +78,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 								return ProjectOSGiTranslationProvider.this.visit(delta);
 							}
 						});
-					} catch (CoreException e) {
+					} catch (final CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -85,7 +87,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		});
 		setLocale(locale, false);
 
-		IFile f = this.project.getFile(MANIFEST_DEFAULT_PATH);
+		final IFile f = this.project.getFile(MANIFEST_DEFAULT_PATH);
 		if (f.exists()) {
 			handleManifestChange(f);
 		} else {
@@ -99,20 +101,22 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	void setLocale(@Named(TranslationService.LOCALE) String locale, @Optional Boolean performUpdate) {
 		try {
 			this.locale = locale == null ? Locale.getDefault() : ResourceBundleHelper.toLocale(locale);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			this.locale = Locale.getDefault();
 		}
 
-		if (performUpdate == null || performUpdate)
+		if (performUpdate == null || performUpdate) {
 			updateResourceBundle();
+		}
 	}
 
 	@Inject
 	void setLocale(@Named(TranslationService.LOCALE) Locale locale, @Optional Boolean performUpdate) {
 		this.locale = locale == null ? Locale.getDefault() : locale;
 
-		if (performUpdate == null || performUpdate)
+		if (performUpdate == null || performUpdate) {
 			updateResourceBundle();
+		}
 	}
 
 	/**
@@ -126,7 +130,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	boolean visit(IResourceDelta delta) {
 		if (delta.getResource() instanceof IWorkspaceRoot) {
 			return true;
-		} else if (delta.getResource().equals(this.project)) {
+		} else if (delta.getResource().equals(project)) {
 			return true;
 		} else if (delta.getResource().getProjectRelativePath().toString().equals(META_INF_DIRECTORY_NAME)) {
 			return true;
@@ -134,21 +138,21 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 			handleManifestChange((IFile) delta.getResource());
 			return false;
 		} else if (delta.getResource() instanceof IFile) {
-			String filename = ((IFile) delta.getResource()).getName();
+			final String filename = ((IFile) delta.getResource()).getName();
 			// extract base bundle name out of local basename
-			String fileBaseName = this.basename.substring(this.basename.lastIndexOf("/") + 1, this.basename.length()); //$NON-NLS-1$
+			final String fileBaseName = basename.substring(basename.lastIndexOf("/") + 1, basename.length()); //$NON-NLS-1$
 			if (filename.startsWith(fileBaseName)) {
 				updateResourceBundle();
 				return false;
 			}
 		}
 
-		if (delta.getResource().getProjectRelativePath().toString().equals(this.basename)) {
+		if (delta.getResource().getProjectRelativePath().toString().equals(basename)) {
 			updateResourceBundle();
 			return false;
 		}
 
-		String[] p = this.basename.split("/"); //$NON-NLS-1$
+		final String[] p = basename.split("/"); //$NON-NLS-1$
 		int i = 0;
 		String path = ""; //$NON-NLS-1$
 		do {
@@ -172,7 +176,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 */
 	private void handleManifestChange(IFile file) {
 		try {
-			String newValue = extractBasenameFromManifest(file);
+			final String newValue = extractBasenameFromManifest(file);
 
 			if (!newValue.equals(basename)) {
 				basename = newValue;
@@ -181,10 +185,10 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 				}
 			}
 
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -206,8 +210,8 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 * @see IFile#getContents()
 	 */
 	public static String extractBasenameFromManifest(IFile file) throws CoreException, IOException {
-		InputStream in = file.getContents();
-		BufferedReader r = new BufferedReader(new InputStreamReader(in));
+		final InputStream in = file.getContents();
+		final BufferedReader r = new BufferedReader(new InputStreamReader(in));
 		String line;
 		String newValue = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 		while ((line = r.readLine()) != null) {
@@ -225,12 +229,13 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 * Reloads the underlying ResourceBundle.
 	 */
 	protected void updateResourceBundle() {
-		setResourceBundle(ResourceBundleHelper.getEquinoxResourceBundle(this.basename, this.locale, new ProjectResourceBundleControl(true), new ProjectResourceBundleControl(false)));
+		setResourceBundle(ResourceBundleHelper.getEquinoxResourceBundle(basename, locale,
+			new ProjectResourceBundleControl(true), new ProjectResourceBundleControl(false)));
 	}
 
 	/**
-	 * Specialization of {@link Control} which loads the {@link ResourceBundle}
-	 * by using file structures of a project instead of using a classloader.
+	 * Specialization of {@link Control} which loads the {@link ResourceBundle} by using file structures of a project
+	 * instead of using a classloader.
 	 *
 	 * @author Dirk Fauth
 	 */
@@ -246,17 +251,17 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		/**
 		 * @param useFallback
 		 *            <code>true</code> if the default locale should be used as
-		 *            fallback locale in the search path or <code>false</code>
-		 *            if there should be no fallback.
+		 *            fallback locale in the search path or <code>false</code> if there should be no fallback.
 		 */
 		ProjectResourceBundleControl(boolean useFallback) {
 			this.useFallback = useFallback;
 		}
 
 		@Override
-		public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException, IOException {
+		public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
+			boolean reload) throws IllegalAccessException, InstantiationException, IOException {
 
-			String bundleName = toBundleName(baseName, locale);
+			final String bundleName = toBundleName(baseName, locale);
 			ResourceBundle bundle = null;
 			if (format.equals("java.properties")) { //$NON-NLS-1$
 				final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
@@ -268,7 +273,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 							return getResourceAsStream(resourceName);
 						}
 					});
-				} catch (PrivilegedActionException e) {
+				} catch (final PrivilegedActionException e) {
 					throw (IOException) e.getException();
 				}
 				if (stream != null) {
@@ -285,21 +290,19 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		}
 
 		/**
-		 * Loads the properties file by using the {@link IProject} of the
-		 * {@link ProjectOSGiTranslationProvider}.
+		 * Loads the properties file by using the {@link IProject} of the {@link ProjectOSGiTranslationProvider}.
 		 *
 		 * @param name
 		 * @return The {@link InputStream} to the properties file to load
 		 */
 		protected InputStream getResourceAsStream(String name) {
-			IFile f = project.getFile(name);
+			final IFile f = project.getFile(name);
 			try {
 				if (f.exists()) {
 					return f.getContents();
-				} else {
-					return null;
 				}
-			} catch (CoreException e) {
+				return null;
+			} catch (final CoreException e) {
 				return null;
 			}
 		}
@@ -311,7 +314,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 
 		@Override
 		public Locale getFallbackLocale(String baseName, Locale locale) {
-			return this.useFallback ? super.getFallbackLocale(baseName, locale) : null;
+			return useFallback ? super.getFallbackLocale(baseName, locale) : null;
 		}
 
 		// this implementation simply doesn't cache the values in the

@@ -6,13 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Wim Jongman <wim.jongman@remainsoftware.com> - initial API and implementation
- *     Steven Spungin <steve@spungin.tv> -Bug 439284 - [model editor] make list a combo with autocomplete for add part descriptor
- *     Toni Umbreit - Bug 440289
+ * Wim Jongman <wim.jongman@remainsoftware.com> - initial API and implementation
+ * Steven Spungin <steve@spungin.tv> -Bug 439284 - [model editor] make list a combo with autocomplete for add part
+ * descriptor
+ * Toni Umbreit - Bug 440289
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
 import javax.inject.Inject;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.nls.Translation;
@@ -40,10 +42,10 @@ public class ViewerElement {
 	Messages Messages;
 
 	private StructuredViewer viewer;
-	private AbstractComponentEditor editor;
+	private final AbstractComponentEditor editor;
 	private ComboViewer dropDown;
 	private Button addButton;
-	private Composite parent;
+	private final Composite parent;
 
 	private Button removeButton;
 
@@ -53,7 +55,6 @@ public class ViewerElement {
 
 	/**
 	 * @param parent
-	 * @param reference
 	 * @param editor
 	 */
 	@Inject
@@ -72,10 +73,11 @@ public class ViewerElement {
 
 		createTopButtons();
 
-		if (viewer == null)
+		if (viewer == null) {
 			viewer = new TableViewer(parent);
+		}
 
-		GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1);
+		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1);
 		viewer.getControl().setLayoutData(gd);
 
 		createBottomButtons();
@@ -83,9 +85,9 @@ public class ViewerElement {
 	}
 
 	private void createBottomButtons() {
-		Composite buttonCompBot = new Composite(parent, SWT.NONE);
+		final Composite buttonCompBot = new Composite(parent, SWT.NONE);
 		buttonCompBot.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 3, 1));
-		GridLayout gl = new GridLayout(3, false);
+		final GridLayout gl = new GridLayout(3, false);
 		gl.marginLeft = 0;
 		gl.marginRight = 0;
 		gl.marginWidth = 0;
@@ -113,17 +115,16 @@ public class ViewerElement {
 	 * Returns the button that removes an element from the list. Use it to add
 	 * your {@link SelectionListener} to it.
 	 *
-	 * @return
+	 * @return the {@link Button}
 	 */
 	public Button getButtonRemove() {
 		return removeButton;
 	}
 
 	/**
-	 * Returns the button that adds an element to the list. Use it to add your
-	 * {@link SelectionListener} to it.
+	 * Returns the button that adds an element to the list. Use it to add your {@link SelectionListener} to it.
 	 *
-	 * @return
+	 * @return the {@link Button}
 	 */
 	public Button getButtonAdd() {
 		return addButton;
@@ -133,7 +134,7 @@ public class ViewerElement {
 	 * Returns the button that moves an element down in the list. Use it to add
 	 * your {@link SelectionListener} to it.
 	 *
-	 * @return
+	 * @return the {@link Button}
 	 */
 	public Button getButtonDown() {
 		return downButton;
@@ -143,16 +144,16 @@ public class ViewerElement {
 	 * Returns the button that moves an element up in the list. Use it to add
 	 * your {@link SelectionListener} to it.
 	 *
-	 * @return
+	 * @return the {@link Button}
 	 */
 	public Button getButtonUp() {
 		return upButton;
 	}
 
 	private void createTopButtons() {
-		Composite buttonCompTop = new Composite(parent, SWT.NONE);
+		final Composite buttonCompTop = new Composite(parent, SWT.NONE);
 		buttonCompTop.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 3, 1));
-		GridLayout buttonCompTopLayout = new GridLayout(2, false);
+		final GridLayout buttonCompTopLayout = new GridLayout(2, false);
 		buttonCompTopLayout.marginLeft = 0;
 		buttonCompTopLayout.marginRight = 0;
 		buttonCompTopLayout.marginWidth = 0;
@@ -179,12 +180,11 @@ public class ViewerElement {
 	 *
 	 * @param parentContext
 	 * @param parent
-	 * @param reference
 	 * @param editor
 	 * @return a new {@link ViewerElement}
 	 */
 	public static ViewerElement create(IEclipseContext parentContext, Composite parent, AbstractComponentEditor editor) {
-		IEclipseContext mycontext = parentContext.createChild();
+		final IEclipseContext mycontext = parentContext.createChild();
 		mycontext.set(Composite.class, parent);
 		mycontext.set(AbstractComponentEditor.class, editor);
 		return ContextInjectionFactory.make(ViewerElement.class, mycontext);

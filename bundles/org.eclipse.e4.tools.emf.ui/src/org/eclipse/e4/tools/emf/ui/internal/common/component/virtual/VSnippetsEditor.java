@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -43,18 +45,19 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
-	private List<Action> actions = new ArrayList<Action>();
-	private EStructuralFeature targetFeature;
+	private final List<Action> actions = new ArrayList<Action>();
+	private final EStructuralFeature targetFeature;
 
 	public VSnippetsEditor() {
 		super();
-		this.targetFeature = UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS;
+		targetFeature = UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS;
 	}
 
 	@PostConstruct
 	void init() {
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddArea,
+			createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.AREA);
@@ -68,48 +71,55 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.PART);
-			}
-		});
+		actions
+			.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.PART);
+				}
+			});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer, createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer,
+			createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPartStack, createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPartStack,
+			createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_STACK);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack, createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
+		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack,
+			createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
 			}
 		});
-		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective, createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective,
+			createImageDescriptor(ResourceProvider.IMG_Perspective)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE);
 			}
 		});
 
-		actions.add(new Action(Messages.VTrimContributionsEditor_AddTrimContribution, createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
+		actions.add(new Action(Messages.VTrimContributionsEditor_AddTrimContribution,
+			createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIM_ELEMENT);
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
+		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow,
+			createImageDescriptor(ResourceProvider.IMG_Window)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIMMED_WINDOW);
@@ -121,13 +131,15 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 				handleAdd(BasicPackageImpl.Literals.WINDOW);
 			}
 		});
-		actions.add(new Action(Messages.VWindowTrimEditor_AddWindowTrim, createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
+		actions.add(new Action(Messages.VWindowTrimEditor_AddWindowTrim,
+			createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIM_BAR);
 			}
 		});
-		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog, createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
+		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog,
+			createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.WIZARD_DIALOG);
@@ -169,27 +181,27 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, targetFeature) {
+		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, targetFeature) {
 			@Override
 			protected void addPressed() {
-				EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+				final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 				handleAdd(eClass);
-			};
+			}
 
 			@Override
 			protected List<?> getContainerChildren(Object container) {
@@ -200,7 +212,11 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		viewer = pickList.getList();
 
 		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
-		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE, AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
+		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
+			AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE,
+			AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER,
+			BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
+			BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
 		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
 		folder.setSelection(0);
@@ -215,16 +231,16 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	protected void handleAdd(EClass eClass) {
-		EObject handler = EcoreUtil.create(eClass);
+		final EObject handler = EcoreUtil.create(eClass);
 		setElementId(handler);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), targetFeature, handler);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), targetFeature, handler);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

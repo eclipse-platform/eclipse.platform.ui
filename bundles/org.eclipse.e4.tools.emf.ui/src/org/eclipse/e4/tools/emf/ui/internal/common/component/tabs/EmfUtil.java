@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -36,7 +36,7 @@ public class EmfUtil {
 		}
 		// return (EAttribute)
 		// eObject.eGet(eObject.eClass().getEStructuralFeature(attName));
-		for (EAttribute att : eObject.eClass().getEAllAttributes()) {
+		for (final EAttribute att : eObject.eClass().getEAllAttributes()) {
 			if (attName.equals(att.getName())) {
 				return att;
 			}
@@ -56,12 +56,11 @@ public class EmfUtil {
 	 *         or has null as the value.
 	 */
 	static public Object getAttributeValue(EObject eObject, String attName) {
-		EAttribute att = getAttribute(eObject, attName);
+		final EAttribute att = getAttribute(eObject, attName);
 		if (att == null) {
 			return null;
-		} else {
-			return eObject.eGet(att);
 		}
+		return eObject.eGet(att);
 	}
 
 	/**
@@ -70,15 +69,13 @@ public class EmfUtil {
 	 *
 	 * @param eObject
 	 * @param attName
-	 * @return
 	 * @throws Exception
 	 */
 	static public Object getAttributeValueThrows(EObject eObject, String attName) throws Exception {
-		EAttribute att = getAttribute(eObject, attName);
+		final EAttribute att = getAttribute(eObject, attName);
 		if (att == null) {
 			throw new Exception(Messages.EmfUtil_ex_attribute_not_found + " : " + attName); //$NON-NLS-1$
-		} else {
-			return eObject.eGet(att);
 		}
+		return eObject.eGet(att);
 	}
 }

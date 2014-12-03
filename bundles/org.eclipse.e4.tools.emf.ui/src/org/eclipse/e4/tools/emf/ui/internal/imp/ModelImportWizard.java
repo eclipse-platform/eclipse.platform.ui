@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Wim Jongmam <wim.jongman@remainsoftware.com> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing Maintenance
+ * Wim Jongmam <wim.jongman@remainsoftware.com> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.imp;
 
@@ -24,28 +24,33 @@ import org.eclipse.jface.wizard.Wizard;
 
 public class ModelImportWizard extends Wizard {
 
-	private Class<? extends MApplicationElement> applicationElement;
+	private final Class<? extends MApplicationElement> applicationElement;
 
 	private ModelImportPage1 page1;
 
-	private MApplication application;
+	private final MApplication application;
 
-	private AbstractComponentEditor editor;
+	private final AbstractComponentEditor editor;
 
 	private final String hint;
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, IResourcePool resourcePool) {
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor,
+		IResourcePool resourcePool) {
 		this(applicationElement, editor, "", resourcePool); //$NON-NLS-1$
 	}
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor, String hint, IResourcePool resourcePool) {
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor,
+		String hint, IResourcePool resourcePool) {
 		this.applicationElement = applicationElement;
 		this.editor = editor;
 		this.hint = hint;
-		this.application = (MApplication) editor.getEditor().getModelProvider().getRoot().get(0);
-		setWindowTitle(Messages.ModelImportWizard_Model + " " + applicationElement.getSimpleName() + " " + Messages.ModelImportWizard_ImportWizard); //$NON-NLS-1$ //$NON-NLS-2$
-		setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Wizban16_imp3x_wiz)));
-		Assert.isNotNull(RegistryUtil.getStruct(applicationElement, getHint()), Messages.ModelImportWizard_UnknownElement + ": " + applicationElement.getClass().getName()); //$NON-NLS-1$
+		application = (MApplication) editor.getEditor().getModelProvider().getRoot().get(0);
+		setWindowTitle(Messages.ModelImportWizard_Model
+			+ " " + applicationElement.getSimpleName() + " " + Messages.ModelImportWizard_ImportWizard); //$NON-NLS-1$ //$NON-NLS-2$
+		setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool
+			.getImageUnchecked(ResourceProvider.IMG_Wizban16_imp3x_wiz)));
+		Assert.isNotNull(RegistryUtil.getStruct(applicationElement, getHint()),
+			Messages.ModelImportWizard_UnknownElement + ": " + applicationElement.getClass().getName()); //$NON-NLS-1$
 	}
 
 	@Override
@@ -69,8 +74,8 @@ public class ModelImportWizard extends Wizard {
 	}
 
 	/**
-	 * @return the extension point name associated with the
-	 *         {@link MApplicationElement} that is passed in the constructor of
+	 * @return the extension point name associated with the {@link MApplicationElement} that is passed in the
+	 *         constructor of
 	 *         this wizard.
 	 * @see #MAPPING_EXTENSION
 	 * @see #getApplicationElement()
@@ -80,8 +85,8 @@ public class ModelImportWizard extends Wizard {
 	}
 
 	/**
-	 * @return the extension point id associated with the
-	 *         {@link MApplicationElement} that is passed in the constructor of
+	 * @return the extension point id associated with the {@link MApplicationElement} that is passed in the constructor
+	 *         of
 	 *         this wizard.
 	 * @see #MAPPING_EXTENSION
 	 * @see #getApplicationElement()
@@ -103,9 +108,9 @@ public class ModelImportWizard extends Wizard {
 	 * Returns the list of {@link MApplicationElement}s of the type passed in
 	 * the constructor of the wizard.
 	 *
-	 * @param <T>
 	 *
-	 * @return
+	 *
+	 * @return an array of {@link MApplicationElement}
 	 */
 	public MApplicationElement[] getElements(Class<? extends MApplicationElement> type) {
 		return RegistryUtil.getModelElements(type, getHint(), application, page1.getConfigurationElements());
@@ -127,7 +132,7 @@ public class ModelImportWizard extends Wizard {
 	/**
 	 * Returns the hint that explains the meaning of the caller.
 	 *
-	 * @return
+	 * @return the hint as a String
 	 */
 	public String getHint() {
 		return hint;

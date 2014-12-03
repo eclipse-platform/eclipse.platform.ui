@@ -6,16 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance, Bug 443945
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance, Bug 443945
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -45,7 +47,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	public VModelFragmentsEditor() {
@@ -54,7 +56,8 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.VModelFragmentsEditor_AddFragment, createImageDescriptor(ResourceProvider.IMG_ModelFragments)) {
+		actions.add(new Action(Messages.VModelFragmentsEditor_AddFragment,
+			createImageDescriptor(ResourceProvider.IMG_ModelFragments)) {
 			@Override
 			public void run() {
 				handleAdd();
@@ -88,23 +91,25 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -114,9 +119,8 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 				protected List<?> getContainerChildren(Object container) {
 					if (container instanceof MModelFragments) {
 						return ((MModelFragments) container).getFragments();
-					} else {
-						return null;
 					}
+					return null;
 				}
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
@@ -135,14 +139,15 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	private void handleAdd() {
-		MStringModelFragment eObject = MFragmentFactory.INSTANCE.createStringModelFragment();
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
+		final MStringModelFragment eObject = MFragmentFactory.INSTANCE.createStringModelFragment();
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

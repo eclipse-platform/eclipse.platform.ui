@@ -6,17 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Tracy Miranda <tracymiranda@yahoo.com> - bugfix for 430663
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Tracy Miranda <tracymiranda@yahoo.com> - bugfix for 430663
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -47,7 +49,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	private TableViewer viewer;
 	private EMFDataBindingContext context;
 
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	public VApplicationAddons() {
@@ -56,12 +58,13 @@ public class VApplicationAddons extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.VApplicationAddons_AddAddon, createImageDescriptor(ResourceProvider.IMG_Addons)) {
-			@Override
-			public void run() {
-				handleAddAddon();
-			}
-		});
+		actions
+			.add(new Action(Messages.VApplicationAddons_AddAddon, createImageDescriptor(ResourceProvider.IMG_Addons)) {
+				@Override
+				public void run() {
+					handleAddAddon();
+				}
+			});
 	}
 
 	@Override
@@ -90,27 +93,29 @@ public class VApplicationAddons extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, ApplicationPackageImpl.Literals.APPLICATION__ADDONS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+				ApplicationPackageImpl.Literals.APPLICATION__ADDONS) {
 				@Override
 				protected void addPressed() {
 					handleAddAddon();
-				};
+				}
 
 				@Override
 				protected List<?> getContainerChildren(Object container) {
@@ -127,10 +132,11 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	}
 
 	private void handleAddAddon() {
-		MAddon addon = MApplicationFactory.INSTANCE.createAddon();
+		final MAddon addon = MApplicationFactory.INSTANCE.createAddon();
 		setElementId(addon);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__ADDONS, addon);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
+			ApplicationPackageImpl.Literals.APPLICATION__ADDONS, addon);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -145,7 +151,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

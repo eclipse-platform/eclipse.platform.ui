@@ -6,16 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.services.nls.Translation;
@@ -52,9 +54,9 @@ public class VCommandEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 
-	private EStructuralFeature commandsFeature;
-	private List<Action> actions = new ArrayList<Action>();
-	private List<Action> actionsImport = new ArrayList<Action>();
+	private final EStructuralFeature commandsFeature;
+	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	@Translation
@@ -63,19 +65,21 @@ public class VCommandEditor extends AbstractComponentEditor {
 	@Inject
 	public VCommandEditor() {
 		super();
-		this.commandsFeature = ApplicationPackageImpl.Literals.APPLICATION__COMMANDS;
+		commandsFeature = ApplicationPackageImpl.Literals.APPLICATION__COMMANDS;
 	}
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.VCommandEditor_AddCommand, createImageDescriptor(ResourceProvider.IMG_Command)) {
-			@Override
-			public void run() {
-				handleAdd();
-			}
-		});
+		actions
+			.add(new Action(Messages.VCommandEditor_AddCommand, createImageDescriptor(ResourceProvider.IMG_Command)) {
+				@Override
+				public void run() {
+					handleAdd();
+				}
+			});
 
-		actionsImport.add(new Action(Messages.VCommandEditor_ImportCommands, createImageDescriptor(ResourceProvider.IMG_Command)) {
+		actionsImport.add(new Action(Messages.VCommandEditor_ImportCommands,
+			createImageDescriptor(ResourceProvider.IMG_Command)) {
 			@Override
 			public void run() {
 				handleImport();
@@ -109,27 +113,29 @@ public class VCommandEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, ApplicationPackageImpl.Literals.APPLICATION__COMMANDS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+				ApplicationPackageImpl.Literals.APPLICATION__COMMANDS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
-				};
+				}
 
 				@Override
 				protected List<?> getContainerChildren(Object container) {
@@ -146,13 +152,13 @@ public class VCommandEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd() {
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		final MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		addCommand(command);
 	}
 
 	private void addCommand(MCommand command) {
 		setElementId(command);
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -161,11 +167,11 @@ public class VCommandEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleImport() {
-		ModelImportWizard wizard = new ModelImportWizard(MCommand.class, this, resourcePool);
-		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+		final ModelImportWizard wizard = new ModelImportWizard(MCommand.class, this, resourcePool);
+		final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 		if (wizardDialog.open() == Window.OK) {
-			MCommand[] elements = (MCommand[]) wizard.getElements(MCommand.class);
-			for (MCommand mCommand : elements) {
+			final MCommand[] elements = (MCommand[]) wizard.getElements(MCommand.class);
+			for (final MCommand mCommand : elements) {
 				addCommand(mCommand);
 			}
 		}
@@ -178,14 +184,14 @@ public class VCommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actionsImport);
 		return l;
 	}

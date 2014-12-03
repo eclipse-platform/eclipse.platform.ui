@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372, Bug 440469, Ongoing Maintenance
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 432555, Bug 436889, Bug 437372, Bug 440469,
+ * Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -36,6 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -175,13 +178,13 @@ public class ListTab implements IViewEObjects {
 
 	// save custom column and filter settings
 	public void saveSettings() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
+		final IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
 		try {
-			Document doc = DocUtil.createDocument("list-tab"); //$NON-NLS-1$
-			Element cols = DocUtil.createChild(doc.getDocumentElement(), "columns"); //$NON-NLS-1$
+			final Document doc = DocUtil.createDocument("list-tab"); //$NON-NLS-1$
+			final Element cols = DocUtil.createChild(doc.getDocumentElement(), "columns"); //$NON-NLS-1$
 
 			final ArrayList<TableColumn> allCols = TableViewerUtil.getColumnsInDisplayOrder(tvResults);
-			for (TableColumn col : allCols) {
+			for (final TableColumn col : allCols) {
 				String id;
 				if (requiredColumns.containsValue(col)) {
 					id = getKey(requiredColumns, col);
@@ -191,35 +194,35 @@ public class ListTab implements IViewEObjects {
 				saveColumn(cols, id, col);
 			}
 
-			Element filters = DocUtil.createChild(doc.getDocumentElement(), "filters"); //$NON-NLS-1$
+			final Element filters = DocUtil.createChild(doc.getDocumentElement(), "filters"); //$NON-NLS-1$
 			if (E.notEmpty(filterByAttrName)) {
-				Element filter = DocUtil.createChild(filters, "filter"); //$NON-NLS-1$
+				final Element filter = DocUtil.createChild(filters, "filter"); //$NON-NLS-1$
 				DocUtil.createChild(filter, "type").setTextContent("attribute"); //$NON-NLS-1$//$NON-NLS-2$
 				DocUtil.createChild(filter, "condition").setTextContent(filterByAttrName); //$NON-NLS-1$
 				DocUtil.createChild(filter, "emptyOption").setTextContent(filterByAttrEmptyOption.name()); //$NON-NLS-1$
 			}
 			if (E.notEmpty(filterByItemName)) {
-				Element filter = DocUtil.createChild(filters, "filter"); //$NON-NLS-1$
+				final Element filter = DocUtil.createChild(filters, "filter"); //$NON-NLS-1$
 				DocUtil.createChild(filter, "type").setTextContent("item"); //$NON-NLS-1$ //$NON-NLS-2$
 				DocUtil.createChild(filter, "condition").setTextContent(filterByItemName); //$NON-NLS-1$
 			}
 
 			pref.put("list-tab-xml", docToString(doc)); //$NON-NLS-1$
-		} catch (ParserConfigurationException e1) {
+		} catch (final ParserConfigurationException e1) {
 			e1.printStackTrace();
-		} catch (TransformerException e) {
+		} catch (final TransformerException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			pref.flush();
-		} catch (BackingStoreException e) {
+		} catch (final BackingStoreException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private String getKey(Map<String, ?> map, Object value) {
-		for (Entry<String, ?> entry : map.entrySet()) {
+		for (final Entry<String, ?> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
 				return entry.getKey();
 			}
@@ -228,37 +231,38 @@ public class ListTab implements IViewEObjects {
 	}
 
 	private void saveColumn(Element eleCols, String columnName, TableColumn objCol) {
-		Element col = DocUtil.createChild(eleCols, "column"); //$NON-NLS-1$
+		final Element col = DocUtil.createChild(eleCols, "column"); //$NON-NLS-1$
 
 		DocUtil.createChild(col, "attribute").setTextContent(columnName); //$NON-NLS-1$
 
-		Integer width = objCol.getWidth();
+		final Integer width = objCol.getWidth();
 		DocUtil.createChild(col, "width").setTextContent(width.toString()); //$NON-NLS-1$
 	}
 
 	// load custom column and filter settings
 	private void loadSettings() {
-		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
+		final IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(Plugin.ID);
 
-		boolean restoreColumns = pref.getBoolean(ModelEditorPreferences.LIST_TAB_REMEMBER_COLUMNS, false);
-		boolean restoreFilters = pref.getBoolean(ModelEditorPreferences.LIST_TAB_REMEMBER_FILTERS, false);
+		final boolean restoreColumns = pref.getBoolean(ModelEditorPreferences.LIST_TAB_REMEMBER_COLUMNS, false);
+		final boolean restoreFilters = pref.getBoolean(ModelEditorPreferences.LIST_TAB_REMEMBER_FILTERS, false);
 		if (!restoreColumns && !restoreFilters) {
 			return;
 		}
 
-		String xml = pref.get("list-tab-xml", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		final String xml = pref.get("list-tab-xml", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (E.notEmpty(xml)) {
 			try {
-				Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-				XPath xpath = XPathFactory.newInstance().newXPath();
+				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(new StringReader(xml)));
+				final XPath xpath = XPathFactory.newInstance().newXPath();
 				NodeList list;
 				if (restoreColumns) {
 					// restore columns and column widths
 					list = (NodeList) xpath.evaluate("//columns/column", doc, XPathConstants.NODESET); //$NON-NLS-1$
 					for (int i = 0; i < list.getLength(); i++) {
-						Element ele = (Element) list.item(i);
+						final Element ele = (Element) list.item(i);
 						TableColumn col;
-						String colName = xpath.evaluate("attribute/text()", ele); //$NON-NLS-1$
+						final String colName = xpath.evaluate("attribute/text()", ele); //$NON-NLS-1$
 						if (colName.isEmpty()) {
 							continue;
 						}
@@ -268,8 +272,8 @@ public class ListTab implements IViewEObjects {
 						}
 
 						// move it to the end of the list.
-						int currentIndex = TableViewerUtil.getVisibleColumnIndex(tvResults, col);
-						int[] order = tvResults.getTable().getColumnOrder();
+						final int currentIndex = TableViewerUtil.getVisibleColumnIndex(tvResults, col);
+						final int[] order = tvResults.getTable().getColumnOrder();
 						for (int idx = 0; idx < order.length; idx++) {
 							if (order[idx] > currentIndex) {
 								order[idx]--;
@@ -285,10 +289,10 @@ public class ListTab implements IViewEObjects {
 						// col = colItem;
 						// }
 
-						String sWidth = xpath.evaluate("width/text()", ele); //$NON-NLS-1$
+						final String sWidth = xpath.evaluate("width/text()", ele); //$NON-NLS-1$
 						try {
 							col.setWidth(Integer.parseInt(sWidth));
-						} catch (Exception e) {
+						} catch (final Exception e) {
 						}
 					}
 				}
@@ -297,43 +301,43 @@ public class ListTab implements IViewEObjects {
 					// restore filters
 					list = (NodeList) xpath.evaluate("//filters/filter", doc, XPathConstants.NODESET); //$NON-NLS-1$
 					for (int i = 0; i < list.getLength(); i++) {
-						Element ele = (Element) list.item(i);
-						String type = xpath.evaluate("type/text()", ele); //$NON-NLS-1$
-						String condition = xpath.evaluate("condition/text()", ele); //$NON-NLS-1$
-						String emptyOption = xpath.evaluate("emptyOption/text()", ele); //$NON-NLS-1$
+						final Element ele = (Element) list.item(i);
+						final String type = xpath.evaluate("type/text()", ele); //$NON-NLS-1$
+						final String condition = xpath.evaluate("condition/text()", ele); //$NON-NLS-1$
+						final String emptyOption = xpath.evaluate("emptyOption/text()", ele); //$NON-NLS-1$
 						if ("item".equals(type)) { //$NON-NLS-1$
 							filterByItem(condition);
 						} else if ("attribute".equals(type)) { //$NON-NLS-1$
 							EmptyFilterOption emptyFilterOption;
 							try {
 								emptyFilterOption = EmptyFilterOption.valueOf(emptyOption);
-							} catch (Exception e) {
+							} catch (final Exception e) {
 								emptyFilterOption = EmptyFilterOption.INCLUDE;
 							}
 							filterByAttribute(condition, emptyFilterOption);
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		}
 	}
 
 	// @Refactor
 	static private String docToString(Document doc) throws TransformerException {
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer = tf.newTransformer();
+		final TransformerFactory tf = TransformerFactory.newInstance();
+		final Transformer transformer = tf.newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
-		StringWriter writer = new StringWriter();
+		final StringWriter writer = new StringWriter();
 		transformer.transform(new DOMSource(doc), new StreamResult(writer));
-		String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		final String output = writer.getBuffer().toString().replaceAll("\n|\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		return output;
 	}
 
 	// @Refactor
 	static String join(Collection<String> items, String separator) {
-		StringBuilder sb = new StringBuilder();
-		for (String item : items) {
+		final StringBuilder sb = new StringBuilder();
+		for (final String item : items) {
 			sb.append(item);
 			sb.append(separator);
 		}
@@ -355,7 +359,7 @@ public class ListTab implements IViewEObjects {
 		});
 		try {
 			imgMarkedItem = imageCache.create(Plugin.ID, "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$
-		} catch (Exception e2) {
+		} catch (final Exception e2) {
 			e2.printStackTrace();
 		}
 
@@ -374,7 +378,7 @@ public class ListTab implements IViewEObjects {
 
 		tabItem = new CTabItem(tabFolder, SWT.NONE, 1);
 
-		Composite composite = new Composite(tabFolder, SWT.NONE);
+		final Composite composite = new Composite(tabFolder, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, false));
 		tabItem.setControl(composite);
@@ -386,19 +390,19 @@ public class ListTab implements IViewEObjects {
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 
 		{
-			ToolItem button = new ToolItem(toolBar, SWT.PUSH);
+			final ToolItem button = new ToolItem(toolBar, SWT.PUSH);
 			button.setText(Messages.ListTab_addColumn + ELIPSIS);
 			button.setImage(imageCache.create("/icons/full/obj16/add_column.gif")); //$NON-NLS-1$
 
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					TitleAreaFilterDialogWithEmptyOptions dlg = createEObjectAttributePicker(Messages.ListTab_addColumn);
+					final TitleAreaFilterDialogWithEmptyOptions dlg = createEObjectAttributePicker(Messages.ListTab_addColumn);
 					dlg.setShowEmptyOptions(false);
 					if (dlg.open() == Window.OK) {
 						// Add Column
-						String attName = dlg.getFirstElement().toString();
-						EAttributeTableViewerColumn col = addColumn(attName);
+						final String attName = dlg.getFirstElement().toString();
+						final EAttributeTableViewerColumn col = addColumn(attName);
 						col.getTableViewerColumn().getColumn().pack();
 						tvResults.refresh();
 					}
@@ -407,14 +411,14 @@ public class ListTab implements IViewEObjects {
 		}
 
 		{
-			ToolItem button = new ToolItem(toolBar, SWT.PUSH);
+			final ToolItem button = new ToolItem(toolBar, SWT.PUSH);
 			button.setText(Messages.ListTab_resetColumns);
 			button.setImage(imageCache.create("/icons/full/obj16/reset_columns.gif")); //$NON-NLS-1$
 
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					for (EAttributeTableViewerColumn col : optionalColumns.values()) {
+					for (final EAttributeTableViewerColumn col : optionalColumns.values()) {
 						col.dispose();
 					}
 					optionalColumns.clear();
@@ -438,7 +442,7 @@ public class ListTab implements IViewEObjects {
 					if (dlg.open() == Window.OK) {
 						filterByItem(dlg.getFirstElement().toString());
 					}
-				};
+				}
 			});
 		}
 
@@ -451,11 +455,11 @@ public class ListTab implements IViewEObjects {
 			filterByAttribute.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					TitleAreaFilterDialogWithEmptyOptions dlg = createEObjectAttributePicker(Messages.ListTab_filterByAttribute);
+					final TitleAreaFilterDialogWithEmptyOptions dlg = createEObjectAttributePicker(Messages.ListTab_filterByAttribute);
 					if (dlg.open() == Window.OK) {
 						filterByAttribute(dlg.getFirstElement().toString(), dlg.getEmptyFilterOption());
 					}
-				};
+				}
 			});
 		}
 
@@ -472,7 +476,7 @@ public class ListTab implements IViewEObjects {
 					tvResults.setFilters(new ViewerFilter[0]);
 					filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS);
 					filterByAttribute.setText(Messages.ListTab_markAttribute + ELIPSIS);
-				};
+				}
 			});
 		}
 
@@ -482,7 +486,7 @@ public class ListTab implements IViewEObjects {
 			final E4ToolItemMenu tiCommands = new E4ToolItemMenu(toolBar, context);
 			tiCommands.getToolItem().setImage(imageCache.create("/icons/full/obj16/command.gif")); //$NON-NLS-1$
 
-			ArrayList<String> commandIds = new ArrayList<String>();
+			final ArrayList<String> commandIds = new ArrayList<String>();
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_attributes"); //$NON-NLS-1$
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_ids"); //$NON-NLS-1$
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_labels"); //$NON-NLS-1$
@@ -530,12 +534,12 @@ public class ListTab implements IViewEObjects {
 			@Override
 			public String getText(Object element) {
 				return ""; //$NON-NLS-1$
-			};
+			}
 
 			@Override
 			public Image getImage(Object element) {
 				return imgXmi;
-			};
+			}
 		});
 
 		tvResults.getTable().addMouseListener(new MouseAdapter() {
@@ -560,10 +564,8 @@ public class ListTab implements IViewEObjects {
 				if (isHighlighted(element)) {
 					try {
 						ret = imgMarkedItem;
-					} catch (Exception e) {
+					} catch (final Exception e) {
 					}
-				} else {
-					ret = null;
 				}
 				return ret;
 			}
@@ -580,17 +582,19 @@ public class ListTab implements IViewEObjects {
 		colItem.setLabelProvider(new ColumnLabelProvider_Markable() {
 			@Override
 			public String getText(Object element) {
-				EObject eObject = (EObject) element;
+				final EObject eObject = (EObject) element;
 				return super.getText(eObject.eClass().getName());
 			}
 		});
 
 		app.getContext().set("org.eclipse.e4.tools.active-object-viewer", this); //$NON-NLS-1$
 
-		EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults, "elementId", "elementId", context); //$NON-NLS-1$//$NON-NLS-2$
+		final EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults,
+			"elementId", "elementId", context); //$NON-NLS-1$//$NON-NLS-2$
 		defaultColumns.put("elementId", colId); //$NON-NLS-1$
 
-		EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults, "label", "label", context); //$NON-NLS-1$//$NON-NLS-2$
+		final EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults,
+			"label", "label", context); //$NON-NLS-1$//$NON-NLS-2$
 		defaultColumns.put("label", colLabel); //$NON-NLS-1$
 
 		// Custom selection for marked items
@@ -599,14 +603,16 @@ public class ListTab implements IViewEObjects {
 			public void handleEvent(Event event) {
 				event.detail &= ~SWT.HOT;
 				if ((event.detail & SWT.SELECTED) == 0)
+				{
 					return; // / item not selected
+				}
 
-				TableItem item = (TableItem) event.item;
+				final TableItem item = (TableItem) event.item;
 				if (isHighlighted(item.getData())) {
 
-					Table table = (Table) event.widget;
-					int clientWidth = table.getClientArea().width;
-					GC gc = event.gc;
+					final Table table = (Table) event.widget;
+					final int clientWidth = table.getClientArea().width;
+					final GC gc = event.gc;
 					// Color oldForeground = gc.getForeground();
 					// Color oldBackground = gc.getBackground();
 
@@ -626,19 +632,21 @@ public class ListTab implements IViewEObjects {
 		for (final EAttributeTableViewerColumn col : defaultColumns.values()) {
 			col.getTableViewerColumn().getColumn().setMoveable(true);
 		}
-		for (TableColumn col : requiredColumns.values()) {
+		for (final TableColumn col : requiredColumns.values()) {
 			col.setMoveable(true);
 		}
 
-		makeSortable(colId.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colId.getTableViewerColumn().getColumn(), "elementId")); //$NON-NLS-1$
-		makeSortable(colLabel.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colLabel.getTableViewerColumn().getColumn(), "label")); //$NON-NLS-1$
+		makeSortable(colId.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colId
+			.getTableViewerColumn().getColumn(), "elementId")); //$NON-NLS-1$
+		makeSortable(colLabel.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colLabel
+			.getTableViewerColumn().getColumn(), "label")); //$NON-NLS-1$
 		makeSortable(colItem.getColumn(), new TableViewerUtil.ColumnLabelSorter(colItem.getColumn()));
 		makeSortable(colMarked.getColumn(), new TableViewerUtil.AbstractInvertableTableSorter() {
 
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				boolean mark1 = isHighlighted(e1);
-				boolean mark2 = isHighlighted(e2);
+				final boolean mark1 = isHighlighted(e1);
+				final boolean mark2 = isHighlighted(e2);
 				if (mark1 && !mark2) {
 					return -1;
 				} else if (mark2 && !mark1) {
@@ -682,12 +690,12 @@ public class ListTab implements IViewEObjects {
 
 	@Override
 	public List<EObject> getAllEObjects() {
-		ArrayList<EObject> list = new ArrayList<EObject>();
-		TreeIterator<Object> itTree = EcoreUtil.getAllContents(modelResource.getRoot());
+		final ArrayList<EObject> list = new ArrayList<EObject>();
+		final TreeIterator<Object> itTree = EcoreUtil.getAllContents(modelResource.getRoot());
 		while (itTree.hasNext()) {
-			Object object = itTree.next();
-			EObject eObject = (EObject) object;
-			EAttribute att = EmfUtil.getAttribute(eObject, "elementId"); //$NON-NLS-1$
+			final Object object = itTree.next();
+			final EObject eObject = (EObject) object;
+			final EAttribute att = EmfUtil.getAttribute(eObject, "elementId"); //$NON-NLS-1$
 			if (att != null) {
 				list.add(eObject);
 			}
@@ -697,8 +705,8 @@ public class ListTab implements IViewEObjects {
 
 	@Override
 	public Collection<EObject> getSelectedEObjects() {
-		ArrayList<EObject> selected = new ArrayList<EObject>();
-		for (Object item : ((IStructuredSelection) tvResults.getSelection()).toList()) {
+		final ArrayList<EObject> selected = new ArrayList<EObject>();
+		for (final Object item : ((IStructuredSelection) tvResults.getSelection()).toList()) {
 			if (item instanceof EObject) {
 				selected.add((EObject) item);
 
@@ -710,7 +718,7 @@ public class ListTab implements IViewEObjects {
 	@Override
 	public void deleteEObjects(Collection<EObject> list) {
 		if (list.isEmpty() == false) {
-			Command cmd = DeleteCommand.create(modelResource.getEditingDomain(), list);
+			final Command cmd = DeleteCommand.create(modelResource.getEditingDomain(), list);
 			if (cmd.canExecute()) {
 				modelResource.getEditingDomain().getCommandStack().execute(cmd);
 			}
@@ -721,9 +729,9 @@ public class ListTab implements IViewEObjects {
 	private TitleAreaFilterDialogWithEmptyOptions createEObjectAttributePicker(final String title) {
 		// Get Attribute Names
 		final HashSet<String> set = new HashSet<String>();
-		Collection<EObject> allEObjects = getAllEObjects();
-		for (EObject obj : allEObjects) {
-			for (EAttribute attribute : obj.eClass().getEAllAttributes()) {
+		final Collection<EObject> allEObjects = getAllEObjects();
+		for (final EObject obj : allEObjects) {
+			for (final EAttribute attribute : obj.eClass().getEAllAttributes()) {
 				set.add(attribute.getName());
 			}
 		}
@@ -731,20 +739,21 @@ public class ListTab implements IViewEObjects {
 		Collections.sort(sorted);
 
 		// Select Attribute
-		ILabelProvider renderer = new LabelProvider() {
+		final ILabelProvider renderer = new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				return String.valueOf(element);
 			}
 		};
-		TitleAreaFilterDialogWithEmptyOptions dlg = new TitleAreaFilterDialogWithEmptyOptions(context.get(Shell.class), renderer) {
+		final TitleAreaFilterDialogWithEmptyOptions dlg = new TitleAreaFilterDialogWithEmptyOptions(
+			context.get(Shell.class), renderer) {
 			@Override
 			protected Control createContents(Composite parent) {
-				Control ret = super.createContents(parent);
+				final Control ret = super.createContents(parent);
 				setMessage(Messages.ListTab_selectAnAttribute);
 				try {
 					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/attribute_wiz.gif")); //$NON-NLS-1$
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 				}
 				setTitle(title);
@@ -758,25 +767,25 @@ public class ListTab implements IViewEObjects {
 	private TitleAreaFilterDialog createElementTypePicker(final String title) {
 		// Get Attribute Names
 		final HashSet<String> set = new HashSet<String>();
-		Collection<EObject> allEObjects = getAllEObjects();
-		for (EObject obj : allEObjects) {
+		final Collection<EObject> allEObjects = getAllEObjects();
+		for (final EObject obj : allEObjects) {
 			set.add(obj.eClass().getName());
 		}
 
 		final ArrayList<String> sorted = new ArrayList<String>(set);
 		Collections.sort(sorted);
 
-		ILabelProvider renderer = new LabelProvider() {
+		final ILabelProvider renderer = new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				return String.valueOf(element);
 			}
 		};
-		TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(context.get(Shell.class), renderer) {
+		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(context.get(Shell.class), renderer) {
 
 			@Override
 			protected Control createContents(Composite parent) {
-				Control ret = super.createContents(parent);
+				final Control ret = super.createContents(parent);
 				setMessage(Messages.ListTab_selectAType);
 				setTitle(title);
 				setElements(sorted.toArray(new String[0]));
@@ -800,7 +809,8 @@ public class ListTab implements IViewEObjects {
 				colName = new EAttributeTableViewerColumn_Markable(tvResults, attName, attName, context);
 				optionalColumns.put(attName, colName);
 				colName.getTableViewerColumn().getColumn().setMoveable(true);
-				makeSortable(colName.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colName.getTableViewerColumn().getColumn(), attName));
+				makeSortable(colName.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colName
+					.getTableViewerColumn().getColumn(), attName));
 				tvResults.refresh();
 			}
 		}
@@ -809,7 +819,7 @@ public class ListTab implements IViewEObjects {
 
 	static private class AttributeColumnLabelSorter extends TableViewerUtil.ColumnLabelSorter {
 
-		private String attName;
+		private final String attName;
 
 		AttributeColumnLabelSorter(TableColumn col, String attName) {
 			super(col);
@@ -819,26 +829,26 @@ public class ListTab implements IViewEObjects {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			// if either is boolean, use boolean value, otherwise use text value
-			ATT_TYPE e1Type = EAttributeEditingSupport.getAttributeType(e1, attName);
-			ATT_TYPE e2Type = EAttributeEditingSupport.getAttributeType(e2, attName);
+			final ATT_TYPE e1Type = EAttributeEditingSupport.getAttributeType(e1, attName);
+			final ATT_TYPE e2Type = EAttributeEditingSupport.getAttributeType(e2, attName);
 			if (e1Type == ATT_TYPE.BOOLEAN || e2Type == ATT_TYPE.BOOLEAN) {
-				Boolean b1 = (Boolean) (EmfUtil.getAttributeValue((EObject) e1, attName));
-				Boolean b2 = (Boolean) (EmfUtil.getAttributeValue((EObject) e2, attName));
+				final Boolean b1 = (Boolean) EmfUtil.getAttributeValue((EObject) e1, attName);
+				final Boolean b2 = (Boolean) EmfUtil.getAttributeValue((EObject) e2, attName);
 				if (b1 == null && b2 != null) {
 					return -2;
 				} else if (b2 == null && b1 != null) {
 					return 2;
 				} else {
-					return (b1.compareTo(b2));
+					return b1.compareTo(b2);
 				}
-			} else {
-				return super.compare(viewer, e1, e2);
 			}
+			return super.compare(viewer, e1, e2);
 		}
 	}
 
 	private class EAttributeTableViewerColumn_Markable extends EAttributeTableViewerColumn {
-		public EAttributeTableViewerColumn_Markable(TableViewer tvResults, String label, String attName, IEclipseContext context) {
+		public EAttributeTableViewerColumn_Markable(TableViewer tvResults, String label, String attName,
+			IEclipseContext context) {
 			super(tvResults, label, attName, context);
 		}
 
@@ -882,7 +892,7 @@ public class ListTab implements IViewEObjects {
 		filterByAttrEmptyOption = null;
 		mapId_Object.clear();
 		final ArrayList<EObject> filtered = new ArrayList<EObject>();
-		for (EObject object : getAllEObjects()) {
+		for (final EObject object : getAllEObjects()) {
 			if (object.eClass().getName().equals(filterByItemName)) {
 				filtered.add(object);
 				// filter.setText(Messages.ListTab_7 +
@@ -890,7 +900,7 @@ public class ListTab implements IViewEObjects {
 
 			}
 
-			ViewerFilter viewerFilter = new ViewerFilter() {
+			final ViewerFilter viewerFilter = new ViewerFilter() {
 
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -910,10 +920,10 @@ public class ListTab implements IViewEObjects {
 		filterByItemName = null;
 		mapId_Object.clear();
 		final ArrayList<EObject> filtered = new ArrayList<EObject>();
-		for (EObject object : getAllEObjects()) {
+		for (final EObject object : getAllEObjects()) {
 			if (EmfUtil.getAttribute(object, filterByAttrName) != null) {
 				filtered.add(object);
-				ViewerFilter viewerFilter = new ViewerFilter() {
+				final ViewerFilter viewerFilter = new ViewerFilter() {
 
 					@Override
 					public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -931,7 +941,7 @@ public class ListTab implements IViewEObjects {
 								return filtered.contains(element);
 							}
 						case ONLY:
-							if (E.notEmpty((EmfUtil.getAttributeValue((EObject) element, filterByAttrName)))) {
+							if (E.notEmpty(EmfUtil.getAttributeValue((EObject) element, filterByAttrName))) {
 								return false;
 							} else {
 								return true;
@@ -952,13 +962,13 @@ public class ListTab implements IViewEObjects {
 
 			}
 		}
-		TableViewerColumn viewerColumn = addColumn(filterByAttrName).getTableViewerColumn();
+		final TableViewerColumn viewerColumn = addColumn(filterByAttrName).getTableViewerColumn();
 		viewerColumn.getColumn().pack();
 	}
 
 	@Override
 	public void autosizeContent() {
-		for (TableColumn col : tvResults.getTable().getColumns()) {
+		for (final TableColumn col : tvResults.getTable().getColumns()) {
 			col.pack();
 			if (col.getWidth() < 10) {
 				col.setWidth(10);
@@ -968,7 +978,7 @@ public class ListTab implements IViewEObjects {
 
 	@Override
 	public void resetToDefault() {
-		for (EAttributeTableViewerColumn col : optionalColumns.values()) {
+		for (final EAttributeTableViewerColumn col : optionalColumns.values()) {
 			col.dispose();
 		}
 		optionalColumns.clear();
