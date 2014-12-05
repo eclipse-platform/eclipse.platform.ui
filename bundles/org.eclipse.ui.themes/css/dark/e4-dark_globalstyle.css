@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 434189
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 430848
  *******************************************************************************/
 
 /*******************************************************************************
@@ -413,7 +414,7 @@ FlyoutControlComposite, FlyoutControlComposite ToolBar, FlyoutControlComposite C
  * which does not look very nice.
  */
 Label#org-eclipse-ui-splash-progressText {
-	background-color: #f7f7f7;
+	background-color: inherit; /* transparent */
 	color: #9c9696; /* see property startupForegroundColor in the product */
 }
 
