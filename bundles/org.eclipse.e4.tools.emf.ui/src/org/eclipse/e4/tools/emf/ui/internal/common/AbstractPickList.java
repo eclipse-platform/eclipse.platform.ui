@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -48,8 +49,8 @@ import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * <p>
- * A composite widget containing a combo for picking items, a list with
- * selectable items, and action buttons for modifying the list.
+ * A composite widget containing a combo for picking items, a list with selectable items, and action buttons for
+ * modifying the list.
  * </p>
  *
  * @author Steven Spungin
@@ -64,16 +65,17 @@ public abstract class AbstractPickList extends Composite {
 	protected ComboViewer picker;
 	protected TableViewer viewer;
 
-	private Group group;
-	private ToolBar toolBar;
-	private ToolItem tiRemove;
-	private ToolItem tiUp;
-	private ToolItem tiDown;
-	private ToolItem tiAdd;
-	private AutoCompleteField autoCompleteField;
+	private final Group group;
+	private final ToolBar toolBar;
+	private final ToolItem tiRemove;
+	private final ToolItem tiUp;
+	private final ToolItem tiDown;
+	private final ToolItem tiAdd;
+	private final AutoCompleteField autoCompleteField;
 	private Map<String, Object> proposals;
 
-	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages, AbstractComponentEditor componentEditor) {
+	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
+		AbstractComponentEditor componentEditor) {
 		super(parent, style);
 
 		// TODO remove dependency to Messages and AbstractComponentEditor. They
@@ -130,14 +132,14 @@ public abstract class AbstractPickList extends Composite {
 		});
 
 		picker = new ComboViewer(group, SWT.DROP_DOWN);
-		Combo control = picker.getCombo();
+		final Combo control = picker.getCombo();
 		control.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-		ComboContentAdapter controlContentAdapter = new ComboContentAdapter() {
+		final ComboContentAdapter controlContentAdapter = new ComboContentAdapter() {
 			@Override
 			public void setControlContents(Control control, String text1, int cursorPosition) {
 				super.setControlContents(control, text1, cursorPosition);
-				Object valueInModel = proposals.get(text1);
+				final Object valueInModel = proposals.get(text1);
 				if (valueInModel != null) {
 					getPicker().setSelection(new StructuredSelection(valueInModel));
 				}
@@ -154,7 +156,7 @@ public abstract class AbstractPickList extends Composite {
 		});
 
 		viewer = new TableViewer(group);
-		GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
+		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -194,7 +196,7 @@ public abstract class AbstractPickList extends Composite {
 		getPicker().setInput(input);
 
 		proposals = toProposals(input);
-		Set<String> keySet = proposals.keySet();
+		final Set<String> keySet = proposals.keySet();
 		autoCompleteField.setProposals(keySet.toArray(new String[keySet.size()]));
 	}
 
@@ -208,15 +210,15 @@ public abstract class AbstractPickList extends Composite {
 
 	private Map<String, Object> toProposals(Object inputElement) {
 
-		Map<String, Object> props = new TreeMap<String, Object>();
+		final Map<String, Object> props = new TreeMap<String, Object>();
 
 		if (inputElement instanceof Object[]) {
-			for (Object value : (Object[]) inputElement) {
+			for (final Object value : (Object[]) inputElement) {
 				props.put(getTextualValue(value), value);
 			}
 		}
 		if (inputElement instanceof Collection) {
-			for (Object value : (Collection<Object>) inputElement) {
+			for (final Object value : (Collection<Object>) inputElement) {
 				props.put(getTextualValue(value), value);
 			}
 
@@ -263,9 +265,9 @@ public abstract class AbstractPickList extends Composite {
 	}
 
 	public void updateUiState() {
-		IStructuredSelection selection = (IStructuredSelection) getList().getSelection();
-		boolean selected = selection.size() > 0;
-		int count = getItemCount();
+		final IStructuredSelection selection = (IStructuredSelection) getList().getSelection();
+		final boolean selected = selection.size() > 0;
+		final int count = getItemCount();
 		if (tiDown.isDisposed() == false) {
 			tiDown.setEnabled(selected && count > 1);
 			tiUp.setEnabled(selected && count > 1);

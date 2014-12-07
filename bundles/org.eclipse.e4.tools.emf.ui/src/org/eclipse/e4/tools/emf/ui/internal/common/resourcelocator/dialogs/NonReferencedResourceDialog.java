@@ -6,12 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Ongoing Maintenance
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
-
-import org.eclipse.e4.tools.emf.ui.common.Plugin;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -21,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipFile;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
+import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionDataFile;
@@ -58,14 +58,15 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 	private String bundle;
 	private final IFile file;
 	private IFile result;
-	private IProject project;
+	private final IProject project;
 	private String className;
-	private String installLocation;
+	private final String installLocation;
 	protected Runnable okAction;
 	private BundleImageCache imageCache;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
-	public NonReferencedResourceDialog(Shell parentShell, IProject project, String bundle, IFile file, String installLocation, IEclipseContext context) {
+	public NonReferencedResourceDialog(Shell parentShell, IProject project, String bundle, IFile file,
+		String installLocation, IEclipseContext context) {
 		super(parentShell);
 		this.project = project;
 		this.bundle = bundle;
@@ -77,8 +78,8 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			this.bundle = FilteredContributionDialog.getBundle(installLocation);
 		}
 		if (file instanceof ContributionDataFile) {
-			ContributionDataFile cdf = (ContributionDataFile) file;
-			this.className = cdf.getContributionData().className;
+			final ContributionDataFile cdf = (ContributionDataFile) file;
+			className = cdf.getContributionData().className;
 		}
 	}
 
@@ -88,7 +89,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			try {
 				okAction.run();
 				super.okPressed();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		} else {
 			super.okPressed();
@@ -97,34 +98,34 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite compParent = (Composite) super.createDialogArea(parent);
+		final Composite compParent = (Composite) super.createDialogArea(parent);
 
-		Composite comp = new Composite(compParent, SWT.NONE);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final Composite comp = new Composite(compParent, SWT.NONE);
+		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.horizontalSpan = 2;
 		comp.setLayoutData(layoutData);
 		comp.setLayout(new GridLayout(2, false));
 
-		String message = ""; //$NON-NLS-1$
+		final String message = ""; //$NON-NLS-1$
 		Button defaultButton = null;
 
 		if (installLocation != null) {
-			Label label = new Label(comp, SWT.NONE);
+			final Label label = new Label(comp, SWT.NONE);
 			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.NonReferencedResourceDialog_installLocation);
 
-			Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label2.setText(installLocation);
 		}
 
 		if (className != null) {
-			ContributionData cd = ((ContributionDataFile) file).getContributionData();
-			Label label = new Label(comp, SWT.NONE);
+			final ContributionData cd = ((ContributionDataFile) file).getContributionData();
+			final Label label = new Label(comp, SWT.NONE);
 			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.NonReferencedResourceDialog_2);
 
-			Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			if (bundle != null) {
 				label2.setText(bundle);
@@ -132,37 +133,37 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				label2.setText(Messages.NonReferencedResourceDialog__ast_notInABundle_ast);
 			}
 
-			Label label3 = new Label(comp, SWT.NONE);
+			final Label label3 = new Label(comp, SWT.NONE);
 			label3.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label3.setText(Messages.NonReferencedResourceDialog_package);
 
-			Text label4 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label4 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label4.setText(getPackageFromClassName(className));
 
-			Label label5 = new Label(comp, SWT.NONE);
+			final Label label5 = new Label(comp, SWT.NONE);
 			label5.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label5.setText(Messages.NonReferencedResourceDialog_class);
 
-			Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label6.setText(cd.className.substring(cd.className.lastIndexOf('.') + 1));
 
 			if (bundle != null) {
-				Label label7 = new Label(comp, SWT.NONE);
+				final Label label7 = new Label(comp, SWT.NONE);
 				label7.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 				label7.setText(Messages.NonReferencedResourceDialog_url);
 
-				Text label8 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+				final Text label8 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 				label8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				label8.setText("bundleclass://" + bundle + "/" + className); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
-			Label label = new Label(comp, SWT.NONE);
+			final Label label = new Label(comp, SWT.NONE);
 			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.NonReferencedResourceDialog_bundle);
 
-			Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label2 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			if (bundle != null) {
 				label2.setText(bundle);
@@ -170,38 +171,39 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				label2.setText(Messages.NonReferencedResourceDialog_ast_notInABundle_ast);
 			}
 
-			Label label7 = new Label(comp, SWT.NONE);
+			final Label label7 = new Label(comp, SWT.NONE);
 			label7.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label7.setText(Messages.NonReferencedResourceDialog_directory);
 
-			Text label8 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label8 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label8.setText(file.getFullPath().removeFirstSegments(1).removeLastSegments(1).toOSString());
 
-			Label label3 = new Label(comp, SWT.NONE);
+			final Label label3 = new Label(comp, SWT.NONE);
 			label3.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label3.setText(Messages.NonReferencedResourceDialog_resource);
 
-			Text label4 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+			final Text label4 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 			label4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label4.setText(file.getFullPath().lastSegment());
 
 			if (bundle != null) {
-				Label label5 = new Label(comp, SWT.NONE);
+				final Label label5 = new Label(comp, SWT.NONE);
 				label5.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 				label5.setText(Messages.NonReferencedResourceDialog_url);
 
-				Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
+				final Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 				label6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-				label6.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+				label6
+					.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
-		Label lblMessage = new Label(comp, SWT.NONE);
+		final Label lblMessage = new Label(comp, SWT.NONE);
 		lblMessage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 0));
 		lblMessage.setText(message);
 
-		Group group = new Group(comp, SWT.NONE);
+		final Group group = new Group(comp, SWT.NONE);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 0));
 		group.setLayout(new GridLayout(1, false));
 		group.setText(Messages.NonReferencedResourceDialog_Action);
@@ -241,13 +243,13 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 						okAction = new Runnable() {
 							@Override
 							public void run() {
-								IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+								final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 								Manifest manifest;
 								try {
 									manifest = new Manifest(fileManifest.getContents());
 									String value = manifest.getMainAttributes().getValue("Import-Package"); //$NON-NLS-1$
 
-									String packageName = getPackageFromClassName(className);
+									final String packageName = getPackageFromClassName(className);
 									// TODO ensure the packageName is not
 									// already in the manifest (although it
 									// should not be if we are here)
@@ -257,12 +259,12 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 										value += "," + packageName; //$NON-NLS-1$
 									}
 									manifest.getMainAttributes().putValue("Import-Package", value); //$NON-NLS-1$
-									ByteArrayOutputStream bos = new ByteArrayOutputStream();
+									final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 									manifest.write(bos);
-									ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+									final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
 									fileManifest.setContents(bis, true, true, null);
 									result = file;
-								} catch (Exception e) {
+								} catch (final Exception e) {
 									e.printStackTrace();
 								}
 							}
@@ -304,18 +306,24 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 								public void run() {
 									String bundleId;
 									try {
-										ContributionData contributionData = cdf.getContributionData();
-										bundleId = BundleConverter.convertProjectToBundle(contributionData.installLocation, project.getWorkspace());
+										final ContributionData contributionData = cdf.getContributionData();
+										bundleId = BundleConverter.convertProjectToBundle(
+											contributionData.installLocation, project.getWorkspace());
 										if (bundleId != null) {
 
-											ContributionData cdConverted = new ContributionData(bundleId, contributionData.className, contributionData.sourceType, contributionData.iconPath);
+											final ContributionData cdConverted = new ContributionData(bundleId,
+												contributionData.className, contributionData.sourceType,
+												contributionData.iconPath);
 											cdConverted.installLocation = installLocation;
-											cdConverted.resourceRelativePath = Path.fromOSString(contributionData.iconPath).removeFirstSegments(1).toOSString();
+											cdConverted.resourceRelativePath = Path
+												.fromOSString(contributionData.iconPath).removeFirstSegments(1)
+												.toOSString();
 											doRequireBundle(bundleId, installLocation);
 											result = new ContributionDataFile(cdConverted);
 										}
-									} catch (Exception e1) {
-										MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error, e1.getMessage());
+									} catch (final Exception e1) {
+										MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
+											e1.getMessage());
 									}
 								}
 							};
@@ -360,10 +368,11 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 							@Override
 							public void run() {
-								ReferencedProjectPickerDialog dlg = new ReferencedProjectPickerDialog(getShell(), project) {
+								final ReferencedProjectPickerDialog dlg = new ReferencedProjectPickerDialog(getShell(),
+									project) {
 									@Override
 									protected Control createContents(Composite parent) {
-										Control ret = super.createContents(parent);
+										final Control ret = super.createContents(parent);
 										setMessage(Messages.NonReferencedResourceDialog_selectProjectToReceiveCopy);
 										setTitleImage(imageCache.create("/icons/full/wizban/plugin_wiz.gif")); //$NON-NLS-1$
 
@@ -389,12 +398,11 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 	// @Refactor
 	static public String getPackageFromClassName(String className) {
-		int index = className.lastIndexOf('.');
+		final int index = className.lastIndexOf('.');
 		if (index >= 0) {
 			return className.substring(0, index);
-		} else {
-			return ""; //$NON-NLS-1$
 		}
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -408,15 +416,15 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			}
 		});
 
-		Control ret = super.createContents(parent);
+		final Control ret = super.createContents(parent);
 		setMessage(Messages.NonReferencedResourceDialog_resourceNotReferenced);
-		String message = getMessage();
+		final String message = getMessage();
 		setMessage(message);
 		setTitle(Messages.NonReferencedResourceDialog_resourceReferenceWarning);
 		getShell().setText(Messages.NonReferencedResourceDialog_resourceReferenceWarning);
 		try {
 			setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/newefix_wizban.png")); //$NON-NLS-1$
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return ret;
@@ -428,10 +436,11 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 	public void copyResourceToProject(IProject project) {
 		try {
-			ProjectFolderPickerDialog dlg = new ProjectFolderPickerDialog(getShell(), project, file.getFullPath().toOSString()) {
+			final ProjectFolderPickerDialog dlg = new ProjectFolderPickerDialog(getShell(), project, file.getFullPath()
+				.toOSString()) {
 				@Override
 				protected Control createContents(Composite parent) {
-					Control ret = super.createContents(parent);
+					final Control ret = super.createContents(parent);
 					setMessage(Messages.NonReferencedResourceDialog_selectTheFolderResourceCopy);
 					setTitleImage(imageCache.create(Plugin.ID, "/icons/full/wizban/add_to_dir_wiz.png")); //$NON-NLS-1$
 
@@ -449,14 +458,14 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				if (className != null) {
 					newPath.append(className + ".class"); //$NON-NLS-1$
 				} else {
-					String name = file.getFullPath().lastSegment();
+					final String name = file.getFullPath().lastSegment();
 					newPath = newPath.append(name);
 				}
-				IFile fileClone = project.getFile(newPath);
+				final IFile fileClone = project.getFile(newPath);
 				fileClone.create(file.getContents(), false, null);
 				result = fileClone;
 			}
-		} catch (CoreException e1) {
+		} catch (final CoreException e1) {
 			e1.printStackTrace();
 			MessageDialog.openError(getShell(), "Error", e1.getMessage()); //$NON-NLS-1$
 
@@ -471,7 +480,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		try {
 			Manifest manifestSource;
 			if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
-				ZipFile zip = new ZipFile(installLocation);
+				final ZipFile zip = new ZipFile(installLocation);
 				srcStream = zip.getInputStream(zip.getEntry("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 				manifestSource = new Manifest(srcStream);
 				zip.close();
@@ -483,17 +492,17 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			if (version != null) {
 				version = version.replaceFirst("\\.qualifier", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return;
 		} finally {
 			try {
 				srcStream.close();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		}
 
-		IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		Manifest manifest;
 		try {
 			manifest = new Manifest(fileManifest.getContents());
@@ -507,15 +516,15 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				}
 				manifest.getMainAttributes().putValue("Require-Bundle", value); //$NON-NLS-1$
 			}
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			manifest.write(bos);
 			// StringReader reader = new
-			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+			final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
 			fileManifest.setContents(bis, true, true, null);
 			result = file;
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 			e1.printStackTrace();
-		} catch (CoreException e1) {
+		} catch (final CoreException e1) {
 			e1.printStackTrace();
 		}
 	}

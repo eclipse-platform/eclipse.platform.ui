@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.LabelProvider;
  *
  */
 public class FeatureClassLabelProvider extends LabelProvider {
-	private ModelEditor editor;
+	private final ModelEditor editor;
 
 	public FeatureClassLabelProvider(ModelEditor editor) {
 		this.editor = editor;
@@ -31,13 +31,12 @@ public class FeatureClassLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		FeatureClass eFeatureClass = (FeatureClass) element;
-		EClass eclass = eFeatureClass.eClass;
-		AbstractComponentEditor elementEditor = editor.getEditor(eclass);
+		final FeatureClass eFeatureClass = (FeatureClass) element;
+		final EClass eclass = eFeatureClass.eClass;
+		final AbstractComponentEditor elementEditor = editor.getEditor(eclass);
 		if (elementEditor != null) {
 			return elementEditor.getLabel(null);
-		} else {
-			return eclass.getName();
 		}
+		return eclass.getName();
 	}
 }

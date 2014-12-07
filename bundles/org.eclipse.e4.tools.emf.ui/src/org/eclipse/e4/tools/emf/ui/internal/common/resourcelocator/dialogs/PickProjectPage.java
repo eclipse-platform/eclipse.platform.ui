@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -39,20 +38,20 @@ import org.eclipse.swt.widgets.Composite;
  * @author Steven Spungin
  *
  */
-public class PickProjectPage extends WizardPage implements IWizardPage {
+public class PickProjectPage extends WizardPage {
 
 	private TableViewer viewer;
 	private BundleImageCache imageCache;
 	private Image imgProject;
 	private IProject[] projects;
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	protected PickProjectPage(IEclipseContext context) {
 		super(Messages.PickProjectPage_SelectReferencedProject);
 		this.context = context;
 		try {
-			this.projects = context.get(IProject.class).getReferencedProjects();
-		} catch (CoreException e) {
+			projects = context.get(IProject.class).getReferencedProjects();
+		} catch (final CoreException e) {
 			setErrorMessage(e.getMessage());
 			e.printStackTrace();
 		}
@@ -73,7 +72,7 @@ public class PickProjectPage extends WizardPage implements IWizardPage {
 		});
 		imgProject = imageCache.create("/icons/full/obj16/projects.png"); //$NON-NLS-1$
 
-		Composite comp = new Composite(parent, SWT.NONE);
+		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		comp.setLayout(new GridLayout(1, false));
 
@@ -82,7 +81,7 @@ public class PickProjectPage extends WizardPage implements IWizardPage {
 		viewer.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				IProject project = (IProject) element;
+				final IProject project = (IProject) element;
 				return project.getName();
 			}
 
@@ -99,19 +98,19 @@ public class PickProjectPage extends WizardPage implements IWizardPage {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				Object firstElement = ((StructuredSelection) event.getSelection()).getFirstElement();
+				final Object firstElement = ((StructuredSelection) event.getSelection()).getFirstElement();
 				context.set("projectToCopyTo", firstElement); //$NON-NLS-1$
 				setPageComplete(firstElement != null);
 				getContainer().updateButtons();
 			}
 		});
 
-		String message = Messages.ReferencedProjectPickerDialog_selectReferencedProject;
+		final String message = Messages.ReferencedProjectPickerDialog_selectReferencedProject;
 		setMessage(message);
 		getShell().setText(message);
 		setTitle(message);
 
-		Image image = context.get(BundleImageCache.class).create("/icons/full/obj16/projects.png"); //$NON-NLS-1$
+		final Image image = context.get(BundleImageCache.class).create("/icons/full/obj16/projects.png"); //$NON-NLS-1$
 		setImageDescriptor(ImageDescriptor.createFromImage(image));
 
 		setControl(comp);
@@ -119,7 +118,7 @@ public class PickProjectPage extends WizardPage implements IWizardPage {
 
 	@Override
 	public void setVisible(boolean visible) {
-		Object object = context.get("projectToCopyTo"); //$NON-NLS-1$
+		final Object object = context.get("projectToCopyTo"); //$NON-NLS-1$
 		if (visible) {
 			if (object != null) {
 				viewer.setSelection(new StructuredSelection(object));

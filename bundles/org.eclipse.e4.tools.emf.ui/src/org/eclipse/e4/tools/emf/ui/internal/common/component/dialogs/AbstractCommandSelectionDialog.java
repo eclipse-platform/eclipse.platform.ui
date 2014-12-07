@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSettingsDialog {
 	private final IModelResource resource;
 	private TableViewer viewer;

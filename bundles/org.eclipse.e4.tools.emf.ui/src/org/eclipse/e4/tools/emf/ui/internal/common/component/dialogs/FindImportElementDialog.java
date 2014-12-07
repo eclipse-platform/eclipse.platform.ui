@@ -53,7 +53,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-@SuppressWarnings("restriction")
 public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 	private final EObject element;
 	private final AbstractComponentEditor editor;
@@ -112,7 +111,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 				final MApplicationElement appEl = (MApplicationElement) o;
 				final StyledString styledString = new StyledString(
 					editor.getLabel(o)
-					+ " (" + (appEl.getElementId() == null ? "<" + Messages.FindImportElementDialog_noId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						+ " (" + (appEl.getElementId() == null ? "<" + Messages.FindImportElementDialog_noId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				final String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$

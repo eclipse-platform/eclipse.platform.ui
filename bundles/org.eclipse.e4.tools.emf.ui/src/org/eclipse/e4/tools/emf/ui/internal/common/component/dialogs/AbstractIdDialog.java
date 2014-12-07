@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends
-	SaveDialogBoundsSettingsDialog {
+SaveDialogBoundsSettingsDialog {
 
 	protected EModelService modelService;
 
@@ -92,16 +92,16 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 				final ElementClass el = (ElementClass) cell.getElement();
 				final String elementId = el.getElementId() != null && el.getElementId().trim().length() > 0 ? el
 					.getElementId() : "(Id missing)"; //$NON-NLS-1$
-				final StyledString str = new StyledString(elementId);
+					final StyledString str = new StyledString(elementId);
 
-				final String infoString = getListItemInformation(el);
-				if (infoString != null && infoString.trim().length() > 0)
-				{
-					str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-				}
+					final String infoString = getListItemInformation(el);
+					if (infoString != null && infoString.trim().length() > 0)
+					{
+						str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+					}
 
-				cell.setText(str.getString());
-				cell.setStyleRanges(str.getStyleRanges());
+					cell.setText(str.getString());
+					cell.setStyleRanges(str.getStyleRanges());
 			}
 		};
 	}
@@ -123,7 +123,6 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 		idField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final PatternFilter filter = new PatternFilter() {
-			@SuppressWarnings("restriction")
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);

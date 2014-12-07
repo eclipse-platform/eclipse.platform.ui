@@ -7,13 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 391089, Bug 437543, Ongoing Maintenance
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 391089, Bug 437543, Ongoing Maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -96,8 +97,8 @@ public class XmiTab extends Composite {
 		});
 
 		final AnnotationModel model = new AnnotationModel();
-		VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH, new AnnotationAccess(resourcePool));
-		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
+		final VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH, new AnnotationAccess(resourcePool));
+		final int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
 		sourceViewer = new SourceViewer(this, verticalRuler, styles);
 		sourceViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -106,7 +107,8 @@ public class XmiTab extends Composite {
 		sourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 
 		final IDocument document = emfDocumentProvider.getDocument();
-		IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] { XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
+		final IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] {
+			XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
 		sourceViewer.setDocument(document);
@@ -118,13 +120,13 @@ public class XmiTab extends Composite {
 			public void run() {
 				model.removeAllAnnotations();
 
-				for (Diagnostic d : emfDocumentProvider.getErrorList()) {
-					Annotation a = new Annotation("e4xmi.error", false, d.getMessage()); //$NON-NLS-1$
+				for (final Diagnostic d : emfDocumentProvider.getErrorList()) {
+					final Annotation a = new Annotation("e4xmi.error", false, d.getMessage()); //$NON-NLS-1$
 					int l;
 					try {
 						l = document.getLineOffset(d.getLine() - 1);
 						model.addAnnotation(a, new Position(l));
-					} catch (BadLocationException e) {
+					} catch (final BadLocationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -132,7 +134,8 @@ public class XmiTab extends Composite {
 			}
 		});
 
-		String property = System.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
+		final String property = System
+			.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
 			sourceViewer.setEditable(false);
 			sourceViewer.getTextWidget().setEnabled(false);
@@ -156,11 +159,10 @@ public class XmiTab extends Composite {
 			if (region != null) {
 				sourceViewer.setSelection(new TextSelection(region.getOffset(), region.getLength()), true);
 				return region.getOffset() + region.getLength();
-			} else {
-				sourceViewer.setSelection(new TextSelection(0, 0), true);
-				return -1;
 			}
-		} catch (Exception e) {
+			sourceViewer.setSelection(new TextSelection(0, 0), true);
+			return -1;
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return -1;
 		}
@@ -172,7 +174,7 @@ public class XmiTab extends Composite {
 
 	public void gotoEObject(EObject object) {
 		// select the entire start tag
-		IRegion region = emfDocumentProvider.findStartTag(object);
+		final IRegion region = emfDocumentProvider.findStartTag(object);
 		if (region != null) {
 			sourceViewer.setSelection(new TextSelection(region.getOffset(), region.getLength()), true);
 		} else {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 436848
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 436848
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
@@ -28,13 +28,14 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class NonReferencedResourceWizard extends DynamicWizard {
 
-	private NonReferencedActionPage nonReferencedActionPage;
+	private final NonReferencedActionPage nonReferencedActionPage;
 	protected IProject project;
 	IEclipseContext wizContext;
 
 	BundleImageCache imageCache;
 
-	public NonReferencedResourceWizard(Shell parentShell, IProject project, String bundle, IFile file, String installLocation, IEclipseContext context) {
+	public NonReferencedResourceWizard(Shell parentShell, IProject project, String bundle, IFile file,
+		String installLocation, IEclipseContext context) {
 		this.project = project;
 
 		wizContext = context.createChild();
@@ -58,7 +59,7 @@ public class NonReferencedResourceWizard extends DynamicWizard {
 
 	@Override
 	public boolean performFinish() {
-		Runnable action = wizContext.get(Runnable.class);
+		final Runnable action = wizContext.get(Runnable.class);
 		if (action != null) {
 			action.run();
 		}
@@ -73,20 +74,20 @@ public class NonReferencedResourceWizard extends DynamicWizard {
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page instanceof NonReferencedActionPage) {
 			clearDynamicPages();
-			NonReferencedAction action = wizContext.get(NonReferencedAction.class);
+			final NonReferencedAction action = wizContext.get(NonReferencedAction.class);
 			if (action == null) {
 				return null;
 			}
 			switch (action) {
 			case COPY: {
-				PickProjectFolderPage pickProjectFolderPage = new PickProjectFolderPage(wizContext);
+				final PickProjectFolderPage pickProjectFolderPage = new PickProjectFolderPage(wizContext);
 				addPage(pickProjectFolderPage);
 				return pickProjectFolderPage;
 			}
 			case COPY_TO_OTHER:
-				PickProjectPage pickProjectPage = new PickProjectPage(wizContext);
+				final PickProjectPage pickProjectPage = new PickProjectPage(wizContext);
 				addPage(pickProjectPage);
-				PickProjectFolderPage pickProjectFolderPage = new PickProjectFolderPage(wizContext);
+				final PickProjectFolderPage pickProjectFolderPage = new PickProjectFolderPage(wizContext);
 				addPage(pickProjectFolderPage);
 				return pickProjectPage;
 			case USE_ANYWAY:
@@ -103,9 +104,8 @@ public class NonReferencedResourceWizard extends DynamicWizard {
 			default:
 				return null;
 			}
-		} else {
-			return super.getNextPage(page);
 		}
+		return super.getNextPage(page);
 	}
 
 	@Override

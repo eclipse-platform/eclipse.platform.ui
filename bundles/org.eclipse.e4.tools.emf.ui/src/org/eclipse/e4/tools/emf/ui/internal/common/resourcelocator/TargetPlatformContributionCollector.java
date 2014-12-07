@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132, Bug 436283, Bug 436281, Bug 443510
- *     Fabian Miehe - Bug 440327
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730, Bug 435625, Bug 436133, Bug 436132,
+ * Bug 436283, Bug 436281, Bug 443510
+ * Fabian Miehe - Bug 440327
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
@@ -31,10 +32,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
@@ -112,7 +115,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			@Override
 			public void findContribution(Filter filter, ContributionResultHandler handler) {
 
-				Pattern patternName = Pattern.compile(filter.namePattern, Pattern.CASE_INSENSITIVE);
+				final Pattern patternName = Pattern.compile(filter.namePattern, Pattern.CASE_INSENSITIVE);
 
 				reloadCache(false, filter.getProviderStatusCallback());
 
@@ -125,18 +128,18 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 				boolean more = false;
 
 				stopFiltering = false;
-				for (Entry e : cacheEntry) {
+				for (final Entry e : cacheEntry) {
 					if (stopFiltering) {
 						break;
 					}
-					IProgressMonitor monitor = filter.getProgressMonitor();
+					final IProgressMonitor monitor = filter.getProgressMonitor();
 					if (monitor != null) {
 						if (monitor.isCanceled()) {
 							stopFiltering = true;
 							break;
-						} else {
-							monitor.subTask(Messages.TargetPlatformContributionCollector_Searching + " " + e.installLocation); //$NON-NLS-1$
 						}
+						monitor.subTask(Messages.TargetPlatformContributionCollector_Searching
+							+ " " + e.installLocation); //$NON-NLS-1$
 					}
 
 					if (E.notEmpty(filter.getBundles())) {
@@ -151,7 +154,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					}
 					if (E.notEmpty(filter.getLocations())) {
 						boolean locationFound = false;
-						for (String location : filter.getLocations()) {
+						for (final String location : filter.getLocations()) {
 							if (e.installLocation.startsWith(location)) {
 								locationFound = true;
 								break;
@@ -168,12 +171,12 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					}
 					if (filter.getSearchScope().contains(ResourceSearchScope.WORKSPACE)) {
 						if (filter.project != null) {
-							IWorkspace workspace = filter.project.getWorkspace();
+							final IWorkspace workspace = filter.project.getWorkspace();
 							boolean fnd = false;
-							for (IProject project : workspace.getRoot().getProjects()) {
+							for (final IProject project : workspace.getRoot().getProjects()) {
 								// String path =
 								// project.getLocationURI().getPath();
-								String path = project.getName();
+								final String path = project.getName();
 								if (e.installLocation.contains(path)) {
 									fnd = true;
 									break;
@@ -185,16 +188,15 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						}
 					}
 
-					Matcher m = patternName.matcher(e.name);
+					final Matcher m = patternName.matcher(e.name);
 					if (m.find()) {
 						found++;
 						if (found > maxResults) {
 							more = true;
 							handler.moreResults(ContributionResultHandler.MORE_UNKNOWN, filter);
 							break;
-						} else {
-							handler.result(makeData(e));
 						}
+						handler.result(makeData(e));
 					}
 
 				}
@@ -234,8 +236,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		IPath ip = Path.fromOSString(e.path);
 		ip = ip.addTrailingSeparator().makeRelative();
 		ip = ip.append(e.name);
-		String className = ip.toOSString().replace(File.separatorChar, '.');
-		ContributionData data = new ContributionData(e.bundleSymName, className, "Java", e.installLocation); //$NON-NLS-1$
+		final String className = ip.toOSString().replace(File.separatorChar, '.');
+		final ContributionData data = new ContributionData(e.bundleSymName, className, "Java", e.installLocation); //$NON-NLS-1$
 		data.installLocation = e.installLocation;
 		data.resourceRelativePath = e.relativePath;
 		return data;
@@ -292,95 +294,97 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					// load workspace projects
-					IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-					IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-					int total = projects.length + models.length;
-					monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache + cacheName + ")", total); //$NON-NLS-1$
+					final IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
+					final IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
+					final int total = projects.length + models.length;
+					monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache
+						+ cacheName + ")", total); //$NON-NLS-1$
 
 					for (final IProject pj : projects) {
 						if (monitor.isCanceled()) {
 							break;
 						}
-						String rootDirectory = pj.getLocation().toOSString();
+						final String rootDirectory = pj.getLocation().toOSString();
 						monitor.subTask(rootDirectory);
 						monitor.worked(1);
-						TargetPlatformContributionCollector.this.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory, new File(rootDirectory));
+						TargetPlatformContributionCollector.this
+						.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory,
+							new File(rootDirectory));
 					}
 
 					// load target platform bundles
-					for (IPluginModelBase pluginModelBase : models) {
+					for (final IPluginModelBase pluginModelBase : models) {
 						monitor.subTask(pluginModelBase.getPluginBase().getId());
 						monitor.worked(1);
 						if (monitor.isCanceled()) {
 							break;
 						}
 
-						IPluginBase pluginBase = pluginModelBase.getPluginBase();
+						final IPluginBase pluginBase = pluginModelBase.getPluginBase();
 						if (pluginBase == null) {
 							// bundle = getBundle(new File())
 							continue;
 						}
 						URL url;
 						try {
-							String installLocation = pluginModelBase.getInstallLocation();
+							final String installLocation = pluginModelBase.getInstallLocation();
 							if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
 								url = new URL("file://" + installLocation); //$NON-NLS-1$
-								ZipInputStream zis = new ZipInputStream(url.openStream());
+								final ZipInputStream zis = new ZipInputStream(url.openStream());
 								while (true) {
-									ZipEntry entry = zis.getNextEntry();
+									final ZipEntry entry = zis.getNextEntry();
 									if (entry == null) {
 										break;
-									} else {
-										String name2 = entry.getName();
-										if (shouldIgnore(name2)) {
-											continue;
-										}
-										Matcher m = patternFile.matcher(name2);
-										if (m.matches()) {
-											Entry e = new Entry();
-											e.installLocation = installLocation;
-											cacheLocation.add(installLocation);
-											e.name = m.group(2);
-											e.path = m.group(1);
-											if (e.path != null) {
-												e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
-												if (e.pakage.startsWith(".")) { //$NON-NLS-1$
-													e.pakage = e.pakage.substring(1);
-												}
-												if (e.pakage.endsWith(".")) { //$NON-NLS-1$
-													e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
-												}
-											} else {
-												e.pakage = ""; //$NON-NLS-1$
+									}
+									final String name2 = entry.getName();
+									if (shouldIgnore(name2)) {
+										continue;
+									}
+									final Matcher m = patternFile.matcher(name2);
+									if (m.matches()) {
+										final Entry e = new Entry();
+										e.installLocation = installLocation;
+										cacheLocation.add(installLocation);
+										e.name = m.group(2);
+										e.path = m.group(1);
+										if (e.path != null) {
+											e.pakage = e.path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+											if (e.pakage.startsWith(".")) { //$NON-NLS-1$
+												e.pakage = e.pakage.substring(1);
 											}
-											cachePackage.add(e.pakage);
-
-											e.bundleSymName = pluginBase.getId();
-											if (e.path == null) {
-												e.path = ""; //$NON-NLS-1$
+											if (e.pakage.endsWith(".")) { //$NON-NLS-1$
+												e.pakage = e.pakage.substring(0, e.pakage.length() - 1);
 											}
-											cacheEntry.add(e);
-											cacheBundleId.add(pluginBase.getId());
-
-											//
-											// System.out.println(group
-											// + " -> "
-											// +
-											// m.group(2));
+										} else {
+											e.pakage = ""; //$NON-NLS-1$
 										}
+										cachePackage.add(e.pakage);
+
+										e.bundleSymName = pluginBase.getId();
+										if (e.path == null) {
+											e.path = ""; //$NON-NLS-1$
+										}
+										cacheEntry.add(e);
+										cacheBundleId.add(pluginBase.getId());
+
+										//
+										// System.out.println(group
+										// + " -> "
+										// +
+										// m.group(2));
 									}
 								}
 							} else {
 								// not a jar file
-								String bundle = getBundle(new File(installLocation));
+								final String bundle = getBundle(new File(installLocation));
 								if (bundle != null) {
 									visit(monitor, bundle, installLocation, new File(installLocation));
 								}
 							}
-						} catch (MalformedURLException e) {
+						} catch (final MalformedURLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						} catch (IOException e) {
+						} catch (final IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
@@ -391,12 +395,11 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 							providerStatusCallback.onStatusChanged(ProviderStatus.CANCELLED);
 						}
 						return Status.CANCEL_STATUS;
-					} else {
-						if (providerStatusCallback != null) {
-							providerStatusCallback.onStatusChanged(ProviderStatus.READY);
-						}
-						return Status.OK_STATUS;
 					}
+					if (providerStatusCallback != null) {
+						providerStatusCallback.onStatusChanged(ProviderStatus.READY);
+					}
+					return Status.OK_STATUS;
 				}
 			};
 			job.schedule();
@@ -409,13 +412,13 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 				@Override
 				public void run() {
-					ProgressMonitorDialog dlg = new ProgressMonitorDialog(Display.getDefault().getActiveShell()) {
+					final ProgressMonitorDialog dlg = new ProgressMonitorDialog(Display.getDefault().getActiveShell()) {
 
 						@Override
 						protected Control createContents(Composite parent) {
 							// TODO odd this is not a bean.
-							Composite ret = (Composite) super.createContents(parent);
-							Label label = new Label(ret, SWT.NONE);
+							final Composite ret = (Composite) super.createContents(parent);
+							final Label label = new Label(ret, SWT.NONE);
 							label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1));
 							label.setText(Messages.TargetPlatformContributionCollector_pleaseWait);
 
@@ -424,7 +427,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 
 						@Override
 						protected void createButtonsForButtonBar(Composite parent) {
-							Button button = createButton(parent, 101, Messages.TargetPlatformContributionCollector_RunInBackground, false);
+							final Button button = createButton(parent, 101,
+								Messages.TargetPlatformContributionCollector_RunInBackground, false);
 							// TODO JA
 							button.addSelectionListener(new SelectionAdapter() {
 								@Override
@@ -449,18 +453,22 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						dlg.run(true, true, new IRunnableWithProgress() {
 
 							@Override
-							public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								monitor.beginTask(Messages.TargetPlatformContributionCollector_WaitingForTargetPlatformIndexingToComplete, IProgressMonitor.UNKNOWN);
+							public void run(final IProgressMonitor monitor) throws InvocationTargetException,
+							InterruptedException {
+								monitor
+								.beginTask(
+									Messages.TargetPlatformContributionCollector_WaitingForTargetPlatformIndexingToComplete,
+									IProgressMonitor.UNKNOWN);
 								while (job.getState() == Job.RUNNING && !runInBackground) {
 									Thread.sleep(100);
 								}
 								monitor.done();
 							}
 						});
-					} catch (InvocationTargetException e1) {
+					} catch (final InvocationTargetException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					} catch (InterruptedException e1) {
+					} catch (final InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -476,17 +484,17 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			return null;
 		}
 
-		File f = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		final File f = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (f.exists() && f.isFile()) {
 			BufferedReader r = null;
 			try {
-				InputStream s = new FileInputStream(f);
+				final InputStream s = new FileInputStream(f);
 				r = new BufferedReader(new InputStreamReader(s));
 				String line;
 				while ((line = r.readLine()) != null) {
 					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
-						int start = line.indexOf(':');
+						final int start = line.indexOf(':');
 						int end = line.indexOf(';');
 						if (end == -1) {
 							end = line.length();
@@ -494,13 +502,13 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						return line.substring(start + 1, end).trim();
 					}
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			} finally {
 				if (r != null) {
 					try {
 						r.close();
-					} catch (IOException e) {
+					} catch (final IOException e) {
 					}
 				}
 			}
@@ -509,7 +517,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	}
 
 	protected void visit(IProgressMonitor monitor, String bundleName, String installLocation, File file) {
-		for (File fChild : file.listFiles()) {
+		for (final File fChild : file.listFiles()) {
 			if (monitor.isCanceled()) {
 				break;
 			}
@@ -521,9 +529,9 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 				if (shouldIgnore(name2)) {
 					continue;
 				}
-				Matcher m = patternFile.matcher(name2);
+				final Matcher m = patternFile.matcher(name2);
 				if (m.matches()) {
-					Entry e = new Entry();
+					final Entry e = new Entry();
 					e.installLocation = installLocation;
 					cacheLocation.add(installLocation);
 					e.name = m.group(2);
@@ -545,7 +553,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					if (e.path == null) {
 						e.path = ""; //$NON-NLS-1$
 					}
-					e.relativePath = Path.fromOSString(file.getAbsolutePath().replace(e.installLocation, "")).makeRelative().toOSString(); //$NON-NLS-1$
+					e.relativePath = Path
+						.fromOSString(file.getAbsolutePath().replace(e.installLocation, "")).makeRelative().toOSString(); //$NON-NLS-1$
 
 					e.bundleSymName = bundleName;
 					// TODO we need project to strip source paths.
@@ -565,7 +574,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		if (installLocation.matches(".*\\.jar")) { //$NON-NLS-1$
 			return path;
 		}
-		for (String sourceDirectory : getOutputDirectories(installLocation)) {
+		for (final String sourceDirectory : getOutputDirectories(installLocation)) {
 			if (path.startsWith(sourceDirectory)) {
 				path = path.substring(sourceDirectory.length());
 				break;
@@ -589,14 +598,16 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			ret = new ArrayList<String>();
 			outputDirectories.put(installLocation, ret);
 			try {
-				Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(installLocation + File.separator + ".classpath")); //$NON-NLS-1$
-				XPath xp = XPathFactory.newInstance().newXPath();
-				NodeList list = (NodeList) xp.evaluate("//classpathentry[@kind='output']/@path", doc, XPathConstants.NODESET); //$NON-NLS-1$
+				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new File(installLocation + File.separator + ".classpath")); //$NON-NLS-1$
+				final XPath xp = XPathFactory.newInstance().newXPath();
+				final NodeList list = (NodeList) xp.evaluate(
+					"//classpathentry[@kind='output']/@path", doc, XPathConstants.NODESET); //$NON-NLS-1$
 				for (int i = 0; i < list.getLength(); i++) {
-					String value = list.item(i).getNodeValue();
+					final String value = list.item(i).getNodeValue();
 					ret.add(value);
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		}
 		return ret;

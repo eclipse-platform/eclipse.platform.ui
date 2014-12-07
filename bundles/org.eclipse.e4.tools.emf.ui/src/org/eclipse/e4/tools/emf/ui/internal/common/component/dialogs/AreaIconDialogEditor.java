@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
-@SuppressWarnings("restriction")
 public class AreaIconDialogEditor extends AbstractIconDialog {
 
 	public AreaIconDialogEditor(Shell parentShell, IEclipseContext context, IProject project,

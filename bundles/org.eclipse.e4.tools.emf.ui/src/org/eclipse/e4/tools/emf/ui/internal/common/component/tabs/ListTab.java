@@ -857,9 +857,8 @@ public class ListTab implements IViewEObjects {
 			Color ret;
 			if (isHighlighted(element)) {
 				return ret = tvResults.getTable().getDisplay().getSystemColor(SWT.COLOR_YELLOW);
-			} else {
-				ret = super.getBackground(element);
 			}
+			ret = super.getBackground(element);
 			return ret;
 		}
 	}
@@ -937,22 +936,19 @@ public class ListTab implements IViewEObjects {
 						case EXCLUDE:
 							if (E.isEmpty(EmfUtil.getAttributeValue((EObject) element, filterByAttrName))) {
 								return false;
-							} else {
-								return filtered.contains(element);
 							}
+							return filtered.contains(element);
 						case ONLY:
 							if (E.notEmpty(EmfUtil.getAttributeValue((EObject) element, filterByAttrName))) {
 								return false;
-							} else {
-								return true;
 							}
+							return true;
 						default:
 						case INCLUDE:
 							if (E.isEmpty(EmfUtil.getAttributeValue((EObject) element, filterByAttrName))) {
 								return true;
-							} else {
-								return filtered.contains(element);
 							}
+							return filtered.contains(element);
 						}
 					}
 				};

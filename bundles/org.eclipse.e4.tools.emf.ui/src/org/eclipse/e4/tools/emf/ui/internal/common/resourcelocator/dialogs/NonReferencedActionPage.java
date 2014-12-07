@@ -197,7 +197,7 @@ public class NonReferencedActionPage extends WizardPage {
 				final Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 				label6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				label6
-					.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+				.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -495,9 +495,8 @@ public class NonReferencedActionPage extends WizardPage {
 		final int index = className.lastIndexOf('.');
 		if (index >= 0) {
 			return className.substring(0, index);
-		} else {
-			return ""; //$NON-NLS-1$
 		}
+		return ""; //$NON-NLS-1$
 	}
 
 }

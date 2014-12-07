@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
 import java.util.ArrayList;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -41,11 +42,11 @@ public class DynamicWizard extends Wizard {
 	@Override
 	public boolean canFinish() {
 
-		IWizardPage cur = getContainer().getCurrentPage();
-		IWizardPage nextPage = getNextPage(cur);
+		final IWizardPage cur = getContainer().getCurrentPage();
+		final IWizardPage nextPage = getNextPage(cur);
 
 		// We need to call get next page first, as that may add or remove pages
-		for (IWizardPage page : pages) {
+		for (final IWizardPage page : pages) {
 			if (page.isPageComplete() == false) {
 				return false;
 			}
@@ -74,9 +75,9 @@ public class DynamicWizard extends Wizard {
 	private void updateMessage() {
 		if (E.notEmpty(message) && pages.size() > 0) {
 			// TODO file bug: IWizardPage is missing the setMessage method!
-			IWizardPage page = pages.get(0);
+			final IWizardPage page = pages.get(0);
 			if (page instanceof WizardPage) {
-				WizardPage wizPage = (WizardPage) page;
+				final WizardPage wizPage = (WizardPage) page;
 				wizPage.setMessage(message);
 			}
 		}
@@ -84,23 +85,21 @@ public class DynamicWizard extends Wizard {
 
 	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
-		IWizardPage cur = getContainer().getCurrentPage();
-		int index = pages.indexOf(cur);
+		final IWizardPage cur = getContainer().getCurrentPage();
+		final int index = pages.indexOf(cur);
 		if (index > 0) {
 			return pages.get(index - 1);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		int index = pages.indexOf(page);
+		final int index = pages.indexOf(page);
 		if (index < pages.size() - 1) {
 			return pages.get(index + 1);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public void clearDynamicPages() {

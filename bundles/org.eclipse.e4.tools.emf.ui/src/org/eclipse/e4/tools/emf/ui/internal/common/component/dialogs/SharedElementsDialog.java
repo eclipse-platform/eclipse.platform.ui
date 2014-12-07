@@ -6,14 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -60,12 +61,13 @@ import org.eclipse.swt.widgets.Text;
 
 public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 	private TableViewer viewer;
-	private MPlaceholder placeholder;
-	private IModelResource resource;
-	private ModelEditor editor;
-	private Messages Messages;
+	private final MPlaceholder placeholder;
+	private final IModelResource resource;
+	private final ModelEditor editor;
+	private final Messages Messages;
 
-	public SharedElementsDialog(Shell parentShell, ModelEditor editor, MPlaceholder placeholder, IModelResource resource, Messages Messages) {
+	public SharedElementsDialog(Shell parentShell, ModelEditor editor, MPlaceholder placeholder,
+		IModelResource resource, Messages Messages) {
 		super(parentShell);
 		this.editor = editor;
 		this.placeholder = placeholder;
@@ -75,20 +77,20 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite comp = (Composite) super.createDialogArea(parent);
+		final Composite comp = (Composite) super.createDialogArea(parent);
 
 		getShell().setText(Messages.SharedElementsDialog_ShellTitle);
 		setTitle(Messages.SharedElementsDialog_Title);
 		setMessage(Messages.SharedElementsDialog_Message);
 
-		Composite container = new Composite(comp, SWT.NONE);
+		final Composite container = new Composite(comp, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.SharedElementsDialog_Name);
 
-		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		l = new Label(container, SWT.NONE);
@@ -107,14 +109,14 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 		});
 
 		if (resource.getRoot().get(0) instanceof MApplication) {
-			List<MUIElement> list = new ArrayList<MUIElement>();
-			for (MWindow m : ((MApplication) resource.getRoot().get(0)).getChildren()) {
+			final List<MUIElement> list = new ArrayList<MUIElement>();
+			for (final MWindow m : ((MApplication) resource.getRoot().get(0)).getChildren()) {
 				list.addAll(filter(m.getSharedElements()));
 			}
 			viewer.setInput(list);
 		} else if (resource.getRoot().get(0) instanceof MModelFragments) {
-			List<MApplicationElement> list = new ArrayList<MApplicationElement>();
-			for (MModelFragment f : ((MModelFragments) resource.getRoot().get(0)).getFragments()) {
+			final List<MApplicationElement> list = new ArrayList<MApplicationElement>();
+			for (final MModelFragment f : ((MModelFragments) resource.getRoot().get(0)).getFragments()) {
 				if (f instanceof MStringModelFragment) {
 					if (((MStringModelFragment) f).getFeaturename().equals("sharedElements")) { //$NON-NLS-1$
 						list.addAll(filter(f.getElements()));
@@ -123,7 +125,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 			}
 
 			// NEW IMPLEMENTATION:
-			for (MApplicationElement f : ((MModelFragments) resource.getRoot().get(0)).getImports()) {
+			for (final MApplicationElement f : ((MModelFragments) resource.getRoot().get(0)).getImports()) {
 				// let filter() do its job
 				list.addAll(filter(Collections.singletonList(f)));
 			}
@@ -146,8 +148,9 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 	@Override
 	protected void okPressed() {
 		if (!viewer.getSelection().isEmpty()) {
-			IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-			Command cmd = SetCommand.create(resource.getEditingDomain(), placeholder, AdvancedPackageImpl.Literals.PLACEHOLDER__REF, s.getFirstElement());
+			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final Command cmd = SetCommand.create(resource.getEditingDomain(), placeholder,
+				AdvancedPackageImpl.Literals.PLACEHOLDER__REF, s.getFirstElement());
 			if (cmd.canExecute()) {
 				resource.getEditingDomain().getCommandStack().execute(cmd);
 				super.okPressed();
@@ -156,8 +159,8 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 	}
 
 	private static <T> List<T> filter(List<T> o) {
-		List<T> rv = new ArrayList<T>();
-		for (T i : o) {
+		final List<T> rv = new ArrayList<T>();
+		for (final T i : o) {
 			if (i instanceof MPart || i instanceof MPartSashContainer || i instanceof MArea || i instanceof MPartStack) {
 				rv.add(i);
 			}
@@ -168,15 +171,15 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 	private class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 		@Override
 		public void update(final ViewerCell cell) {
-			EObject o = (EObject) cell.getElement();
+			final EObject o = (EObject) cell.getElement();
 
-			StyledString string = new StyledString(getTypename(o));
+			final StyledString string = new StyledString(getTypename(o));
 
 			if (o instanceof MUILabel) {
 				string.append(" - " + ((MUILabel) o).getLabel(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
 
-			MApplicationElement el = (MApplicationElement) o;
+			final MApplicationElement el = (MApplicationElement) o;
 			string.append(" - " + el.getElementId(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 
 			cell.setText(string.getString());
@@ -186,29 +189,28 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 
 		@Override
 		public String getText(Object element) {
-			EObject o = (EObject) element;
-			MApplicationElement el = (MApplicationElement) o;
+			final EObject o = (EObject) element;
+			final MApplicationElement el = (MApplicationElement) o;
 
 			if (el instanceof MUILabel) {
-				MUILabel label = (MUILabel) el;
+				final MUILabel label = (MUILabel) el;
 				return getTypename(o) + " - " + el.getElementId() + " - " + label.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				return getTypename(o) + " - " + el.getElementId() + " - "; //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			return getTypename(o) + " - " + el.getElementId() + " - "; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		private String getTypename(EObject o) {
-			AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor((o).eClass());
+			final AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(o.eClass());
 			if (editor != null) {
 				return editor.getLabel(o);
-			} else {
-				return o.eClass().getName();
 			}
+			return o.eClass().getName();
 		}
 
 		@Override
 		public Image getImage(Object element) {
-			AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject) element).eClass());
+			final AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject) element)
+				.eClass());
 			if (editor != null) {
 				return editor.getImage(element, getShell().getDisplay());
 			}

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, ongoing maintenance
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, ongoing maintenance
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -40,8 +41,9 @@ public class TableViewerUtil {
 
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			TableViewer tableViewer = (TableViewer) viewer;
-			ColumnLabelProvider labelProvider = (ColumnLabelProvider) tableViewer.getLabelProvider(Arrays.asList(tableViewer.getTable().getColumns()).indexOf(col));
+			final TableViewer tableViewer = (TableViewer) viewer;
+			final ColumnLabelProvider labelProvider = (ColumnLabelProvider) tableViewer.getLabelProvider(Arrays.asList(
+				tableViewer.getTable().getColumns()).indexOf(col));
 			return labelProvider.getText(e1).compareTo(labelProvider.getText(e2));
 		}
 	}
@@ -60,7 +62,7 @@ public class TableViewerUtil {
 
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				return (-1) * AbstractInvertableTableSorter.this.compare(viewer, e1, e2);
+				return -1 * AbstractInvertableTableSorter.this.compare(viewer, e1, e2);
 			}
 
 			@Override
@@ -110,12 +112,13 @@ public class TableViewerUtil {
 		 *            column is reselected. If false, the listener will use the
 		 *            default sorting direction
 		 */
-		public TableSortSelectionListener(TableViewer viewer, TableColumn column, AbstractInvertableTableSorter sorter, int defaultDirection, boolean keepDirection) {
+		public TableSortSelectionListener(TableViewer viewer, TableColumn column, AbstractInvertableTableSorter sorter,
+			int defaultDirection, boolean keepDirection) {
 			this.viewer = viewer;
 			this.column = column;
 			this.keepDirection = keepDirection;
-			this.sorter = (defaultDirection == SWT.UP) ? sorter : sorter.getInverseSorter();
-			this.currentSorter = this.sorter;
+			this.sorter = defaultDirection == SWT.UP ? sorter : sorter.getInverseSorter();
+			currentSorter = this.sorter;
 
 			this.column.addSelectionListener(this);
 		}
@@ -165,11 +168,11 @@ public class TableViewerUtil {
 
 	public static boolean isColumnClicked(TableViewer viewer, MouseEvent e, TableViewerColumn tvColumn) {
 		boolean ret;
-		ViewerCell cell = viewer.getCell(new Point(e.x, e.y));
+		final ViewerCell cell = viewer.getCell(new Point(e.x, e.y));
 		if (cell == null) {
 			ret = false;
 		} else {
-			int index = Arrays.asList(viewer.getTable().getColumns()).indexOf(tvColumn.getColumn());
+			final int index = Arrays.asList(viewer.getTable().getColumns()).indexOf(tvColumn.getColumn());
 			if (index == -1) {
 				ret = false;
 			} else {
@@ -180,22 +183,21 @@ public class TableViewerUtil {
 	}
 
 	public static Object getData(TableViewer viewer, MouseEvent e) {
-		ViewerCell cell = viewer.getCell(new Point(e.x, e.y));
+		final ViewerCell cell = viewer.getCell(new Point(e.x, e.y));
 		if (cell == null) {
 			return null;
-		} else {
-			return cell.getElement();
 		}
+		return cell.getElement();
 	}
 
 	public static void packAllColumns(TableViewer viewer) {
-		for (TableColumn col : viewer.getTable().getColumns()) {
+		for (final TableColumn col : viewer.getTable().getColumns()) {
 			col.pack();
 		}
 	}
 
 	static public void resetColumnOrder(TableViewer tvResults) {
-		int[] order = tvResults.getTable().getColumnOrder();
+		final int[] order = tvResults.getTable().getColumnOrder();
 		for (int i = 0; i < order.length; i++) {
 			order[i] = i;
 		}
@@ -216,11 +218,10 @@ public class TableViewerUtil {
 	}
 
 	static public int getVisibleColumnIndex(TableViewer tvResults2, TableColumn col) {
-		int createOrder = Arrays.asList(tvResults2.getTable().getColumns()).indexOf(col);
+		final int createOrder = Arrays.asList(tvResults2.getTable().getColumns()).indexOf(col);
 		if (createOrder == -1) {
 			return -1;
-		} else {
-			return tvResults2.getTable().getColumnOrder()[createOrder];
 		}
+		return tvResults2.getTable().getColumnOrder()[createOrder];
 	}
 }

@@ -1482,9 +1482,8 @@ public class ModelEditor implements IGotoObject {
 					return editor;
 				}
 			}
-			if (editor == null) {
-				editor = ContextInjectionFactory.make(DefaultEditor.class, context);
-			}
+
+			editor = ContextInjectionFactory.make(DefaultEditor.class, context);
 		}
 		return editor;
 	}
@@ -1774,7 +1773,7 @@ public class ModelEditor implements IGotoObject {
 				final TreeItem item = (TreeItem) getCurrentEvent().item;
 				if (item != null) {
 					final TreeItem parentItem = item.getParentItem();
-					if (item != null) {
+					if (parentItem != null) {
 						if (parentItem.getData() instanceof VirtualEntry<?>) {
 							final VirtualEntry<?> vE = (VirtualEntry<?>) parentItem.getData();
 							parent = (EObject) vE.getOriginalParent();

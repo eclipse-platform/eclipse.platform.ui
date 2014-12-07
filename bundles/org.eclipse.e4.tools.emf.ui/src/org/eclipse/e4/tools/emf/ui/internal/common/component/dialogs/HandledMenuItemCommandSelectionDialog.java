@@ -20,7 +20,6 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Shell;
 
-@SuppressWarnings("restriction")
 public class HandledMenuItemCommandSelectionDialog extends AbstractCommandSelectionDialog {
 	private final MHandledItem handler;
 

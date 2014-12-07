@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 	private TreeViewer viewer;
 	private final MStringModelFragment fragment;

@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-@SuppressWarnings("restriction")
 public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialog {
 	private final IModelResource resource;
 	private TableViewer viewer;

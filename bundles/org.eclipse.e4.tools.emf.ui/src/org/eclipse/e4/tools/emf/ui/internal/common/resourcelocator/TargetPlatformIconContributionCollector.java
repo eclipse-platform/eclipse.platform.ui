@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
+ * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 424730
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
 
 import java.util.regex.Pattern;
+
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 
 /**
@@ -32,7 +33,8 @@ public class TargetPlatformIconContributionCollector extends TargetPlatformContr
 
 	static public TargetPlatformIconContributionCollector getInstance() {
 		if (instance == null) {
-			instance = new TargetPlatformIconContributionCollector(Messages.TargetPlatformIconContributionCollector_images);
+			instance = new TargetPlatformIconContributionCollector(
+				Messages.TargetPlatformIconContributionCollector_images);
 		}
 		return instance;
 	}
@@ -40,11 +42,11 @@ public class TargetPlatformIconContributionCollector extends TargetPlatformContr
 	@Override
 	protected Pattern getFilePattern() {
 		return pattern;
-	};
+	}
 
 	@Override
 	protected ContributionData makeData(Entry e) {
-		ContributionData data = new ContributionData(e.bundleSymName, null, "Java", e.path + e.name); //$NON-NLS-1$
+		final ContributionData data = new ContributionData(e.bundleSymName, null, "Java", e.path + e.name); //$NON-NLS-1$
 		data.installLocation = e.installLocation;
 		data.resourceRelativePath = data.iconPath;
 		return data;

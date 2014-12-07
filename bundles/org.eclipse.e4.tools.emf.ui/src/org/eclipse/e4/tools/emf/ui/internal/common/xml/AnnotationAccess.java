@@ -10,7 +10,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 public class AnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension {
-	private IResourcePool pool;
+	private final IResourcePool pool;
 
 	public AnnotationAccess(IResourcePool pool) {
 		this.pool = pool;
@@ -49,18 +49,21 @@ public class AnnotationAccess implements IAnnotationAccess, IAnnotationAccessExt
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public Object getType(Annotation annotation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public boolean isMultiLine(Annotation annotation) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean isTemporary(Annotation annotation) {
 		// TODO Auto-generated method stub
