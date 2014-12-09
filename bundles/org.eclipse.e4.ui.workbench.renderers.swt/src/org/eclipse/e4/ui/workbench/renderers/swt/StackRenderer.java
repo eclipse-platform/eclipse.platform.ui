@@ -1254,7 +1254,10 @@ public class StackRenderer extends LazyStackRenderer {
 		// Ensure that the newly selected control is correctly sized
 		if (cti.getControl() instanceof Composite) {
 			Composite ctiComp = (Composite) cti.getControl();
-			ctiComp.layout(true, true);
+			// Do not call layout(true, true) because it forces all
+			// subcomponents to relayout as well
+			// ctiComp.layout(true, true);
+			ctiComp.setBounds(ctf.getClientArea());
 		}
 		ctf.setSelection(cti);
 		ignoreTabSelChanges = false;
