@@ -7,15 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866,
- *         Bug403081, Bug 403083
+ *     Marco Descher <marco@descher.at> - Bug 389063,398865,398866,403081,403083
+ *     Bruce Skingle <Bruce.Skingle@immutify.com> - Bug 442570
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -163,19 +162,6 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 					continue;
 				}
 
-				// remove existing entries for this dynamic contribution item if
-				// there are any
-				Map<String, Object> storageMap = currentMenuElement
-						.getTransientData();
-				@SuppressWarnings("unchecked")
-				ArrayList<MMenuElement> dump = (ArrayList<MMenuElement>) storageMap
-						.get(DYNAMIC_ELEMENT_STORAGE_KEY);
-				if (dump != null && dump.size() > 0)
-					renderer.removeDynamicMenuContributions(menuManager,
-							menuModel, dump);
-
-				storageMap.remove(DYNAMIC_ELEMENT_STORAGE_KEY);
-
 				if (mel.size() > 0) {
 
 					int position = 0;
@@ -201,7 +187,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 						menuModel.getChildren().add(position++, menuElement);
 						renderer.modelProcessSwitch(menuManager, menuElement);
 					}
-					storageMap.put(DYNAMIC_ELEMENT_STORAGE_KEY, mel);
+					currentMenuElement.getTransientData().put(DYNAMIC_ELEMENT_STORAGE_KEY, mel);
 				}
 			}
 		}
