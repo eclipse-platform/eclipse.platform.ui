@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Teddy Walker <teddy.walker@googlemail.com>
  *     		- Fix for Bug 151204 [Progress] Blocked status of jobs are not applied/reported
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
+ *     Terry Parker - Bug 454633, Report the cumulative error status of job groups in the ProgressManager
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -461,12 +462,25 @@ public class ProgressManager extends ProgressProvider implements
 				final JobInfo info = getJobInfo(event.getJob());
 				removeJobInfo(info);
 
-				if (event.getResult() != null
-						&& event.getResult().getSeverity() == IStatus.ERROR) {
-					StatusAdapter statusAdapter = new StatusAdapter(event
-							.getResult());
+				/*
+				 * Only report severe errors to the StatusManager if the error
+				 * is not part of a job group, or if the job is the last job in
+				 * a job group. For job groups, the JobManager accumulates the
+				 * status of jobs belonging to the group, suppresses the status
+				 * reporting of the individual jobs and reports a single
+				 * MultiStatus for the group, so mirror that behavior here.
+				 */
+				StatusAdapter statusAdapter = null;
+				if (event.getJobGroupResult() != null
+						&& event.getJobGroupResult().getSeverity() == IStatus.ERROR) {
+					statusAdapter = new StatusAdapter(event.getJobGroupResult());
+				} else if (event.getResult() != null
+						&& event.getResult().getSeverity() == IStatus.ERROR
+						&& (event.getJob() == null || event.getJob().getJobGroup() == null)) {
+					statusAdapter = new StatusAdapter(event.getResult());
 					statusAdapter.addAdapter(Job.class, event.getJob());
-
+				}
+				if (statusAdapter != null) {
 					if (event
 							.getJob()
 							.getProperty(
