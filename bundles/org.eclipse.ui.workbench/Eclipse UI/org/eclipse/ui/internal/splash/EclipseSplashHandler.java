@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430848
  *******************************************************************************/
 package org.eclipse.ui.internal.splash;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -28,13 +30,16 @@ import org.eclipse.ui.splash.BasicSplashHandler;
  */
 public class EclipseSplashHandler extends BasicSplashHandler {
 
+	// CSS id can be used to style the label for the build ID
+	private static final String CSS_ID_SPLASH_BUILD_ID = "org-eclipse-ui-buildid-text"; //$NON-NLS-1$
+
 	/**
 	 * Initializes the splash screen.
 	 * <p>
 	 * <strong>WARNING:</strong> Do not change the default values as existing
 	 * products might rely on them.
 	 * </p>
-	 * 
+	 *
 	 * @param splash
 	 *            the shell that contains the splash screen
 	 */
@@ -96,7 +101,7 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			idLabel.setForeground(getForeground());
 			idLabel.setBounds(buildIdRectangle);
 			idLabel.setText(buildId);
-			
+			idLabel.setData(CSSSWTConstants.CSS_ID_KEY, CSS_ID_SPLASH_BUILD_ID);
 		}
 		else {
 			getContent(); // ensure creation of the progress

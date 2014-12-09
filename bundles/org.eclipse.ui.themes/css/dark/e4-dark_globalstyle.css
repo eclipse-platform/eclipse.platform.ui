@@ -418,6 +418,10 @@ Label#org-eclipse-ui-splash-progressText {
 	color: #9c9696; /* see property startupForegroundColor in the product */
 }
 
+Label#org-eclipse-ui-buildid-text {
+	background-color: inherit; /* transparent */
+}
+
 ProgressIndicator#org-eclipse-ui-splash-progressIndicator {
 	background-color: #e1e1e1;
 }
