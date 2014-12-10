@@ -12,6 +12,7 @@
  *     Mike Moreaty - Fix for bug 289790
  *     Oracle Corporation - Fix for bug 316839
  *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
+ *     Jan Koehnlein - Fix for bug 60964 (454698)
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -839,6 +840,11 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 						return true;
 				}
 				previous = previous.previous();
+			}
+			for (Iterator i = waitingThreadJobs.iterator(); i.hasNext();) {
+				ThreadJob waitingJob = (ThreadJob) i.next();
+				if (runningJob.isConflicting(waitingJob) && waitingJob.shouldInterrupt())
+					return true;
 			}
 			// none found
 			return false;

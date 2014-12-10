@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     Stephan Wahlbrink  - Test fix for bug 200997.
  *     Dmitry Karasik - Test cases for bug 255384
+ *     Jan Koehnlein - Test case for bug 60964 (454698)
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
@@ -765,6 +766,32 @@ public class JobTest extends AbstractJobTest {
 		//clean up
 		cancel(jobs);
 		waitForState(jobs, Job.NONE);
+	}
+
+	// @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=60964
+	public void testIsBlocking2() throws InterruptedException {
+		final IJobManager manager = Job.getJobManager();
+		final ISchedulingRule rule = new IdentityRule();
+		Thread thread = new Thread("testIsBlocking2") {
+			@Override
+			public void run() {
+				try {
+					manager.beginRule(rule, null);
+				} finally {
+					manager.endRule(rule);
+				}
+			}
+		};
+		try {
+			manager.beginRule(rule, null);
+			thread.start();
+			while (thread.getState() != Thread.State.WAITING)
+				Thread.sleep(50);
+			assertTrue(manager.currentJob().isBlocking());
+		} finally {
+			manager.endRule(rule);
+			thread.join();
+		}
 	}
 
 	public void testIsSystem() {
