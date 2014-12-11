@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,9 +99,12 @@ public class DataTransferMessages extends NLS {
 	public static String WizardProjectsImportPage_SearchForNestedProjects;
 	public static String WizardProjectsImportPage_CopyProjectsIntoWorkspace;
 	public static String WizardProjectsImportPage_projectsInWorkspace;
+	public static String WizardProjectsImportPage_projectsInvalid;
+	public static String WizardProjectsImportPage_projectsInWorkspaceAndInvalid;
 	public static String WizardProjectsImportPage_noProjectsToImport;
 	public static String WizardProjectsImportPage_projectLabel;
 	public static String WizardProjectsImportPage_hideExistingProjects;
+	public static String WizardProjectsImportPage_invalidProjectName;
 
 	// --- Export Wizards ---
 	public static String DataTransfer_export;

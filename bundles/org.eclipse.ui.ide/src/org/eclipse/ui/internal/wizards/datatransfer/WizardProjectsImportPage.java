@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@
  *     		- Bug 144610 [Import/Export] Import existing projects does not search subdirectories of found projects
  *     Christian Georgi (christian.georgi@sap.com) 
  *     		- Bug 400399 [Import/Export] Project import wizard does not remember selected folder or archive
+ *     Bob Meincke (bob.meincke@gmx.de)
+ *      	- Bug 394900 - [Import/Export] Import existing projects broken by mal-formed .project file
  *******************************************************************************/
 
 package org.eclipse.ui.internal.wizards.datatransfer;
@@ -134,7 +136,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		@Override
 		public Color getForeground(Object element) {
 			ProjectRecord projectRecord = (ProjectRecord) element;
-			if(projectRecord.hasConflicts) {
+			if (projectRecord.hasConflicts || projectRecord.isInvalid) {
 				return getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 			}
 			return null;
@@ -157,6 +159,8 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		int level;
 		
 		boolean hasConflicts;
+
+		boolean isInvalid = false;
 
 		IProjectDescription description;
 
@@ -231,9 +235,13 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 				}
 			} catch (CoreException e) {
-				// no good couldn't get the name
+				// project definition file could not be parsed
+				this.projectName = DataTransferMessages.WizardProjectsImportPage_invalidProjectName;
+				this.isInvalid = true;
+
 			} catch (IOException e) {
-				// no good couldn't get the name
+				this.projectName = DataTransferMessages.WizardProjectsImportPage_invalidProjectName;
+				this.isInvalid = true;
 			}
 		}
 
@@ -265,6 +273,15 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		}
 
 		/**
+		 * Returns whether the given project description file was invalid
+		 *
+		 * @return boolean
+		 */
+		public boolean isInvalidProject() {
+			return isInvalid;
+		}
+
+		/**
 		 * Gets the label to be used when rendering this project record in the
 		 * UI.
 		 * 
@@ -272,10 +289,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		 * @since 3.4
 		 */
 		public String getProjectLabel() {
-			if (description == null) {
-				return projectName;
-			}
-
 			String path = projectSystemFile == null ? structureProvider
 					.getLabel(parent) : projectSystemFile
 					.getParent();
@@ -556,7 +569,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				ProjectRecord element = (ProjectRecord) event.getElement();
-				if(element.hasConflicts) {
+				if (element.hasConflicts || element.isInvalid) {
 					projectsList.setChecked(element, false);
 				}
 				setPageComplete(projectsList.getCheckedElements().length > 0);
@@ -589,7 +602,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (ProjectRecord selectedProject : selectedProjects) {
-					if(selectedProject.hasConflicts) {
+					if (selectedProject.hasConflicts || selectedProject.isInvalid) {
 						projectsList.setChecked(selectedProject, false);
 					} else {
 						projectsList.setChecked(selectedProject, true);
@@ -949,20 +962,26 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		projectsList.refresh(true);
 		ProjectRecord[] projects = getProjectRecords();
-		boolean displayWarning = false;
+
+		boolean displayConflictWarning = false;
+		boolean displayInvalidWarning = false;
+
 		for (ProjectRecord project : projects) {
-			if(project.hasConflicts) {
-				displayWarning = true;
+			if (project.hasConflicts || project.isInvalid) {
 				projectsList.setGrayed(project, true);
-			}else {
+				displayConflictWarning |= project.hasConflicts;
+				displayInvalidWarning |= project.isInvalid;
+			} else {
 				projectsList.setChecked(project, true);
 			}
 		}
 		
-		if (displayWarning) {
-			setMessage(
-					DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace,
-					WARNING);
+		if (displayConflictWarning && displayInvalidWarning) {
+			setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid, WARNING);
+		} else if (displayConflictWarning) {
+			setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace, WARNING);
+		} else if (displayInvalidWarning) {
+			setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInvalid, WARNING);
 		} else {
 			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 		}

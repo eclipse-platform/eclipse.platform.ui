@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,10 @@
  *******************************************************************************/
 
 package org.eclipse.ui.tests.datatransfer;
+
+import static org.eclipse.jface.dialogs.IMessageProvider.WARNING;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +51,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
+import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
@@ -64,6 +69,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	private static final String ARCHIVE_HELLOWORLD = "helloworld";
 	private static final String ARCHIVE_FILE_WITH_EMPTY_FOLDER = "EmptyFolderInArchive";
 	private static final String PROJECTS_ARCHIVE = "ProjectsArchive";
+	private static final String CORRUPT_PROJECTS_ARCHIVE = "CorruptProjectsArchive";
 
 	private static final String[] FILE_LIST = new String[] { "test-file-1.txt",
 			"test-file-2.doc", ".project" };
@@ -94,6 +100,9 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		ts.addTest(new ImportExistingProjectsWizardTest("testInitialValue"));
 		ts.addTest(new ImportExistingProjectsWizardTest("testImportArchiveMultiProject"));
 		ts.addTest(new ImportExistingProjectsWizardTest("testGetProjectRecords"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testGetProjectRecordsShouldHandleCorruptProjects"));
+		ts.addTest(new ImportExistingProjectsWizardTest(
+				"testGetProjectRecordsShouldHandleCorruptAndConflictingProjects"));
 		return ts;
 	}
 
@@ -1177,6 +1186,90 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		for (int i = 0; i < projectRecords.length; i++) {
 			if(!projectRecords[i].hasConflicts()) {
 				projectNames.add(projectRecords[i].getProjectName());
+			}
+		}
+		return projectNames;
+	}
+
+	public void testGetProjectRecordsShouldHandleCorruptProjects() throws Exception {
+
+		URL projectsArchive = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), new Path(
+				DATA_PATH_PREFIX + CORRUPT_PROJECTS_ARCHIVE + ".zip")));
+
+		WizardProjectsImportPage newWizard = spy(getNewWizard());
+		ProjectRecord[] projectRecords = getProjectsFromArchive(newWizard, projectsArchive);
+		verify(newWizard).setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInvalid, WARNING);
+
+		List<String> invalidProjectNames = getInvalidProjects(projectRecords);
+		assertEquals("Expected to find invalid projects", 2, invalidProjectNames.size());
+		assertEquals("Expected pseudo name for first invalid project",
+				DataTransferMessages.WizardProjectsImportPage_invalidProjectName, invalidProjectNames.get(0));
+		assertEquals("Expected pseudo name for second invalid project",
+				DataTransferMessages.WizardProjectsImportPage_invalidProjectName, invalidProjectNames.get(1));
+
+		List<String> validProjectNames = getValidProjects(projectRecords);
+		assertEquals("Expected to find only one valid project", 1, validProjectNames.size());
+		assertEquals("Expected to find valid project", "Project1", validProjectNames.get(0));
+
+	}
+
+	public void testGetProjectRecordsShouldHandleCorruptAndConflictingProjects() throws Exception {
+
+		URL projectsArchive = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(), new Path(
+				DATA_PATH_PREFIX + CORRUPT_PROJECTS_ARCHIVE + ".zip")));
+
+		WizardProjectsImportPage newWizard = spy(getNewWizard());
+		FileUtil.createProject("Project1");
+
+		ProjectRecord[] projectRecords = getProjectsFromArchive(newWizard, projectsArchive);
+		verify(newWizard).setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid,
+				WARNING);
+
+		List<String> invalidProjectNames = getInvalidProjects(projectRecords);
+		assertEquals("Expected to find invalid projects", 2, invalidProjectNames.size());
+
+		List<String> validProjectNames = getValidProjects(projectRecords);
+		assertEquals("Expected to find one valid project", 1, validProjectNames.size());
+		assertEquals("Expected to find valid project", "Project1", validProjectNames.get(0));
+
+		List<String> conflictingProjectNames = getProjectsWithConflicts(projectRecords);
+		assertEquals("Expected to find one existing project", 1, conflictingProjectNames.size());
+		assertEquals("Expected to find existing project", "Project1", conflictingProjectNames.get(0));
+
+	}
+
+	private ProjectRecord[] getProjectsFromArchive(WizardProjectsImportPage newWizard, URL projectsArchive) {
+		newWizard.getProjectFromDirectoryRadio().setSelection(false);
+		newWizard.updateProjectsList(projectsArchive.getPath());
+		ProjectRecord[] projectRecords = newWizard.getProjectRecords();
+		return projectRecords;
+	}
+
+	private List<String> getValidProjects(ProjectRecord[] projectRecords) {
+		List<String> projectNames = new ArrayList<String>();
+		for (int i = 0; i < projectRecords.length; i++) {
+			if (!projectRecords[i].isInvalidProject()) {
+				projectNames.add(projectRecords[i].getProjectName());
+			}
+		}
+		return projectNames;
+	}
+
+	private List<String> getInvalidProjects(ProjectRecord[] projectRecords) {
+		List<String> projectNames = new ArrayList<String>();
+		for (ProjectRecord projectRecord : projectRecords) {
+			if (projectRecord.isInvalidProject()) {
+				projectNames.add(projectRecord.getProjectName());
+			}
+		}
+		return projectNames;
+	}
+
+	private List<String> getProjectsWithConflicts(ProjectRecord[] projectRecords) {
+		List<String> projectNames = new ArrayList<String>();
+		for (ProjectRecord projectRecord : projectRecords) {
+			if (projectRecord.hasConflicts()) {
+				projectNames.add(projectRecord.getProjectName());
 			}
 		}
 		return projectNames;
