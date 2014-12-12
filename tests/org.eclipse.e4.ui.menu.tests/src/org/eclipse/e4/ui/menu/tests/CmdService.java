@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,14 +39,10 @@ class CmdService implements ICommandService {
 
 	@Override
 	public void addExecutionListener(IExecutionListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void defineUncategorizedCategory(String name, String description) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -59,8 +55,6 @@ class CmdService implements ICommandService {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -109,13 +103,11 @@ class CmdService implements ICommandService {
 
 	@Override
 	public String getHelpContextId(Command command) throws NotDefinedException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getHelpContextId(String commandId) throws NotDefinedException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -132,46 +124,33 @@ class CmdService implements ICommandService {
 
 	@Override
 	public void readRegistry() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void refreshElements(String commandId, Map filter) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void registerElement(IElementReference elementReference) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public IElementReference registerElementForCommand(
 			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void removeExecutionListener(IExecutionListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setHelpContextId(IHandler handler, String helpContextId) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void unregisterElement(IElementReference elementReference) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

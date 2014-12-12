@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 452764
@@ -123,10 +123,6 @@ public class MMenuItemTest {
 		item1.setElementId("mmc.item2");
 		item1.setLabel("mmc.item2");
 		mmc.getChildren().add(item1);
-
-		// exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
-		// exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
-		// mmc.setVisibleWhen(exp);
 
 		application.getMenuContributions().add(mmc);
 	}
