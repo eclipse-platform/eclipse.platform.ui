@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.ide.undo.CreateProjectOperation;
+import org.eclipse.ui.internal.navigator.resources.nested.NestedProjectsContentProvider;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -58,6 +59,9 @@ public class OpenFolderAsProjectAction extends Action {
 			CreateProjectOperation operation = new CreateProjectOperation(desc, desc.getName());
 			IStatus status = OperationHistoryFactory.getOperationHistory().execute(operation, null, null);
 			if (status.isOK()) {
+				if (this.viewer.getNavigatorContentService().getActivationService().isNavigatorExtensionActive(NestedProjectsContentProvider.EXTENSION_ID)) {
+					this.viewer.refresh(folder.getParent());
+				}
 				viewer.setSelection(new StructuredSelection(operation.getAffectedObjects()));
 			} else {
 				WorkbenchNavigatorPlugin.getDefault().getLog().log(status);	

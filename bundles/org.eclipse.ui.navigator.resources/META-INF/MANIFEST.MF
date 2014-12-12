@@ -10,6 +10,7 @@ Export-Package: org.eclipse.ui.internal.navigator.resources;x-internal:=true,
  org.eclipse.ui.internal.navigator.resources.actions;x-internal:=true,
  org.eclipse.ui.internal.navigator.resources.plugin;x-internal:=true,
  org.eclipse.ui.internal.navigator.resources.workbench;x-internal:=true,
+ org.eclipse.ui.internal.navigator.resources.nested;x-internal:=true,
  org.eclipse.ui.internal.navigator.workingsets;x-internal:=true,
  org.eclipse.ui.navigator.resources
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.6.0,4.0.0)",
