@@ -189,8 +189,6 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				if (Job.getJobManager().currentJob() == this)
 					return;
 				setInterrupted(true);
-				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT)
-					Policy.debug(new RuntimeException("Autobuild was interrupted")); //$NON-NLS-1$
 				break;
 		}
 		//clear the autobuild avoidance flag if we were interrupted
@@ -255,6 +253,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 */
 	private synchronized void setInterrupted(boolean value) {
 		interrupted = value;
+		if (interrupted && Policy.DEBUG_BUILD_INTERRUPT)
+			Policy.debug(new RuntimeException("Autobuild was interrupted")); //$NON-NLS-1$
 	}
 
 	/**
