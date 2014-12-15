@@ -45,7 +45,7 @@ import org.eclipse.ui.monitoring.UiFreezeEvent;
  * log.
  */
 public class EventLoopMonitorThread extends Thread {
-	private static final int EVENT_HISTORY_SIZE = 50;
+	private static final int EVENT_HISTORY_SIZE = 100;
 	private static final String EXTENSION_ID = "org.eclipse.ui.monitoring.logger"; //$NON-NLS-1$
 	private static final String NEW_LINE_AND_BULLET = "\n* "; //$NON-NLS-1$
 	private static final String TRACE_EVENT_MONITOR = "/debug/event_monitor"; //$NON-NLS-1$
@@ -163,10 +163,10 @@ public class EventLoopMonitorThread extends Thread {
 				if (!doesEventIndicateResponsiveUI(event.detail)) {
 					break;  // Ignore events that may be produced during a UI freeze.
 				}
-				if (eventHistory != null) {
-					eventHistory.recordEvent(event.type);
-				}
 				nestingLevel++;
+				if (eventHistory != null) {
+					eventHistory.recordEvent(event.type, event.detail, nestingLevel);
+				}
 				// Log a long interval, start the timer.
 				handleEventTransition(true, true);
 				break;
@@ -174,28 +174,32 @@ public class EventLoopMonitorThread extends Thread {
 				if (!doesEventIndicateResponsiveUI(event.detail)) {
 					break;  // Ignore events that may be produced during a UI freeze.
 				}
-				if (eventHistory != null) {
-					eventHistory.recordEvent(event.type);
+				if (--nestingLevel < 0) {
+					// This may happen if some PreEvent events had occurred before we
+					// started listening to SWT events.
+					nestingLevel = 0;
 				}
-				nestingLevel--;
+				if (eventHistory != null) {
+					eventHistory.recordEvent(event.type, event.detail, nestingLevel);
+				}
 				 // Log a long interval, start the timer if inside another event.
 				handleEventTransition(true, nestingLevel > 0);
 				break;
 			case SWT.PreExternalEventDispatch:
-				if (eventHistory != null) {
-					eventHistory.recordEvent(event.type);
-				}
 				saveAndResetNestingLevel();
+				if (eventHistory != null) {
+					eventHistory.recordEvent(event.type, event.detail, nestingLevel);
+				}
 				// Log a long interval, stop the timer.
 				handleEventTransition(true, false);
 				break;
 			case SWT.PostExternalEventDispatch:
-				if (eventHistory != null) {
-					eventHistory.recordEvent(event.type);
-				}
 				restoreNestingLevel();
-				// Don't log a long interval, start the timer.
-				handleEventTransition(false, true);
+				if (eventHistory != null) {
+					eventHistory.recordEvent(event.type, event.detail, nestingLevel);
+				}
+				// Don't log a long interval, start the timer if inside another event.
+				handleEventTransition(false, nestingLevel > 0);
 				break;
 			default:
 				break;
@@ -291,6 +295,8 @@ public class EventLoopMonitorThread extends Thread {
 		private static class EventInfo {
 			long timestamp;
 			int eventType;
+			int detail;
+			int nestingLevel;
 		}
 
 		private final EventInfo[] buffer;
@@ -304,11 +310,13 @@ public class EventLoopMonitorThread extends Thread {
 			}
 		}
 
-		synchronized void recordEvent(int eventType) {
+		synchronized void recordEvent(int eventType, int detail, int nestingLevel) {
 			int j = (start + size) % buffer.length;
 			EventInfo event = buffer[j];
 			event.timestamp = System.currentTimeMillis();
 			event.eventType = eventType;
+			event.detail = detail;
+			event.nestingLevel = nestingLevel;
 			if (size < buffer.length) {
 				size++;
 			} else if (++start >= buffer.length) {
@@ -340,6 +348,10 @@ public class EventLoopMonitorThread extends Thread {
 					buf.append("Event "); //$NON-NLS-1$
 					buf.append(eventInfo.eventType);
 				}
+				buf.append(' ');
+				buf.append(eventInfo.detail);
+				buf.append(" nesting level: "); //$NON-NLS-1$
+				buf.append(eventInfo.nestingLevel);
 				buf.append('\n');
 			}
 			size = 0;
