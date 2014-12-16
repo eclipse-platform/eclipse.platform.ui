@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,12 +73,20 @@ public abstract class PreferencePage extends DialogPage implements
     private Control body;
 
     /**
-     * Whether this page has the standard Apply and Defaults buttons; 
-     * <code>true</code> by default.
-     *
-     * @see #noDefaultAndApplyButton
-     */
-    private boolean createDefaultAndApplyButton = true;
+	 * Whether this page has the standard Apply button; <code>true</code> by
+	 * default.
+	 *
+	 * @see #noDefaultAndApplyButton
+	 */
+	private boolean createApplyButton = true;
+
+	/**
+	 * Whether this page has the standard Default button; <code>true</code> by
+	 * default.
+	 *
+	 * @see #noDefaultButton
+	 */
+	private boolean createDefaultButton = true;
 
     /**
      * Standard Defaults button, or <code>null</code> if none.
@@ -250,43 +258,46 @@ public abstract class PreferencePage extends DialogPage implements
 
         contributeButtons(buttonBar);
         
-        if (createDefaultAndApplyButton) {
-            layout.numColumns = layout.numColumns + 2;
-			String[] labels = JFaceResources.getStrings(new String[] {
-					"defaults", "apply" }); //$NON-NLS-2$//$NON-NLS-1$
+		if (createApplyButton || createDefaultButton) {
+			layout.numColumns = 1 + (createApplyButton && createDefaultButton ? 1 : 0);
 			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-			defaultsButton = new Button(buttonBar, SWT.PUSH);
-			defaultsButton.setText(labels[0]);
-			Dialog.applyDialogFont(defaultsButton);
-			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			Point minButtonSize = defaultsButton.computeSize(SWT.DEFAULT,
-					SWT.DEFAULT, true);
-			data.widthHint = Math.max(widthHint, minButtonSize.x);
-			defaultsButton.setLayoutData(data);
-			defaultsButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					performDefaults();
-				}
-			});
 
-            applyButton = new Button(buttonBar, SWT.PUSH);
-			applyButton.setText(labels[1]);
-			Dialog.applyDialogFont(applyButton);
-			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			minButtonSize = applyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-					true);
-			data.widthHint = Math.max(widthHint, minButtonSize.x);
-			applyButton.setLayoutData(data);
-			applyButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					performApply();
-				}
-			});
-            applyButton.setEnabled(isValid());
-            applyDialogFont(buttonBar);
-        } else {
+			if (createDefaultButton) {
+				String label = JFaceResources.getString("defaults"); //$NON-NLS-1$
+				defaultsButton = new Button(buttonBar, SWT.PUSH);
+				defaultsButton.setText(label);
+				Dialog.applyDialogFont(defaultsButton);
+				Point minButtonSize = defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+				data.widthHint = Math.max(widthHint, minButtonSize.x);
+				defaultsButton.setLayoutData(data);
+				defaultsButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						performDefaults();
+					}
+				});
+			}
+			if (createApplyButton) {
+				String label = JFaceResources.getString("apply"); //$NON-NLS-1$
+
+				applyButton = new Button(buttonBar, SWT.PUSH);
+				applyButton.setText(label);
+				Dialog.applyDialogFont(applyButton);
+				Point minButtonSize = applyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+				data.widthHint = Math.max(widthHint, minButtonSize.x);
+				applyButton.setLayoutData(data);
+				applyButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						performApply();
+					}
+				});
+				applyButton.setEnabled(isValid());
+			}
+			applyDialogFont(buttonBar);
+		} else {
             /* Check if there are any other buttons on the button bar.
              * If not, throw away the button bar composite.  Otherwise
              * there is an unusually large button bar.
@@ -297,7 +308,7 @@ public abstract class PreferencePage extends DialogPage implements
         }
     }
 
-	
+
 
 	/**
      * Apply the dialog font to the composite and it's children
@@ -408,15 +419,30 @@ public abstract class PreferencePage extends DialogPage implements
      * </p>
      */
     protected void noDefaultAndApplyButton() {
-        createDefaultAndApplyButton = false;
+		createApplyButton = false;
+		createDefaultButton = false;
     }
 
     /**
-     * The <code>PreferencePage</code> implementation of this 
-     * <code>IPreferencePage</code> method returns <code>true</code>
-     * if the page is valid.
-     * @see IPreferencePage#okToLeave()
-     */
+	 * Suppress creation of the standard Default button for this page.
+	 * <p>
+	 * Subclasses wishing a preference page with this button should call this
+	 * framework method before the page's control has been created.
+	 * </p>
+	 * 
+	 * @since 3.11
+	 */
+	protected void noDefaultButton() {
+		createDefaultButton = false;
+	}
+
+	/**
+	 * The <code>PreferencePage</code> implementation of this
+	 * <code>IPreferencePage</code> method returns <code>true</code> if the page
+	 * is valid.
+	 * 
+	 * @see IPreferencePage#okToLeave()
+	 */
     @Override
 	public boolean okToLeave() {
         return isValid();
