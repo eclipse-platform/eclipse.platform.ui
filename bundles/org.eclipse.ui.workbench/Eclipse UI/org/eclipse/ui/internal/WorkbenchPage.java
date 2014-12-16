@@ -1777,7 +1777,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return false;
 		}
 
-		for (MPart part : partService.getParts()) {
+		Collection<MPart> partsToHide = partService.getParts();
+		// workaround for bug 455281
+		List<MPart> partsOutsidePersp = modelService.findElements(window, null, MPart.class, null,
+				EModelService.OUTSIDE_PERSPECTIVE);
+		partsToHide.removeAll(partsOutsidePersp);
+
+		for (MPart part : partsToHide) {
 			// no save, no confirm, force
 			hidePart(part, false, true, true);
 		}
