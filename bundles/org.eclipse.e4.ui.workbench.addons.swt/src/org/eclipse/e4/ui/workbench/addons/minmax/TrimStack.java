@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars.Vogel@vogella.com - Bug 454712
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
@@ -1035,7 +1036,7 @@ public class TrimStack {
 						}
 					} else if (selectedElement instanceof MElementContainer<?>) {
 						MElementContainer<?> container = (MElementContainer<?>) selectedElement;
-						selectedElement = (MElementContainer<?>) container.getSelectedElement();
+						selectedElement = container.getSelectedElement();
 					}
 				}
 
