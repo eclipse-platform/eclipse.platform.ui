@@ -841,6 +841,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				}
 				previous = previous.previous();
 			}
+			// consider threads waiting on IJobManager#beginRule
 			for (Iterator i = waitingThreadJobs.iterator(); i.hasNext();) {
 				ThreadJob waitingJob = (ThreadJob) i.next();
 				if (runningJob.isConflicting(waitingJob) && waitingJob.shouldInterrupt())
