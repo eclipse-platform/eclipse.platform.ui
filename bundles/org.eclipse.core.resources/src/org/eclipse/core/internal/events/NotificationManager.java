@@ -273,7 +273,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		}
 	}
 
-	private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, final boolean lockTree) {
+	private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final ResourceChangeEvent event, final boolean lockTree) {
 		int type = event.getType();
 		boolean oldLock = workspace.isTreeLocked();
 		if (lockTree)
@@ -291,7 +291,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 
 						public void run() throws Exception {
 							if (Policy.DEBUG_NOTIFICATIONS)
-								Policy.debug("Notifying " + listener + " about resource change event" + ((ResourceChangeEvent) event).toDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
+								Policy.debug("Notifying " + listener + " about resource change event" + event.toDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
 							listener.resourceChanged(event);
 						}
 					});
