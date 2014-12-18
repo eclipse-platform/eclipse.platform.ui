@@ -480,7 +480,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	public IStatus getValidGroupContainer(IPath destination, boolean isLink, boolean isGroup) throws CoreException {
+	public IStatus getValidGroupContainer(IPath destination, boolean isLink, boolean isGroup) {
 		if (!isLink && !isGroup) {
 			String message = Messages.group_invalidParent;
 			ResourceInfo info = workspace.getResourceInfo(destination, false, false);
@@ -523,6 +523,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return path.isPrefixOf(resource.getFullPath());
 	}
 
+	/**
+	 * @throws CoreException
+	 */
 	public void convertToPhantom() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, true);
 		if (info == null || isPhantom(getFlags(info)))

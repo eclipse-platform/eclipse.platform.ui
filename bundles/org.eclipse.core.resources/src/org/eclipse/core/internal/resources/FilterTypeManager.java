@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2014 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IFilterMatcherDescriptor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
@@ -73,12 +72,8 @@ class FilterTypeManager implements IManager {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase(FILTER_ELEMENT)) {
-				try {
-					IFilterMatcherDescriptor desc = new FilterDescriptor(element);
-					factories.put(desc.getId(), desc);
-				} catch (CoreException e) {
-					Policy.log(e);
-				}
+				IFilterMatcherDescriptor desc = new FilterDescriptor(element);
+				factories.put(desc.getId(), desc);
 			}
 		}
 	}
@@ -88,12 +83,8 @@ class FilterTypeManager implements IManager {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase(FILTER_ELEMENT)) {
-				try {
-					IFilterMatcherDescriptor desc = new FilterDescriptor(element, false);
-					factories.remove(desc.getId());
-				} catch (CoreException e) {
-					Policy.log(e);
-				}
+				IFilterMatcherDescriptor desc = new FilterDescriptor(element, false);
+				factories.remove(desc.getId());
 			}
 		}
 	}

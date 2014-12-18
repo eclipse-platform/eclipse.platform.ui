@@ -933,7 +933,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * event of a crash recovery, the snapshot file is not deleted until
 	 * the next successful save.
 	 */
-	protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
+	protected void restoreSnapshots(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		String message;

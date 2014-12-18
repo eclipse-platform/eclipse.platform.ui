@@ -24,11 +24,11 @@ public class FilterDescriptor implements IFilterMatcherDescriptor {
 	private boolean isFirst = false;
 	private IConfigurationElement element;
 
-	public FilterDescriptor(IConfigurationElement element) throws CoreException {
+	public FilterDescriptor(IConfigurationElement element) {
 		this(element, true);
 	}
 
-	public FilterDescriptor(IConfigurationElement element, boolean instantiateFactory) throws CoreException {
+	public FilterDescriptor(IConfigurationElement element, boolean instantiateFactory) {
 		id = element.getAttribute("id"); //$NON-NLS-1$
 		name = element.getAttribute("name"); //$NON-NLS-1$
 		description = element.getAttribute("description"); //$NON-NLS-1$

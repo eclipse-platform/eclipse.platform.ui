@@ -30,7 +30,7 @@ public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {
 	}
 
 	@Override
-	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
+	public boolean matches(IContainer parent, IFileInfo fileInfo) {
 		if (pattern != null) {
 			Matcher m = pattern.matcher(fileInfo.getName());
 			return m.matches();

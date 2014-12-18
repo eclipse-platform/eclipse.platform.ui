@@ -1029,7 +1029,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
 	}
 
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.addPropertyChangeListener(this);
 		lightweightAutoRefreshEnabled = preferences.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
