@@ -47,10 +47,6 @@ import org.eclipse.ui.internal.navigator.Policy;
  */
 public final class CommonViewerSorter extends TreePathViewerSorter {
 
-	private static final int LEFT_UNDERSTANDS = 1;
-	private static final int RIGHT_UNDERSTANDS = 2;
-	private static final int BOTH_UNDERSTAND = LEFT_UNDERSTANDS | RIGHT_UNDERSTANDS;
-
 	private NavigatorContentService contentService;
 
 	private INavigatorSorterService sorterService;
@@ -110,29 +106,13 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		if (sourceOfLvalue == sourceOfRvalue) {
 			sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
 		} else {
+			// findSorter returns the sorter specified at the source or if it has a higher priority a sortOnly sorter that is registered for the parent
+			ViewerSorter lSorter = findApplicableSorter(sourceOfLvalue, parent, e1, e2);
+			ViewerSorter rSorter = findApplicableSorter(sourceOfRvalue, parent, e1, e2);
+			sorter = rSorter;
 
-			boolean flags[] = new boolean[4];
-			flags[0] = sourceOfLvalue.isTriggerPoint(e1);
-			flags[1] = sourceOfLvalue.isTriggerPoint(e2);
-			flags[2] = sourceOfRvalue.isTriggerPoint(e1);
-			flags[3] = sourceOfRvalue.isTriggerPoint(e2);
-
-			int whoknows = 0;
-			whoknows = whoknows | (flags[0] & flags[1] ? LEFT_UNDERSTANDS : 0);
-			whoknows = whoknows | (flags[2] & flags[3] ? RIGHT_UNDERSTANDS : 0);
-
-			switch (whoknows) {
-			case BOTH_UNDERSTAND:
-				sorter = sourceOfLvalue.getSequenceNumber() < sourceOfRvalue.getSequenceNumber() ? sorterService
-						.findSorter(sourceOfLvalue, parent, e1, e2)
-						: sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
-				break;
-			case LEFT_UNDERSTANDS:
-				sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
-				break;
-			case RIGHT_UNDERSTANDS:
-				sorter = sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
-				break;
+			if (rSorter == null || (lSorter != null && sourceOfLvalue.getSequenceNumber() < sourceOfRvalue.getSequenceNumber())) {
+				sorter = lSorter;
 			}
 		}
 
@@ -145,6 +125,18 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			return super.compare(viewer, e1, e2);
 		}
 		return categoryDelta;
+	}
+
+	private ViewerSorter findApplicableSorter(INavigatorContentDescriptor descriptor, Object parent,
+			Object e1,
+			Object e2) {
+		ViewerSorter sorter = sorterService.findSorter(descriptor, parent, e1, e2);
+		if (!descriptor.isSortOnly()) { // for compatibility
+			if (!(descriptor.isTriggerPoint(e1) && descriptor.isTriggerPoint(e2))) {
+				return null;
+			}
+		}
+		return sorter;
 	}
 
 	@Override

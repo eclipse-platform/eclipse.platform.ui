@@ -119,6 +119,9 @@ public class NavigatorTestBase {
 	public static final String TEST_CONTENT_SORTER_RESOURCE_SORTONLY_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterResource.sortOnly.override";
 	public static final String TEST_CONTENT_SORTER_RESOURCE_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterResource.override";
 	public static final String TEST_CONTENT_SORTER_RESOURCE_OVERRIDE_SORTER = "org.eclipse.ui.tests.navigator.testContentSorterResource.override.sorter";
+	public static final String TEST_CONTENT_SORTER_BASIC_A = "org.eclipse.ui.tests.navigator.testContentBasic.a";
+	public static final String TEST_CONTENT_SORTER_BASIC_B = "org.eclipse.ui.tests.navigator.testContentBasic.b";
+	public static final String TEST_CONTENT_SORTER_BASIC_SORTONLY_SORTER = "org.eclipse.ui.tests.navigator.testContentBasic.sortOnlySorter";
 
 	public static final String TEST_CONTENT_REDLABEL = "org.eclipse.ui.tests.navigator.testContentRedLabel";
 	public static final String TEST_CONTENT_MISSINGLABEL = "org.eclipse.ui.tests.navigator.testContentMissingLabel";

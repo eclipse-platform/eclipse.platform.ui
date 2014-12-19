@@ -713,6 +713,67 @@
 		<override suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
 
       </navigatorContent>
+      <navigatorContent
+            activeByDefault="false"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderBasicA"
+            id="org.eclipse.ui.tests.navigator.testContentBasic.a"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Navigator Extension [Basic Content A]">
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IResource">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.extension.TreeContentA">
+            </instanceof>
+         </possibleChildren>
+      </navigatorContent>
+      <navigatorContent
+            activeByDefault="false"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderBasicB"
+            id="org.eclipse.ui.tests.navigator.testContentBasic.b"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Navigator Extension [Basic Content B]">
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IResource">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData">
+               </instanceof>
+            </or></triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.extension.TreeContentB">
+            </instanceof>
+         </possibleChildren>
+      </navigatorContent>
+      <navigatorContent
+            activeByDefault="false"
+            id="org.eclipse.ui.tests.navigator.testContentBasic.sortOnlySorter"
+            name="Test Navigator Extension [Basic Sortonly Sorter]"
+            sortOnly="true">
+         <commonSorter
+               class="org.eclipse.jface.viewers.ViewerSorter">
+            <parentExpression>
+               <or>
+                  <instanceof
+                        value="org.eclipse.core.resources.IResource">
+                  </instanceof>
+                  <instanceof
+                        value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData">
+                  </instanceof>
+               </or></parentExpression>
+         </commonSorter>
+      </navigatorContent>
       
       <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testContentEmpty" 
