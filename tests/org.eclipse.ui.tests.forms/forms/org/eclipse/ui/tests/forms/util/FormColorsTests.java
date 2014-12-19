@@ -11,7 +11,6 @@
  
 package org.eclipse.ui.tests.forms.util;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.swt.graphics.Color;
@@ -19,6 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.junit.Assert;
 
 
 public class FormColorsTests extends TestCase {

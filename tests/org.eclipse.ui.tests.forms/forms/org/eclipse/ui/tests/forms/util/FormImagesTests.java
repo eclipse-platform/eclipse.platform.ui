@@ -11,15 +11,15 @@
  
 package org.eclipse.ui.tests.forms.util;
 
+import junit.framework.TestCase;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 public class FormImagesTests extends TestCase {
 	public void testSingleton() {
