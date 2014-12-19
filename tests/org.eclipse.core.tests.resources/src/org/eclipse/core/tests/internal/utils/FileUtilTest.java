@@ -28,8 +28,23 @@ public class FileUtilTest extends FileSystemTest {
 		return new TestSuite(FileUtilTest.class);
 	}
 
+	private IPath baseTestDir;
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		baseTestDir = getRandomLocation();
+		baseTestDir.toFile().mkdirs();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		ensureDoesNotExistInFileSystem(baseTestDir.toFile());
+	}
+
 	public void testRealPath() throws Exception {
-		IPath realPath = getTempDir().append("Test.TXT");
+		IPath realPath = baseTestDir.append("Test.TXT");
 		realPath.toFile().createNewFile();
 		IPath testPath;
 		if (EFS.getLocalFileSystem().isCaseSensitive()) {
@@ -41,7 +56,7 @@ public class FileUtilTest extends FileSystemTest {
 	}
 
 	public void testRealPathOfNonexistingFile() throws Exception {
-		IPath realPath = getTempDir().append("ExistingDir");
+		IPath realPath = baseTestDir.append("ExistingDir");
 		realPath.toFile().mkdirs();
 		IPath testPath;
 		if (EFS.getLocalFileSystem().isCaseSensitive()) {
@@ -54,7 +69,7 @@ public class FileUtilTest extends FileSystemTest {
 	}
 
 	public void testRealURI() throws Exception {
-		IPath realPath = getTempDir().append("Test.TXT");
+		IPath realPath = baseTestDir.append("Test.TXT");
 		realPath.toFile().createNewFile();
 		IPath testPath;
 		if (EFS.getLocalFileSystem().isCaseSensitive()) {
