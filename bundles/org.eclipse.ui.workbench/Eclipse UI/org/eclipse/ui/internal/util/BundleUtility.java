@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Aurelien Pupier <aurelien.pupier@bonitasoft.com> - Bug 450701
  *******************************************************************************/
 package org.eclipse.ui.internal.util;
 
 import java.net.URL;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -32,7 +32,7 @@ public class BundleUtility {
 	}
 
     public static boolean isActivated(Bundle bundle) {
-    	if ((bundle.getState() & Bundle.STARTING) != 0)
+		if (bundle != null && (bundle.getState() & Bundle.STARTING) != 0)
     		return WorkbenchPlugin.getDefault().isStarting(bundle);
         return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STOPPING)) != 0;
     }
