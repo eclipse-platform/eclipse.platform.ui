@@ -59,7 +59,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testConstructorWithCollection_ContainsAllEntries() {
-		Map toCopy = new HashMap();
+		Map<Object, Object> toCopy = new HashMap<Object, Object>();
 		toCopy.put(new Object(), new Object());
 		map = new IdentityMap(toCopy);
 		assertEquals(toCopy, map);
@@ -106,7 +106,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testPutAll() {
-		Map other = new HashMap();
+		Map<Object, Object> other = new HashMap<Object, Object>();
 		other.put(key, value);
 
 		assertTrue(map.isEmpty());
@@ -124,7 +124,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testValues() {
-		Collection values = map.values();
+		Collection<?> values = map.values();
 		assertTrue(values.isEmpty());
 
 		map.put(key, value);
@@ -137,7 +137,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testKeySet() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertTrue(keySet.isEmpty());
 
 		map.put(key, value);
@@ -166,7 +166,7 @@ public class IdentityMapTest extends TestCase {
 
 	public void testKeySet_Clear() {
 		map.put(key, value);
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertTrue(keySet.contains(key));
 		keySet.clear();
 		assertTrue(keySet.isEmpty());
@@ -174,21 +174,21 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testKeySet_Contains() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertFalse(keySet.contains(key));
 		map.put(key, value);
 		assertTrue(keySet.contains(key));
 	}
 
 	public void testKeySet_ContainsAll() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertFalse(keySet.containsAll(Collections.singleton(key)));
 		map.put(key, value);
 		assertTrue(keySet.containsAll(Collections.singleton(key)));
 	}
 
 	public void testKeySet_IsEmpty() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertTrue(keySet.isEmpty());
 		map.put(key, value);
 		assertFalse(keySet.isEmpty());
@@ -196,7 +196,7 @@ public class IdentityMapTest extends TestCase {
 
 	public void testKeySet_Iterator() {
 		map.put(key, value);
-		Iterator iterator = map.keySet().iterator();
+		Iterator<Object> iterator = map.keySet().iterator();
 		assertTrue(iterator.hasNext());
 		assertEquals(key, iterator.next());
 
@@ -216,7 +216,7 @@ public class IdentityMapTest extends TestCase {
 
 	public void testKeySet_RemoveAll() {
 		map.put(key, value);
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertFalse(keySet.removeAll(Collections.EMPTY_SET));
 		assertEquals(1, map.size());
 		assertTrue(keySet.removeAll(Collections.singleton(key)));
@@ -225,7 +225,7 @@ public class IdentityMapTest extends TestCase {
 
 	public void testKeySet_RetainAll() {
 		map.put(key, value);
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertFalse(keySet.retainAll(Collections.singleton(key)));
 		assertEquals(1, map.size());
 		assertTrue(keySet.retainAll(Collections.EMPTY_SET));
@@ -233,7 +233,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testKeySet_Size() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertEquals(0, keySet.size());
 		map.put(key, value);
 		assertEquals(1, keySet.size());
@@ -242,7 +242,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testKeySet_ToArray() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		map.put(key, value);
 		Object[] array = keySet.toArray();
 		assertEquals(1, array.length);
@@ -258,7 +258,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testKeySet_Equals() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertFalse(keySet.equals(null));
 		assertTrue(keySet.equals(keySet));
 
@@ -268,7 +268,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testKeySet_HashCode() {
-		Set keySet = map.keySet();
+		Set<Object> keySet = map.keySet();
 		assertEquals(0, keySet.hashCode());
 		map.put(key, value);
 		int hash = key.hashCode();
@@ -276,7 +276,7 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testEntrySet() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertTrue(entrySet.isEmpty());
 
 		map.put(key, value);
@@ -314,25 +314,23 @@ public class IdentityMapTest extends TestCase {
 
 	public void testEntrySet_Contains() {
 		map.put(key, value);
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertTrue(entrySet.contains(new MapEntryStub(key, value)));
 		map.remove(key);
 		assertFalse(entrySet.contains(new MapEntryStub(key, value)));
 	}
 
 	public void testEntrySet_ContainsAll() {
-		Set entrySet = map.entrySet();
-		assertFalse(entrySet.containsAll(Collections
-				.singleton(new MapEntryStub(key, value))));
+		Set<Object> entrySet = map.entrySet();
+		assertFalse(entrySet.containsAll(Collections.singleton(new MapEntryStub(key, value))));
 		assertTrue(entrySet.containsAll(Collections.EMPTY_SET));
 
 		map.put(key, value);
-		assertTrue(entrySet.containsAll(Collections.singleton(new MapEntryStub(
-				key, value))));
+		assertTrue(entrySet.containsAll(Collections.singleton(new MapEntryStub(key, value))));
 	}
 
 	public void testEntrySet_IsEmpty() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertTrue(entrySet.isEmpty());
 		map.put(key, value);
 		assertFalse(entrySet.isEmpty());
@@ -340,7 +338,7 @@ public class IdentityMapTest extends TestCase {
 
 	public void testEntrySet_Iterator() {
 		map.put(key, value);
-		Iterator iterator = map.entrySet().iterator();
+		Iterator<Object> iterator = map.entrySet().iterator();
 		assertTrue(iterator.hasNext());
 		Map.Entry entry = (Map.Entry) iterator.next();
 		assertTrue(entry.equals(new MapEntryStub(key, value)));
@@ -360,38 +358,36 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testEntrySet_RemoveAll() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertFalse(entrySet.removeAll(Collections.EMPTY_SET));
 
 		map.put(key, value);
 		assertEquals(1, map.size());
-		assertTrue(entrySet.removeAll(Collections.singleton(new MapEntryStub(
-				key, value))));
+		assertTrue(entrySet.removeAll(Collections.singleton(new MapEntryStub(key, value))));
 		assertTrue(map.isEmpty());
 	}
 
 	public void testEntrySet_RetainAll() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertFalse(entrySet.retainAll(Collections.EMPTY_SET));
 
 		map.put(key, value);
 		assertEquals(1, map.size());
-		assertFalse(entrySet.retainAll(Collections.singleton(new MapEntryStub(
-				key, value))));
+		assertFalse(entrySet.retainAll(Collections.singleton(new MapEntryStub(key, value))));
 		assertEquals(1, map.size());
 		assertTrue(entrySet.retainAll(Collections.EMPTY_SET));
 		assertTrue(map.isEmpty());
 	}
 
 	public void testEntrySet_Size() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertEquals(0, entrySet.size());
 		map.put(key, value);
 		assertEquals(1, entrySet.size());
 	}
 
 	public void testEntrySet_ToArray() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertEquals(0, entrySet.toArray().length);
 
 		map.put(key, value);
@@ -401,33 +397,31 @@ public class IdentityMapTest extends TestCase {
 	}
 
 	public void testEntrySet_ToArrayWithObjectArray() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertEquals(0, entrySet.toArray(new Object[0]).length);
 
 		map.put(key, value);
-		Map.Entry[] array = (Map.Entry[]) entrySet.toArray(new Map.Entry[0]);
+		Map.Entry[] array = entrySet.toArray(new Map.Entry[0]);
 		assertEquals(1, array.length);
 		assertTrue(array[0].equals(new MapEntryStub(key, value)));
 	}
 
 	public void testEntrySet_Equals() {
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertFalse(entrySet.equals(null));
 		assertTrue(entrySet.equals(entrySet));
 
 		assertTrue(entrySet.equals(Collections.EMPTY_SET));
-		assertFalse(entrySet.equals(Collections.singleton(new MapEntryStub(key,
-				value))));
+		assertFalse(entrySet.equals(Collections.singleton(new MapEntryStub(key, value))));
 
 		map.put(key, value);
 		assertFalse(entrySet.equals(Collections.EMPTY_SET));
-		assertTrue(entrySet.equals(Collections.singleton(new MapEntryStub(key,
-				value))));
+		assertTrue(entrySet.equals(Collections.singleton(new MapEntryStub(key, value))));
 	}
 
 	public void testEntrySet_HashCode() {
 		// hash formula mandated by Map contract
-		Set entrySet = map.entrySet();
+		Set<Object> entrySet = map.entrySet();
 		assertEquals(0, entrySet.hashCode());
 
 		map.put(key, value);
@@ -468,7 +462,7 @@ public class IdentityMapTest extends TestCase {
 		assertFalse(map.equals(null));
 		assertTrue(map.equals(map));
 
-		Map other = new HashMap();
+		Map<Object, Object> other = new HashMap<Object, Object>();
 		other.put(key, value);
 
 		assertTrue(map.equals(Collections.EMPTY_MAP));

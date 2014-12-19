@@ -92,7 +92,7 @@ public class AbstractObservableListTest extends TestCase {
 		list.add(element);
 		list.add(new Object());
 
-		final List diffEntries = new ArrayList();
+		final List<ListDiffEntry> diffEntries = new ArrayList<ListDiffEntry>();
 		list.addListChangeListener(new IListChangeListener() {
 			@Override
 			public void handleListChange(ListChangeEvent event) {
@@ -104,12 +104,12 @@ public class AbstractObservableListTest extends TestCase {
 
 		assertEquals(2, diffEntries.size());
 
-		ListDiffEntry entry = (ListDiffEntry) diffEntries.get(0);
+		ListDiffEntry entry = diffEntries.get(0);
 		assertEquals(element, entry.getElement());
 		assertEquals(false, entry.isAddition());
 		assertEquals(0, entry.getPosition());
 
-		entry = (ListDiffEntry) diffEntries.get(1);
+		entry = diffEntries.get(1);
 		assertEquals(element, entry.getElement());
 		assertEquals(true, entry.isAddition());
 		assertEquals(1, entry.getPosition());
@@ -220,12 +220,10 @@ public class AbstractObservableListTest extends TestCase {
 		return suite;
 	}
 
-	/* package */static class Delegate extends
-			AbstractObservableCollectionContractDelegate {
+	/* package */static class Delegate extends AbstractObservableCollectionContractDelegate {
 
 		@Override
-		public IObservableCollection createObservableCollection(Realm realm,
-				final int itemCount) {
+		public IObservableCollection createObservableCollection(Realm realm, final int itemCount) {
 
 			String[] items = new String[itemCount];
 			for (int i = 0; i < itemCount; i++) {
@@ -251,7 +249,7 @@ public class AbstractObservableListTest extends TestCase {
 	static class AbstractObservableListStub extends AbstractObservableList {
 		Object elementType;
 
-		List wrappedList;
+		List<Object> wrappedList;
 
 		public AbstractObservableListStub() {
 			super();
@@ -301,22 +299,21 @@ public class AbstractObservableListTest extends TestCase {
 	}
 
 	static class MutableObservableListStub extends AbstractObservableListStub {
-		// These methods are present so we can test AbstractObservableList.move()
+		// These methods are present so we can test
+		// AbstractObservableList.move()
 
 		@Override
 		public void add(int index, Object element) {
 			checkRealm();
 			wrappedList.add(index, element);
-			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
-					index, true, element)));
+			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index, true, element)));
 		}
 
 		@Override
 		public Object remove(int index) {
 			checkRealm();
 			Object element = wrappedList.remove(index);
-			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
-					index, false, element)));
+			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index, false, element)));
 			return element;
 		}
 	}

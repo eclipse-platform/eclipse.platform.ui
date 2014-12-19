@@ -16,10 +16,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import junit.framework.TestCase;
+
 import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
 import org.eclipse.jface.viewers.IElementComparer;
-
-import junit.framework.TestCase;
 
 /**
  * @since 1.2
@@ -47,11 +47,12 @@ public class ViewerElementSetTest extends TestCase {
 		try {
 			new ViewerElementSet(null, new IdentityElementComparer());
 			fail("Constructor should throw exception when null collection passed in");
-		} catch (RuntimeException expected) {}
+		} catch (RuntimeException expected) {
+		}
 	}
 
 	public void testConstructorWithCollection_AddsAllElements() {
-		Collection toCopy = Collections.singleton(new Object());
+		Collection<Object> toCopy = Collections.singleton(new Object());
 		set = new ViewerElementSet(toCopy, new IdentityElementComparer());
 		assertTrue(set.containsAll(toCopy));
 	}
@@ -81,7 +82,7 @@ public class ViewerElementSetTest extends TestCase {
 	public void testAddAll_ContainsAllHonorsComparer() {
 		String o1 = new String("o1");
 		String o2 = new String("o2");
-		Collection items = Arrays.asList(new Object[] { o1, o2 });
+		Collection<Object> items = Arrays.asList(new Object[] { o1, o2 });
 		assertTrue(set.addAll(items));
 
 		assertTrue(set.containsAll(items));
@@ -147,8 +148,7 @@ public class ViewerElementSetTest extends TestCase {
 		assertFalse(set.contains(o1));
 		assertFalse(set.removeAll(Collections.singleton(o1)));
 
-		assertTrue(set.removeAll(Arrays.asList(new Object[] { o2, "some",
-				"other", "objects" })));
+		assertTrue(set.removeAll(Arrays.asList(new Object[] { o2, "some", "other", "objects" })));
 		assertFalse(set.contains(o2));
 	}
 

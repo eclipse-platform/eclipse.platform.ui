@@ -22,7 +22,6 @@ import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -85,8 +84,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 				throw e;
 			}
 		};
-		assertEquals(ValidationStatus.error("message", e), validator
-				.getValidationStatus().getValue());
+		assertEquals(ValidationStatus.error("message", e), validator.getValidationStatus().getValue());
 	}
 
 	public void testGetValidationStatus_TracksWithDependency() {
@@ -120,8 +118,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	public void testObserveValidatedValue_ReturnValue() {
 		WritableValue target = new WritableValue();
-		ValidatedObservableValue validated = (ValidatedObservableValue) validator
-				.observeValidatedValue(target);
+		ValidatedObservableValue validated = (ValidatedObservableValue) validator.observeValidatedValue(target);
 
 		target.setValue(new Object());
 		assertEquals(target.getValue(), validated.getValue());
@@ -269,11 +266,9 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testValidationStaleness() {
-		ValueChangeEventTracker validationChangeCounter = ValueChangeEventTracker
-				.observe(validationStatus);
+		ValueChangeEventTracker validationChangeCounter = ValueChangeEventTracker.observe(validationStatus);
 
-		StaleEventTracker validationStaleCounter = StaleEventTracker
-				.observe(validationStatus);
+		StaleEventTracker validationStaleCounter = StaleEventTracker.observe(validationStatus);
 
 		// Assert initial state.
 		assertFalse(validationStatus.isStale());
@@ -324,12 +319,12 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testValidationStatusBecomesStaleThroughNewDependency() {
-		final DependencyObservableValue nonStaleDependency = new DependencyObservableValue(
-				ValidationStatus.ok(), IStatus.class);
+		final DependencyObservableValue nonStaleDependency = new DependencyObservableValue(ValidationStatus.ok(),
+				IStatus.class);
 		nonStaleDependency.setStale(false);
 
-		final DependencyObservableValue staleDependency = new DependencyObservableValue(
-				ValidationStatus.ok(), IStatus.class);
+		final DependencyObservableValue staleDependency = new DependencyObservableValue(ValidationStatus.ok(),
+				IStatus.class);
 		staleDependency.setStale(true);
 
 		validator = new MultiValidator() {
@@ -345,8 +340,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 		assertFalse(validationStatus.isStale());
 
-		StaleEventTracker validationStaleCounter = StaleEventTracker
-				.observe(validationStatus);
+		StaleEventTracker validationStaleCounter = StaleEventTracker.observe(validationStatus);
 		assertEquals(0, validationStaleCounter.count);
 
 		// Setting the status of the non-stale dependency to null leads to the
@@ -363,13 +357,13 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		assertEquals(dependency1, dependency2);
 		assertNotSame(dependency1, dependency2);
 
-		final List dependencies = new ArrayList();
+		final List<DependencyObservable> dependencies = new ArrayList<DependencyObservable>();
 		dependencies.add(dependency1);
 		validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
-				for (Iterator it = dependencies.iterator(); it.hasNext();)
-					ObservableTracker.getterCalled((IObservable) it.next());
+				for (Iterator<DependencyObservable> it = dependencies.iterator(); it.hasNext();)
+					ObservableTracker.getterCalled(it.next());
 				return null;
 			}
 		};
@@ -450,8 +444,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 				if (stale) {
 					fireStale();
 				} else {
-					fireValueChange(Diffs.createValueDiff(doGetValue(),
-							doGetValue()));
+					fireValueChange(Diffs.createValueDiff(doGetValue(), doGetValue()));
 				}
 			}
 		}

@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Assert;
 public class ThreadRealm extends Realm {
     private Thread thread;
 
-    private final LinkedList queue = new LinkedList();
+    private final LinkedList<Runnable> queue = new LinkedList<Runnable>();
 
     private volatile boolean block;
 
@@ -131,7 +131,7 @@ public class ThreadRealm extends Realm {
                     if (queue.isEmpty()) {
                         queue.wait();
                     } else {
-                        runnable = (Runnable) queue.getFirst();
+                        runnable = queue.getFirst();
                     }
                 }
 

@@ -31,8 +31,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
-public class ObservableSetTreeContentProviderTest extends
-		AbstractDefaultRealmTestCase {
+public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTestCase {
 	private Shell shell;
 	private TreeViewer viewer;
 	private Tree tree;
@@ -81,22 +80,19 @@ public class ObservableSetTreeContentProviderTest extends
 			}
 		});
 
-		assertTrue(Arrays.equals(new Object[0], contentProvider
-				.getElements("unknown input")));
+		assertTrue(Arrays.equals(new Object[0], contentProvider.getElements("unknown input")));
 
 		Object element0 = new Object();
 		elements.add(element0);
 
-		assertTrue(Arrays.equals(new Object[] { element0 }, contentProvider
-				.getElements(input)));
+		assertTrue(Arrays.equals(new Object[] { element0 }, contentProvider.getElements(input)));
 
 		Object element1 = new Object();
 		elements.add(element1);
 
-		List elementList = Arrays.asList(contentProvider.getElements(input));
+		List<Object> elementList = Arrays.asList(contentProvider.getElements(input));
 		assertEquals(2, elementList.size());
-		assertTrue(elementList.containsAll(Arrays.asList(new Object[] {
-				element0, element1 })));
+		assertTrue(elementList.containsAll(Arrays.asList(new Object[] { element0, element1 })));
 	}
 
 	public void testViewerUpdate_RemoveElementAfterMutation() {
@@ -113,8 +109,7 @@ public class ObservableSetTreeContentProviderTest extends
 		};
 		viewer.setComparer(comparer);
 
-		final IObservableSet children = ObservableViewerElementSet
-				.withComparer(Realm.getDefault(), null, comparer);
+		final IObservableSet children = ObservableViewerElementSet.withComparer(Realm.getDefault(), null, comparer);
 		initContentProvider(new IObservableFactory() {
 			@Override
 			public IObservable createObservable(Object target) {

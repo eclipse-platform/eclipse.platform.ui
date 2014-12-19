@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class LockRealm extends Realm {
 
-	private LinkedList queue;
+	private LinkedList<Runnable> queue;
 	private ILock lock;
 	private Job job;
 	private boolean lockAcquired;
 
 	public LockRealm() {
-		queue = new LinkedList();
+		queue = new LinkedList<Runnable>();
 		lock = Job.getJobManager().newLock();
 		job = new Job("Lock Realm Job") {
 			@Override
@@ -81,7 +81,7 @@ public class LockRealm extends Realm {
 			if (queue.isEmpty()) {
 				return null;
 			}
-			return (Runnable) queue.getFirst();
+			return queue.getFirst();
 		}
 	}
 

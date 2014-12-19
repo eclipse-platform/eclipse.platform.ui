@@ -52,7 +52,7 @@ public class IdentitySetTest extends TestCase {
 	}
 
 	public void testConstructorWithCollection_AddsAllElements() {
-		Collection toCopy = Collections.singleton(new Object());
+		Collection<Object> toCopy = Collections.singleton(new Object());
 		set = new IdentitySet(toCopy);
 		assertTrue(set.containsAll(toCopy));
 	}
@@ -82,7 +82,7 @@ public class IdentitySetTest extends TestCase {
 	public void testAddAll_ContainsAllHonorsComparer() {
 		String o1 = new String("o1");
 		String o2 = new String("o2");
-		Collection items = Arrays.asList(new Object[] { o1, o2 });
+		Collection<Object> items = Arrays.asList(new Object[] { o1, o2 });
 		assertTrue(set.addAll(items));
 
 		assertTrue(set.containsAll(items));
@@ -148,8 +148,7 @@ public class IdentitySetTest extends TestCase {
 		assertFalse(set.contains(o1));
 		assertFalse(set.removeAll(Collections.singleton(o1)));
 
-		assertTrue(set.removeAll(Arrays.asList(new Object[] { o2, "some",
-				"other", "objects" })));
+		assertTrue(set.removeAll(Arrays.asList(new Object[] { o2, "some", "other", "objects" })));
 		assertFalse(set.contains(o2));
 	}
 

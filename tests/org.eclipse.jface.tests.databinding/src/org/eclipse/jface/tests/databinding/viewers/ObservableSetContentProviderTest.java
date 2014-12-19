@@ -61,21 +61,18 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	}
 
 	public void testKnownElements_Realm() throws Exception {
-		assertSame("realm for the known elements should be the SWT realm",
-				DisplayRealm.getRealm(Display.getDefault()), contentProvider
-						.getKnownElements().getRealm());
+		assertSame("realm for the known elements should be the SWT realm", DisplayRealm.getRealm(Display.getDefault()),
+				contentProvider.getKnownElements().getRealm());
 	}
 
 	public void testRealizedElements_Realm() {
 		assertSame("realm for the realized elements should be the SWT realm",
-				DisplayRealm.getRealm(Display.getDefault()), contentProvider
-						.getRealizedElements().getRealm());
+				DisplayRealm.getRealm(Display.getDefault()), contentProvider.getRealizedElements().getRealm());
 	}
 
 	public void testKnownElementsAfterSetInput() {
 		assertEquals(0, contentProvider.getKnownElements().size());
-		Set newElements = new HashSet(Arrays.asList(new String[] { "one",
-				"two", "three" }));
+		Set<String> newElements = new HashSet<String>(Arrays.asList(new String[] { "one", "two", "three" }));
 		WritableSet newInput = new WritableSet();
 		newInput.addAll(newElements);
 		viewer.setInput(newInput);
