@@ -16,8 +16,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.ui.internal.dialogs.TreeManager;
-import org.eclipse.ui.internal.dialogs.TreeManager.TreeItem;
+import org.eclipse.ui.internal.dialogs.cpd.TreeManager;
+import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
 
 public class TreeManagerTest extends TestCase {
 

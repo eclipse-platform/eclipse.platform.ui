@@ -147,7 +147,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.EditorSelectionDialog;
-import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
+import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
