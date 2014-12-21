@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 407522 - Perspective reset not working correctly
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040, 431992
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 456729
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 456729, 404348, 421178
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
 
@@ -2228,13 +2228,33 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 	}
 
-	private boolean updateHiddenElements(DisplayItem items, String currentHidden, String prefix) {
-		boolean hasChanges = false;
+	private boolean updateHiddenElements(List<ActionSet> items, String currentHidden, String prefix) {
+		List<String> changedAndVisible = new ArrayList<String>();
+		List<String> changedAndInvisible = new ArrayList<String>();
+		for (ActionSet actionSet : items) {
+			if (!actionSet.wasChanged()) {
+				continue;
+			}
+			if (actionSet.isActive()) {
+				changedAndVisible.add(actionSet.descriptor.getId());
+			} else {
+				changedAndInvisible.add(actionSet.descriptor.getId());
+			}
+		}
+		return updateHiddenElements(currentHidden, prefix, changedAndVisible, changedAndInvisible);
+	}
 
+	private boolean updateHiddenElements(DisplayItem items, String currentHidden, String prefix) {
 		List<String> changedAndVisible = new ArrayList<String>();
 		List<String> changedAndInvisible = new ArrayList<String>();
 		getChangedIds(items, changedAndInvisible, changedAndVisible);
 
+		return updateHiddenElements(currentHidden, prefix, changedAndVisible, changedAndInvisible);
+	}
+
+	private boolean updateHiddenElements(String currentHidden, String prefix, List<String> changedAndVisible,
+			List<String> changedAndInvisible) {
+		boolean hasChanges = false;
 		// Remove explicitly 'visible' elements from the current list
 		for (String id : changedAndVisible) {
 			if (id != null && currentHidden.contains(prefix + id)) {
@@ -2289,6 +2309,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		perspective.turnOnActionSets(toAdd.toArray(new IActionSetDescriptor[toAdd.size()]));
 		perspective.turnOffActionSets(toRemove.toArray(new IActionSetDescriptor[toRemove.size()]));
 
+		requiresUpdate |= updateHiddenElements(actionSets, wPage.getHiddenItems(),
+				ModeledPageLayout.HIDDEN_ACTIONSET_PREFIX);
 		// Menu and Toolbar Items
 		requiresUpdate |= updateHiddenElements(menuItems, wPage.getHiddenItems(),
 				ModeledPageLayout.HIDDEN_MENU_PREFIX);
