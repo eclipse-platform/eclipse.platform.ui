@@ -771,6 +771,14 @@ public abstract class ResourceTest extends CoreTest {
 		return store;
 	}
 
+	/**
+	 * Ensures that the file system location associated with the corresponding path is deleted during test tear down.
+	 */
+	protected void deleteOnTearDown(IPath path) {
+		storesToDelete.add(EFS.getLocalFileSystem().getStore(path));
+
+	}
+
 	public String getUniqueString() {
 		return new UniversalUniqueIdentifier().toString();
 	}
