@@ -94,7 +94,8 @@ public class FileUtil {
 		if (fileSystem.isCaseSensitive())
 			return path;
 		IPath realPath = path.isAbsolute() ? Path.ROOT : Path.EMPTY;
-		realPath = realPath.setDevice(path.getDevice().toUpperCase());
+		String device = path.getDevice();
+		realPath = realPath.setDevice(device != null ? device.toUpperCase() : null);
 		IFileStore file = null;
 		for (int i = 0; i < path.segmentCount(); i++) {
 			String segment = path.segment(i);
