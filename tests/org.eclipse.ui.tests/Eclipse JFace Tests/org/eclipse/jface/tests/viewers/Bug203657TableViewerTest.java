@@ -16,9 +16,10 @@ import java.lang.reflect.Field;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
@@ -43,27 +44,32 @@ public class Bug203657TableViewerTest extends ViewerTestCase {
 	protected StructuredViewer createViewer(Composite parent) {
 		final TableViewer tableViewer = new TableViewer(parent, SWT.FULL_SELECTION);
 		tableViewer.setContentProvider(new ArrayContentProvider());
-		tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(
-				tableViewer.getTable()) });
-		tableViewer.setColumnProperties(new String[] { "0" });
-		tableViewer.setCellModifier(new ICellModifier() {
+
+		TableColumn column = new TableColumn(tableViewer.getTable(), SWT.NONE);
+		column.setWidth(200);
+
+		TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, column);
+		tableViewerColumn.setEditingSupport(new EditingSupport(tableViewer) {
+
 			@Override
-			public boolean canModify(Object element, String property) {
-				return true;
+			protected void setValue(Object element, Object value) {
 			}
 
 			@Override
-			public Object getValue(Object element, String property) {
+			protected Object getValue(Object element) {
 				return "";
 			}
 
 			@Override
-			public void modify(Object element, String property, Object value) {
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(tableViewer.getTable());
 			}
 
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
 		});
-
-	    new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(200);
 
 		return tableViewer;
 	}

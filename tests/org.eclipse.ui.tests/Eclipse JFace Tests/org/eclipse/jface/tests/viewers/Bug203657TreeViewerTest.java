@@ -16,11 +16,12 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
@@ -106,28 +107,31 @@ public class Bug203657TreeViewerTest extends ViewerTestCase {
 			}
 		});
 
-		treeViewer.setCellEditors(new CellEditor[] { new TextCellEditor(
-				treeViewer.getTree()) });
-		treeViewer.setColumnProperties(new String[] { "0" });
-		treeViewer.setCellModifier(new ICellModifier() {
+		TreeColumn column = new TreeColumn(treeViewer.getTree(), SWT.NONE);
+		column.setWidth(200);
+
+		TreeViewerColumn viewerColumn = new TreeViewerColumn(treeViewer, column);
+		viewerColumn.setEditingSupport(new EditingSupport(treeViewer) {
+
 			@Override
-			public boolean canModify(Object element, String property) {
-				return true;
+			protected void setValue(Object element, Object value) {
 			}
 
 			@Override
-			public Object getValue(Object element, String property) {
+			protected Object getValue(Object element) {
 				return "";
 			}
 
 			@Override
-			public void modify(Object element, String property, Object value) {
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(treeViewer.getTree());
 			}
 
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
 		});
-
-		new TreeColumn(treeViewer.getTree(), SWT.NONE).setWidth(200);
-
 		return treeViewer;
 	}
 
