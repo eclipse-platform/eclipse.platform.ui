@@ -103,7 +103,7 @@ public class MenuHelper {
 		WorkbenchSWTActivator.trace(Policy.MENUS, msg, error);
 	}
 
-	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
+	public static final String MAIN_MENU_ID = ActionSet.MAIN_MENU;
 	private static Field urlField;
 
 	/**

@@ -55,7 +55,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 public class MenuAdditionCacheEntry {
 	private static final String AFTER_ADDITIONS = "after=additions"; //$NON-NLS-1$
 
-	final static String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+	final static String MAIN_TOOLBAR = ActionSet.MAIN_TOOLBAR;
 
 	final static String TRIM_COMMAND1 = "org.eclipse.ui.trim.command1"; //$NON-NLS-1$
 
