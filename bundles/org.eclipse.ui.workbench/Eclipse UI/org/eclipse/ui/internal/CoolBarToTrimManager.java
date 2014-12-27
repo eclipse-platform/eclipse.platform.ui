@@ -46,6 +46,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.internal.menus.ActionSet;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.menus.CommandContributionItem;
 
@@ -56,7 +57,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 public class CoolBarToTrimManager extends ContributionManager implements ICoolBarManager2 {
 
 	private static final String TOOLBAR_SEPARATOR = "toolbarSeparator"; //$NON-NLS-1$
-	private static final String MAIN_TOOLBAR_ID = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+	private static final String MAIN_TOOLBAR_ID = ActionSet.MAIN_TOOLBAR;
 	private static final String OBJECT = "coolbar.object"; //$NON-NLS-1$
 	private static final String PREV_CHILD_VISIBLE = "prevChildVisible"; //$NON-NLS-1$
 	private MTrimBar topTrim;
@@ -95,8 +96,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void add(IAction action) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -325,7 +324,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public boolean getLockLayout() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -336,14 +334,11 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public int getStyle() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void insertAfter(String id, IAction action) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private MTrimBar getTrim(MTrimElement te) {
@@ -391,7 +386,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -402,14 +396,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void markDirty() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void prependToGroup(String groupName, IAction action) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -425,8 +415,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -479,8 +467,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void setContextMenuManager(IMenuManager menuManager) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -490,8 +476,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void setLockLayout(boolean value) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
