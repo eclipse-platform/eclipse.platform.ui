@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -88,6 +88,13 @@ public abstract class FileSystemTest extends CoreTest {
 			fail("ensureExists", e);
 		}
 
+	}
+
+	/**
+	 * Checks whether the local file system supports accessing and modifying the given attribute.
+	 */
+	protected boolean isAttributeSupported(int attribute) {
+		return (EFS.getLocalFileSystem().attributes() & attribute) != 0;
 	}
 
 	protected void setUp() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [232426] push up createSymLink() to CoreTest
  * Martin Oberhuber (Wind River) - [331716] Symlink test failures on Windows 7
  * Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
+ * 							  [445805] Make sure symlink tests are green when run on Windows with administrator privileges
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
@@ -27,6 +28,13 @@ import org.eclipse.core.runtime.Platform;
  * 
  */
 public class SymlinkTest extends FileSystemTest {
+	/**
+	 * Symbolic links on Windows behave differently compared to Unix-based systems. Symbolic links
+	 * on Windows have their own set of attributes independent from the attributes of the link's
+	 * target. The {@link java.io.File#exists() File.exists()} method on Windows checks for
+	 * existence of the symbolic link itself, not its target.
+	 */
+	private static final boolean SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES = isWindowsVistaOrHigher();
 	private static String specialCharName = "äöüß ÄÖÜ àÀâÂ µ²³úá"; //$NON-NLS-1$
 
 	protected IFileStore aDir, aFile; //actual Dir, File
@@ -57,7 +65,7 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public boolean haveSymlinks() {
-		return (getFileSystem().attributes() & EFS.ATTRIBUTE_SYMLINK) != 0;
+		return isAttributeSupported(EFS.ATTRIBUTE_SYMLINK);
 	}
 
 	protected void makeLinkStructure() {
@@ -97,28 +105,37 @@ public class SymlinkTest extends FileSystemTest {
 		// Only activate this test if testing of symbolic links is possible.
 		if (!canCreateSymLinks())
 			return;
+		long testStartTime = System.currentTimeMillis();
 		makeLinkStructure();
 		//break links by removing actual dir and file
 		ensureDoesNotExist(aDir);
 		ensureDoesNotExist(aFile);
 		fetchFileInfos();
 
-		assertFalse(ilFile.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, ilFile.exists());
 		assertFalse(ilFile.isDirectory());
-		assertFalse(illFile.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, illFile.exists());
 		assertFalse(illFile.isDirectory());
-		assertFalse(ilDir.exists());
-		assertFalse(ilDir.isDirectory());
-		assertFalse(illDir.exists());
-		assertFalse(illDir.isDirectory());
-		assertEquals(ilFile.getLastModified(), 0);
-		assertEquals(ilFile.getLength(), 0);
-		assertEquals(ilDir.getLastModified(), 0);
-		assertEquals(ilDir.getLength(), 0);
-		assertEquals(illFile.getLastModified(), 0);
-		assertEquals(illFile.getLength(), 0);
-		assertEquals(illDir.getLastModified(), 0);
-		assertEquals(illDir.getLength(), 0);
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, ilDir.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, ilDir.isDirectory());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, illDir.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, illDir.isDirectory());
+		if (SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES) {
+			// Symlinks on Windows have their own modification time.
+			assertTrue(ilFile.getLastModified() >= testStartTime);
+			assertTrue(ilDir.getLastModified() >= testStartTime);
+			assertTrue(illFile.getLastModified() >= testStartTime);
+			assertTrue(illDir.getLastModified() >= testStartTime);
+		} else {
+			assertEquals(0, ilFile.getLastModified());
+			assertEquals(0, ilDir.getLastModified());
+			assertEquals(0, illFile.getLastModified());
+			assertEquals(0, illDir.getLastModified());
+		}
+		assertEquals(0, ilFile.getLength());
+		assertEquals(0, ilDir.getLength());
+		assertEquals(0, illFile.getLength());
+		assertEquals(0, illDir.getLength());
 
 		assertTrue(ilFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
 		assertEquals(ilFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aFile");
@@ -202,7 +219,7 @@ public class SymlinkTest extends FileSystemTest {
 		mkLink(baseStore, "l2", "l1", false);
 		IFileStore l1 = baseStore.getChild("l1");
 		IFileInfo i1 = l1.fetchInfo();
-		assertFalse(i1.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, i1.exists());
 		assertFalse(i1.isDirectory());
 
 		assertTrue(i1.getAttribute(EFS.ATTRIBUTE_SYMLINK));
@@ -224,7 +241,7 @@ public class SymlinkTest extends FileSystemTest {
 			assertTrue(exceptionThrown);
 			assertTrue(i1.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 		}
-		assertFalse(i1.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, i1.exists());
 
 		i1.setLastModified(12345);
 		exceptionThrown = false;
@@ -237,7 +254,7 @@ public class SymlinkTest extends FileSystemTest {
 		//FIXME bug: putInfo neither sets attributes nor throws an exception for broken symbolic links
 		//assertTrue(exceptionThrown);
 		//assertEquals(i1.getLastModified(), 12345);
-		assertFalse(i1.exists());
+		assertEquals(SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, i1.exists());
 
 		l1.delete(EFS.NONE, getMonitor());
 		infos = baseStore.childInfos(EFS.NONE, getMonitor());
@@ -260,10 +277,18 @@ public class SymlinkTest extends FileSystemTest {
 		assertTrue(ilDir.isDirectory());
 		assertTrue(illDir.exists());
 		assertTrue(illDir.isDirectory());
-		assertEquals(iFile.getLastModified(), illFile.getLastModified());
-		assertEquals(iFile.getLength(), illFile.getLength());
-		assertEquals(iDir.getLastModified(), illDir.getLastModified());
-		assertEquals(iDir.getLength(), illDir.getLength());
+		if (SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES) {
+			// Symlinks on Windows have their own modification time and zero size.
+			assertTrue(illFile.getLastModified() >= iFile.getLastModified());
+			assertEquals(0, illFile.getLength());
+			assertTrue(illDir.getLastModified() >= iDir.getLastModified());
+			assertEquals(0, illDir.getLength());
+		} else {
+			assertEquals(iFile.getLastModified(), illFile.getLastModified());
+			assertEquals(iFile.getLength(), illFile.getLength());
+			assertEquals(iDir.getLastModified(), illDir.getLastModified());
+			assertEquals(iDir.getLength(), illDir.getLength());
+		}
 
 		assertTrue(ilFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
 		assertEquals(ilFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "aFile");
@@ -407,7 +432,7 @@ public class SymlinkTest extends FileSystemTest {
 		illFile.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
 		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES, getMonitor());
 		iFile = aFile.fetchInfo();
-		assertTrue(iFile.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		assertEquals(!SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, iFile.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 
 		illFile.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
 		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES, getMonitor());
@@ -417,7 +442,7 @@ public class SymlinkTest extends FileSystemTest {
 		illDir.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
 		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
 		iDir = aDir.fetchInfo();
-		assertTrue(iDir.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		assertEquals(!SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES, iDir.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 
 		illDir.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
 		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
@@ -434,6 +459,8 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkPutExecutable() throws Exception {
+		if (!isAttributeSupported(EFS.ATTRIBUTE_EXECUTABLE))
+			return;
 		// Only activate this test if testing of symbolic links is possible.
 		if (!canCreateSymLinks())
 			return;
