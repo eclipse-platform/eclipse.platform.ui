@@ -12,16 +12,23 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ParameterIdSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -29,16 +36,25 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class ParameterEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
 	private StackLayout stackLayout;
+
+	@Inject
+	private IEclipseContext eclipseContext;
 
 	@Inject
 	public ParameterEditor() {
@@ -126,7 +142,7 @@ public class ParameterEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ParameterEditor_Name, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME));
+		createParameterNameRow(parent, textProp);
 		ControlFactory.createTextField(parent, Messages.ParameterEditor_Value, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__VALUE));
 
 		item = new CTabItem(folder, SWT.NONE);
@@ -150,4 +166,39 @@ public class ParameterEditor extends AbstractComponentEditor {
 		return null;
 	}
 
+	private void createParameterNameRow(Composite parent, IWidgetValueProperty textProp) {
+		{
+			Label commandParameterIdLabel = new Label(parent, SWT.NONE);
+			commandParameterIdLabel.setText(Messages.ParameterEditor_Command_Parameter_ID);
+			commandParameterIdLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			Text commandParameterIdValue = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			commandParameterIdValue.setLayoutData(gd);
+			TextPasteHandler.createFor(commandParameterIdValue);
+			IEMFEditValueProperty modelProp = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME);
+			context.bindValue(textProp.observeDelayed(200, commandParameterIdValue), modelProp.observeDetail(getMaster()));
+		}
+
+		Button chooseParameterButton = new Button(parent, SWT.PUSH | SWT.FLAT);
+		chooseParameterButton.setText(Messages.ModelTooling_Common_FindEllipsis);
+		chooseParameterButton.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
+		chooseParameterButton.addSelectionListener(new ChooseParameterButtonSelectionListener());
+		chooseParameterButton.setLayoutData(new GridData());
+	}
+
+	private final class ChooseParameterButtonSelectionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			WritableValue master = getMaster();
+			if (master == null || !(master.getValue() instanceof MParameter)) {
+				return;
+			}
+
+			IEclipseContext staticContext = EclipseContextFactory.create("ParameterIdSelectionDialog static context"); //$NON-NLS-1$
+			staticContext.set(MParameter.class, (MParameter) master.getValue());
+			ParameterIdSelectionDialog dialog = ContextInjectionFactory.make(ParameterIdSelectionDialog.class, eclipseContext, staticContext);
+			dialog.open();
+		}
+	}
 }

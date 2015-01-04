@@ -426,8 +426,13 @@ public class Messages {
 
 	public String ParameterEditor_TreeLabel;
 	public String ParameterEditor_TreeLabelDescription;
-	public String ParameterEditor_Name;
+	public String ParameterEditor_Command_Parameter_ID;
 	public String ParameterEditor_Value;
+
+	public String ParameterIdSelectionDialog_ShellTitle;
+	public String ParameterIdSelectionDialog_DialogTitle;
+	public String ParameterIdSelectionDialog_DialogMessage;
+	public String ParameterIdSelectionDialog_LabelText;
 
 	public String PopupMenuEditor_TreeLabel;
 	public String PopupMenuEditor_TreeLabelDescription;
