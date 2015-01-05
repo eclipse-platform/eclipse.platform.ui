@@ -23,7 +23,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public class ComputedValueTest extends AbstractDefaultRealmTestCase {
     public void testValueType() throws Exception {
@@ -105,25 +105,25 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         WritableValueExt value2 = new WritableValueExt(Integer.TYPE, new Integer(1));
         values.add(value1);
         values.add(value2);
-        
+
         assertFalse(value1.hasListeners());
         assertFalse(value2.hasListeners());
         cv.getValue();
         assertTrue(value1.hasListeners());
         assertTrue(value2.hasListeners());
-        
+
         //force the computed value to be stale
         value2.setValue(new Integer(2));
         //remove value2 from the values that are used to compute the value
         values.remove(value2);
-        
+
         //force the value to be computed
         cv.getValue();
         assertEquals(new Integer(1), cv.getValue());
         assertTrue(value1.hasListeners());
         assertFalse("because value2 is not a part of the calculation the listeners should have been removed", value2.hasListeners());
     }
-    
+
     public void testSetValueUnsupportedOperationException() throws Exception {
         ComputedValue cv = new ComputedValue() {
             @Override
@@ -131,7 +131,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
                 return null;
             }
         };
-        
+
         try {
             cv.setValue(new Object());
             fail("exception should have been thrown");

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ObjectToPrimitiveValidatorTest extends TestCase {
 

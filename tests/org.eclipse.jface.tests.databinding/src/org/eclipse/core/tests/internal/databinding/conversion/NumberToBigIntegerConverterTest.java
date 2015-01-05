@@ -23,7 +23,7 @@ import com.ibm.icu.text.NumberFormat;
  */
 public class NumberToBigIntegerConverterTest extends NumberToNumberTestHarness {
 	private NumberFormat numberFormat;
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -31,7 +31,7 @@ public class NumberToBigIntegerConverterTest extends NumberToNumberTestHarness {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.NumberToNumberTestHarness#doGetOutOfRangeNumber()
 	 */

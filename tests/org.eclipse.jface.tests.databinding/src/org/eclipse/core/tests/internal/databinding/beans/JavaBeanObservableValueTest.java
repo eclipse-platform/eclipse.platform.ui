@@ -212,7 +212,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Throws an exception when the value is set.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	/* package */class ThrowsSetException {

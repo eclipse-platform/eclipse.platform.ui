@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ViewerElementWrapperTest extends TestCase {
 	private ViewerElementWrapper wrapper;

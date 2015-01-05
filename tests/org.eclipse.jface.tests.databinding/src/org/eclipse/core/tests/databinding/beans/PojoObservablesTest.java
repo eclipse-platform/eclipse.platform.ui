@@ -37,7 +37,7 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override

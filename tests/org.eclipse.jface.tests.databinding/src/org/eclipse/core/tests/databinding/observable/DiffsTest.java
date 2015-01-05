@@ -38,7 +38,7 @@ public class DiffsTest extends TestCase {
 				return null;
 			}
 		};
-		
+
 		try {
 			diff.toString();
 			assertTrue(true);
@@ -63,7 +63,7 @@ public class DiffsTest extends TestCase {
 				return null;
 			}
 		};
-		
+
 		try {
 			diff.toString();
 			assertTrue(true);

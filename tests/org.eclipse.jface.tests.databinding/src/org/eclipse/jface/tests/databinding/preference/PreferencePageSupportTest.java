@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class PreferencePageSupportTest extends AbstractSWTTestCase {
 	private PreferencePageWithSupport page;

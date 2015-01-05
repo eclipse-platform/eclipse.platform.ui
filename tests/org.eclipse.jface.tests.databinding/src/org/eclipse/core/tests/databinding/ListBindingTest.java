@@ -34,10 +34,10 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	private IObservableList target;
 	private IObservableList model;
 	private DataBindingContext dbc;
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -53,13 +53,13 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindList(target, model,
 				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST),
 				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST));
-		
+
 		target.add("1");
 		List targetCopy = new ArrayList(target.size());
 		targetCopy.addAll(target);
-		
+
 		model.add("2");
-		
+
 		assertFalse("target should not equal model", target.equals(model));
 		binding.updateTargetToModel();
 		assertEquals("target should not have changed", targetCopy, target);
@@ -70,70 +70,70 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindList(target, model,
 				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST),
 				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST));
-		
-		target.add("1");		
+
+		target.add("1");
 		model.add("2");
-		
+
 		List modelCopy = new ArrayList(model.size());
 		modelCopy.addAll(model);
-		
+
 		assertFalse("model should not equal target", model.equals(target));
 		binding.updateModelToTarget();
-		
+
 		assertEquals("model should not have changed", modelCopy, model);
 		assertEquals("model != target", model, target);
 	}
-	
+
 	public void testGetTarget() throws Exception {
 		Binding binding = dbc.bindList(target, model);
 		assertEquals(target, binding.getTarget());
 	}
-	
+
 	public void testGetModel() throws Exception {
 		Binding binding = dbc.bindList(target, model);
 		assertEquals(model, binding.getModel());
 	}
-	
+
 	public void testStatusIsInstanceOfBindingStatus() throws Exception {
 		Binding binding = dbc.bindList(target, model);
 		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
 	}
-	
+
 	public void testAddValidationStatusContainsMultipleStatuses() throws Exception {
 		UpdateListStrategy strategy = new UpdateListStrategy() {
 			@Override
 			protected IStatus doAdd(IObservableList observableList,
 					Object element, int index) {
 				super.doAdd(observableList, element, index);
-				
+
 				switch (index) {
 				case 0:
 					return ValidationStatus.error("");
 				case 1:
 					return ValidationStatus.info("");
 				}
-				
+
 				return null;
 			}
 		};
-		
+
 		Binding binding = dbc.bindList(target, model, strategy, null);
 		target.addAll(Arrays.asList(new String[] {"1", "2"}));
-		
+
 		IStatus status = (IStatus) binding.getValidationStatus().getValue();
 		assertEquals("maximum status", IStatus.ERROR, status.getSeverity());
 		assertTrue("multi status", status.isMultiStatus());
-		
+
 		IStatus[] children = status.getChildren();
 		assertEquals("multi status children", 2, children.length);
 		assertEquals("first status severity", IStatus.ERROR, children[0].getSeverity());
 		assertEquals("second status severity", IStatus.INFO, children[1].getSeverity());
 	}
-	
+
 	public void testRemoveValidationStatusContainsMultipleStatuses() throws Exception {
 		List items = Arrays.asList(new String[] {"1", "2"});
 		model.addAll(items);
-		
+
 		UpdateListStrategy strategy = new UpdateListStrategy() {
 			int count;
 			/* (non-Javadoc)
@@ -142,44 +142,44 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 			@Override
 			protected IStatus doRemove(IObservableList observableList, int index) {
 				super.doRemove(observableList, index);
-				
+
 				switch (count++) {
 				case 0:
 					return ValidationStatus.error("");
 				case 1:
 					return ValidationStatus.info("");
 				}
-				
-				return null; 	
+
+				return null;
 			}
 		};
-		
+
 		Binding binding = dbc.bindList(target, model, strategy, null);
 		target.removeAll(items);
-		
+
 		IStatus status = (IStatus) binding.getValidationStatus().getValue();
 		assertEquals("maximum status", IStatus.ERROR, status.getSeverity());
 		assertTrue("multi status", status.isMultiStatus());
-		
+
 		IStatus[] children = status.getChildren();
 		assertEquals("multi status children", 2, children.length);
 		assertEquals("first status severity", IStatus.ERROR, children[0].getSeverity());
 		assertEquals("second status severity", IStatus.INFO, children[1].getSeverity());
 	}
-	
+
 	public void testAddOKValidationStatus() throws Exception {
 		Binding binding = dbc.bindList(target, model);
 		target.add("1");
-		
+
 		IStatus status = (IStatus) binding.getValidationStatus().getValue();
 		assertTrue(status.isOK());
 		assertEquals(0, status.getChildren().length);
 	}
-	
+
 	public void testRemoveOKValidationStatus() throws Exception {
 		model.add("1");
 		Binding binding = dbc.bindList(target, model);
-		
+
 		target.remove("1");
 		IStatus status = (IStatus) binding.getValidationStatus().getValue();
 		assertTrue(status.isOK());

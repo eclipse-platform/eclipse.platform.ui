@@ -13,7 +13,7 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CustomBeanModelType {
 

@@ -19,7 +19,7 @@ import java.util.Set;
  * A bean in which all property change events are fired according to an annoying
  * provision in the bean spec, where <code>(oldValue == null && newValue ==
  * null)</code> indicates that an unknown change occured.
- * 
+ *
  * @since 3.2
  */
 public class AnnoyingBean extends Bean {

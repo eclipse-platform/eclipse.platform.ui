@@ -24,7 +24,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValu
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class DecoratingObservableValueTest {
 	public static Test suite() {

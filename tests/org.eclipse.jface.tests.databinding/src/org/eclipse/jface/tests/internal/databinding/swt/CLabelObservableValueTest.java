@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CLabelObservableValueTest extends TestCase {
 	private Delegate delegate;

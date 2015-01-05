@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests for DelayedObservableValue
- * 
+ *
  * @since 1.2
  */
 public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {

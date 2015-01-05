@@ -22,7 +22,7 @@ import junit.framework.Test;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class BindingTestSetup extends TestSetup {
 

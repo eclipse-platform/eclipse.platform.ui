@@ -16,12 +16,12 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Abstract test case that handles disposing of the Shell after each test.
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	private Shell shell;
-	
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -31,7 +31,7 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -44,17 +44,17 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	/**
 	 * Returns a Shell to be used in a test.
-	 * 
+	 *
 	 * @return shell
 	 */
 	protected Shell getShell() {
 		if (shell == null || shell.isDisposed()) {
 			shell = new Shell();
 		}
-		
+
 		return shell;
 	}
 }

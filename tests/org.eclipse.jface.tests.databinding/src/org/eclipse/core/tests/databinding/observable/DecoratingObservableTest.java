@@ -20,7 +20,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class DecoratingObservableTest extends AbstractDefaultRealmTestCase {
 	private IObservable decorated;

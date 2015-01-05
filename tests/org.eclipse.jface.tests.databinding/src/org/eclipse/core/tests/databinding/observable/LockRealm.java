@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class LockRealm extends Realm {
 

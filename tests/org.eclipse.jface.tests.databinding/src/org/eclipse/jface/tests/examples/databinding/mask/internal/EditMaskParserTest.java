@@ -78,7 +78,7 @@ public class EditMaskParserTest extends TestCase {
 		parser.setInput("6a0) 5*5-1\\12");
 		assertFalse("incomplete", parser.isComplete());
 	}
-	
+
 	public void testSetPlaceholder() throws Exception {
 		parser.setInput("6a0) 5*5-1\\12");
 		assertEquals("Formatted input", "(605) 511-2   ", parser.getFormattedResult());
@@ -94,7 +94,7 @@ public class EditMaskParserTest extends TestCase {
 		assertEquals("Position 1 is good", 1, parser.getNextInputPosition(1));
 		assertEquals("Skip )<space>", 6, parser.getNextInputPosition(4));
 	}
-	
+
 	public void testGetFirstIncompleteInputPosition() throws Exception {
 		assertEquals("1st position incomplete", 1, parser.getFirstIncompleteInputPosition());
 		parser.setInput("6a0) 5*5-1\\12");

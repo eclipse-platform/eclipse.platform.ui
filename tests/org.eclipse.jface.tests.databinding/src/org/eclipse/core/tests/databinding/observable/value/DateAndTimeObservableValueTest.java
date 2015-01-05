@@ -22,7 +22,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public class DateAndTimeObservableValueTest extends
 		AbstractDefaultRealmTestCase {

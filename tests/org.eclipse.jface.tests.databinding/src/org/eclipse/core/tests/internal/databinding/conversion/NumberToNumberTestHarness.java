@@ -22,7 +22,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 
 	/**
 	 * Invoked when a to primitive validator is needed.
-	 * 
+	 *
 	 * @param fromType
 	 * @return validator, <code>null</code> if the type does not have a primitive form
 	 */
@@ -30,7 +30,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 
 	/**
 	 * Invoked when a to boxed validator is needed.
-	 * 
+	 *
 	 * @param fromType
 	 * @return
 	 */
@@ -38,7 +38,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 
 	/**
 	 * Invoked when the type is needed.
-	 * 
+	 *
 	 * @param primitive
 	 * @return type, <code>null</code> if the type does not have a primitive form
 	 */
@@ -46,7 +46,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 
 	/**
 	 * Invoked when an out of range number is needed to use for conversion.
-	 * 
+	 *
 	 * @return out of range number of <code>null</code> if the type has no bounds
 	 */
 	protected abstract Number doGetOutOfRangeNumber();
@@ -58,7 +58,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 
 	public void testToTypeIsPrimitive() throws Exception {
 		Class toType = doGetToType(true);
-		
+
 		if (toType == null) {
 			//return if there is no primitive type
 			return;
@@ -79,9 +79,9 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		Integer value = new Integer(1);
 		Number result = (Number) doGetToBoxedTypeValidator(Integer.class)
 				.convert(value);
-		
+
 		assertNotNull("result was null", result);
-		
+
 		// regardless if the converter is for the primitive value the returned
 		// value will be the boxed type
 		assertEquals(doGetToType(false), result.getClass());
@@ -90,7 +90,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 
 	public void testOutOfRangeConversion() throws Exception {
 		Number outOfRange = doGetOutOfRangeNumber();
-		
+
 		if (outOfRange == null) {
 			//the number does not have bounds (e.g. BigInteger or BigDecimal)
 			return;
@@ -106,10 +106,10 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 			throws Exception {
 		if (doGetToType(true) == null) {
 			//return if primitive is not supported
-			
+
 			return;
 		}
-		
+
 		try {
 			doGetToPrimitiveValidator(Integer.class).convert(null);
 			fail("exception should have been thrown");

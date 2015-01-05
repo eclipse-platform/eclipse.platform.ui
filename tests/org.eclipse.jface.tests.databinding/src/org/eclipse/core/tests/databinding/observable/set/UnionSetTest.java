@@ -33,7 +33,7 @@ public class UnionSetTest extends TestCase {
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
 		return suite;
 	}
-	
+
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
 		private IObservableSet[] sets;
@@ -43,7 +43,7 @@ public class UnionSetTest extends TestCase {
 
 		@Override
 		public void setUp() {
-			
+
 			super.setUp();
 		}
 
@@ -66,9 +66,9 @@ public class UnionSetTest extends TestCase {
 
 		@Override
 		public IObservableCollection createObservableCollection(Realm realm,
-				int elementCount) {			
+				int elementCount) {
 			sets = new IObservableSet[]{new WritableSet(realm), new WritableSet(realm)};
-			
+
 			IObservableSet set = new UnionSet(sets);
 
 			for (int i = 0; i < elementCount; i++) {

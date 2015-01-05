@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	private Shell shell;

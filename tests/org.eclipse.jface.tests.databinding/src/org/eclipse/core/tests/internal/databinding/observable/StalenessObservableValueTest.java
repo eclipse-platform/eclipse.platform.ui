@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 
 /**
  * Tests for StalenessObservableValue
- * 
+ *
  * @since 1.1
  */
 public class StalenessObservableValueTest extends TestCase {

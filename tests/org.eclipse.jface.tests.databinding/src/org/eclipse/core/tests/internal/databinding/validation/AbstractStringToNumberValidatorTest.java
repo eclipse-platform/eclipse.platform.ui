@@ -21,13 +21,13 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * Tests for AbstractStringToNumberValidator. Most tests should be included in
  * StringToNumberValidatorTestHarness. This class is for the edge cases.
- * 
+ *
  * @since 3.2
  */
 public class AbstractStringToNumberValidatorTest extends TestCase {
 	/**
 	 * Test for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=194353.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testErrorMessagesAreNotCached() throws Exception {
@@ -42,12 +42,12 @@ public class AbstractStringToNumberValidatorTest extends TestCase {
 
 		assertFalse("messages should not be equal", status1.getMessage().equals(status2.getMessage()));
 	}
-	
+
 	static class ValidatorStub extends AbstractStringToNumberValidator {
 		ValidatorStub(NumberFormatConverter c) {
 			super(c, new Integer(Integer.MIN_VALUE), new Integer(Integer.MAX_VALUE));
 		}
-		
+
 		@Override
 		protected boolean isInRange(Number number) {
 			return true;

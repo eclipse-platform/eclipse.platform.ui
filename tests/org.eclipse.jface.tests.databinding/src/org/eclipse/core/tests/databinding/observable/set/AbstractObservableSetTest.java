@@ -58,25 +58,25 @@ public class AbstractObservableSetTest extends TestCase {
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			AbstractObservableSetStub set = new AbstractObservableSetStub(realm, String.class);
-			
+
 			for (int i = 0; i < elementCount; i++) {
 				set.getWrappedSet().add(Integer.toString(i));
 			}
-			
+
 			return set;
 		}
 	}
-	
+
 	private static class AbstractObservableSetStub extends AbstractObservableSet {
 		private Object type;
 		private HashSet set;
-		
+
 		private AbstractObservableSetStub(Realm realm, Object type) {
 			super (realm);
 			set = new HashSet();
 			this.type = type;
 		}
-		
+
 		@Override
 		protected Set getWrappedSet() {
 			return set;
@@ -85,8 +85,8 @@ public class AbstractObservableSetTest extends TestCase {
 		@Override
 		public Object getElementType() {
 			return type;
-		}		
-		
+		}
+
 		@Override
 		protected void fireSetChange(SetDiff diff) {
 			super.fireSetChange(diff);

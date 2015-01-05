@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 
 /**
  * Tests for ListDiff class
- * 
+ *
  * @since 1.1
  */
 public class ListDiffTest extends TestCase {

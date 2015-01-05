@@ -36,7 +36,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * Tests for AbstractObservable.
- * 
+ *
  * @since 1.1
  */
 public class AbstractObservableTest extends AbstractDefaultRealmTestCase {

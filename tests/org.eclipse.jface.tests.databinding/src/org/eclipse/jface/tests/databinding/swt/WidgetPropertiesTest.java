@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class WidgetPropertiesTest extends AbstractSWTTestCase {
 	private Shell shell;

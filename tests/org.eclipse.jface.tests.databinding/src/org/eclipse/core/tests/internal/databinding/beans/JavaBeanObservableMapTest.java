@@ -39,7 +39,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 	private Bean model1;

@@ -89,12 +89,12 @@ public class TextControlScenario extends ScenariosTestCase {
                 BeansObservables.observeValue(transportation, "price"));
 
         NumberFormat numberFormat = NumberFormat.getInstance();
-        
+
         assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
         text.setText("9876.54");
         text.notifyListeners(SWT.FocusOut, null);
         assertEquals(9876.54, transportation.getPrice(), 0);
-        
+
         transportation.setPrice(1234.56);
         assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
     }
@@ -154,14 +154,14 @@ public class TextControlScenario extends ScenariosTestCase {
 //            // Verify the model has changed
 //            assertEquals(newName.substring(0, i + 1), adventure.getName());
 //        }
-//        
+//
 //        // Now send an escape key and verify that the model reverts
 //        Event event = new Event();
 //        event.character = SWT.ESC;
 //        event.keyCode = 27;
 //        text.notifyListeners(SWT.KeyDown, event);
 //        assertEquals(adventure.getName(), originalName);
-//        
+//
 //        // Now send "Austria" key by key
 //        newName = "Austria";
 //        for (int i = 0; i < newName.length(); i++) {
@@ -259,7 +259,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // validator on the MaxNumberOfPeople property
 
         DataBindingContext dbc = getDbc();
-        
+
         dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
 				BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
 				new CustomBeanUpdateValueStrategy(), null);
@@ -275,7 +275,7 @@ public class TextControlScenario extends ScenariosTestCase {
 
     public void testScenario09() {
         // Verify direct binding between a Text and Label following bugzilla
-        // 118696        
+        // 118696
         Label label = new Label(getComposite(), SWT.NONE);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label));
 

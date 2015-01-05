@@ -29,7 +29,7 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class WritableMapTest extends TestCase {
 	@Override
@@ -87,25 +87,25 @@ public class WritableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testPutWithExistingKeyMapChangeEvent() throws Exception {
 		WritableMap map = new WritableMap();
 		String key = "key";
 		String value = "value";
 		map.put(key, value);
-		
+
 		MapChangeEventTracker listener = new MapChangeEventTracker();
 		map.addMapChangeListener(listener);
-		
+
 		assertEquals(0, listener.count);
-		
+
 		String newValue = "new value";
 		map.put(key, newValue);
-		
+
 		assertEquals(1, listener.count);
 		MapChangeEvent event = listener.event;
-		
-		
+
+
 		Set changedKeys = event.diff.getChangedKeys();
 		assertEquals(1, changedKeys.size());
 		assertTrue(changedKeys.contains(key));
@@ -127,7 +127,7 @@ public class WritableMapTest extends TestCase {
 		map.put(key, equalValue);
 
 		assertEquals(0, tracker.count);
-		
+
 	}
 
 	public void testPutNullKey_SingleAdditionChangeEvent() {

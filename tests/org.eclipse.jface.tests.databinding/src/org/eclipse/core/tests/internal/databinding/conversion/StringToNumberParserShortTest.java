@@ -41,5 +41,5 @@ public class StringToNumberParserShortTest extends StringToNumberParserTestHarne
 	@Override
 	protected Number getValidMin() {
 		return new Short(Short.MIN_VALUE);
-	}	
+	}
 }

@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class NPETestScenario extends ScenariosTestCase {
 	private Text text;

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 	protected ThreadRealm threadRealm;

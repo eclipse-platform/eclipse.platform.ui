@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matt Carter - Bug 180392     
+ *     Matt Carter - Bug 180392
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.conversion;
@@ -31,7 +31,7 @@ public class NumberToStringConverterTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -113,11 +113,11 @@ public class NumberToStringConverterTest extends TestCase {
 		String result = (String) converter.convert(input);
 		assertEquals(expected, result);
 	}
-	
+
 	public void testConvertBigIntegerToString() throws Exception {
 		BigInteger input = BigInteger.valueOf(1000);
 		String expected = integerFormat.format(input);
-		
+
 		NumberToStringConverter converter = NumberToStringConverter.fromBigInteger();
 		String result = (String) converter.convert(input);
 		assertEquals(expected, result);
@@ -138,7 +138,7 @@ public class NumberToStringConverterTest extends TestCase {
 	 * when ICU is available, otherwise platform default. Note that
 	 * Java < 1.5 did not format BigDecimals properly, truncating them via doubleValue(),
 	 * so this method will return bad results, Data Binding will not, so
-	 * the test will FAIL on Java < 1.5 under these conditions. 
+	 * the test will FAIL on Java < 1.5 under these conditions.
 	 * @param bd
 	 * @return
 	 * @throws ClassNotFoundException
@@ -152,7 +152,7 @@ public class NumberToStringConverterTest extends TestCase {
 			return numberFormat.format(icubd);
 		}
 		throw new IllegalArgumentException("ICU not present. Cannot reliably format large BigDecimal values; needed for testing. Java platforms prior to 1.5 fail to format/parse these decimals correctly.");
-	}	
+	}
 	public void testConvertBigDecimalToString() throws Exception {
 		NumberToStringConverter converter = NumberToStringConverter.fromBigDecimal();
 		// Test 1: Decimal
@@ -160,13 +160,13 @@ public class NumberToStringConverterTest extends TestCase {
 		String expected = formatBigDecimal(input);
 		String result = (String) converter.convert(input);
 		assertEquals("Non-integer BigDecimal", expected, result);
-		
+
 		// Test 2: Long
 		input = new BigDecimal(Integer.MAX_VALUE + 100L);
 		expected = formatBigDecimal(input);
 		result = (String) converter.convert(input);
 		assertEquals("Integral BigDecimal in long range", expected, result);
-		
+
 		// Test 3: BigInteger range
 		input = new BigDecimal(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.valueOf(100L)));
 		expected = formatBigDecimal(input);
@@ -178,7 +178,7 @@ public class NumberToStringConverterTest extends TestCase {
 		expected = formatBigDecimal(input);
 		result = (String) converter.convert(input);
 		assertEquals("High-precision BigDecimal", expected, result);
-		
+
 	}
 
 	public void testNullSourceConvertsToEmptyString() throws Exception {

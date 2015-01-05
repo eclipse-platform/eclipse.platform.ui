@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Tests to assert the inputs of the TextObservableValue constructor.
- * 
+ *
  * @since 3.2
  */
 public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
@@ -67,7 +67,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=171132
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {

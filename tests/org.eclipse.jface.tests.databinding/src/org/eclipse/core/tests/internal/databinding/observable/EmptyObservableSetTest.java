@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class EmptyObservableSetTest {
 	public static Test suite() {

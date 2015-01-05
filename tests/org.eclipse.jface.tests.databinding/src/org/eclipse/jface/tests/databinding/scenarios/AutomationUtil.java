@@ -23,7 +23,7 @@ public class AutomationUtil {
 
 	/**
 	 * Method to mimic a key code event on a display.
-	 * 
+	 *
 	 * @param display
 	 *            The display.
 	 * @param eventType
@@ -41,7 +41,7 @@ public class AutomationUtil {
 
 	/**
 	 * Method to mimic a character event on a display.
-	 * 
+	 *
 	 * @param display
 	 *            The display.
 	 * @param eventType

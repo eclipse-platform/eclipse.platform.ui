@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 
 /**
  * Tests for ListDiffVisitor class
- * 
+ *
  * @since 1.1
  */
 public class ListDiffVisitorTest extends TestCase {

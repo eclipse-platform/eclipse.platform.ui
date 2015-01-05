@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 
 /**
  * Tests for ConstantObservableValue
- * 
+ *
  * @since 1.1
  */
 public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {

@@ -151,7 +151,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// // Show that when an item is added to a collection the table gets an
 		// extra item
 		// Account[] accounts = catalog.getAccounts();
-		//		
+		//
 		// TableViewerDescription tableViewerDescription = new
 		// TableViewerDescription(
 		// tableViewer);
@@ -159,19 +159,19 @@ public class TableScenarios extends ScenariosTestCase {
 		// tableViewerDescription.addColumn("lastName");
 		// tableViewerDescription.addColumn("state");
 		// tableViewerDescription.addColumn(null,new IConverter(){
-		//			
+		//
 		// public Class getModelType() {
 		// return Account.class;
 		// }
-		//			
+		//
 		// public Class getTargetType() {
 		// return ViewerLabel.class;
 		// }
-		//			
+		//
 		// public Object convertTargetToModel(Object targetObject) {
 		// return null;
 		// }
-		//			
+		//
 		// public Object convertModelToTarget(Object modelObject) {
 		// Account account = (Account) modelObject;
 		// return new ViewerLabel(account.toString(), images[new
@@ -181,7 +181,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// new Property(catalog, "accounts"), null);
 		//
 		// //interact();
-		//		
+		//
 		// // Verify the number of accounts matches the number of items in the
 		// table
 		// assertEquals(tableViewer.getTable().getItemCount(),accounts.length);
@@ -205,7 +205,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// // The number of items should still match the number of accounts
 		// (i.e. test the model is reset)
 		// assertEquals(tableViewer.getTable().getItemCount(),catalog.getAccounts().length);
-		//		
+		//
 		// // Test adding and removing to the model on a non UI thread
 		// int numberOfAccounts = catalog.getAccounts().length;
 		// final Account barney = new Account();
@@ -221,7 +221,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// // The number of items should have gone up by one
 		// assertEquals(tableViewer.getTable().getItemCount(),numberOfAccounts +
 		// 1);
-		//		
+		//
 		// invokeNonUI(new Runnable(){
 		// public void run(){
 		// catalog.removeAccount(barney);
@@ -231,7 +231,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// // The number of items should have reverted to the original number
 		// before barney was added and removed
 		// assertEquals(tableViewer.getTable().getItemCount(),numberOfAccounts);
-		//		
+		//
 	}
 
 	public void testScenario03() {
@@ -285,7 +285,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// new StateConverter());
 		// getDbc().bind(tableViewerDescription,
 		// new Property(catalog, "accounts"), null);
-		//		
+		//
 		// final Account account = catalog.getAccounts()[0];
 		// String lastName = tableViewer.getTable().getItem(0).getText(0);
 		// // Check the firstName in the TableItem is the same as the model
@@ -294,7 +294,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// account.setLastName("Gershwin");
 		// lastName = tableViewer.getTable().getItem(0).getText(0);
 		// assertEquals(lastName,account.getLastName());
-		//		
+		//
 		// // Test the model update on a non UI thread
 		// invokeNonUI(new Runnable(){
 		// public void run(){
@@ -304,7 +304,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// spinEventLoop(0);
 		// lastName = tableViewer.getTable().getItem(0).getText(0);
 		// assertEquals(lastName,account.getLastName());
-		//		
+		//
 	}
 
 	public void testScenario06() {
@@ -351,7 +351,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// enterText((Text) priceEditor.getControl(), "123.45");
 		// // Verify the model is updated
 		// assertEquals(transporation.getPrice(),123.45,0);
-		//		
+		//
 	}
 
 	public void testScenario08_00() {
@@ -378,7 +378,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// TextCellEditor passwordEditor = (TextCellEditor) cellEditors[1];
 		// enterText((Text) passwordEditor.getControl(), "Cricket11Players");
 		// assertEquals("Cricket11Players",firstSignon.getPassword());
-		//		
+		//
 	}
 
 	public void testScenario08_01() {
@@ -405,7 +405,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// TextCellEditor passwordEditor = (TextCellEditor) cellEditors[1];
 		// enterText((Text) passwordEditor.getControl(), "Cricket11Players");
 		// assertEquals("Cricket11Players",firstSignon.getPassword());
-		//		
+		//
 	}
 
 	public void testScenario09() {
@@ -417,7 +417,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// tableViewerDescription.addColumn("defaultLodging.name");
 		// getDbc().bind(tableViewerDescription,new Property(category,
 		// "adventures"),null);
-		//		
+		//
 	}
 	/**
 	 * public void testScenario10(){ // Verify that for TIME_EARLY updating

@@ -40,21 +40,21 @@ public class AbstractObservableMapTest extends TestCase {
 		RealmTester.setDefault(new CurrentRealm(true));
 		map = new AbstractObservableMapStub();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		RealmTester.setDefault(null);
 	}
-	
+
 	public void testIsStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
 			public void run() {
 				map.isStale();
-			}			
+			}
 		});
 	}
-	
+
 	public void testSetStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -63,16 +63,16 @@ public class AbstractObservableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testFireStaleRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() { 
+		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
 			public void run() {
 				map.fireStale();
 			}
 		});
 	}
-	
+
 	public void testFireChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -81,7 +81,7 @@ public class AbstractObservableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testFireMapChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -181,17 +181,17 @@ public class AbstractObservableMapTest extends TestCase {
 		public Set entrySet() {
 			return null;
 		}
-		
+
 		@Override
 		protected void fireChange() {
 			super.fireChange();
 		}
-		
+
 		@Override
 		protected void fireMapChange(MapDiff diff) {
 			super.fireMapChange(diff);
 		}
-		
+
 		@Override
 		protected void fireStale() {
 			super.fireStale();

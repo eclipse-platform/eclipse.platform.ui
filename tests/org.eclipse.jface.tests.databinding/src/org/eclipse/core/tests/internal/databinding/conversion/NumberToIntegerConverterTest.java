@@ -21,17 +21,17 @@ import com.ibm.icu.text.NumberFormat;
  */
 public class NumberToIntegerConverterTest extends NumberToNumberTestHarness {
 	private NumberFormat numberFormat;
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		numberFormat = NumberFormat.getInstance();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.NumberToNumberTestHarness#doGetOutOfRangeNumber()
 	 */

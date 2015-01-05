@@ -18,7 +18,7 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
  */
 public class StringToNumberParserIntegerTest extends
 		StringToNumberParserTestHarness {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTestHarness#assertValid(java.lang.Number)
 	 */

@@ -25,7 +25,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class SelectObservableValueTest extends AbstractDefaultRealmTestCase {
 	public static Test suite() {

@@ -38,21 +38,21 @@ public class ObservableSetTest extends TestCase {
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
 		return suite;
 	}
-	
-	private static class Delegate extends AbstractObservableCollectionContractDelegate {	
-		private Delegate() {	
+
+	private static class Delegate extends AbstractObservableCollectionContractDelegate {
+		private Delegate() {
 		}
-		
+
 		@Override
 		public void change(IObservable observable) {
 			((ObservableSetStub) observable).fireSetChange(Diffs.createSetDiff(new HashSet(), new HashSet()));
 		}
-		
+
 		@Override
 		public Object createElement(IObservableCollection collection) {
 			return Integer.toString(collection.size());
 		}
-	
+
 		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return String.class;
@@ -62,11 +62,11 @@ public class ObservableSetTest extends TestCase {
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			IObservableSet set = new ObservableSetStub(realm, new HashSet(), String.class);
-			
+
 			for (int i = 0; i < elementCount; i++) {
 				set.add(Integer.toString(i));
 			}
-			
+
 			return set;
 		}
 	}

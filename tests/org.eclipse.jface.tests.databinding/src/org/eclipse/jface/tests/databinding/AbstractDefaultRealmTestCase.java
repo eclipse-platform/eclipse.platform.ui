@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Base class that sets the default realm to be the SWT realm.
- * 
+ *
  * @since 3.3
  */
 public class AbstractDefaultRealmTestCase extends TestCase {
@@ -28,7 +28,7 @@ public class AbstractDefaultRealmTestCase extends TestCase {
 
 	/**
 	 * Sets the default realm to be the realm for the default display.
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override

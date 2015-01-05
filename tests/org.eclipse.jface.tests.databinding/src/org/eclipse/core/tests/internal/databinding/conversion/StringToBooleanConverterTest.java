@@ -34,7 +34,7 @@ public class StringToBooleanConverterTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#run(junit.framework.TestResult)
 	 */
 	@Override
@@ -62,7 +62,7 @@ public class StringToBooleanConverterTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override

@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
-public class ObservablesTest extends AbstractDefaultRealmTestCase {	
+public class ObservablesTest extends AbstractDefaultRealmTestCase {
 	public void testUnmodifableObservableListExceptions() throws Exception {
 		try {
 			Observables.unmodifiableObservableList(null);
@@ -28,12 +28,12 @@ public class ObservablesTest extends AbstractDefaultRealmTestCase {
 		} catch (IllegalArgumentException e) {
 		}
 	}
-	
+
 	public void testUnmodifiableObservableList() throws Exception {
 		IObservableList unmodifiable = Observables.unmodifiableObservableList(new ObservableListStub(new ArrayList(0), String.class));
 		assertTrue(unmodifiable instanceof UnmodifiableObservableList);
 	}
-	
+
 	private static class ObservableListStub extends ObservableList {
 		/**
 		 * @param wrappedList
@@ -41,6 +41,6 @@ public class ObservablesTest extends AbstractDefaultRealmTestCase {
 		 */
 		protected ObservableListStub(List wrappedList, Object elementType) {
 			super(wrappedList, elementType);
-		}		
+		}
 	}
 }

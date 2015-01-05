@@ -59,7 +59,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override

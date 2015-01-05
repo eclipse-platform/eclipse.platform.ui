@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Shell shell;
@@ -39,13 +39,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		shell = new Shell();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override

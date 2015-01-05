@@ -25,7 +25,7 @@ public class ValidationStatusTest extends TestCase {
 		Exception e = new IllegalArgumentException();
 		IStatus status1 = ValidationStatus.error(message, e);
 		IStatus status2 = ValidationStatus.error(message, e);
-		
+
 		assertEquals(status1, status2);
 		assertEquals(status1.hashCode(), status2.hashCode());
 	}

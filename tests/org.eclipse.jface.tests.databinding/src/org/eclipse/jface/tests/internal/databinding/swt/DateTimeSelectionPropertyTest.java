@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.DateTime;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class DateTimeSelectionPropertyTest extends AbstractSWTTestCase {
 	DateTime dateTime;

@@ -62,7 +62,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Bug 152543.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoUpdateTargetFromModel() throws Exception {

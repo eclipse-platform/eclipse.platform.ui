@@ -60,14 +60,14 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}
-	
+
 
 	private Combo comboEditable;
 	//private Combo comboReadOnly;
-	
+
 	private static final String PROP_TEXT = "text";
 	private String text = "Hello, world";
-	
+
 	public String getText() {
 		return text;
 	}
@@ -75,7 +75,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+
 	private static final String PROP_CHOICES = "choices";
 	private List choices = new ArrayList();
 	 {
@@ -100,9 +100,9 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		comboEditable = new Combo(getComposite(), SWT.DROP_DOWN);
 //		comboReadOnly = new Combo(getComposite(), SWT.DROP_DOWN | SWT.READ_ONLY);
 	}
-	
+
 	//-------------------------------------------------------------------------
-	
+
 	private static final String NEXT = "Next";
 	public void testBindText() throws Exception {
         getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, "text"));
@@ -112,18 +112,18 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		spinEventLoop(0);
 		assertEquals("Should find new value in text", NEXT, text);
 	}
-	
+
 	public void testBindItems_listHasSameItems_editable() throws Exception {
 		if (BindingTestSuite.failingTestsDisabled(this)) {
 			return;
 		}
 		text = "Apple";
-        
+
         getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT));
-        
+
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
-        
+
         IObservableList list = new WritableList(getChoices(), null);
         getDbc().bindList(SWTObservables.observeItems(comboEditable), list);
 
@@ -169,16 +169,16 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		if (BindingTestSuite.failingTestsDisabled(this)) {
 			return;
 		}
-        
+
         getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT));
 
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
-        
+
         IObservableList list = new WritableList(new ArrayList(), String.class);
         list.addAll(getChoices());
         getDbc().bindList(SWTObservables.observeItems(comboEditable), list);
-        
+
 		spinEventLoop(0);
 		int position = 0;
 		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
@@ -212,5 +212,5 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 //		spinEventLoop(0);
 //		assertEquals("Should find value of text", "Banana", text);
 //	}
-	
+
 }

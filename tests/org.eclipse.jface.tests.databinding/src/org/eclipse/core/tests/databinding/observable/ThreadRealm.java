@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * {@link Realm} that enforces execution to be within a specific
  * {@link Thread}.
- * 
+ *
  * @since 3.2
  */
 public class ThreadRealm extends Realm {
@@ -31,7 +31,7 @@ public class ThreadRealm extends Realm {
 
     /**
      * Initializes the realm.
-     * 
+     *
      * @param thread
      */
     public synchronized void init(Thread thread) {
@@ -62,7 +62,7 @@ public class ThreadRealm extends Realm {
 
     /**
      * Queues the provided <code>runnable</code>.
-     * 
+     *
      * @param runnable
      */
     @Override
@@ -72,11 +72,11 @@ public class ThreadRealm extends Realm {
             queue.notifyAll();
         }
     }
-    
+
     /**
      * Returns after the realm has completed all runnables currently on its
      * queue.  Do not call from the realm's thread.
-     * 
+     *
      * @throws IllegalStateException
      *             if the ThreadRealm is not blocking on its thread.
      * @throws IllegalStateException
@@ -113,11 +113,11 @@ public class ThreadRealm extends Realm {
         if (block) {
             throw new IllegalStateException("Realm is already blocking.");
         }
-        
+
         if (Thread.currentThread() != thread) {
             throw new IllegalStateException("The current thread is not the correct thread.");
         }
-        
+
         try {
             block = true;
 

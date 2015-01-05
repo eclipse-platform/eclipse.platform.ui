@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for DelayedObservableValue
- * 
+ *
  * @since 1.2
  */
 public class SWTDelayedObservableValueDecoratorTest extends

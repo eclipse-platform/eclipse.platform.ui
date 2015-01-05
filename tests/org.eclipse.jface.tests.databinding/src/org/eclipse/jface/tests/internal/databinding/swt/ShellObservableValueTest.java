@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for ShellObservableValue
- * 
+ *
  * @since 1.2
  */
 public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {

@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * Simple Java Bean for testing.
- * 
+ *
  * @since 3.3
  */
 public class Bean implements IBean {

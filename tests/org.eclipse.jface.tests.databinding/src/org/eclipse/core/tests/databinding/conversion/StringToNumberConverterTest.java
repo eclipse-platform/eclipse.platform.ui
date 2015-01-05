@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matt Carter - Bug 180392     
+ *     Matt Carter - Bug 180392
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.conversion;
@@ -31,7 +31,7 @@ public class StringToNumberConverterTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -59,21 +59,21 @@ public class StringToNumberConverterTest extends TestCase {
 		assertEquals("Byte.class", Byte.class, StringToNumberConverter.toByte(false).getToType());
 		assertEquals("Byte.TYPE", Byte.TYPE, StringToNumberConverter.toByte(true).getToType());
 	}
-	
+
 	public void testFromTypeIsString() throws Exception {
 		assertEquals(String.class, StringToNumberConverter.toInteger(false)
 				.getFromType());
 	}
-	
+
 	public void testConvertsToBigInteger() throws Exception {
 		BigInteger input = BigInteger.valueOf(1000);
-		
+
 		StringToNumberConverter converter = StringToNumberConverter.toBigInteger();
 		BigInteger result = (BigInteger) converter.convert(numberFormat.format(input));
-		
+
 		assertEquals(input, result);
 	}
-	
+
 	Class icuBigDecimal = null;
 	Constructor icuBigDecimalCtr = null;
 	{
@@ -86,10 +86,10 @@ public class StringToNumberConverterTest extends TestCase {
 	}
 	/**
 	 * Takes a java.math.BigDecimal and returns an ICU formatted string for it.
-	 * These tests depend on ICU to reliably format test strings for comparison. 
-	 * Java < 1.5 DecimalFormat did not format/parse BigDecimals properly, 
+	 * These tests depend on ICU to reliably format test strings for comparison.
+	 * Java < 1.5 DecimalFormat did not format/parse BigDecimals properly,
 	 * converting them via doubleValue(), so we have a dependency for this unit test on ICU4J.
-	 * See Bug #180392 for more info.  
+	 * See Bug #180392 for more info.
 	 * @param bd
 	 * @return
 	 * @throws ClassNotFoundException
@@ -104,7 +104,7 @@ public class StringToNumberConverterTest extends TestCase {
 		}
 		throw new IllegalArgumentException("ICU not present. Cannot reliably format large BigDecimal values; needed for testing. Java platforms prior to 1.5 fail to format/parse these decimals correctly.");
 	}
-	
+
 	public void testConvertsToBigDecimal() throws Exception {
 		StringToNumberConverter converter = StringToNumberConverter.toBigDecimal();
 		// Test 1: Decimal
@@ -121,13 +121,13 @@ public class StringToNumberConverterTest extends TestCase {
 		input = new BigDecimal("92233720368547990480");
 		result = (BigDecimal) converter.convert(formatBigDecimal(input));
 		assertEquals("Integral BigDecimal in long range", input, result);
-		
-		// Test 4: Very high precision Decimal. 
+
+		// Test 4: Very high precision Decimal.
 		input = new BigDecimal("100404101.23345678345678893456789345678923198200134567823456789");
 		result = (BigDecimal) converter.convert(formatBigDecimal(input));
 		assertEquals("Non-integer BigDecimal", input, result);
 	}
-	
+
 	public void testConvertsToInteger() throws Exception {
 		Integer input = new Integer(1000);
 
@@ -205,7 +205,7 @@ public class StringToNumberConverterTest extends TestCase {
 
 		assertEquals(input, result);
 	}
-	
+
 	public void testReturnsNullBoxedTypeForEmptyString() throws Exception {
 		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
 		try {
@@ -224,11 +224,11 @@ public class StringToNumberConverterTest extends TestCase {
 		} catch (IllegalArgumentException e) {
 		}
 	}
-	
+
 	/**
 	 * Asserts a use case where the integer starts with a valid value but ends
 	 * in an unparsable format.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInvalidInteger() throws Exception {
@@ -241,7 +241,7 @@ public class StringToNumberConverterTest extends TestCase {
 		} catch (IllegalArgumentException e) {
 		}
 	}
-	
+
 	public void testThrowsIllegalArgumentExceptionIfNumberIsOutOfRange() throws Exception {
 		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
 		try {

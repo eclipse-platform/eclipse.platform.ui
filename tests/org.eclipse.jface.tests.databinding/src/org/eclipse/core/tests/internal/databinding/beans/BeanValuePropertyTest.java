@@ -23,7 +23,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class BeanValuePropertyTest extends AbstractDefaultRealmTestCase {
 	public void testChangeListenerIsOnlyNotifiedWhenWatchedPropertyChanges()

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
 public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * All constructors delegate to the 3 arg constructor.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testConstructor() throws Exception {

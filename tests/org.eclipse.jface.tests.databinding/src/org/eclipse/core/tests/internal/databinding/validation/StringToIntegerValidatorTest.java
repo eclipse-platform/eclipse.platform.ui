@@ -24,7 +24,7 @@ public class StringToIntegerValidatorTest extends
 		StringToNumberValidatorTestHarness {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#setupNumberFormat()
 	 */
 	@Override
@@ -34,7 +34,7 @@ public class StringToIntegerValidatorTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#setupValidator(com.ibm.icu.text.NumberFormat)
 	 */
 	@Override
@@ -46,7 +46,7 @@ public class StringToIntegerValidatorTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#getInRangeNumber()
 	 */
 	@Override
@@ -56,7 +56,7 @@ public class StringToIntegerValidatorTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#getInvalidString()
 	 */
 	@Override
@@ -66,7 +66,7 @@ public class StringToIntegerValidatorTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.tests.internal.databinding.validation.StringToNumberValidatorTestHarness#getOutOfRangeNumber()
 	 */
 	@Override

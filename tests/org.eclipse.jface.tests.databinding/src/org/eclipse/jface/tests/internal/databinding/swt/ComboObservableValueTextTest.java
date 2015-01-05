@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ComboObservableValueTextTest extends TestCase {
 	private Delegate delegate;

@@ -20,7 +20,7 @@ import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class IdentityConverterTest extends TestCase {
 
@@ -28,7 +28,7 @@ public class IdentityConverterTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override

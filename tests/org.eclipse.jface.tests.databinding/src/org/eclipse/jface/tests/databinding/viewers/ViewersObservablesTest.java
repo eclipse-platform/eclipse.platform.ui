@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for ViewersObservables
- * 
+ *
  * @since 1.2
  */
 public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {

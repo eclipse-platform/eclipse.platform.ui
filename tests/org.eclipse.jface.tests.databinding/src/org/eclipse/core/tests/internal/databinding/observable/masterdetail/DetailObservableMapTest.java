@@ -30,13 +30,13 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * Asserts the use case of specifying null on construction for the detail
 	 * type of the detail set.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testKeyValueTypeNull() throws Exception {
@@ -65,7 +65,7 @@ public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Asserts that you can't change the type across multiple inner observables.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testKeyValueTypeNotNull() throws Exception {

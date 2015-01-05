@@ -45,7 +45,7 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.conformance.databinding.ObservableDelegateTest#setUp()
 	 */

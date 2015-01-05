@@ -50,7 +50,7 @@ public class ObservableListTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
@@ -87,8 +87,8 @@ public class ObservableListTest extends TestCase {
 			@Override
 			public void handleListChange(ListChangeEvent event) {
 				diffEntries.addAll(Arrays.asList(event.diff.getDifferences()));
-			} 
-		}); 
+			}
+		});
 
 		list.move(0, 1);
 
@@ -111,7 +111,7 @@ public class ObservableListTest extends TestCase {
 		final Object element1 = new Object();
 		list.add(0, element0);
 		list.add(1, element1);
-		
+
 		list.move(0, 1);
 
 		assertEquals(element1, list.get(0));
@@ -124,7 +124,7 @@ public class ObservableListTest extends TestCase {
 		suite.addTest(ObservableListContractTest.suite(new Delegate()));
 		return suite;
 	}
-	
+
 	/* package */ static class Delegate extends AbstractObservableCollectionContractDelegate {
 		@Override
 		public IObservableCollection createObservableCollection(Realm realm, final int elementCount) {
@@ -132,10 +132,10 @@ public class ObservableListTest extends TestCase {
 			for (int i = 0; i < elementCount; i++) {
 				wrappedList.add(String.valueOf(i));
 			}
-			
+
 			return new MutableObservableListStub(realm, wrappedList, String.class);
 		}
-		
+
 		@Override
 		public void change(IObservable observable) {
 			ObservableListStub list = (ObservableListStub) observable;
@@ -143,7 +143,7 @@ public class ObservableListTest extends TestCase {
 			list.wrappedList.add(element);
 			list.fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(list.size(), true, element)));
 		}
-		
+
 		@Override
 		public Object getElementType(IObservableCollection collection) {
 			return String.class;
@@ -156,12 +156,12 @@ public class ObservableListTest extends TestCase {
 			super(realm, wrappedList, elementType);
 			this.wrappedList = wrappedList;
 		}
-		
+
 		ObservableListStub(List wrappedList, Object elementType) {
 			super(wrappedList, elementType);
 			this.wrappedList = wrappedList;
 		}
-		
+
 		@Override
 		protected void fireListChange(ListDiff diff) {
 			super.fireListChange(diff);

@@ -24,7 +24,7 @@ public class NumberToByteConverterTest extends NumberToNumberTestHarness {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override

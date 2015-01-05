@@ -29,7 +29,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 
@@ -155,7 +155,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(new Integer(0), tracker.event.diff.getNewValue(person1));
 		assertEquals(new Integer(0), composedMap.get(person1));
 	}
-	
+
 	public void testChangeInFirstMapToShared() {
 		SimplePerson person0 = new SimplePerson("p0", "a0", "c0", "s0");
 		person0.getCart().setNumItems(13);
@@ -176,7 +176,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(new Integer(13), tracker.event.diff.getNewValue(person1));
 		assertEquals(new Integer(13), composedMap.get(person1));
 	}
-	
+
 	public void testChangeInFirstMapFromShared() {
 		SimplePerson person0 = new SimplePerson("p0", "a0", "c0", "s0");
 		person0.getCart().setNumItems(13);
@@ -197,7 +197,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(new Integer(0), tracker.event.diff.getNewValue(person1));
 		assertEquals(new Integer(0), composedMap.get(person1));
 	}
-	
+
 	public void testChangeInSecondMap() {
 		SimplePerson person0 = new SimplePerson("p0", "a0", "c0", "s0");
 		person0.getCart().setNumItems(13);
@@ -215,7 +215,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(new Integer(42), tracker.event.diff.getNewValue(person0));
 		assertEquals(new Integer(42), composedMap.get(person0));
 	}
-	
+
 	public void testDispose() {
 		SimplePerson person0 = new SimplePerson("p0", "a0", "c0", "s0");
 		person0.getCart().setNumItems(13);
@@ -224,5 +224,5 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		composedMap.dispose();
 		assertFalse(hasListeners((AbstractObservable) first));
 	}
-	
+
 }

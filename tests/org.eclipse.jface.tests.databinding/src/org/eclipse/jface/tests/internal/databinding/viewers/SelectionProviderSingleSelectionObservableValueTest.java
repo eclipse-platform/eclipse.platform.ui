@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for SelectionProviderSingleSelectionObservableValue.
- * 
+ *
  * @since 1.1
  */
 public class SelectionProviderSingleSelectionObservableValueTest extends
@@ -43,7 +43,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
@@ -113,7 +113,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 	 * <li>the selection is available in the observable</li>
 	 * <li>Value change events are fired with appropriate diff values</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param postSelection
 	 *            <code>true</code> for observing the post selection,
 	 *            <code>false</code> for observing the normal selection.

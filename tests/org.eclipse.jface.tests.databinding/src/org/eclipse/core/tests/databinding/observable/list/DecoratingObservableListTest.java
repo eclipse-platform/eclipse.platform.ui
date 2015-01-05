@@ -30,7 +30,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableColl
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class DecoratingObservableListTest {
 	public static Test suite() {

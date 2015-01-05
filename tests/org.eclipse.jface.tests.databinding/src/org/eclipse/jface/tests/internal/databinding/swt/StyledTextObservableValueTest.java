@@ -64,7 +64,7 @@ public class StyledTextObservableValueTest extends AbstractDefaultRealmTestCase 
 
 	/**
 	 * s
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {
@@ -76,9 +76,9 @@ public class StyledTextObservableValueTest extends AbstractDefaultRealmTestCase 
 		String b = "b";
 
 		text.setText(a);
-		
+
 		// fetching the value updates the buffered value
-		assertEquals(a, observableValue.getValue()); 
+		assertEquals(a, observableValue.getValue());
 		assertEquals(1, listener.count);
 
 		text.setText(b);

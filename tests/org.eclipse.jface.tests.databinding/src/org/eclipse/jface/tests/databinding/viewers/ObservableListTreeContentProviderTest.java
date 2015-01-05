@@ -115,7 +115,7 @@ public class ObservableListTreeContentProviderTest extends
 	public void testInputChanged_ClearsKnownElements() {
 		input = new Object();
 		final Object input2 = new Object();
-		
+
 		final IObservableList children = new WritableList();
 		final IObservableList children2 = new WritableList();
 		initContentProvider(new IObservableFactory() {
@@ -141,7 +141,7 @@ public class ObservableListTreeContentProviderTest extends
 	public void testInputChanged_ClearsRealizedElements() {
 		input = new Object();
 		final Object input2 = new Object();
-		
+
 		final IObservableList children = new WritableList();
 		final IObservableList children2 = new WritableList();
 		initContentProvider(new IObservableFactory() {

@@ -27,7 +27,7 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ObservableMapTest extends TestCase {
 	ObservableMapStub map;

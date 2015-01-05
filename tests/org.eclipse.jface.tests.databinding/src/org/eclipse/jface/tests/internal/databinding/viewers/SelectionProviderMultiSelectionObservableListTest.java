@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for SelectionProviderMultiSelectionObservableList.
- * 
+ *
  * @since 1.2
  */
 public class SelectionProviderMultiSelectionObservableListTest extends TestCase {
@@ -83,7 +83,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 	 * <li>the selection is available in the observable</li>
 	 * <li>Value change events are fired with appropriate diff values</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param postSelection
 	 *            <code>true</code> for observing the post selection,
 	 *            <code>false</code> for observing the normal selection.

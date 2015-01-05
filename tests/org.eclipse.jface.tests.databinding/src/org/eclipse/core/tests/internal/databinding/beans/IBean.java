@@ -17,7 +17,7 @@ import java.util.Set;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public interface IBean {
 	public String getValue();

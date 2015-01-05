@@ -135,7 +135,7 @@ public class UnmodifiableObservableListTest extends
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList#add(java.lang.Object)
 		 */
 		@Override

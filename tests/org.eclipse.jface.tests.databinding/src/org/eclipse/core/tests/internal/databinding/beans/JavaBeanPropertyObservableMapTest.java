@@ -24,7 +24,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class JavaBeanPropertyObservableMapTest extends
 		AbstractDefaultRealmTestCase {

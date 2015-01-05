@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for ViewerInputObservableValue.
- * 
+ *
  * @since 1.2
  */
 public class ViewerInputObservableValueTest extends

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class PolicyTest extends TestCase {
 

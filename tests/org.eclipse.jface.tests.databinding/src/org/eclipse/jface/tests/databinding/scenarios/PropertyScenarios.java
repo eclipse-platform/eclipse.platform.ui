@@ -152,7 +152,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         IObservableValue defaultLodging = BeansObservables.observeDetailValue(
         		BeansObservables.observeValue(adventure, "defaultLodging"),
-        		"description", String.class); 
+        		"description", String.class);
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), defaultLodging);
 
@@ -313,7 +313,7 @@ public class PropertyScenarios extends ScenariosTestCase {
                 }
             }
         };
-        
+
         //Create a number formatter that will display one decimal position.
 		NumberFormat numberFormat = NumberFormat.getInstance();
 		numberFormat.setMinimumFractionDigits(1);
@@ -333,25 +333,25 @@ public class PropertyScenarios extends ScenariosTestCase {
 		String expected = numberFormat.format(adventure.getPrice());
         assertEquals(expected, text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        
+
         String toEnter = numberFormat.format(0.65);
         enterText(text, toEnter);
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
-        
+
         adventure.setPrice(42.24);
         expected = numberFormat.format(adventure.getPrice());
         assertEquals(expected, text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        
+
         enterText(text, "jygt");
         assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
-        
+
         toEnter = numberFormat.format(-23.9);
         enterText(text, toEnter);
         assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
-        
+
         adventure.setPrice(0.0);
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
     }
@@ -410,23 +410,23 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
         String expected = currencyFormat.format(5);
         assertEquals(expected, text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        
+
         String toEnter = currencyFormat.format(0.65);
         enterText(text, toEnter);
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
-        
+
         adventure.setPrice(42.24);
         expected = currencyFormat.format(adventure.getPrice());
         assertEquals(expected, text.getText());
-        
+
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         enterText(text, "jygt");
         assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
-        
+
         toEnter = currencyFormat.format(-23.9);
         enterText(text, toEnter);
-        
+
         assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
         adventure.setPrice(0.0);
@@ -506,13 +506,13 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
         getDbc().bindValue(checkbox1Selected,
                 checkbox2Selected,new UpdateValueStrategy().setConverter(negatingConverter),
                 new UpdateValueStrategy().setConverter(negatingConverter));
-        
+
         // bind the enabled state of the two text widgets to one of the
         // checkboxes each.
-        
+
         getDbc().bindValue(SWTObservables.observeEnabled(text1), checkbox1Selected);
         getDbc().bindValue(SWTObservables.observeEnabled(text2), checkbox2Selected);
-                
+
         assertEquals(true, text1.getEnabled());
         assertEquals(false, text2.getEnabled());
         assertEquals(true, checkbox1.getSelection());
@@ -528,7 +528,7 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
 
     public void testScenario13() {
         Text text = new Text(getComposite(), SWT.BORDER);
-        
+
         getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), BeansObservables.observeValue(adventure, "name"));
 
         // uncomment the following line to see what's happening
@@ -549,14 +549,14 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
     public void testScenario14() {
         Text t1 = new Text(getComposite(), SWT.BORDER);
         Text t2 = new Text(getComposite(), SWT.BORDER);
-  
+
         getDbc().bindValue(SWTObservables.observeText(t1, SWT.Modify), BeansObservables.observeValue(adventure, "name"));
         getDbc().bindValue(SWTObservables.observeText(t2, SWT.Modify), BeansObservables.observeValue(adventure, "name"));
-        
+
         final int[] counter = { 0 };
-        
+
         IObservableValue uv = BeansObservables.observeValue(adventure, "name");
-        
+
         uv.addChangeListener(new IChangeListener() {
             @Override
 			public void handleChange(ChangeEvent event) {
@@ -582,10 +582,10 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
         Text text = new Text(getComposite(), SWT.NONE);
         Account account = new Account();
         account.setExpiryDate(new Date());
-        
+
         Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"));
         Text errorText = new Text(getComposite(), SWT.NONE);
-        
+
         getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
         assertTrue(((IStatus)b.getValidationStatus().getValue()).isOK());
         enterText(text, "foo");

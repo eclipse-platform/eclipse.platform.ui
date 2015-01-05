@@ -89,133 +89,133 @@ public class Diffs_ListDiffTests extends TestCase {
 		ListDiff diff = diff(null, null);
 		assertEquals(0, diff.getDifferences().length);
 	}
-	
+
 	private ListDiff diff(String[] oldArray, String[] newArray) {
 		List a = Arrays.asList((oldArray != null) ? oldArray : new String[] {});
 		List b = Arrays.asList((newArray != null) ? newArray : new String[] {});
-		
+
 		return Diffs.computeListDiff(a, b);
 	}
-	
+
 	public void testDiffScenario2() throws Exception {
 		ListDiff diff = diff(new String[] {"a"}, null);
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 0, "a");
 	}
-	
+
 	public void testDiffScenario3() throws Exception {
 		ListDiff diff = diff(null, new String[] {"a"});
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "a");
 	}
-	
+
 	public void testDiffScenario4() throws Exception {
 		ListDiff diff = diff(new String[] {"a"}, new String[] {"a"});
-		
+
 		assertEquals(0, diff.getDifferences().length);
 	}
-	
+
 	public void testDiffScenario5() throws Exception {
 		ListDiff diff = diff(new String[] {"a"}, new String[] {"b"});
 		assertEquals(2, diff.getDifferences().length);
-		
+
 		assertEntry(diff.getDifferences()[0], true, 0, "b");
 		assertEntry(diff.getDifferences()[1], false, 1, "a");
 	}
-	
+
 	public void testDiffScenario6() throws Exception {
 		ListDiff diff = diff(new String[] { "a" }, new String[] { "a", "b" });
-		
+
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 1, "b");
 	}
-	
+
 	public void testDiffScenario7() throws Exception {
 		ListDiff diff = diff(new String[] { "a" }, new String[] { "b", "a" });
-		
+
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "b");
 	}
-	
+
 	public void testDiffScenario8() throws Exception {
 		ListDiff diff = diff(new String[] { "a" }, new String[] { "b", "b" });
-		
+
 		assertEquals(3, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "b");
 		assertEntry(diff.getDifferences()[1], true, 1, "b");
 		assertEntry(diff.getDifferences()[2], false, 2, "a");
 	}
-	
+
 	public void testDiffScenario9() throws Exception {
 		ListDiff diff = diff(new String[] { "a" }, new String[] { "a", "b", "c" });
-		
+
 		assertEquals(2, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 1, "b");
 		assertEntry(diff.getDifferences()[1], true, 2, "c");
 	}
-	
+
 	public void testDiffScenario10() throws Exception {
 		ListDiff diff = diff(new String[] { "b" }, new String[] { "a", "b", "c" });
-		
+
 		assertEquals(2, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "a");
 		assertEntry(diff.getDifferences()[1], true, 2, "c");
 	}
-	
+
 	public void testDiffScenario11() throws Exception {
 		ListDiff diff = diff(new String[] { "c" }, new String[] { "a", "b", "c" });
-		
+
 		assertEquals(2, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], true, 0, "a");
-		assertEntry(diff.getDifferences()[1], true, 1, "b");		
+		assertEntry(diff.getDifferences()[1], true, 1, "b");
 	}
-	
+
 	public void testDiffScenario12() throws Exception {
 		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "b", "c" });
-		
+
 		assertEquals(0, diff.getDifferences().length);
 	}
-	
+
 	public void testDiffScenario13() throws Exception {
 		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "b", "c" });
-		
+
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 0, "a");
 	}
-	
+
 	public void testDiffScenarios14() throws Exception {
 		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "c" });
-		
+
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 1, "b");
 	}
-	
+
 	public void testDiffScenarios15() throws Exception {
 		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "a", "b" });
-		
+
 		assertEquals(1, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 2, "c");
 	}
-	
+
 	public void testDiffScenarios16() throws Exception {
 		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "c", "b", "a" });
-		
+
 		assertEquals(4, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 2, "c");
 		assertEntry(diff.getDifferences()[1], true, 0, "c");
 		assertEntry(diff.getDifferences()[2], false, 2, "b");
 		assertEntry(diff.getDifferences()[3], true, 1, "b");
 	}
-	
+
 	public void testDiffScenarios17() throws Exception {
 		ListDiff diff = diff(new String[] { "a", "b", "c" }, new String[] { "c", "b" });
-		
+
 		assertEquals(3, diff.getDifferences().length);
 		assertEntry(diff.getDifferences()[0], false, 0, "a");
 		assertEntry(diff.getDifferences()[1], false, 1, "c");
 		assertEntry(diff.getDifferences()[2], true, 0, "c");
 	}
-	
+
 	private static void assertEntry(ListDiffEntry entry, boolean addition, int position, String element) {
 		assertEquals("addition", addition, entry.isAddition());
 		assertEquals("position", position, entry.getPosition());

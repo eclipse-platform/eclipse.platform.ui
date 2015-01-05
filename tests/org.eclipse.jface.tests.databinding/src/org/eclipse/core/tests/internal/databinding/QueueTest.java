@@ -27,7 +27,7 @@ public class QueueTest extends TestCase {
 	protected void setUp() throws Exception {
 		this.queue = new Queue();
 	}
-	
+
 	public void testIsEmpty() {
 		assertTrue(queue.isEmpty());
 		queue.enqueue("foo");
@@ -39,7 +39,7 @@ public class QueueTest extends TestCase {
 		queue.dequeue();
 		assertTrue(queue.isEmpty());
 	}
-	
+
 	public void testEnqueueAndDequeue() {
 		try {
 			queue.dequeue();
@@ -65,5 +65,5 @@ public class QueueTest extends TestCase {
 		assertEquals("moo", queue.dequeue());
 		assertTrue(queue.isEmpty());
 	}
-	
+
 }
