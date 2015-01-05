@@ -53,7 +53,7 @@ Plug-ins that provide an extension to this extension point are listed in the wor
 
    <element name="startup">
       <complexType>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified name of the class that implements 
@@ -67,15 +67,6 @@ Mandatory since 3.0. Do not specify the plug-in class as it would be instantiate
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         See interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -97,6 +88,15 @@ Mandatory since 3.0. Do not specify the plug-in class as it would be instantiate
      &lt;startup class=&quot;org.eclipse.example.StartupClass&quot;/&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         See interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
       </documentation>
    </annotation>
 
