@@ -15,6 +15,7 @@ package org.eclipse.e4.ui.workbench;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 
 /**
  * The presentation engine is used to translate the generic workbench model into widgets.
@@ -93,6 +94,15 @@ public interface IPresentationEngine {
 	 * @since 1.1
 	 */
 	public static String WINDOW_MAXIMIZED_TAG = "shellMaximized"; //$NON-NLS-1$
+
+	/**
+	 * When applied to an MArea causes it to behave like a
+	 * {@link MPartSashContainer} allowing the different parts to be
+	 * minimized/maximized separately.
+	 *
+	 * @since 1.4
+	 */
+	public static String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = "MinMaximizeableChildrenArea"; //$NON-NLS-1$
 
 	/**
 	 * When applied to an MWindow causes the renderer to render the resulting control as a top level
