@@ -27,7 +27,6 @@ import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -324,11 +323,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	protected void updateDescription() {
-		ISelection selection = viewer.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 		String desc = ""; //$NON-NLS-1$
 		if (!selection.isEmpty()) {
-			Object element = ((IStructuredSelection) selection)
-					.getFirstElement();
+			Object element = selection.getFirstElement();
 			if ((element instanceof PreferenceTransferElement)) {
 				desc = ((PreferenceTransferElement) element).getDescription();
 			}
