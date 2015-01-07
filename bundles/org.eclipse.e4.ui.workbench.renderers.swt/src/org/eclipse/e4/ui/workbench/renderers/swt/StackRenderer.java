@@ -1035,7 +1035,7 @@ public class StackRenderer extends LazyStackRenderer {
 		IEclipseContext ctxt = getContext(stack);
 		final BasicPartList editorList = new BasicPartList(ctf.getShell(),
 				SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL,
-				ctxt.get(EPartService.class), stack, this,
+				ctxt.get(EPartService.class), stack, this, ctf,
 				(ISWTResourceUtilities) ctxt.get(IResourceUtilities.class),
 				getInitialMRUValue(ctf));
 		editorList.setInput();
