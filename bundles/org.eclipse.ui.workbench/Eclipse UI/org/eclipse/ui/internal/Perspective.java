@@ -191,6 +191,9 @@ public class Perspective {
 		IContextService service = page.getWorkbenchWindow().getService(IContextService.class);
 		try {
 			service.deferUpdates(true);
+
+			// this advance for loop only works because it breaks out of it
+			// right after the removal
 			for (IActionSetDescriptor desc : alwaysOnActionSets) {
 				if (desc.getId().equals(id)) {
 					removeAlwaysOn(desc);
@@ -198,6 +201,8 @@ public class Perspective {
 				}
 			}
 
+			// this advance for loop only works because it breaks out of it
+			// right after the removal
 			for (IActionSetDescriptor desc : alwaysOffActionSets) {
 				if (desc.getId().equals(id)) {
 					removeAlwaysOff(desc);
