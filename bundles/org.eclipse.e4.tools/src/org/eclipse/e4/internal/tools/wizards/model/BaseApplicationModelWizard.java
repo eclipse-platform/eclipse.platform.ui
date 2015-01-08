@@ -49,7 +49,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
 import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -57,6 +59,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.ui.INewWizard;
@@ -107,8 +110,9 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			final IFile modelFile = getModelFile();
 
 			if (modelFile.exists()) {
-				if (!MessageDialog.openQuestion(getShell(), Messages.BaseApplicationModelWizard_FileExists, Messages.BaseApplicationModelWizard_TheFileAlreadyExists
-					+ Messages.BaseApplicationModelWizard_AddExtractedNode)) {
+				if (!MessageDialog.openQuestion(getShell(), Messages.BaseApplicationModelWizard_FileExists,
+					Messages.BaseApplicationModelWizard_TheFileAlreadyExists
+						+ Messages.BaseApplicationModelWizard_AddExtractedNode)) {
 					return false;
 				}
 			}
@@ -117,112 +121,112 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			//
 			final WorkspaceModifyOperation operation =
 				new WorkspaceModifyOperation() {
-					@Override
-					protected void execute(IProgressMonitor progressMonitor) {
-						try {
-							// Create a resource set
-							//
-							final ResourceSet resourceSet = new ResourceSetImpl();
+				@Override
+				protected void execute(IProgressMonitor progressMonitor) {
+					try {
+						// Create a resource set
+						//
+						final ResourceSet resourceSet = new ResourceSetImpl();
 
-							// Get the URI of the model file.
-							//
-							final URI fileURI = URI.createPlatformResourceURI(modelFile.getFullPath().toString(), true);
+						// Get the URI of the model file.
+						//
+						final URI fileURI = URI.createPlatformResourceURI(modelFile.getFullPath().toString(), true);
 
-							// Create a resource for this file.
-							//
-							final Resource resource = resourceSet.createResource(fileURI);
+						// Create a resource for this file.
+						//
+						final Resource resource = resourceSet.createResource(fileURI);
 
-							// If target file already exists, load its content
-							//
-							if (modelFile.exists()) {
-								resource.load(null);
-							}
+						// If target file already exists, load its content
+						//
+						if (modelFile.exists()) {
+							resource.load(null);
+						}
 
-							// Add the initial model object to the contents.
-							//
-							final EObject rootObject = createInitialModel();
-							if (rootObject != null) {
-								if (resource.getContents().size() == 0) {
-									// If target model is empty (file just created) => add as is
-									resource.getContents().add(rootObject);
-								} else {
-									// Otherwise (file already exists) => take the roots of source and target models
-									// and copy multiple attributes 'imports' and 'fragments' objects from source to
-								// target
-									final MModelFragments sourceFragments = (MModelFragments) rootObject;
-									final MModelFragments targetFragments = (MModelFragments) resource.getContents()
-									.get(0);
+						// Add the initial model object to the contents.
+						//
+						final EObject rootObject = createInitialModel();
+						if (rootObject != null) {
+							if (resource.getContents().size() == 0) {
+								// If target model is empty (file just created) => add as is
+								resource.getContents().add(rootObject);
+							} else {
+								// Otherwise (file already exists) => take the roots of source and target models
+								// and copy multiple attributes 'imports' and 'fragments' objects from source to
+									// target
+								final MModelFragments sourceFragments = (MModelFragments) rootObject;
+								final MModelFragments targetFragments = (MModelFragments) resource.getContents()
+										.get(0);
 
-								final List<MCommand> listOfAllImportsFromElements = new ArrayList<MCommand>();
-									for (final MModelFragment fragment : sourceFragments.getFragments()) {
-										final List<MCommand> commandsToImport = new ArrayList<MCommand>();
-										final EObject eObject = (EObject) fragment;
-										final TreeIterator<EObject> eAllContents = eObject.eAllContents();
-										while (eAllContents.hasNext()) {
-											final EObject next = eAllContents.next();
-											final MApplicationElement mApplicationElement = (MApplicationElement) next;
-											if (mApplicationElement instanceof MHandler) {
-												final MHandler mHandler = (MHandler) mApplicationElement;
-												final MCommand command = mHandler.getCommand();
-												commandsToImport.add(command);
-												final MApplicationElement copy = (MApplicationElement) EcoreUtil
-												.copy((EObject) command);
-												targetFragments.getImports().add(copy);
-												mHandler.setCommand((MCommand) copy);
-											}
-											else if (mApplicationElement instanceof MHandledItem) {
-												final MHandledItem mHandledItem = (MHandledItem) mApplicationElement;
-												final MCommand command = mHandledItem.getCommand();
-												commandsToImport.add(command);
-												final MApplicationElement copy = (MApplicationElement) EcoreUtil
-												.copy((EObject) command);
-												targetFragments.getImports().add(copy);
-												mHandledItem.setCommand((MCommand) copy);
-											}
-
+									final List<MCommand> listOfAllImportsFromElements = new ArrayList<MCommand>();
+								for (final MModelFragment fragment : sourceFragments.getFragments()) {
+									final List<MCommand> commandsToImport = new ArrayList<MCommand>();
+									final EObject eObject = (EObject) fragment;
+									final TreeIterator<EObject> eAllContents = eObject.eAllContents();
+									while (eAllContents.hasNext()) {
+										final EObject next = eAllContents.next();
+										final MApplicationElement mApplicationElement = (MApplicationElement) next;
+										if (mApplicationElement instanceof MHandler) {
+											final MHandler mHandler = (MHandler) mApplicationElement;
+											final MCommand command = mHandler.getCommand();
+											commandsToImport.add(command);
+											final MApplicationElement copy = (MApplicationElement) EcoreUtil
+													.copy((EObject) command);
+											targetFragments.getImports().add(copy);
+											mHandler.setCommand((MCommand) copy);
 										}
-										listOfAllImportsFromElements.addAll(commandsToImport);
-										targetFragments.getFragments().add(
-										(MModelFragment) EcoreUtil.copy((EObject) fragment));
+										else if (mApplicationElement instanceof MHandledItem) {
+											final MHandledItem mHandledItem = (MHandledItem) mApplicationElement;
+											final MCommand command = mHandledItem.getCommand();
+											commandsToImport.add(command);
+											final MApplicationElement copy = (MApplicationElement) EcoreUtil
+													.copy((EObject) command);
+											targetFragments.getImports().add(copy);
+											mHandledItem.setCommand((MCommand) copy);
+										}
 
 									}
-									for (final MApplicationElement element : sourceFragments.getImports()) {
-										boolean isAlreadyImport = true;
-									for (final MCommand mCommand : listOfAllImportsFromElements) {
+									listOfAllImportsFromElements.addAll(commandsToImport);
+									targetFragments.getFragments().add(
+											(MModelFragment) EcoreUtil.copy((EObject) fragment));
 
-											if (!mCommand.getElementId().equals(element.getElementId())) {
+								}
+								for (final MApplicationElement element : sourceFragments.getImports()) {
+									boolean isAlreadyImport = true;
+										for (final MCommand mCommand : listOfAllImportsFromElements) {
 
-											isAlreadyImport = false;
-												break;
-											}
-											if (!isAlreadyImport) {
+										if (!mCommand.getElementId().equals(element.getElementId())) {
 
-												targetFragments.getImports().add(
-												(MApplicationElement) EcoreUtil.copy((EObject) element));
-											}
+												isAlreadyImport = false;
+											break;
+										}
+										if (!isAlreadyImport) {
 
+											targetFragments.getImports().add(
+													(MApplicationElement) EcoreUtil.copy((EObject) element));
 										}
 
 									}
 
 								}
-							}
 
-							// Save the contents of the resource to the file system.
-							//
-							final Map<Object, Object> options = new HashMap<Object, Object>();
-							resource.save(options);
-							adjustBuildPropertiesFile(modelFile);
-							adjustDependencies(modelFile);
+							}
 						}
-						catch (final Exception exception) {
-							throw new RuntimeException(exception);
-						}
-						finally {
-							progressMonitor.done();
-						}
+
+						// Save the contents of the resource to the file system.
+						//
+						final Map<Object, Object> options = new HashMap<Object, Object>();
+						resource.save(options);
+						adjustBuildPropertiesFile(modelFile);
+						adjustDependencies(modelFile);
 					}
-				};
+					catch (final Exception exception) {
+						throw new RuntimeException(exception);
+					}
+					finally {
+						progressMonitor.done();
+					}
+				}
+			};
 
 			getContainer().run(false, false, operation);
 
@@ -234,20 +238,20 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			if (activePart instanceof ISetSelectionTarget) {
 				final ISelection targetSelection = new StructuredSelection(modelFile);
 				getShell().getDisplay().asyncExec
-					(new Runnable() {
-					@Override
-						public void run() {
-						((ISetSelectionTarget) activePart).selectReveal(targetSelection);
-					}
-				});
+				(new Runnable() {
+						@Override
+					public void run() {
+							((ISetSelectionTarget) activePart).selectReveal(targetSelection);
+						}
+					});
 			}
 
 			// Open an editor on the new file.
 			//
 			try {
 				page.openEditor
-					(new FileEditorInput(modelFile),
-					workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());
+				(new FileEditorInput(modelFile),
+						workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());
 			} catch (final PartInitException exception) {
 				MessageDialog.openError(workbenchWindow.getShell(), "Could not init editor", exception.getMessage()); //$NON-NLS-1$
 				return false;
@@ -381,14 +385,26 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	 */
 	private void registerWithExtensionPointIfRequired(IProject project,
 		WorkspaceBundlePluginModel fModel, IFile file) throws CoreException {
-		final IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 
 		final String WORKBENCH_MODEL_EP_ID = "org.eclipse.e4.workbench.model"; //$NON-NLS-1$
 		final String FRAGMENT = "fragment"; //$NON-NLS-1$
 
+		// Fix bug #436836 : the received fModel is an empty plugin model without extension.
+		// We must copy extensions found in registry plugin model into it
+		// The registry plugin model is read only and must be copied inside the new extension value..
+		final BundlePluginModel registryModel = (BundlePluginModel) PluginRegistry.findModel(project.getName());
+		// The registry Model is not modifiable and may be contains some existing extensions.
+		// Must copy them in the new created fModel
+		for (final IPluginExtension e : registryModel.getPluginBase().getExtensions()) {
+			final IPluginExtension clonedExtens = copyExtension(fModel.getFactory(), e);
+			fModel.getPluginBase().add(clonedExtens);
+		}
+
+		// Can now check if we must add this extension (may be already inside).
+		final IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		for (final IPluginExtension iPluginExtension : extensions) {
 			if (WORKBENCH_MODEL_EP_ID
-				.equalsIgnoreCase(iPluginExtension.getId())) {
+				.equalsIgnoreCase(iPluginExtension.getPoint())) {
 				final IPluginObject[] children = iPluginExtension.getChildren();
 				for (final IPluginObject child : children) {
 					if (FRAGMENT.equalsIgnoreCase(child.getName())) {
@@ -410,4 +426,52 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		fModel.getPluginBase().add(extPointFragmentRegister);
 		fModel.save();
 	}
+
+	// Used to Fix bug #436836
+	private IPluginExtension copyExtension(IExtensionsModelFactory factory, final IPluginExtension ext) {
+		try
+		{
+			final IPluginExtension clonedExt = factory.createExtension();
+			clonedExt.setPoint(ext.getPoint());
+			final IPluginObject[] _children = ext.getChildren();
+			for (final IPluginObject elt : _children) {
+				if (elt instanceof IPluginElement) {
+					final IPluginElement ipe = (IPluginElement) elt;
+					final IPluginElement clonedElt = copyExtensionElement(factory, ipe, ext);
+					clonedExt.add(clonedElt);
+				}
+			}
+			return clonedExt;
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	// Used to Fix bug #436836
+	private IPluginElement copyExtensionElement(IExtensionsModelFactory factory, final IPluginElement elt,
+		final IPluginObject parent) {
+		try
+		{
+			final IPluginElement clonedElt = factory.createElement(parent);
+			clonedElt.setName(elt.getName());
+			for (final IPluginAttribute a : elt.getAttributes()) {
+				clonedElt.setAttribute(a.getName(), a.getValue());
+			}
+			for (final IPluginObject e : elt.getChildren()) {
+				if (e instanceof IPluginElement) {
+					final IPluginElement ipe = (IPluginElement) e;
+					final IPluginElement copyExtensionElement = copyExtensionElement(factory, ipe, clonedElt);
+					clonedElt.add(copyExtensionElement);
+				}
+			}
+			return clonedElt;
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 }
