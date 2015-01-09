@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 vogella GmbH and others.
+ * Copyright (c) 2014, 2015 vogella GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 430370
  *******************************************************************************/
-package org.eclipse.ui.forms.css.properties.css2;
+package org.eclipse.ui.internal.forms.css.properties.css2;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
