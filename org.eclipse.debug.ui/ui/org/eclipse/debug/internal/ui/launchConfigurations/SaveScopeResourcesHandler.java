@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,7 +203,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
                 return Boolean.TRUE;
             }
         } 
-        if (projects != null) {
+        if (projects != null && projects.length > 0) {
             IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
             String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
             int ret = showSaveDialog(projects, !save.equals(MessageDialogWithToggle.NEVER), save.equals(MessageDialogWithToggle.PROMPT));
