@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import org.eclipse.core.runtime.IPath;
+
 import java.io.*;
 import java.io.File;
 import java.net.URI;
@@ -1953,12 +1955,14 @@ public class LinkedResourceTest extends ResourceTest {
 		if (!canCreateSymLinks())
 			return;
 		IPath baseLocation = getRandomLocation();
-		deleteOnTearDown(baseLocation);
-		IPath symlinkTarget = baseLocation.append("dir1/target");
+		IPath resolvedBaseLocation = resolve(baseLocation);
+		deleteOnTearDown(resolvedBaseLocation);
+		IPath symlinkTarget = resolvedBaseLocation.append("dir1/target");
 		symlinkTarget.toFile().mkdirs();
-		createSymLink(baseLocation.toFile(), "symlink", symlinkTarget.toOSString(), true);
+		createSymLink(resolvedBaseLocation.toFile(), "symlink", symlinkTarget.toOSString(), true);
 		IPath linkChildLocation = baseLocation.append("symlink/dir2");
-		File linkChild = linkChildLocation.toFile();
+		IPath resolvedLinkChildLocation = resolve(linkChildLocation);
+		File linkChild = resolvedLinkChildLocation.toFile();
 		linkChild.mkdir();
 		assertTrue("Could not create link at location: " + linkChild, linkChild.exists());
 
@@ -1969,6 +1973,6 @@ public class LinkedResourceTest extends ResourceTest {
 			fail("1.1", e);
 		}
 		// Check that the symlink is preserved.
-		assertEquals("1.2", resolve(linkChildLocation), folder.getLocation());
+		assertEquals("1.2", resolvedLinkChildLocation, folder.getLocation());
 	}
 }
