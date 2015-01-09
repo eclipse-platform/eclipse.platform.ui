@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	private final static String PROJECT_VARIABLE_NAME = "PROOT";
 	private final static String PROJECT_RELATIVE_VARIABLE_NAME = "RELATIVE_PROOT";
 	private final static String PROJECT_RELATIVE_VARIABLE_VALUE = "${PROOT}";
-	private final ArrayList toDelete = new ArrayList();
+	private final ArrayList<IPath> toDelete = new ArrayList<IPath>();
 	private IFileStore toSetWritable = null;
 
 	public LinkedResourceWithPathVariableTest() {
@@ -74,7 +74,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			toSetWritable = null;
 		}
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, null);
-		IPath[] paths = (IPath[]) toDelete.toArray(new IPath[0]);
+		IPath[] paths = toDelete.toArray(new IPath[toDelete.size()]);
 		toDelete.clear();
 		for (int i = 0; i < paths.length; i++)
 			Workspace.clear(paths[i].toFile());
