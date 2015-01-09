@@ -31,11 +31,13 @@ public interface IPlatformRunnable {
 	/**
 	 * Exit object indicating normal termination
 	 */
+	@Deprecated
 	public static final Integer EXIT_OK = new Integer(0);
 
 	/**
 	 * Exit object requesting platform restart
 	 */
+	@Deprecated
 	public static final Integer EXIT_RESTART = new Integer(23);
 
 	/**
@@ -43,6 +45,7 @@ public interface IPlatformRunnable {
 	 * this is used to relaunch Eclipse with different command line arguments. When the executable is
 	 * relaunched the command line will be retrieved from the <code>eclipse.exitdata</code> system property.  
 	 */
+	@Deprecated
 	public static final Integer EXIT_RELAUNCH = new Integer(24);
 
 	/**
@@ -59,5 +62,6 @@ public interface IPlatformRunnable {
 	 * @see #EXIT_RESTART
 	 * @see #EXIT_RELAUNCH
 	 */
+	@Deprecated
 	public Object run(Object args) throws Exception;
 }
