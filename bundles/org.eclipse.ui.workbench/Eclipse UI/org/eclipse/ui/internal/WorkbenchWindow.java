@@ -17,8 +17,6 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,6 +160,7 @@ import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.ContextService;
+import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
@@ -1252,7 +1251,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return null;
 	}
 
-	private void fill(MenuManagerRenderer renderer, MMenu menu, IMenuManager manager) {
+	public void fill(MenuManagerRenderer renderer, MMenu menu, IMenuManager manager) {
 		for (IContributionItem item : manager.getItems()) {
 			if (item instanceof MenuManager) {
 				MenuManager menuManager = (MenuManager) item;

@@ -799,7 +799,7 @@ public class MenuHelper {
 		return null;
 	}
 
-	public static MToolItem createToolItem(MApplication application, CommandContributionItem cci) {
+	public static MHandledToolItem createToolItem(MApplication application, CommandContributionItem cci) {
 		String id = cci.getCommand().getId();
 		for (MCommand command : application.getCommands()) {
 			if (id.equals(command.getElementId())) {
