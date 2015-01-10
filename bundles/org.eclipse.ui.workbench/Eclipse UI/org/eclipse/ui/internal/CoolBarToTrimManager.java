@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 430116
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457237
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 420956 - Fix perspective customization on 4.x
+ *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 420956, 457198
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -544,7 +544,13 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(el, null);
 			final ToolBarManager manager = renderer.getManager(el);
 			if (manager != null) {
+				boolean wasVisible = el.isVisible();
 				fill(el, manager);
+				// fix for bug 383569#25: if the toolbar model changed the
+				// visibility we must create (or remove) SWT toolbar widgets
+				if (el.isVisible() != wasVisible) {
+					manager.update(true);
+				}
 				// TODO: Hack to work around Bug 370961
 				ToolBar tb = manager.getControl();
 				if (tb != null && !tb.isDisposed()) {
@@ -601,6 +607,17 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			if (toolBarElem != null) {
 				if (container.isVisible()) {
 					setChildVisible(toolBarElem, item, manager);
+					continue;
+				}
+				if (item.isSeparator() || item.isGroupMarker()) {
+					continue;
+				}
+				// partial fix for bug 383569, introduced via fix for bug 402429
+				// If the toolbar is hidden but one of the children is not,
+				// make both the child and the toolbar visible
+				if (isChildVisible(item, manager)) {
+					setChildVisible(toolBarElem, item, manager);
+					container.setVisible(true);
 				}
 				continue;
 			}
@@ -648,33 +665,42 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	}
 
 	private void setChildVisible(MToolBarElement modelItem, IContributionItem item, IContributionManager manager) {
-		Boolean currentChildVisible = isChildVisible(item, manager);
+		Boolean overridenVisibility = getOverridenVisibility(item, manager);
 		Boolean prevChildVisible = (Boolean) modelItem.getTransientData().get(PREV_CHILD_VISIBLE);
 
-		if (currentChildVisible != null) {
+		if (overridenVisibility != null) {
 			if (prevChildVisible == null) {
 				modelItem.getTransientData().put(PREV_CHILD_VISIBLE, modelItem.isVisible());
-				modelItem.setVisible(currentChildVisible);
+				modelItem.setVisible(overridenVisibility);
+			} else {
+				return;
 			}
 		} else if (prevChildVisible != null) {
 			modelItem.setVisible(prevChildVisible);
 			modelItem.getTransientData().remove(PREV_CHILD_VISIBLE);
+		} else {
+			modelItem.setVisible(item.isVisible());
 		}
 	}
 
-	private Boolean isChildVisible(IContributionItem item, IContributionManager manager) {
-		Boolean v;
+	/**
+	 * Checks if the item's visibility is overridden by the given manager
+	 *
+	 * @return non null overridden visibility value (if it is overridden), null
+	 *         otherwise
+	 */
+	private Boolean getOverridenVisibility(IContributionItem item, IContributionManager manager) {
 		IContributionManagerOverrides overrides = manager.getOverrides();
-		if (overrides == null) {
-			v = null;
-		} else {
-			v = overrides.getVisible(item);
+		return overrides == null ? null : overrides.getVisible(item);
 		}
 
-		if (v != null) {
-			return v.booleanValue();
-		}
-		return null;
+	/**
+	 * Computes real item visibility considering possibly overridden state from
+	 * manager
+	 */
+	private boolean isChildVisible(IContributionItem item, IContributionManager manager) {
+		Boolean v = getOverridenVisibility(item, manager);
+		return v == null ? item.isVisible() : v.booleanValue();
 	}
 
 	public MTrimBar getTopTrim() {
