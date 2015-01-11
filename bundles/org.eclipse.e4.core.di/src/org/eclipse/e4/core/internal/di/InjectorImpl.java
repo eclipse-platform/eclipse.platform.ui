@@ -491,7 +491,7 @@ public class InjectorImpl implements IInjector {
 						continue;
 					actualArgs[i] = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier, tempSupplier);
 				} catch (InjectionException e) {
-					// ignore
+					e.printStackTrace();
 				}
 			}
 		}
