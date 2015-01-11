@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 457211
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -34,8 +35,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * sophisticated layout is required.
  * </p>
  */
-public class ToolBarManager extends ContributionManager implements
-		IToolBarManager {
+public class ToolBarManager extends ContributionManager implements IToolBarManager {
 
 	/**
 	 * The tool bar items style; <code>SWT.NONE</code> by default.
@@ -46,19 +46,18 @@ public class ToolBarManager extends ContributionManager implements
 	 * The tool bar control; <code>null</code> before creation and after
 	 * disposal.
 	 */
-	private ToolBar toolBar = null;
+	private ToolBar toolBar;
 
 	/**
 	 * The menu manager to the context menu associated with the toolbar.
-	 * 
+	 *
 	 * @since 3.0
 	 */
-	private MenuManager contextMenuManager = null;
+	private MenuManager contextMenuManager;
 
 	/**
 	 * Creates a new tool bar manager with the default SWT button style. Use the
 	 * {@link #createControl(Composite)} method to create the tool bar control.
-	 * 
 	 */
 	public ToolBarManager() {
 		//Do nothing if there are no parameters
@@ -67,7 +66,7 @@ public class ToolBarManager extends ContributionManager implements
 	/**
 	 * Creates a tool bar manager with the given SWT button style. Use the
 	 * <code>createControl</code> method to create the tool bar control.
-	 * 
+	 *
 	 * @param style
 	 *            the tool bar item style
 	 * @see org.eclipse.swt.widgets.ToolBar for valid style bits
@@ -79,13 +78,13 @@ public class ToolBarManager extends ContributionManager implements
 	/**
 	 * Creates a tool bar manager for an existing tool bar control. This manager
 	 * becomes responsible for the control, and will dispose of it when the
-	 * manager is disposed.
-	 * <strong>NOTE</strong> When creating a ToolBarManager from an existing
-	 * {@link ToolBar} you will not get the accessible listener provided by
-	 * JFace.
+	 * manager is disposed. <strong>NOTE</strong> When creating a ToolBarManager
+	 * from an existing {@link ToolBar} you will not get the accessible listener
+	 * provided by JFace.
+	 *
 	 * @see #ToolBarManager()
 	 * @see #ToolBarManager(int)
-	 * 
+	 *
 	 * @param toolbar
 	 *            the tool bar control
 	 */
@@ -124,7 +123,7 @@ public class ToolBarManager extends ContributionManager implements
 			toolBar = new ToolBar(parent, itemStyle);
 			toolBar.setMenu(getContextMenuControl());
 			update(true);
-			
+
 			toolBar.getAccessible().addAccessibleListener(getAccessibleListener());
 		}
 
@@ -133,9 +132,9 @@ public class ToolBarManager extends ContributionManager implements
 
 	/**
 	 * Get the accessible listener for the tool bar.
-	 * 
+	 *
 	 * @return AccessibleListener
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private AccessibleListener getAccessibleListener() {
@@ -183,7 +182,7 @@ public class ToolBarManager extends ContributionManager implements
 
 	/**
 	 * Returns the tool bar control for this manager.
-	 * 
+	 *
 	 * @return the tool bar control, or <code>null</code> if none (before
 	 *         creating or after disposal)
 	 */
@@ -196,7 +195,7 @@ public class ToolBarManager extends ContributionManager implements
 	 * <p>
 	 * The default implementation of this framework method re-lays out the
 	 * parent when the number of items are different and the new count != 0
-	 * 
+	 *
 	 * @param layoutBar
 	 *            the tool bar control
 	 * @param oldCount
@@ -205,18 +204,19 @@ public class ToolBarManager extends ContributionManager implements
 	 *            the new number of items
 	 */
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
-		if ((oldCount != newCount) && (newCount!=0)) {
+		if (oldCount != newCount && newCount != 0) {
 			Point beforePack = layoutBar.getSize();
 			layoutBar.pack(true);
 			Point afterPack = layoutBar.getSize();
-			
+
 			// If the TB didn't change size then we're done
-			if (beforePack.equals(afterPack))
+			if (beforePack.equals(afterPack)) {
 				return;
-			
+			}
+
 			// OK, we need to re-layout the TB
 			layoutBar.getParent().layout();
-			
+
 			// Now, if we're in a CoolBar then change the CoolItem size as well
 			if (layoutBar.getParent() instanceof CoolBar) {
 				CoolBar cb = (CoolBar) layoutBar.getParent();
@@ -235,7 +235,7 @@ public class ToolBarManager extends ContributionManager implements
 
 	/**
 	 * Returns whether the tool bar control is created and not disposed.
-	 * 
+	 *
 	 * @return <code>true</code> if the control is created and not disposed,
 	 *         <code>false</code> otherwise
 	 */
@@ -246,174 +246,154 @@ public class ToolBarManager extends ContributionManager implements
 	@Override
 	public void update(boolean force) {
 
-		//	long startTime= 0;
-		//	if (DEBUG) {
-		//		dumpStatistics();
-		//		startTime= (new Date()).getTime();
-		//	}
-
-		if (isDirty() || force) {
-
-			if (toolBarExist()) {
-
-				int oldCount = toolBar.getItemCount();
-
-				// clean contains all active items without double separators
-				IContributionItem[] items = getItems();
-				ArrayList<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
-				IContributionItem separator = null;
-				//			long cleanStartTime= 0;
-				//			if (DEBUG) {
-				//				cleanStartTime= (new Date()).getTime();
-				//			}
-				for (IContributionItem ci : items) {
-					if (!isChildVisible(ci)) {
-						continue;
-					}
-					if (ci.isSeparator()) {
-						// delay creation until necessary
-						// (handles both adjacent separators, and separator at
-						// end)
-						separator = ci;
-					} else {
-						if (separator != null) {
-							if (clean.size() > 0) {
-								clean.add(separator);
-							}
-							separator = null;
-						}
-						clean.add(ci);
-					}
-				}
-				//			if (DEBUG) {
-				//				System.out.println(" Time needed to build clean vector: " +
-				// ((new Date()).getTime() - cleanStartTime));
-				//			}
-
-				// determine obsolete items (removed or non active)
-				ToolItem[] mi = toolBar.getItems();
-				ArrayList<ToolItem> toRemove = new ArrayList<ToolItem>(mi.length);
-				for (ToolItem item : mi) {
-					// there may be null items in a toolbar
-					if (item == null)
-						continue;
-					
-					Object data = item.getData();
-					if (data == null
-							|| !clean.contains(data)
-							|| (data instanceof IContributionItem && ((IContributionItem) data)
-									.isDynamic())) {
-						toRemove.add(item);
-					}
-				}
-
-				// Turn redraw off if the number of items to be added
-				// is above a certain threshold, to minimize flicker,
-				// otherwise the toolbar can be seen to redraw after each item.
-				// Do this before any modifications are made.
-				// We assume each contribution item will contribute at least one
-				// toolbar item.
-				boolean useRedraw = (clean.size() - (mi.length - toRemove
-						.size())) >= 3;
-				try {
-					if (useRedraw) {
-						toolBar.setRedraw(false);
-					}
-
-					// remove obsolete items
-					for (int i = toRemove.size(); --i >= 0;) {
-						ToolItem item = toRemove.get(i);
-						if (!item.isDisposed()) {
-							Control ctrl = item.getControl();
-							if (ctrl != null) {
-								item.setControl(null);
-								ctrl.dispose();
-							}
-							item.dispose();
-						}
-					}
-
-					// add new items
-					IContributionItem dest;
-					mi = toolBar.getItems();
-					int srcIx = 0;
-					int destIx = 0;
-					for (IContributionItem src : clean) {
-
-						// get corresponding item in SWT widget
-						if (srcIx < mi.length) {
-							dest = (IContributionItem) mi[srcIx].getData();
-						} else {
-							dest = null;
-						}
-
-						if (dest != null && src.equals(dest)) {
-							srcIx++;
-							destIx++;
-							continue;
-						}
-
-						if (dest != null && dest.isSeparator()
-								&& src.isSeparator()) {
-							mi[srcIx].setData(src);
-							srcIx++;
-							destIx++;
-							continue;
-						}
-
-						int start = toolBar.getItemCount();
-						src.fill(toolBar, destIx);
-						int newItems = toolBar.getItemCount() - start;
-						for (int i = 0; i < newItems; i++) {
-							ToolItem item = toolBar.getItem(destIx++);
-							item.setData(src);
-						}
-					}
-
-					// remove any old tool items not accounted for
-					for (int i = mi.length; --i >= srcIx;) {
-						ToolItem item = mi[i];
-						if (!item.isDisposed()) {
-							Control ctrl = item.getControl();
-							if (ctrl != null) {
-								item.setControl(null);
-								ctrl.dispose();
-							}
-							item.dispose();
-						}
-					}
-
-					setDirty(false);
-
-					// turn redraw back on if we turned it off above
-				} finally {
-					if (useRedraw) {
-						toolBar.setRedraw(true);
-					}
-				}
-
-				int newCount = toolBar.getItemCount();
-				
-				// If we're forcing a change then ensure that we re-layout everything
-				if (force)
-					oldCount = newCount+1;
-				
-				relayout(toolBar, oldCount, newCount);
-			}
-
+		if (!isDirty() && !force) {
+			return;
 		}
 
-		//	if (DEBUG) {
-		//		System.out.println(" Time needed for update: " + ((new
-		// Date()).getTime() - startTime));
-		//		System.out.println();
-		//	}
+		if (!toolBarExist()) {
+			return;
+		}
+
+		int oldCount = toolBar.getItemCount();
+
+		// clean contains all active items without double separators
+		IContributionItem[] items = getItems();
+		ArrayList<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
+		IContributionItem separator = null;
+		for (IContributionItem ci : items) {
+			if (!isChildVisible(ci)) {
+				continue;
+			}
+			if (ci.isSeparator()) {
+				// delay creation until necessary (handles both adjacent
+				// separators, and separator at end)
+				separator = ci;
+			} else {
+				if (separator != null) {
+					if (clean.size() > 0) {
+						clean.add(separator);
+					}
+					separator = null;
+				}
+				clean.add(ci);
+			}
+		}
+
+		// determine obsolete items (removed or non active)
+		ToolItem[] mi = toolBar.getItems();
+		ArrayList<ToolItem> toRemove = new ArrayList<ToolItem>(mi.length);
+		for (ToolItem item : mi) {
+			// there may be null items in a toolbar
+			if (item == null) {
+				continue;
+			}
+
+			Object data = item.getData();
+			if (data == null || !clean.contains(data)
+					|| (data instanceof IContributionItem && ((IContributionItem) data).isDynamic())) {
+				toRemove.add(item);
+			}
+		}
+
+		// Turn redraw off if the number of items to be added
+		// is above a certain threshold, to minimize flicker,
+		// otherwise the toolbar can be seen to redraw after each item.
+		// Do this before any modifications are made.
+		// We assume each contribution item will contribute at least one
+		// toolbar item.
+		boolean useRedraw = (clean.size() - (mi.length - toRemove.size())) >= 3;
+		try {
+			if (useRedraw) {
+				toolBar.setRedraw(false);
+			}
+
+			// remove obsolete items
+			for (int i = toRemove.size(); --i >= 0;) {
+				ToolItem item = toRemove.get(i);
+				if (!item.isDisposed()) {
+					Control ctrl = item.getControl();
+					if (ctrl != null) {
+						item.setControl(null);
+						ctrl.dispose();
+					}
+					item.dispose();
+				}
+			}
+
+			// add new items
+			IContributionItem dest;
+			mi = toolBar.getItems();
+			int srcIx = 0;
+			int destIx = 0;
+			for (IContributionItem src : clean) {
+
+				// get corresponding item in SWT widget
+				if (srcIx < mi.length) {
+					dest = (IContributionItem) mi[srcIx].getData();
+				} else {
+					dest = null;
+				}
+
+				if (dest != null && src.equals(dest)) {
+					srcIx++;
+					destIx++;
+					continue;
+				}
+
+				if (dest != null && dest.isSeparator() && src.isSeparator()) {
+					mi[srcIx].setData(src);
+					srcIx++;
+					destIx++;
+					continue;
+				}
+
+				int start = toolBar.getItemCount();
+				src.fill(toolBar, destIx);
+				int newItems = toolBar.getItemCount() - start;
+				for (int i = 0; i < newItems; i++) {
+					ToolItem item = toolBar.getItem(destIx++);
+					item.setData(src);
+				}
+			}
+
+			// remove any old tool items not accounted for
+			for (int i = mi.length; --i >= srcIx;) {
+				ToolItem item = mi[i];
+				if (!item.isDisposed()) {
+					Control ctrl = item.getControl();
+					if (ctrl != null) {
+						item.setControl(null);
+						ctrl.dispose();
+					}
+					item.dispose();
+				}
+			}
+
+			setDirty(false);
+
+			// turn redraw back on if we turned it off above
+		} finally {
+			if (useRedraw) {
+				toolBar.setRedraw(true);
+			}
+		}
+
+		int newCount = toolBar.getItemCount();
+
+		// If we're forcing a change then ensure that we re-layout
+		// everything
+		if (force) {
+			oldCount = newCount + 1;
+		}
+
+		relayout(toolBar, oldCount, newCount);
+
 	}
 
 	/**
 	 * Returns the control of the Menu Manager. If the menu manager does not
 	 * have a control then one is created.
-	 * 
+	 *
 	 * @return menu widget associated with manager
 	 */
 	private Menu getContextMenuControl() {
@@ -429,7 +409,7 @@ public class ToolBarManager extends ContributionManager implements
 
 	/**
 	 * Returns the context menu manager for this tool bar manager.
-	 * 
+	 *
 	 * @return the context menu manager, or <code>null</code> if none
 	 * @since 3.0
 	 */
@@ -441,7 +421,7 @@ public class ToolBarManager extends ContributionManager implements
 	 * Sets the context menu manager for this tool bar manager to the given menu
 	 * manager. If the tool bar control exists, it also adds the menu control to
 	 * the tool bar.
-	 * 
+	 *
 	 * @param contextMenuManager
 	 *            the context menu manager, or <code>null</code> if none
 	 * @since 3.0
@@ -453,19 +433,16 @@ public class ToolBarManager extends ContributionManager implements
 		}
 	}
 
+	/**
+	 * Computes real item visibility considering possibly overridden state from
+	 * manager
+	 */
 	private boolean isChildVisible(IContributionItem item) {
-		Boolean v;
-		
 		IContributionManagerOverrides overrides = getOverrides();
 		if(overrides == null) {
-			v = null;
-		} else {
-			v = getOverrides().getVisible(item); 
+			return item.isVisible();
 		}
-		
-		if (v != null) {
-			return v.booleanValue();
-		}
-		return item.isVisible();
+		Boolean v = overrides.getVisible(item);
+		return v != null ? v.booleanValue() : item.isVisible();
 	}
 }
