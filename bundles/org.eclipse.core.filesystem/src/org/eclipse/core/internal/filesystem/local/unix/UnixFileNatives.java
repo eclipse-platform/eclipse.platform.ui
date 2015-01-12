@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local.unix;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Enumeration;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -92,6 +93,31 @@ public abstract class UnixFileNatives {
 			if (getErrno() != ENOENT)
 				info.setError(IFileInfo.IO_ERROR);
 		}
+
+		// Fill in the real name of the file.
+		File file = new File(fileName);
+		final String lastName = file.getName();
+		// If the file does not exist, or the file system is not case sensitive, or the name
+		// of the file is not case sensitive, use the name we have. Otherwise obtain the real
+		// name of the file from a parent directory listing.
+		if (!info.exists() || EFS.getLocalFileSystem().isCaseSensitive() ||
+				lastName.toLowerCase().equals(lastName.toUpperCase())) {
+			info.setName(lastName);
+		} else {
+			// Notice that file.getParentFile() is guaranteed to be not null since fileName == "/"
+			// case is handled by the other branch of the 'if' statement.
+			String[] names = file.getParentFile().list(new FilenameFilter() {
+				public boolean accept(File dir, String n) {
+					return n.equalsIgnoreCase(lastName);
+				}
+			});
+			if (names.length == 1) {
+				info.setName(names[0]);
+			} else {
+				info.setName(lastName);
+			}
+		}
+
 		return info;
 	}
 

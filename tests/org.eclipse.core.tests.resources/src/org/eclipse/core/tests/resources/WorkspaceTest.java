@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,13 @@ public class WorkspaceTest extends ResourceTest {
 	 * @throws Exception
 	 */
 	public void doCleanup() throws Exception {
+		IPath location = getWorkspace().getRoot().getLocation().append("testProject");
+		deleteOnTearDown(location);
+		IPath location2 = getWorkspace().getRoot().getLocation().append("testProject2");
+		deleteOnTearDown(location2);
 		cleanup();
+		assertTrue(location.toOSString() + " has not been deleted", !location.toFile().exists());
+		assertTrue(location2.toOSString() + " has not been deleted", !location2.toFile().exists());
 	}
 
 	/**
