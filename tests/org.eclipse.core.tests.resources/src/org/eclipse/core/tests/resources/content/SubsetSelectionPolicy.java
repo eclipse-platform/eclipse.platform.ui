@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,17 +15,17 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
 
 public class SubsetSelectionPolicy implements ISelectionPolicy {
-	private Set subset;
+	private Set<IContentType> subset;
 
 	public SubsetSelectionPolicy(IContentType[] subset) {
-		this.subset = new HashSet(Arrays.asList(subset));
+		this.subset = new HashSet<IContentType>(Arrays.asList(subset));
 	}
 
 	public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
-		List result = new ArrayList(candidates.length);
+		List<IContentType> result = new ArrayList<IContentType>(candidates.length);
 		for (int i = 0; i < candidates.length; i++)
 			if (subset.contains(candidates[i]))
 				result.add(candidates[i]);
-		return (IContentType[]) result.toArray(new IContentType[result.size()]);
+		return result.toArray(new IContentType[result.size()]);
 	}
 }
