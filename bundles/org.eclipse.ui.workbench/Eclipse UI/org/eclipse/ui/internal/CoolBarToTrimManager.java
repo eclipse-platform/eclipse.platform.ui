@@ -500,7 +500,14 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		}
 		// and now add it to the model, start the rendering
 		if (!trimBarsAdded) {
+			boolean hidden = !topTrim.isVisible();
+			if (hidden) {
+				topTrim.setVisible(true);
+			}
 			topTrim.setToBeRendered(true);
+			if (hidden) {
+				topTrim.setVisible(false);
+			}
 			trimBarsAdded = true;
 		}
 	}
