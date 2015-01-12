@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
 import org.eclipse.jface.internal.text.html.HTML2TextReader;
@@ -45,6 +46,13 @@ public class HTML2TextReaderTest extends TestCase {
 		return new TestSuite(HTML2TextReaderTest.class);
 	}
 
+	/**
+	 * @param input
+	 * @param expectedOutput
+	 * @param styleRangeCount
+	 * @throws IOException
+	 * @deprecated pass actual style ranges
+	 */
 	private void verify(String input, String expectedOutput, int styleRangeCount) throws IOException {
 		Reader reader= new StringReader(input);
 		TextPresentation textPresentation= new TextPresentation();
@@ -79,6 +87,42 @@ public class HTML2TextReaderTest extends TestCase {
 			}
 		}
 
+	}
+
+	private void verify(String input, String expectedOutput, StyleRange[] styleRanges) throws IOException {
+		Reader reader= new StringReader(input);
+		TextPresentation textPresentation= new TextPresentation();
+		HTML2TextReader htmlReader= new HTML2TextReader(reader, textPresentation);
+		String result= htmlReader.getString();
+		if (DEBUG)
+			System.out.println("<" + result + "/>");
+		assertEquals(expectedOutput, result);
+		
+		Iterator styleRangeIterator= textPresentation.getAllStyleRangeIterator();
+		List ranges= new ArrayList();
+		while (styleRangeIterator.hasNext()) {
+			ranges.add(styleRangeIterator.next());
+		}
+		
+		Collections.sort(ranges, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				StyleRange range1= (StyleRange)o1;
+				StyleRange range2= (StyleRange)o2;
+				return range1.start - range2.start;
+			}
+		});
+		
+		assertEquals(Arrays.asList(styleRanges), ranges);
+		
+		for (int i= 0; i < ranges.size() - 1; i++) {
+			StyleRange range1= (StyleRange)ranges.get(i);
+			StyleRange range2= (StyleRange)ranges.get(i + 1);
+			
+			if (range1.start + range1.length > range2.start) {
+				assertTrue("StyleRanges overlap", false);
+			}
+		}
+		
 	}
 
 	public void test0() throws IOException{
@@ -210,6 +254,17 @@ public class HTML2TextReaderTest extends TestCase {
 		String string= "<del>This <b>is <del>yet</del> another </b>test</del>";
 		String expected= "This is yet another test";
 		verify(string, expected, 3);
+	}
+	
+	public void testStylesWithPre() throws IOException {
+		String string= "I am <b>bold</b>.\n<p>\n<pre>One\n\n<b>T</b>hree.</pre>\n<p>\n<b>Author:</b> me.";
+		String expected= "I am bold. \nOne\n\nThree. \nAuthor: me.";
+		StyleRange[] ranges= {
+				new StyleRange(5, 4, null, null, SWT.BOLD),
+				new StyleRange(17, 1, null, null, SWT.BOLD),
+				new StyleRange(25, 7, null, null, SWT.BOLD)
+		};
+		verify(string, expected, ranges);
 	}
 }
 
