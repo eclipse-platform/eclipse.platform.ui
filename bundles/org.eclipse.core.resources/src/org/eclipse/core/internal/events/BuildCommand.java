@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,19 +245,20 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * For builders which don't respond to multiple configurations, there's only one builder
 	 * instance.
 	 * @param config
-	 * @param builder
+	 * @param newBuilder
 	 */
-	public void addBuilder(IBuildConfiguration config, IncrementalProjectBuilder builder) {
+	public void addBuilder(IBuildConfiguration config, IncrementalProjectBuilder newBuilder) {
 		// Builder shouldn't already exist in this build command
-		Assert.isTrue(builders == null || !builders.containsKey(config));
-		Assert.isTrue(this.builder == null);
+		IncrementalProjectBuilder currentBuilder = builders == null ? null : builders.get(config);
+		Assert.isTrue(currentBuilder == null, "Current builder: " + currentBuilder + ", new builder: " + newBuilder + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Assert.isTrue(builder == null, "Current builder: " + builder + ", new builder: " + newBuilder + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		if (supportsConfigs()) {
 			if (builders == null)
 				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>(1);
-			builders.put(config, builder);
+			builders.put(config, newBuilder);
 		} else
-			this.builder = builder;
+			builder = newBuilder;
 	}
 
 	/**
