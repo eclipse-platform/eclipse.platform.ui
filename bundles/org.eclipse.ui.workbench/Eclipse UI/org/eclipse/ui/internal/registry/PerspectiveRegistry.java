@@ -73,7 +73,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 				if (existingDescriptor == null) {
 					// A custom perspective with its own name.
-					String label = perspective.getLabel();
+					String label = perspective.getLocalizedLabel();
 					String originalId = getOriginalId(perspective.getElementId());
 					PerspectiveDescriptor originalDescriptor = descriptors.get(originalId);
 					PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(id, label,
