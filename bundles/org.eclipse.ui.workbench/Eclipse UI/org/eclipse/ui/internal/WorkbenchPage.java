@@ -331,32 +331,32 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		try {
 			service.deferUpdates(true);
 			if (newPersp != null) {
-				IActionSetDescriptor[] newAlwaysOn = newPersp.getAlwaysOnActionSets();
-				for (int i = 0; i < newAlwaysOn.length; i++) {
-					IActionSetDescriptor descriptor = newAlwaysOn[i];
+				List<IActionSetDescriptor> newAlwaysOn = newPersp.getAlwaysOnActionSets();
+				for (int i = 0; i < newAlwaysOn.size(); i++) {
+					IActionSetDescriptor descriptor = newAlwaysOn.get(i);
 
 					actionSets.showAction(descriptor);
 				}
 
-				IActionSetDescriptor[] newAlwaysOff = newPersp.getAlwaysOffActionSets();
-				for (int i = 0; i < newAlwaysOff.length; i++) {
-					IActionSetDescriptor descriptor = newAlwaysOff[i];
+				List<IActionSetDescriptor> newAlwaysOff = newPersp.getAlwaysOffActionSets();
+				for (int i = 0; i < newAlwaysOff.size(); i++) {
+					IActionSetDescriptor descriptor = newAlwaysOff.get(i);
 
 					actionSets.maskAction(descriptor);
 				}
 			}
 
 			if (oldPersp != null) {
-				IActionSetDescriptor[] newAlwaysOn = oldPersp.getAlwaysOnActionSets();
-				for (int i = 0; i < newAlwaysOn.length; i++) {
-					IActionSetDescriptor descriptor = newAlwaysOn[i];
+				List<IActionSetDescriptor> oldAlwaysOn = oldPersp.getAlwaysOnActionSets();
+				for (int i = 0; i < oldAlwaysOn.size(); i++) {
+					IActionSetDescriptor descriptor = oldAlwaysOn.get(i);
 
 					actionSets.hideAction(descriptor);
 				}
 
-				IActionSetDescriptor[] newAlwaysOff = oldPersp.getAlwaysOffActionSets();
-				for (int i = 0; i < newAlwaysOff.length; i++) {
-					IActionSetDescriptor descriptor = newAlwaysOff[i];
+				List<IActionSetDescriptor> oldAlwaysOff = oldPersp.getAlwaysOffActionSets();
+				for (int i = 0; i < oldAlwaysOff.size(); i++) {
+					IActionSetDescriptor descriptor = oldAlwaysOff.get(i);
 
 					actionSets.unmaskAction(descriptor);
 				}
@@ -3427,7 +3427,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		// deactivate and activate other action sets as
-		updateActionSets(getPerspective(persp), getPerspective(dummyPerspective));
+		Perspective oldPersp = getPerspective(persp);
+		Perspective dummyPersp = getPerspective(dummyPerspective);
+		updateActionSets(oldPersp, dummyPersp);
+		oldPersp.getAlwaysOnActionSets().clear();
+		oldPersp.getAlwaysOnActionSets().addAll(dummyPersp.getAlwaysOnActionSets());
+		oldPersp.getAlwaysOffActionSets().clear();
+		oldPersp.getAlwaysOffActionSets().addAll(dummyPersp.getAlwaysOffActionSets());
+
 		modelToPerspectiveMapping.remove(dummyPerspective);
 
 		// partly fixing toolbar refresh issue, see bug 383569 comment 10
@@ -4113,7 +4120,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
              
              IActionSetDescriptor desc = reg.findActionSet(actionSetID);
              if (desc != null) {
-				IActionSetDescriptor[] offActionSets = persp.getAlwaysOffActionSets();
+				List<IActionSetDescriptor> offActionSets = persp.getAlwaysOffActionSets();
 				for (IActionSetDescriptor off : offActionSets) {
 					if (off.getId().equals(desc.getId())) {
 						return;
