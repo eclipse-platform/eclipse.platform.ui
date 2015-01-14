@@ -14,10 +14,9 @@ package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -41,32 +40,29 @@ public class Bug180504TableViewerTest extends ViewerTestCase {
 	protected StructuredViewer createViewer(Composite parent) {
 		final TableViewer tableViewer = new TableViewer(parent, SWT.FULL_SELECTION);
 		tableViewer.setContentProvider(new ArrayContentProvider());
-		TableColumn column = new TableColumn(tableViewer.getTable(), SWT.NONE);
-		column.setWidth(200);
-
-		TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, column);
-		tableViewerColumn.setEditingSupport(new EditingSupport(tableViewer) {
-
+		tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(
+				tableViewer.getTable()) });
+		tableViewer.setColumnProperties(new String[] { "0" });
+		tableViewer.setCellModifier(new ICellModifier() {
 			@Override
-			protected void setValue(Object element, Object value) {
-				tableViewer.getControl().dispose();
+			public boolean canModify(Object element, String property) {
+				return true;
 			}
 
 			@Override
-			protected Object getValue(Object element) {
+			public Object getValue(Object element, String property) {
 				return "";
 			}
 
 			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(tableViewer.getTable());
+			public void modify(Object element, String property, Object value) {
+				tableViewer.getControl().dispose();
 			}
 
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
 		});
+
+	    new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(200);
+
 		return tableViewer;
 	}
 
