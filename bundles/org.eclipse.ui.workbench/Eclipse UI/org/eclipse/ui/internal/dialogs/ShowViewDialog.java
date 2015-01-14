@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 128526, bug 128529
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988, 457434 
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.EHelpService;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -55,7 +56,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -103,8 +103,8 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	 * @param context
 	 *
 	 */
-	public ShowViewDialog(Shell shell, MApplication application, MWindow window,
-			EModelService modelService, IEclipseContext context) {
+	public ShowViewDialog(Shell shell, MApplication application, MWindow window, EModelService modelService,
+			IEclipseContext context) {
 		super(shell);
 		this.application = application;
 		this.window = window;
@@ -136,10 +136,10 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(WorkbenchMessages.ShowView_shellTitle);
-		// TODO change to context access once
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=445600
-		// is solved
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.SHOW_VIEW_DIALOG);
+		EHelpService helpService = context.get(EHelpService.class);
+		if (helpService != null) {
+			helpService.setHelp(shell, IWorkbenchHelpContextIds.SHOW_VIEW_DIALOG);
+		}
 	}
 
 	@Override
