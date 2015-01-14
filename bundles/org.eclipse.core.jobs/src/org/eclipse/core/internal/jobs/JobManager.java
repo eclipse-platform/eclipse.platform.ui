@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Oracle Corporation - Fix for bug 316839
  *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
  *     Jan Koehnlein - Fix for bug 60964 (454698)
+ *     Terry Parker - Bug 457504, Publish a job group's final status to IJobChangeListeners
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -105,6 +106,12 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 
+	/**
+	 * Listeners for the job lifecycle. It is important that the
+	 * JobManager#JobGroupUpdater is the first one that is dispatched to, since
+	 * it updates the JobChangeEvent#jobGroupStatus field, which other listeners
+	 * may use.
+	 */
 	private final JobListeners jobListeners = new JobListeners();
 
 	/**
@@ -1852,9 +1859,15 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 						isJobGroupCompleted = true;
 					}
 				}
-				// Log the group result when the job group is completed.
-				if (isJobGroupCompleted && jobGroupResult.matches(IStatus.ERROR | IStatus.WARNING))
-					RuntimeLog.log(jobGroupResult);
+
+				// If the job group is completing, add the job group's status to the event
+				// and log errors and warnings.
+				if (isJobGroupCompleted) {
+					((JobChangeEvent) event).jobGroupResult = jobGroupResult;
+					if (jobGroupResult.matches(IStatus.ERROR | IStatus.WARNING))
+						RuntimeLog.log(jobGroupResult);
+				}
+
 				return;
 			}
 

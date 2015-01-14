@@ -1286,6 +1286,49 @@ public class JobGroupTest extends AbstractJobTest {
 		waitForCompletion(jobGroup);
 	}
 
+	/**
+	 * Tests that the JobManager publishes a final job group status to IJobChangeListeners.
+	 */
+	public void testJobManagerPublishesJobGroupResults() {
+		final int NUM_GROUP_JOBS = 3;
+		final String GROUP_NAME = "TestJobGroup";
+		final JobGroup jobGroup = new JobGroup(GROUP_NAME, 1, NUM_GROUP_JOBS);
+
+		// Record job completion events for all jobs in this job group.
+		final List<IJobChangeEvent> events = new ArrayList<IJobChangeEvent>(NUM_GROUP_JOBS);
+		IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				if (event.getJob().getJobGroup() == jobGroup) {
+					events.add(event);
+				}
+			}
+		};
+		manager.addJobChangeListener(listener);
+
+		// Execute all jobs in the job group and validate that the last job includes the job group result.
+		try {
+			for (int i = 0; i < NUM_GROUP_JOBS; i++) {
+				TestJob testJob = new TestJob("GroupJob", 10, 1);
+				testJob.setJobGroup(jobGroup);
+				testJob.schedule();
+			}
+			waitForCompletion(jobGroup);
+
+			assertEquals("Should have seen as many job completion events as the count of jobs in the job group.", NUM_GROUP_JOBS, events.size());
+			for (int i = 0; i < NUM_GROUP_JOBS; i++) {
+				IJobChangeEvent event = events.get(i);
+				assertNotNull("All job completion events should have a job status.", event.getResult());
+				if (i < NUM_GROUP_JOBS - 1)
+					assertNull("Only the last job competion event shoud have a job group status.", event.getJobGroupResult());
+				else
+					assertNotNull("The last job competion event shoud have a job group status.", event.getJobGroupResult());
+			}
+		} finally {
+			manager.removeJobChangeListener(listener);
+		}
+	}
+
 	private void assertState(String msg, Job job, int expectedState) {
 		int actualState = job.getState();
 		if (actualState != expectedState)

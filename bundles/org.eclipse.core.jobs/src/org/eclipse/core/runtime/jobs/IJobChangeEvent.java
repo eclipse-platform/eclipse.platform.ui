@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Terry Parker - Bug 457504, Publish a job group's final status to IJobChangeListeners
  *******************************************************************************/
 package org.eclipse.core.runtime.jobs;
 
@@ -44,4 +45,14 @@ public interface IJobChangeEvent {
 	 * @return the status for this event
 	 */
 	public IStatus getResult();
+
+	/**
+	 * The result returned by the job's job group, if this event signals
+	 * completion of the last job in a group, or <code>null</code> if not
+	 * applicable.  This value is only applicable for the <code>done</code> event.
+	 *
+	 * @return the job group status for this event, or <code>null</code>
+	 * @since 3.7
+	 */
+	public IStatus getJobGroupResult();
 }
