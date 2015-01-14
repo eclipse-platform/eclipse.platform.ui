@@ -1900,6 +1900,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				if (findDynamics.containsKey(null)) {
 					IContributionItem item = findDynamics.get(null);
 					dynamicEntry = new DynamicContributionItem(item);
+					dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
 					dynamicEntry.setActionSet(idToActionSet.get(getActionSetID(item)));
 					parent.addChild(dynamicEntry);
 				}
