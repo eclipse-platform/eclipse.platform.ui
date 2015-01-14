@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
+import java.io.BufferedInputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import junit.framework.Test;
@@ -18,7 +20,11 @@ import junit.framework.TestSuite;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.runtime.ContributorFactorySimple;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -36,10 +42,44 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 public class MarkerAnnotationOrderTest extends TestCase {
 
+	IContributor pointContributor= null;
+
+	Object masterToken= null;
+
 	public static Test suite() {
 		return new TestSuite(MarkerAnnotationOrderTest.class);
 	}
 
+	protected void setUp() throws Exception {
+		//add the marker updater extension point
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		pointContributor= ContributorFactorySimple.createContributor(Long.toString(EditorTestPlugin.getDefault().getBundle().getBundleId()));
+
+		try {
+			BufferedInputStream bis= new BufferedInputStream(getClass().getResourceAsStream("plugin.xml"));
+
+			Field field=
+					org.eclipse.core.internal.registry.ExtensionRegistry.class
+							.getDeclaredField("masterToken");
+			field.setAccessible(true);
+			masterToken= field.get(registry);
+			registry.addContribution(bis, pointContributor, true, null, null, masterToken);
+		} catch (Exception ex) {
+			fail("update marker setup failed to execute");
+			EditorTestPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, EditorTestPlugin.PLUGIN_ID, ex.getMessage()));
+		}
+	}
+
+	protected void tearDown() throws Exception {
+		// remove the marker updater extension point
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IExtension[] extensions = registry.getExtensions(pointContributor);
+		for (int i= 0; i < extensions.length; i++) {
+			if ("org.eclipse.ui.editors.markerUpdaters".equals(extensions[i].getExtensionPointUniqueIdentifier()))
+				registry.removeExtension(extensions[i], masterToken);
+		}
+	}
+	
 	public void testDirectDependency() {
 		final ArrayList list= new ArrayList(2);
 		Bundle bundle= Platform.getBundle(EditorsUI.PLUGIN_ID);
