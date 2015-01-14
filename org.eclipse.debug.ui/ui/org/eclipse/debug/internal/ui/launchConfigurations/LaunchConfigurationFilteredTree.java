@@ -77,6 +77,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		treeViewer.setComparator(new WorkbenchViewerComparator());
 		treeViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(fLaunchGroup.getMode(), cparent.getShell()));
 		treeViewer.addFilter(new LaunchGroupFilter(fLaunchGroup));
+		treeViewer.setUseHashlookup(true);
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		if(fFilters != null) {
 			for (int i = 0; i < fFilters.length; i++) {
