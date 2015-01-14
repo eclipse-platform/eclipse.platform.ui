@@ -250,8 +250,10 @@ public class BuildCommand extends ModelObject implements ICommand {
 	public void addBuilder(IBuildConfiguration config, IncrementalProjectBuilder newBuilder) {
 		// Builder shouldn't already exist in this build command
 		IncrementalProjectBuilder currentBuilder = builders == null ? null : builders.get(config);
-		Assert.isTrue(currentBuilder == null, "Current builder: " + currentBuilder + ", new builder: " + newBuilder + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		Assert.isTrue(builder == null, "Current builder: " + builder + ", new builder: " + newBuilder + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (currentBuilder != null)
+			Assert.isTrue(false, "Current builder: " + currentBuilder.getClass().getName() + ", new builder: " + newBuilder.getClass().getName() + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (builder != null)
+			Assert.isTrue(false, "Current builder: " + builder.getClass().getName() + ", new builder: " + newBuilder.getClass().getName() + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		if (supportsConfigs()) {
 			if (builders == null)
