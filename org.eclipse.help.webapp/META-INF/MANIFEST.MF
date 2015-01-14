@@ -18,7 +18,7 @@ Export-Package: org.eclipse.help.internal.webapp;x-friends:="org.eclipse.ua.test
  org.eclipse.help.internal.webapp.servlet;x-friends:="org.eclipse.ua.tests,org.eclipse.ua.tests.doc",
  org.eclipse.help.internal.webapp.utils;x-friends:="org.eclipse.ua.tests",
  org.eclipse.help.webapp
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.ibm.icu.text;version="3.8.0",
  javax.servlet;version="2.4.0",
  javax.servlet.http;version="2.4.0",
