@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,19 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Muskalla  - bug 77710
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430603
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 455527
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -50,19 +51,24 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 
 	private MWindow window;
 
+	private EPartService partService;
+
 	/**
 	 * @param context
 	 * @param modelService
+	 * @param partService
 	 * @param window
 	 *            the workbench window
 	 * @param dimmedForeground
 	 *            the dimmed foreground color to use for views that are already
 	 *            open
 	 */
-	public ViewLabelProvider(IEclipseContext context, EModelService modelService, MWindow window,
+	public ViewLabelProvider(IEclipseContext context, EModelService modelService, EPartService partService,
+			MWindow window,
 			Color dimmedForeground) {
 		this.context = context;
 		this.modelService = modelService;
+		this.partService = partService;
 		this.window = window;
 		this.dimmedForeground = dimmedForeground;
 	}
@@ -116,31 +122,14 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 
 	@Override
 	public Color getForeground(Object element) {
-		if (element instanceof MPartDescriptor) {
-			String elementId = ((MPartDescriptor) element).getElementId();
-			List<MPart> findElements = modelService.findElements(
-					modelService.getActivePerspective(window), elementId, MPart.class, null);
-
-			if (findElements.size() > 0) {
-				MPart part = findElements.get(0);
-
-				// if that is a shared part, check the placeholders
-				if (window.getSharedElements().contains(part)) {
-					List<MPlaceholder> placeholders = modelService.findElements(
-							modelService.getActivePerspective(window), elementId, MPlaceholder.class, null);
-					for (MPlaceholder mPlaceholder : placeholders) {
-						if (mPlaceholder.isVisible() && mPlaceholder.isToBeRendered()) {
-							return dimmedForeground;
-						}
-					}
-					return null;
-				}
-				// not a shared part
-				if (part.isVisible() && part.isToBeRendered()) {
-					return dimmedForeground;
-				}
+		if (element instanceof MApplicationElement) {
+			String elementId = ((MApplicationElement) element).getElementId();
+			MPerspective activePerspective = modelService.getActivePerspective(window);
+			if(partService.isPartOrPlaceholderInPerspective(elementId, activePerspective)){
+				return dimmedForeground;
 			}
 		}
+
 		return null;
 	}
 }
