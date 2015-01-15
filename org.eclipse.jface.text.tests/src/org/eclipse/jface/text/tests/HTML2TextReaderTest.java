@@ -257,12 +257,12 @@ public class HTML2TextReaderTest extends TestCase {
 	}
 	
 	public void testStylesWithPre() throws IOException {
-		String string= "I am <b>bold</b>.\n<p>\n<pre>One\n\n<b>T</b>hree.</pre>\n<p>\n<b>Author:</b> me.";
-		String expected= "I am bold. \nOne\n\nThree. \nAuthor: me.";
+		String string= "I am <b>bold</b>." + LD + "<p>" + LD + "<pre>One" + LD + LD + "<b>T</b>hree.</pre>" + LD + "<p>" + LD + "<b>Author:</b> me.";
+		String expected= "I am bold. " + LD + "One" + LD + LD + "Three. " + LD + "Author: me.";
 		StyleRange[] ranges= {
 				new StyleRange(5, 4, null, null, SWT.BOLD),
-				new StyleRange(17, 1, null, null, SWT.BOLD),
-				new StyleRange(25, 7, null, null, SWT.BOLD)
+				new StyleRange(14 + 3*LD.length(), 1, null, null, SWT.BOLD),
+				new StyleRange(21 + 4*LD.length(), 7, null, null, SWT.BOLD)
 		};
 		verify(string, expected, ranges);
 	}
