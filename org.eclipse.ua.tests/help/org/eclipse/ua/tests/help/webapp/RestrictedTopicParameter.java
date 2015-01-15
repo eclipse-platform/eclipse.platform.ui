@@ -30,6 +30,7 @@ public class RestrictedTopicParameter extends TestCase {
 	private boolean restrictTopic;
 	private int helpMode;
 	
+	@Override
 	protected void setUp() throws Exception {
 		restrictTopic = Platform.getPreferencesService().getBoolean
 	     (HelpBasePlugin.PLUGIN_ID, RESTRICT_TOPIC,
@@ -37,6 +38,7 @@ public class RestrictedTopicParameter extends TestCase {
 		helpMode = BaseHelpSystem.getMode();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		setRestrictTopic(restrictTopic);
 		BaseHelpSystem.setMode(helpMode);

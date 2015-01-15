@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.help.internal.webapp.utils.Utils;
 public class ValidatorServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3783758607845176051L;
-	private Hashtable servletTable = new Hashtable();
+	private Hashtable<String, HttpServlet> servletTable = new Hashtable<String, HttpServlet>();
 	
 	protected void process(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -94,20 +94,20 @@ public class ValidatorServlet extends HttpServlet {
 	private HttpServlet getServlet(String name) 
 			throws CoreException {
 		
-		HttpServlet servlet = (HttpServlet)servletTable.get(name);
+		HttpServlet servlet = servletTable.get(name);
 		
 		if (servlet == null) {
 			
 			IConfigurationElement[] configs = 
 				Platform.getExtensionRegistry().getConfigurationElementsFor(HelpWebappPlugin.PLUGIN_ID+".validatedServlet"); //$NON-NLS-1$
 			
-			for (int c=0; c < configs.length; c++) {
+			for (IConfigurationElement config2 : configs) {
 				
-				String alias = configs[c].getAttribute("alias"); //$NON-NLS-1$
+				String alias = config2.getAttribute("alias"); //$NON-NLS-1$
 				if (alias != null) {
 					
 					if (isMatch(alias, name)) {
-						servlet = (HttpServlet)configs[c].createExecutableExtension("class"); //$NON-NLS-1$
+						servlet = (HttpServlet)config2.createExecutableExtension("class"); //$NON-NLS-1$
 						servletTable.put(name, servlet);
 						break;
 					}
@@ -132,11 +132,13 @@ public class ValidatorServlet extends HttpServlet {
 		return false;
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		process(req, resp);
 	}
 	
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		process(req, resp);
@@ -144,13 +146,13 @@ public class ValidatorServlet extends HttpServlet {
 	
 	public boolean isSecure(HttpServletRequest req,HttpServletResponseAdv resp) 
 			throws SecurityException {
-		Enumeration names = req.getParameterNames();
-		List values = new ArrayList();
-		List scripts = new ArrayList();
+		Enumeration<String> names = req.getParameterNames();
+		List<String> values = new ArrayList<String>();
+		List<String> scripts = new ArrayList<String>();
 		
 		while (names.hasMoreElements()) {
 			
-			String name = (String)names.nextElement();
+			String name = names.nextElement();
 			String val = req.getParameter(name);
 			values.add(val);
 			if (replaceAll(val, '+', "").indexOf("<script")>-1) //$NON-NLS-1$ //$NON-NLS-2$
@@ -160,18 +162,12 @@ public class ValidatorServlet extends HttpServlet {
 		if (resp.getWriter() != null) {
 			String data = resp.getString();
 			for (int s=0; s < scripts.size(); s++)
-				if (data.indexOf((String)scripts.get(s)) > -1)
+				if (data.indexOf(scripts.get(s)) > -1)
 					throw new SecurityException("Potential cross-site scripting detected."); //$NON-NLS-1$
 		}
 		
 		return true;
 	}
-
-	public void isScript(List params,OutputStream out) {
-		
-//		ByteArrayOutputStream bOut = new ByteArrayOutputStream(out);
-	}
-
 	
 	public String replaceAll(String str, char remove, String add) {
 		
@@ -198,6 +194,7 @@ public class ValidatorServlet extends HttpServlet {
 			this.response = response;
 		}
 
+		@Override
 		public PrintWriter getWriter() {
 			
 			if (writer == null && stream == null)
@@ -205,6 +202,7 @@ public class ValidatorServlet extends HttpServlet {
 			return writer;
 		}
 		
+		@Override
 		public ServletOutputStream getOutputStream() throws IOException {
 			
 			if (stream == null && writer == null)

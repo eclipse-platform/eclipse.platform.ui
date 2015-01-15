@@ -32,6 +32,7 @@ public class ChildLinkInsertion extends TestCase {
 			super(out, req, prefix);
 		}
 
+		@Override
 		protected void insertBasedOnKeyword(int index) throws IOException {
 			if (index == 0 ) {
 				out.write("<LINKS>".getBytes()); //$NON-NLS-1$

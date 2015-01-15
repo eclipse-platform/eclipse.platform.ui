@@ -23,10 +23,12 @@ public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 
 	public static final String CONTAINS_LETTER = "containsLetter";
 
+	@Override
 	public ICriteria[] getCriteria(ITopic topic) {
 		return getCriteriaFromLabel(topic.getLabel());
 	}
 
+	@Override
 	public ICriteria[] getCriteria(IToc toc) {
 		return getCriteriaFromLabel(toc.getLabel());
 	}

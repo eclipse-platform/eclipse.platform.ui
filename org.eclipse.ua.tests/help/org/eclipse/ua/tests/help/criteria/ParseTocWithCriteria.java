@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,19 +65,17 @@ public class ParseTocWithCriteria extends TestCase {
 		Map<String, Set<String>> criteria = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteria, toc.getCriteria());
 	    assertEquals(2, criteria.size());
-	    Object  versions = criteria.get("version");
+	    Set<String> versions = criteria.get("version");
 	    assertNotNull(versions);
-	    Set versionSet = (Set)versions;
-	    assertEquals(2, versionSet.size());
-	    assertTrue(versionSet.contains("1.0"));
-	    assertTrue(versionSet.contains("2.0"));
+	    assertEquals(2, versions.size());
+	    assertTrue(versions.contains("1.0"));
+	    assertTrue(versions.contains("2.0"));
 
-	    Object  platforms = criteria.get("platform");
+	    Set<String> platforms = criteria.get("platform");
 	    assertNotNull(platforms);
-	    Set platformSet = (Set)platforms;
-	    assertEquals(2, platformSet.size());
-	    assertTrue(platformSet.contains("linux"));
-	    assertTrue(platformSet.contains("win32"));
+	    assertEquals(2, platforms.size());
+	    assertTrue(platforms.contains("linux"));
+	    assertTrue(platforms.contains("win32"));
 	}
 	
 	public void testCopyTocWithCriteria() throws Exception {
@@ -86,36 +84,33 @@ public class ParseTocWithCriteria extends TestCase {
 		Map<String, Set<String>> criteria = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteria, toc.getCriteria());
 	    assertEquals(2, criteria.size());
-	    Object  versions = criteria.get("version");
+	    Set<String> versions = criteria.get("version");
 	    assertNotNull(versions);
-	    Set versionSet = (Set)versions;
-	    assertEquals(2, versionSet.size());
-	    assertTrue(versionSet.contains("1.0"));
-	    assertTrue(versionSet.contains("2.0"));	    
+	    assertEquals(2, versions.size());
+	    assertTrue(versions.contains("1.0"));
+	    assertTrue(versions.contains("2.0"));	    
 
-	    Object  platforms = criteria.get("platform");
+	    Set<String> platforms = criteria.get("platform");
 	    assertNotNull(platforms);
-	    Set platformSet = (Set)platforms;
-	    assertEquals(2, platformSet.size());
-	    assertTrue(platformSet.contains("linux"));
-	    assertTrue(platformSet.contains("win32"));
+	    assertEquals(2, platforms.size());
+	    assertTrue(platforms.contains("linux"));
+	    assertTrue(platforms.contains("win32"));
 	}
 	
 	public void testTopicWithCriteria() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c1.xml");
-		ITopic[] topics = (ITopic[]) toc.getTopics();
+		ITopic[] topics = toc.getTopics();
 		assertEquals(topics.length, 2);
 		// First topic
 		Map<String, Set<String>> criteria = new HashMap<String, Set<String>>();
 		assertTrue(topics[0] instanceof ITopic2);
 		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[0]).getCriteria());
 	    assertEquals(2, criteria.size());
-	    Object  versions = criteria.get("version");
+	    Set<String> versions = criteria.get("version");
 	    assertNotNull(versions);
-	    Set versionSet = (Set)versions;
-	    assertEquals(1, versionSet.size());
-	    assertTrue(versionSet.contains("1.0"));
-	    assertFalse(versionSet.contains("2.0"));
+	    assertEquals(1, versions.size());
+	    assertTrue(versions.contains("1.0"));
+	    assertFalse(versions.contains("2.0"));
 
 		// Second topic
 
@@ -124,10 +119,9 @@ public class ParseTocWithCriteria extends TestCase {
 		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[1]).getCriteria());	   
 	    versions = criteria.get("version");
 	    assertNotNull(versions);
-	    versionSet = (Set)versions;
-	    assertEquals(1, versionSet.size());
-	    assertTrue(versionSet.contains("2.0"));
-	    assertFalse(versionSet.contains("1.0"));
+	    assertEquals(1, versions.size());
+	    assertTrue(versions.contains("2.0"));
+	    assertFalse(versions.contains("1.0"));
 	}
 
 	public void testCriteriaScoping1() throws Exception {

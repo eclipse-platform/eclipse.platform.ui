@@ -53,8 +53,8 @@ public class SearchTestUtils {
 		
 		SearchHit[] hits;
 		hits = getSearchHits(searchWord, nl);
-		for (int j=0;j<hits.length;++j) {
-			String href = hits[j].getHref();
+		for (SearchHit hit : hits) {
+			String href = hit.getHref();
 			// ignore query params
 			int index = href.indexOf('?');
 			if (index != -1) {

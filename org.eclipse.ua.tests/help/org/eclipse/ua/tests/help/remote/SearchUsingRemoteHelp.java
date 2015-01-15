@@ -20,11 +20,13 @@ public class SearchUsingRemoteHelp extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);

@@ -32,8 +32,8 @@ public class StatusCheck {
 	public static void assertMultiStatusContains(IStatus status, String text) {
 		Assert.assertTrue(status instanceof MultiStatus);
 		IStatus[] children = status.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getMessage().indexOf(text) >= 0) {
+		for (IStatus element : children) {
+			if (element.getMessage().indexOf(text) >= 0) {
 				return;
 			}
 		}

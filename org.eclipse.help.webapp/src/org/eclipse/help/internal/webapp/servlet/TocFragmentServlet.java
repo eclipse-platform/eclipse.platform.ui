@@ -41,9 +41,10 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class TocFragmentServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private static Map locale2Response = new WeakHashMap();
+	private static Map<String, String> locale2Response = new WeakHashMap<String, String>();
 	private boolean isErrorSuppress;
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// set the character-set to UTF-8 before calling resp.getWriter()

@@ -22,6 +22,7 @@ public class NavigateAction extends Action implements ICheatSheetAction {
 		final String finalNewSheet = newSheet;
 		try {
 			Display.getCurrent().asyncExec( new Runnable() {
+				@Override
 				public void run() {
 					OpenCheatSheetAction csAction = new OpenCheatSheetAction( finalNewSheet );
 					csAction.run();
@@ -33,6 +34,7 @@ public class NavigateAction extends Action implements ICheatSheetAction {
 		}
 	}
 
+	@Override
 	public void run( String[] params, ICheatSheetManager manager ) {
 		go( params[ 0 ] );
 	}

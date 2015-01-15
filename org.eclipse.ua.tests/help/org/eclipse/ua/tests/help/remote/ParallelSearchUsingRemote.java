@@ -22,6 +22,7 @@ public class ParallelSearchUsingRemote extends TestCase {
 	private class Searcher implements ParallelTestSupport.ITestCase {
 	
 	private int count = 0;
+		@Override
 		public String runTest() throws Exception {
 			count++;
 			return SearchTestUtils.searchForExpectedResults
@@ -37,11 +38,13 @@ public class ParallelSearchUsingRemote extends TestCase {
 			new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" }
 	}; 
 
+	@Override
 	protected void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);

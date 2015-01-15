@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,12 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	// Current working set , empty string means all documents
 	private String currentWorkingSet = ""; //$NON-NLS-1$
-	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
+	private SortedSet<WorkingSet> workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
 	private String locale;
 	private AdaptableTocsArray root;
 	
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
-	private Map allCriteriaValues;
+	private Map<String, Set<String>> allCriteriaValues;
 
 	/**
 	 * Constructor
@@ -72,6 +72,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		restoreState();
 	}
 
+	@Override
 	public AdaptableTocsArray getRoot() {
 		if (root == null)
 			root = new AdaptableTocsArray(HelpPlugin.getTocManager().getTocs(
@@ -82,6 +83,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Adds a new working set and saves it
 	 */
+	@Override
 	public void addWorkingSet(WorkingSet workingSet) throws IOException {
 		if (workingSet == null || workingSets.contains(workingSet))
 			return;
@@ -92,11 +94,13 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
+	@Override
 	public WorkingSet createWorkingSet(String name,
 			AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
 
+	@Override
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		return new WorkingSet(name, elements, criteria);
 	}
@@ -105,13 +109,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	 * Returns a working set by name
 	 *  
 	 */
+	@Override
 	public WorkingSet getWorkingSet(String name) {
 		if (name == null || workingSets == null)
 			return null;
 
-		Iterator iter = workingSets.iterator();
+		Iterator<WorkingSet> iter = workingSets.iterator();
 		while (iter.hasNext()) {
-			WorkingSet workingSet = (WorkingSet) iter.next();
+			WorkingSet workingSet = iter.next();
 			if (name.equals(workingSet.getName()))
 				return workingSet;
 		}
@@ -123,14 +128,16 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	 * 
 	 * @see org.eclipse.help.internal.workingset.IHelpWorkingSetManager#getWorkingSets()
 	 */
+	@Override
 	public WorkingSet[] getWorkingSets() {
-		return (WorkingSet[]) workingSets.toArray(new WorkingSet[workingSets
+		return workingSets.toArray(new WorkingSet[workingSets
 				.size()]);
 	}
 
 	/**
 	 * Removes specified working set
 	 */
+	@Override
 	public void removeWorkingSet(WorkingSet workingSet) {
 		workingSets.remove(workingSet);
 		try {
@@ -206,7 +213,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				continue;
 			}
 			String name = URLCoder.decode(nameAndCriteria[0]);
-		    List criteriaResource = new ArrayList();
+		    List<CriterionResource> criteriaResource = new ArrayList<CriterionResource>();
 			for (int j = 1; j < nameAndCriteria.length; ++j) {
 				String criterion = nameAndCriteria[j];
 				String[] keyAndValue = criterion.split("#", -1); //$NON-NLS-1$
@@ -218,7 +225,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				if(criterionValues.length < 1)
 					continue;
 
-				List criterionValuesList = Arrays.asList(criterionValues);
+				List<String> criterionValuesList = Arrays.asList(criterionValues);
 				CriterionResource criterionResource = new CriterionResource(key, criterionValuesList);
 				criteriaResource.add(criterionResource);
 
@@ -249,21 +256,20 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		data.append(URLCoder.compactEncode(currentWorkingSet /* , "UTF8" */
 		));
 
-		for (Iterator i = workingSets.iterator(); i.hasNext();) {
+		for (WorkingSet ws : workingSets) {
 			data.append('|');
-			WorkingSet ws = (WorkingSet) i.next();
 			data.append(URLCoder.compactEncode(ws.getName() /* , "UTF8" */
 			));
 
 			AdaptableHelpResource[] resources = ws.getElements();
 			AdaptableToc lastTopicParent = null;
-			for (int j = 0; j < resources.length; j++) {
+			for (AdaptableHelpResource resource : resources) {
 
-				IAdaptable parent = resources[j].getParent();
+				IAdaptable parent = resource.getParent();
 				if (parent == getRoot()) {
 					// saving toc
 					data.append('&');
-					data.append(URLCoder.compactEncode(resources[j].getHref()
+					data.append(URLCoder.compactEncode(resource.getHref()
 					/* , "UTF8" */
 					));
 					lastTopicParent = null;
@@ -272,7 +278,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					AdaptableToc toc = (AdaptableToc) parent;
 					AdaptableHelpResource[] siblings = (toc).getChildren();
 					for (int t = 0; t < siblings.length; t++) {
-						if (siblings[t] == resources[j]) {
+						if (siblings[t] == resource) {
 							data.append('&');
 							if (!toc.equals(lastTopicParent)) {
 								data.append(URLCoder.compactEncode(toc.getHref()
@@ -298,22 +304,19 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		StringBuffer data = new StringBuffer();
 		data.append(URLCoder.compactEncode(currentWorkingSet));
 		//|scope1$platform#AIX,WINDOWS,$version#1.0,2.0,
-		for (Iterator i = workingSets.iterator(); i.hasNext();) {
+		for (WorkingSet ws : workingSets) {
 			data.append('|');
-			WorkingSet ws = (WorkingSet) i.next();
 			data.append(URLCoder.compactEncode(ws.getName()));
 
 			CriterionResource[] criteria = ws.getCriteria();
-			for (int j = 0; j < criteria.length; ++ j){
-				CriterionResource criterion = criteria[j];
+			for (CriterionResource criterion : criteria) {
 				String criterionName = criterion.getCriterionName();
-				List criterionValues = criterion.getCriterionValues();
+				List<String> criterionValues = criterion.getCriterionValues();
 				if(null != criterionValues && !criterionValues.isEmpty()){
 					data.append('$');
 					data.append(URLCoder.compactEncode(criterionName));
 					data.append('#');
-					for (Iterator iter = criterionValues.iterator(); iter.hasNext();) {
-						String value = (String) iter.next();						
+					for (String value : criterionValues) {
 						data.append(URLCoder.compactEncode(value+','));
 					}
 				}
@@ -343,15 +346,18 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
+	@Override
 	public void workingSetChanged(WorkingSet changedWorkingSet)
 			throws IOException {
 		saveState();
 	}
 
+	@Override
 	public AdaptableToc getAdaptableToc(String href) {
 		return getRoot().getAdaptableToc(href);
 	}
 
+	@Override
 	public AdaptableTopic getAdaptableTopic(String id) {
 
 		if (id == null || id.length() == 0)
@@ -384,10 +390,12 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		return null;
 	}
 
+	@Override
 	public String getCurrentWorkingSet() {
 		return currentWorkingSet;
 	}
 
+	@Override
 	public void setCurrentWorkingSet(String workingSet) {
 		currentWorkingSet = workingSet;
 		try {
@@ -396,6 +404,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		}
 	}
 
+	@Override
 	public boolean isCriteriaScopeEnabled(){
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(locale);
@@ -407,14 +416,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		}
 	}
 	
+	@Override
 	public String[] getCriterionIds() {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(locale);
 		}
-		List criterionIds = new ArrayList();
+		List<String> criterionIds = new ArrayList<String>();
 		if(null != allCriteriaValues){
-			for(Iterator iter = allCriteriaValues.keySet().iterator(); iter.hasNext();){
-				String criterion = (String) iter.next();
+			for (String criterion : allCriteriaValues.keySet()) {
 				if(null == criterion || 0 == criterion.length() || 0 == getCriterionValueIds(criterion).length)
 					continue;
 				criterionIds.add(criterion);
@@ -427,13 +436,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	}
 	
 
+	@Override
 	public String[] getCriterionValueIds(String criterionName) {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(locale);
 		}
-		List valueIds = new ArrayList();
+		List<String> valueIds = new ArrayList<String>();
 		if(null != criterionName && null != allCriteriaValues) {
-			Set criterionValues = (Set)allCriteriaValues.get(criterionName);
+			Set<String> criterionValues = allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {
 				valueIds.addAll(criterionValues);
 				Collections.sort(valueIds);
@@ -446,10 +456,12 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	}
 	
 
+	@Override
 	public String getCriterionDisplayName(String criterionId) {
 		return HelpPlugin.getCriteriaManager().getCriterionDisplayName(criterionId, locale);
 	}
 
+	@Override
 	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
 		return HelpPlugin.getCriteriaManager().getCriterionValueDisplayName(criterionId, criterionValueId, locale);
 	}

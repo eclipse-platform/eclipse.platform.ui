@@ -32,24 +32,26 @@ public class WorkingSetManagerTest extends TestCase {
 	
 	private WorkingSet[] workingSets;
 	
+	@Override
 	protected void setUp() throws Exception {
 		WorkingSetManager manager = new WorkingSetManager();
 		manager.restoreState();
 		workingSets = manager.getWorkingSets();
-		for (int i = 0; i < workingSets.length; i++) {
-			manager.removeWorkingSet(workingSets[i]);
+		for (WorkingSet workingSet : workingSets) {
+			manager.removeWorkingSet(workingSet);
 		}
 		manager.saveState();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		WorkingSetManager manager = new WorkingSetManager();
 		WorkingSet[] wsetsToRemove = manager.getWorkingSets();
-		for (int i = 0; i < wsetsToRemove.length; i++) {
-			manager.removeWorkingSet(wsetsToRemove[i]);
+		for (WorkingSet element : wsetsToRemove) {
+			manager.removeWorkingSet(element);
 		}
-		for (int i = 0; i < workingSets.length; i++) {
-		    manager.addWorkingSet(workingSets[i]);
+		for (WorkingSet workingSet : workingSets) {
+		    manager.addWorkingSet(workingSet);
 		}
 		manager.saveState();
 	}
@@ -113,8 +115,8 @@ public class WorkingSetManagerTest extends TestCase {
 		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
 		for (int i = 1; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
-		    for (int t = 0; t < topics.length; t++) {
-			    assertFalse(scope.inScope(topics[t]));
+		    for (ITopic topic : topics) {
+			    assertFalse(scope.inScope(topic));
 		    }
 		}
 	};
@@ -129,8 +131,8 @@ public class WorkingSetManagerTest extends TestCase {
 		mgr.addWorkingSet(wset);
 		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
 		ITopic[] topics = tocs[0].getTopics();
-		for (int t = 0; t < topics.length; t++) {
-			assertTrue(scope.inScope(topics[t]));
+		for (ITopic topic : topics) {
+			assertTrue(scope.inScope(topic));
 		}
 	};
 	
@@ -168,8 +170,8 @@ public class WorkingSetManagerTest extends TestCase {
 		mgr.saveState();
 		WorkingSetScope scope = new WorkingSetScope("test1", mgr, "scope");
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
-		for (int i = 0; i < tocs.length; i++) {
-		    assertTrue(scope.inScope(tocs[i]));
+		for (Toc toc : tocs) {
+		    assertTrue(scope.inScope(toc));
 		}
 	}
 
@@ -178,10 +180,10 @@ public class WorkingSetManagerTest extends TestCase {
 		createWsetWithAllTocs(mgr, "test1a");
 		WorkingSetScope scope = new WorkingSetScope("test1a", mgr, "scope");
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
-		for (int i = 0; i < tocs.length; i++) {;
-			ITopic[] topics = tocs[i].getTopics();
-			for (int j = 0; j < topics.length; j++) {
-		         assertTrue(scope.inScope(topics[j]));
+		for (Toc toc : tocs) {;
+			ITopic[] topics = toc.getTopics();
+			for (ITopic topic : topics) {
+		         assertTrue(scope.inScope(topic));
 			}
 		}
 	}
@@ -191,12 +193,12 @@ public class WorkingSetManagerTest extends TestCase {
 		createWsetWithAllTocs(mgr, "test1b");
 		WorkingSetScope scope = new WorkingSetScope("test1b", mgr, "scope");
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
-		for (int i = 0; i < tocs.length; i++) {;
-			ITopic[] topics = tocs[i].getTopics();
-			for (int j = 0; j < topics.length; j++) {
-				ITopic[] subtopics = topics[j].getSubtopics();
-				for (int k = 0; k < subtopics.length; k++) {
-		            assertTrue(scope.inScope(subtopics[k]));
+		for (Toc toc : tocs) {;
+			ITopic[] topics = toc.getTopics();
+			for (ITopic topic : topics) {
+				ITopic[] subtopics = topic.getSubtopics();
+				for (ITopic subtopic : subtopics) {
+		            assertTrue(scope.inScope(subtopic));
 				}
 			}
 		}
@@ -206,8 +208,8 @@ public class WorkingSetManagerTest extends TestCase {
 		WorkingSet wset = new WorkingSet(name);
 		List<AdaptableToc> tocList = new ArrayList<AdaptableToc>();
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
-		for (int i = 0; i < tocs.length; i++) {
-			tocList.add(mgr.getAdaptableToc(tocs[i].getHref()));
+		for (Toc toc : tocs) {
+			tocList.add(mgr.getAdaptableToc(toc.getHref()));
 		}
 		wset.setElements(tocList.toArray(new AdaptableToc[0]));
 		mgr.addWorkingSet(wset);

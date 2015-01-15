@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class TestCompositeParser extends TestCase {
 	private static final String COMPOSITES_FOLDER = "data/cheatsheet/composite/";
 	private CompositeCheatSheetParser parser;
 	
+	@Override
 	protected void setUp() throws Exception {
 	    parser = new CompositeCheatSheetParser();
 	}
@@ -99,7 +100,7 @@ public class TestCompositeParser extends TestCase {
 		CompositeCheatSheetModel model = parseTestFile("ValidParameter.xml");
 		assertNotNull(model);
 		assertTrue(parser.getStatus().isOK());
-		Dictionary params = model.getRootTask().getParameters();
+		Dictionary<String, String> params = model.getRootTask().getParameters();
 		assertEquals(1, params.size());
 		assertEquals("b", params.get("a"));
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
-	private static ArrayList topicList;
+	private static ArrayList<String> topicList;
 	private static String firstHref;
-    public static List errors = new ArrayList();
+    public static List<String> errors = new ArrayList<String>();
     public static String lastPage;
     public static String currentPage;
     
@@ -49,6 +49,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		String lastHref;
 		int timesSame = 0;
 		boolean isComplete = false;
+		@Override
 		public void run() {
 			while (!isComplete) {
 				if (lastHref == lastPage) {
@@ -80,8 +81,8 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		} else {
 			reportStatus("Testing complete, errors found");
 		}
-		for (Iterator iter = errors.iterator(); iter.hasNext();) {
-			String errorMessage = (String)iter.next();
+		for (Iterator<String> iter = errors.iterator(); iter.hasNext();) {
+			String errorMessage = iter.next();
 			reportStatus(errorMessage);
 		}
 		errors = null;	
@@ -94,6 +95,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	private class NotFoundCallout implements EclipseConnector.INotFoundCallout {
+		@Override
 		public void notFound(String url) {
 			if (errors != null) {
 			    errors.add("Error opening " + lastPage + "\n   cannot load " + url);	
@@ -101,14 +103,15 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		}	
 	}
 	
-	private class LinkProvider implements Iterator {
-		private List links;
+	private class LinkProvider implements Iterator<String> {
+		private List<String> links;
 		int lastLink = -1;
 		
-		public LinkProvider(List links) {
+		public LinkProvider(List<String> links) {
 			this.links = links;
 		}
 		
+		@Override
 		public boolean hasNext() {
 			if (topicList != null && lastLink < links.size() && links.size() > 0) {
 				return true;
@@ -118,24 +121,26 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			return false;
 		}
 		
-		public Object next() {
+		@Override
+		public String next() {
 			if (lastLink >= 0 && lastLink < links.size()) {
-				lastPage = (String) links.get(lastLink);
+				lastPage = links.get(lastLink);
 				//System.out.println("Last page is " + lastPage);
 			}
 			lastLink++;
 			if (lastLink < links.size()) {
-				currentPage = (String)links.get(lastLink);
+				currentPage = links.get(lastLink);
 				//System.out.println("Current page is " + currentPage);
 				return currentPage;	
 			} else if (lastLink == links.size()) {
-				currentPage =  (String)links.get(lastLink - 1);
+				currentPage =  links.get(lastLink - 1);
 				//System.out.println("Current page is " + currentPage);
 				return currentPage;	
 			}
 			return null;
 		}
 		
+		@Override
 		public void remove() {
 		}	
 		
@@ -153,6 +158,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	 * in the workbench UI.
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
+	@Override
 	public void run(IAction action) {
 		showErrors();
 		SelectTocDialog dlg = new SelectTocDialog(window.getShell());
@@ -172,10 +178,9 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		}
 	
 		firstHref = null;
-		topicList = new ArrayList();
-		for (int i = 0; i < tocsToCheck.length; i++) {
-		    Toc toc = tocsToCheck[i];
-			reportStatus("Test level = " + testKind + " testing " + toc.getTocContribution().getId());
+		topicList = new ArrayList<String>();
+		for (Toc toc : tocsToCheck) {
+		    reportStatus("Test level = " + testKind + " testing " + toc.getTocContribution().getId());
 		    ITopic[] topics = toc.getTopics();
 		    addTopics(topics);
 		}
@@ -183,9 +188,9 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		LinkProvider linkProvider = new LinkProvider(topicList);
 		OnLoadFilter.setLinkProvider(linkProvider);
 		EclipseConnector.setNotFoundCallout(new NotFoundCallout());
-		errors = new ArrayList();
+		errors = new ArrayList<String>();
 		if (linkProvider.hasNext()) {
-			firstHref = (String)linkProvider.next();
+			firstHref = linkProvider.next();
 		    PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(firstHref);
 			new MonitorThread().start();
 		} else {
@@ -194,8 +199,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private void addTopics(ITopic[] topics) {
-		for (int i = 0; i < topics.length; i++) {
-			ITopic nextTopic = topics[i];
+		for (ITopic nextTopic : topics) {
 			addTopic(nextTopic);
 		}
 	}
@@ -227,6 +231,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
@@ -235,6 +240,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	 * resources we previously allocated.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
+	@Override
 	public void dispose() {
 	}
 
@@ -243,6 +249,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	 * be able to provide parent shell for the message dialog.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}

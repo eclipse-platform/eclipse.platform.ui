@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import java.util.Locale;
  * @since 3.5
  */
 
-public abstract class AbstractButton implements Comparable {
+public abstract class AbstractButton implements Comparable<AbstractButton> {
 	
 	/**
 	 * Gets the id which will be assigned to the image of the button in the 
@@ -114,9 +114,13 @@ public abstract class AbstractButton implements Comparable {
     	return true;
     }
     
-    final public int compareTo(Object o) {
-    	if (o instanceof AbstractButton) {
-    		String objectName = ((AbstractButton)o).getId();
+    /**
+	 * @since 3.7
+	 */
+    @Override
+	final public int compareTo(AbstractButton o) {
+    	if (o != null) {
+    		String objectName = o.getId();
 			return (getId().compareTo(objectName));
     	}
     	return 0;

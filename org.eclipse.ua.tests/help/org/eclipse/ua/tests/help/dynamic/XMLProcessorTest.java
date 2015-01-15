@@ -39,6 +39,7 @@ public class XMLProcessorTest extends TestCase {
 		return new TestSuite(XMLProcessorTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		// activate the UI plug-in for UI filtering ability
 		HelpUIPlugin.getDefault();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,15 +20,13 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.junit.Assert;
-
-import org.eclipse.help.internal.HelpData;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.help.internal.HelpData;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Assert;
 
 /*
  * Tests the help data ordering of tocs and hiding tocs, indexes, etc.
@@ -53,6 +51,7 @@ public class HelpDataTest extends TestCase {
 	private String ignoredIndexesPreference;
 	
 
+	@Override
 	protected void setUp() throws Exception {
 		baseTocsPreference = Platform.getPreferencesService().getString
 	        (HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, "", null);
@@ -65,6 +64,7 @@ public class HelpDataTest extends TestCase {
 		setIgnoredIndexes("");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		setBaseTocs(baseTocsPreference);
 		setIgnoredTocs(ignoredTocsPreference);
@@ -87,14 +87,11 @@ public class HelpDataTest extends TestCase {
 	}
 
 	public void testHelpData() {
-		for (int i=0;i<TEST_DATA.length;++i) {
-			String[][] entry = (String[][])TEST_DATA[i];
+		for (String[][] entry : TEST_DATA) {
 			String file = entry[0][0];
-			List expectedTocOrder = Arrays.asList(entry[1]); 
-			@SuppressWarnings("unchecked")
-			Set expectedHiddenTocs = new HashSet(Arrays.asList(entry[2])); 
-			@SuppressWarnings("unchecked")
-			Set expectedHiddenIndexes = new HashSet(Arrays.asList(entry[3]));
+			List<String> expectedTocOrder = Arrays.asList(entry[1]); 
+			Set<String> expectedHiddenTocs = new HashSet<String>(Arrays.asList(entry[2])); 
+			Set<String> expectedHiddenIndexes = new HashSet<String>(Arrays.asList(entry[3]));
 			URL url = UserAssistanceTestPlugin.getDefault().getBundle().getEntry(file);
 			HelpData data = new HelpData(url);
 			Assert.assertEquals("Did not get the expected toc order from help data file " + file, expectedTocOrder, data.getTocOrder());
@@ -114,7 +111,7 @@ public class HelpDataTest extends TestCase {
 	public void testNullUrlWithBaseTocs() {
 		HelpData data = new HelpData(null);
 		setBaseTocs("/a/b.xml,/c/d.xml");
-		List tocOrder = data.getTocOrder();
+		List<?> tocOrder = data.getTocOrder();
 		assertEquals(2, tocOrder.size());
 		assertEquals("/a/b.xml", tocOrder.get(0));
 		assertEquals("/c/d.xml", tocOrder.get(1));
@@ -127,7 +124,7 @@ public class HelpDataTest extends TestCase {
 		HelpData data = new HelpData(null);
 		setIgnoredTocs("/a/b.xml,/c/d.xml");
 		assertEquals(0, data.getTocOrder().size());
-		Set hiddenTocs = data.getHiddenTocs();
+		Set<?> hiddenTocs = data.getHiddenTocs();
 		assertEquals(2, hiddenTocs.size());
 		assertTrue(hiddenTocs.contains("/a/b.xml"));
 		assertTrue(hiddenTocs.contains("/c/d.xml"));
@@ -140,7 +137,7 @@ public class HelpDataTest extends TestCase {
 		setIgnoredIndexes("/a/b.xml,/c/d.xml");
 		assertEquals(0, data.getTocOrder().size());
 		assertEquals(0, data.getHiddenTocs().size());
-		Set hiddenIndexes = data.getHiddenIndexes();
+		Set<?> hiddenIndexes = data.getHiddenIndexes();
 		assertEquals(2, hiddenIndexes.size());
 		assertTrue(hiddenIndexes.contains("/a/b.xml"));
 		assertTrue(hiddenIndexes.contains("/c/d.xml"));

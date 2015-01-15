@@ -70,8 +70,8 @@ public class PrebuiltIndexChecker extends TestCase {
 		assertNotNull(bundle);
 		
 		String[] suffixes = { "", "/indexed_contributions", "/indexed_docs", "/indexed_dependencies" };
-		for (int i = 0; i < suffixes.length; i++) {
-			String fullPath = filepath + suffixes[i];
+		for (String suffixe : suffixes) {
+			String fullPath = filepath + suffixe;
 			IPath path = new Path(fullPath);
 			URL url = FileLocator.find(bundle, path, null);
 			assertNotNull("could not open: " + fullPath, url);

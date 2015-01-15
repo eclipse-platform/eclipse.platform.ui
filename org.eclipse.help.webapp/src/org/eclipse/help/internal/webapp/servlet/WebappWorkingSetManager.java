@@ -50,12 +50,14 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 		}
 	}
 
+	@Override
 	public AdaptableTocsArray getRoot() {
 		return wSetManager.getRoot();
 	}
 	/**
 	 * Adds a new working set and saves it
 	 */
+	@Override
 	public void addWorkingSet(WorkingSet workingSet) throws IOException {
 		wSetManager.addWorkingSet(workingSet);
 	}
@@ -63,11 +65,13 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
+	@Override
 	public WorkingSet createWorkingSet(String name,
 			AdaptableHelpResource[] elements) {
 		return wSetManager.createWorkingSet(name, elements);
 	}
 
+	@Override
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		return wSetManager.createWorkingSet(name, elements, criteria);
 	}
@@ -76,6 +80,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	 * Returns a working set by name
 	 *  
 	 */
+	@Override
 	public WorkingSet getWorkingSet(String name) {
 		return wSetManager.getWorkingSet(name);
 	}
@@ -84,12 +89,14 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
+	@Override
 	public WorkingSet[] getWorkingSets() {
 		return wSetManager.getWorkingSets();
 	}
 	/**
 	 * Removes specified working set
 	 */
+	@Override
 	public void removeWorkingSet(WorkingSet workingSet) {
 		wSetManager.removeWorkingSet(workingSet);
 	}
@@ -101,45 +108,55 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
+	@Override
 	public void workingSetChanged(WorkingSet changedWorkingSet)
 			throws IOException {
 		wSetManager.workingSetChanged(changedWorkingSet);
 	}
 
+	@Override
 	public AdaptableToc getAdaptableToc(String href) {
 		return wSetManager.getAdaptableToc(href);
 	}
 
+	@Override
 	public AdaptableTopic getAdaptableTopic(String id) {
 		return wSetManager.getAdaptableTopic(id);
 	}
 
+	@Override
 	public String getCurrentWorkingSet() {
 		return wSetManager.getCurrentWorkingSet();
 	}
 
+	@Override
 	public void setCurrentWorkingSet(String scope) {
 		wSetManager.setCurrentWorkingSet(scope);
 	}
 	
+	@Override
 	public boolean isCriteriaScopeEnabled(){
 		return wSetManager.isCriteriaScopeEnabled();
 	}
 	
+	@Override
 	public String[] getCriterionIds() {
 		return wSetManager.getCriterionIds();
 	}
 	
 
+	@Override
 	public String[] getCriterionValueIds(String criterionId) {
 		return wSetManager.getCriterionValueIds(criterionId);
 	}
 
 
+	@Override
 	public String getCriterionDisplayName(String criterionId) {
 		return wSetManager.getCriterionDisplayName(criterionId);
 	}
 	
+	@Override
 	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
 		return wSetManager.getCriterionValueDisplayName(criterionId, criterionValueId);
 	}

@@ -13,7 +13,6 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -51,7 +50,7 @@ import com.ibm.icu.text.Collator;
 public class IndexFragmentServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private static Map locale2Response = new WeakHashMap();
+	private static Map<String, String> locale2Response = new WeakHashMap<String, String>();
 	private String startParameter;
 	private String sizeParameter;
 	private String entryParameter;
@@ -67,6 +66,7 @@ public class IndexFragmentServlet extends HttpServlet {
 	private static final String SHOW_ALL = "showAll"; //$NON-NLS-1$
 	private Collator collator = Collator.getInstance();
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// set the character-set to UTF-8 before calling resp.getWriter()
@@ -132,7 +132,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		private StringBuffer buf;
 		private int count = 0;
 		private String locale;
-		private List entryList;
+		private List<Integer> entryList;
 		private IIndexEntry[] entries;
 		private boolean enablePrevious = true;
 		private boolean enableNext = true;
@@ -157,7 +157,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			if (entries.length == 0) {
 				generateEmptyIndexMessage();
 			} else {
-				entryList = new ArrayList();
+				entryList = new ArrayList<Integer>();
 				int nextEntry = findFirstEntry(entries);
 				if (PREVIOUS.equals(modeParameter)) {
 					int remaining = getPreviousEntries(nextEntry, size);
@@ -170,8 +170,7 @@ public class IndexFragmentServlet extends HttpServlet {
 						getPreviousEntries(nextEntry, 1);
 					}
 				}
-				for (Iterator iter = entryList.iterator(); iter.hasNext();) {
-					Integer entryId = (Integer)iter.next();
+				for (Integer entryId : entryList) {
 					generateEntry(entries[entryId.intValue()], 0, "e" + entryId.intValue()); //$NON-NLS-1$
 				}
 			}
@@ -286,14 +285,14 @@ public class IndexFragmentServlet extends HttpServlet {
 
 			IIndexEntry[] subentries = entry.getSubentries();
 		    int subentryCount = 0;
-			for (int i=0; i<subentries.length; ++i) {
-				count += enabledEntryCount(subentries[i]);
+			for (IIndexEntry subentrie : subentries) {
+				count += enabledEntryCount(subentrie);
 			}
 			
 			int seeCount = 0;
 			IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : new IIndexSee[0];
-			for (int s = 0; s < sees.length; s++) {
-				if (ScopeUtils.showInTree(sees[s], scope)) {
+			for (IIndexSee see : sees) {
+				if (ScopeUtils.showInTree(see, scope)) {
 					seeCount++;
 				}
 			}
@@ -309,8 +308,8 @@ public class IndexFragmentServlet extends HttpServlet {
 		private int enabledTopicCount(IIndexEntry entry) {
 			int topicCount = 0;
 		    ITopic[] topics = entry.getTopics();
-		    for (int i = 0; i < topics.length; i++) {
-		    	if (scope.inScope(topics[i])) {
+		    for (ITopic topic : topics) {
+		    	if (scope.inScope(topic)) {
 		    		topicCount++;
 		    	}
 		    }
@@ -368,16 +367,15 @@ public class IndexFragmentServlet extends HttpServlet {
 		
 		private void generateSubentries(IIndexEntry entry, int level) {
 			IIndexEntry[] subentries = entry.getSubentries();
-			for (int i=0;i<subentries.length;++i) {
-				generateEntry(subentries[i], level, "s" + count++); //$NON-NLS-1$
+			for (IIndexEntry subentrie : subentries) {
+				generateEntry(subentrie, level, "s" + count++); //$NON-NLS-1$
 			}
 		}
 		
 		private void generateTopicList(IIndexEntry entry) {
 			ITopic[] topics = entry.getTopics();
 			
-			for (int i = 0; i < topics.length; ++i) {
-				ITopic topic = (ITopic) topics[i];
+			for (ITopic topic : topics) {
 				if (ScopeUtils.showInTree(topic, scope)) {
 					//
 					String label = UrlUtil.htmlEncode(topic.getLabel());
@@ -402,18 +400,17 @@ public class IndexFragmentServlet extends HttpServlet {
 		}
 		
 		private void generateSees(IIndexSee[] sees) {
-	        for (int i = 0; i < sees.length; i++) {
-	        	IIndexSee see = sees[i];
-				if (ScopeUtils.showInTree(see, scope)) {
+	        for (IIndexSee see : sees) {
+	        	if (ScopeUtils.showInTree(see, scope)) {
 					//
 					String key = see.isSeeAlso() ? "SeeAlso" : "See"; //$NON-NLS-1$ //$NON-NLS-2$
 					String seePrefix = WebappResources.getString(key, UrlUtil
 							.getLocale(locale));
 					String seeTarget = see.getKeyword();
 					IIndexSubpath[] subpathElements = see.getSubpathElements();
-					for (int pathIndex = 0; pathIndex < subpathElements.length; pathIndex++ ) {
+					for (IIndexSubpath subpathElement : subpathElements) {
 						seeTarget += ", "; //$NON-NLS-1$
-						seeTarget += subpathElements[pathIndex].getKeyword();
+						seeTarget += subpathElement.getKeyword();
 					}
 					String label = NLS.bind(seePrefix, seeTarget);
 					String encodedLabel = UrlUtil.htmlEncode(label);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class TestPersistence extends TestCase {
     	helper.saveCompositeState(model, null);
 
     	createCompositeCheatSheet();
-    	model.loadState(new Hashtable());
+    	model.loadState(new Hashtable<String, String>());
     	assertEquals(ICompositeCheatSheetTask.IN_PROGRESS, task1.getState());
     	assertEquals(ICompositeCheatSheetTask.COMPLETED, task2.getState());
     }
@@ -124,7 +124,7 @@ public class TestPersistence extends TestCase {
     	helper.saveCompositeState(model, null);
     	
     	createCompositeCheatSheet();
-    	model.loadState(new Hashtable());
+    	model.loadState(new Hashtable<String, String>());
     	editor1.setInput(task1, model.getTaskMemento(task1.getId()));
     	editor2.setInput(task2, model.getTaskMemento(task2.getId()));
     	assertEquals(value1, editor1.getValue());
@@ -140,7 +140,7 @@ public class TestPersistence extends TestCase {
     	values.put("One", "1");
     	values.put("Two", "2");
     	helper.saveCompositeState(model, values);
-        Map restoredValues = new Hashtable();
+        Map<String, String> restoredValues = new Hashtable<String, String>();
     	createCompositeCheatSheet();
     	model.loadState(restoredValues);
     	assertEquals(2, restoredValues.size());

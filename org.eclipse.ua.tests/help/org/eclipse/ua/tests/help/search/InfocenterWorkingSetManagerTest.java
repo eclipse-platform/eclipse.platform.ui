@@ -278,8 +278,8 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 	
 	private int cookieLength(Cookie[] cookies) {
 		int total = 0;
-		for (int i = 0; i < cookies.length; i++) {
-			total += cookies[i].getValue().length();
+		for (Cookie cookie : cookies) {
+			total += cookie.getValue().length();
 		}
 		return total;
 	}

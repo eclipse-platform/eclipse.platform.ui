@@ -31,10 +31,12 @@ public class View extends AbstractView {
 		this.isDeferred = isDeferred;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getURL() {
 		return url;
 	}
@@ -44,6 +46,7 @@ public class View extends AbstractView {
 	 * 
 	 * @return String
 	 */
+	@Override
 	public String getImageURL() {
 		int i = imageURL.lastIndexOf('/');
 		return imageURL.substring(0, i) + "/e_" + imageURL.substring(i + 1); //$NON-NLS-1$
@@ -54,6 +57,7 @@ public class View extends AbstractView {
 	 * 
 	 * @return char or 0 if no shortcut
 	 */
+	@Override
 	public char getKey() {
 		return shortcut;
 	}
@@ -62,6 +66,7 @@ public class View extends AbstractView {
 	 * Returns whether or not this view should do a deferred load; i.e. it will
 	 * take some time to load and should show a progress message while loading.
 	 */
+	@Override
 	public boolean isDeferred() {
 		return isDeferred;
 	}
@@ -75,6 +80,7 @@ public class View extends AbstractView {
 		return null;
 	}
 
+	@Override
 	public String getTitle(Locale locale) {
 		return WebappResources.getString(name, locale);
 	}

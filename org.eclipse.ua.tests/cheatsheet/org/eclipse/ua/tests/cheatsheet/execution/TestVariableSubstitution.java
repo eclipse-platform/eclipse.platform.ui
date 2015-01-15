@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 public class TestVariableSubstitution extends TestCase {
 	private CheatSheetManager manager;
 	
+	@Override
 	protected void setUp() throws Exception {
 		manager = new CheatSheetManager(new CheatSheetElement("name"));
 		manager.setData("p1", "one");

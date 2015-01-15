@@ -29,6 +29,7 @@ public class MockContentServlet extends HttpServlet {
 	 * Return a create page based on the path and locale unless the path
 	 * starts with "/invalid" in which case return an I/O error
 	 */
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);

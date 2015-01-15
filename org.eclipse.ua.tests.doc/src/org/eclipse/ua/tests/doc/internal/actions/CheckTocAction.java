@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,14 +26,14 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
-    public static List errors = new ArrayList();
+    public static List<BrokenLink> errors = new ArrayList<BrokenLink>();
     
     public static void showErrors() {
     	if (errors.size() == 0) {
     		reportStatus("No errors detected in load");
     	}
     	for (int i = 0; i < errors.size(); i++) {
-			BrokenLink link = (BrokenLink)errors.get(i);
+			BrokenLink link = errors.get(i);
 			reportStatus("Invalid link in \"" + link.getTocID() + "\": " + link.getHref());
 		}
 	}
@@ -55,6 +55,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	 * in the workbench UI.
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
+	@Override
 	public void run(IAction action) {
 		SelectTocDialog dlg = new SelectTocDialog(window.getShell());
 		dlg.open();
@@ -67,8 +68,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public  void checkTocFilesExist(Toc[] tocsToCheck) {
-		for (int i = 0; i < tocsToCheck.length; i++) {
-			Toc toc = tocsToCheck[i];
+		for (Toc toc : tocsToCheck) {
 			String id = toc.getTocContribution().getId();
 			reportStatus("Testing " + id);
 			String[] href = { id };
@@ -90,6 +90,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
@@ -98,6 +99,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	 * resources we previously allocated.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
+	@Override
 	public void dispose() {
 	}
 
@@ -106,6 +108,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	 * be able to provide parent shell for the message dialog.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}

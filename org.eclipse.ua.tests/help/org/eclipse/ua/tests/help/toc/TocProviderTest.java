@@ -33,16 +33,15 @@ public class TocProviderTest extends TestCase {
 	public void testTocProvider() throws Exception {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs("en");
 		IToc uaToc = null;
-		for (int i = 0; i < tocs.length; i++) {
-			if ("User Assistance Tests".equals(tocs[i].getLabel())) {
-				uaToc = tocs[i];
+		for (IToc toc : tocs) {
+			if ("User Assistance Tests".equals(toc.getLabel())) {
+				uaToc = toc;
 			}
 		}
 		assertNotNull("User Assistance Tests not found", uaToc);
 		ITopic[] children = uaToc.getTopics();
 		int generatedParentTopics = 0;
-		for (int i = 0; i < children.length; i++) {
-			ITopic child = children[i];
+		for (ITopic child : children) {
 			if ("Generated Parent".equals(child.getLabel())) {
 				generatedParentTopics++;
 				assertEquals(4, child.getSubtopics().length);

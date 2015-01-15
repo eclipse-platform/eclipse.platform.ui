@@ -33,10 +33,12 @@ public class ContextLinkSorter extends TestCase {
 			this.label = label;
 		}
 
+		@Override
 		public String getHref() {
 			return href;
 		}
 
+		@Override
 		public String getLabel() {
 			return label;
 		}
@@ -49,6 +51,7 @@ public class ContextLinkSorter extends TestCase {
 	
 	private class TestContext implements IContext2 {
 
+		@Override
 		public String getCategory(IHelpResource topic) {
 			if (topic instanceof TestResource) {
 				return ((TestResource)topic).getCategory();
@@ -56,18 +59,22 @@ public class ContextLinkSorter extends TestCase {
 			return null;
 		}
 
+		@Override
 		public String getStyledText() {
 			return null;
 		}
 
+		@Override
 		public String getTitle() {
 			return null;
 		}
 
+		@Override
 		public IHelpResource[] getRelatedTopics() {
 			return null;
 		}
 
+		@Override
 		public String getText() {
 			return null;
 		}

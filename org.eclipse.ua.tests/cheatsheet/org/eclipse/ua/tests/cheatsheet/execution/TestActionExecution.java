@@ -33,6 +33,7 @@ public class TestActionExecution extends TestCase {
 	private static final String ACTION_WITH_PARAMETERS_CLASS =
 		ACTION_PACKAGE + ".ActionWithParameters"; //$NON-NLS-1$
 	
+	@Override
 	protected void setUp() throws Exception {
 		ActionEnvironment.reset();
 	}

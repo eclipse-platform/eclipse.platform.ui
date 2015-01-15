@@ -26,7 +26,8 @@ public class ServletPrintWriter extends PrintWriter{
      * Writes a single character.
      * @param c int specifying a character to be written.
      */
-    public void write(int c) {
+    @Override
+	public void write(int c) {
 	    synchronized (lock) {
 	    	buffer.append((char)(c));
 	    }
@@ -38,7 +39,8 @@ public class ServletPrintWriter extends PrintWriter{
      * @param off Offset from which to start writing characters
      * @param len Number of characters to write
      */
-    public void write(char buf[], int off, int len) {
+    @Override
+	public void write(char buf[], int off, int len) {
 	    synchronized (lock) {
 	    	buffer.append(buf, off, len);
 	    }
@@ -49,7 +51,8 @@ public class ServletPrintWriter extends PrintWriter{
      * Writer class because it must suppress I/O exceptions.
      * @param buf Array of characters to be written
      */
-    public void write(char buf[]) {
+    @Override
+	public void write(char buf[]) {
     	write(buf, 0, buf.length);
     }
 
@@ -59,7 +62,8 @@ public class ServletPrintWriter extends PrintWriter{
      * @param off Offset from which to start writing characters
      * @param len Number of characters to write
      */
-    public void write(String s, int off, int len) {
+    @Override
+	public void write(String s, int off, int len) {
 	    synchronized (lock) {
 	    	buffer.append(s.toCharArray(), off, off+len);
 	    }
@@ -70,11 +74,13 @@ public class ServletPrintWriter extends PrintWriter{
      * because it must suppress I/O exceptions.
      * @param s String to be written
      */
-    public void write(String s) {
+    @Override
+	public void write(String s) {
 	write(s, 0, s.length());
     }
 	
-    public String toString()
+    @Override
+	public String toString()
     {
     	return buffer.toString();
     }

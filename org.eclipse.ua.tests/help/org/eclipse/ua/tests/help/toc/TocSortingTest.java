@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,26 +47,32 @@ public class TocSortingTest extends TestCase {
 			this.label = label;
 		}
 
+		@Override
 		public ITopic getTopic(String href) {
 			return null;
 		}
 
+		@Override
 		public ITopic[] getTopics() {
             return new ITopic[0];
 		}
 
+		@Override
 		public IUAElement[] getChildren() {
 			return new IUAElement[0];
 		}
 
+		@Override
 		public boolean isEnabled(IEvaluationContext context) {
 			return true;
 		}
 
+		@Override
 		public String getHref() {
 			return null;
 		}
 
+		@Override
 		public String getLabel() {
 			return label;
 		}
@@ -85,39 +91,48 @@ public class TocSortingTest extends TestCase {
 			this.toc = new Toc(name);
 		}
 		
+		@Override
 		public String getCategoryId() {
 			return categoryId;
 		}
 
+		@Override
 		public String getContributorId() {
 			return "org.eclipse.ua.tests";
 		}
 
+		@Override
 		public String[] getExtraDocuments() {
 			return new String[0];
 		}
 
+		@Override
 		public String getId() {
 			return id;
 		}
 
+		@Override
 		public String getLinkTo() {
 			return null;
 		}
 
+		@Override
 		public String getLocale() {
 			return "en";
 		}
 
+		@Override
 		public IToc getToc() {
 			return toc;
 		}
 
+		@Override
 		public boolean isPrimary() {
 			return true;
 		}		
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		helpDataPreference = Platform.getPreferencesService().getString
 	       (HelpPlugin.HELP_DATA_KEY, HelpPlugin.HELP_DATA_KEY, "", null);
@@ -129,6 +144,7 @@ public class TocSortingTest extends TestCase {
 		setBaseTocs("");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		setHelpData(helpDataPreference);
 		setBaseTocs(baseTocsPreference);
@@ -148,8 +164,8 @@ public class TocSortingTest extends TestCase {
 	
 	private String toString(ITocContribution[] tocs) {
 		String result = "";
-		for (int i = 0; i < tocs.length; i++) {
-			result += tocs[i].getToc().getLabel();
+		for (ITocContribution toc : tocs) {
+			result += toc.getToc().getLabel();
 		}
 		return result;
 	}
@@ -260,19 +276,19 @@ public class TocSortingTest extends TestCase {
 	}
 
 	public void testNoProductNoHelpData() {
-		List ordering = ProductPreferences.getTocOrdering(null, "", "/a/b.xml,/c/d.xml");
+		List<String> ordering = ProductPreferences.getTocOrdering(null, "", "/a/b.xml,/c/d.xml");
 		assertEquals(2, ordering.size());
 		assertEquals("/a/b.xml", ordering.get(0));
 		assertEquals("/c/d.xml", ordering.get(1));
 	}
 	
 	public void testNoProductWithHelpData() {
-		List ordering = ProductPreferences.getTocOrdering(null, "helpData.xml", "/a/b.xml,/c/d.xml");
+		List<String> ordering = ProductPreferences.getTocOrdering(null, "helpData.xml", "/a/b.xml,/c/d.xml");
 		assertNull(ordering);
 	}
 	
 	public void testNoProductWithPluginsRoot() {
-		List ordering = ProductPreferences.getTocOrdering(null, ORDERED_XML, "/a/b.xml,/c/d.xml");
+		List<String> ordering = ProductPreferences.getTocOrdering(null, ORDERED_XML, "/a/b.xml,/c/d.xml");
 		assertEquals(3, ordering.size());
 		assertEquals("/x/toc.xml", ordering.get(0));
 		assertEquals("/d/toc.xml", ordering.get(1));

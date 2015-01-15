@@ -28,6 +28,7 @@ public class MockSearchServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -5115067950875335923L;
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String phrase = req.getParameter("phrase"); 

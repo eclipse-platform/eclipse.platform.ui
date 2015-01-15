@@ -25,14 +25,17 @@ public class UserIndexSubpath implements IIndexSubpath {
 	}
 	
 
+	@Override
 	public String getKeyword() {
 		return keyword;
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
 		return new IUAElement[0];
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
 	}

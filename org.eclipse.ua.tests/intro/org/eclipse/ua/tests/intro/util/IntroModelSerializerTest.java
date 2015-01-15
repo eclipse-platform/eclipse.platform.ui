@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class IntroModelSerializerTest extends TestCase {
 	 * content filtering that is used by this test. See
 	 * UIContentFilterProcessor.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		HelpUIPlugin.getDefault();
 	}
@@ -78,14 +79,14 @@ public class IntroModelSerializerTest extends TestCase {
 		 * Serialize the test intros.
 		 */
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
-		for (int i=0;i<elements.length;++i) {
+		for (IConfigurationElement element : elements) {
 			/*
 			 * Only use the ones from this test plugin.
 			 */
-			if (elements[i].getDeclaringExtension().getContributor().getName().equals(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName())) {
+			if (element.getDeclaringExtension().getContributor().getName().equals(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName())) {
 				String pluginRoot = UserAssistanceTestPlugin.getDefault().getBundle().getLocation().substring("update@".length());
-				String content = elements[i].getAttribute("content");
-				String id = elements[i].getAttribute("id");
+				String content = element.getAttribute("content");
+				String id = element.getAttribute("id");
 
 				/*
 				 * First do the intro XML files.
@@ -102,13 +103,13 @@ public class IntroModelSerializerTest extends TestCase {
 				 * Now do the intro XHTML files. Find all the XHTML files
 				 * referenced from the model.
 				 */
-				Map map = getXHTMLFiles(model);
-				Iterator iter = map.entrySet().iterator();
+				Map<String, String> map = getXHTMLFiles(model);
+				Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator();
 				while (iter.hasNext()) {
-					Map.Entry entry = (Map.Entry)iter.next();
+					Map.Entry<String, String> entry = iter.next();
 					file = FileUtil.getResultFile(pluginRoot + entry.getKey());
 					out = new PrintWriter(new FileOutputStream(file));
-					out.print((String)entry.getValue());
+					out.print(entry.getValue());
 					out.close();
 				}
 			}
@@ -121,18 +122,17 @@ public class IntroModelSerializerTest extends TestCase {
 	 * mapping of filenames relative to the test plugin to Strings, the
 	 * contents of the XHTML files.
 	 */
-	@SuppressWarnings("unchecked")
-	public static Map getXHTMLFiles(IntroModelRoot model) {
-		Map map = new HashMap();
+	public static Map<String, String> getXHTMLFiles(IntroModelRoot model) {
+		Map<String, String> map = new HashMap<String, String>();
 		Collection<AbstractIntroPage> pages = new ArrayList<AbstractIntroPage>();
 		IntroHomePage home = model.getRootPage();
 		if (home.isXHTMLPage()) {
 			pages.add(home);
 		}
 		IntroPage[] otherPages = model.getPages();
-		for (int i=0;i<otherPages.length;++i) {
-			if (otherPages[i].isXHTMLPage()) {
-				pages.add(otherPages[i]);
+		for (IntroPage otherPage : otherPages) {
+			if (otherPage.isXHTMLPage()) {
+				pages.add(otherPage);
 			}
 		}
 		Iterator<AbstractIntroPage> iter = pages.iterator();
@@ -140,6 +140,7 @@ public class IntroModelSerializerTest extends TestCase {
 			AbstractIntroPage page = iter.next();
 			BrowserIntroPartImplementation impl = new BrowserIntroPartImplementation();
 			String xhtml = impl.generateXHTMLPage(page, new IIntroContentProviderSite() {
+				@Override
 				public void reflow(IIntroContentProvider provider, boolean incremental) {
 					// dummy site
 				}

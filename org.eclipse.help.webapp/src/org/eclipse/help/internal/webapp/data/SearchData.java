@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
+import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableSelectedToc;
 import org.eclipse.help.internal.workingset.AdaptableSelectedTopic;
 import org.eclipse.help.internal.workingset.AdaptableToc;
@@ -49,7 +51,6 @@ import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.search.AbstractSearchProcessor;
 import org.eclipse.help.search.ISearchEngineResult;
-import org.eclipse.help.search.ISearchEngineResult2;
 import org.eclipse.help.search.ISearchResult;
 import org.eclipse.help.search.SearchProcessorInfo;
 import org.eclipse.osgi.util.NLS;
@@ -81,7 +82,7 @@ public class SearchData extends ActivitiesData {
 	private QueryTooComplexException queryException = null;
 
 	// List of alternate search terms
-	private List altList = new ArrayList();
+	private List<String> altList = new ArrayList<String>();
 
 	private boolean showCategories = false;
 
@@ -137,20 +138,18 @@ public class SearchData extends ActivitiesData {
 			altList.clear();
 			
 			AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
-			for (int p=0;p<processors.length;p++)
-			{
+			for (AbstractSearchProcessor processor : processors) {
 				SearchProcessorInfo result = 
-					processors[p].preSearch(searchWord);
+					processor.preSearch(searchWord);
 				if (result!=null)
 				{
 					String alternates[] = result.getAlternateTerms();
 					if (alternates!=null)
 					{
-						for (int a=0;a<alternates.length;a++)
-						{
+						for (String alternate : alternates) {
 							String div = 
-									"<div><a target=\"_self\" href=\"./searchView.jsp?searchWord="+alternates[a]+"\">"+ //$NON-NLS-1$ //$NON-NLS-2$
-									alternates[a]+
+									"<div><a target=\"_self\" href=\"./searchView.jsp?searchWord="+alternate+"\">"+ //$NON-NLS-1$ //$NON-NLS-2$
+									alternate+
 									"</a></div>"; //$NON-NLS-1$
 							
 							if (!altList.contains(div))
@@ -179,9 +178,8 @@ public class SearchData extends ActivitiesData {
 				
 				ISearchResult results[] = SearchManager.convertHitsToResults(hits);
 				boolean reset= false;
-				for (int p=0;p<processors.length;p++)
-				{
-					ISearchResult tmp[] = processors[p].postSearch(searchWord,results);
+				for (AbstractSearchProcessor processor : processors) {
+					ISearchResult tmp[] = processor.postSearch(searchWord,results);
 					if (tmp!=null)
 					{
 						reset = true;
@@ -324,9 +322,9 @@ public class SearchData extends ActivitiesData {
 	public boolean isShowDescriptions() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-        		for (int i=0;i<cookies.length;++i) {
-        			if ("showDescriptions".equals(cookies[i].getName())) { //$NON-NLS-1$
-        				return String.valueOf(true).equals(cookies[i].getValue());
+        		for (Cookie cookie : cookies) {
+        			if ("showDescriptions".equals(cookie.getName())) { //$NON-NLS-1$
+        				return String.valueOf(true).equals(cookie.getValue());
         			}
         		}
 		}
@@ -375,8 +373,8 @@ public class SearchData extends ActivitiesData {
 		String[] books = request.getParameterValues("scope"); //$NON-NLS-1$
 		if (books == null)
 			return false;
-		for (int i = 0; i < books.length; i++) {
-			if (books[i].equals(href)) {
+		for (String book : books) {
+			if (book.equals(href)) {
 				return true;
 			}
 		}
@@ -458,7 +456,7 @@ public class SearchData extends ActivitiesData {
 		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
 		boolean fieldSearch = fieldSearchStr != null ? new Boolean(
 				fieldSearchStr).booleanValue() : false;
-		return new SearchQuery(searchWord == null ? "" : searchWord, fieldSearch, new ArrayList(), //$NON-NLS-1$
+		return new SearchQuery(searchWord == null ? "" : searchWord, fieldSearch, new ArrayList<String>(), //$NON-NLS-1$
 				getLocale());
 	}
 
@@ -505,9 +503,9 @@ public class SearchData extends ActivitiesData {
 			return null;
 		}
 		// confirm working set exists and use it
-		ArrayList workingSetCol = new ArrayList(scopes.length);
-		for (int s = 0; s < scopes.length; s++) {
-			WorkingSet ws = wsmgr.getWorkingSet(scopes[s]);
+		ArrayList<WorkingSet> workingSetCol = new ArrayList<WorkingSet>(scopes.length);
+		for (String scope : scopes) {
+			WorkingSet ws = wsmgr.getWorkingSet(scope);
 			if (ws != null) {
 				workingSetCol.add(ws);
 			}
@@ -515,7 +513,7 @@ public class SearchData extends ActivitiesData {
 		if (workingSetCol.size() == 0) {
 			return null;
 		}
-		return (WorkingSet[]) workingSetCol
+		return workingSetCol
 				.toArray(new WorkingSet[workingSetCol.size()]);
 	}
 
@@ -534,14 +532,14 @@ public class SearchData extends ActivitiesData {
 			return null;
 		}
 		// create working set from books
-		ArrayList tocs = new ArrayList(scopes.length);
-		for (int s = 0; s < scopes.length; s++) {
-			AdaptableToc toc = wsmgr.getAdaptableToc(scopes[s]);
+		ArrayList<AdaptableToc> tocs = new ArrayList<AdaptableToc>(scopes.length);
+		for (String scope : scopes) {
+			AdaptableToc toc = wsmgr.getAdaptableToc(scope);
 			if (toc != null) {
 				tocs.add(toc);
 			}
 		}
-		AdaptableToc[] adaptableTocs = (AdaptableToc[]) tocs
+		AdaptableToc[] adaptableTocs = tocs
 				.toArray(new AdaptableToc[tocs.size()]);
 		WorkingSet[] workingSets = new WorkingSet[1];
 		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs); //$NON-NLS-1$
@@ -560,7 +558,7 @@ public class SearchData extends ActivitiesData {
 		}
 		IToc toc = tocData.getTocs()[selectedToc];
 		ITopic[] topics = tocData.getTopicPathFromRootPath(toc);
-		List resources = new ArrayList();
+		List<AdaptableHelpResource> resources = new ArrayList<AdaptableHelpResource>();
 		AdaptableToc adaptableToc = new AdaptableToc(toc);
 		if (topics != null) {
 			ITopic selectedTopic = topics[topics.length - 1];
@@ -586,7 +584,7 @@ public class SearchData extends ActivitiesData {
 		}
 		IToc toc = tocData.getTocs()[selectedToc];
 		ITopic[] topics = tocData.getTopicPathFromRootPath(toc);
-		List resources = new ArrayList();
+		List<AdaptableHelpResource> resources = new ArrayList<AdaptableHelpResource>();
 		AdaptableSelectedToc adaptableSelectedToc = new AdaptableSelectedToc(toc);
 		if (topics != null) {
 			ITopic selectedTopic = topics[topics.length - 1];
@@ -640,7 +638,7 @@ public class SearchData extends ActivitiesData {
 		result.append(ServletResources.getString("AlternateSearchQueries", request)); //$NON-NLS-1$
 		result.append("<ul>"); //$NON-NLS-1$
 		for (int a=0;a<altList.size();a++)
-			result.append("<li>"+(String)altList.get(a)+"</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+			result.append("<li>"+altList.get(a)+"</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 		result.append("</ul>"); //$NON-NLS-1$
 		
 		return result.toString();
@@ -656,12 +654,13 @@ public class SearchData extends ActivitiesData {
 			super(workingSets, maxHits, locale, isQuickSearch);
 			setFilter(filter);
 		}
-		public void addHits(List hits, String highlightTerms) {
-			List filtered = new ArrayList();
-			Iterator iter = hits.iterator();
+		@Override
+		public void addHits(List<SearchHit> hits, String highlightTerms) {
+			List<SearchHit> filtered = new ArrayList<SearchHit>();
+			Iterator<SearchHit> iter = hits.iterator();
 			while (iter.hasNext()) {
-				Object obj = iter.next();
-				if (!(obj instanceof ISearchEngineResult2 && ((ISearchEngineResult2)obj).canOpen())) {
+				SearchHit obj = iter.next();
+				if (!(obj != null && obj.canOpen())) {
 					filtered.add(obj);
 				}
 			}
@@ -679,10 +678,9 @@ public class SearchData extends ActivitiesData {
 	 *               contain {@code null} elements
 	 */
 	private static void primallySortByCategory(ISearchEngineResult[] toSort) {
-		Arrays.sort(toSort, new Comparator() {
-			public int compare(Object e1, Object e2) {
-				IHelpResource c1 = ((ISearchEngineResult)e1).getCategory();
-				IHelpResource c2 = ((ISearchEngineResult)e2).getCategory();
+		Arrays.sort(toSort, new Comparator<ISearchEngineResult>() {
+			@Override
+			public int compare(ISearchEngineResult c1, ISearchEngineResult c2) {
 				if (c1 == null && c2 == null) return 0;
 				if (c1 == null) return 1;
 				if (c2 == null) return -1;

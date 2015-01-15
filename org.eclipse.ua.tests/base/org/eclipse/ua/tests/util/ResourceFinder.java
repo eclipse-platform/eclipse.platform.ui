@@ -64,15 +64,15 @@ public class ResourceFinder {
 	private static URL[] findFiles(File[] files, String suffix, boolean recursive) {
 		List<URL> list = new ArrayList<URL>();
 		if (files != null) {
-			for (int i=0;i<files.length;++i) {
-				if (files[i].isDirectory()) {
+			for (File file : files) {
+				if (file.isDirectory()) {
 					if (recursive) {
-						list.addAll(Arrays.asList(findFiles(files[i].listFiles(), suffix, recursive)));
+						list.addAll(Arrays.asList(findFiles(file.listFiles(), suffix, recursive)));
 					}
 				}
 				else {
 					try {
-						URL url = files[i].toURI().toURL();
+						URL url = file.toURI().toURL();
 						if (url.toString().endsWith(suffix)) {
 							list.add(url);
 						}

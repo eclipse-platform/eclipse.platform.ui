@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,10 +20,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.junit.Assert;
-
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Assert;
 
 /*
  * Tests the products preferences utility
@@ -145,24 +144,23 @@ public class ProductPreferencesTest extends TestCase {
 	}
 	
 	public void testGetOrderedList() {
-		for (int i=0;i<GET_ORDERED_LIST_DATA.length;++i) {
-			String[] data = GET_ORDERED_LIST_DATA[i];
-			List items = ProductPreferences.tokenize(data[0]);
-			List expectedOrder = ProductPreferences.tokenize(data[1]);
-			List primaryOrdering = ProductPreferences.tokenize(data[2]);
-			List[] secondaryOrderings = new List[data.length - 3];
+		for (String[] data : GET_ORDERED_LIST_DATA) {
+			List<String> items = ProductPreferences.tokenize(data[0]);
+			List<String> expectedOrder = ProductPreferences.tokenize(data[1]);
+			List<String> primaryOrdering = ProductPreferences.tokenize(data[2]);
+			@SuppressWarnings("unchecked")
+			List<String>[] secondaryOrderings = (List<String>[]) new List<?>[data.length - 3];
 			for (int j=0;j<secondaryOrderings.length;++j) {
 				secondaryOrderings[j] = ProductPreferences.tokenize(data[j + 3]);
 			}
 			
-			List actualOrder = ProductPreferences.getOrderedList(items, primaryOrdering, secondaryOrderings, null);
+			List<String> actualOrder = ProductPreferences.getOrderedList(items, primaryOrdering, secondaryOrderings, null);
 			Assert.assertEquals("Items in list were not ordered as expected", expectedOrder, actualOrder);
 		}
 	}
 	
 	public void testGetPropertiesFile() {
-		for (int i=0;i<GET_PROPERTIES_FILE_DATA.length;++i) {
-			String[] data = GET_PROPERTIES_FILE_DATA[i];
+		for (String[] data : GET_PROPERTIES_FILE_DATA) {
 			String path = "data/help/preferences/" + data[0];
 			Properties properties = ProductPreferences.loadPropertiesFile(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName(), path);
 			
@@ -173,18 +171,16 @@ public class ProductPreferencesTest extends TestCase {
 				StringTokenizer tok = new StringTokenizer(data[j], "=");
 				String key = tok.nextToken();
 				String expectedValue = tok.nextToken();
-				String actualValue = (String)properties.getProperty(key);
+				String actualValue = properties.getProperty(key);
 				Assert.assertEquals("One of the properties files' keys did not match the expected value: file=" + path + ", key=" + key, expectedValue, actualValue);
 			}
 		}
 	}
 	
 	public void testGetValue() {
-		for (int i=0;i<GET_VALUE_DATA.length;++i) {
-			String[] data = GET_VALUE_DATA[i];
+		for (String[] data : GET_VALUE_DATA) {
 			String key = data[0];
-			@SuppressWarnings("unchecked")
-			Set allowableValues = new HashSet(ProductPreferences.tokenize(data[1]));
+			Set<String> allowableValues = new HashSet<String>(ProductPreferences.tokenize(data[1]));
 			Properties primary = ProductPreferences.loadPropertiesFile(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName(), "data/help/preferences/" + data[2]);
 			Properties[] secondary = new Properties[data.length - 3];
 			for (int j=0;j<secondary.length;++j) {
@@ -202,10 +198,9 @@ public class ProductPreferencesTest extends TestCase {
 	}
 	
 	public void testTokenize() {
-		for (int i=0;i<TOKENIZE_DATA.length;++i) {
-			String[] data = TOKENIZE_DATA[i];
+		for (String[] data : TOKENIZE_DATA) {
 			String input = data[0];
-			List output = ProductPreferences.tokenize(input);
+			List<String> output = ProductPreferences.tokenize(input);
 			
 			Assert.assertNotNull("The tokenized output was unexpectedly null for: " + input, output);
 			Assert.assertEquals("The number of tokens did not match the expected result for: " + input, data.length - 1, output.size());

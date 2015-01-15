@@ -56,6 +56,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 		this.req = req;
 	}
 
+	@Override
 	public void write(int b) throws IOException {
 		switch(state) {
 	    case INITIAL_STATE: 
@@ -211,6 +212,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	}
 
 	
+	@Override
 	public void close() throws IOException {
 		if (state == IN_QUOTE) {
 			flushPluginsRootCharacters();

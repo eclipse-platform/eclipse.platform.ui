@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class TestCommandExecution extends TestCase {
 	private static final String RETURN_STORE = "retData";
 	private static final String PARENT_RETURN_STORE = "parent.retData";
 
+	@Override
 	protected void setUp() throws Exception {
 		CommandHandler.reset();
 	}
@@ -108,7 +109,7 @@ public class TestCommandExecution extends TestCase {
 	
 	private void checkCommandExecution() {
 		assertTrue(CommandHandler.getTimesCompleted() == 1);
-		Map params = CommandHandler.getParams();
+		Map<?, ?> params = CommandHandler.getParams();
 		assertEquals(2, params.size());
 		assertTrue(params.containsKey(PARAM1_ID));
 		assertEquals(PARAM1_VALUE, params.get(PARAM1_ID));

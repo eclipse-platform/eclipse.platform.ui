@@ -37,23 +37,28 @@ public class EnabledTopicTest extends TestCase {
 			this.isEnabled = isEnabled;
 		}
 
+		@Override
 		public ITopic[] getSubtopics() {
 			return children.toArray(new ITopic[children.size()]);
 		}
 
+		@Override
 		public IUAElement[] getChildren() {
 
 			return getSubtopics();
 		}
 
+		@Override
 		public boolean isEnabled(IEvaluationContext context) {
 			return isEnabled;
 		}
 
+		@Override
 		public String getHref() {
 			return "http://www.eclipse.org";
 		}
 
+		@Override
 		public String getLabel() {
 			return label;
 		}	
@@ -69,6 +74,7 @@ public class EnabledTopicTest extends TestCase {
 			super(label, true);
 		}
 		
+		@Override
 		public String getHref() {
 			return null;
 		}
@@ -86,6 +92,7 @@ public class EnabledTopicTest extends TestCase {
 			this.keyword = keyword;
 		}
 
+		@Override
 		public String getKeyword() {
 			return keyword;
 		}
@@ -98,14 +105,17 @@ public class EnabledTopicTest extends TestCase {
 			topics.add(topic);
 		}
 
+		@Override
 		public IIndexEntry[] getSubentries() {
 			return subEntries.toArray(new IIndexEntry[subEntries.size()]);
 		}
 
+		@Override
 		public ITopic[] getTopics() {
 			return topics.toArray(new ITopic[topics.size()]);
 		}
 
+		@Override
 		public synchronized IUAElement[] getChildren() {
 			List<IUAElement> all = new ArrayList<IUAElement>();
 			all.addAll(subEntries);

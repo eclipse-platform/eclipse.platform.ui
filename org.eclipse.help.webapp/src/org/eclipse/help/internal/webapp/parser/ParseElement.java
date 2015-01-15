@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.help.internal.webapp.utils.JSonHelper;
 public class ParseElement {
 
 	private Properties props;
-	private ArrayList children = new ArrayList();
+	private ArrayList<ParseElement> children = new ArrayList<ParseElement>();
 	private ParseElement parent;
 
 	public ParseElement(Properties props, ParseElement parent) {
@@ -49,6 +49,7 @@ public class ParseElement {
 		return (props != null) ? props.getProperty(key) : ""; //$NON-NLS-1$
 	}
 	
+	@Override
 	public String toString() {
 		return (props != null) ? props.toString() : ""; //$NON-NLS-1$
 	}
@@ -74,7 +75,7 @@ public class ParseElement {
 		buff.append(JSonHelper.BEGIN_BRACE);
 		
 		if (props != null) {
-			Enumeration enumObj = props.keys();
+			Enumeration<?> enumObj = props.keys();
 			while (enumObj.hasMoreElements()) {
 				
 				String key = (String) enumObj.nextElement();
@@ -113,7 +114,7 @@ public class ParseElement {
 				if (i > 0)
 					buff.append(JSonHelper.COMMA);
 				
-				ParseElement element = (ParseElement) children.get(i);
+				ParseElement element = children.get(i);
 				buff.append(element.toJSON(level + 2));
 			}
 			
@@ -133,7 +134,7 @@ public class ParseElement {
 		StringBuffer buff = new StringBuffer();
 		
 		if (props != null) {
-			Enumeration enumObj = props.keys();
+			Enumeration<?> enumObj = props.keys();
 			while (enumObj.hasMoreElements()) {
 				
 				String key = (String) enumObj.nextElement();
@@ -172,7 +173,7 @@ public class ParseElement {
 				if (i > 0)
 					buff.append(JSonHelper.COMMA);
 				
-				ParseElement child = (ParseElement) children.get(i);
+				ParseElement child = children.get(i);
 				buff.append(child.toJSON(1));
 			}
 			

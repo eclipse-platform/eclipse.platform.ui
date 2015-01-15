@@ -20,6 +20,7 @@ import org.eclipse.help.internal.util.URLCoder;
 
 public class UATestContentProducer implements IHelpContentProducer {
 
+	@Override
 	public InputStream getInputStream(String pluginId, String href,
 			Locale locale) {
 		if (href.startsWith("generated/")) {

@@ -29,22 +29,27 @@ public class UserTopic implements ITopic {
 	private String href;
 	private String label;
 
+	@Override
 	public ITopic[] getSubtopics() {
 		return children.toArray(new ITopic[0]);
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
 		return getSubtopics();
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return isEnabled;
 	}
 
+	@Override
 	public String getHref() {
 		return href;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}

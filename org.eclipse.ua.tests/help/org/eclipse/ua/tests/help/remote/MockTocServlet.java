@@ -29,6 +29,7 @@ public class MockTocServlet extends TocServlet {
 
 	private static final long serialVersionUID = 2934062693291854845L;
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);

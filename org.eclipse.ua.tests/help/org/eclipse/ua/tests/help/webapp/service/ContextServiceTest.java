@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 
 public class ContextServiceTest extends ContextServletTest {
 
+	@Override
 	protected Element[] getContextsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
@@ -27,6 +28,7 @@ public class ContextServiceTest extends ContextServletTest {
 		return makeServletCall(url);
 	}
 	
+	@Override
 	protected Element[] getContextsUsingLocale(String phrase, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();

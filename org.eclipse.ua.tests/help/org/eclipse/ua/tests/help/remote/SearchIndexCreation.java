@@ -27,6 +27,7 @@ public class SearchIndexCreation extends TestCase {
 	private int mode;
 	private AnalyzerDescriptor analyzerDesc;
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
         mode = BaseHelpSystem.getMode();
@@ -38,6 +39,7 @@ public class SearchIndexCreation extends TestCase {
 		analyzerDesc = new AnalyzerDescriptor("en-us");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);

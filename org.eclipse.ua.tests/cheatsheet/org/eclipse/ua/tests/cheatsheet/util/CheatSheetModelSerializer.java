@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,6 @@ public class CheatSheetModelSerializer {
 	/*
 	 * Serializes the given array with the specified indentation.
 	 */
-	@SuppressWarnings("unchecked")
 	public static String serialize(Object[] array, String indent) {
 		StringBuffer buf = new StringBuffer();
 		if (array == null) {
@@ -189,21 +188,20 @@ public class CheatSheetModelSerializer {
 		}
 		else {
 			buf.append(indent + "<array>\n");
-			for (int i=0;i<array.length;++i) {
-				Object obj = array[i];
+			for (Object obj : array) {
 				if (obj != null) {
-					Class c = obj.getClass();
+					Class<?> c = obj.getClass();
 					/*
 					 * Find a serializer method that knows how to serialize this
 					 * object.
 					 */
 					boolean found = false;
 					Method[] methods = CheatSheetModelSerializer.class.getMethods();
-					for (int j=0;j<methods.length;++j) {
-						Class[] params = methods[j].getParameterTypes();
+					for (Method method : methods) {
+						Class<?>[] params = method.getParameterTypes();
 						if (params.length == 2 && params[0].isAssignableFrom(c) && params[1].equals(String.class)) {
 							try {
-								buf.append(methods[j].invoke(null, new Object[] {obj, indent + "   "}));
+								buf.append(method.invoke(null, new Object[] {obj, indent + "   "}));
 							}
 							catch(Exception e) {
 								buf.append(indent + "   " + e + ", cause: " + e.getCause());
@@ -229,8 +227,7 @@ public class CheatSheetModelSerializer {
 	/*
 	 * Serializes the given List with the specified indentation.
 	 */
-	@SuppressWarnings("unchecked")
-	public static String serialize(List list, String indent) {
+	public static String serialize(List<?> list, String indent) {
 		StringBuffer buf = new StringBuffer();
 		if (list == null) {
 			buf.append(indent + "<nullList/>\n");
@@ -240,22 +237,22 @@ public class CheatSheetModelSerializer {
 		}
 		else {
 			buf.append(indent + "<list>\n");
-			Iterator iter = list.iterator();
+			Iterator<?> iter = list.iterator();
 			while (iter.hasNext()) {
 				Object obj = iter.next();
 				if (obj != null) {
-					Class c = obj.getClass();
+					Class<?> c = obj.getClass();
 					/*
 					 * Find a serializer method that knows how to serialize this
 					 * object.
 					 */
 					boolean found = false;
 					Method[] methods = CheatSheetModelSerializer.class.getMethods();
-					for (int i=0;i<methods.length;++i) {
-						Class[] params = methods[i].getParameterTypes();
+					for (Method method : methods) {
+						Class<?>[] params = method.getParameterTypes();
 						if (params.length == 2 && params[0].isAssignableFrom(c) && params[1].equals(String.class)) {
 							try {
-								buf.append(methods[i].invoke(null, new Object[] {obj, indent + "   "}));
+								buf.append(method.invoke(null, new Object[] {obj, indent + "   "}));
 							}
 							catch(Exception e) {
 								buf.append(indent + "   " + e + ", cause: " + e.getCause());

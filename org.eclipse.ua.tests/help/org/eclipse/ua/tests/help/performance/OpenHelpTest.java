@@ -48,6 +48,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		return new TestSuite(OpenHelpTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		TocManager tocManager = HelpPlugin.getTocManager();
@@ -61,6 +62,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		indexManager.clearCache();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		TocManager tocManager = HelpPlugin.getTocManager();
@@ -109,6 +111,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		final boolean[] done = new boolean[] { false };
 		final String url = "http://" + WebappManager.getHost() + ":" + WebappManager.getPort() + "/help/index.jsp";
 		browser.addLocationListener(new LocationAdapter() {
+			@Override
 			public void changed(LocationEvent event) {
 				if (url.equals(event.location)) {
 					done[0] = true;
@@ -141,6 +144,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 	}
 
 	private static class TestTocFileProvider extends TocFileProvider {
+		@Override
 		protected TocFile[] getTocFiles(String locale) {
 			String id = UserAssistanceTestPlugin.getPluginId();
 			String nl = Platform.getNL();

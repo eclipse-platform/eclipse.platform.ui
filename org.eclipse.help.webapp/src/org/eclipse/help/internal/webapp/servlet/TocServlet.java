@@ -39,10 +39,11 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class TocServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private Map responseByLocale;
+	private Map<String, String> responseByLocale;
 	private DocumentWriter writer;
 	private static boolean clearCache;
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// set the character-set to UTF-8 before calling resp.getWriter()
@@ -57,14 +58,14 @@ public class TocServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		
 		if (clearCache){
-			responseByLocale = new WeakHashMap();
+			responseByLocale = new WeakHashMap<String, String>();
 			clearCache = false;
 		}
 		
 		if (responseByLocale == null) {
-			responseByLocale = new WeakHashMap();
+			responseByLocale = new WeakHashMap<String, String>();
 		}
-		String response = (String)responseByLocale.get(locale);
+		String response = responseByLocale.get(locale);
 		if (response == null) {
 			TocContribution[] contributions = HelpPlugin.getTocManager().getTocContributions(locale);
 			try {
@@ -86,8 +87,8 @@ public class TocServlet extends HttpServlet {
 		if (writer == null) {
 			writer = new DocumentWriter();
 		}
-		for (int i = 0; i < contributions.length; ++i) {
-			TocContribution contrib = contributions[i];
+		for (TocContribution contribution : contributions) {
+			TocContribution contrib = contribution;
 			if (!contrib.isSubToc()) {
 				buf.append("<tocContribution"); //$NON-NLS-1$
 				if (contrib.getCategoryId() != null) {
@@ -101,8 +102,8 @@ public class TocServlet extends HttpServlet {
 				buf.append("\n      isPrimary=\"" + contrib.isPrimary() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				buf.append(writer.writeString((Toc)contrib.getToc(), false));
 				String[] hrefs = contrib.getExtraDocuments();
-				for (int j=0;j<hrefs.length;++j) {
-					buf.append("   <extraDocument href=\"" + hrefs[j] + "\"/>\n");  //$NON-NLS-1$//$NON-NLS-2$
+				for (String href : hrefs) {
+					buf.append("   <extraDocument href=\"" + href + "\"/>\n");  //$NON-NLS-1$//$NON-NLS-2$
 				}
 				buf.append("</tocContribution>\n"); //$NON-NLS-1$
 			}

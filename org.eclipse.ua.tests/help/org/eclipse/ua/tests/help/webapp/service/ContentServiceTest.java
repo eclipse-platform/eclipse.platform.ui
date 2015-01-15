@@ -18,6 +18,7 @@ public class ContentServiceTest extends ContentServletTest {
 
 	private static final String UA_TESTS = "org.eclipse.ua.tests";
 
+	@Override
 	public void testSimpleContent() throws Exception {
 		final String path = "/data/help/index/topic1.html";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "en");
@@ -25,6 +26,7 @@ public class ContentServiceTest extends ContentServletTest {
 	    assertEquals(remoteContent, localContent);
 	}
 
+	@Override
 	public void testFilteredContent() throws Exception {
 		final String path = "/data/help/manual/filter.xhtml";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "en");
@@ -32,6 +34,7 @@ public class ContentServiceTest extends ContentServletTest {
 	    assertEquals(remoteContent, localContent);
 	}
 
+	@Override
 	public void testContentInEnLocale() throws Exception {
 		final String path = "/data/help/search/testnl1.xhtml";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "en");
@@ -39,6 +42,7 @@ public class ContentServiceTest extends ContentServletTest {
 	    assertEquals(remoteContent, localContent);
 	}
 	
+	@Override
 	public void testContentInDeLocale() throws Exception {
 		final String path = "/data/help/search/testnl1.xhtml";
 		String remoteContent = ServicesTestUtils.getRemoteContent(UA_TESTS, path, "de");
@@ -48,6 +52,7 @@ public class ContentServiceTest extends ContentServletTest {
 	    assertFalse(remoteContent.equals(enLocalContent));
 	}
 	
+	@Override
 	public void testRemoteContentNotFound() throws Exception {
 		try {
 			ServicesTestUtils.getRemoteContent(UA_TESTS, "/no/such/path.html", "en");

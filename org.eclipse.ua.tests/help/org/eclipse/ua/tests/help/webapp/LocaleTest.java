@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,10 @@ import javax.servlet.http.Cookie;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
-
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests for locale related code in UrlUtil
@@ -30,10 +29,12 @@ public class LocaleTest extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		mode = BaseHelpSystem.getMode();
 	}
@@ -46,7 +47,6 @@ public class LocaleTest extends TestCase {
 		assertEquals("ab-cd______ef", UrlUtil.cleanLocale("ab-cd\n\r_\"\'_ef"));
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testForced_Locale() {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		MockServletRequest req = new MockServletRequest();
@@ -56,7 +56,6 @@ public class LocaleTest extends TestCase {
 		assertEquals("es", locale);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testForcedLangOverridesCookies() {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		MockServletRequest req = new MockServletRequest();

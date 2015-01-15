@@ -17,26 +17,32 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 public class TestHelpToolbarFrame extends AbstractFrame {
 
+	@Override
 	public String getName() {
 		return "testHelpToolbarFrame";
 	}
 
+	@Override
 	public String getURL() {
 		return "/titlesearch/jsp/advanced/testHelpToolbarFrame.jsp";
 	}
 	
+	@Override
 	public int getLocation() {
 		return AbstractFrame.HELP_TOOLBAR;
 	}
 	
+	@Override
 	public String getSize() {
 		return "*";
 	}
 	
-    public String getFrameAttributes() {
+    @Override
+	public String getFrameAttributes() {
     	return "\"marginwidth=\"0\" marginheight=\"0\" frameborder=\"0\" scrolling=\"no\""; //$NON-NLS-1$
     }
 	
+	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean
 	    (UserAssistanceTestPlugin.getPluginId(), "extraFrame", false, null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class LayoutData extends RequestData {
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0, false); //$NON-NLS-1$
 
-		ArrayList viewList = new ArrayList();
+		ArrayList<AbstractView> viewList = new ArrayList<AbstractView>();
 		viewList.add(tocview);
 		if (indexview != null) {
 			viewList.add(indexview);
@@ -170,28 +170,28 @@ public class LayoutData extends RequestData {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(VIEW_EXTENSION_POINT); 
-		for (int i = 0; i < elements.length; i++) {
+		for (IConfigurationElement element : elements) {
 			Object obj = null;
 			try {
-				obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
 						+ VIEW_EXTENSION_POINT + "].", e); //$NON-NLS-1$
 			}
 			if (obj instanceof AbstractView) {
-				viewList.add(obj);
+				viewList.add((AbstractView) obj);
 			}
 		}
 		
-		views = (AbstractView[]) viewList.toArray(new AbstractView[viewList.size()]);
+		views = viewList.toArray(new AbstractView[viewList.size()]);
 		return views;
 	}
 
 	public String getVisibleView() {
 		String requestedView = request.getParameter("tab"); //$NON-NLS-1$
 		AbstractView[] allViews = getViews();
-		for (int i = 0; i < allViews.length; i++) {
-			if (allViews[i].getName().equals(requestedView)) {
+		for (AbstractView allView : allViews) {
+			if (allView.getName().equals(requestedView)) {
 				return requestedView;
 			}
 		}
@@ -201,9 +201,9 @@ public class LayoutData extends RequestData {
 	public AbstractView getCurrentView() {
 		String name = request.getParameter("view"); //$NON-NLS-1$
 		views = getViews();
-		for (int i = 0; i < views.length; i++)
-			if (views[i].getName().equals(name))
-				return views[i];
+		for (AbstractView view : views)
+			if (view.getName().equals(name))
+				return view;
 		return null;
 	}
 	
@@ -216,7 +216,7 @@ public class LayoutData extends RequestData {
 			try {
 				Bundle bundle = Platform.getBundle(resourceContainer);
 				BundleContext bundleContext = HelpWebappPlugin.getContext();
-				ServiceReference ref = bundleContext.getServiceReference(BundleLocalization.class.getName()); 
+				ServiceReference<?> ref = bundleContext.getServiceReference(BundleLocalization.class.getName()); 
 				BundleLocalization localization = (BundleLocalization) bundleContext.getService(ref); 
                 return localization.getLocalization(bundle, locale).getString(resource);
 			} catch (Exception e) {

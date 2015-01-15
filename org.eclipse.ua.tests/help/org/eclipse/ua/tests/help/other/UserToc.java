@@ -34,14 +34,17 @@ public class UserToc implements IToc {
 	/*
 	 * Not exercised by any test so return of null is OK for now
 	 */
+	@Override
 	public ITopic getTopic(String href) {
 		return null;
 	}
 
+	@Override
 	public ITopic[] getTopics() {
 		return children.toArray(new ITopic[0]);
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
 		return getTopics();
 	}
@@ -50,14 +53,17 @@ public class UserToc implements IToc {
 		children.add(child);
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return isEnabled;
 	}
 
+	@Override
 	public String getHref() {
 		return href;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}

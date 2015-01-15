@@ -53,6 +53,7 @@ public class ContextTest extends TestCase {
 		return new TestSuite(ContextTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		// Required for isEnabled() to work correctly
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);

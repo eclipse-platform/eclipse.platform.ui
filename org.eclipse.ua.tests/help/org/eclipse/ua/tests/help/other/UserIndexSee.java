@@ -25,10 +25,12 @@ public class UserIndexSee implements IIndexSee {
 	private boolean isEnabled;
 	private String keyword;
 
+	@Override
 	public IUAElement[] getChildren() {
 		return getSubpathElements();
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return isEnabled;
 	}
@@ -42,14 +44,17 @@ public class UserIndexSee implements IIndexSee {
 		this.isEnabled = isEnabled;
 	}
 
+	@Override
 	public String getKeyword() {
 		return keyword;
 	}
 
+	@Override
 	public IIndexSubpath[] getSubpathElements() {
 		return children.toArray(new IIndexSubpath[0]);
 	}
 
+	@Override
 	public boolean isSeeAlso() {
 		return false;
 	}

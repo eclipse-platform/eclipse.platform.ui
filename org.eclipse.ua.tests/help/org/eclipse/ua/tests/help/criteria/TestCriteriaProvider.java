@@ -92,8 +92,8 @@ public class TestCriteriaProvider extends TestCase {
 
 	private boolean containsCriterion(ICriteria[] allCriteria,
 			String name, String value) {
-        for (int i = 0; i < allCriteria.length; i++) {
-        	if (allCriteria[i].getName().equals(name) && allCriteria[i].getValue().equals(value)) {
+        for (ICriteria element : allCriteria) {
+        	if (element.getName().equals(name) && element.getValue().equals(value)) {
         		return true;
         	}
         }

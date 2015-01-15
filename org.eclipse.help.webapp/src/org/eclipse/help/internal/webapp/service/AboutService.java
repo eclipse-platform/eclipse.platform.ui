@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -67,6 +66,7 @@ public class AboutService extends AboutServlet {
 	
 	private long service;
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
@@ -185,14 +185,14 @@ public class AboutService extends AboutServlet {
 		buf.append(XMLGenerator.xmlEscape(title));
 		buf.append("\""); //$NON-NLS-1$
 		
-		List plugins = new ArrayList();
+		List<PluginDetails> plugins = new ArrayList<PluginDetails>();
 		
 		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
-		for (int k = 0; k < bundles.length; k++) {
-         	plugins.add(pluginDetails(bundles[k]));
+		for (Bundle bundle : bundles) {
+         	plugins.add(pluginDetails(bundle));
         }
 		
-        Comparator pluginComparator = new PluginComparator(sortColumn);
+        Comparator<PluginDetails> pluginComparator = new PluginComparator(sortColumn);
 		Collections.sort(plugins, pluginComparator );
 		
 		String[] headerColumns = new String[]{
@@ -202,17 +202,16 @@ public class AboutService extends AboutServlet {
 		    "pluginId" //$NON-NLS-1$
 		};
 		
-		for (int i = 0; i < headerColumns.length; i++) {
+		for (String headerColumn : headerColumns) {
 			buf.append("\n          "); //$NON-NLS-1$
-			buf.append(headerColumns[i]);
+			buf.append(headerColumn);
 			buf.append("=\""); //$NON-NLS-1$
-			buf.append(XMLGenerator.xmlEscape(WebappResources.getString(headerColumns[i], locale)));
+			buf.append(XMLGenerator.xmlEscape(WebappResources.getString(headerColumn, locale)));
 			buf.append("\""); //$NON-NLS-1$
 		}
 		buf.append(">"); //$NON-NLS-1$
 		
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
-			PluginDetails details = (PluginDetails) iter.next();
+		for (PluginDetails details : plugins) {
 			buf.append("\n        <plugin"); //$NON-NLS-1$
 			for (int i = 0; i < headerColumns.length; i++) {
 				buf.append("\n          "); //$NON-NLS-1$

@@ -71,6 +71,7 @@ public class IndexEntryTest extends TestCase {
 		return new TestSuite(IndexEntryTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 	}

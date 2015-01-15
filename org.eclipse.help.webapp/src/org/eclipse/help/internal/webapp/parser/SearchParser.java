@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class SearchParser extends ResultParser {
 		super(JSonHelper.LABEL);
 	}
 
+	@Override
 	public void startElement(String uri, 
 			String lname, String name, Attributes attrs) {
 		
@@ -54,6 +55,7 @@ public class SearchParser extends ResultParser {
 		}
 	}
 	
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		
 		if (currentTag.equalsIgnoreCase(XMLHelper.ELEMENT_HIT) 
@@ -74,6 +76,7 @@ public class SearchParser extends ResultParser {
 		}
 	}
 
+	@Override
 	public void endElement(String uri, String lname, String name) {
 
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_HIT)) {

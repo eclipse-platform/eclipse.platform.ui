@@ -26,18 +26,22 @@ public class UserCriteria implements ICriteria {
 		this.enabled = enabled;
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return enabled;
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}

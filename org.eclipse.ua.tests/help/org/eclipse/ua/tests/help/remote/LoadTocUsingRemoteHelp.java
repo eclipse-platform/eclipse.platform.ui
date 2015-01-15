@@ -21,11 +21,13 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
@@ -80,8 +82,8 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 	 */
 	private int matchingTocs(Toc[] tocs, String label) {
 		int result = 0;
-		for (int i = 0; i < tocs.length; i++) {
-			if (label.equals(tocs[i].getLabel())) {
+		for (Toc toc : tocs) {
+			if (label.equals(toc.getLabel())) {
 				result += 1;
 			}
 		}

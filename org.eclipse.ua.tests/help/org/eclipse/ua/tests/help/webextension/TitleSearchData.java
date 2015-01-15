@@ -41,10 +41,10 @@ public SearchResult[] getSearchResults() {
      results = new ArrayList<SearchResult>();
      searchTerm = request.getParameter("searchWord");
      IToc[] tocs = getTocs();
-     for (int i = 0; i < tocs.length; i++) {
-    	 ITopic[] topics = tocs[i].getTopics();
-    	 for (int t = 0; t < topics.length; t++) {
-    		 searchTopic(topics[t]);
+     for (IToc toc : tocs) {
+    	 ITopic[] topics = toc.getTopics();
+    	 for (ITopic topic : topics) {
+    		 searchTopic(topic);
     	 }
      }
      return results.toArray(new SearchResult[results.size()]);
@@ -59,8 +59,8 @@ private void searchTopic(ITopic topic) {
 		results.add(result);
 	}
 	ITopic[] topics = topic.getSubtopics();
-	for (int t = 0; t < topics.length; t++) {
-		searchTopic(topics[t]);
+	for (ITopic topic2 : topics) {
+		searchTopic(topic2);
 	}
 }
 

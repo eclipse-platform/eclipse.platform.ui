@@ -24,6 +24,7 @@ public class TocManagerTest extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
@@ -31,6 +32,7 @@ public class TocManagerTest extends TestCase {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 		RemotePreferenceStore.restorePreferences();
@@ -59,13 +61,12 @@ public class TocManagerTest extends TestCase {
 		RemotePreferenceStore.setMockLocalPriority();
 		HelpPlugin.getTocManager().clearCache();
 		AbstractTocProvider [] tocProviders = HelpPlugin.getTocManager().getTocProviders();
-		for(int i=0;i<tocProviders.length;i++)
-		{
-			if(tocProviders[i] instanceof TocFileProvider)
-				localPriority = tocProviders[i].getPriority();
+		for (AbstractTocProvider tocProvider : tocProviders) {
+			if(tocProvider instanceof TocFileProvider)
+				localPriority = tocProvider.getPriority();
 			
-			if(tocProviders[i] instanceof RemoteTocProvider)
-				remotePriority = tocProviders[i].getPriority();
+			if(tocProvider instanceof RemoteTocProvider)
+				remotePriority = tocProvider.getPriority();
 		}
 		
 		assertTrue(localPriority<remotePriority);
@@ -79,13 +80,12 @@ public class TocManagerTest extends TestCase {
 		int localPriority=0,remotePriority=0;
 		
 		AbstractTocProvider [] tocProviders = HelpPlugin.getTocManager().getTocProviders();
-		for(int i=0;i<tocProviders.length;i++)
-		{
-			if(tocProviders[i] instanceof TocFileProvider)
-				localPriority = tocProviders[i].getPriority();
+		for (AbstractTocProvider tocProvider : tocProviders) {
+			if(tocProvider instanceof TocFileProvider)
+				localPriority = tocProvider.getPriority();
 			
-			if(tocProviders[i] instanceof RemoteTocProvider)
-				remotePriority = tocProviders[i].getPriority();
+			if(tocProvider instanceof RemoteTocProvider)
+				remotePriority = tocProvider.getPriority();
 		}
 		
 		assertTrue(remotePriority<localPriority);
@@ -95,12 +95,11 @@ public class TocManagerTest extends TestCase {
 	{
 		HashSet<String> contributionsFound = new HashSet<String>();
 		
-		for(int i=0;i<tocContributions.length;i++)
-		{
-			if(contributionsFound.contains(tocContributions[i].getId()))
+		for (TocContribution tocContribution : tocContributions) {
+			if(contributionsFound.contains(tocContribution.getId()))
 				return true;
 			else
-				contributionsFound.add(tocContributions[i].getId());
+				contributionsFound.add(tocContribution.getId());
 		}
 		
 		return false;

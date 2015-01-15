@@ -14,7 +14,6 @@ package org.eclipse.ua.tests.doc.internal.actions;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
@@ -26,15 +25,17 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class CheckLinkAction implements ILiveHelpAction {
 	
 	private static final String HELP_TOPIC = "/help/topic";
-	private static Map links = new HashMap();
+	private static Map<String, String> links = new HashMap<String, String>();
 	private String link;
 	public final static String ALL_PAGES_LOADED = "ALL_PAGES_LOADED";
 	public final static String CHECK_LINKS = "CHECK_LINKS";
 
+	@Override
 	public void setInitializationString(String data) {
 		link = data;
 	}
 
+	@Override
 	public void run() {
 		//System.out.println("Link = " + link);
 		if (ALL_PAGES_LOADED.equals(link)) {
@@ -53,8 +54,7 @@ public class CheckLinkAction implements ILiveHelpAction {
 		setPageNotFoundPreference("");
 		System.out.println("Start checking " + links.size() + " links");
 		int count = 0;
-		for (Iterator iter = links.keySet().iterator(); iter.hasNext(); ) {
-			String next = (String)iter.next();
+		for (String next : links.keySet()) {
 			count++;
 			if (count % 1000 == 0)  {
 				System.out.println("Checked " + count + " links");
@@ -79,14 +79,14 @@ public class CheckLinkAction implements ILiveHelpAction {
 				opened = false;
 			}
 			if (!opened) {
-				String containingPage = (String) links.get(next);
+				String containingPage = links.get(next);
 				System.out.println("Cannot open link from " + trimPath(containingPage)                       
 				       + " to " + trimPath(next));
 			}
 		}
 		//EclipseConnector.setNotFoundCallout(null);
 	    setPageNotFoundPreference(errorPage);
-		links = new HashMap();
+		links = new HashMap<String, String>();
 		System.out.println("End check links");
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,12 @@ import org.osgi.framework.ServiceReference;
 
 public class JettyTestServer extends JettyHelpServer {
 	
+	@Override
 	protected String getOtherInfo() {
 		return "org.eclipse.ua.tests";
 	}
 	
+	@Override
 	protected int getPortParameter() {
 		return AUTO_SELECT_JETTY_PORT;
 	}
@@ -32,6 +34,7 @@ public class JettyTestServer extends JettyHelpServer {
 	 * Ensures that the bundle with the specified name and the highest available
 	 * version is started and reads the port number
 	 */
+	@Override
 	protected void checkBundle() throws InvalidSyntaxException, BundleException {
 		Bundle bundle = Platform.getBundle("org.eclipse.equinox.http.registry"); //$NON-NLS-1$if (bundle != null) {
 		if (bundle.getState() == Bundle.RESOLVED) {
@@ -39,7 +42,7 @@ public class JettyTestServer extends JettyHelpServer {
 		}
 		if (port == -1) {
 			// Jetty selected a port number for us
-			ServiceReference[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=" + getOtherInfo() + ')'); //$NON-NLS-1$ //$NON-NLS-2$
+			ServiceReference<?>[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=" + getOtherInfo() + ')'); //$NON-NLS-1$ //$NON-NLS-2$
 			Object assignedPort = reference[reference.length - 1].getProperty("http.port"); //$NON-NLS-1$
 			port = Integer.parseInt((String)assignedPort);
 		}

@@ -14,6 +14,7 @@ package org.eclipse.help.internal.webapp.data;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
@@ -38,12 +39,12 @@ public class IconFinder {
 	public static int TYPEICON_LEAF   = 2;
 	
 
-	private static Map IconPathMap = null; // hash table
+	private static Map<String, String> IconPathMap = null; // hash table
 
 	private static void addIconPath(String IconKey, String IconPath) {
 		if (IconPathMap == null) {
-			IconPathMap = new HashMap();
-			IconPathMap = new TreeMap(); // sorted map
+			IconPathMap = new HashMap<String, String>();
+			IconPathMap = new TreeMap<String, String>(); // sorted map
 		}
 		IconPathMap.put(IconKey, IconPath);
 	}
@@ -125,24 +126,23 @@ public class IconFinder {
 		IExtension[] extensionsFound = Platform.getExtensionRegistry()
 				.getExtensionPoint(EXT_PT).getExtensions();
 
-		for (int i = 0; i < extensionsFound.length; i++) {
+		for (IExtension element : extensionsFound) {
 
-			IConfigurationElement[] configElements = extensionsFound[i]
+			IConfigurationElement[] configElements = element
 					.getConfigurationElements();
-			for (int j = 0; j < configElements.length; j++) {
-				if (configElements[j].getName().equals(TOC_ICON_ELEMENT)) {
-					IConfigurationElement iconElem = configElements[j];
+			for (IConfigurationElement iconElem : configElements) {
+				if (iconElem.getName().equals(TOC_ICON_ELEMENT)) {
 					String attrs[] = iconElem.getAttributeNames();
 					String contributorID = iconElem.getContributor().getName();
 
-					for (int k = 0; k < attrs.length; k++) {
-						if (attrs[k].equals(OPEN_ICON_PATH))
+					for (String attr : attrs) {
+						if (attr.equals(OPEN_ICON_PATH))
 							IconFinder.setIconImagePath(contributorID, iconElem.getAttribute(OPEN_ICON_PATH),iconElem.getAttribute(TOC_ICON_ID) + OPEN);
-						if (attrs[k].equals(CLOSED_ICON_PATH))
+						if (attr.equals(CLOSED_ICON_PATH))
 							IconFinder.setIconImagePath(contributorID,iconElem.getAttribute(CLOSED_ICON_PATH),iconElem.getAttribute(TOC_ICON_ID)+ CLOSED);
-						if (attrs[k].equals(LEAF_ICON_PATH))
+						if (attr.equals(LEAF_ICON_PATH))
 							IconFinder.setIconImagePath(contributorID, iconElem.getAttribute(LEAF_ICON_PATH),iconElem.getAttribute(TOC_ICON_ID) + LEAF);
-						if (attrs[k].equals(ICON_ALT_TEXT))
+						if (attr.equals(ICON_ALT_TEXT))
 							IconFinder.setIconAltText(iconElem.getAttribute(ICON_ALT_TEXT),iconElem.getAttribute(TOC_ICON_ID) + ALT);
 					}
 				}

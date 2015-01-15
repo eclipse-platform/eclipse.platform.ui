@@ -21,6 +21,7 @@ public class MockContextServlet extends ContextServlet {
 	private static final String ORG_ECLIPSE_UA_TESTS_TEST = "org.eclipse.ua.tests.test";
 	private static final long serialVersionUID = 3615294041471900830L;
 
+	@Override
 	protected IContext getContext(String locale, String id) {
 		if (id.startsWith(ORG_ECLIPSE_UA_TESTS_TEST)) {
 			String suffix = id.substring(ORG_ECLIPSE_UA_TESTS_TEST.length());

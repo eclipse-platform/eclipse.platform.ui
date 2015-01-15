@@ -34,26 +34,32 @@ public class UserContext implements IContext3 {
 		this.text = text;
 	}
 
+	@Override
 	public ICommandLink[] getRelatedCommands() {
 		return new ICommandLink[0];
 	}
 
+	@Override
 	public String getCategory(IHelpResource topic) {
 		return null;
 	}
 
+	@Override
 	public String getStyledText() {
 		return getText();
 	}
 
+	@Override
 	public String getTitle() {
 		return title;
 	}
 
+	@Override
 	public IHelpResource[] getRelatedTopics() {
 		return children.toArray(new IHelpResource[0]);
 	}
 
+	@Override
 	public String getText() {
 		return text;
 	}

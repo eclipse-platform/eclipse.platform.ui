@@ -47,6 +47,7 @@ public class TocFragmentParser extends ResultParser {
 		super.parse(in);
 	}
 
+	@Override
 	public void startElement(String uri, 
 			String lname, String name, Attributes attrs) {
 		
@@ -82,6 +83,7 @@ public class TocFragmentParser extends ResultParser {
 		}
 	}
 
+	@Override
 	public void endElement(String uri, String lname, String name) {
 
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE) 

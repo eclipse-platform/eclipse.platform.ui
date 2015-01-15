@@ -26,17 +26,20 @@ public class TestCheatSheetManagerEvents extends TestCase {
 	private int handler2Calls;
 	
 	private class Handler1 extends CheatSheetListener {
+		@Override
 		public void cheatSheetEvent(ICheatSheetEvent event) {
 			handler1Calls++;		
 		}	
 	}
 	
 	private class Handler2 extends CheatSheetListener {
+		@Override
 		public void cheatSheetEvent(ICheatSheetEvent event) {
 			handler2Calls++;		
 		}	
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		element = new CheatSheetElement("Name");
 		manager = new CheatSheetManager(element);

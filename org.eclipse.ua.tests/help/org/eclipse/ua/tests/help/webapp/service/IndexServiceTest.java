@@ -25,6 +25,7 @@ import org.xml.sax.InputSource;
 
 public class IndexServiceTest extends IndexServletTest {
 
+	@Override
 	protected Node getIndexContributions( String locale)
 			throws Exception {
 		int port = WebappManager.getPort();

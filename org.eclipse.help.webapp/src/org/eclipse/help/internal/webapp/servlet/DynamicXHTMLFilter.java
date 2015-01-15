@@ -41,6 +41,7 @@ public class DynamicXHTMLFilter implements IFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
 	 */
+	@Override
 	public OutputStream filter(final HttpServletRequest req, final OutputStream out) {
 		final String uri = req.getRequestURI();
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -60,6 +61,7 @@ public class DynamicXHTMLFilter implements IFilter {
 		 * the document is processed then pushed through the filter.
 		 */
 		ByteArrayOutputStream out2 = new ByteArrayOutputStream() {
+			@Override
 			public void close() throws IOException {
 				super.close();
 				byte[] buf = toByteArray();

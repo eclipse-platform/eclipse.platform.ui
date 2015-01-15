@@ -75,6 +75,7 @@ public class DocumentReaderTest extends TestCase {
 		}
 		public int status = RUNNING;
 		
+		@Override
 		public void run() {
 			try {
 				for (int i = 0; i < 10; i++) {

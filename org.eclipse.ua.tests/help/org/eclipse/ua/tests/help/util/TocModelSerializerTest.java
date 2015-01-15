@@ -56,6 +56,7 @@ public class TocModelSerializerTest extends TestCase {
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra content
 	 * filtering that is used by this test. See UIContentFilterProcessor.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		HelpUIPlugin.getDefault();
 	}
@@ -91,18 +92,18 @@ public class TocModelSerializerTest extends TestCase {
 		Collection<TocFile> tocFiles = new ArrayList<TocFile>();
 		IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, "toc");
 		IExtension[] extensions = xpt.getExtensions();
-		for (int i=0;i<extensions.length;i++) {
-			String pluginId = extensions[i].getContributor().getName();
+		for (IExtension extension : extensions) {
+			String pluginId = extension.getContributor().getName();
 			if (pluginId.equals("org.eclipse.ua.tests")) {
-				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-				for (int j=0;j<configElements.length;j++) {
-					if (configElements[j].getName().equals("toc")) {
+				IConfigurationElement[] configElements = extension.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
+					if (configElement.getName().equals("toc")) {
 						// only get files in data/help/toc/
-						String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
+						String href = configElement.getAttribute("file"); //$NON-NLS-1$
 						if (href.startsWith("data/help/toc/")) {
-							boolean isPrimary = "true".equals(configElements[j].getAttribute("primary")); //$NON-NLS-1$
-							String extraDir = configElements[j].getAttribute("extradir"); //$NON-NLS-1$
-							String categoryId = configElements[j].getAttribute("category"); //$NON-NLS-1$
+							boolean isPrimary = "true".equals(configElement.getAttribute("primary")); //$NON-NLS-1$
+							String extraDir = configElement.getAttribute("extradir"); //$NON-NLS-1$
+							String categoryId = configElement.getAttribute("category"); //$NON-NLS-1$
 							tocFiles.add(new TocFile(pluginId, href, isPrimary, Platform.getNL(), extraDir, categoryId));
 						}
 					}

@@ -33,22 +33,27 @@ public class MockScope extends AbstractHelpScope {
 		this.isHierarchical = isHierarchical;
 	}
 
+	@Override
 	public boolean inScope(IToc toc) {
 		return testForInScope(toc.getLabel());
 	}
 
+	@Override
 	public boolean inScope(ITopic topic) {
 		return testForInScope(topic.getLabel());
 	}
 
+	@Override
 	public boolean inScope(IIndexEntry entry) {
 		return testForInScope(entry.getKeyword());
 	}
 
+	@Override
 	public boolean inScope(IIndexSee see) {
 		return true;
 	}
 
+	@Override
 	public String getName(Locale locale) {
 		return null;
 	}
@@ -57,6 +62,7 @@ public class MockScope extends AbstractHelpScope {
 		return label.indexOf(letter) >= 0;
 	}
 	
+	@Override
 	public boolean isHierarchicalScope() {
 		return isHierarchical;
 	}

@@ -19,6 +19,7 @@ import org.eclipse.jface.action.Action;
 
 public class SimpleAction extends Action {
 	
+	@Override
 	public void run() {
 		if (ActionEnvironment.shouldThrowException()) {
 			throw new RuntimeException();

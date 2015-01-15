@@ -30,6 +30,7 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 		this.name = name;
 	}
 	
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
 	}
@@ -38,6 +39,7 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -46,14 +48,17 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
         return getCriterionValueDefinitions();
 	}
 
+	@Override
 	public ICriterionValueDefinition[] getCriterionValueDefinitions() {
 		return children.toArray(new ICriterionValueDefinition[0]);
 	}

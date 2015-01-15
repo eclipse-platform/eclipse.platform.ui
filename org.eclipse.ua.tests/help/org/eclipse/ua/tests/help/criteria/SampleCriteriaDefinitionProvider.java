@@ -21,6 +21,7 @@ import org.eclipse.ua.tests.help.other.UserCriterionValueDefinition;
 public class SampleCriteriaDefinitionProvider extends
 		AbstractCriteriaDefinitionProvider {
 
+	@Override
 	public ICriteriaDefinitionContribution[] getCriteriaDefinitionContributions(
 			String locale) {
 		if (locale.startsWith("es")) {

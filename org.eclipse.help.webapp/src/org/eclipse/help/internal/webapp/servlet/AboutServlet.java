@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,26 @@
 
 package org.eclipse.help.internal.webapp.servlet;
 
-import com.ibm.icu.text.Collator;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
 import javax.servlet.ServletException;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A servlet that provides an informational page about the plugins that make up
@@ -46,7 +55,7 @@ public class AboutServlet extends HttpServlet {
 		}
 	}
 
-	protected class PluginComparator implements Comparator {
+	protected class PluginComparator implements Comparator<PluginDetails> {
 
 		public PluginComparator(int column) {
 			this.column = column;
@@ -54,9 +63,8 @@ public class AboutServlet extends HttpServlet {
 
 		private int column;
 
-		public int compare(Object o1, Object o2) {
-			PluginDetails pd1 = (PluginDetails) o1;
-			PluginDetails pd2 = (PluginDetails) o2;
+		@Override
+		public int compare(PluginDetails pd1, PluginDetails pd2) {
 			return Collator.getInstance().compare(pd1.columns[column], pd2.columns[column]);
 		}
 
@@ -73,6 +81,7 @@ public class AboutServlet extends HttpServlet {
 	private static final String XHTML_2 = "</title>\n <style type = \"text/css\"> td { padding-right : 10px; }</style></head>\n<body>\n"; //$NON-NLS-1$
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
@@ -112,14 +121,14 @@ public class AboutServlet extends HttpServlet {
 		}
 
 		buf.append("<table>"); //$NON-NLS-1$
-		List plugins = new ArrayList();
+		List<PluginDetails> plugins = new ArrayList<PluginDetails>();
 
 		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
-		for (int k = 0; k < bundles.length; k++) {
-			plugins.add(pluginDetails(bundles[k]));
+		for (Bundle bundle : bundles) {
+			plugins.add(pluginDetails(bundle));
 		}
 
-		Comparator pluginComparator = new PluginComparator(sortColumn);
+		Comparator<PluginDetails> pluginComparator = new PluginComparator(sortColumn);
 		Collections.sort(plugins, pluginComparator);
 		String[] headerColumns = new String[] {WebappResources.getString("provider", locale), //$NON-NLS-1$
 				WebappResources.getString("pluginName", locale), //$NON-NLS-1$
@@ -128,8 +137,7 @@ public class AboutServlet extends HttpServlet {
 		};
 		PluginDetails header = new PluginDetails(headerColumns);
 		buf.append(headerRowFor(header));
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
-			PluginDetails details = (PluginDetails) iter.next();
+		for (PluginDetails details : plugins) {
 			buf.append(tableRowFor(details));
 		}
 		buf.append("</table>"); //$NON-NLS-1$
@@ -194,7 +202,7 @@ public class AboutServlet extends HttpServlet {
 		return row;
 	}
 
-	protected Object pluginDetails(Bundle bundle) {
+	protected PluginDetails pluginDetails(Bundle bundle) {
 		String[] values = new String[] {getResourceString(bundle, Constants.BUNDLE_VENDOR), getResourceString(bundle, Constants.BUNDLE_NAME), getResourceString(bundle, Constants.BUNDLE_VERSION), bundle.getSymbolicName()};
 		PluginDetails details = new PluginDetails(values);
 
@@ -202,7 +210,7 @@ public class AboutServlet extends HttpServlet {
 	}
 
 	private static String getResourceString(Bundle bundle, String headerName) {
-		String value = (String) bundle.getHeaders().get(headerName);
+		String value = bundle.getHeaders().get(headerName);
 		return value == null ? null : Platform.getResourceString(bundle, value);
 	}
 

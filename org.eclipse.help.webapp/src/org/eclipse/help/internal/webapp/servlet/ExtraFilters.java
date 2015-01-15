@@ -29,7 +29,7 @@ public class ExtraFilters implements IFilter {
 
 	public static final String CONTENTFILTER_XP_NAME = "org.eclipse.help.webapp.contentFilter"; //$NON-NLS-1$
 
-	private static List filters = null;
+	private static List<PrioritizedFilter> filters = null;
 
 	public ExtraFilters() {
 		if (filters == null) {
@@ -38,15 +38,15 @@ public class ExtraFilters implements IFilter {
 	}
 
 	private void readFilters() {
-		filters = new ArrayList();
+		filters = new ArrayList<PrioritizedFilter>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(CONTENTFILTER_XP_NAME);
-		for (int i = 0; i < elements.length; i++) {
+		for (IConfigurationElement element : elements) {
 
 			Object obj = null;
 			try {
-				obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
 						+ CONTENTFILTER_XP_NAME + "].", e); //$NON-NLS-1$
@@ -54,7 +54,7 @@ public class ExtraFilters implements IFilter {
 			if (obj instanceof IFilter) {
 
 				int priority = 0;
-				String priStr = elements[i].getAttribute("priority"); //$NON-NLS-1$
+				String priStr = element.getAttribute("priority"); //$NON-NLS-1$
 				if (priStr != null && !"".equals(priStr)) { //$NON-NLS-1$
 					try {
 						priority = Integer.parseInt(priStr);
@@ -77,17 +77,18 @@ public class ExtraFilters implements IFilter {
 	 * For JUnit testing
 	 */
 	public static void setFilters(PrioritizedFilter[] newFilters) {
-		filters = new ArrayList();
-		for (int i = 0; i < newFilters.length; i++) {
-			filters.add(newFilters[i]);
+		filters = new ArrayList<PrioritizedFilter>();
+		for (PrioritizedFilter newFilter : newFilters) {
+			filters.add(newFilter);
 		}
 		sortFilters();
 	}
 
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		PrioritizedFilter filter;
 		for(int index = 0; index < filters.size(); index++) {
-			filter = (PrioritizedFilter)filters.get(index);
+			filter = filters.get(index);
 			out = filter.filter(req, out);
 		}
 		return out;

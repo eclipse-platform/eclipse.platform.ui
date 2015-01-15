@@ -186,14 +186,14 @@ public class EclipseConnector {
 			OutputStream out = resp.getOutputStream();
 			IFilter filters[] = pageNotFound ? errorPageFilters : allFilters;
 			if (isProcessingRequired(resp.getContentType())) {
-				for (int i = 0; i < filters.length; i++) {
+				for (IFilter filter : filters) {
 					// condition for enabling remote css 
-					if((filters[i] instanceof InjectionFilter) && is instanceof RemoteHelpInputStream){
+					if((filter instanceof InjectionFilter) && is instanceof RemoteHelpInputStream){
 						InjectionFilter ifilter = new InjectionFilter(true);
 						out=ifilter.filter(req, out);
 					}
 					else{
-						out = filters[i].filter(req, out);
+						out = filter.filter(req, out);
 					}
 				}
 			}

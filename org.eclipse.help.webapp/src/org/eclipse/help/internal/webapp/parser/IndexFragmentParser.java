@@ -24,6 +24,7 @@ public class IndexFragmentParser extends ResultParser{
 		super(JSonHelper.TITLE);
 	}
 	
+	@Override
 	public void startElement(String uri, String lname, String name, Attributes attrs) {
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE))
 		{
@@ -46,6 +47,7 @@ public class IndexFragmentParser extends ResultParser{
 		
 	}
 	
+	@Override
 	public void endElement(String uri, String lname, String name) {
 		if (element != null 
 				&& name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE)) {

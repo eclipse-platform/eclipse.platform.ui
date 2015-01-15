@@ -24,6 +24,7 @@ public class TocParser extends ResultParser {
 		super(JSonHelper.LABEL);
 	}
 	
+	@Override
 	public void startElement(String uri, String lname, String name, Attributes attrs) {
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_TOC_CONTRIBUTIONS))
 			return;
@@ -46,6 +47,7 @@ public class TocParser extends ResultParser {
 		
 	}
 	
+	@Override
 	public void endElement(String uri, String lname, String name) {
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_TOC_CONTRIBUTIONS))
 			return;

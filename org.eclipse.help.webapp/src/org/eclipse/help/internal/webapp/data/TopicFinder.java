@@ -111,7 +111,7 @@ public class TopicFinder {
 		if (topics != null) {
 			for (int i = 0; i < topics.length; ++i) {
 				// returns path in reverse order
-				List reversePath = getTopicPathInTopic(topicToFind, topics[i]);
+				List<ITopic> reversePath = getTopicPathInTopic(topicToFind, topics[i]);
 				if (reversePath != null) {
 					prependFilteredIndex(i, topics);
 					return invertPath(reversePath);
@@ -121,11 +121,11 @@ public class TopicFinder {
 		return null;
 	}
 
-	private ITopic[] invertPath(List reversePath) {
+	private ITopic[] invertPath(List<ITopic> reversePath) {
 		// reverse and return
 		ITopic[] path = new ITopic[reversePath.size()];
 		for (int j = 0; j < path.length; ++j) {
-			path[j] = (ITopic) reversePath.get((path.length - 1)
+			path[j] = reversePath.get((path.length - 1)
 					- j);
 		}
 		return path;
@@ -145,16 +145,16 @@ public class TopicFinder {
 	 * Finds the topic in the given topic sub-tree. Returns a path of ITopics to
 	 * that topic in reverse order (from the topic up).
 	 */
-	private List getTopicPathInTopic(ITopic topicToFind, ITopic topic) {
+	private List<ITopic> getTopicPathInTopic(ITopic topicToFind, ITopic topic) {
 		if (sameTopic(topicToFind, topic)) {
 			// found it. start the list to be created recursively
-			List path = new ArrayList();
+			List<ITopic> path = new ArrayList<ITopic>();
 			path.add(topic);
 			return path;
 		} else {
 			ITopic[] subtopics = topic.getSubtopics();
 			for (int i = 0; i < subtopics.length; ++i) {
-				List path = getTopicPathInTopic(topicToFind, subtopics[i]);
+				List<ITopic> path = getTopicPathInTopic(topicToFind, subtopics[i]);
 				if (path != null) {
 					// it was in a subtopic.. add to the path and return
 					path.add(topic);
@@ -331,8 +331,8 @@ public class TopicFinder {
 		if (!tocEnabled)
 			return false;
 		ITopic[] topics = toc.getTopics();
-		for (int i = 0; i < topics.length; i++) {
-			if (ScopeUtils.showInTree(topics[i], scope)) {
+		for (ITopic topic : topics) {
+			if (ScopeUtils.showInTree(topic, scope)) {
 				return true;
 			}
 		}

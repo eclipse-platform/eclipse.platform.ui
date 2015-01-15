@@ -34,10 +34,12 @@ public class HelpServerBinding extends TestCase {
 	// To enable these tests for local testing set testUsingIP to true.
 	private final boolean testUsingIP = false;
 
+	@Override
 	protected void setUp() throws Exception {
 		previousMode = BaseHelpSystem.getMode();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		BaseHelpSystem.setMode(previousMode);
 	}

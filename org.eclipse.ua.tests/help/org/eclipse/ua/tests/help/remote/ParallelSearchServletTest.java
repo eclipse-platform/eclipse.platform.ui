@@ -38,12 +38,14 @@ public class ParallelSearchServletTest extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}
@@ -57,6 +59,7 @@ public class ParallelSearchServletTest extends TestCase {
 			this.expectedHits = expectedHits;
 		}
 		
+		@Override
 		public String runTest() throws Exception {
 			Node[] hits = getSearchHitsFromServlet(phrase);
 			if (hits.length != expectedHits) {

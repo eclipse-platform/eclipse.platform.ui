@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,12 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
-
-import junit.framework.TestCase;
 
 public class TestStatePersistence extends TestCase {
 	
@@ -57,6 +57,7 @@ public class TestStatePersistence extends TestCase {
 	 * Initialize the properties that will be saved. Individual tests will modify
 	 * the properties which apply to a particular test.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		propsToSave = new PropertySet();
 		propsToSave.button = 1;
@@ -96,7 +97,7 @@ public class TestStatePersistence extends TestCase {
 	private PropertySet restore(String id) {
 		PropertySet result = new PropertySet();
 		Properties restored = helper.loadState(id);
-		result.id = (String)restored.getProperty(IParserTags.ID);
+		result.id = restored.getProperty(IParserTags.ID);
 		result.button = Integer.parseInt(restored.getProperty(IParserTags.BUTTON));
 		result.currentItem = Integer.parseInt(restored.getProperty(IParserTags.CURRENT));
 		result.completed = (ArrayList<String>) restored.get(IParserTags.COMPLETED);
@@ -105,7 +106,7 @@ public class TestStatePersistence extends TestCase {
         result.expandRestore = (ArrayList<String>) restored.get(IParserTags.EXPANDRESTORE);
         result.subItemCompleted = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMCOMPLETED);
         result.subItemSkipped = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMSKIPPED);
-        Hashtable managerData = (Hashtable) restored.get(IParserTags.MANAGERDATA);
+        Hashtable<String, String> managerData = (Hashtable<String, String>) restored.get(IParserTags.MANAGERDATA);
 		CheatSheetElement csElement = new CheatSheetElement(id);
         result.manager = new CheatSheetManager(csElement);
         result.manager.setData(managerData);

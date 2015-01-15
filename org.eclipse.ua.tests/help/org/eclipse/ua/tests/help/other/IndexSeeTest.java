@@ -48,6 +48,7 @@ public class IndexSeeTest extends TestCase {
 		return new TestSuite(IndexSeeTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 	}

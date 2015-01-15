@@ -46,8 +46,8 @@ public class ToolbarData extends RequestData {
 	 * down menu).
 	 */
 	public boolean hasMenu() {
-		for (int i=0;i<buttons.length;++i) {
-			if ("menu".equals(buttons[i].getAction())) { //$NON-NLS-1$
+		for (ToolbarButton button : buttons) {
+			if ("menu".equals(button.getAction())) { //$NON-NLS-1$
 				return true;
 			}
 		}
@@ -74,7 +74,7 @@ public class ToolbarData extends RequestData {
 			return;
 		}
 
-		List buttonList = new ArrayList();
+		List<ToolbarButton> buttonList = new ArrayList<ToolbarButton>();
 		for (int i = 0; i < names.length; i++) {
 			if ("".equals(names[i])) //$NON-NLS-1$
 				buttonList.add(new ToolbarButton());
@@ -101,21 +101,21 @@ public class ToolbarData extends RequestData {
 							+ "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
 					"restore_maximize", null, "off")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		buttons = (ToolbarButton[]) buttonList
+		buttons = buttonList
 				.toArray(new ToolbarButton[buttonList.size()]);
 	}
 
-	private void addExtensionButtons(List buttonList) {
+	private void addExtensionButtons(List<ToolbarButton> buttonList) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(BUTTON_EXTENSION_POINT);
 		
-		List extensionButtons = new ArrayList();
-		List scripts = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
+		List<AbstractButton> extensionButtons = new ArrayList<AbstractButton>();
+		List<String> scripts = new ArrayList<String>();
+		for (IConfigurationElement element : elements) {
 			Object obj = null;
 			try {
-				obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
 						+ BUTTON_EXTENSION_POINT + "].", e); //$NON-NLS-1$
@@ -135,8 +135,7 @@ public class ToolbarData extends RequestData {
 		
 		Collections.sort(extensionButtons);
 
-		for (Iterator iter = extensionButtons.iterator(); iter.hasNext();) {
-			AbstractButton button = (AbstractButton) iter.next();
+		for (AbstractButton button : extensionButtons) {
 			String scriptFile = button.getJavaScriptURL();
 			if (scriptFile != null) {
 				scripts.add(UrlUtil.getRelativePath(request, scriptFile));
@@ -149,7 +148,7 @@ public class ToolbarData extends RequestData {
 					button.getState());
 			 buttonList.add(toolButton);
 		}	
-		scriptFiles = (String[]) scripts.toArray(new String[scripts.size()]);
+		scriptFiles = scripts.toArray(new String[scripts.size()]);
 	}
 
 	public ToolbarButton[] getButtons() {

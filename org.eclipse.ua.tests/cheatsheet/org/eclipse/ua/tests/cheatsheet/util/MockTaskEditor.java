@@ -28,11 +28,13 @@ public class MockTaskEditor extends TaskEditor {
 	
 	private static final String KEY = "key";
 
+	@Override
 	public Control getControl() {
 		// Not used by tests
 		return null;
 	}
 
+	@Override
 	public void setInput(IEditableTask task, IMemento memento) {
 		if (memento == null) {
 			setValue(NO_MEMENTO);
@@ -41,10 +43,12 @@ public class MockTaskEditor extends TaskEditor {
 	    }
 	}
 	
+	@Override
 	public void saveState(IMemento memento) {
 		memento.putString(KEY, getValue());
 	}
 
+	@Override
 	public void createControl(Composite parent, FormToolkit toolkit) {
 	}
 

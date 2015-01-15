@@ -90,8 +90,8 @@ public class ExtensionReorderingTest extends TestCase {
 		
 		private String toString(int[] order) {
 			String result = "";
-			for (int i = 0; i < order.length; i++) {
-				result = result + order[i];
+			for (int element : order) {
+				result = result + element;
 			}
 			return result;
 		}
@@ -149,12 +149,12 @@ public class ExtensionReorderingTest extends TestCase {
 
         // find all configs with given attribute and attribute value.
         Vector<IConfigurationElement> elements = new Vector<IConfigurationElement>();
-        for (int i = 0; i < configElements.length; i++) {
-            String currentAttributeValue = configElements[i]
+        for (IConfigurationElement configElement : configElements) {
+            String currentAttributeValue = configElement
                 .getAttribute(attributeName);
             if (currentAttributeValue != null
                     && currentAttributeValue.equals(attributeValue))
-                elements.add(configElements[i]);
+                elements.add(configElement);
         }
 
         // now return array.

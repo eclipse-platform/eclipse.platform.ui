@@ -39,9 +39,10 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class IndexServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private Map responseByLocale;
+	private Map<String, String> responseByLocale;
 	private DocumentWriter writer;
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// set the character-set to UTF-8 before calling resp.getWriter()
@@ -56,9 +57,9 @@ public class IndexServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		
 		if (responseByLocale == null) {
-			responseByLocale = new WeakHashMap();
+			responseByLocale = new WeakHashMap<String, String>();
 		}
-		String response = (String)responseByLocale.get(locale);
+		String response = responseByLocale.get(locale);
 		if (response == null) {
 			IndexContribution[] contributions = HelpPlugin.getIndexManager().getIndexContributions(locale);
 			try {
@@ -80,8 +81,7 @@ public class IndexServlet extends HttpServlet {
 		if (writer == null) {
 			writer = new DocumentWriter();
 		}
-		for (int i=0;i<contributions.length;++i) {
-			IndexContribution contrib = contributions[i];
+		for (IndexContribution contrib : contributions) {
 			buf.append("<indexContribution\n"); //$NON-NLS-1$
 			buf.append("      id=\"" + contrib.getId() + '"'); //$NON-NLS-1$
 			buf.append("      locale=\"" + contrib.getLocale() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$

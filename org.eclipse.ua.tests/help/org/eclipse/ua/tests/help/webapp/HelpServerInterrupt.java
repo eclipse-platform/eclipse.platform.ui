@@ -34,6 +34,7 @@ public class HelpServerInterrupt extends TestCase {
 		
 		private Exception exception = null;
 
+		@Override
 		public synchronized void run() {
 			try {
 				WebappManager.start("help");
@@ -47,6 +48,7 @@ public class HelpServerInterrupt extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}

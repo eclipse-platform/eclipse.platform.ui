@@ -26,6 +26,7 @@ public class MockSearchParticipant extends SearchParticipant {
 	private static final String DOC_1 = "/org.eclipse.ua.tests/participant1.xml";
 	private static final String DOC_2 = "/org.eclipse.ua.tests/participant2.xml";
 	
+	@Override
 	public Set<String> getAllDocuments(String locale) {
 		HashSet<String> set = new HashSet<String>();
 		set.add(DOC_1);
@@ -33,6 +34,7 @@ public class MockSearchParticipant extends SearchParticipant {
 		return set;
 	}
 
+	@Override
 	public IStatus addDocument(IHelpSearchIndex index, String pluginId,
 			String name, URL url, String id, ISearchDocument doc) {
 		boolean isDoc1 = url.getPath().equals(DOC_1) ;

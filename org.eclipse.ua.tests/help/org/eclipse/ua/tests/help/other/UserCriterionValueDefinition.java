@@ -25,18 +25,22 @@ public class UserCriterionValueDefinition implements ICriterionValueDefinition {
 		this.name = name;
 	}
 	
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
         return new IUAElement[0];
 	}

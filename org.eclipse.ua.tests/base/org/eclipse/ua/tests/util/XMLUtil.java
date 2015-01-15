@@ -73,6 +73,7 @@ public class XMLUtil extends Assert {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
+		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			buf.append('<');
 			buf.append(qName);
@@ -98,6 +99,7 @@ public class XMLUtil extends Assert {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 		 */
+		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			buf.append('<');
 			buf.append('/');
@@ -108,6 +110,7 @@ public class XMLUtil extends Assert {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 		 */
+		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			buf.append(ch, start, length);
 		}
@@ -118,6 +121,7 @@ public class XMLUtil extends Assert {
 		 * 
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
+		@Override
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			try {
 				return entityResolver.resolveEntity(publicId, systemId);
@@ -126,6 +130,7 @@ public class XMLUtil extends Assert {
 			}
 		}
 
+		@Override
 		public String toString() {
 			return buf.toString();
 		}

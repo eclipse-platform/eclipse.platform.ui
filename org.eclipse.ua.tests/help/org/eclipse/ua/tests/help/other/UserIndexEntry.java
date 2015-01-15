@@ -33,6 +33,7 @@ public class UserIndexEntry implements IIndexEntry2 {
 	private boolean isEnabled;
 	private String keyword;
 
+	@Override
 	public IUAElement[] getChildren() {
 		IUAElement[] subentries = getSubentries();
 		IUAElement[] sees = getSees();
@@ -44,6 +45,7 @@ public class UserIndexEntry implements IIndexEntry2 {
 		return result;
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return isEnabled;
 	}
@@ -65,18 +67,22 @@ public class UserIndexEntry implements IIndexEntry2 {
 		this.isEnabled = isEnabled;
 	}
 
+	@Override
 	public IIndexSee[] getSees() {
 		return sees.toArray(new IIndexSee[0]);
 	}
 
+	@Override
 	public String getKeyword() {
 		return keyword;
 	}
 
+	@Override
 	public IIndexEntry[] getSubentries() {
 		return subentries.toArray(new IIndexEntry[0]);
 	}
 
+	@Override
 	public ITopic[] getTopics() {
 		return topics.toArray(new ITopic[0]);
 	}

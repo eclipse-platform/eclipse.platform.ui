@@ -17,10 +17,12 @@ public class VisitPageAction implements ILiveHelpAction {
 	
 	public static String lastPageVisited = "NO_PAGES_VISITED";
 	
+	@Override
 	public void setInitializationString(String data) {
 		lastPageVisited = data;
 	}
 
+	@Override
 	public void run() {
 	}
 

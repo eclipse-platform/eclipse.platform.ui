@@ -36,12 +36,14 @@ public class TocFragmentServiceTest extends TestCase {
 
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}
@@ -98,9 +100,9 @@ public class TocFragmentServiceTest extends TestCase {
 	private int findUATopicIndex(String title, String locale) {
 		int index = -1;
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
-		for (int i = 0; i < tocs.length; i++) {
-			if ("/org.eclipse.ua.tests/data/help/toc/root.xml".equals(tocs[i].getHref())) {
-				ITopic[] topics = tocs[i].getTopics();
+		for (Toc toc : tocs) {
+			if ("/org.eclipse.ua.tests/data/help/toc/root.xml".equals(toc.getHref())) {
+				ITopic[] topics = toc.getTopics();
 				for (int j = 0; j < topics.length; j++) {
 					if (title.equals(topics[j].getLabel())) {
 						index = j;
@@ -152,7 +154,7 @@ public class TocFragmentServiceTest extends TestCase {
 				}
 			}
 		}
-		return (Element[]) results.toArray(new Element[results.size()]);
+		return results.toArray(new Element[results.size()]);
 	}
 	
 	/*
@@ -180,7 +182,7 @@ public class TocFragmentServiceTest extends TestCase {
 				}
 			}
 		}
-		return (Element[]) results.toArray(new Element[results.size()]);
+		return results.toArray(new Element[results.size()]);
 	}
 	 
 

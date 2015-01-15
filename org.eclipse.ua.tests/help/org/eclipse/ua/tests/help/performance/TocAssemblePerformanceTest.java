@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 		return new TestSuite(TocAssemblePerformanceTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
@@ -48,7 +49,6 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 		return parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), tocFile, true, "en", null, null));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void assembleToc() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		List<TocContribution> contributions = new ArrayList<TocContribution>();
@@ -69,8 +69,8 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 	
 	private int countTopics(ITopic[] topics) {
 		int result = topics.length;
-		for (int i = 0; i < topics.length; i++) {
-			result = result + countTopics(topics[i].getSubtopics());
+		for (ITopic topic : topics) {
+			result = result + countTopics(topic.getSubtopics());
 		}
 		return result;
 	}

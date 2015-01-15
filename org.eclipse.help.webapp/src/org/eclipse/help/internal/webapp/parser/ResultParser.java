@@ -27,7 +27,7 @@ public class ResultParser extends DefaultHandler {
 
 	protected String id;
 	protected String label;
-	protected ArrayList items = new ArrayList(); //parser populates the items arrayList withe parsed data.
+	protected ArrayList<ParseElement> items = new ArrayList<ParseElement>(); //parser populates the items arrayList withe parsed data.
 
 	public ResultParser(String label) {
 		this(label, JSonHelper.ID);
@@ -59,11 +59,12 @@ public class ResultParser extends DefaultHandler {
 		this.id = id;
 	}
 	
-	public ArrayList getItems()
+	public ArrayList<ParseElement> getItems()
 	{
 		return items;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return items.toString();
@@ -97,7 +98,7 @@ public class ResultParser extends DefaultHandler {
 			if (i > 0)
 				buf.append(JSonHelper.COMMA);
 			
-			ParseElement element = (ParseElement) items.get(i);
+			ParseElement element = items.get(i);
 			buf.append(element.toJSON(1));
 		}
 		

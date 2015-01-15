@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,8 +91,8 @@ public class WorkingSetData extends RequestData {
 		// See if the toc is in the working set
 		AdaptableToc adaptableToc = tocs[toc];
 		AdaptableHelpResource[] elements = ws.getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] == adaptableToc)
+		for (AdaptableHelpResource element : elements) {
+			if (element == adaptableToc)
 				return STATE_CHECKED;
 		}
 
@@ -149,8 +149,8 @@ public class WorkingSetData extends RequestData {
 			return STATE_UNCHECKED;
 		AdaptableTopic adaptableTopic = topics[topic];
 		AdaptableHelpResource[] elements = ws.getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] == adaptableTopic)
+		for (AdaptableHelpResource element : elements) {
+			if (element == adaptableTopic)
 				return STATE_CHECKED;
 		}
 		return STATE_UNCHECKED;
@@ -228,14 +228,14 @@ public class WorkingSetData extends RequestData {
 			return STATE_UNCHECKED;
 
 		String category = categories[index];
-		Map criteriaMap = new HashMap();
+		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriterionResource[] criteria = ws.getCriteria();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		if(!criteriaMap.keySet().contains(category))
 			return STATE_UNCHECKED;
 		
-		Set criterionValuesFromWS = (Set) criteriaMap.get(category);
-		Set criterionValuesSet = new HashSet(Arrays.asList(getCriterionValueIds(category)));
+		Set<String> criterionValuesFromWS = criteriaMap.get(category);
+		Set<String> criterionValuesSet = new HashSet<String>(Arrays.asList(getCriterionValueIds(category)));
 		if(criterionValuesFromWS.containsAll(criterionValuesSet)){
 			return STATE_CHECKED;
 		}else{
@@ -254,11 +254,11 @@ public class WorkingSetData extends RequestData {
 			return STATE_UNCHECKED;
 
 		String category = categories[categoryIndex];
-		Map criteriaMap = new HashMap();
+		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriterionResource[] criteria = ws.getCriteria();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		
-		Set criterionValuesFromWS = (Set) criteriaMap.get(category);
+		Set<String> criterionValuesFromWS = criteriaMap.get(category);
 		String[] crietriaValues = getCriterionValueIds(category);
 		if (valueIndex < 0 || valueIndex >= crietriaValues.length){
 			return STATE_UNCHECKED;

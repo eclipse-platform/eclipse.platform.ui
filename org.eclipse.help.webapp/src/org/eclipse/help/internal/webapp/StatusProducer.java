@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,16 +21,17 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.MissingContentManager;
+import org.eclipse.help.internal.base.MissingContentManager.Placeholder;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.data.WebappPreferences;
-import org.eclipse.core.runtime.Platform;
 
 
 public class StatusProducer implements IHelpContentProducer {
@@ -52,6 +53,7 @@ public class StatusProducer implements IHelpContentProducer {
 	
 	
 	
+	@Override
 	public InputStream getInputStream(String pluginID, String href, Locale locale) {
 
 		// Only accept requests for our pages.  Otherwise
@@ -81,8 +83,8 @@ public class StatusProducer implements IHelpContentProducer {
 		
 		
 		// Get all remote sites, and subset of non-working sites
-		ArrayList remoteSites = RemoteStatusData.getRemoteSites();
-		ArrayList badSites = RemoteStatusData.checkSitesConnectivity(remoteSites);
+		ArrayList<URL> remoteSites = RemoteStatusData.getRemoteSites();
+		ArrayList<URL> badSites = RemoteStatusData.checkSitesConnectivity(remoteSites);
 		RemoteStatusData.clearCache();
 
 		// Check to see if there are any enabled remote sites.
@@ -197,7 +199,7 @@ public class StatusProducer implements IHelpContentProducer {
 		String activeLink = 
 			MessageFormat.format(
 					WebappResources.getString("remotePreferences", locale), //$NON-NLS-1$
-					new String[]{getActiveLink(locale)});
+					getActiveLink(locale));
 
 		pageBuffer.append(tab(3)+activeLink);
 		
@@ -285,13 +287,13 @@ public class StatusProducer implements IHelpContentProducer {
 		pageBuffer.append(WebappResources.getString("installInstructions", locale)); //$NON-NLS-1$
 		pageBuffer.append("</p>\n"); //$NON-NLS-1$
 		pageBuffer.append(tab(3)+"<ul>\n"); //$NON-NLS-1$
-		for (int i = 0; i < unresolved.length; i++ ) {
+		for (Placeholder element : unresolved) {
 			pageBuffer.append(tab(4) + "<li>\n"); //$NON-NLS-1$
 			pageBuffer.append(tab(5) + "<a href = \""); //$NON-NLS-1$			
-			String href = unresolved[i].placeholderPage;
+			String href = element.placeholderPage;
 			pageBuffer.append(UrlUtil.getHelpURL(href, 2));
 			pageBuffer.append("\">"); //$NON-NLS-1$
-			pageBuffer.append(unresolved[i].bundle);
+			pageBuffer.append(element.bundle);
 			pageBuffer.append("</a>\n"); //$NON-NLS-1$
 			pageBuffer.append(tab(4) + "</li>\n"); //$NON-NLS-1$
 		}

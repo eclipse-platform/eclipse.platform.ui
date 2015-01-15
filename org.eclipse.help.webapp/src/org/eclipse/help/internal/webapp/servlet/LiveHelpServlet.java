@@ -27,6 +27,7 @@ public class LiveHelpServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	/**
 	 */
+	@Override
 	public void init() throws ServletException {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			throw new ServletException();
@@ -37,6 +38,7 @@ public class LiveHelpServlet extends HttpServlet {
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * servlet to handle a GET request.
 	 */
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
@@ -63,6 +65,7 @@ public class LiveHelpServlet extends HttpServlet {
 	 * Handle the search requests,
 	 *  
 	 */
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		doGet(req, resp);

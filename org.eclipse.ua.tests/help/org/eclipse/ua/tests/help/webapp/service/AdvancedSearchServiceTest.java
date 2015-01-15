@@ -20,6 +20,7 @@ import org.w3c.dom.Node;
 
 public class AdvancedSearchServiceTest extends SearchServletTest {
 
+	@Override
 	protected Node[] getSearchHitsFromServlet(String searchWord)
 			throws Exception {
 		int port = WebappManager.getPort();
@@ -27,6 +28,7 @@ public class AdvancedSearchServiceTest extends SearchServletTest {
 		return makeServletCall(url);
 	}
 	
+	@Override
 	protected Node[] getSearchHitsUsingLocale(String searchWord, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();

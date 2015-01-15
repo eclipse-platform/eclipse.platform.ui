@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -30,7 +29,7 @@ import org.eclipse.help.webapp.AbstractButton;
 public class ButtonData extends RequestData {
 	
 	private static final String BUTTON_EXTENSION_POINT = "org.eclipse.help.webapp.toolbarButton"; //$NON-NLS-1$
-	private List allButtons;
+	private List<AbstractButton> allButtons;
 
 	public ButtonData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -42,30 +41,29 @@ public class ButtonData extends RequestData {
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(BUTTON_EXTENSION_POINT);
 		if (allButtons == null) {
-			allButtons = new ArrayList();
-			for (int i = 0; i < elements.length; i++) {
+			allButtons = new ArrayList<AbstractButton>();
+			for (IConfigurationElement element : elements) {
 				Object obj = null;
 				try {
-					obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+					obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
 					HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
 							+ BUTTON_EXTENSION_POINT + "].", e); //$NON-NLS-1$
 				}
 				if (obj instanceof AbstractButton) {
-					allButtons.add(obj);
+					allButtons.add((AbstractButton) obj);
 				}
 			}
 			Collections.sort(allButtons);
 		}
 
-		List buttonList = new ArrayList();
-		for (Iterator iter = allButtons.iterator(); iter.hasNext();) {
-			AbstractButton button = (AbstractButton) iter.next();
+		List<AbstractButton> buttonList = new ArrayList<AbstractButton>();
+		for (AbstractButton button : allButtons) {
 			//if (button.isVisible() && button.getLocation() == location) {
 				buttonList.add(button);
 			//}
 		}			
-		AbstractButton[] buttons = (AbstractButton[]) buttonList.toArray(new AbstractButton[buttonList.size()]);
+		AbstractButton[] buttons = buttonList.toArray(new AbstractButton[buttonList.size()]);
 		return buttons;		
 	}
 	

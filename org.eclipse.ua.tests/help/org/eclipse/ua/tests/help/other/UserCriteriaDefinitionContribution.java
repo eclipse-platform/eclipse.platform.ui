@@ -29,6 +29,7 @@ public class UserCriteriaDefinitionContribution implements ICriteriaDefinitionCo
 		this.criteriaDefinition = criteriaDefinition;
 	}
 
+	@Override
 	public ICriteriaDefinition getCriteriaDefinition() {
 		return criteriaDefinition;
 	}
@@ -37,6 +38,7 @@ public class UserCriteriaDefinitionContribution implements ICriteriaDefinitionCo
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -45,6 +47,7 @@ public class UserCriteriaDefinitionContribution implements ICriteriaDefinitionCo
 		this.locale = locale;
 	}
 
+	@Override
 	public String getLocale() {
 		return locale;
 	}

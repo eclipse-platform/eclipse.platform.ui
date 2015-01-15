@@ -38,6 +38,7 @@ public class BookmarksTest extends TestCase {
 		public Object arg;
 		public int eventCount = 0;
 
+		@Override
 		public void update(Observable o, Object arg) {
 			++eventCount;
 			this.o = o;
@@ -53,6 +54,7 @@ public class BookmarksTest extends TestCase {
 	private BookmarkManager manager;
 	private BookmarkObserver observer;
 	
+	@Override
 	protected void setUp() throws Exception {
 		manager = new BookmarkManager();
 		manager.removeAllBookmarks();
@@ -60,6 +62,7 @@ public class BookmarksTest extends TestCase {
 		manager.addObserver(observer);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		manager = null;
 		observer = null;

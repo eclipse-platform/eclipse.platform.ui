@@ -30,6 +30,7 @@ public class AboutParser extends ResultParser {
 			this.setIdentifier(JSonHelper.PLUGIN_ID);
 	}
 	
+	@Override
 	public void startElement(String uri, String lname, String name, Attributes attrs) {
 		
 		currentTag = name;
@@ -57,6 +58,7 @@ public class AboutParser extends ResultParser {
 		element = elem;
 	}
 	
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		if ((service == Utils.PREFERENCE 
 				&& (currentTag.equalsIgnoreCase(XMLHelper.ELEMENT_PREFERENCES) 
@@ -83,6 +85,7 @@ public class AboutParser extends ResultParser {
 		}
 	}
 	
+	@Override
 	public void endElement(String uri, String lname, String name) {
 		
 		if (element != null) {
@@ -91,6 +94,7 @@ public class AboutParser extends ResultParser {
 		currentTag = ""; //$NON-NLS-1$
 	}
 	
+	@Override
 	public String toJSON() {
 		
 		StringBuffer buf = new StringBuffer();
@@ -109,7 +113,7 @@ public class AboutParser extends ResultParser {
 		buf.append(JSonHelper.getQuotes(label));
 		buf.append(JSonHelper.COMMA);
 		
-		ParseElement elem = (ParseElement) items.get(0);
+		ParseElement elem = items.get(0);
 		if (elem != null)
 			buf.append(elem.toJSON());
 		

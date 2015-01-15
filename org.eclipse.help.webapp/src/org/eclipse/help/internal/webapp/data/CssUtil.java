@@ -11,7 +11,6 @@
 
 package org.eclipse.help.internal.webapp.data;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -54,18 +53,17 @@ public class CssUtil {
 		return result;
 	}
 	
-	public static void addCssFiles(final String preference, List list) {
+	public static void addCssFiles(final String preference, List<String> list) {
 		String topicCssPath = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, preference, "", null);  //$NON-NLS-1$
 		String[] cssFiles = CssUtil.getCssFilenames(topicCssPath);
-		for (int i = 0; i < cssFiles.length; i++) {
-			list.add(cssFiles[i]);
+		for (String cssFile : cssFiles) {
+			list.add(cssFile);
 		}
 	}
 	
-	public static String createCssIncludes(List cssFiles, String backPath) {
+	public static String createCssIncludes(List<String> cssFiles, String backPath) {
 		StringBuffer script = new StringBuffer();
-		for (Iterator iter = cssFiles.iterator(); iter.hasNext();) {
-			String cssPath = (String) iter.next();
+		for (String cssPath : cssFiles) {
 			script.append(cssLink1);
 			script.append(fixCssPath(cssPath, backPath));
 			script.append(cssLink2);

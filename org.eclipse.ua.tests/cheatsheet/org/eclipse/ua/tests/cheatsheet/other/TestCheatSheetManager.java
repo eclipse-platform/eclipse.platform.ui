@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@ package org.eclipse.ua.tests.cheatsheet.other;
 
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
-
-import junit.framework.TestCase;
 
 public class TestCheatSheetManager extends TestCase {
 
@@ -56,7 +56,7 @@ public class TestCheatSheetManager extends TestCase {
 		assertEquals(VALUE_A, manager.getDataQualified(KEY1));
 		assertEquals(VALUE_B, manager.getData(PARENT_KEY1));
 		assertEquals(VALUE_B, manager.getDataQualified(PARENT_KEY1));
-		Set keys = manager.getKeySet();
+		Set<?> keys = manager.getKeySet();
 		assertEquals(keys.size(), 2);
 		assertTrue(keys.contains(KEY1));
 		assertTrue(keys.contains(PARENT_KEY1));
@@ -76,12 +76,12 @@ public class TestCheatSheetManager extends TestCase {
 		assertEquals(VALUE_A, manager.getDataQualified(KEY1));
 		assertNull(manager.getData(PARENT_KEY1));
 		assertEquals(VALUE_B, manager.getDataQualified(PARENT_KEY1));
-		Set keys = manager.getKeySet();
+		Set<?> keys = manager.getKeySet();
 		assertEquals(keys.size(), 1);
 		assertTrue(keys.contains(KEY1));
 		assertFalse(keys.contains(PARENT_KEY1));
 
-		Set parentKeys = parentManager.getKeySet();
+		Set<?> parentKeys = parentManager.getKeySet();
 		assertEquals(parentKeys.size(), 1);
 		assertTrue(parentKeys.contains(KEY1));
 		assertFalse(parentKeys.contains(PARENT_KEY1));
@@ -100,12 +100,12 @@ public class TestCheatSheetManager extends TestCase {
 		assertEquals(VALUE_A, manager.getDataQualified(KEY1));
 		assertNull(manager.getDataQualified(PARENT_KEY1));
 		assertEquals(VALUE_B, manager.getData(PARENT_KEY1));
-		Set keys = manager.getKeySet();
+		Set<?> keys = manager.getKeySet();
 		assertEquals(keys.size(), 2);
 		assertTrue(keys.contains(KEY1));
 		assertTrue(keys.contains(PARENT_KEY1));
 
-		Set parentKeys = parentManager.getKeySet();
+		Set<?> parentKeys = parentManager.getKeySet();
 		assertEquals(parentKeys.size(), 0);
 	}
 	

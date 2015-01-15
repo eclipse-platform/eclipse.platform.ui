@@ -19,6 +19,7 @@ import org.eclipse.jface.action.Action;
 
 public class FailingAction extends Action {
 	
+	@Override
 	public void run() {
 		// Return a failure status
 		notifyResult(false);

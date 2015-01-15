@@ -23,6 +23,7 @@ public class GetContextUsingRemoteHelp extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
@@ -30,6 +31,7 @@ public class GetContextUsingRemoteHelp extends TestCase {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);

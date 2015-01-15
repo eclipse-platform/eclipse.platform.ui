@@ -41,6 +41,7 @@ public class SearchStateService extends HttpServlet {
 	private final static String STATE = "state"; //$NON-NLS-1$
 	private final static String PERCENT = "percent"; //$NON-NLS-1$
 	
+	@Override
 	public void init() throws ServletException {
 	}
 
@@ -48,6 +49,7 @@ public class SearchStateService extends HttpServlet {
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * Servlet to handle a GET request.
 	 */
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
@@ -62,6 +64,7 @@ public class SearchStateService extends HttpServlet {
 	 * Handle the search requests,
 	 *
 	 */
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		process(req, resp);

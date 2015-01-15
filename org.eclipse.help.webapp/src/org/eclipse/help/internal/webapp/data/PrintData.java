@@ -215,8 +215,8 @@ public class PrintData extends RequestData {
 		}
 
 		ITopic[] subtopics = ScopeUtils.inScopeTopics(topic.getSubtopics(), scope);
-		for (int i = 0; i < subtopics.length; ++i) {
-			topicsRequested += topicsRequested(subtopics[i]);
+		for (ITopic subtopic : subtopics) {
+			topicsRequested += topicsRequested(subtopic);
 		}
 		return topicsRequested;
 	}
@@ -288,13 +288,13 @@ public class PrintData extends RequestData {
 	 */
 	public void generateContent(Writer out) throws IOException {
 		int topicsGenerated = 0;
-		generateContent(getTopic(), null, topicsGenerated, new HashSet(), out);
+		generateContent(getTopic(), null, topicsGenerated, new HashSet<String>(), out);
 	}
 
 	/*
 	 * Auxiliary method for recursively generating print content.
 	 */
-	private int generateContent(ITopic topic, String sectionId, int topicsGenerated, Set generated, Writer out) throws IOException {
+	private int generateContent(ITopic topic, String sectionId, int topicsGenerated, Set<String> generated, Writer out) throws IOException {
 		if (topicsGenerated < allowedMaxTopics) {
 			String href = topic.getHref();
 			if (href != null && href.length() > 0) {
@@ -435,9 +435,9 @@ public class PrintData extends RequestData {
 				return HelpPlugin.getTocManager().getTocs(getLocale())[index];
 			}
 			IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
-			for (int i=0;i<tocs.length;++i) {
-				if (tocs[i].getTopic(topicParam) != null) {
-					return tocs[i];
+			for (IToc toc : tocs) {
+				if (toc.getTopic(topicParam) != null) {
+					return toc;
 				}
 			}
 		}
@@ -467,13 +467,13 @@ public class PrintData extends RequestData {
 			}
 			else {
 				IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
-				for (int i=0;i<tocs.length;++i) {
-					ITopic topic = tocs[i].getTopic(topicParam);
+				for (IToc toc : tocs) {
+					ITopic topic = toc.getTopic(topicParam);
 					if (topic != null) {
 						return topic;
 					}
 					// Test for root node as topic
-					topic = tocs[i].getTopic(null);
+					topic = toc.getTopic(null);
 					if (topicParam.equals(topic.getHref())) {
 						return topic;
 					}
@@ -493,7 +493,7 @@ public class PrintData extends RequestData {
 	}
 	
 	private String getCssIncludes() {
-		List css = new ArrayList();
+		List<String> css = new ArrayList<String>();
 		CssUtil.addCssFiles("topic_css", css); //$NON-NLS-1$
 		return CssUtil.createCssIncludes(css, "../"); //$NON-NLS-1$
 	}

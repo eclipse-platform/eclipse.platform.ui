@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,8 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import org.osgi.framework.Bundle;
-
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
 /**
  * Uses a resource bundle to load images and strings from a property file in a
@@ -32,7 +31,7 @@ import org.eclipse.core.runtime.Platform;
 public class WebappResources {
 
 	// resource bundles indexed by locale
-	private static HashMap resourceBundleTable = new HashMap();
+	private static HashMap<Locale, ResourceBundle> resourceBundleTable = new HashMap<Locale, ResourceBundle>();
 
 	/**
 	 * Returns a string from a property file. It uses 'name' as a the key to
@@ -93,7 +92,7 @@ public class WebappResources {
 		try {
 			String stringFromPropertiesFile = bundle.getString(name);
 			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, args);
+					stringFromPropertiesFile, (Object[]) args);
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -111,7 +110,7 @@ public class WebappResources {
 			locale = getDefaultLocale();
 
 		// check cache
-		ResourceBundle bundle = (ResourceBundle) resourceBundleTable
+		ResourceBundle bundle = resourceBundleTable
 				.get(locale);
 
 		// load bundle

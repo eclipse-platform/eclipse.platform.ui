@@ -34,8 +34,8 @@ public class TocModelSerializer {
 			buf.append(indent + "      href=\"" + toc.getHref() + "\">\n");
 			
 			ITopic[] topics = toc.getTopics();
-			for (int i=0;i<topics.length;++i) {
-				buf.append(serializeAux(topics[i], indent + "   "));
+			for (ITopic topic : topics) {
+				buf.append(serializeAux(topic, indent + "   "));
 			}
 			
 			buf.append(indent + "</toc>");
@@ -52,8 +52,8 @@ public class TocModelSerializer {
 			buf.append(indent + "      href=\"" + topic.getHref() + "\">\n");
 			
 			ITopic[] subtopics = topic.getSubtopics();
-			for (int i=0;i<subtopics.length;++i) {
-				buf.append(serializeAux(subtopics[i], indent + "   "));
+			for (ITopic subtopic : subtopics) {
+				buf.append(serializeAux(subtopic, indent + "   "));
 			}
 			
 			buf.append(indent + "</topic>\n");

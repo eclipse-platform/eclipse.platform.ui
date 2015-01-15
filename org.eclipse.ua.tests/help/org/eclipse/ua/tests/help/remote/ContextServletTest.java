@@ -39,12 +39,14 @@ public class ContextServletTest extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}

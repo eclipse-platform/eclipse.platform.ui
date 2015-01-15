@@ -25,34 +25,42 @@ public class UaTestTocProvider extends AbstractTocProvider {
 	
 	private class TocContribution implements ITocContribution {
 
+		@Override
 		public String getCategoryId() {
 			return null;
 		}
 
+		@Override
 		public String getContributorId() {
 			return "org.eclipse.ua.tests";
 		}
 
+		@Override
 		public String[] getExtraDocuments() {
 			return new String[0];
 		}
 
+		@Override
 		public String getId() {
 			return "generatedToc";
 		}
 
+		@Override
 		public String getLinkTo() {
 			return "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/root.xml#generatedContent";
 		}
 
+		@Override
 		public String getLocale() {
 			return null;
 		}
 
+		@Override
 		public IToc getToc() {
 			return toc;
 		}
 
+		@Override
 		public boolean isPrimary() {
 			return false;
 		}
@@ -74,6 +82,7 @@ public class UaTestTocProvider extends AbstractTocProvider {
 		contributions = new ITocContribution[] { contribution };
 	}
 
+	@Override
 	public ITocContribution[] getTocContributions(String locale) {
 		return contributions; 
 	}

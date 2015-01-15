@@ -12,7 +12,6 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import javax.servlet.http.*;
 
@@ -36,9 +35,9 @@ public class CookieUtil {
 		String ret = null;
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
-				if (name.equals(cookies[i].getName())) {
-					ret = cookies[i].getValue();
+			for (Cookie cookie : cookies) {
+				if (name.equals(cookie.getName())) {
+					ret = cookie.getValue();
 					break;
 				}
 			}
@@ -109,11 +108,11 @@ public class CookieUtil {
 	
 	public static void deleteObsoleteCookies(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
-		HashSet cookiesToKeep= new HashSet();
-		HashSet cookiesToDelete = new HashSet();
+		HashSet<String> cookiesToKeep= new HashSet<String>();
+		HashSet<String> cookiesToDelete = new HashSet<String>();
 		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
-				    String name = cookies[i].getName();
+			for (Cookie cookie : cookies) {
+				    String name = cookie.getName();
 				    if (isObsoleteCookie(name) || cookiesToKeep.contains(name)) {
 				    	cookiesToDelete.add(name);
 				    }
@@ -121,8 +120,7 @@ public class CookieUtil {
 				}
 			}
 
-			for (Iterator iter = cookiesToDelete.iterator(); iter.hasNext();) {
-				String name = (String) iter.next();
+			for (String name : cookiesToDelete) {
 				deleteCookieUsingPath(name, request, response, request.getContextPath() + "/advanced/"); //$NON-NLS-1$
 				deleteCookieUsingPath(name, request, response, "/"); //$NON-NLS-1$
 			}

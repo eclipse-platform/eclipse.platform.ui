@@ -25,6 +25,7 @@ import org.xml.sax.InputSource;
 
 public class TocServiceTest extends TocServletTest {
 
+	@Override
 	protected Node getTocContributions( String locale)
 			throws Exception {
 		int port = WebappManager.getPort();

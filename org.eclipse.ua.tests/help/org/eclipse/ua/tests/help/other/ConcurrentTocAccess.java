@@ -72,6 +72,7 @@ public class ConcurrentTocAccess extends TestCase {
 			this.toc = toc;
 		}
 		
+		@Override
 		public void run() {
             try {
 				int result = traverseToc(toc);
@@ -148,8 +149,8 @@ public class ConcurrentTocAccess extends TestCase {
 
 	private int computeNumberOfLeafTopics(int[] dimensions) {
 		int expectedLeaves = 1;
-		for (int dim = 0; dim < dimensions.length; dim++) {
-			expectedLeaves = expectedLeaves * dimensions[dim];
+		for (int dimension : dimensions) {
+			expectedLeaves = expectedLeaves * dimension;
 		}
 		return expectedLeaves;
 	}

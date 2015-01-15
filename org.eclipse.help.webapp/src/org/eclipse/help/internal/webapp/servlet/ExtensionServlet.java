@@ -34,9 +34,10 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class ExtensionServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private Map responseByLocale;
+	private Map<String, String> responseByLocale;
 	private DocumentWriter writer;
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// set the character-set to UTF-8 before calling resp.getWriter()
@@ -50,9 +51,9 @@ public class ExtensionServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		
 		if (responseByLocale == null) {
-			responseByLocale = new WeakHashMap();
+			responseByLocale = new WeakHashMap<String, String>();
 		}
-		String response = (String)responseByLocale.get(locale);
+		String response = responseByLocale.get(locale);
 		if (response == null) {
 			ContentExtension[] extensions = HelpPlugin.getContentExtensionManager().getExtensions(locale);
 			try {
@@ -70,11 +71,11 @@ public class ExtensionServlet extends HttpServlet {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 		buf.append("<contentExtensions>\n"); //$NON-NLS-1$
-		for (int i = 0; i < extensions.length; ++i) {
+		for (ContentExtension extension : extensions) {
 			if (writer == null) {
 				writer = new DocumentWriter();
 			}
-			buf.append(writer.writeString(extensions[i], false));
+			buf.append(writer.writeString(extension, false));
 		}
 		buf.append("</contentExtensions>\n"); //$NON-NLS-1$
 		return buf.toString();

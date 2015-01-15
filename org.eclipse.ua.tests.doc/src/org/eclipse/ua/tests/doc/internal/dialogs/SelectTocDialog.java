@@ -46,11 +46,13 @@ public class SelectTocDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Check Table of Contents");
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite inner = new Composite(parent, SWT.NULL);
 		inner.setLayout(new GridLayout());
@@ -58,8 +60,8 @@ public class SelectTocDialog extends Dialog {
 		Label selectLabel = new Label(inner, SWT.NULL);
 		selectLabel.setText("Select a TOC to check");
 		tocList = new List(inner, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		for (int i = 0; i < tocs.length; i++) {
-			tocList.add(tocs[i].getLabel());
+		for (Toc toc : tocs) {
+			tocList.add(toc.getLabel());
 		}
 		tocList.setSelection(0);
 		GridData tocData = new GridData(GridData.FILL_BOTH);
@@ -76,6 +78,7 @@ public class SelectTocDialog extends Dialog {
 		return inner;
 	}
 	
+	@Override
 	protected void okPressed() {
 		selectedTocs = tocList.getSelectionIndices();
 		if (existButton.getSelection()) {
@@ -91,11 +94,11 @@ public class SelectTocDialog extends Dialog {
 	}
 	
 	public Toc[] getTocsToCheck() {
-		ArrayList selected = new ArrayList();
-		for (int i = 0; i < selectedTocs.length; i++) {
-		    selected.add(tocs[selectedTocs[i]]);
+		ArrayList<Toc> selected = new ArrayList<Toc>();
+		for (int selectedToc : selectedTocs) {
+		    selected.add(tocs[selectedToc]);
 		}
-		Toc[] tocsToCheck = (Toc[]) selected.toArray(new Toc[0]) ;
+		Toc[] tocsToCheck = selected.toArray(new Toc[0]) ;
 		return tocsToCheck;	
 	}
 	

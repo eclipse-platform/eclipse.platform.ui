@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -303,8 +302,8 @@ public class TocData extends ActivitiesData {
 	 */
 	public void generateBasicToc(int toc, Writer out) throws IOException {
 		ITopic[] topics = getEnabledSubtopics(tocs[toc]);
-		for (int i = 0; i < topics.length; i++) {
-			generateBasicTopic(topics[i], out);
+		for (ITopic topic : topics) {
+			generateBasicTopic(topic, out);
 		}
 
 	}
@@ -331,8 +330,8 @@ public class TocData extends ActivitiesData {
 
 			out.write("<ul>\n"); //$NON-NLS-1$
 
-			for (int i = 0; i < topics.length; i++) {
-				generateBasicTopic(topics[i], out);
+			for (ITopic topic2 : topics) {
+				generateBasicTopic(topic2, out);
 			}
 
 			out.write("</ul>\n"); //$NON-NLS-1$
@@ -384,8 +383,8 @@ public class TocData extends ActivitiesData {
 	 * @return ITopic[]
 	 */
 	public ITopic[] getEnabledSubtopics(Object element) {
-		List topics = getEnabledSubtopicList(element);
-		return (ITopic[])topics.toArray(new ITopic[topics.size()]);
+		List<ITopic> topics = getEnabledSubtopicList(element);
+		return topics.toArray(new ITopic[topics.size()]);
 	}
 	/**
 	 * Obtains children topics for a given navigation element. Topics from TOCs
@@ -394,10 +393,10 @@ public class TocData extends ActivitiesData {
 	 * @param navigationElement
 	 * @return List of ITopic
 	 */
-	private List getEnabledSubtopicList(Object element) {
+	private List<ITopic> getEnabledSubtopicList(Object element) {
 		if (element instanceof IToc && !isEnabled((IToc) element))
-			return Collections.EMPTY_LIST;
-		List children;
+			return Collections.emptyList();
+		List<ITopic> children;
 		if (element instanceof IToc) {
 			children = Arrays.asList(((IToc)element).getTopics());
 		}
@@ -406,18 +405,18 @@ public class TocData extends ActivitiesData {
 		}
 		else {
 			// unknown element type
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
-		List childTopics = new ArrayList(children.size());
-		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
-			Object c = childrenIt.next();
+		List<ITopic> childTopics = new ArrayList<ITopic>(children.size());
+		for (ITopic iTopic : children) {
+			Object c = iTopic;
 			if ((c instanceof ITopic)) {
 				// add topic only if it will not end up being an empty
 				// container
 				if (((((ITopic) c).getHref() != null && ((ITopic) c)
 						.getHref().length() > 0) || getEnabledSubtopicList(c).size() > 0) &&
 						!UAContentFilter.isFiltered(c, HelpEvaluationContext.getContext())) {
-					childTopics.add(c);
+					childTopics.add((ITopic) c);
 				}
 			} else {
 				// it is a Toc, Anchor or Link,
@@ -453,19 +452,18 @@ public class TocData extends ActivitiesData {
         } catch (IOException ioe) {
         }
         ITopic[] topics = topic.getSubtopics();
-        for (int i = 0; i < topics.length; i++) {
-            generateTopicLinks(topics[i], w, indent + 1);
+        for (ITopic topic2 : topics) {
+            generateTopicLinks(topic2, w, indent + 1);
         }
     }
 
     public void generateLinks(Writer out) {
-        for (int i = 0; i < tocs.length; i++) {
-            IToc toc = tocs[i];
+        for (IToc toc : tocs) {
             ITopic tocTopic = toc.getTopic(null);
             generateTopicLinks(tocTopic, out, 0);
             ITopic[] topics = toc.getTopics();
-            for (int t = 0; t < topics.length; t++) {
-                generateTopicLinks(topics[t], out, 1);
+            for (ITopic topic : topics) {
+                generateTopicLinks(topic, out, 1);
             }
         }
 

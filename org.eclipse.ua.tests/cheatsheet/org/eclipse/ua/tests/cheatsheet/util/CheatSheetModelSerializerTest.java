@@ -57,12 +57,12 @@ public class CheatSheetModelSerializerTest extends TestCase {
 	public void testRunSerializer() throws IOException {
 		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/cheatsheet/valid", ".xml", true);
 		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
-		for (int i=0;i<urls.length;++i) {
+		for (URL url : urls) {
 			CheatSheetParser parser = new CheatSheetParser();
-			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
-			Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + urls[i], sheet);
+			CheatSheet sheet = (CheatSheet)parser.parse(url, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
+			Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + url, sheet);
 			
-			PrintWriter out = new PrintWriter(new FileOutputStream(FileUtil.getResultFile(urls[i].toString().substring("file:/".length()))));
+			PrintWriter out = new PrintWriter(new FileOutputStream(FileUtil.getResultFile(url.toString().substring("file:/".length()))));
 			out.print(CheatSheetModelSerializer.serialize(sheet));
 			out.close();
 		}

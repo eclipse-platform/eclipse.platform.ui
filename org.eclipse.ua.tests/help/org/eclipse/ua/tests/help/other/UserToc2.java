@@ -26,6 +26,7 @@ public class UserToc2 extends UserToc implements IToc2 {
 
 	private List<ICriteria> criteria = new ArrayList<ICriteria>();
 
+	@Override
 	public IUAElement[] getChildren() {
 		IUAElement[] criteriaElements = getCriteria();
 		IUAElement[] topics = getTopics();
@@ -39,14 +40,17 @@ public class UserToc2 extends UserToc implements IToc2 {
 		criteria.add(child);
 	}
 
+	@Override
 	public ICriteria[] getCriteria() {
 		return criteria.toArray(new ICriteria[0]);
 	}
 
+	@Override
 	public String getIcon() {
 		return null;
 	}
 
+	@Override
 	public boolean isSorted() {
 		return false;
 	}

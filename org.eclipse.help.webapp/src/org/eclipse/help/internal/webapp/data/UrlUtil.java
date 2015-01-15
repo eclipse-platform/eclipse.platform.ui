@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -28,12 +27,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
-
-import org.eclipse.core.runtime.Platform;
 
 public class UrlUtil {
 
@@ -45,7 +43,7 @@ public class UrlUtil {
 	private static String defaultLocale;
 	// Locales that infocenter can serve in addition to the default locale.
 	// null indicates that infocenter can serve every possible client locale.
-	private static Collection locales;
+	private static Collection<String> locales;
 	
 	private static final int INFOCENTER_DIRECTION_BY_LOCALE = 1;
 	private static final int INFOCENTER_DIRECTION_LTR = 2;
@@ -60,12 +58,11 @@ public class UrlUtil {
 		char[] wordChars = new char[str.length()];
 		str.getChars(0, str.length(), wordChars, 0);
 		StringBuffer jsEncoded = new StringBuffer();
-		for (int j = 0; j < wordChars.length; j++) {
-			int unicode = wordChars[j];
+		for (char unicode : wordChars) {
 			// to enhance readability, do not encode A-Z,a-z
 			if (('A' <= unicode && unicode <= 'Z')
 					|| ('a' <= unicode && unicode <= 'z')) {
-				jsEncoded.append(wordChars[j]);
+				jsEncoded.append(unicode);
 				continue;
 			}
 			// encode the character
@@ -134,9 +131,9 @@ public class UrlUtil {
 		try {
 			String hostname = InetAddress.getLocalHost().getHostName();
 			InetAddress[] addr = InetAddress.getAllByName(hostname);
-			for (int i = 0; i < addr.length; i++) {
+			for (InetAddress element : addr) {
 				// test all addresses retrieved from the local machine
-				if (addr[i].getHostAddress().equals(reqIP))
+				if (element.getHostAddress().equals(reqIP))
 					return true;
 			}
 		} catch (IOException ioe) {
@@ -515,8 +512,8 @@ public class UrlUtil {
 			return request.getLocale().toString();
 		}
 		// match client browser locales with one of infocenter locales
-		for (Enumeration e = request.getLocales(); e.hasMoreElements();) {
-			String locale = ((Locale) e.nextElement()).toString();
+		for (Enumeration<Locale> e = request.getLocales(); e.hasMoreElements();) {
+			String locale = e.nextElement().toString();
 			if (locale.length() >= 5) {
 				String ll_CC = locale.substring(0, 5);
 				if (locales.contains(ll_CC)) {
@@ -580,9 +577,9 @@ public class UrlUtil {
 			// check if locale was passed earlier in this session
 			Cookie[] cookies = request.getCookies();
 			if (cookies != null) {
-        			for (int c = 0; c < cookies.length; c++) {
-        				if ("lang".equals(cookies[c].getName())) { //$NON-NLS-1$
-        					forcedLocale = cookies[c].getValue();
+        			for (Cookie cookie : cookies) {
+        				if ("lang".equals(cookie.getName())) { //$NON-NLS-1$
+        					forcedLocale = cookie.getValue();
         					break;
         				}
         			}
@@ -631,21 +628,21 @@ public class UrlUtil {
 		}
 
 		// locale strings as passed in command line or in preferences
-		final List infocenterLocales= new ArrayList();
+		final List<String> infocenterLocales= new ArrayList<String>();
 
 		// first check if locales passed as command line arguments
 		String[] args = Platform.getCommandLineArgs();
 		boolean localeOption = false;
-		for (int i = 0; i < args.length; i++) {
-			if ("-locales".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
+		for (String arg : args) {
+			if ("-locales".equalsIgnoreCase(arg)) { //$NON-NLS-1$
 				localeOption = true;
 				continue;
-			} else if (args[i].startsWith("-")) { //$NON-NLS-1$
+			} else if (arg.startsWith("-")) { //$NON-NLS-1$
 				localeOption = false;
 				continue;
 			}
 			if (localeOption) {
-				infocenterLocales.add(args[i]);
+				infocenterLocales.add(arg);
 			}
 		}
 		// if no locales from command line, get them from preferences
@@ -661,9 +658,8 @@ public class UrlUtil {
 
 		// format locales and collect in a set for lookup
 		if (!infocenterLocales.isEmpty()) {
-			locales = new HashSet(10, 0.4f);
-			for (Iterator it = infocenterLocales.iterator(); it.hasNext();) {
-				String locale = (String) it.next();
+			locales = new HashSet<String>(10, 0.4f);
+			for (String locale : infocenterLocales) {
 				if (locale.length() >= 5) {
 					locales.add(locale.substring(0, 2).toLowerCase(Locale.ENGLISH) + "_" //$NON-NLS-1$
 							+ locale.substring(3, 5).toUpperCase(Locale.ENGLISH));

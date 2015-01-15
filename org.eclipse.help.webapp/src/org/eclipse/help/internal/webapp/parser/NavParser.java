@@ -23,6 +23,7 @@ public class NavParser extends ResultParser {
 		super(JSonHelper.TITLE);
 	}
 	
+	@Override
 	public void startElement(String uri, String lname, String name, Attributes attrs) {
 		
 		Properties properties = new Properties();
@@ -43,6 +44,7 @@ public class NavParser extends ResultParser {
 		element = elem;
 	}
 	
+	@Override
 	public void endElement(String uri, String lname, String name) {
 		
 		if (element != null) {
@@ -50,6 +52,7 @@ public class NavParser extends ResultParser {
 		}
 	}
 	
+	@Override
 	public String toJSON() {
 		
 		StringBuffer buf = new StringBuffer();
@@ -68,7 +71,7 @@ public class NavParser extends ResultParser {
 		buf.append(JSonHelper.getQuotes(label));
 		buf.append(JSonHelper.COMMA);
 		
-		ParseElement elem = (ParseElement) items.get(0);
+		ParseElement elem = items.get(0);
 		if (elem != null)
 			buf.append(elem.toJSON());
 		

@@ -25,6 +25,7 @@ import junit.framework.TestCase;
  */
 public class FilterExtensionTest extends TestCase {
 	
+	@Override
 	protected void tearDown() throws Exception {
         ExtraFilters.setFilters(new PrioritizedFilter[0]);
 	}

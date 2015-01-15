@@ -62,14 +62,14 @@ public class ToolbarButton {
 	}
 
 	public String[][] getMenuData() {
-		List list = new ArrayList();
+		List<String[]> list = new ArrayList<String[]>();
 		StringTokenizer tok = new StringTokenizer(param, ","); //$NON-NLS-1$
 		while(tok.hasMoreTokens()) {
 			String token = tok.nextToken();
 			int index = token.indexOf('=');
 			list.add(new String[] { token.substring(0, index), token.substring(index + 1) });
 		}
-		return (String[][])list.toArray(new String[list.size()][]);
+		return list.toArray(new String[list.size()][]);
 	}
 	
 	public String getTooltip() {

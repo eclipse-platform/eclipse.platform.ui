@@ -38,6 +38,7 @@ public class DynamicXHTMLProcessorTest extends TestCase {
 		return new TestSuite(DynamicXHTMLProcessorTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		// activate the UI plug-in for UI filtering ability
 		HelpUIPlugin.getDefault();

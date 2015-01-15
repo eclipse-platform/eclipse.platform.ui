@@ -27,10 +27,12 @@ public class RemotePreferenceTest extends TestCase {
 		prefs.put(name, value);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 	}

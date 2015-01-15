@@ -53,13 +53,13 @@ public class ProducerSerializerTest extends TestCase {
 
 	public void testGenerateOutput() throws Exception {
 		IToc[] tocs = HelpSystem.getTocs();
-		for (int i=0;i<tocs.length;++i) {
+		for (IToc toc : tocs) {
 			// only look for content in data/help/producer
-			if (tocs[i].getHref().indexOf("data/help/producer/") != -1) {
-				ITopic[] topics = tocs[i].getTopics();
+			if (toc.getHref().indexOf("data/help/producer/") != -1) {
+				ITopic[] topics = toc.getTopics();
 				// only goes one level deep - don't need subtopics here
-				for (int j=0;j<topics.length;++j) {
-					String href = topics[j].getHref();
+				for (ITopic topic : topics) {
+					String href = topic.getHref();
 					String pluginRoot = UserAssistanceTestPlugin.getDefault().getBundle().getLocation().substring("update@".length());
 					String relativePath = href.substring(href.indexOf('/', 1));
 					String absolutePath = pluginRoot + relativePath;

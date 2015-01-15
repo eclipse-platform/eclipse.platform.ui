@@ -28,6 +28,7 @@ import org.eclipse.help.internal.server.WebappManager;
  */
 public class TocZipTest extends TestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 	}

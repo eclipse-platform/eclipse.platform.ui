@@ -48,6 +48,7 @@ public class InjectionFilter implements IFilter {
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		boolean isUnfiltered = ProductPreferences.useEnablementFilters();
 
@@ -68,7 +69,7 @@ public class InjectionFilter implements IFilter {
 			return out;
 		}
 
-		List cssIncludes = new ArrayList();
+		List<String> cssIncludes = new ArrayList<String>();
 		if (isNav) {
 			CssUtil.addCssFiles(NAV_CSS, cssIncludes);
 		} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ package org.eclipse.help.webapp;
  * @since 3.5
  */
 
-public abstract class AbstractFrame implements Comparable {
+public abstract class AbstractFrame implements Comparable<AbstractFrame> {
 	
 	/**
 	 * Constant returned from getFrameLocation() function to indicate that
@@ -66,9 +66,13 @@ public abstract class AbstractFrame implements Comparable {
     	return "\"marginwidth=\"1\" marginheight=\"1\" frameborder=\"1\" scrolling=\"no\""; //$NON-NLS-1$
     }
     
-    final public int compareTo(Object o) {
-    	if (o instanceof AbstractFrame) {
-    		String objectName = ((AbstractFrame)o).getName();
+    /**
+	 * @since 3.7
+	 */
+    @Override
+	final public int compareTo(AbstractFrame o) {
+    	if (o != null) {
+    		String objectName = o.getName();
 			return (getName().compareTo(objectName));
     	}
     	return 0;

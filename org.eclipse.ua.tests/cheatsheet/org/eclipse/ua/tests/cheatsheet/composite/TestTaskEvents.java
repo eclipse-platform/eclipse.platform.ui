@@ -76,6 +76,7 @@ public class TestTaskEvents extends TestCase {
 	}
 	
 	public class ModelObserver implements Observer {
+		@Override
 		public void update(Observable o, Object arg) {
 			taskMap.put((ICompositeCheatSheetTask)arg);
 		}
@@ -123,6 +124,7 @@ public class TestTaskEvents extends TestCase {
 		group2.addSubtask(task2B);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		resetTaskMap();
 	}

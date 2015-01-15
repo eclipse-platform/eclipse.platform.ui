@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -104,29 +104,28 @@ public class IntroModelSerializer {
         printPageStyles(rootPage, text);
     }
 
-    @SuppressWarnings("unchecked")
 	private void printPageStyles(AbstractIntroPage page, StringBuffer text) {
         text.append("\n\tpage styles are = "); //$NON-NLS-1$
         String[] styles = page.getStyles();
-        for (int i = 0; i < styles.length; i++)
-            text.append(filterURL(styles[i] + "\n\t\t\t")); //$NON-NLS-1$
+        for (String style : styles)
+			text.append(filterURL(style + "\n\t\t\t")); //$NON-NLS-1$
         text.append("\n\tpage alt-styles are = "); //$NON-NLS-1$
 
-        final Hashtable altStylesHashtable = page.getAltStyles();
+        final Hashtable<String, Bundle> altStylesHashtable = page.getAltStyles();
         if (altStylesHashtable == null)
             return;
 
-        Set set = altStylesHashtable.keySet();
+        Set<String> set = altStylesHashtable.keySet();
         String[] sorted = new String[set.size()];
         set.toArray(sorted);
         for (int i=0;i<sorted.length;++i) {
-        	Bundle bundle = (Bundle) altStylesHashtable.get(sorted[i]);
+        	Bundle bundle = altStylesHashtable.get(sorted[i]);
             sorted[i] = filterURL(sorted[i]) + " from " + bundle.getSymbolicName(); //$NON-NLS-1$
         }
         Arrays.sort(sorted);
         
-        for (int i=0;i<sorted.length;++i) {
-            text.append(sorted[i] + "\n\t\t"); //$NON-NLS-1$
+        for (String element : sorted) {
+            text.append(element + "\n\t\t"); //$NON-NLS-1$
         }
     }
 
@@ -142,41 +141,41 @@ public class IntroModelSerializer {
             StringBuffer text, String indent) {
 
         AbstractIntroElement[] children = container.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            int childType = children[i].getType();
+        for (AbstractIntroElement element : children) {
+            int childType = element.getType();
             switch (childType) {
             case AbstractIntroElement.ELEMENT:
                 text.append("SHOULD NEVER BE HERE"); //$NON-NLS-1$
                 break;
             case AbstractIntroElement.GROUP:
-                printGroup(text, (IntroGroup) children[i], indent);
+                printGroup(text, (IntroGroup) element, indent);
                 break;
             case AbstractIntroElement.LINK:
-                printLink(text, (IntroLink) children[i], indent);
+                printLink(text, (IntroLink) element, indent);
                 break;
             case AbstractIntroElement.TEXT:
-                printText(text, (IntroText) children[i], indent);
+                printText(text, (IntroText) element, indent);
                 break;
             case AbstractIntroElement.IMAGE:
-                printImage(text, (IntroImage) children[i], indent);
+                printImage(text, (IntroImage) element, indent);
                 break;
             case AbstractIntroElement.HTML:
-                printHtml(text, (IntroHTML) children[i], indent);
+                printHtml(text, (IntroHTML) element, indent);
                 break;
             case AbstractIntroElement.INCLUDE:
-                printInclude(text, (IntroInclude) children[i], indent);
+                printInclude(text, (IntroInclude) element, indent);
                 break;
             case AbstractIntroElement.HEAD:
-                printHead(text, (IntroHead) children[i], indent);
+                printHead(text, (IntroHead) element, indent);
                 break;
             case AbstractIntroElement.PAGE_TITLE:
-                printPageTitle(text, (IntroPageTitle) children[i], indent);
+                printPageTitle(text, (IntroPageTitle) element, indent);
                 break;
             case AbstractIntroElement.ANCHOR:
-                printAnchor(text, (IntroAnchor) children[i], indent);
+                printAnchor(text, (IntroAnchor) element, indent);
                 break;
             case AbstractIntroElement.CONTENT_PROVIDER:
-                printContentProvidor(text, (IntroContentProvider) children[i],
+                printContentProvidor(text, (IntroContentProvider) element,
                     indent);
                 break;
 
@@ -272,15 +271,15 @@ public class IntroModelSerializer {
      * @param text
      */
     private void printPages(IntroPage[] pages, StringBuffer text) {
-        for (int i = 0; i < pages.length; i++) {
-            text.append("\n\nPAGE id = " + pages[i].getId()); //$NON-NLS-1$
+        for (IntroPage page : pages) {
+            text.append("\n\nPAGE id = " + page.getId()); //$NON-NLS-1$
             text.append("\n----------"); //$NON-NLS-1$
-            text.append("\n\ttitle = " + pages[i].getTitle()); //$NON-NLS-1$
-            text.append("\n\tstyle = " + filterURL(pages[i].getStyle())); //$NON-NLS-1$
-            text.append("\n\talt-style = " + filterURL(pages[i].getAltStyle())); //$NON-NLS-1$
-            text.append("\n\tstyle-id = " + pages[i].getStyleId()); //$NON-NLS-1$
-            printPageStyles(pages[i], text);
-            printPageChildren(pages[i], text);
+            text.append("\n\ttitle = " + page.getTitle()); //$NON-NLS-1$
+            text.append("\n\tstyle = " + filterURL(page.getStyle())); //$NON-NLS-1$
+            text.append("\n\talt-style = " + filterURL(page.getAltStyle())); //$NON-NLS-1$
+            text.append("\n\tstyle-id = " + page.getStyleId()); //$NON-NLS-1$
+            printPageStyles(page, text);
+            printPageChildren(page, text);
         }
     }
 
@@ -353,7 +352,8 @@ public class IntroModelSerializer {
     /**
      * @return Returns the textUI.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return buffer.toString();
     }
 }

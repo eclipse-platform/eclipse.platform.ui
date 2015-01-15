@@ -30,6 +30,7 @@ public class MockIndexServlet extends IndexServlet {
 
 	private static final long serialVersionUID = -930969620357059313L;
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);

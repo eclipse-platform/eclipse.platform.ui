@@ -32,6 +32,7 @@ public class UserIndex implements IIndex {
 		this.enabled = true;
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
 		return getEntries();
 	}
@@ -40,10 +41,12 @@ public class UserIndex implements IIndex {
 		entries.add(child);
 	}
 
+	@Override
 	public IIndexEntry[] getEntries() {
 		return entries.toArray(new IIndexEntry[0]);
 	}
 
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return enabled;
 	}

@@ -35,6 +35,7 @@ public class HighlightFilter implements IFilter {
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
 		if (uri == null) {
@@ -44,7 +45,7 @@ public class HighlightFilter implements IFilter {
 			return out;
 		}
 
-		Collection keywords = getWords(req);
+		Collection<String> keywords = getWords(req);
 		if (keywords.size() == 0) {
 			return out;
 		}
@@ -64,17 +65,17 @@ public class HighlightFilter implements IFilter {
 	 * @param keywords
 	 * @return byte[]
 	 */
-	private byte[] createJScript(HttpServletRequest req, Collection keywords) {
+	private byte[] createJScript(HttpServletRequest req, Collection<String> keywords) {
 		StringBuffer buf = new StringBuffer(scriptPart1);
 		StringBuffer buf2 = new StringBuffer(sheetRefPart1);
 		// append comma separated list of keywords
-		Iterator it = keywords.iterator();
+		Iterator<String> it = keywords.iterator();
 		if (!it.hasNext())
 			return null;
-		String keyword = (String) it.next();
+		String keyword = it.next();
 		buf.append("\"").append(keyword).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		while (it.hasNext()) {
-			keyword = (String) it.next();
+			keyword = it.next();
 			buf.append(", \"").append(keyword).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		buf.append(scriptPart2);
@@ -102,9 +103,9 @@ public class HighlightFilter implements IFilter {
 	 * 
 	 * @return Collection of String
 	 */
-	private Collection getWords(HttpServletRequest req) {
+	private Collection<String> getWords(HttpServletRequest req) {
 		// Collect words to hash set to eliminate duplcates
-		Collection tokens = new ArrayList();
+		Collection<String> tokens = new ArrayList<String>();
 
 		String searchWord = req.getParameter("resultof"); //$NON-NLS-1$
 		if (searchWord == null) {
@@ -141,12 +142,11 @@ public class HighlightFilter implements IFilter {
 	 * 
 	 * @return Collection of String
 	 */
-	private Collection encodeKeyWords(Collection col) {
+	private Collection<String> encodeKeyWords(Collection<String> col) {
 		if (col == null)
 			return col;
-		Collection result = new ArrayList();
-		for (Iterator it = col.iterator(); it.hasNext();) {
-			String word = (String) it.next();
+		Collection<String> result = new ArrayList<String>();
+		for (String word : col) {
 			int l = word.length();
 			if (l < 1)
 				continue;
@@ -161,14 +161,13 @@ public class HighlightFilter implements IFilter {
 	 * 
 	 * @return Collection of String
 	 */
-	private Collection removeWildCards(Collection col) {
+	private Collection<String> removeWildCards(Collection<String> col) {
 		if (col == null)
 			return col;
 
 		// Split words into parts: before "*" and after "*"
-		Collection resultPass1 = new ArrayList();
-		for (Iterator it = col.iterator(); it.hasNext();) {
-			String word = (String) it.next();
+		Collection<String> resultPass1 = new ArrayList<String>();
+		for (String word : col) {
 			int index;
 			while ((index = word.indexOf("*")) >= 0) { //$NON-NLS-1$
 				if (index > 0)
@@ -181,9 +180,8 @@ public class HighlightFilter implements IFilter {
 		}
 
 		// Split words into parts: before "?" and after "?"
-		Collection resultPass2 = new ArrayList();
-		for (Iterator it = resultPass1.iterator(); it.hasNext();) {
-			String word = (String) it.next();
+		Collection<String> resultPass2 = new ArrayList<String>();
+		for (String word : resultPass1) {
 			int index;
 			while ((index = word.indexOf("?")) >= 0) { //$NON-NLS-1$
 				if (index > 0)

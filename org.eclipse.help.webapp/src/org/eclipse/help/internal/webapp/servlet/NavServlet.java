@@ -49,6 +49,7 @@ public class NavServlet extends HttpServlet {
 		new FramesetFilter(), new InjectionFilter(false), new BreadcrumbsFilter(), 
 		new ShowInTocFilter(), new ExtraFilters() };
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Locale locale = getLocale(req, resp);
 
@@ -66,8 +67,8 @@ public class NavServlet extends HttpServlet {
 		}
 
 		OutputStream out = resp.getOutputStream();
-		for (int i = 0; i < filters.length; i++) {
-			out = filters[i].filter(req, out);
+		for (IFilter filter : filters) {
+			out = filter.filter(req, out);
 		}
 
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$

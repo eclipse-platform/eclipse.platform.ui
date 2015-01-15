@@ -29,6 +29,7 @@ public class TestState extends TestCase {
 	
 	private CompositeCheatSheetModel model;
 	
+	@Override
 	protected void setUp() throws Exception {
 		model = new CompositeCheatSheetModel("name", "description", "explorerId");
 	}

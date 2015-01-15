@@ -64,6 +64,7 @@ public class AdvancedSearchService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static final String XID = "xid"; //$NON-NLS-1$
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,24 +38,28 @@ import org.eclipse.help.internal.validation.TocValidator.BrokenLink;
 public class TocLinkChecker extends TestCase {
 	
 	private final class ReferenceFilter extends TocValidator.Filter {
+		@Override
 		public boolean isIncluded(String href) {
 			return href.startsWith("reference");
 		}
 	}
 	
 	private final class NonReferenceFilter extends TocValidator.Filter {
+		@Override
 		public boolean isIncluded(String href) {
 			return !href.startsWith("reference");
 		}
 	}
 	
 	private final class NonReferenceNonSampleFilter extends TocValidator.Filter {
+		@Override
 		public boolean isIncluded(String href) {
 			return !href.startsWith("reference") && !href.startsWith("samples");
 		}
 	}
 	
 	private final class ReferenceOrSampleFilter extends TocValidator.Filter {
+		@Override
 		public boolean isIncluded(String href) {
 			return href.startsWith("reference") || href.startsWith("samples");
 		}
@@ -72,49 +76,49 @@ public class TocLinkChecker extends TestCase {
 	}
 	
 	public void testPlatformUser() throws Exception {
-		ArrayList failures = TocValidator.validate(PLATFORM_USER);
+		ArrayList<BrokenLink> failures = TocValidator.validate(PLATFORM_USER);
 		doAssert(failures);
 	}
 
 	public void testPlatformIsvStatic() throws Exception {
-		ArrayList failures = TocValidator.filteredValidate(PLATFORM_ISV, new NonReferenceNonSampleFilter());
+		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PLATFORM_ISV, new NonReferenceNonSampleFilter());
 		doAssert(failures);
 	}
 	
 	public void testPlatformIsvGenerated() throws Exception {
-		ArrayList failures = TocValidator.filteredValidate(PLATFORM_ISV, new ReferenceOrSampleFilter());
+		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PLATFORM_ISV, new ReferenceOrSampleFilter());
 		doAssert(failures);
 	}
 
 	public void testPdeUserStatic() throws Exception {
-		ArrayList failures = TocValidator.filteredValidate(PDE_USER, new NonReferenceFilter());
+		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PDE_USER, new NonReferenceFilter());
 		doAssert(failures);
 	}
 	
 	public void testPdeUserGenerated() throws Exception {
-		ArrayList failures = TocValidator.filteredValidate(PDE_USER, new ReferenceFilter());
+		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PDE_USER, new ReferenceFilter());
 		doAssert(failures);
 	}
 	
 	public void testJdtUser() throws Exception {
-		ArrayList failures = TocValidator.validate(JDT_USER);
+		ArrayList<BrokenLink> failures = TocValidator.validate(JDT_USER);
 		doAssert(failures);
 	}
 	
 	public void testJdtIsvStatic() throws Exception {
-		ArrayList failures = TocValidator.filteredValidate(JDT_ISV, new NonReferenceFilter());
+		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(JDT_ISV, new NonReferenceFilter());
 		doAssert(failures);
 	}
 	
 	public void testJdtIsvGenerated() throws Exception {
-		ArrayList failures = TocValidator.filteredValidate(JDT_ISV, new ReferenceFilter());
+		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(JDT_ISV, new ReferenceFilter());
 		doAssert(failures);
 	}
 	
-	private void doAssert(List failures) {
+	private void doAssert(List<BrokenLink> failures) {
 		StringBuffer message = new StringBuffer();
 		for (int i = 0; i < failures.size(); i++) {
-			BrokenLink link = (BrokenLink)failures.get(i);
+			BrokenLink link = failures.get(i);
 			message.append("Invalid link in \"" + link.getTocID() + "\": " + link.getHref() + "\n");
 		}
 		Assert.assertTrue(message.toString(), failures.isEmpty());

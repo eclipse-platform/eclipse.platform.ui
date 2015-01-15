@@ -25,12 +25,14 @@ public class LoadIndexUsingRemoteHelp extends TestCase {
 	
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
@@ -72,9 +74,9 @@ public class LoadIndexUsingRemoteHelp extends TestCase {
 	private IIndexEntry[] matchingEntries(IIndex index, String keyword) {
 		List<IIndexEntry> matches = new ArrayList<IIndexEntry>();
 		IIndexEntry[] entries = index.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (keyword.equals(entries[i].getKeyword())) {
-				matches.add(entries[i]);
+		for (IIndexEntry entrie : entries) {
+			if (keyword.equals(entrie.getKeyword())) {
+				matches.add(entrie);
 			}
 		}
 		return matches.toArray(new IIndexEntry[matches.size()]);

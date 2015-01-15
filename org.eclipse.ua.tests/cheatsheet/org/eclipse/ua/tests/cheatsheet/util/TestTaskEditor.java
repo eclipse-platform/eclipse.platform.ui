@@ -31,6 +31,7 @@ public class TestTaskEditor extends TaskEditor {
 
 	private Composite control;
 	
+	@Override
 	public void createControl(Composite parent, FormToolkit toolkit) {
 		control = new Composite(parent, SWT.NULL);
 		control.setLayout(new GridLayout());
@@ -39,14 +40,17 @@ public class TestTaskEditor extends TaskEditor {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
+	@Override
 	public Control getControl() {
 		return control;
 	}
 
+	@Override
 	public void setInput(IEditableTask task, IMemento memento) {
 		// Do nothing
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		// Do nothing
 	}

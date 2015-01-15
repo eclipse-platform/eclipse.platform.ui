@@ -51,10 +51,10 @@ public class PreferenceWriter {
 	private void writePreference(String plugin) {
 		try {
 		    IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(plugin);
-			Set keySet = new HashSet();
+			Set<String> keySet = new HashSet<String>();
 		    prefs = DefaultScope.INSTANCE.getNode(plugin);
 			keySet.addAll(Arrays.asList(prefs.keys()));
-			String[] allKeys = (String[]) keySet.toArray(new String[keySet.size()]);
+			String[] allKeys = keySet.toArray(new String[keySet.size()]);
 			if (allKeys.length > 0) {
 			    Arrays.sort(allKeys);
 			    
@@ -68,8 +68,7 @@ public class PreferenceWriter {
 					buf.append(XMLGenerator.xmlEscape(plugin));
 					buf.append("\">"); //$NON-NLS-1$
 			    }
-			    for (int i = 0; i < allKeys.length; i++) {
-			    	String key = allKeys[i];
+			    for (String key : allKeys) {
 			    	String value = Platform.getPreferencesService().getString
 			    			(plugin, key, "", null); //$NON-NLS-1$
 			    	if (!isXML) {

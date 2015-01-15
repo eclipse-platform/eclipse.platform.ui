@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,18 +22,17 @@ import org.eclipse.help.internal.webapp.servlet.XMLGenerator;
 
 public class SearchXMLGenerator  {
 
-	public static String serialize(Collection results) {
-		return serialize((results != null) ? results.toArray() : null, false);
+	public static String serialize(Collection<SearchHit> results) {
+		return serialize((results != null) ? results.toArray(new SearchHit[results.size()]) : null, false);
 	}
 	
-	public static String serialize(Object[] hits, boolean boolIsCategory) {
+	public static String serialize(SearchHit[] hits, boolean boolIsCategory) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 		buf.append("<searchHits>\n"); //$NON-NLS-1$
 		
 		if (hits != null) {
-			for (int i = 0; i < hits.length; i++) {
-				SearchHit hit = (SearchHit) hits[i];
+			for (SearchHit hit : hits) {
 				serialize(hit, buf, "   ", boolIsCategory); //$NON-NLS-1$
 			}
 		}

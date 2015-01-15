@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ public class TocAssemblerTest extends TestCase {
 		return new TestSuite(TocAssemblerTest.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testAssemble() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
@@ -45,11 +44,11 @@ public class TocAssemblerTest extends TestCase {
 		TocContribution result_b_c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/result_b_c.xml", true, "en", null, null));
 		
 		TocAssembler assembler = new TocAssembler();
-		List contributions = new ArrayList(Arrays.asList(new Object[] { b, c }));
+		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(b, c));
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 		String expected = serialize(result_b_c);
-		String actual = serialize((TocContribution)contributions.get(0));
+		String actual = serialize(contributions.get(0));
 		XMLUtil.assertXMLEquals("Assembled TOC did not match expected result", expected, actual);
 
 		TocContribution a = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/a.xml", true, "en", null, null));
@@ -58,12 +57,12 @@ public class TocAssemblerTest extends TestCase {
 		TocContribution d = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/d.xml", false, "en", null, null));
 		TocContribution result_a_b_c_d = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/result_a_b_c_d.xml", true, "en", null, null));
 
-		contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c, d }));
+		contributions = new ArrayList<TocContribution>(Arrays.asList(a, b, c, d));
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 		
 		expected = serialize(result_a_b_c_d);
-		actual = serialize((TocContribution)contributions.get(0));
+		actual = serialize(contributions.get(0));
 		XMLUtil.assertXMLEquals("Assembled TOC did not match expected result", expected, actual);
 	}
 	
@@ -74,8 +73,7 @@ public class TocAssemblerTest extends TestCase {
 		TocContribution linkTo3 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo3.xml", true, "en", null, null));
 		
 		TocAssembler assembler = new TocAssembler();
-		@SuppressWarnings("unchecked")
-		List contributions = new ArrayList(Arrays.asList(new Object[] { linkTo1, linkTo2, linkTo3 }));
+		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(linkTo1, linkTo2, linkTo3));
 		contributions = assembler.assemble(contributions);
 		assertEquals(3, contributions.size());
 	}
@@ -85,10 +83,9 @@ public class TocAssemblerTest extends TestCase {
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
 		TocContribution c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/c.xml", true, "en", null, null));
 		TocAssembler assembler = new TocAssembler();
-		@SuppressWarnings("unchecked")
-		List contributions = new ArrayList(Arrays.asList(new Object[] { b, c }));
+		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(b, c));
 		contributions = assembler.assemble(contributions);
-		IToc toc =((TocContribution)contributions.get(0)).getToc();
+		IToc toc =contributions.get(0).getToc();
 		assertNotNull(toc.getTopic("/org.eclipse.ua.tests/B_topic3.html"));
 		assertNotNull(toc.getTopic("/org.eclipse.ua.tests/C_topic.html"));
 		assertNull(toc.getTopic("/org.eclipse.ua.tests/D_topic.html"));

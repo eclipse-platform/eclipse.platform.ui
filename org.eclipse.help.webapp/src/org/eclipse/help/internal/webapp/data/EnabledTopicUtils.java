@@ -46,8 +46,8 @@ public class EnabledTopicUtils {
 	
 	public static boolean hasEnabledSubtopic(ITopic topic) {
 		ITopic[] subtopics = topic.getSubtopics();
-		for (int i = 0; i < subtopics.length; i++) {
-			if (isEnabled(subtopics[i])) {
+		for (ITopic subtopic : subtopics) {
+			if (isEnabled(subtopic)) {
 				return true;
 			}
 		}
@@ -66,8 +66,8 @@ public class EnabledTopicUtils {
 		}
 		// A toc is enabled only if at least one subtopic is enabled
 		ITopic[] subtopics = toc.getTopics();
-		for (int i = 0; i < subtopics.length; i++) {
-			if (isEnabled(subtopics[i])) {
+		for (ITopic subtopic : subtopics) {
+			if (isEnabled(subtopic)) {
 				return true;
 			}
 		}
@@ -84,21 +84,21 @@ public class EnabledTopicUtils {
 			return false;
 		}
 		ITopic[] topics = entry.getTopics();
-		for (int i=0;i<topics.length;++i) {
-			if (isEnabled(topics[i])) {
+		for (ITopic topic : topics) {
+			if (isEnabled(topic)) {
 				return true;
 			}
 		}
 		IIndexEntry[] subentries = entry.getSubentries();
-		for (int i=0;i<subentries.length;++i) {
-			if (isEnabled(subentries[i])) {
+		for (IIndexEntry subentrie : subentries) {
+			if (isEnabled(subentrie)) {
 				return true;
 			}
 		}
 		if (entry instanceof IIndexEntry2) {
 			IIndexSee[] sees = ((IIndexEntry2)entry).getSees();
-			for (int i = 0; i < sees.length; i++) {
-				if (isEnabled(sees[i])) {
+			for (IIndexSee see : sees) {
+				if (isEnabled(see)) {
 					return true;
 				}
 			}
@@ -118,13 +118,13 @@ public class EnabledTopicUtils {
 	public static IIndexEntry[] getEnabled(IIndexEntry[] entries) {
 		for (int i=0;i<entries.length;++i) {
 			if (!isEnabled(entries[i])) {
-				List list = new ArrayList(entries.length);
+				List<IIndexEntry> list = new ArrayList<IIndexEntry>(entries.length);
 				for (int j=0;j<entries.length;++j) {
 					if (j < i || isEnabled(entries[j])) {
 						list.add(entries[j]);
 					}
 				}
-				return (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
+				return list.toArray(new IIndexEntry[list.size()]);
 			}
 		}
 		return entries;
@@ -138,13 +138,13 @@ public class EnabledTopicUtils {
 	public static ITopic[] getEnabled(ITopic[] topics) {
 		for (int i=0;i<topics.length;++i) {
 			if (!isEnabled(topics[i])) {
-				List list = new ArrayList(topics.length);
+				List<ITopic> list = new ArrayList<ITopic>(topics.length);
 				for (int j=0;j<topics.length;++j) {
 					if (j < i || isEnabled(topics[j])) {
 						list.add(topics[j]);
 					}
 				}
-				return (ITopic[])list.toArray(new ITopic[list.size()]);
+				return list.toArray(new ITopic[list.size()]);
 			}
 		}
 		return topics;

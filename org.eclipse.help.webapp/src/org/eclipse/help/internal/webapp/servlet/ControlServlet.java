@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.webapp.data.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpApplication;
+import org.eclipse.help.internal.base.HelpDisplay;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.osgi.framework.Bundle;
 
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
@@ -103,6 +109,7 @@ public class ControlServlet extends HttpServlet {
 	 * Called by the servlet container to indicate to a servlet that the servlet
 	 * is being placed into service.
 	 */
+	@Override
 	public void init() throws ServletException {
 		super.init();
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
@@ -114,6 +121,7 @@ public class ControlServlet extends HttpServlet {
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * servlet to handle a GET request.
 	 */
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		processRequest(req, resp);
@@ -123,6 +131,7 @@ public class ControlServlet extends HttpServlet {
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * servlet to handle a POST request.
 	 */
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		processRequest(req, resp);
@@ -202,13 +211,13 @@ public class ControlServlet extends HttpServlet {
 				System.out.println("No class name for command " + command); //$NON-NLS-1$
 				return;
 			}
-			Class c = bundle.loadClass(className);
+			Class<?> c = bundle.loadClass(className);
 			if (c == null) {
 				System.out.println("No class for command " + command); //$NON-NLS-1$
 				return;
 			}
-			Class[] parameterTypes = getParameterTypes(className);
-			Constructor constr = c.getConstructor(parameterTypes);
+			Class<?>[] parameterTypes = getParameterTypes(className);
+			Constructor<?> constr = c.getConstructor(parameterTypes);
 			if (constr == null) {
 				System.out.println("No expected constructor for command " //$NON-NLS-1$
 						+ command);
@@ -262,7 +271,7 @@ public class ControlServlet extends HttpServlet {
 			return null;
 	}
 
-	private Class[] getParameterTypes(String className) {
+	private Class<?>[] getParameterTypes(String className) {
 		if (CLASS_INSTALL.equals(className))
 			return new Class[]{String.class, String.class, String.class,
 					String.class, String.class};

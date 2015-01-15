@@ -44,6 +44,7 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 		return new TestSuite(BuildHtmlSearchIndex.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		TocManager tocManager = HelpPlugin.getTocManager();
@@ -58,6 +59,7 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 		analyzerDesc = new AnalyzerDescriptor("en-us");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		TocManager tocManager = HelpPlugin.getTocManager();
@@ -145,6 +147,7 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 	}
 
 	private static class TestTocFileProvider extends TocFileProvider {
+		@Override
 		protected TocFile[] getTocFiles(String locale) {
 			String id = UserAssistanceTestPlugin.getPluginId();
 			String nl = Platform.getNL();

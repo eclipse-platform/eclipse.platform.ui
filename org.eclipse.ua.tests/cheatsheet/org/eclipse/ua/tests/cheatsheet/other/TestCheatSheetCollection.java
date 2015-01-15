@@ -28,6 +28,7 @@ public class TestCheatSheetCollection extends TestCase {
 	private CheatSheetCollectionElement c11;
 	private CheatSheetCollectionElement c12;
 	
+	@Override
 	protected void setUp() throws Exception {
 		root = new CheatSheetCollectionElement("rootPlugin", "rootId", "rootName", root);
 		csA = new CheatSheetElement("A");

@@ -33,9 +33,9 @@ public class CookiesData extends RequestData {
 	public boolean isSynchToc() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-        		for (int i=0;i<cookies.length;++i) {
-        			if ("synchToc".equals(cookies[i].getName())) { //$NON-NLS-1$
-        				return String.valueOf(true).equals(cookies[i].getValue());
+        		for (Cookie cookie : cookies) {
+        			if ("synchToc".equals(cookie.getName())) { //$NON-NLS-1$
+        				return String.valueOf(true).equals(cookie.getValue());
         			}
         		}
 		}

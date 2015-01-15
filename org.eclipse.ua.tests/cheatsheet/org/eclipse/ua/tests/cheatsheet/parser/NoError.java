@@ -31,6 +31,7 @@ public class NoError extends TestCase {
 
 	private CheatSheetParser parser;
 	
+	@Override
 	protected void setUp() throws Exception {
 	    parser = new CheatSheetParser();
 	}

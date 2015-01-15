@@ -34,6 +34,7 @@ public class CounterServlet extends HttpServlet {
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 	private static int counter = 0;
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,16 +38,16 @@ public class ResourceTest extends TestCase {
 		checkFields(org.eclipse.ui.internal.intro.universal.Messages.class);
 	}
 
-	private void checkFields(Class messages) throws IllegalAccessException {
+	private void checkFields(Class<?> messages) throws IllegalAccessException {
 		Field[] fields = messages.getFields();
-		for (int i = 0; i < fields.length; i++) {
-			int modifiers = fields[i].getModifiers();
+		for (Field field : fields) {
+			int modifiers = field.getModifiers();
 			if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-				Object value = fields[i].get(null); 
+				Object value = field.get(null); 
 				if (value instanceof String) {
 					String stringValue = (String)value;
 					if (stringValue.startsWith("NLS missing message")) {
-						fail("Missing resource for " + fields[i].getName());
+						fail("Missing resource for " + field.getName());
 					}
 				}             
 			}

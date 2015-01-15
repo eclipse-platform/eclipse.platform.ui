@@ -89,8 +89,7 @@ public class AnalyzerTest extends TestCase {
     private void checkAnalyzer(String language, String analyzerKind) {
 		AnalyzerDescriptor an = new AnalyzerDescriptor(language);
 
-		for (int i = 0; i < supportedLanguages.length; i++) {
-			String nextLocale = supportedLanguages[i];
+		for (String nextLocale : supportedLanguages) {
 			AnalyzerDescriptor expected = new AnalyzerDescriptor(nextLocale);
 			String analyzerClassName = expected.getAnalyzerClassName();
 			if (nextLocale.equals(analyzerKind)) {

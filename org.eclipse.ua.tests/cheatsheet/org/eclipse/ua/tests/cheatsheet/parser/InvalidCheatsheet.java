@@ -27,6 +27,7 @@ public class InvalidCheatsheet extends TestCase {
 	private static final String INVALID_CHEATSHEET_FOLDER = "data/cheatsheet/invalid/";
 	private CheatSheetParser parser;
 	
+	@Override
 	protected void setUp() throws Exception {
 	    parser = new CheatSheetParser();
 	}

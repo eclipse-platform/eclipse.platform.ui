@@ -23,16 +23,16 @@ public class TestCheatSheetCategories extends TestCase {
 
 	public void testForCollection() {
 		CheatSheetCollectionElement cheatSheets = 
-			(CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
+			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		Object[] subCategories = cheatSheets.getChildren();
-		for (int i = 0; i < subCategories.length; i++) {
-			assertTrue(subCategories[i] instanceof CheatSheetCollectionElement);
+		for (Object subCategorie : subCategories) {
+			assertTrue(subCategorie instanceof CheatSheetCollectionElement);
 		}
 	}
 	
 	public void testFindTestCategory() {
 		CheatSheetCollectionElement cheatSheets = 
-			(CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
+			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
 		assertNotNull("Cannot find category org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat",
 					       testCat);
@@ -40,7 +40,7 @@ public class TestCheatSheetCategories extends TestCase {
 
 	public void testFindQualifiedSubcategory() {
 		CheatSheetCollectionElement cheatSheets = 
-			(CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
+			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
 		CheatSheetCollectionElement subCat = findChildCategory(testCat, 
 				"org.eclipse.ua.tests.subcategory");
@@ -49,7 +49,7 @@ public class TestCheatSheetCategories extends TestCase {
 
 	public void testFindCsInUnqualifiedSubcategory() {
 		CheatSheetCollectionElement cheatSheets = 
-			(CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
+			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
 		CheatSheetCollectionElement subCat = findChildCategory(testCat, 
 				"org.eclipse.ua.tests.subcategory");
@@ -60,7 +60,7 @@ public class TestCheatSheetCategories extends TestCase {
 	
 	public void testFindCsInQualifiedSubcategory() {
 		CheatSheetCollectionElement cheatSheets = 
-			(CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
+			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
 		CheatSheetCollectionElement subCat = findChildCategory(testCat, 
 				"org.eclipse.ua.tests.subcategory");
@@ -72,8 +72,8 @@ public class TestCheatSheetCategories extends TestCase {
 	private CheatSheetCollectionElement findChildCategory(
 			CheatSheetCollectionElement collection, String id) {
 		Object[] subCategories = collection.getChildren();
-		for (int i = 0; i < subCategories.length; i++) {
-			 CheatSheetCollectionElement child = (CheatSheetCollectionElement)subCategories[i];
+		for (Object subCategorie : subCategories) {
+			 CheatSheetCollectionElement child = (CheatSheetCollectionElement)subCategorie;
 			 if (child.getId().equals(id)) {
 				 return child;
 			 }
@@ -83,8 +83,8 @@ public class TestCheatSheetCategories extends TestCase {
 	private CheatSheetElement findCheatsheet(
 			CheatSheetCollectionElement collection, String id) {
 		Object[] cheatSheets = collection.getCheatSheets();
-		for (int i = 0; i < cheatSheets.length; i++) {
-			 CheatSheetElement child = (CheatSheetElement)cheatSheets[i];
+		for (Object cheatSheet : cheatSheets) {
+			 CheatSheetElement child = (CheatSheetElement)cheatSheet;
 			 if (child.getID().equals(id)) {
 				 return child;
 			 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class OnLoadFilter implements IFilter {
 			   state = 20;
 			   out.write(b);
 			   if (linkProvider.hasNext()) {
-			       String location = (String)linkProvider.next(); 
+			       String location = linkProvider.next(); 
 			       String onload = getOnloadText(pathPrefix + location, testKind);
 				   out.write(onload.getBytes());
 				   //System.out.println("Onload = " + onload);
@@ -110,6 +110,7 @@ public class OnLoadFilter implements IFilter {
 			this.pathPrefix = prefix;
 		}
 
+		@Override
 		public void write(int b) throws IOException {
 			updateState(b);
 			if (state != 20) {
@@ -117,6 +118,7 @@ public class OnLoadFilter implements IFilter {
 			}
 		}
 		
+		@Override
 		public void close() throws IOException {
 			out.close();
 			super.close();
@@ -129,12 +131,13 @@ public class OnLoadFilter implements IFilter {
     	this.testKind = testKind;
     }
     
-    private static Iterator linkProvider;
+    private static Iterator<String> linkProvider;
 	
 	protected String getCommentText() {
 		return "comment";
 	}	
 
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		if (linkProvider == null) {
 			return out;
@@ -146,7 +149,7 @@ public class OnLoadFilter implements IFilter {
 		return new OutFilter(out, "PLUGINS_ROOT");
 	}
 
-	public static void setLinkProvider(Iterator provider) {
+	public static void setLinkProvider(Iterator<String> provider) {
 		linkProvider = provider;
 	}	
 

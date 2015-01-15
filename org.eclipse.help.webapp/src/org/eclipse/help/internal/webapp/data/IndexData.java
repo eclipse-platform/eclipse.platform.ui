@@ -81,8 +81,7 @@ public class IndexData extends ActivitiesData {
 	public void generateIds(Writer out) throws IOException {
 		boolean first = true;
 		IIndexEntry[] entries = index.getEntries();
-		for (int i=0;i<entries.length;++i) {
-			IIndexEntry entry = entries[i];
+		for (IIndexEntry entry : entries) {
 			if (entry != null && entry.getKeyword() != null && entry.getKeyword().length() > 0) {
 				if (first) {
 					first = false;
@@ -105,9 +104,9 @@ public class IndexData extends ActivitiesData {
 	public void generateIndex(Writer out) throws IOException {
 		this.out = out;
 		IIndexEntry[] entries = index.getEntries();
-		for (int i=0;i<entries.length;++i) {
-			if (EnabledTopicUtils.isEnabled(entries[i])) {
-				generateEntry(entries[i], 0);
+		for (IIndexEntry entrie : entries) {
+			if (EnabledTopicUtils.isEnabled(entrie)) {
+				generateEntry(entrie, 0);
 			}
 		}
 	}
@@ -168,8 +167,8 @@ public class IndexData extends ActivitiesData {
 	public void generateBasicIndex(Writer out) throws IOException {
 		this.out = out;
 		IIndexEntry[] entries = index.getEntries();
-		for (int i=0;i<entries.length;++i) {
-			generateBasicEntry(entries[i], 0);
+		for (IIndexEntry entrie : entries) {
+			generateBasicEntry(entrie, 0);
 		}
 	}
 
@@ -302,9 +301,7 @@ public class IndexData extends ActivitiesData {
 			out.write(expandedCollapsed);
 			out.write("\">\n"); //$NON-NLS-1$
 		}
-		for (int i = 0; i < topics.length; ++i) {
-			ITopic topic = (ITopic)topics[i]; 
-
+		for (ITopic topic : topics) {
 			out.write("<li>"); //$NON-NLS-1$
 			if (usePlusMinus && advancedUI) {
 				out.write("<img class=\"h\" src=\""); //$NON-NLS-1$
@@ -350,8 +347,8 @@ public class IndexData extends ActivitiesData {
 			out.write("<ul class=\"expanded\">\n"); //$NON-NLS-1$
 		}
 		IIndexEntry[] subentries = entry.getSubentries();
-		for (int i=0;i<subentries.length;++i) {
-			generateEntry(subentries[i], level);
+		for (IIndexEntry subentrie : subentries) {
+			generateEntry(subentrie, level);
 		}
 		if (advancedUI) {
 			out.write("</ul>\n"); //$NON-NLS-1$

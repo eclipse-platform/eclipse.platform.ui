@@ -25,6 +25,7 @@ public class ContentServlet extends HttpServlet {
 
 	/**
 	 */
+	@Override
 	public void init() throws ServletException {
 		try {
 			connector = new EclipseConnector(getServletContext());
@@ -37,6 +38,7 @@ public class ContentServlet extends HttpServlet {
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * servlet to handle a GET request.
 	 */
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
@@ -53,6 +55,7 @@ public class ContentServlet extends HttpServlet {
 	 * Handle the search requests,
 	 *  
 	 */
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		if (connector != null)

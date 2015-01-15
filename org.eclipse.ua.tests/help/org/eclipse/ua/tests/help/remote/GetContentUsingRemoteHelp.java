@@ -40,6 +40,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 
 	private int mode;
 
+	@Override
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
         mode = BaseHelpSystem.getMode();
@@ -50,6 +51,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		HelpPlugin.getTocManager().getTocs("en");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);

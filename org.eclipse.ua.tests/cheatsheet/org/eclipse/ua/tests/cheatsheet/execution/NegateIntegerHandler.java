@@ -16,6 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 public class NegateIntegerHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		Integer val = (Integer)event.getObjectParameterForExecution("number");

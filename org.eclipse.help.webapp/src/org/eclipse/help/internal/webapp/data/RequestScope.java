@@ -67,7 +67,7 @@ public class RequestScope {
 			HttpServletResponse resp, boolean isSearchFilter) {
 		AbstractHelpScope[] scopeArray;
 		String scopeString;
-		List scopes = new ArrayList();
+		List<AbstractHelpScope> scopes = new ArrayList<AbstractHelpScope>();
 		if (ProductPreferences.useEnablementFilters()) {
 			scopes.add(new FilterScope()); // Workbench is always filtered, infocenter may be
 		}
@@ -98,7 +98,7 @@ public class RequestScope {
 			} catch (Exception e) {
 			}
 		}
-		scopeArray = (AbstractHelpScope[]) scopes.toArray(new AbstractHelpScope[scopes.size()]);
+		scopeArray = scopes.toArray(new AbstractHelpScope[scopes.size()]);
 		return scopeArray;
 	}
 
@@ -157,9 +157,9 @@ public class RequestScope {
 		// check if scope was passed earlier in this session
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-			for (int c = 0; c < cookies.length; c++) {
-				if (cookieName.equals(cookies[c].getName())) { 
-					return URLCoder.decode(cookies[c].getValue());
+			for (Cookie cookie : cookies) {
+				if (cookieName.equals(cookie.getName())) { 
+					return URLCoder.decode(cookie.getValue());
 				}
 			}
 		}

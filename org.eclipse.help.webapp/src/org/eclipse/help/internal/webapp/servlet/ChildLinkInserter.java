@@ -90,11 +90,11 @@ public class ChildLinkInserter {
 		String servletPath = req.getServletPath();
 		if ("/nav".equals(servletPath)) return new ITopic[0]; //$NON-NLS-1$
 		Toc[] tocs =  HelpPlugin.getTocManager().getTocs(locale);
-		for (int i = 0; i < tocs.length; i++) {
-			if (pathInfo.equals(tocs[i].getTopic())) {
-				return tocs[i].getTopics();
+		for (Toc toc : tocs) {
+			if (pathInfo.equals(toc.getTopic())) {
+				return toc.getTopics();
 			}
-			ITopic topic = tocs[i].getTopic(pathInfo);
+			ITopic topic = toc.getTopic(pathInfo);
 			if (topic != null) {
 				return topic.getSubtopics();
 			}
@@ -116,8 +116,8 @@ public class ChildLinkInserter {
 
 	public void addStyle() throws UnsupportedEncodingException, IOException {
 		ITopic[] subtopics = getSubtopics();
-		for (int i = 0; i < subtopics.length; ++i) {
-			if (ScopeUtils.showInTree(subtopics[i], scope)) {
+		for (ITopic subtopic : subtopics) {
+			if (ScopeUtils.showInTree(subtopic, scope)) {
 				out.write(HAS_CHILDREN.getBytes(UTF_8));
 				return;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.ISearchHitCollector;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
+import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.utils.SearchXMLGenerator;
@@ -39,14 +40,16 @@ import org.eclipse.help.internal.webapp.utils.SearchXMLGenerator;
 public class SearchServlet extends HttpServlet {
 	
 	private final class HitCollector implements ISearchHitCollector {
-		public Collection results = new ArrayList();
+		public Collection<SearchHit> results = new ArrayList<SearchHit>();
 
-		public void addHits(List hits, String wordsSearched) {
+		@Override
+		public void addHits(List<SearchHit> hits, String wordsSearched) {
 			if (results != null) {
 				results.addAll(hits);
 			}
 		}
 
+		@Override
 		public void addQTCException(QueryTooComplexException exception)
 				throws QueryTooComplexException {
 			searchException = exception;			
@@ -57,6 +60,7 @@ public class SearchServlet extends HttpServlet {
 	private static final String PARAMETER_PHRASE = "phrase"; //$NON-NLS-1$
 	private QueryTooComplexException searchException;
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String response = processRequest(req, resp);
@@ -75,7 +79,7 @@ public class SearchServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		String phrase = req.getParameter(PARAMETER_PHRASE);
 		if (phrase != null) {
-			ISearchQuery query = new SearchQuery(phrase, false, Collections.EMPTY_LIST, locale);
+			ISearchQuery query = new SearchQuery(phrase, false, Collections.<String> emptyList(), locale);
 			collector.results.clear();
 			BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 			if (searchException == null) {
@@ -85,7 +89,7 @@ public class SearchServlet extends HttpServlet {
 		return ""; //$NON-NLS-1$
 	}
 	
-	public static String serialize(Collection results) {
+	public static String serialize(Collection<SearchHit> results) {
 		return SearchXMLGenerator.serialize(results);
 	}
 }

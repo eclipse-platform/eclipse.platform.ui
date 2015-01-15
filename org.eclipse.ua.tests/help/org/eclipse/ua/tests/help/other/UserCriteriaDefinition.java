@@ -23,10 +23,12 @@ public class UserCriteriaDefinition implements ICriteriaDefinition {
 
 	private List<ICriterionDefinition> children = new ArrayList<ICriterionDefinition>();
 	
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
 	}
 
+	@Override
 	public ICriterionDefinition[] getCriterionDefinitions() {
 		return children.toArray(new ICriterionDefinition[0]);
 	}
@@ -35,6 +37,7 @@ public class UserCriteriaDefinition implements ICriteriaDefinition {
 		children.add(definition);
 	}
 
+	@Override
 	public IUAElement[] getChildren() {
 		return getCriterionDefinitions();
 	}

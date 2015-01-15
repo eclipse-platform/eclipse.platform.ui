@@ -36,10 +36,12 @@ public class ParallelServerAccessTest extends TestCase {
 		return new TestSuite(ParallelServerAccessTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		LoadServletUtil.stopServer();
 	}
@@ -91,6 +93,7 @@ public class ParallelServerAccessTest extends TestCase {
 		
 		public Exception exception;
 		
+		@Override
 		public void run() {
 			for (int j = 0; j <= 100; j++) {
 				try {
@@ -113,6 +116,7 @@ public class ParallelServerAccessTest extends TestCase {
 			this.actual = actual;
 		}
 		
+		@Override
 		public String getMessage() {
 			return "Expected: " + expected +" Actual: " + actual;
 		}

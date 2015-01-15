@@ -23,6 +23,7 @@ import org.eclipse.help.webapp.IFilter;
 
 public class CommentFilter implements IFilter {
 
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		return new OutFilter(out);
 	}
@@ -36,6 +37,7 @@ public class CommentFilter implements IFilter {
 			this.out = out;
 		}
 
+		@Override
 		public void write(int b) throws IOException {
 			if (!preambleWritten) {
 				preambleWritten = true;
@@ -45,6 +47,7 @@ public class CommentFilter implements IFilter {
 			out.write(b);			
 		}
 		
+		@Override
 		public void close() throws IOException {
 			String comment = "<!-- post " + getCommentText() + " -->";
 			out.write(comment.getBytes());

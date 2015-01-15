@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -30,7 +29,7 @@ import org.eclipse.help.webapp.AbstractFrame;
 public class FrameData extends RequestData {
 	
 	private static final String FRAME_EXTENSION_POINT = "org.eclipse.help.webapp.frame"; //$NON-NLS-1$
-	private List allFrames;
+	private List<AbstractFrame> allFrames;
 
 	public FrameData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -42,30 +41,29 @@ public class FrameData extends RequestData {
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(FRAME_EXTENSION_POINT);
 		if (allFrames == null) {
-			allFrames = new ArrayList();
-			for (int i = 0; i < elements.length; i++) {
+			allFrames = new ArrayList<AbstractFrame>();
+			for (IConfigurationElement element : elements) {
 				Object obj = null;
 				try {
-					obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+					obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
 					HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
 							+ FRAME_EXTENSION_POINT + "].", e); //$NON-NLS-1$
 				}
 				if (obj instanceof AbstractFrame) {
-					allFrames.add(obj);
+					allFrames.add((AbstractFrame) obj);
 				}
 			}
 			Collections.sort(allFrames);
 		}
 
-		List frameList = new ArrayList();
-		for (Iterator iter = allFrames.iterator(); iter.hasNext();) {
-			AbstractFrame frame = (AbstractFrame) iter.next();
+		List<AbstractFrame> frameList = new ArrayList<AbstractFrame>();
+		for (AbstractFrame frame : allFrames) {
 			if (frame.isVisible() && frame.getLocation() == location) {
 				frameList.add(frame);
 			}
 		}			
-		AbstractFrame[] frames = (AbstractFrame[]) frameList.toArray(new AbstractFrame[frameList.size()]);
+		AbstractFrame[] frames = frameList.toArray(new AbstractFrame[frameList.size()]);
 		return frames;		
 	}
 	
@@ -76,9 +74,9 @@ public class FrameData extends RequestData {
 	public String getContentAreaFrameSizes() {
 		String size = "24,*"; //$NON-NLS-1$
 		AbstractFrame[] frames = getFrames(AbstractFrame.BELOW_CONTENT);
-		for (int f = 0; f < frames.length; f++) {
+		for (AbstractFrame frame : frames) {
 			size += ',';
-			size += frames[f].getSize();
+			size += frame.getSize();
 		}
 		return size;
 	}

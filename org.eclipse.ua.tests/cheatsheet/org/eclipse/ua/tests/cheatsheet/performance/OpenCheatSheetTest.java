@@ -32,6 +32,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 		return new TestSuite(OpenCheatSheetTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		OpenIntroTest.closeIntro();

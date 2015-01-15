@@ -28,6 +28,7 @@ public class AddScriptFilter implements IFilter {
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
 		StringBuffer script = new StringBuffer();	

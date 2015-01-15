@@ -19,18 +19,22 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 public class TitleSearchButton extends AbstractButton {
 
+	@Override
 	public String getAction() {
 		return "toggleTitleView";
 	}
 
+	@Override
 	public String getId() {
 		return "tsearch";
 	}
 
+	@Override
 	public String getImageURL() {
 		return "/titlesearch/icons/sample3.gif";
 	}
 
+	@Override
 	public String getTooltip(Locale locale) {
 		if ("es".equals(locale.getLanguage())) {
 			return "Muestre busque en titulos";
@@ -38,10 +42,12 @@ public class TitleSearchButton extends AbstractButton {
 		return "Show Search Topic Title";
 	}
 	
+	@Override
 	public String getJavaScriptURL() {
 		return "/titlesearch/script/titlesearch.js";
 	}
 	
+	@Override
 	public boolean isAddedToToolbar(String toolbarName) {
 		boolean addButton = Platform.getPreferencesService().getBoolean
 	    (UserAssistanceTestPlugin.getPluginId(), "extraButton", false, null);

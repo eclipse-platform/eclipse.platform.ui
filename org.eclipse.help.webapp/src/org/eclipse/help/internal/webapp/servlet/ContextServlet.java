@@ -37,6 +37,7 @@ public class ContextServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String PARAMETER_ID = "id"; //$NON-NLS-1$
 	
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String response = processRequest(req, resp);
@@ -89,13 +90,13 @@ public class ContextServlet extends HttpServlet {
 		}
 		
 		IHelpResource[] topics = context.getRelatedTopics();
-		for (int i=0;i<topics.length;++i) {
+		for (IHelpResource topic : topics) {
 			buff.append("   <" + Topic.NAME); //$NON-NLS-1$
-			if (topics[i].getLabel() != null) {
-				buff.append("\n         " + Topic.ATTRIBUTE_LABEL + "=\"" + topics[i].getLabel() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
+			if (topic.getLabel() != null) {
+				buff.append("\n         " + Topic.ATTRIBUTE_LABEL + "=\"" + topic.getLabel() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			if (topics[i].getHref() != null) {
-				buff.append("\n         " + Topic.ATTRIBUTE_HREF + "=\"" + topics[i].getHref() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
+			if (topic.getHref() != null) {
+				buff.append("\n         " + Topic.ATTRIBUTE_HREF + "=\"" + topic.getHref() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			buff.append(">   </" + Topic.NAME + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

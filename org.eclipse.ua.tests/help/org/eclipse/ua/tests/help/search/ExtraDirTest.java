@@ -151,8 +151,8 @@ public class ExtraDirTest extends TestCase {
 		SearchResults collector = new SearchResults(workingSets, 500, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 		SearchHit[] hits = collector.getSearchHits();
-		for (int j=0;j<hits.length;++j) {
-			String href = hits[j].getHref();
+		for (SearchHit hit : hits) {
+			String href = hit.getHref();
 			// ignore query params
 			int index = href.indexOf('?');
 			if (index != -1) {

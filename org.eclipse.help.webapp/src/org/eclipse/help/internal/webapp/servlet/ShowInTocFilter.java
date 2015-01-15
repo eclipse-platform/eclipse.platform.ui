@@ -28,6 +28,7 @@ public class ShowInTocFilter implements IFilter {
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
+	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
 		if (uri == null) return out;

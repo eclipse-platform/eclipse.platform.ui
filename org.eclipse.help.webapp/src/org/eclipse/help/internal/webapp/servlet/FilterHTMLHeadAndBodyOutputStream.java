@@ -103,6 +103,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	 * @exception IOException
 	 *                if an I/O error occurs.
 	 */
+	@Override
 	public final void write(int b) throws IOException {
 		switch (state) {
 		case STATE_START:
@@ -291,6 +292,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 		state = areaState;
 	}
 
+	@Override
 	public void write(byte b[], int off, int len) throws IOException {
 		if (state == STATE_DONE) {
 			out.write(b, off, len);
@@ -306,6 +308,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	 * 
 	 * @see java.io.FilterOutputStream#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		reset();
 		super.close();

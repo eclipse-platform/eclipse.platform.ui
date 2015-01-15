@@ -19,18 +19,22 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 public class TitleSearchView extends AbstractView {
 
+	@Override
 	public String getImageURL() {
 		return "/titlesearch/icons/sample3.gif";
 	}
 
+	@Override
 	public char getKey() {
 		return 0;
 	}
 
+	@Override
 	public String getName() {
 		return "titlesearch";
 	}
 
+	@Override
 	public String getTitle(Locale locale) {
 		if ("es".equals(locale.getLanguage())) {
 			return "Busque en titulos";
@@ -38,19 +42,23 @@ public class TitleSearchView extends AbstractView {
 		return "Search Topic Title";
 	}
 
+	@Override
 	public String getURL() {
 		return "/titlesearch/jsp/advanced/";
 	}
 	
+	@Override
 	public String getBasicURL() {
 		return "/titlesearch/jsp/basic/";
 	}
 	
+	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean
 		    (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
 	}
 	
+	@Override
 	public boolean isVisibleBasic() {
 		return Platform.getPreferencesService().getBoolean
 	        (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
