@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,6 @@ import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -906,10 +905,6 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	private void forceLayout(Shell shell) {
-		if (Util.isMac())
-			return; // Bug 431966: Relaunching with many editors opened, the
-					// caret disappears when switching editors.
-
 		int i = 0;
 		while(shell.isLayoutDeferred()) {
 			shell.setLayoutDeferred(false);
