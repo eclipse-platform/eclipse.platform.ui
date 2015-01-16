@@ -47,6 +47,11 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 			throw new InjectionException(e);
 		} catch (InvocationTargetException e) {
 			Throwable originalException = e.getCause();
+			// Errors such as ThreadDeath or OutOfMemoryError should not be trapped
+			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=457687
+			if (originalException instanceof Error) {
+				throw (Error) originalException;
+			}
 			throw new InjectionException((originalException != null) ? originalException : e);
 		} finally {
 			if (!wasAccessible)

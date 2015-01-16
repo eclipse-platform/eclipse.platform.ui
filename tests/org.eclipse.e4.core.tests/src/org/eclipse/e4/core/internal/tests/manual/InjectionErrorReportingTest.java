@@ -15,14 +15,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.junit.Ignore;
+
+import junit.framework.TestCase;
 
 /**
  * Manual test to observe error reporting. The JUnits in this
@@ -243,15 +242,17 @@ public class InjectionErrorReportingTest extends TestCase {
 	}
 
 	/**
-	 * Manual test to check error message for recursive object creation
+	 * Manual test to check error message for recursive object creation Although
+	 * bug 377343 disabled throwing InjectionExceptions on recursive creation,
+	 * the fix for bug 457687 now exposes java.lang.Errors (such as
+	 * StackOverflowError) rather than wrapping them in an InjectionException.
 	 */
-	@Ignore("Exception on recursive creations removed with bug 377343")
 	public void testRecursionError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		boolean exception = false;
 		try {
 			ContextInjectionFactory.make(InjectedRecursive.class, context);
-		} catch (InjectionException e) {
+		} catch (StackOverflowError e) {
 			basicLog(e);
 			exception = true;
 		}
@@ -261,14 +262,14 @@ public class InjectionErrorReportingTest extends TestCase {
 		exception = false;
 		try {
 			ContextInjectionFactory.make(InjectedRecursive.class, context);
-		} catch (InjectionException e) {
+		} catch (StackOverflowError e) {
 			basicLog(e);
 			exception = true;
 		}
 		assertFalse(exception);
 	}
 
-	private void basicLog(InjectionException e) {
+	private void basicLog(Throwable e) {
 		e.printStackTrace(System.out);
 	}
 }
