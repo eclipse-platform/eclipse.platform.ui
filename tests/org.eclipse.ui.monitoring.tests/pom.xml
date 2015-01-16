@@ -8,7 +8,7 @@
 
   Contributors:
       Marcus Eng (Google) - initial API and implementation
-      Lars Vogel <Lars.Vogel@vogella.com> - Bug 443678
+      Lars Vogel <Lars.Vogel@vogella.com> - Bug 443678, 457719 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -23,7 +23,7 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-	<testSuiteMonitoring>**/org/eclipse/ui/internal/monitoring/MonitoringTestSuite.java</testSuiteMonitoring>
+	<testSuiteMonitoring>org.eclipse.ui.internal.monitoring.MonitoringTestSuite</testSuiteMonitoring>
  	<skipTests>false</skipTests>
   </properties>
 
@@ -34,9 +34,8 @@
   			<artifactId>tycho-surefire-plugin</artifactId>
   			<version>${tycho.version}</version>
 			<configuration>
-				<includes>
-				 	<include>${testSuiteMonitoring}</include>
-				</includes>
+				<testSuite>org.eclipse.ui.monitoring.tests</testSuite>
+				<testClass>${testSuiteMonitoring}</testClass>
 				<useUIHarness>true</useUIHarness>
 				<useUIThread>true</useUIThread>
 	  			<dependencies>
