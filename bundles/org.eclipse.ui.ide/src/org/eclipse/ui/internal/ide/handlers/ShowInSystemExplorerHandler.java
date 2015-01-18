@@ -16,13 +16,13 @@ import java.io.IOException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -35,7 +35,6 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEPreferenceInitializer;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.106
@@ -52,71 +51,70 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	private static final String VARIABLE_FOLDER = "${selected_resource_parent_loc}"; //$NON-NLS-1$
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ILog log = IDEWorkbenchPlugin.getDefault().getLog();
+	public Object execute(final ExecutionEvent event) {
 
-		IResource item = getResource(event);
+		final IResource item = getResource(event);
 		if (item == null) {
 			return null;
 		}
 
-		String logMsgPrefix;
-		try {
-			logMsgPrefix = event.getCommand().getName() + ": "; //$NON-NLS-1$
-		} catch (NotDefinedException e) {
-			// will used id instead...
-			logMsgPrefix = event.getCommand().getId() + ": "; //$NON-NLS-1$
-		}
+		Job job = new Job(IDEWorkbenchMessages.ShowInSystemExplorerHandler_jobTitle) {
 
-		try {
-			File canonicalPath = getSystemExplorerPath(item);
-			if (canonicalPath == null) {
-				StatusManager
-						.getManager()
-						.handle(new Status(
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				String logMsgPrefix;
+				try {
+					logMsgPrefix = event.getCommand().getName() + ": "; //$NON-NLS-1$
+				} catch (NotDefinedException e) {
+					// will used id instead...
+					logMsgPrefix = event.getCommand().getId() + ": "; //$NON-NLS-1$
+				}
+
+				try {
+					File canonicalPath = getSystemExplorerPath(item);
+					if (canonicalPath == null) {
+						return new Status(
 								IStatus.ERROR,
 								IDEWorkbenchPlugin.getDefault().getBundle()
-										.getSymbolicName(),
+								.getSymbolicName(),
 								logMsgPrefix
-										+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_notDetermineLocation),
-								StatusManager.SHOW | StatusManager.LOG);
-				return null;
-			}
-			String launchCmd = formShowInSytemExplorerCommand(canonicalPath);
+								+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_notDetermineLocation);
+					}
+					String launchCmd = formShowInSytemExplorerCommand(canonicalPath);
 
-			if ("".equals(launchCmd)) { //$NON-NLS-1$
-				StatusManager
-						.getManager()
-						.handle(new Status(
+					if ("".equals(launchCmd)) { //$NON-NLS-1$
+						return new Status(
 								IStatus.ERROR,
 								IDEWorkbenchPlugin.getDefault().getBundle()
-										.getSymbolicName(),
+								.getSymbolicName(),
 								logMsgPrefix
-										+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_commandUnavailable),
-								StatusManager.SHOW | StatusManager.LOG);
-				return null;
+								+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_commandUnavailable);
+					}
+
+					File dir = item.getWorkspace().getRoot().getLocation().toFile();
+					Process p;
+					if (Util.isLinux() || Util.isMac()) {
+						p = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", launchCmd }, null, dir); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						p = Runtime.getRuntime().exec(launchCmd, null, dir);
+					}
+					int retCode = p.waitFor();
+					if (retCode != 0 && !Util.isWindows()) {
+						return new Status(IStatus.ERROR, IDEWorkbenchPlugin
+								.getDefault().getBundle().getSymbolicName(),
+								logMsgPrefix + "Execution of '" + launchCmd //$NON-NLS-1$
+										+ "' failed with return code: " + retCode); //$NON-NLS-1$
+					}
+				} catch (Exception e) {
+					return new Status(IStatus.ERROR, IDEWorkbenchPlugin.getDefault()
+							.getBundle().getSymbolicName(), logMsgPrefix
+							+ "Unhandled failure.", e); //$NON-NLS-1$
+				}
+				return Status.OK_STATUS;
 			}
 
-			File dir = item.getWorkspace().getRoot().getLocation().toFile();
-			Process p;
-			if (Util.isLinux() || Util.isMac()) {
-				p = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", launchCmd }, null, dir); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				p = Runtime.getRuntime().exec(launchCmd, null, dir);
-			}
-			int retCode = p.waitFor();
-			if (retCode != 0 && !Util.isWindows()) {
-				log.log(new Status(IStatus.ERROR, IDEWorkbenchPlugin
-						.getDefault().getBundle().getSymbolicName(),
-						logMsgPrefix + "Execution of '" + launchCmd //$NON-NLS-1$
-								+ "' failed with return code: " + retCode)); //$NON-NLS-1$
-			}
-		} catch (Exception e) {
-			log.log(new Status(IStatus.ERROR, IDEWorkbenchPlugin.getDefault()
-					.getBundle().getSymbolicName(), logMsgPrefix
-					+ "Unhandled failure.", e)); //$NON-NLS-1$
-			throw new ExecutionException("Show in Explorer command failed.", e); //$NON-NLS-1$
-		}
+		};
+		job.schedule();
 		return null;
 	}
 

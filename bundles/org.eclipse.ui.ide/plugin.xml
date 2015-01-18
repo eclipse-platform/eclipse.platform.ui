@@ -2047,6 +2047,7 @@
              commandId="org.eclipse.ui.ide.showInSystemExplorer"
              label="%command.showInSystemExplorer.menu.name"
              mnemonic="%command.showInSystemExplorer.menu.mnemonic"
+             icon="$nl$/icons/full/elcl16/gotoobj_tsk.png"
              style="push">
           <visibleWhen
                 checkEnabled="false">
