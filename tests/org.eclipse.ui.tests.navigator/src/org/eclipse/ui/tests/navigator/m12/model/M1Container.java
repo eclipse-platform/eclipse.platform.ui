@@ -13,6 +13,7 @@ public class M1Container extends M1Resource {
 	public M1Container(IContainer container) {
 		super(container);
 	}
+	@Override
 	public M1Resource[] getChildren() throws CoreException {
 		IContainer container = (IContainer) getResource();
 		IResource[] children = (container.isAccessible()) ? container.members()

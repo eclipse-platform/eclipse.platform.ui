@@ -69,15 +69,18 @@ public class TestExtensionTreeData {
 		return name;
 	}
 
+	@Override
 	public int hashCode() {
 		return name.hashCode();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof TestExtensionTreeData
 				&& ((TestExtensionTreeData) obj).getName().equals(name);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer toString = new StringBuffer(getName()).append(":");
 

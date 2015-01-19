@@ -33,6 +33,7 @@ public class JstPipelineTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER_PIPELINE;
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 

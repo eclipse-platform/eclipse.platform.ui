@@ -20,6 +20,7 @@ import java.util.Set;
 
 /** Replaces M1Files whose name contain the character 2 with M2Files. */
 public class M2ContentProvider extends ResourceWrapperContentProvider {
+	@Override
 	public void getPipelinedChildren(Object aParent, Set currentChildren) {
 		List newElements = new ArrayList();
 		for (Iterator it = currentChildren.iterator(); it.hasNext();) {
@@ -33,10 +34,12 @@ public class M2ContentProvider extends ResourceWrapperContentProvider {
 		currentChildren.addAll(newElements);
 	}
 
+	@Override
 	public boolean hasPipelinedChildren(Object anInput, boolean currentHasChildren) {
 		return currentHasChildren;
 	}
 
+	@Override
 	protected Object _convertToModelObject(Object object) {
 		return M2Core.getModelObject(object);
 	}

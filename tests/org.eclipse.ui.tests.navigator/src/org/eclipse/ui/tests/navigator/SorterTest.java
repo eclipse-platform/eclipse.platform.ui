@@ -51,6 +51,7 @@ public class SorterTest extends NavigatorTestBase {
 		refreshViewer();
 
 		ILogListener ll = new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				_statusCount++;
 			}

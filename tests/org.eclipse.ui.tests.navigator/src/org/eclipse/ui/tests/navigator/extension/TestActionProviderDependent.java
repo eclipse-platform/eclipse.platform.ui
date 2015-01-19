@@ -23,10 +23,12 @@ public class TestActionProviderDependent extends CommonActionProvider {
 
 	private IAction action = null;
 	
+	@Override
 	public void init(ICommonActionExtensionSite aConfig) {
 		 action = new TestActionDependent(aConfig.getViewSite().getShell(), aConfig.getExtensionId());
 	}
 	
+	@Override
 	public void fillContextMenu(IMenuManager menu) { 
 		IMenuManager submenu = menu.findMenuUsingPath(TestActionProviderMenu.GROUP_TEST_MENU);
 		Assert.assertNotNull("The submenu should have been added by TestActionProviderMenu!", submenu);

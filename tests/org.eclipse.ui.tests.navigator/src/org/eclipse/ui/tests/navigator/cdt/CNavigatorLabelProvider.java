@@ -30,19 +30,24 @@ public class CNavigatorLabelProvider extends LabelProvider implements
 	public CNavigatorLabelProvider() {
 	}
 
+	@Override
 	public void init(ICommonContentExtensionSite extensionSite) {
 	}
 
+	@Override
 	public void restoreState(IMemento memento) {
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public String getText(Object element) {
 		return getDescription(element);
 	}
 
+	@Override
 	public String getDescription(Object element) {
 		String desc = "<notfound>";
 		if (element instanceof IResource) {

@@ -27,6 +27,7 @@ public class NonCommonViewerView extends ViewPart {
 
 	private TreeViewer _viewer;
 
+	@Override
 	public void createPartControl(Composite parent) {
 		_viewer = new TreeViewer(parent);
 
@@ -48,6 +49,7 @@ public class NonCommonViewerView extends ViewPart {
 
 	}
 
+	@Override
 	public void setFocus() {
 	}
 

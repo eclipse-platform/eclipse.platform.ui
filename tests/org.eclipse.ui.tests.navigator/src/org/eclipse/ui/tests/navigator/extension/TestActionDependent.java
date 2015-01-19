@@ -25,6 +25,7 @@ public class TestActionDependent extends Action implements IAction {
 		
 	}
 	
+	@Override
 	public void run() {
 		MessageDialog.openInformation(shell, "TestActionDependent", "The dependent action ran!");
 	}

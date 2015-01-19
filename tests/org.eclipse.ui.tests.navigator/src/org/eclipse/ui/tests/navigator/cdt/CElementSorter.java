@@ -84,6 +84,7 @@ public class CElementSorter extends ViewerSorter {
 	public CElementSorter() {
 	}
 
+	@Override
 	public int category(Object element) {
 		if (element instanceof CElement) {
 			if (element instanceof CRoot)
@@ -110,6 +111,7 @@ public class CElementSorter extends ViewerSorter {
 		return OTHERS;
 	}
 
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		int cat1 = category(e1);
 		int cat2 = category(e2);

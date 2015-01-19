@@ -38,6 +38,7 @@ public class TestSorterData extends ViewerSorter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 	
 		if(e1 instanceof TestExtensionTreeData) {
@@ -58,7 +59,8 @@ public class TestSorterData extends ViewerSorter {
 	}
 
 	
-    public boolean isSorterProperty(Object element, String property) {
+    @Override
+	public boolean isSorterProperty(Object element, String property) {
     	_sorterProperty = property;
     	_sorterElement = element;
         return false;

@@ -28,6 +28,7 @@ public class TestSorterDataAndResource extends ViewerSorter {
 		super(collator);
 	}
 
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 
 		String lname = "";

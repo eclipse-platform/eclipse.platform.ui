@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 public class TestLabelProviderStyledGreen extends TestStyledLabelProvider {
 	public static TestLabelProviderStyledGreen instance;
 
+	@Override
 	protected void initSubclass() {
 		backgroundColor = Display.getCurrent().getSystemColor(
 				SWT.COLOR_GREEN);

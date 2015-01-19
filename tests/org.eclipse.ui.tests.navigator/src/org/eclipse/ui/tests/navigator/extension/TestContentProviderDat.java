@@ -23,25 +23,31 @@ public class TestContentProviderDat implements ITreeContentProvider {
 	   
 	private TestExtensionTreeData child = new TestExtensionTreeData(null, "Child", null, null);
 
+	@Override
 	public Object[] getChildren(Object parentElement) { 
 		return new Object[] { child } ;
 	}
 
+	@Override
 	public Object getParent(Object element) { 
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) { 
 		return getChildren(element).length > 0;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) { 
 		return null;
 	}
 
+	@Override
 	public void dispose() { 
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
 	}
 

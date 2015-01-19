@@ -32,6 +32,7 @@ public class TestSimpleChildrenContentProvider implements ITreeContentProvider {
 		public String _name;
 		public Object _parent;
 
+		@Override
 		public String toString() {
 			return _name;
 		}
@@ -40,10 +41,12 @@ public class TestSimpleChildrenContentProvider implements ITreeContentProvider {
 	public TestSimpleChildrenContentProvider() {
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IResource) {
 			if (_children == null) {
@@ -61,19 +64,23 @@ public class TestSimpleChildrenContentProvider implements ITreeContentProvider {
 		return new Object[] {};
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		SimpleChild child = (SimpleChild) element;
 		return child._parent;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return true;
 	}
 
+	@Override
 	public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
 		_children = null;
 	}
 
+	@Override
 	public void dispose() {
 	}
 }

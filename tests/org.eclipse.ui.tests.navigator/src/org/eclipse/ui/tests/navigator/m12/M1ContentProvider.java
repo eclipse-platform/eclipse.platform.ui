@@ -28,6 +28,7 @@ import org.eclipse.ui.tests.navigator.m12.model.M1Core;
  * with M1Files.
  */
 public class M1ContentProvider extends ResourceWrapperContentProvider {
+	@Override
 	public void getPipelinedElements(Object input, Set currentElements) {
 		List newElements = new ArrayList();
 		for (Iterator it = currentElements.iterator(); it.hasNext();) {
@@ -41,6 +42,7 @@ public class M1ContentProvider extends ResourceWrapperContentProvider {
 		currentElements.addAll(newElements);
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		try {
 			return ((ResourceWrapper) parentElement).getChildren();
@@ -50,10 +52,12 @@ public class M1ContentProvider extends ResourceWrapperContentProvider {
 		}
 	}
 
+	@Override
 	public boolean hasPipelinedChildren(Object anInput, boolean currentHasChildren) {
 		return currentHasChildren;
 	}
 
+	@Override
 	protected Object _convertToModelObject(Object object) {
 		if (object instanceof IResource) {
 			return M1Core.getModelObject((IResource) object);

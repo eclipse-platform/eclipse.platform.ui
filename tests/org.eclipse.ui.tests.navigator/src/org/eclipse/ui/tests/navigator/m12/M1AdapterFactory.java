@@ -18,6 +18,7 @@ import org.eclipse.ui.tests.navigator.m12.model.M1Project;
 
 public class M1AdapterFactory implements IAdapterFactory {
 
+	@Override
 	public Object getAdapter(Object object, Class adapterType) {
 		if (object instanceof M1Project
 				&& IProject.class.isAssignableFrom(adapterType)) {
@@ -29,6 +30,7 @@ public class M1AdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { IProject.class };
 	}

@@ -163,6 +163,7 @@ public class NavigatorTestBase extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 
 		if (_navigatorInstanceId == null) {
@@ -234,6 +235,7 @@ public class NavigatorTestBase extends TestCase {
 		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		clearAll();
 		// Hide it, we want a new one each time

@@ -19,6 +19,7 @@ public abstract class ResourceWrapper implements IWorkbenchAdapter {
 	public IResource getResource() {
 		return _resource;
 	}
+	@Override
 	public Object[] getChildren(Object obj) {
 		return NO_CHILDREN;
 	}
@@ -29,15 +30,18 @@ public abstract class ResourceWrapper implements IWorkbenchAdapter {
 		M1Resource[] children = getChildren();
 		return children.length > 0;
 	}
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof M1Resource) {
 			return _resource.equals(((M1Resource) obj).getResource());
 		}
 		return false;
 	}
+	@Override
 	public int hashCode() {
 		return _resource.hashCode();
 	}
+	@Override
 	public Object getParent(Object obj) {
 		return getParent();
 	}
@@ -49,9 +53,11 @@ public abstract class ResourceWrapper implements IWorkbenchAdapter {
 	protected abstract ResourceWrapper getModelObject(IResource resource);
 	public abstract String getModelId();
 	
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
+	@Override
 	public String getLabel(Object o) {
 		return  _resource.toString();
 	}

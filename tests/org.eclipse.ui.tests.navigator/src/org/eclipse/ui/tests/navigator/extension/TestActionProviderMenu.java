@@ -26,11 +26,13 @@ public class TestActionProviderMenu extends CommonActionProvider {
 
 	private IAction action = null;
 
+	@Override
 	public void init(ICommonActionExtensionSite aSite) {
 		super.init(aSite);
 		action = new TestAction(aSite.getViewSite().getShell());
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = new MenuManager("CN Test Menu", GROUP_TEST_MENU);
 		submenu.add(action);

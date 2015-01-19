@@ -58,6 +58,7 @@ IFontProvider, IStyledLabelProvider {
 			
 	private String _id;
 
+	@Override
 	public void init(ICommonContentExtensionSite config) {
 		_id = config.getExtension().getId();
 		int i = _id.lastIndexOf('.');
@@ -66,6 +67,7 @@ IFontProvider, IStyledLabelProvider {
 		}
 	}
 	
+	@Override
 	public Image getImage(Object element) {
 		_track(imageQueries, element);
 		return null;
@@ -80,37 +82,45 @@ IFontProvider, IStyledLabelProvider {
 			System.out.println(_id + ": " + element + " map: " + map);
 	}
 
+	@Override
 	public String getText(Object element) {
 		_track(textQueries, element);
 		return null;
 	}
 
+	@Override
 	public String getDescription(Object element) {
 		_track(descriptionQueries, element);
 		return null;
 	}
 
+	@Override
 	public Color getBackground(Object element) {
 		_track(backgroundQueries, element);
 		return null;
 	}
 
+	@Override
 	public Color getForeground(Object element) {
 		_track(foregroundQueries, element);
 		return null;
 	}
 
+	@Override
 	public Font getFont(Object element) {
 		_track(fontQueries, element);
 		return null;
 	}
 
+	@Override
 	public StyledString getStyledText(Object element) {
 		_track(styledTextQueries, element);
 		return null;
 	}
 
+	@Override
 	public void restoreState(IMemento aMemento) {}
+	@Override
 	public void saveState(IMemento aMemento) {}
 
 	public static void resetQueries() {

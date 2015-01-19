@@ -46,6 +46,7 @@ public class TestLinkHelper implements ILinkHelper {
 		activateEditorCount = 0;
 	}
 	
+	@Override
 	public IStructuredSelection findSelection(IEditorInput anInput) {
 		findSelectionEditorInput = anInput;
 		findSelectionCount++;
@@ -57,6 +58,7 @@ public class TestLinkHelper implements ILinkHelper {
 		return StructuredSelection.EMPTY;
 	}
 
+	@Override
 	public void activateEditor(IWorkbenchPage aPage,
 			IStructuredSelection aSelection) {
 		activateEditorCount++;
@@ -72,6 +74,7 @@ public class TestLinkHelper implements ILinkHelper {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return "findSel: " + findSelectionEditorInput + " (" + findSelectionCount + ") activate: " + activateEditorSelection + " (" + activateEditorCount + ")";
 	}

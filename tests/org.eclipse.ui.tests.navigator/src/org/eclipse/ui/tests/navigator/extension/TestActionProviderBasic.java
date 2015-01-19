@@ -27,6 +27,7 @@ public class TestActionProviderBasic extends CommonActionProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
+	@Override
 	public void init(ICommonActionExtensionSite site) { 
 		super.init(site);
 
@@ -40,6 +41,7 @@ public class TestActionProviderBasic extends CommonActionProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		menu.add(action);
 	}
