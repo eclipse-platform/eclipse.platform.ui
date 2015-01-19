@@ -52,7 +52,7 @@ public abstract class ResourceWrapper implements IWorkbenchAdapter {
 	}
 	protected abstract ResourceWrapper getModelObject(IResource resource);
 	public abstract String getModelId();
-	
+
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
@@ -61,5 +61,5 @@ public abstract class ResourceWrapper implements IWorkbenchAdapter {
 	public String getLabel(Object o) {
 		return  _resource.toString();
 	}
-	
+
 }

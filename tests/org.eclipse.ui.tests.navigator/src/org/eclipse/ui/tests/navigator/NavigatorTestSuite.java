@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides 
- *     
+ *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides
+ *
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 

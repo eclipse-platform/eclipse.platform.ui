@@ -261,7 +261,7 @@ public class CNavigatorContentProvider implements
 
 	/**
 	 * Converts the shape modification to use CElements.
-	 * 
+	 *
 	 * @param modification
 	 *            the shape modification to convert
 	 * @return <code>true</code> if the shape modification set was modified
@@ -291,7 +291,7 @@ public class CNavigatorContentProvider implements
 
 	/**
 	 * Converts the given set to CElements.
-	 * 
+	 *
 	 * @param currentChildren
 	 *            The set of current children that would be contributed or
 	 *            refreshed in the viewer.

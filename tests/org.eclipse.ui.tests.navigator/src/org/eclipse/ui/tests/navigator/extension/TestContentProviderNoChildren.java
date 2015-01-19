@@ -21,9 +21,9 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
 public class TestContentProviderNoChildren implements IPipelinedTreeContentProvider2 {
 
-	
+
 	public static boolean _hasChildrenTrue;
-	
+
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		return new Object[] {};

@@ -32,7 +32,7 @@ public class TestDragAssistant extends ResourceDragAdapterAssistant {
 		_finishedEvent = null;
 		_finishedSelection = null;
 	}
-	
+
 	@Override
 	public void dragStart(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {

@@ -111,7 +111,7 @@ public class PR263695 {
 
                                 try { Thread.sleep(sleep); } catch
 (InterruptedException e) {}
-                                System.out.println("release");                  
+                                System.out.println("release");
                                 event = new Event();
                                 event.type = SWT.MouseUp;
                                 event.button = 1;

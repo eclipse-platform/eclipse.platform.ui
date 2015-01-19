@@ -100,7 +100,7 @@ public class TestExtensionTreeData {
 	/**
 	 * @return
 	 */
-	public IFile getFile() { 
+	public IFile getFile() {
 		return container;
 	}
 

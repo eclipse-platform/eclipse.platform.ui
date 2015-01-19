@@ -28,7 +28,7 @@ public class LinkHelperTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER_LINK_HELPER;
 	}
 
-	
+
 	public void testLinkHelperSelectionChange() throws Exception {
 
 		System.out.println("SelectionChange start");
@@ -39,12 +39,12 @@ public class LinkHelperTest extends NavigatorTestBase {
 		IDE.openEditor(activePage, _p2.getFile("file2.txt"));
 
 		_commonNavigator.setLinkingEnabled(true);
-		
+
 		_viewer.setSelection(new StructuredSelection(_p2.getFile("file1.txt"))); //$NON-NLS-1$
 		DisplayHelper.sleep(SLEEP_TIME);
 
 		_commonNavigator.getViewSite().getPage().activate(_commonNavigator);
-		
+
 		System.out.println("before set 2");
 		_viewer.setSelection(new StructuredSelection(_p2.getFile("file2.txt"))); //$NON-NLS-1$
 		DisplayHelper.sleep(SLEEP_TIME);
@@ -67,7 +67,7 @@ public class LinkHelperTest extends NavigatorTestBase {
 
 	public void testLinkHelperEditorActivation() throws Exception {
 		System.out.println("EditorActivation start");
-		
+
 		_commonNavigator.setLinkingEnabled(false);
 		DisplayHelper.sleep(SLEEP_TIME);
 
@@ -88,7 +88,7 @@ public class LinkHelperTest extends NavigatorTestBase {
 		System.out.println("EditorActivation 1 Done: " + TestLinkHelper.instance);
 		assertEquals(1, TestLinkHelper.instance.findSelectionCount);
 		assertEquals(0, TestLinkHelper.instance.activateEditorCount);
-		
+
 		TestLinkHelper.instance.resetTest();
 
 		System.out.println("before activate 2");
@@ -97,7 +97,7 @@ public class LinkHelperTest extends NavigatorTestBase {
 		System.out.println("EditorActivation 2 Done: " + TestLinkHelper.instance);
 		assertEquals(1, TestLinkHelper.instance.findSelectionCount);
 		assertEquals(0, TestLinkHelper.instance.activateEditorCount);
-		
+
 
 	}
 

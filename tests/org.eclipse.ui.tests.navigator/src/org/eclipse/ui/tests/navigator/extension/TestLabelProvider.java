@@ -47,7 +47,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	public boolean _null;
 
 	public static boolean _throw;
-	
+
 	public static void resetTest() {
 		_throw = false;
 	}

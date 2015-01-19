@@ -37,13 +37,13 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
  *
  */
 public class TestPipelineProvider extends ResourceWrapperContentProvider {
-	
+
 	public static final Map ELEMENTS = new HashMap(),
 	CHILDREN = new HashMap(),
 	ADDS = new HashMap(),
 	REMOVES = new HashMap(),
 	UPDATES = new HashMap();
-	
+
 	private String _id;
 
 	@Override
@@ -95,13 +95,13 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		if (key instanceof ResourceWrapper) {
 			key = ((ResourceWrapper)key).getResource();
 		}
-		
+
 		System.out.println("track:  " + mapName(map) + " " + key + " id: " + id);
-		
+
 		String queries = (String) map.get(key);
 		StringBuffer buf = new StringBuffer(queries==null ? "" : queries);
 		buf.append(id);
-		map.put(key, buf.toString());		
+		map.put(key, buf.toString());
 	}
 
 	/* (non-Javadoc)
@@ -244,7 +244,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		}
 		return null;
 	}
-	
+
 	public static String mapName(Map map) {
 		if (map == ELEMENTS)
 			return "ELEMENTS";
@@ -258,9 +258,9 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 			return "UPDATES";
 		return "??? unknown";
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public static void reset() {
 		ELEMENTS.clear();
@@ -268,7 +268,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 		ADDS.clear();
 		REMOVES.clear();
 		UPDATES.clear();
-		
+
 	}
 
 }

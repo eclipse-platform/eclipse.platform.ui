@@ -23,17 +23,17 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 		IPipelinedTreeContentProvider2 {
 
 	public static boolean _throw;
-	
+
 	public static void resetTest() {
 		_throw = false;
 	}
-	
+
 	public TestContentProviderPipelined() {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren
 	 * (java.lang.Object, java.util.Set)
@@ -49,7 +49,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements
 	 * (java.lang.Object, java.util.Set)
@@ -73,7 +73,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedParent
 	 * (java.lang.Object, java.lang.Object)
@@ -87,7 +87,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org
 	 * .eclipse.ui.navigator.PipelinedShapeModification)
@@ -102,7 +102,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh
 	 * (org.eclipse.ui.navigator.PipelinedViewerUpdate)
@@ -117,7 +117,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove
 	 * (org.eclipse.ui.navigator.PipelinedShapeModification)
@@ -132,7 +132,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptUpdate
 	 * (org.eclipse.ui.navigator.PipelinedViewerUpdate)
@@ -146,7 +146,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator
 	 * .ICommonContentExtensionSite)
@@ -158,7 +158,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento
 	 * )
@@ -170,7 +170,7 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.navigator.IMementoAware#saveState(org.eclipse.ui.IMemento)
 	 */

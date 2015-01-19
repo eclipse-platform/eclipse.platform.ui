@@ -34,7 +34,7 @@ public class TestCopyDropAssistant extends ResourceDropAdapterAssistant {
 		// Make sure we have the event
 		DropTargetEvent event = getCurrentEvent();
 		Assert.isTrue(event != null);
-		
+
 		// Switch to copy
 		getCommonDropAdapter().overrideOperation(DND.DROP_COPY);
 		return super.validateDrop(target, operation, transferType);

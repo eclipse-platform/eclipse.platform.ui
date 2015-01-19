@@ -29,7 +29,7 @@ public class ActivityTest extends NavigatorTestBase {
 	private static final boolean DEBUG = false;
 
 	protected static final boolean USE_NEW_MENU = true;
-	
+
 	// Bug 217801 make sure category filtering works with common wizards
 	// Bug 257598 missing capabilities support for actions
 	public void testCategoryWizard() throws Exception {
@@ -63,7 +63,7 @@ public class ActivityTest extends NavigatorTestBase {
 		assertTrue(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityTest1", !USE_NEW_MENU));
 	}
 
-	
+
 	// Bug 257598 missing capabilities support for actions
 	public void testProviderFilter() throws Exception {
 
@@ -95,6 +95,6 @@ public class ActivityTest extends NavigatorTestBase {
 
 	}
 
-	
-	
+
+
 }

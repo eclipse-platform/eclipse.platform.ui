@@ -30,7 +30,7 @@ public class CElement implements IAdaptable {
 	protected List _children;
 
 	protected CNavigatorContentProvider _cp;
-	
+
 	public CElement(CNavigatorContentProvider cp, IResource resource, CElement parent) {
 		_cp = cp;
 		_resource = resource;

@@ -26,9 +26,9 @@ import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 /**
  * This simulates the CDT usage of the CNF.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class CdtTest extends NavigatorTestBase {
 

@@ -88,7 +88,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_SIMPLE_CHILDREN2 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent2";
 	public static final String TEST_SIMPLE_CHILDREN3 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent3";
 	public static final String TEST_SIMPLE_CHILDREN_NOT_FOUND = "org.eclipse.ui.tests.navigator.testSimpleChildrenAppearsBeforeNotFound";
-	
+
 	public static final String TEST_CONTENT_M12_VIEW = "org.eclipse.ui.tests.navigator.M12View";
 	public static final String TEST_CONTENT_M12_M1_CONTENT = "org.eclipse.ui.tests.navigator.m12.M1";
 	public static final String TEST_CONTENT_M12_M1_CONTENT_FIRST_CLASS = "org.eclipse.ui.tests.navigator.m12.M1FirstClass";
@@ -192,7 +192,7 @@ public class NavigatorTestBase extends TestCase {
 			_expectedChildren.add(_project.getFolder("src")); //$NON-NLS-1$
 			_expectedChildren.add(_project.getFolder("bin")); //$NON-NLS-1$
 			_expectedChildren.add(_project.getFile(".project")); //$NON-NLS-1$
-			_expectedChildren.add(_project.getFile(".classpath")); //$NON-NLS-1$ 
+			_expectedChildren.add(_project.getFile(".classpath")); //$NON-NLS-1$
 			_expectedChildren.add(_project.getFile("model.properties")); //$NON-NLS-1$
 
 			_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
@@ -203,7 +203,7 @@ public class NavigatorTestBase extends TestCase {
 		}
 
 		//lookAt();
-		
+
 		showNavigator();
 		refreshViewer();
 
@@ -217,7 +217,7 @@ public class NavigatorTestBase extends TestCase {
 	protected void lookAt() {
 		DisplayHelper.sleep(1000000);
 	}
-	
+
 	protected void waitForModelObjects() throws Exception {
 		_project.findMember(TestContentProvider.MODEL_FILE_PATH).touch(null);
 		// Let build run to load the model objects
@@ -370,6 +370,6 @@ public class NavigatorTestBase extends TestCase {
 			_viewer.setExpandedState(items[i].getData(), true);
 		}
 	}
-	
-	
+
+
 }

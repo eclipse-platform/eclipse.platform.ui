@@ -49,12 +49,12 @@ public class TestContentProvider implements ITreeContentProvider,
 	private final Map rootElements = new HashMap();
 
 	private StructuredViewer viewer;
-	
+
 	public static TestExtensionTreeData _modelRoot;
-	
+
 	public static boolean _dieOnSetInput;
 	public static boolean _diedOnSetInput;
-	
+
 	public TestContentProvider() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		_dieOnSetInput = false;
@@ -73,7 +73,7 @@ public class TestContentProvider implements ITreeContentProvider,
 			return data.getChildren();
 		} else {
 
-			IProject project = adaptToProject(parentElement);  
+			IProject project = adaptToProject(parentElement);
 			if (project != null && project.isAccessible()) {
 				IFile modelFile = project.getFile(MODEL_FILE_PATH);
 				if (rootElements.containsKey(modelFile)) {
@@ -85,7 +85,7 @@ public class TestContentProvider implements ITreeContentProvider,
 					return model != null ? model.getChildren() : NO_CHILDREN;
 				}
 			}
-		}  
+		}
 		return NO_CHILDREN;
 	}
 
@@ -99,8 +99,8 @@ public class TestContentProvider implements ITreeContentProvider,
 			return (IProject) parentElement;
 		else if(parentElement instanceof IAdaptable)
 			return (IProject) ((IAdaptable) parentElement).getAdapter(IProject.class);
-		else 
-			return (IProject) Platform.getAdapterManager().getAdapter(parentElement, IProject.class); 
+		else
+			return (IProject) Platform.getAdapterManager().getAdapter(parentElement, IProject.class);
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class TestContentProvider implements ITreeContentProvider,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	@Override
@@ -174,7 +174,7 @@ public class TestContentProvider implements ITreeContentProvider,
 		IResourceDelta delta = event.getDelta();
 		try {
 			delta.accept(this);
-		} catch (CoreException e) { 
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 
@@ -182,7 +182,7 @@ public class TestContentProvider implements ITreeContentProvider,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 	 */
 	@Override
@@ -203,7 +203,7 @@ public class TestContentProvider implements ITreeContentProvider,
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (viewer != null && !viewer.getControl().isDisposed())
 							viewer.refresh(file.getParent());
-						return Status.OK_STATUS;						
+						return Status.OK_STATUS;
 					}
 				}.schedule();
 			}

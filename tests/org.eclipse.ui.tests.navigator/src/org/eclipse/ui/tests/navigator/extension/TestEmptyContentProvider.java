@@ -19,7 +19,7 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 	private static final Object[] NO_CHILDREN = new Object[0];
 
 	public static boolean _throw;
-	
+
 	public static void resetTest() {
 		_throw = false;
 	}

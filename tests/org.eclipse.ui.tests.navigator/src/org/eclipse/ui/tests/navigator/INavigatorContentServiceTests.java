@@ -29,9 +29,9 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 
 	public INavigatorContentServiceTests() {
 		_navigatorInstanceId = TEST_VIEWER;
-		
+
 	}
-	
+
 	public void testFindValidExtensions() {
 
 		_contentService
@@ -195,6 +195,6 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 		EditorTestHelper.showView(TEST_VIEW_NON_COMMONVIEWER, true);
 
 	}
-	
-	
+
+
 }

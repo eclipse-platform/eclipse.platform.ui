@@ -26,26 +26,26 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public class TestLinkHelper implements ILinkHelper {
 
-	
+
 	public IEditorInput findSelectionEditorInput;
 	public int findSelectionCount;
-	
+
 	public IStructuredSelection activateEditorSelection;
 	public int activateEditorCount;
-	
+
 	public static TestLinkHelper instance;
-	
+
 	public TestLinkHelper() {
 		instance = this;
 	}
-	
+
 	public void resetTest() {
 		findSelectionEditorInput = null;
 		findSelectionCount = 0;
 		activateEditorSelection = null;
 		activateEditorCount = 0;
 	}
-	
+
 	@Override
 	public IStructuredSelection findSelection(IEditorInput anInput) {
 		findSelectionEditorInput = anInput;
@@ -73,7 +73,7 @@ public class TestLinkHelper implements ILinkHelper {
 				aPage.bringToTop(editor);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "findSel: " + findSelectionEditorInput + " (" + findSelectionCount + ") activate: " + activateEditorSelection + " (" + activateEditorCount + ")";

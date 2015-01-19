@@ -17,7 +17,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class ExtensionsTest extends NavigatorTestBase {
-	
+
 	private static final boolean DEBUG = false;
 
 	public ExtensionsTest() {

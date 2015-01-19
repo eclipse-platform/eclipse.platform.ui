@@ -177,11 +177,11 @@ public class PerformanceTest extends NavigatorTestBase {
 
 	// bug 159828 deleting large number of projects takes too long
 	public void testCreateAndDeleteProjects() throws Exception {
-		
+
 		_numProjects = 100;
-		
+
 		createProjects();
-		
+
 		// Hide it
 		EditorTestHelper.showView(_navigatorInstanceId, false);
 
@@ -201,7 +201,7 @@ public class PerformanceTest extends NavigatorTestBase {
 		DisplayHelper.sleep(500);
 		System.out.println("Project explorer " + _numProjects + " Time: "
 				+ (System.currentTimeMillis() - start));
-		
+
 		DisplayHelper.sleep(500);
 
 	}
@@ -274,13 +274,13 @@ public class PerformanceTest extends NavigatorTestBase {
 				.getProject("p000");
 
 		p1.close(null);
-		
+
 		long start = System.currentTimeMillis();
 		_viewer.setMapper(null);
 		p1.open(null);
 		// Let the updates run
 		DisplayHelper.sleep(200);
-		
+
 		long createUnMappedTime = System.currentTimeMillis() - start;
 		System.out.println("Unmapped Time: " + createUnMappedTime);
 

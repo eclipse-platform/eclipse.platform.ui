@@ -24,7 +24,7 @@ import org.eclipse.ui.navigator.NavigatorActionService;
  */
 public class TestAccessHelper {
 
-	
+
 	public static CommonActionProvider getActionProvider(
 			INavigatorContentService contentService,
 			NavigatorActionService actionService, Class cls) throws Exception {

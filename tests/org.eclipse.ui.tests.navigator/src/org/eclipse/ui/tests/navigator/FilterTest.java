@@ -31,9 +31,9 @@ public class FilterTest extends NavigatorTestBase {
 		TreeItem[] items;
 		items = _viewer.getTree().getItems();
 		assertEquals(3, items.length);
-		
+
 		NavigatorContentService ncs = (NavigatorContentService) _contentService;
-		
+
 		// Bug 305703 Make sure that contribution memory does not leak on filters
 		assertEquals(0, ncs.getContributionMemorySize());
 
@@ -44,7 +44,7 @@ public class FilterTest extends NavigatorTestBase {
 		assertEquals(1, items.length);
 		assertEquals("Test", items[0].getText());
 		assertEquals(0, ncs.getContributionMemorySize());
-		
+
 		_contentService.getFilterService().activateFilterIdsAndUpdateViewer(
 				new String[] { TEST_FILTER_P1 });
 

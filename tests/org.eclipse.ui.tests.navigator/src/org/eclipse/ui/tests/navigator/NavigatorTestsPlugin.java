@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * 
+ *
  * Not exposed as API.
  * @since 3.2
  *
@@ -23,7 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class NavigatorTestsPlugin extends AbstractUIPlugin {
 
 	//The shared instance.
-	private static NavigatorTestsPlugin plugin; 
+	private static NavigatorTestsPlugin plugin;
 	/**
 	 * The plugin id
 	 */
@@ -43,31 +43,31 @@ public class NavigatorTestsPlugin extends AbstractUIPlugin {
 	public static NavigatorTestsPlugin getDefault() {
 		return plugin;
 	}
- 
+
 
 	/**
 	 * Log the given status to the ISV log.
-	 * 
+	 *
 	 * When to use this:
-	 * 
+	 *
 	 * This should be used when a PluginException or a ExtensionException occur but for which an
 	 * error dialog cannot be safely shown.
-	 * 
+	 *
 	 * If you can show an ErrorDialog then do so, and do not call this method.
-	 * 
+	 *
 	 * If you have a plugin exception or core exception in hand call log(String, IStatus)
-	 * 
+	 *
 	 * This convenience method is for internal use by the Workbench only and must not be called
 	 * outside the workbench.
-	 * 
+	 *
 	 * This method is supported in the event the log allows plugin related information to be logged
 	 * (1FTTJKV). This would be done by this method.
-	 * 
+	 *
 	 * This method is internal to the workbench and must not be called by any plugins, or examples.
-	 * 
+	 *
 	 * @param message
 	 *            A high level UI message describing when the problem happened.
-	 *  
+	 *
 	 */
 
 	public static void log(String message) {
@@ -86,26 +86,26 @@ public class NavigatorTestsPlugin extends AbstractUIPlugin {
 		}
 		getDefault().getLog().log(status);
 		System.err.println(status.getMessage());
-	} 
-	
+	}
 
-	public static void logError(int aCode, String aMessage, Throwable anException) { 
-		getDefault().getLog().log(createErrorStatus(aCode, aMessage, anException)); 
+
+	public static void logError(int aCode, String aMessage, Throwable anException) {
+		getDefault().getLog().log(createErrorStatus(aCode, aMessage, anException));
 	}
 
 	public static void log(int severity, int aCode, String aMessage, Throwable exception) {
 		log(createStatus(severity, aCode, aMessage, exception));
 	}
 
-	public static void log(IStatus aStatus) { 
-		getDefault().getLog().log(aStatus); 
-	} 
-	 
+	public static void log(IStatus aStatus) {
+		getDefault().getLog().log(aStatus);
+	}
+
 	public static IStatus createStatus(int severity, int aCode, String aMessage, Throwable exception) {
 		return new Status(severity, PLUGIN_ID, aCode, aMessage, exception);
 	}
- 
+
 	public static IStatus createErrorStatus(int aCode, String aMessage, Throwable exception) {
 		return createStatus(IStatus.ERROR, aCode, aMessage, exception);
-	} 
+	}
 }

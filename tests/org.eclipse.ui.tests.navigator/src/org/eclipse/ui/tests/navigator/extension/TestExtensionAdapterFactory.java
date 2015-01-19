@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
 
 public class TestExtensionAdapterFactory implements IAdapterFactory {
-	
+
 	private static final Class IRESOURCE_TYPE = IResource.class;
 	private static final Class IFILE_TYPE = IFile.class;
 
@@ -31,7 +31,7 @@ public class TestExtensionAdapterFactory implements IAdapterFactory {
 	}
 
 	@Override
-	public Class[] getAdapterList() { 
+	public Class[] getAdapterList() {
 		return ADAPTED_TYPES;
 	}
 

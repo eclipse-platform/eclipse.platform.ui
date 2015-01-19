@@ -48,7 +48,7 @@ public class TestActionProviderNested extends CommonActionProvider {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			@Override
@@ -81,13 +81,13 @@ public class TestActionProviderNested extends CommonActionProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
-		
+
 		actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, openAction);
 
 	}

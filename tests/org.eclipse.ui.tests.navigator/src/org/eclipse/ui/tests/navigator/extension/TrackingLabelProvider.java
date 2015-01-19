@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides 
+ *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides
  ******************************************************************************/
 
 package org.eclipse.ui.tests.navigator.extension;
@@ -39,15 +39,15 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 public class TrackingLabelProvider extends LabelProvider implements
 ICommonLabelProvider, IDescriptionProvider, IColorProvider,
 IFontProvider, IStyledLabelProvider {
-	
+
 	private static final boolean PRINT_DEBUG_INFO = false;
 	public static Color BG_COLOR = Display.getCurrent().getSystemColor(
 			SWT.COLOR_GRAY);
 	public static Color FG_COLOR = Display.getCurrent().getSystemColor(
 			SWT.COLOR_BLACK);
 	public static Font FONT = new Font(Display.getDefault(), new FontData());
-	
-	public final static Map 
+
+	public final static Map
 		descriptionQueries = new HashMap(),
 		backgroundQueries = new HashMap(),
 		foregroundQueries = new HashMap(),
@@ -55,7 +55,7 @@ IFontProvider, IStyledLabelProvider {
 		styledTextQueries = new HashMap(),
 		textQueries = new HashMap(),
 		imageQueries = new HashMap();
-			
+
 	private String _id;
 
 	@Override
@@ -66,7 +66,7 @@ IFontProvider, IStyledLabelProvider {
 			_id = _id.substring(i+1);
 		}
 	}
-	
+
 	@Override
 	public Image getImage(Object element) {
 		_track(imageQueries, element);

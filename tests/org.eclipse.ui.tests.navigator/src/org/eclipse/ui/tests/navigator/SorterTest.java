@@ -82,7 +82,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		_viewer.update(_p1, new String[] { "prop1" });
 		_viewer.expandAll();
- 
+
 		assertEquals("prop1", TestSorterResource._sorterProperty);
 		assertEquals(_p1, TestSorterResource._sorterElement);
 	}
@@ -133,7 +133,7 @@ public class SorterTest extends NavigatorTestBase {
 		TreeItem[] childItems;
 
 		//DisplayHelper.sleep(100000000);
-		
+
 		// Backwards
 		assertEquals("p2", items[0].getText());
 		assertEquals("p1", items[1].getText());
@@ -143,12 +143,12 @@ public class SorterTest extends NavigatorTestBase {
 
 		_contentService.getActivationService().deactivateExtensions(
 				new String[] { TEST_CONTENT_SORTER_RESOURCE_SORTONLY }, false);
-		
+
 		refreshViewer();
 		_viewer.expandAll();
 
 		final int WAIT_COUNT = 100;
-		
+
 		int count = WAIT_COUNT;
 		boolean passed = false;
 
@@ -229,7 +229,7 @@ public class SorterTest extends NavigatorTestBase {
 		}
 	}
 
-	// Here we want to make sure the sorting is done by the 
+	// Here we want to make sure the sorting is done by the
 	// highest (in the override hierarchy) content extension that
 	// has a sorter
 	public void testSorterContentOverrideNoSort() throws Exception {
@@ -299,12 +299,12 @@ public class SorterTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 
 		TreeItem addedParent;
-		
+
 		addedParent = items[_projectInd].getItem(3);
 		assertEquals("BlueParent", addedParent.getText());
 		addedParent = items[_projectInd].getItem(2);
 		assertEquals("BlueAddedParent", addedParent.getText());
-		
+
 		// The sorter for TEST_CONTENT_SORTER_MODEL_OVERRIDE sorts the model
 		// using a sorter that is by name
 		assertEquals("BlueAddedChild1", addedParent.getItem(0).getText());

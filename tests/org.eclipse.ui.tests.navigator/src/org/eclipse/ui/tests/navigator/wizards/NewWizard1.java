@@ -17,22 +17,22 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * Does nothing. Used to test the Capability-awareness of the <b>commonWizard</b> extension.
- * 
+ *
  * @since 3.2
  *
  */
 public class NewWizard1 extends Wizard implements INewWizard {
 
-	public NewWizard1() { 
+	public NewWizard1() {
 	}
- 
+
 	@Override
-	public boolean performFinish() { 
+	public boolean performFinish() {
 		return false;
 	}
 
 	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) { 
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
 
 	}
 

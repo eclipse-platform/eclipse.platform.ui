@@ -39,7 +39,7 @@ public class NonCommonViewerView extends ViewPart {
 				true);
 		service.getActivationService().activateExtensions(
 				new String[] { "org.eclipse.ui.navigator.resourceContent" }, false);
-		
+
 		_viewer.setContentProvider(service.createCommonContentProvider());
 		_viewer.setLabelProvider(new DecoratingLabelProvider(service
 				.createCommonLabelProvider(), PlatformUI.getWorkbench()

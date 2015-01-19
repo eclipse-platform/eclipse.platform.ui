@@ -56,7 +56,7 @@ public class PipelineTest extends NavigatorTestBase {
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
 		assertEquals(
-				"There should be " + _projectCount + " item(s).", _projectCount, rootItems.length); //$NON-NLS-1$		
+				"There should be " + _projectCount + " item(s).", _projectCount, rootItems.length); //$NON-NLS-1$
 
 		assertTrue(
 				"The root object should be an IJavaProject, which is IAdaptable.", rootItems[0].getData() instanceof IAdaptable); //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class PipelineTest extends NavigatorTestBase {
 		}
 		assertTrue(found);
 	}
-	
+
 	// Make sure problems in bad extension points are reported well
 	public void testInterceptAddThrow() throws Exception {
 		_contentService.bindExtensions(new String[] {
@@ -119,8 +119,8 @@ public class PipelineTest extends NavigatorTestBase {
 		// This will throw, have to look in the log to see the message
 		_viewer.add(_project, new Object[] { f });
 
-	}	
-	
+	}
+
 	// Bug 299661 hasChildren() does not handle overrides correctly
 	public void testHasNoChildrenOverride(boolean hasChildren) throws Exception {
 		TestContentProviderNoChildren._hasChildrenTrue = hasChildren;
@@ -132,7 +132,7 @@ public class PipelineTest extends NavigatorTestBase {
 						TEST_CONTENT_NO_CHILDREN }, true);
 
 		refreshViewer();
-		
+
 		TreeItem[] rootItems;
 		rootItems = _viewer.getTree().getItems();
 		assertEquals("p1", rootItems[0].getText());
@@ -141,16 +141,16 @@ public class PipelineTest extends NavigatorTestBase {
 		_viewer.expandAll();
 		rootItems = _viewer.getTree().getItems();
 		assertEquals(0, rootItems[0].getItems().length);
-	}	
-	
+	}
+
 	public void testHasNoChildrenOverrideHasChildren() throws Exception {
 		testHasNoChildrenOverride(true);
-	}	
-	
+	}
+
 	public void testHasNoChildrenOverride() throws Exception {
 		testHasNoChildrenOverride(false);
-	}	
-	
-	
-	
+	}
+
+
+
 }
