@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,8 +119,10 @@ public class ScreenshotTest extends TestCase {
 		
 		// Dump focus control, parents, and shells:
 		Control focusControl = display.getFocusControl();
-		if (focusControl != null) {
-			out.println("FocusControl: ");
+		out.println("FocusControl: ");
+		if (focusControl == null) {
+			System.out.println("  null!");
+		} else {
 			StringBuffer indent = new StringBuffer("  ");
 			do {
 				out.println(indent.toString() + focusControl);
@@ -133,7 +135,8 @@ public class ScreenshotTest extends TestCase {
 			out.println("Shells: ");
 			for (int i = 0; i < shells.length; i++) {
 				Shell shell = shells[i];
-				out.print((shell.isVisible() ? "  visible: " : "  invisible: ") + shell);
+				out.print(display.getActiveShell() == shell ? "  active, " : "  inactive, ");
+				out.print((shell.isVisible() ? "visible: " : "invisible: ") + shell);
 				out.println(" @ " + shell.getBounds().toString());
 			}
 		}
