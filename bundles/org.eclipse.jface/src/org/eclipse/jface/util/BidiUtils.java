@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public final class BidiUtils {
 	
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	/**
 	 * Left-To-Right Base Text Direction.
