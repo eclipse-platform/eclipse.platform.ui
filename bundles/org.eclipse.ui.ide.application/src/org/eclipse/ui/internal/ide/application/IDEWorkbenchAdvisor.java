@@ -807,7 +807,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public String getWorkspaceLocation() {
 		// read command line, which has priority
 		IEclipseContext context = getWorkbenchConfigurer().getWorkbench().getService(IEclipseContext.class);
-		String location = (String) context.get(E4Workbench.FORCED_SHOW_LOCATION);
+		String location = context != null ? (String) context.get(E4Workbench.FORCED_SHOW_LOCATION) : null;
 		if (location != null) {
 			return location;
 		}
