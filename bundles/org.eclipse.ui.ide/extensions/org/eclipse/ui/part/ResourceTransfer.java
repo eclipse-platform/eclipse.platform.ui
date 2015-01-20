@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 205678
  *******************************************************************************/
 package org.eclipse.ui.part;
 
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * The <code>ResourceTransfer</code> class is used to transfer an
@@ -46,7 +48,9 @@ import org.eclipse.swt.dnd.TransferData;
  * A singleton is provided which may be serially reused (see <code>getInstance</code>).  
  * It is not intended to be subclassed.
  * </p>
- *
+ * <p>
+ * The amount of resources which can be transferred is limited to {@value #MAX_RESOURCES_TO_TRANSFER} elements.
+ * </p>
  * @see org.eclipse.jface.viewers.StructuredViewer
  * @see org.eclipse.swt.dnd.DropTarget
  * @see org.eclipse.swt.dnd.DragSource
@@ -54,9 +58,19 @@ import org.eclipse.swt.dnd.TransferData;
  */
 public class ResourceTransfer extends ByteArrayTransfer {
 
-    /**
-     * Singleton instance.
-     */
+	/**
+	 * See bug 205678: sometimes we can misinterpret native data received from
+	 * clipboard. No one seriously would copy/paste or drag/drop more then
+	 * 100.000 resources: only creating an *empty* array of 100.000.000
+	 * resources will cause OOME on 512 MB heap size (default for shipped
+	 * Eclipse packages), same with copy/paste of a *full* array of 10.000.000
+	 * elements.
+	 */
+	private final static int MAX_RESOURCES_TO_TRANSFER = 1000 * 1000;
+
+	/**
+	 * Singleton instance.
+	 */
     private static final ResourceTransfer instance = new ResourceTransfer();
 
     // Create a unique ID to make sure that different Eclipse
@@ -163,6 +177,12 @@ public class ResourceTransfer extends ByteArrayTransfer {
                 new ByteArrayInputStream(bytes));
         try {
             int count = in.readInt();
+			if (count > MAX_RESOURCES_TO_TRANSFER) {
+				String message = "Transfer aborted, too many resources: " + count; //$NON-NLS-1$
+				IDEWorkbenchPlugin.log(message, new IllegalArgumentException(
+						"Maximum limit of resources to transfer is: " + MAX_RESOURCES_TO_TRANSFER)); //$NON-NLS-1$
+				return null;
+			}
             IResource[] results = new IResource[count];
             for (int i = 0; i < count; i++) {
                 results[i] = readResource(in);
