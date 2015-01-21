@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - Bug 458006 - Fix tests that fail on Mac when filesystem.java7 is used
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -50,7 +51,9 @@ public class Bug_329836 extends ResourceTest {
 
 		// check that attributes are really set
 		assertTrue("2.0", info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		assertTrue("3.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
+		if (isAttributeSupported(EFS.ATTRIBUTE_IMMUTABLE)) {
+			assertTrue("3.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
+		}
 
 		// unset EFS.ATTRIBUTE_READ_ONLY which also unsets EFS.IMMUTABLE on Mac
 
@@ -66,8 +69,9 @@ public class Bug_329836 extends ResourceTest {
 
 		// check that attributes are really unset
 		assertFalse("5.0", info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
-		assertFalse("6.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
-
+		if (isAttributeSupported(EFS.ATTRIBUTE_IMMUTABLE)) {
+			assertFalse("6.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
+		}
 	}
 
 	public static Test suite() {
