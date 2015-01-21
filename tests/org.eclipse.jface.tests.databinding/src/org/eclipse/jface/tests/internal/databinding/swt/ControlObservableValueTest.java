@@ -45,7 +45,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
@@ -57,8 +57,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testSetValueEnabled() throws Exception {
-		ISWTObservableValue observableValue = SWTObservables
-				.observeEnabled(shell);
+		ISWTObservableValue observableValue = SWTObservables.observeEnabled(shell);
 		Boolean value = Boolean.FALSE;
 		observableValue.setValue(value);
 		assertFalse(shell.isEnabled());
@@ -183,21 +182,36 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObserveFocus() {
+		System.out.println("ControlObservableValueTest.testObserveFocus() start active shell: "
+				+ shell.getDisplay().getActiveShell());
 		shell.setLayout(new FillLayout());
-		Control c1 = new Text(shell, SWT.NONE);
-		Control c2 = new Text(shell, SWT.NONE);
+		Text c1 = new Text(shell, SWT.NONE);
+		c1.setText("1");
+		Text c2 = new Text(shell, SWT.NONE);
+		c2.setText("2");
 		shell.pack();
 		shell.setVisible(true);
 
+		processDisplayQueue();
+		System.out.println("active shell (2): " + shell.getDisplay().getActiveShell());
+
 		assertTrue(c1.setFocus());
+		Control focus = shell.getDisplay().getFocusControl();
+		System.out.println("focus control (1): " + focus + ", c2? " + (focus == c2));
+		System.out.println("active shell (3): " + shell.getDisplay().getActiveShell());
 
 		IObservableValue value = WidgetProperties.focused().observe(c2);
-		ValueChangeEventTracker tracker = ValueChangeEventTracker
-				.observe(value);
+		ValueChangeEventTracker tracker = ValueChangeEventTracker.observe(value);
 
 		assertTrue(c2.setFocus());
 
 		processDisplayQueue();
+		focus = shell.getDisplay().getFocusControl();
+		System.out.println("focus control (2): " + focus + ", c2? " + (focus == c2));
+		System.out.println("active shell (4): " + shell.getDisplay().getActiveShell());
+
+		System.out.println("Value (should be true): " + value.getValue());
+		Screenshots.takeScreenshot(getClass(), getName(), System.out);
 
 		assertEquals(Boolean.TRUE, value.getValue());
 
