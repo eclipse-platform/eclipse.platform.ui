@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - [458005] Provide a mechanism for disabling file system natives so that Java 7 filesystem.java7 classes can be tested
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -20,6 +21,9 @@ import org.eclipse.core.internal.filesystem.local.unix.UnixFileNatives;
  * Dispatches methods backed by native code to the appropriate platform specific 
  * implementation depending on a library provided by a fragment. Failing this it tries
  * to use Java 7 NIO/2 API's (if they are available).
+ * <p>
+ * Use of native libraries can be disabled by adding -Declipse.filesystem.useNatives=false to VM
+ * arguments.
  */
 public class LocalFileNativesManager {
 	private static final NativeHandler DEFAULT = new NativeHandler() {
@@ -39,9 +43,10 @@ public class LocalFileNativesManager {
 	private static NativeHandler DELEGATE = DEFAULT;
 
 	static {
-		if (UnixFileNatives.isUsingNatives()) {
+		boolean nativesAllowed = Boolean.parseBoolean(System.getProperty("eclipse.filesystem.useNatives", "true")); //$NON-NLS-1$ //$NON-NLS-2$
+		if (nativesAllowed && UnixFileNatives.isUsingNatives()) {
 			DELEGATE = new UnixFileHandler();
-		} else if (LocalFileNatives.isUsingNatives()) {
+		} else if (nativesAllowed && LocalFileNatives.isUsingNatives()) {
 			DELEGATE = new LocalFileHandler();
 		} else {
 			try {
