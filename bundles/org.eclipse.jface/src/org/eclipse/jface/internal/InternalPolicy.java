@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.jface.internal;
 
+import org.eclipse.jface.util.BidiUtils;
+
 
 /**
  * Internal class used for non-API debug flags.
@@ -43,8 +45,17 @@ public class InternalPolicy {
 	public static boolean DEBUG_LOG_LABEL_PROVIDER_NOTIFICATIONS_WHEN_DISPOSED = false;
 	
 	/**
-	 * (NON-API) A flag to indicate whether the JFace bundle is running inside an OSGi
-	 * container
+	 * (NON-API) A flag to indicate whether {@link BidiUtils} should colorize
+	 * processed text fields and add tooltips/messages that show the configured
+	 * handlingType.
+	 * 
+	 * @since 3.11
+	 */
+	public static boolean DEBUG_BIDI_UTILS = false;
+
+	/**
+	 * (NON-API) A flag to indicate whether the JFace bundle is running inside
+	 * an OSGi container
 	 * 
 	 * @since 3.5
 	 */

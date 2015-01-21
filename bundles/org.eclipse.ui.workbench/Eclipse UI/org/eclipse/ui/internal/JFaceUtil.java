@@ -81,6 +81,7 @@ final class JFaceUtil {
 			Policy.TRACE_TOOLBAR = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
 			InternalPolicy.DEBUG_LOG_REENTRANT_VIEWER_CALLS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/viewers/reentrantViewerCalls")); //$NON-NLS-1$ //$NON-NLS-2$
 			InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/viewers/equalElements")); //$NON-NLS-1$ //$NON-NLS-2$
+			InternalPolicy.DEBUG_BIDI_UTILS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/bidiUtils")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

@@ -3,6 +3,9 @@
 # Turn on debugging for the org.eclipse.jface plugin.
 org.eclipse.jface/debug=true
 
+# Colorize bidi-processed fields and add tooltips/messages that show the configured handlingType for text widgets
+org.eclipse.jface/debug/bidiUtils=false
+
 # Log a message if a dialog is opened without a parent
 org.eclipse.jface/debug/dialog/noparent=false
 
