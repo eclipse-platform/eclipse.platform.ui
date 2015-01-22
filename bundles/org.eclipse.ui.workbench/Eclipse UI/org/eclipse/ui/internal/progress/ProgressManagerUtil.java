@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -364,11 +365,12 @@ public class ProgressManagerUtil {
 	 
 	/**
 	 * Utility method to get the best parenting possible for a dialog. If there
-	 * is a modal shell create it so as to avoid two modal dialogs. If not then
-	 * return the shell of the active workbench window. If neither can be found
-	 * return null.
+	 * is a modal shell return it so as to avoid two modal dialogs. If not then
+	 * return the shell of the active workbench window. If that shell is
+	 * <code>null</code> or not visible, then return the splash shell if still
+	 * visible. Otherwise return the shell of the active workbench window.
 	 * 
-	 * @return Shell or <code>null</code>
+	 * @return the best parent shell or <code>null</code>
 	 */
 	public static Shell getDefaultParent() {
 		Shell modal = getModalShellExcluding(null);
@@ -376,7 +378,22 @@ public class ProgressManagerUtil {
 			return modal;
 		}
 
-		return getNonModalShell();
+		Shell nonModalShell = getNonModalShell();
+		if (nonModalShell != null && nonModalShell.isVisible())
+			return nonModalShell;
+
+		try {
+			Shell splashShell = WorkbenchPlugin.getSplashShell(PlatformUI.getWorkbench().getDisplay());
+			if (splashShell != null && splashShell.isVisible()) {
+				return splashShell;
+			}
+		} catch (IllegalAccessException e) {
+			// Use non-modal shell
+		} catch (InvocationTargetException e) {
+			// Use non-modal shell
+		}
+
+		return nonModalShell;
 	}
 
 	/**
