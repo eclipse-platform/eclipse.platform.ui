@@ -45,7 +45,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
@@ -195,10 +195,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		processDisplayQueue();
 		System.out.println("active shell (2): " + shell.getDisplay().getActiveShell());
 
+		shell.forceActive();
+		System.out.println("active shell (3): " + shell.getDisplay().getActiveShell());
+
 		assertTrue(c1.setFocus());
 		Control focus = shell.getDisplay().getFocusControl();
 		System.out.println("focus control (1): " + focus + ", c2? " + (focus == c2));
-		System.out.println("active shell (3): " + shell.getDisplay().getActiveShell());
+		System.out.println("active shell (4): " + shell.getDisplay().getActiveShell());
 
 		IObservableValue value = WidgetProperties.focused().observe(c2);
 		ValueChangeEventTracker tracker = ValueChangeEventTracker.observe(value);
@@ -208,7 +211,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		processDisplayQueue();
 		focus = shell.getDisplay().getFocusControl();
 		System.out.println("focus control (2): " + focus + ", c2? " + (focus == c2));
-		System.out.println("active shell (4): " + shell.getDisplay().getActiveShell());
+		System.out.println("active shell (5): " + shell.getDisplay().getActiveShell());
 
 		System.out.println("Value (should be true): " + value.getValue());
 		Screenshots.takeScreenshot(getClass(), getName(), System.out);
