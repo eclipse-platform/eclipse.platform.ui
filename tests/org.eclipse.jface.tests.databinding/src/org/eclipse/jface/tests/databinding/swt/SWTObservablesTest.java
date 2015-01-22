@@ -114,11 +114,8 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 	}
 
 	@Override
-	protected Shell getShell() {
-		if (shell == null) {
-			shell = new Shell(SWT.V_SCROLL);
-		}
-		return shell;
+	protected Shell createShell() {
+		return new Shell(SWT.V_SCROLL);
 	}
 
 	public void testObserveForeground() throws Exception {

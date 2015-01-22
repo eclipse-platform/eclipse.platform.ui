@@ -46,15 +46,26 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * Returns a Shell to be used in a test.
+	 * Returns a shell to be used in a test. The shell is automatically disposed on tearDown.
 	 *
 	 * @return shell
+	 * @see #createShell()
 	 */
-	protected Shell getShell() {
+	protected final Shell getShell() {
 		if (shell == null || shell.isDisposed()) {
-			shell = new Shell();
+			shell = createShell();
 		}
 
 		return shell;
+	}
+
+	/**
+	 * Returns a new shell to be used in a test. This method is called by {@link #getShell()}.
+	 * It should not be called by test code, but it can be overridden to configure the created shell. 
+	 * 
+	 * @return shell
+	 */
+	protected Shell createShell() {
+		return new Shell();
 	}
 }
