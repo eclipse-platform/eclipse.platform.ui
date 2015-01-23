@@ -8,12 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 128526, bug 128529
-<<<<<<< Upstream, based on master
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988, 457434 
-=======
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988, 457434
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 455527
->>>>>>> 48dd1d8 Bug 455527 - Use isPartOrPlaceholderInPerspective in Show View
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
