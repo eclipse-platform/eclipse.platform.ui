@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
@@ -115,6 +116,22 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 				if (applicationContext.getActiveChild() == context) {
 					application.getContext().set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 				}
+			}
+		}
+	}
+
+	/**
+	 * Notifies selection listeners about selection change caused by active part
+	 * change.
+	 *
+	 * @param activePart
+	 *            the currently active part
+	 */
+	public void notifyListeners(IWorkbenchPart activePart) {
+		if (activePart != null) {
+			ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
+			if (selectionProvider != null) {
+				ISelection selection = selectionProvider.getSelection();
 
 				notifyListeners(activePart.getSite().getId(), activePart, selection);
 				notifyPostSelectionListeners(activePart.getSite().getId(), activePart, selection);
@@ -147,6 +164,16 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			this.selectionService = selectionService;
 		}
 	 }
+
+	@PreDestroy
+	public void dispose() {
+		setSelectionService(null);
+		selectionService = null;
+		listeners.clear();
+		postSelectionListeners.clear();
+		targetedListeners.clear();
+		targetedPostSelectionListeners.clear();
+	}
 
 	private void notifyListeners(String id, IWorkbenchPart workbenchPart, ISelection selection) {
 		for (Object listener : listeners.getListeners()) {
