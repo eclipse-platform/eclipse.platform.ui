@@ -43,10 +43,10 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	private static final String ICON_URI_FOR_PART = "IconUriForPart"; //$NON-NLS-1$
 
-	Map<String, Image> imageMap = new HashMap<String, Image>();
+	private Map<String, Image> imageMap = new HashMap<String, Image>();
 
-	String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.gif"; //$NON-NLS-1$
-	Image pinImage;
+	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.gif"; //$NON-NLS-1$
+	private Image pinImage;
 
 	private ISWTResourceUtilities resUtils;
 
