@@ -1,4 +1,5 @@
 # To force a version qualifier update add the bug here
+Bug 456714 - Add version 54.1.1 ICU4J for Mars release
 Bug 403352 - Update all parent versions to match our build stream
 Bug 424909 - Adopt latest Orbit I-build for javax.annotation 1.2
 Bug 430284 - Update Orbit pre-reqs to latest Orbit I-build
