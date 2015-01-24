@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, Google Inc and others.
+ * Copyright (C) 2014, 2015 Google Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class UiFreezeEvent {
 	}
 
 	/**
-	 * Returns {@code true} if this event was still running at the time the event was logged,
+	 * Returns {@code true} if this event was still ongoing at the time the event was logged,
 	 * which can happen for deadlocks.
 	 */
 	public boolean isStillRunning() {

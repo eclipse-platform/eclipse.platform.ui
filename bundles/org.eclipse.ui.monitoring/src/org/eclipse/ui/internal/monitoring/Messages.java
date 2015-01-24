@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Google, Inc and others.
+ * Copyright (c) 2014, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ public final class Messages extends NLS {
 	public static String DefaultUiFreezeEventLogger_stack_trace_header;
 	public static String DefaultUiFreezeEventLogger_thread_details;
 	public static String DefaultUiFreezeEventLogger_thread_header_2;
-	public static String DefaultUiFreezeEventLogger_ui_delay_header_non_running_2;
-	public static String DefaultUiFreezeEventLogger_ui_delay_header_running_2;
+	public static String DefaultUiFreezeEventLogger_ui_freeze_finished_header_2;
+	public static String DefaultUiFreezeEventLogger_ui_freeze_ongoing_header_2;
 	public static String DefaultUiFreezeEventLogger_waiting_for_1;
 	public static String DefaultUiFreezeEventLogger_waiting_for_with_lock_owner_3;
 	public static String EventLoopMonitorThread_deadlock_error_1;

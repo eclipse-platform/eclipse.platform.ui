@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, Google Inc and others.
+ * Copyright (C) 2014, 2015 Google Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,8 +54,8 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 		String startTime = dateFormat.format(new Date(lastTimestamp));
 
 		String pattern = event.isStillRunning()
-				? Messages.DefaultUiFreezeEventLogger_ui_delay_header_running_2
-				: Messages.DefaultUiFreezeEventLogger_ui_delay_header_non_running_2;
+				? Messages.DefaultUiFreezeEventLogger_ui_freeze_ongoing_header_2
+				: Messages.DefaultUiFreezeEventLogger_ui_freeze_finished_header_2;
 		long duration = event.getTotalDuration();
 		String format = duration >= 100000 ? "%.0f" : duration >= 10 ? "%.2g" : "%.1g"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String header = NLS.bind(pattern, String.format(format, duration / 1000.0), startTime);
