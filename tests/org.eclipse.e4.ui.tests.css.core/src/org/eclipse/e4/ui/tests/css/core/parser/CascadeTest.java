@@ -7,6 +7,7 @@
  * Contributors:
  *   EclipseSource - initial API and implementation
  *   Lars Vogel <Lars.Vogel@gmail.com> - Bug 430468
+ *   Stefan Winkler <stefan@winklerweb.net> - Bug 458342
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
@@ -103,10 +104,12 @@ public class CascadeTest {
 		assertEquals("red", style.getPropertyCSSValue("color").getCssText());
 	}
 
-	private static ViewCSS createViewCss(String css) throws IOException {
-		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+	private static ViewCSS createViewCss(String... css) throws IOException {
 		DocumentCSSImpl docCss = new DocumentCSSImpl();
-		docCss.addStyleSheet(styleSheet);
+		for (String cssString : css) {
+			CSSStyleSheet styleSheet = ParserTestUtil.parseCss(cssString);
+			docCss.addStyleSheet(styleSheet);
+		}
 		return new ViewCSSImpl(docCss);
 	}
 
@@ -132,6 +135,35 @@ public class CascadeTest {
 		String css = "Button, Label { color: blue; font-weight: bold; }\n"
 				+ "Button { color: black }\n";
 		ViewCSS viewCSS = createViewCss(css);
+
+		TestElement button = new TestElement("Button", engine);
+		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		assertEquals("black", style.getPropertyCSSValue("color").getCssText());
+		assertEquals("bold", style.getPropertyCSSValue("font-weight").getCssText());
+	}
+
+	@Test
+	public void testBug458342_combine() throws Exception {
+		// the rules of two stylesheets should be combined
+		String css1 = "Button { color: blue; }";
+		String css2 = "Button { font-weight: bold; }";
+
+		ViewCSS viewCSS = createViewCss(css1, css2);
+
+		TestElement button = new TestElement("Button", engine);
+		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
+		assertEquals("blue", style.getPropertyCSSValue("color").getCssText());
+		assertEquals("bold", style.getPropertyCSSValue("font-weight").getCssText());
+	}
+
+	@Test
+	public void testBug458342_override() throws Exception {
+		// in case of two stylesheets, the second one should override properties
+		// from the first one
+		String css1 = "Button { color: blue; font-weight: bold; }";
+		String css2 = "Button { color: black; }";
+
+		ViewCSS viewCSS = createViewCss(css1, css2);
 
 		TestElement button = new TestElement("Button", engine);
 		CSSStyleDeclaration style = viewCSS.getComputedStyle(button, null);
