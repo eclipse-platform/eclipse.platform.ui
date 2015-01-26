@@ -19,7 +19,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class NestedProjectsLabelProvider implements ILabelProvider {
 
 	private WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
@@ -66,7 +66,7 @@ public class NestedProjectsLabelProvider implements ILabelProvider {
 			return null;
 		}
 		IProject project = (IProject)element;
-		if (!project.getLocation().lastSegment().equals(project.getName())) {
+		if (project.exists() && !project.getLocation().lastSegment().equals(project.getName())) {
 			return labelProvider.getText(element) + " (in " + project.getLocation().lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
