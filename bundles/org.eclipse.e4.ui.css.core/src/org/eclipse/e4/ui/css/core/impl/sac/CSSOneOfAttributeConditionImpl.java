@@ -16,10 +16,15 @@
 
  */
 
-/* This class copied from org.apache.batik.css.engine.sac */
-
+/*******************************************************************************
+ * Contributors:
+ *     This class was copied from org.apache.batik.css.engine.sac
+ *     Apache Batik project - initial API and implementation
+ *     Alain Le Guennec <Alain.LeGuennec@esterel-technologies.com> - Bug 458334
+ *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.sac;
 
+import java.util.StringTokenizer;
 import org.w3c.dom.Element;
 
 /**
@@ -51,16 +56,13 @@ public class CSSOneOfAttributeConditionImpl extends CSSAttributeConditionImpl {
 	public boolean match(Element e, String pseudoE) {
 		String attr = e.getAttribute(getLocalName());
 		String val = getValue();
-		int i = attr.indexOf(val);
-		if (i == -1) {
-			return false;
+		for (StringTokenizer tok = new StringTokenizer(attr); tok.hasMoreElements();) {
+			String candidate = tok.nextToken();
+			if (val.equals(candidate)) {
+				return true;
+			}
 		}
-		if (i != 0 && !Character.isSpaceChar(attr.charAt(i - 1))) {
-			return false;
-		}
-		int j = i + val.length();
-		return (j == attr.length() || (j < attr.length() && Character
-				.isSpaceChar(attr.charAt(j))));
+		return false;
 	}
 
 	/**
