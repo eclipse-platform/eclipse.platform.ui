@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Tristan Hume - <trishume@gmail.com> -
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
+ *     Denis Zygann <d.zygann@web.de> - Bug 330453
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -66,19 +67,16 @@ public class WorkbenchPreferenceInitializer extends
 		// FIXME this does not actually set the default since it is the wrong
 		// node. It works because the default-default is false.
 		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE, false);
-		
+
 		// 5 minute workbench save interval
 		node.putInt(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL, 5);
 
 		node.putBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, true);
-		
+
 		node.putBoolean(IPreferenceConstants.COOLBAR_VISIBLE, true);
 		node.putBoolean(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, true);
 
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
-		node.putInt(IPreferenceConstants.OPEN_VIEW_MODE,
-				IPreferenceConstants.OVM_EMBED);
-		node.putBoolean(IPreferenceConstants.FVB_HIDE, false);
 		node.putInt(IPreferenceConstants.OPEN_PERSP_MODE,
 				IPreferenceConstants.OPM_ACTIVE_PAGE);
 		node.put(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$

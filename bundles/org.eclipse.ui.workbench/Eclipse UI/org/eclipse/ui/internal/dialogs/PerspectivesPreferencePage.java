@@ -78,7 +78,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	private ArrayList<IPerspectiveDescriptor> perspToRevert = new ArrayList<IPerspectiveDescriptor>();
 
 	private Table perspectivesTable;
-	
+
 	private Button revertButton;
 
 	private Button deleteButton;
@@ -92,17 +92,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 	private int openPerspMode;
 
-	// widgets for open view mode
-	private int openViewMode;
-
-	private Button openEmbedButton;
-    
 	// labels
-	private final String OPM_TITLE = WorkbenchMessages.OpenPerspectiveMode_optionsTitle; 
+	private final String OPM_TITLE = WorkbenchMessages.OpenPerspectiveMode_optionsTitle;
 
-	private final String OPM_SAME_WINDOW = WorkbenchMessages.OpenPerspectiveMode_sameWindow; 
+	private final String OPM_SAME_WINDOW = WorkbenchMessages.OpenPerspectiveMode_sameWindow;
 
-	private final String OPM_NEW_WINDOW = WorkbenchMessages.OpenPerspectiveMode_newWindow; 
+	private final String OPM_NEW_WINDOW = WorkbenchMessages.OpenPerspectiveMode_newWindow;
 
 	/**
 	 * <code>Comparator</code> to compare two perspective descriptors
@@ -367,7 +362,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 				.getPreferenceStore();
 		setPreferenceStore(store);
 
-		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 	}
 
@@ -380,14 +374,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		IPreferenceStore store = WorkbenchPlugin.getDefault()
 				.getPreferenceStore();
 
-		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
-		// Open view as float no longer supported
-		if (openViewMode == IPreferenceConstants.OVM_FLOAT) {
-			openViewMode = IPreferenceConstants.OVM_FAST;
-		}
-		openEmbedButton
-				.setSelection(openViewMode == IPreferenceConstants.OVM_EMBED);
-
 		openPerspMode = store
 				.getDefaultInt(IPreferenceConstants.OPEN_PERSP_MODE);
 		openSameWindowButton
@@ -396,7 +382,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 				.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
 
 		String currentDefault = perspectiveRegistry.getDefaultPerspective();
-		
+
 		int index = indexOf(currentDefault);
 		if (index >= 0){
 			defaultPerspectiveId = currentDefault;
@@ -496,9 +482,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		}
 
 		IPreferenceStore store = getPreferenceStore();
-
-		// store the open view mode setting
-		store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
 
 		// store the open perspective mode setting
 		store.setValue(IPreferenceConstants.OPEN_PERSP_MODE, openPerspMode);
