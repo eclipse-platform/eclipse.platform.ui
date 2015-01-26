@@ -148,8 +148,6 @@ public class ModeledPageLayout implements IPageLayout {
 			// sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
 
 			editorStack = modelService.createModelElement(MPartStack.class);
-			// temporary HACK for bug 303982
-			editorStack.getTags().add("newtablook"); //$NON-NLS-1$
 			editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 			editorStack.getTags().add("EditorStack"); //$NON-NLS-1$
 			editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
@@ -413,8 +411,6 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MPartStack createStack(String id, boolean visible) {
 		MPartStack newStack = modelService.createModelElement(MPartStack.class);
-		// temporary HACK for bug 303982
-		newStack.getTags().add("newtablook"); //$NON-NLS-1$
 		newStack.setElementId(id);
 		newStack.setToBeRendered(visible);
 		return newStack;
