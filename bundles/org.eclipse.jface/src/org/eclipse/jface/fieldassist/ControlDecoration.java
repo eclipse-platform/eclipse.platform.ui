@@ -14,6 +14,7 @@ package org.eclipse.jface.fieldassist;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -738,6 +739,9 @@ public class ControlDecoration {
 				c = null;
 			} else if (c instanceof Shell) {
 				// We just installed on a shell, so don't go further
+				c = null;
+			} else if (c instanceof ScrolledComposite) {
+				// ScrolledComposites manage their contents
 				c = null;
 			} else {
 				c = c.getParent();
