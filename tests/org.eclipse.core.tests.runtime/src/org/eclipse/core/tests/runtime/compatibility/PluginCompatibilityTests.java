@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.compatibility;
 
-import java.io.IOException;
 import junit.framework.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
@@ -24,14 +24,14 @@ public class PluginCompatibilityTests extends TestCase {
 	}
 
 	// see bug 59013
-	public void testPluginWithNoRuntimeLibrary() throws BundleException, IOException {
+	public void testPluginWithNoRuntimeLibrary() {
 		assertNull("0.0", BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0"));
 		BundleTestingHelper.runWithBundles("0.1", new Runnable() {
 			public void run() {
 				Bundle[] installed = BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0");
 				assertEquals("1.0", 1, installed.length);
 				assertEquals("1.0", "bundle01", installed[0].getSymbolicName());
-				assertEquals("1.1", new Version("1.0"), new Version((String) installed[0].getHeaders().get(Constants.BUNDLE_VERSION)));
+				assertEquals("1.1", new Version("1.0"), new Version(installed[0].getHeaders().get(Constants.BUNDLE_VERSION)));
 				assertEquals("1.2", Bundle.RESOLVED, installed[0].getState());
 				IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
 				assertNotNull("2.0", descriptor);

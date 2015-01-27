@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.registry;
 
@@ -162,33 +163,27 @@ public class MultiLanguageTest extends TestCase {
 	 * Tests APIs that use implicit default Locale.
 	 */
 	public void testMultiLocaleService() {
-		ServiceRegistration registration = null;
-		try {
-			Object masterToken = new Object();
-			// Create a multi-language extension registry
-			File[] registryLocations = new File[] {registryLocation};
-			boolean[] readOnly = new boolean[] {false};
-			RegistryStrategy strategy = RegistryFactory.createOSGiStrategy(registryLocations, readOnly, masterToken);
-			IExtensionRegistry localRegistry = RegistryFactory.createRegistry(strategy, masterToken, null);
-			assertTrue(localRegistry.isMultiLanguage());
+		Object masterToken = new Object();
+		// Create a multi-language extension registry
+		File[] registryLocations = new File[] {registryLocation};
+		boolean[] readOnly = new boolean[] {false};
+		RegistryStrategy strategy = RegistryFactory.createOSGiStrategy(registryLocations, readOnly, masterToken);
+		IExtensionRegistry localRegistry = RegistryFactory.createRegistry(strategy, masterToken, null);
+		assertTrue(localRegistry.isMultiLanguage());
 
-			// this is a direct test
-			checkTranslationsService(localRegistry, false);
+		// this is a direct test
+		checkTranslationsService(localRegistry, false);
 
-			// test cache
-			localRegistry.stop(masterToken);
-			IExtensionRegistry registryCached = RegistryFactory.createRegistry(strategy, masterToken, null);
-			assertTrue(registryCached.isMultiLanguage());
-			checkTranslationsService(registryCached, true);
-			registryCached.stop(masterToken);
-		} finally {
-			if (registration != null)
-				registration.unregister();
-		}
+		// test cache
+		localRegistry.stop(masterToken);
+		IExtensionRegistry registryCached = RegistryFactory.createRegistry(strategy, masterToken, null);
+		assertTrue(registryCached.isMultiLanguage());
+		checkTranslationsService(registryCached, true);
+		registryCached.stop(masterToken);
 	}
 
 	private void checkTranslationsService(IExtensionRegistry registry, boolean extended) {
-		ServiceRegistration registration = null;
+		ServiceRegistration<LocaleProvider> registration = null;
 		try {
 			IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.test.registryMulti.PointA");
 			assertNotNull(extPoint);
@@ -220,7 +215,7 @@ public class MultiLanguageTest extends TestCase {
 
 			// locale set to German
 			LocaleProviderTest localeProvider = new LocaleProviderTest();
-			registration = RuntimeTestsPlugin.getContext().registerService(LocaleProvider.class.getName(), localeProvider, null);
+			registration = RuntimeTestsPlugin.getContext().registerService(LocaleProvider.class, localeProvider, null);
 			localeProvider.currentLocale = new Locale("de_DE");
 			assertEquals(helloWorldGerman, extPoint.getLabel());
 			assertEquals(catsAndDogsGerman, extension.getLabel());

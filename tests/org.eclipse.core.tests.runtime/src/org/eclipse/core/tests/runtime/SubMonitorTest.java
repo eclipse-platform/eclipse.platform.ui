@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,15 @@
  *     Stefan Xenos - bug 174040 - SubMonitor#convert doesn't always set task name
  *     Stefan Xenos - bug 206942 - Regression test for infinite progress reporting rate
  *     IBM Corporation - bug 252446 - SubMonitor.newChild passes zero ticks to child
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
 import java.util.*;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.junit.Assert;
 
 /**
  * 

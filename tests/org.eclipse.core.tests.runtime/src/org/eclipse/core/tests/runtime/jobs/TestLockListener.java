@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.Assert;
 import org.eclipse.core.runtime.jobs.LockListener;
+import org.junit.Assert;
 
 /**
  * A lock listener used for testing that ensures wait/release calls are correctly paired.

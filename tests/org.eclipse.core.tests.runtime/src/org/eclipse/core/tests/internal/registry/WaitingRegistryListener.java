@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.registry;
 
@@ -24,8 +25,8 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 
 	final static long MIN_WAIT_TIME = 100; // minimum wait time in milliseconds
 
-	private List extensionIDs; // String[]
-	private List extPointIDs; // String[]
+	private List<String> extensionIDs; // String[]
+	private List<String> extPointIDs; // String[]
 
 	private volatile boolean added;
 	private volatile boolean removed;
@@ -67,7 +68,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 
 	public synchronized String[] extensionsReceived(long timeout) {
 		if (extensionIDs != null)
-			return (String[]) extensionIDs.toArray(new String[extensionIDs.size()]);
+			return extensionIDs.toArray(new String[extensionIDs.size()]);
 		try {
 			wait(timeout);
 		} catch (InterruptedException e) {
@@ -75,12 +76,12 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 		}
 		if (extensionIDs == null)
 			return null;
-		return (String[]) extensionIDs.toArray(new String[extensionIDs.size()]);
+		return extensionIDs.toArray(new String[extensionIDs.size()]);
 	}
 
 	public synchronized String[] extPointsReceived(long timeout) {
 		if (extPointIDs != null)
-			return (String[]) extPointIDs.toArray(new String[extPointIDs.size()]);
+			return extPointIDs.toArray(new String[extPointIDs.size()]);
 		try {
 			wait(timeout);
 		} catch (InterruptedException e) {
@@ -88,7 +89,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 		}
 		if (extPointIDs == null)
 			return null;
-		return (String[]) extPointIDs.toArray(new String[extPointIDs.size()]);
+		return extPointIDs.toArray(new String[extPointIDs.size()]);
 	}
 
 	public synchronized int waitFor(int events, long maxTimeout) {
@@ -153,7 +154,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 	}
 
 	private void extensionsToString(IExtension[] extensions) {
-		extensionIDs = new ArrayList(extensions.length);
+		extensionIDs = new ArrayList<String>(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
 			extensionIDs.add(extension.getUniqueIdentifier());
@@ -180,7 +181,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 	}
 
 	private void extPointsToString(IExtensionPoint[] extensionPoints) {
-		extPointIDs = new ArrayList(extensionPoints.length);
+		extPointIDs = new ArrayList<String>(extensionPoints.length);
 		for (int i = 0; i < extensionPoints.length; i++)
 			extPointIDs.add(extensionPoints[i].getUniqueIdentifier());
 	}

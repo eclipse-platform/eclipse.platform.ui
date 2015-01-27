@@ -24,7 +24,7 @@ import org.osgi.framework.ServiceReference;
 public class PlatformTest extends RuntimeTest {
 
 	private FrameworkLog logService;
-	private ServiceReference logRef;
+	private ServiceReference<FrameworkLog> logRef;
 	private java.io.File originalLocation;
 
 	/**
@@ -46,8 +46,8 @@ public class PlatformTest extends RuntimeTest {
 		Platform.getLogFileLocation();
 
 		//setup reference to log service, and remember original log location
-		logRef = RuntimeTestsPlugin.getContext().getServiceReference(FrameworkLog.class.getName());
-		logService = (FrameworkLog) RuntimeTestsPlugin.getContext().getService(logRef);
+		logRef = RuntimeTestsPlugin.getContext().getServiceReference(FrameworkLog.class);
+		logService = RuntimeTestsPlugin.getContext().getService(logRef);
 		originalLocation = logService.getFile();
 	}
 
@@ -134,7 +134,7 @@ public class PlatformTest extends RuntimeTest {
 			}
 		};
 
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
 
 		Platform.removeLogListener(logListener);
 

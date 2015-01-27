@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtime;
 
 import java.io.*;
 import java.net.*;
 import junit.framework.Test;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.eclipse.core.tests.session.ConfigurationSessionTestSuite;
@@ -201,7 +203,7 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		assertEquals("3.0", DATA_CHILD, readContents("3.1", both));
 		URL resolvedURL = null;
 		try {
-			resolvedURL = Platform.resolve(none);
+			resolvedURL = FileLocator.resolve(none);
 		} catch (IOException e) {
 			fail("4.0", e);
 		}

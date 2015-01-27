@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.registry;
 
@@ -44,7 +45,7 @@ public class StaleObjects extends TestCase {
 
 	public synchronized void testA() throws IOException, BundleException {
 		HandleCatcher listener = new HandleCatcher();
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testStale1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testStale1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 
 		IExtension willBeStale = Platform.getExtensionRegistry().getExtension("testStale.ext1");
@@ -81,7 +82,7 @@ public class StaleObjects extends TestCase {
 
 		//Outside of the event notification the handle from a removed object should be invalid
 		gotException = false;
-		try { 
+		try {
 			while (listener2.getAcquiredHandle() == null) {
 				try {
 					wait(200);
@@ -108,7 +109,7 @@ public class StaleObjects extends TestCase {
 	}
 
 	public void testStaleConfigurationElement() throws IOException, BundleException {
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testStale2");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testStale2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 
 		IConfigurationElement ce = Platform.getExtensionRegistry().getExtension("testStale2.ext1").getConfigurationElements()[0];

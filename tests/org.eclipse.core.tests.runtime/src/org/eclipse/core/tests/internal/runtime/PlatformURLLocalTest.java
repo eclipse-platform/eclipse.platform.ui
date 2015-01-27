@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtime;
 
@@ -16,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -55,7 +57,7 @@ public class PlatformURLLocalTest extends RuntimeTest {
 		}
 		URL resolvedURL = null;
 		try {
-			resolvedURL = Platform.resolve(platformURL);
+			resolvedURL = FileLocator.resolve(platformURL);
 		} catch (IOException e) {
 			fail("2.0", e);
 		}
@@ -79,7 +81,7 @@ public class PlatformURLLocalTest extends RuntimeTest {
 		}
 		URL resolvedURL = null;
 		try {
-			resolvedURL = Platform.resolve(platformURL);
+			resolvedURL = FileLocator.resolve(platformURL);
 		} catch (IOException e) {
 			fail("2.0", e);
 		}

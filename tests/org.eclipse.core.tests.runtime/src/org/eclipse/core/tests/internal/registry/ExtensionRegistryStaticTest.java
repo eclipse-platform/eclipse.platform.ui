@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.registry;
 
@@ -29,7 +30,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	public void testA() throws IOException, BundleException {
 		//test the addition of an extension point
 		String name = "A";
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/test" + name);
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/test" + name);
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 		testExtensionPoint(name);
 	}
@@ -50,7 +51,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testB() throws IOException, BundleException {
 		//test the addition of an extension without extension point
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testB/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testB/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 		assertNull(Platform.getExtensionRegistry().getExtension("testB2", "xptB2", "ext1"));
 	}
@@ -58,7 +59,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	public void testBFromCache() throws IOException, BundleException {
 		// Test the addition of an extension point when orphans extension exists 
 		assertNull(Platform.getExtensionRegistry().getExtension("testB2", "xptB2", "ext1"));
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testB/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testB/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
 		testExtensionPoint("B2");
 
@@ -97,10 +98,10 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testC() throws IOException, BundleException {
 		//test the addition of an extension point then the addition of an extension
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testC/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testC/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 		testExtensionPoint("C1");
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testC/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testC/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
 
 		//Test the configurataion elements
@@ -121,9 +122,9 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testD() throws IOException, BundleException {
 		//test the addition of an extension then the addition of an extension point
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testD/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testD/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testD/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testD/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 		testExtensionPoint("D1");
 
@@ -145,9 +146,9 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testE() throws IOException, BundleException {
 		//test the addition of an extension point and then add the extension through a fragment
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testE/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testE/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testE/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testE/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
 		testExtensionPoint("E1");
 
@@ -169,9 +170,9 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testF() throws IOException, BundleException {
 		//test the addition of the extension through a fragment then the addition of an extension point 
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testF/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testF/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testF/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testF/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 		testExtensionPoint("F1");
 
@@ -197,9 +198,9 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testG() throws IOException, BundleException {
 		//fragment contributing an extension point to a plugin that do not have extension or extension point
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testG/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testG/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testG/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testG/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
 
 		assertNotNull(Platform.getExtensionRegistry().getExtensionPoint("testG1.xptG2"));
@@ -216,11 +217,11 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testH() throws IOException, BundleException {
 		//		fragment contributing an extension to a plugin that does not have extension or extension point
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testH/1");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testH/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testH/2");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testH/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
-		Bundle bundle03 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testH/3");
+		Bundle bundle03 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testH/3");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle03});
 
 		testExtensionPoint("H1");
@@ -247,13 +248,13 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 
 	public void test71826() throws MalformedURLException, BundleException, IOException {
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/71826/fragmentF");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/71826/fragmentF");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 
-		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/71826/pluginB");
+		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/71826/pluginB");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
 
-		Bundle bundle03 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/71826/pluginA");
+		Bundle bundle03 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/71826/pluginA");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle03});
 
 		IExtensionPoint xp = Platform.getExtensionRegistry().getExtensionPoint("71826A.xptE");
@@ -266,7 +267,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testJ() throws MalformedURLException, BundleException, IOException {
 		//Test the third level configuration elements
-		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testI");
+		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testI");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 
 		IExtension ext = Platform.getExtensionRegistry().getExtension("testI.ext1");
@@ -301,26 +302,26 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	public void testNonSingletonBundle() throws MalformedURLException, BundleException, IOException {
 		//Non singleton bundles are not supposed to be added
-		Bundle nonSingletonBundle = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingleton");
+		Bundle nonSingletonBundle = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingleton");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {nonSingletonBundle});
 		assertNull(Platform.getExtensionRegistry().getExtensionPoint("NonSingleton.ExtensionPoint"));
 	}
-	
+
 	public void testSingletonFragment() throws MalformedURLException, BundleException, IOException {
 		//Fragments to non singleton host can not contribute extension or extension points 
-		Bundle fragmentToNonSingleton = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/fragmentToNonSingleton");
+		Bundle fragmentToNonSingleton = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/fragmentToNonSingleton");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {fragmentToNonSingleton});
 		assertNull(Platform.getExtensionRegistry().getExtensionPoint("NonSingleton.Bar"));
 	}
-	
+
 	public void testNonSingletonFragment() throws MalformedURLException, BundleException, IOException {
 		//Non singleton bundles are not supposed to be added
-		Bundle regular = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingletonFragment/plugin");
-		Bundle nonSingletonFragment = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingletonFragment/fragment");
+		Bundle regular = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingletonFragment/plugin");
+		Bundle nonSingletonFragment = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingletonFragment/fragment");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {regular, nonSingletonFragment});
 		assertNull(Platform.getExtensionRegistry().getExtensionPoint("Regular.Bar"));
 	}
-	
+
 	public static Test suite() {
 		//Order is important
 		TestSuite sameSession = new TestSuite(ExtensionRegistryStaticTest.class.getName());

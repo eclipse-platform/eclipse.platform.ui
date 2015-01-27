@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2014 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,17 +10,19 @@
  *     Stephan Wahlbrink  - Test fix for bug 200997.
  *     Dmitry Karasik - Test cases for bug 255384
  *     Jan Koehnlein - Test case for bug 60964 (454698)
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
-import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;
+import org.junit.Assert;
 
 /**
  * Tests the implemented get/set methods of the abstract class Job

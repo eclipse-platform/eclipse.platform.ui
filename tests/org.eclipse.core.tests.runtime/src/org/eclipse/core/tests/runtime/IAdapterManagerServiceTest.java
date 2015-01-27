@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
@@ -26,7 +27,7 @@ public class IAdapterManagerServiceTest extends TestCase {
 	private static final String NON_EXISTING = "com.does.not.Exist";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
 
-	private ServiceTracker adapterManagerTracker = null;
+	private ServiceTracker<IAdapterManager, ?> adapterManagerTracker = null;
 
 	public IAdapterManagerServiceTest(String name) {
 		super(name);
@@ -46,7 +47,7 @@ public class IAdapterManagerServiceTest extends TestCase {
 	public IAdapterManager getAdapterManager() {
 		if (adapterManagerTracker == null) {
 			BundleContext context = RuntimeTestsPlugin.getContext();
-			adapterManagerTracker = new ServiceTracker(context, IAdapterManager.class.getName(), null);
+			adapterManagerTracker = new ServiceTracker(context, IAdapterManager.class, null);
 			adapterManagerTracker.open();
 		}
 		return (IAdapterManager) adapterManagerTracker.getService();

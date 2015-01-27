@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
  *******************************************************************************/
 package org.eclipse.core.tests.internal.registry.simple.utils;
 
@@ -21,7 +22,7 @@ import org.eclipse.core.runtime.*;
  */
 public class SimpleRegistryListener implements IRegistryChangeListener {
 
-	private List events = new LinkedList();
+	private List<IRegistryChangeEvent> events = new LinkedList<IRegistryChangeEvent>();
 
 	public synchronized void registryChanged(IRegistryChangeEvent newEvent) {
 		events.add(newEvent);
@@ -38,13 +39,13 @@ public class SimpleRegistryListener implements IRegistryChangeListener {
 	 */
 	public synchronized IRegistryChangeEvent getEvent(long timeout) {
 		if (!events.isEmpty())
-			return (IRegistryChangeEvent) events.remove(0);
+			return events.remove(0);
 		try {
 			wait(timeout);
 		} catch (InterruptedException e) {
 			// nothing to do
 		}
-		return events.isEmpty() ? null : (IRegistryChangeEvent) events.remove(0);
+		return events.isEmpty() ? null : events.remove(0);
 	}
 
 	public void register(IExtensionRegistry registry) {
