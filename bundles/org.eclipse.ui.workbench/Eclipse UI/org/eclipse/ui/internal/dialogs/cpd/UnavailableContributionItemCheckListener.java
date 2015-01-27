@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 445538
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
 
+import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -67,6 +69,7 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 		viewer.update(event.getElement(), null);
 
 		if (isAvailable) {
+
 			// the case where this item is unavailable because of its
 			// children
 			if (!viewer.getExpandedState(item)) {
@@ -78,17 +81,28 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 					item.getLabel()));
 			mb.open();
 		} else {
-			// the case where this item is unavailable because it belongs to
-			// an unavailable action set
-			MessageBox mb = new MessageBox(viewer.getControl().getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING
-					| SWT.SHEET);
-			mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
-			final String errorExplanation = NLS.bind(
-					WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText, item.getLabel(),
-					item.getActionSet());
-			final String message = NLS
-					.bind("{0}{1}{1}{2}", new Object[] { errorExplanation, CustomizePerspectiveDialog.NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab }); //$NON-NLS-1$
-			mb.setMessage(message);
+			MessageBox mb;
+			if (item.getIContributionItem() instanceof HandledContributionItem) {
+				mb = new MessageBox(viewer.getControl().getShell(), SWT.OK | SWT.ICON_WARNING | SWT.SHEET);
+				mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+				// the case of a command contribution which has its own
+				// enablement rules, e.g. "org.eclipse.ui.window.pinEditor"
+				// command
+				final String errorExplanation = NLS.bind(
+						WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandItemText, item.getLabel());
+				mb.setMessage(errorExplanation);
+			} else {
+				// the case where this item is unavailable because it belongs to
+				// an unavailable action set
+				mb = new MessageBox(viewer.getControl().getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.SHEET);
+				mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+				final String errorExplanation = NLS.bind(
+						WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText, item.getLabel(),
+						item.getActionSet());
+				final String message = NLS
+						.bind("{0}{1}{1}{2}", new Object[] { errorExplanation, CustomizePerspectiveDialog.NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab }); //$NON-NLS-1$
+				mb.setMessage(message);
+			}
 			if (mb.open() == SWT.YES) {
 				dialog.showActionSet(item);
 			}

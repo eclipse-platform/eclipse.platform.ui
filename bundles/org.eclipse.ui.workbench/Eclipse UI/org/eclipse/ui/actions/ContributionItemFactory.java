@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 445538
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
@@ -123,82 +117,9 @@ public abstract class ContributionItemFactory {
 							.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED),
 					null, null, null, WorkbenchMessages.PinEditorAction_toolTip, // Local workaround for http://bugs.eclipse.org/387583
 					CommandContributionItem.STYLE_CHECK, null, false);
-			final IPropertyChangeListener[] perfs = new IPropertyChangeListener[1];
-			final IPartListener partListener = new IPartListener() {
-
-				@Override
-				public void partOpened(IWorkbenchPart part) {
-				}
-
-				@Override
-				public void partDeactivated(IWorkbenchPart part) {
-				}
-
-				@Override
-				public void partClosed(IWorkbenchPart part) {
-				}
-
-				@Override
-				public void partBroughtToTop(IWorkbenchPart part) {
-					if (!(part instanceof IEditorPart)) {
-						return;
-					}
-					ICommandService commandService = window
-							.getService(ICommandService.class);
-
-					commandService.refreshElements(COMMAND_ID, null);
-				}
-
-				@Override
-				public void partActivated(IWorkbenchPart part) {
-				}
-			};
-			window.getPartService().addPartListener(partListener);
-			final CommandContributionItem action = new CommandContributionItem(
-					parameter) {
-				@Override
-				public void dispose() {
-					WorkbenchPlugin.getDefault().getPreferenceStore()
-							.removePropertyChangeListener(perfs[0]);
-					window.getPartService().removePartListener(partListener);
-					super.dispose();
-				}
-			};
-
-			perfs[0] = new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (event.getProperty().equals(
-							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-						if (action.getParent() != null) {
-							IPreferenceStore store = WorkbenchPlugin
-									.getDefault().getPreferenceStore();
-							boolean reuseEditors = store
-									.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-							action.setVisible(reuseEditors);
-							action.getParent().markDirty();
-							if (window.getShell() != null
-									&& !window.getShell().isDisposed()) {
-								// this property change notification could be
-								// from a non-ui thread
-								window.getShell().getDisplay().syncExec(
-										new Runnable() {
-											@Override
-											public void run() {
-												action.getParent()
-														.update(false);
-											}
-										});
-							}
-						}
-					}
-				}
-			};
-			WorkbenchPlugin.getDefault().getPreferenceStore()
-					.addPropertyChangeListener(perfs[0]);
+			final CommandContributionItem action = new CommandContributionItem(parameter);
 			action.setVisible(WorkbenchPlugin.getDefault().getPreferenceStore()
-.getBoolean(
-					IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
+					.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 			return action;
 		}
 	};

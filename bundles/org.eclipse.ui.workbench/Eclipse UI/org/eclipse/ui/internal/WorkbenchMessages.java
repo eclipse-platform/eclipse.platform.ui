@@ -12,7 +12,7 @@
  * Tristan Hume - <trishume@gmail.com> -
  * 		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  * 		Implemented workbench auto-save to correctly restore state in case of crash.
- * Andrey Loskutov <loskutov@gmx.de> - Bug 388476
+ * Andrey Loskutov <loskutov@gmx.de> - Bug 388476, 445538
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -211,6 +211,7 @@ public class WorkbenchMessages extends NLS {
 	
 	public static String HideItems_itemInActionSet; 
 	public static String HideItems_itemInUnavailableActionSet;
+	public static String HideItems_itemInUnavailableCommand;
 	public static String HideItems_unavailableChildCommandGroup;
 	public static String HideItems_unavailableChildCommandGroups;
 	public static String HideItems_keyBindings;
@@ -226,6 +227,7 @@ public class WorkbenchMessages extends NLS {
 
 	public static String HideItemsCannotMakeVisible_dialogTitle;
 	public static String HideItemsCannotMakeVisible_unavailableCommandGroupText;
+	public static String HideItemsCannotMakeVisible_unavailableCommandItemText;
 	public static String HideItemsCannotMakeVisible_switchToCommandGroupTab;
 	public static String HideItemsCannotMakeVisible_unavailableChildrenText;
 	

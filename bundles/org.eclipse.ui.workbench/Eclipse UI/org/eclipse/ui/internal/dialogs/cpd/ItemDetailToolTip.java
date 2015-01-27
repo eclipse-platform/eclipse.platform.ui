@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 445538
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -137,9 +139,11 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 							WorkbenchMessages.HideItems_itemInUnavailableActionSet,
 							actionSetName);
 
+				} else if (item.getChildren().isEmpty() && item.getActionSet() == null
+						&& item.getIContributionItem() instanceof HandledContributionItem) {
+					text = WorkbenchMessages.HideItems_itemInUnavailableCommand;
 				} else {
 					//i.e. has children
-
 					Set<ActionSet> actionGroup = new LinkedHashSet<ActionSet>();
 					ItemDetailToolTip.collectDescendantCommandGroups(actionGroup, item,
 							filter);
