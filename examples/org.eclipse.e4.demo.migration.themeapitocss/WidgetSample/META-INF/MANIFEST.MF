@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: WidgetSample
-Bundle-SymbolicName: WidgetSample
-Bundle-Version: 1.0.0.qualifier
-Export-Package: org.eclipse.ui.examples.chart
-Require-Bundle: org.eclipse.swt
