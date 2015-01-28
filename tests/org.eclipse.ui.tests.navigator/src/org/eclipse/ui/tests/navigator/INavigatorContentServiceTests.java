@@ -1,14 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - initial API and implementation
+ * 		IBM Corporation - initial API and implementation
+ * 		Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -23,6 +27,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
+import org.junit.Test;
 
 public class INavigatorContentServiceTests extends NavigatorTestBase {
 
@@ -32,6 +37,7 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 
 	}
 
+	@Test
 	public void testFindValidExtensions() {
 
 		_contentService
@@ -87,6 +93,7 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 
 	}
 
+	@Test
 	public void testDeactivateTestExtension() {
 
 		_contentService.getActivationService().activateExtensions(
@@ -111,6 +118,7 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 
 	}
 
+	@Test
 	public void testBindTestExtension() {
 
 		INavigatorContentService contentServiceWithProgrammaticBindings = NavigatorContentServiceFactory.INSTANCE
@@ -148,18 +156,21 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 
 	}
 
+	@Test
 	public void testTestExtensionVisibility() {
 		assertTrue("The test extension should be visible.", _contentService
 				.getViewerDescriptor().isVisibleContentExtension(
 						TEST_CONTENT));
 	}
 
+	@Test
 	public void testResourceExtensionVisibility() {
 		assertTrue("The test extension should be visible.", _contentService
 				.getViewerDescriptor().isVisibleContentExtension(
 						COMMON_NAVIGATOR_RESOURCE_EXT));
 	}
 
+	@Test
 	public void testVisibleExtensionIds() {
 		String[] visibleIds = _contentService.getVisibleExtensionIds();
 
@@ -191,6 +202,7 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 	}
 
 	// Bug 267722 [CommonNavigator] ClassCastException when synchronizing
+	@Test
 	public void testNonCommonViewer() throws Exception {
 		EditorTestHelper.showView(TEST_VIEW_NON_COMMONVIEWER, true);
 

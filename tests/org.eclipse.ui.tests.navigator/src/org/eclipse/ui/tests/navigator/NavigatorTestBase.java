@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -39,16 +44,18 @@ import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
-import org.eclipse.ui.tests.navigator.extension.TestEmptyContentProvider;
-import org.eclipse.ui.tests.navigator.extension.TestSorterData;
-import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
-import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderResource;
+import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
+import org.eclipse.ui.tests.navigator.extension.TestEmptyContentProvider;
+import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
+import org.eclipse.ui.tests.navigator.extension.TestSorterData;
 import org.eclipse.ui.tests.navigator.extension.TestSorterResource;
 import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
+import org.junit.After;
+import org.junit.Before;
 
-public class NavigatorTestBase extends TestCase {
+public class NavigatorTestBase {
 
 	public static final String COMMON_NAVIGATOR_RESOURCE_EXT = "org.eclipse.ui.navigator.resourceContent";
 
@@ -132,7 +139,7 @@ public class NavigatorTestBase extends TestCase {
 
 	protected String _navigatorInstanceId;
 
-	protected Set _expectedChildren = new HashSet();
+	protected Set<IResource> _expectedChildren = new HashSet<IResource>();
 
 	protected IProject _project;
 	protected IProject _p1;
@@ -160,11 +167,11 @@ public class NavigatorTestBase extends TestCase {
 	}
 
 	public NavigatorTestBase(String name) {
-		super(name);
+		// Nothing
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 
 		if (_navigatorInstanceId == null) {
 			throw new RuntimeException("Set the _navigatorInstanceId in the constructor");
@@ -172,7 +179,11 @@ public class NavigatorTestBase extends TestCase {
 
 		// Easier if this is not around when not needed
 		if (!_navigatorInstanceId.equals(ProjectExplorer.VIEW_ID))
-			EditorTestHelper.showView(ProjectExplorer.VIEW_ID, false);
+			try {
+				EditorTestHelper.showView(ProjectExplorer.VIEW_ID, false);
+			} catch (PartInitException e) {
+				fail("Should not throw an exception");
+			}
 
 		TestContentProviderPipelined.resetTest();
 		TestContentProviderResource.resetTest();
@@ -195,10 +206,15 @@ public class NavigatorTestBase extends TestCase {
 			_expectedChildren.add(_project.getFile(".classpath")); //$NON-NLS-1$
 			_expectedChildren.add(_project.getFile("model.properties")); //$NON-NLS-1$
 
-			_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-			_p1.open(null);
-			_p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
-			_p2.open(null);
+			try {
+				_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
+				_p1.open(null);
+				_p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
+				_p2.open(null);
+			} catch (CoreException e) {
+				fail("Should not throw an exception");
+			}
+
 			_projectCount = 3;
 		}
 
@@ -224,8 +240,12 @@ public class NavigatorTestBase extends TestCase {
 		DisplayHelper.sleep(50);
 	}
 
-	protected void showNavigator() throws PartInitException {
-		EditorTestHelper.showView(_navigatorInstanceId, true);
+	protected void showNavigator() {
+		try {
+			EditorTestHelper.showView(_navigatorInstanceId, true);
+		} catch (PartInitException e) {
+			fail("Should not throw an exception");
+		}
 
 		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWindow.getActivePage();
@@ -235,17 +255,25 @@ public class NavigatorTestBase extends TestCase {
 		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		clearAll();
 		// Hide it, we want a new one each time
-		EditorTestHelper.showView(_navigatorInstanceId, false);
+		try {
+			EditorTestHelper.showView(_navigatorInstanceId, false);
+		} catch (PartInitException e) {
+			fail("Should not throw an exception");
+		}
 	}
 
-	protected void clearAll() throws Exception {
+	protected void clearAll() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			FileUtil.delete(projects[i]);
+			try {
+				FileUtil.delete(projects[i]);
+			} catch (CoreException e) {
+				fail("Should not throw an exception");
+			}
 		}
 	}
 

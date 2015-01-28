@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Fair Isaac Corporation.
+ * Copyright (c) 2009, 2015 Fair Isaac Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,16 @@
  *
  * Contributors:
  *     Fair Isaac Corporation - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  ******************************************************************************/
 
 package org.eclipse.ui.tests.navigator;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.navigator.m12.model.M1Project;
+import org.junit.Test;
 
 /**
  * M1/M2 tests with M1 as a first class provider (i.e. override policy set to
@@ -30,6 +34,7 @@ public class FirstClassM1Tests extends NavigatorTestBase {
 	 * both Ganymede and Galileo because the resourceContent provider triggers
 	 * for M1Project, then fails to provide any children. See Bug #285353
 	 */
+	@Test
 	public void testM1ProjectHasChildren() throws Exception {
 		String[] EXTENSIONS = new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
 				// The issue only arises if the override policy is

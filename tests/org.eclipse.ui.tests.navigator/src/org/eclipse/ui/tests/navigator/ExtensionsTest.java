@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,18 @@
  *
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
- *.....IBM Corporation - fixed dead code warning
+ *     IBM Corporation - fixed dead code warning
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterSelectionDialog;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.Test;
 
 public class ExtensionsTest extends NavigatorTestBase {
 
@@ -37,6 +41,7 @@ public class ExtensionsTest extends NavigatorTestBase {
 	}
 
 	// Bug 185561 when hideAvailableExtensionsTab is true, everything gone
+	@Test
 	public void testHideAvailableExtensions() throws Exception {
 		assertEquals(3, _commonNavigator.getCommonViewer().getTree()
 				.getItemCount());

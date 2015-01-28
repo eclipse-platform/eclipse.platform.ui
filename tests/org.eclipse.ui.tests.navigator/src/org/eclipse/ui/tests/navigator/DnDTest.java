@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2009, 2015 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,31 @@
  *
  * Contributors:
  *     Francis Upton IV, Oakland Software - Initial implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
-
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.SWTEventHelper;
 import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DnDTest extends NavigatorTestBase {
 
@@ -30,16 +40,19 @@ public class DnDTest extends NavigatorTestBase {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		super.setUp();
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		super.tearDown();
 	}
 
-	public void testBasicDragDrop() throws Exception {
+	@Test
+	public void testBasicDragDrop() {
 		_viewer.expandToLevel(_p1, 3);
 
 		// Need to set the selection because the Dnd stuff is not doing it
@@ -73,7 +86,8 @@ public class DnDTest extends NavigatorTestBase {
 	// bug 185569 CommonDragAdapter should provide ways for
 	// CommonDragAdapterAssistant
 	// to perform clean up after drag has finished
-	public void testResourceDrag() throws Exception {
+	@Test
+	public void testResourceDrag() {
 		_viewer.expandToLevel(_p1, 3);
 
 		IFile file = _p1.getFolder("f1").getFile("file1.txt");
@@ -85,7 +99,12 @@ public class DnDTest extends NavigatorTestBase {
 		// used
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
-		TextEditor editorPart = (TextEditor) IDE.openEditor(activePage, file);
+		TextEditor editorPart = null;
+		try {
+			editorPart = (TextEditor) IDE.openEditor(activePage, file);
+		} catch (PartInitException e) {
+			fail("Should not throw an exception");
+		}
 
 		Control end = (Control) editorPart.getAdapter(Control.class);
 
@@ -104,7 +123,8 @@ public class DnDTest extends NavigatorTestBase {
 	}
 
 	// bug 264323 [CommonNavigator] CommonDragAdapterAssistant should be allowed to opt out of a drag
-	public void testDragOptOut() throws Exception {
+	@Test
+	public void testDragOptOut() {
 		_viewer.expandToLevel(_p1, 3);
 
 		IFile file = _p1.getFolder("f1").getFile("file1.txt");
@@ -116,7 +136,12 @@ public class DnDTest extends NavigatorTestBase {
 		// used
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
-		TextEditor editorPart = (TextEditor) IDE.openEditor(activePage, file);
+		TextEditor editorPart = null;
+		try {
+			editorPart = (TextEditor) IDE.openEditor(activePage, file);
+		} catch (PartInitException e) {
+			fail("Should not throw an exception");
+		}
 
 		Control end = (Control) editorPart.getAdapter(Control.class);
 
@@ -137,7 +162,8 @@ public class DnDTest extends NavigatorTestBase {
 
 	// Bug 261060 Add capability of setting drag operation
 	// Bug 242265 Allow event to be available for validateDrop
-	public void testSetDragOperation() throws Exception {
+	@Test
+	public void testSetDragOperation() {
 
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_DROP_COPY },
 				false);

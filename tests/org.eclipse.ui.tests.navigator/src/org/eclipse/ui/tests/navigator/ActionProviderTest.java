@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Oakland Software Incorporated and others.
+ * Copyright (c) 2009, 2015 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,25 +7,32 @@
  *
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData;
+import org.junit.Test;
 
 public class ActionProviderTest extends NavigatorTestBase {
 
@@ -36,6 +43,7 @@ public class ActionProviderTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER;
 	}
 
+	@Test
 	public void testBasicModel() throws Exception {
 		waitForModelObjects();
 
@@ -58,7 +66,8 @@ public class ActionProviderTest extends NavigatorTestBase {
 
 	}
 
-	public void testOverride() throws Exception {
+	@Test
+	public void testOverride() {
 		_contentService.bindExtensions(
 				new String[] { TEST_CONTENT_ACTION_PROVIDER }, false);
 		_contentService.getActivationService().activateExtensions(
@@ -68,9 +77,12 @@ public class ActionProviderTest extends NavigatorTestBase {
 
 		refreshViewer();
 
-		IStructuredSelection sel;
-		sel = new StructuredSelection(
-				((IContainer) _p2.members()[1]).members()[0]);
+		IStructuredSelection sel = null;
+		try {
+			sel = new StructuredSelection(((IContainer) _p2.members()[1]).members()[0]);
+		} catch (CoreException e) {
+			fail("Should not throw an exception");
+		}
 		_viewer.setSelection(sel);
 
 		if (SLEEP_LONG)
@@ -97,18 +109,22 @@ public class ActionProviderTest extends NavigatorTestBase {
 
 	}
 
-	public void testAppearsBefore() throws Exception {
+	@Test
+	public void testAppearsBefore() {
 
-		IStructuredSelection sel;
-		sel = new StructuredSelection(
-				((IContainer) _p2.members()[1]).members()[0]);
+		IStructuredSelection sel = null;
+		try {
+			sel = new StructuredSelection(((IContainer) _p2.members()[1]).members()[0]);
+		} catch (CoreException e) {
+			fail("Should not throw an exception");
+		}
 		_viewer.setSelection(sel);
 
 		MenuManager mm = new MenuManager();
 		_actionService.setContext(new ActionContext(sel));
 		_actionService.fillContextMenu(mm);
 
-		List priorityItems = new ArrayList();
+		List<String> priorityItems = new ArrayList<String>();
 
 		IContributionItem[] items = mm.getItems();
 		for (int i = 0; i < items.length; i++) {

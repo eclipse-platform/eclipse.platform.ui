@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,22 @@
  *
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
- *.....IBM Corporation - fixed dead code warning
+ *     IBM Corporation - fixed dead code warning
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.junit.Test;
 
 public class ActivityTest extends NavigatorTestBase {
 
@@ -32,7 +36,8 @@ public class ActivityTest extends NavigatorTestBase {
 
 	// Bug 217801 make sure category filtering works with common wizards
 	// Bug 257598 missing capabilities support for actions
-	public void testCategoryWizard() throws Exception {
+	@Test
+	public void testCategoryWizard() {
 
 		IStructuredSelection sel = new StructuredSelection(_project);
 		_viewer.setSelection(sel);
@@ -65,7 +70,8 @@ public class ActivityTest extends NavigatorTestBase {
 
 
 	// Bug 257598 missing capabilities support for actions
-	public void testProviderFilter() throws Exception {
+	@Test
+	public void testProviderFilter() {
 
 		IStructuredSelection sel = new StructuredSelection(_project);
 		_viewer.setSelection(sel);

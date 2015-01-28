@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 webtekie@gmail.com, IBM Corporation and others.
+ * Copyright (c) 2008, 2015 webtekie@gmail.com, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,14 @@
  *
  * Contributors:
  *     webtekie@gmail.com - initial API and implementation
- *.....IBM Corporation - fixed dead code warning
+ *     IBM Corporation - fixed dead code warning
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
@@ -17,15 +22,20 @@ import java.text.DecimalFormat;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.navigator.ICommonViewerMapper;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * A test to see if created projects are reflected in Project Explorer
@@ -44,16 +54,18 @@ public class PerformanceTest extends NavigatorTestBase {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		super.setUp();
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		super.tearDown();
 	}
 
-	protected void createProjects() throws Exception {
+	protected void createProjects() {
 		Job createJob = new Job("Create projects") {
 
 			@Override
@@ -79,7 +91,11 @@ public class PerformanceTest extends NavigatorTestBase {
 
 		createJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		createJob.schedule();
-		createJob.join();
+		try {
+			createJob.join();
+		} catch (InterruptedException e) {
+			fail("Should not throw an exception");
+		}
 
 		assertEquals(createJob.getResult(), Status.OK_STATUS);
 
@@ -94,7 +110,7 @@ public class PerformanceTest extends NavigatorTestBase {
 		assertEquals(_numProjects, numOfProjects);
 	}
 
-	protected void deleteProjects() throws Exception {
+	protected void deleteProjects() {
 		Job deleteJob = new Job("Delete Projects") {
 
 			@Override
@@ -116,7 +132,11 @@ public class PerformanceTest extends NavigatorTestBase {
 
 		deleteJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		deleteJob.schedule();
-		deleteJob.join();
+		try {
+			deleteJob.join();
+		} catch (InterruptedException e) {
+			fail("Should not throw an exception");
+		}
 
 		assertEquals(deleteJob.getResult(), Status.OK_STATUS);
 
@@ -124,7 +144,7 @@ public class PerformanceTest extends NavigatorTestBase {
 	}
 
 	protected void createFiles(final IProject project, final int startNumber)
-			throws Exception {
+ {
 		Job createJob = new Job("Create Files") {
 
 			@Override
@@ -146,7 +166,11 @@ public class PerformanceTest extends NavigatorTestBase {
 
 		createJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		createJob.schedule();
-		createJob.join();
+		try {
+			createJob.join();
+		} catch (InterruptedException e) {
+			fail("Should not throw an exception");
+		}
 		assertEquals(createJob.getResult(), Status.OK_STATUS);
 	}
 
@@ -176,14 +200,19 @@ public class PerformanceTest extends NavigatorTestBase {
 	}
 
 	// bug 159828 deleting large number of projects takes too long
-	public void testCreateAndDeleteProjects() throws Exception {
+	@Test
+	public void testCreateAndDeleteProjects() {
 
 		_numProjects = 100;
 
 		createProjects();
 
 		// Hide it
-		EditorTestHelper.showView(_navigatorInstanceId, false);
+		try {
+			EditorTestHelper.showView(_navigatorInstanceId, false);
+		} catch (PartInitException e) {
+			fail("Should not throw an exception");
+		}
 
 		long start = System.currentTimeMillis();
 		deleteProjects();
@@ -249,7 +278,7 @@ public class PerformanceTest extends NavigatorTestBase {
 				+ (System.currentTimeMillis() - start));
 	}
 
-	protected void createFilesForProjects() throws Exception {
+	protected void createFilesForProjects() {
 		for (int i = 0; i < _numProjects; i++) {
 			String name = _df.format(i);
 			IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject(
@@ -259,6 +288,7 @@ public class PerformanceTest extends NavigatorTestBase {
 	}
 
 	// bug 194209 updating lots of label providers does not scale well
+	@Test
 	public void testLabelProviderMapping() throws Exception {
 
 		ICommonViewerMapper mapper = _viewer.getMapper();
@@ -273,7 +303,12 @@ public class PerformanceTest extends NavigatorTestBase {
 		final IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject("p000");
 
-		p1.close(null);
+		try {
+			p1.close(null);
+		} catch (CoreException e) {
+			fail("Should not throw an exception");
+
+		}
 
 		long start = System.currentTimeMillis();
 		_viewer.setMapper(null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,22 @@
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
  *     IBM Corporation - fixed dead code warning
+ *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 457870
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.cdt;
 
-import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.core.runtime.Path;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.NavigatorTestBase;
 import org.eclipse.ui.tests.navigator.util.ProjectUnzipUtil;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
+import org.junit.Test;
 
 /**
  * This simulates the CDT usage of the CNF.
@@ -40,6 +41,7 @@ public class CdtTest extends NavigatorTestBase {
 		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
 	}
 
+	@Test
 	public void testCdt1() throws Exception {
 
 		_contentService.bindExtensions(new String[] { TEST_C_CONTENT }, false);
