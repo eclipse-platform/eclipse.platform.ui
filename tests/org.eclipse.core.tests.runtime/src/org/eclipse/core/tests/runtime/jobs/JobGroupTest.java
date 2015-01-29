@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Google Inc and others.
+ * Copyright (c) 2014, 2015 Google Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,6 +110,7 @@ public class JobGroupTest extends AbstractJobTest {
 			if (i < NUM_SEED_JOBS) {
 				assertEquals("4." + i, JobGroup.ACTIVE, jobGroup.getState());
 			} else {
+				waitForCompletion(jobGroup);
 				assertEquals("4." + i, JobGroup.NONE, jobGroup.getState());
 			}
 		}
@@ -153,6 +154,7 @@ public class JobGroupTest extends AbstractJobTest {
 			if (i < NUM_SEED_JOBS) {
 				assertEquals("4." + i, JobGroup.ACTIVE, jobGroup.getState());
 			} else {
+				waitForCompletion(jobGroup);
 				assertEquals("4." + i, JobGroup.NONE, jobGroup.getState());
 			}
 		}
