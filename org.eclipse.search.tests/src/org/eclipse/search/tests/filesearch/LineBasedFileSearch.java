@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Terry Parker <tparker@google.com> (Google Inc.) - Bug 441016 - Speed up text search by parallelizing it using JobGroups
  *******************************************************************************/
 
 package org.eclipse.search.tests.filesearch;
@@ -45,13 +46,17 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		private final AbstractTextSearchResult fResult;
 		private IFile fLastFile;
 		private IDocument fLastDocument;	
-		
+		private Object fLock= new Object();
+
 		private LineBasedTextSearchResultCollector(AbstractTextSearchResult result) {
 			fResult= result;
 			fLastFile= null;
 			fLastDocument= null;
 		}
 
+		public boolean canRunInParallel() {
+			return true;
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.search.core.text.FileSearchRequestor#acceptPatternMatch(org.eclipse.search.core.text.FileSearchMatchRequestor)
@@ -66,7 +71,9 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 
 				int startLine= doc.getLineOfOffset(matchRequestor.getMatchOffset());
 				int endLine= doc.getLineOfOffset(matchRequestor.getMatchOffset() + matchRequestor.getMatchLength());
-				fResult.addMatch(new FileMatch(file, startLine, endLine - startLine + 1, null));
+				synchronized(fLock) {
+					fResult.addMatch(new FileMatch(file, startLine, endLine - startLine + 1, null));
+				}
 			} catch (BadLocationException e) {
 				throw new CoreException(new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, "bad location", e));
 			}

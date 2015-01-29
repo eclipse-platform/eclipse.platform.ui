@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399094, 402009: Add whole word option to file search
+ *     Terry Parker <tparker@google.com> (Google Inc.) - Bug 441016 - Speed up text search by parallelizing it using JobGroups
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
@@ -51,31 +52,57 @@ public class FileSearchTests extends TestCase {
 			this.length= length;
 		}
 	}
-	
-	
+
 	private static class TestResultCollector extends TextSearchRequestor {
-		
-		private List fResult;
+
+		protected List fResult;
 
 		public TestResultCollector() {
+			reset();
+		}
+
+		public TestResult[] getResults() {
+			return (TestResult[]) fResult.toArray(new TestResult[fResult.size()]);
+		}
+
+		public int getNumberOfResults() {
+			return fResult.size();
+		}
+
+		public void reset() {
 			fResult= new ArrayList();
 		}
-		
+
+	}
+
+	private static class SerialTestResultCollector extends TestResultCollector {
+
+		public boolean canRunInParallel() {
+			return false;
+		}
+
 		public boolean acceptPatternMatch(TextSearchMatchAccess match) throws CoreException {
 			fResult.add(new TestResult(match.getFile(), match.getMatchOffset(), match.getMatchLength()));
 			return true;
 		}
-				
-		public TestResult[] getResults() {
-			return (TestResult[]) fResult.toArray(new TestResult[fResult.size()]);
-		}
-		
-		public int getNumberOfResults() {
-			return fResult.size();
-		}
-		
+
 	}
-	
+
+	private static class ParallelTestResultCollector extends TestResultCollector {
+
+		public boolean canRunInParallel() {
+			return true;
+		}
+
+		public boolean acceptPatternMatch(TextSearchMatchAccess match) throws CoreException {
+			synchronized(fResult) {
+				fResult.add(new TestResult(match.getFile(), match.getMatchOffset(), match.getMatchLength()));
+			}
+			return true;
+		}
+
+	}
+
 	private IProject fProject;
 	
 	public FileSearchTests(String name) {
@@ -101,9 +128,16 @@ public class FileSearchTests extends TestCase {
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("my-project"); //$NON-NLS-1$
 	}
-	
-	
-	public void testSimpleFiles() throws Exception {
+
+	public void testSimpleFilesSerial() throws Exception {
+		testSimpleFiles(new SerialTestResultCollector());
+	}
+
+	public void testSimpleFilesParallel() throws Exception {
+		testSimpleFiles(new ParallelTestResultCollector());
+	}
+
+	private void testSimpleFiles(TestResultCollector collector) throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
 		buf.append("hello\n");
@@ -113,20 +147,27 @@ public class FileSearchTests extends TestCase {
 		IFile file1= ResourceHelper.createFile(folder, "file1", buf.toString());
 		IFile file2= ResourceHelper.createFile(folder, "file2", buf.toString());
 
-		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
-		
+
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 4, results.length);
-		
+
 		assertMatches(results, 2, file1, buf.toString(), "hello");
 		assertMatches(results, 2, file2, buf.toString(), "hello");
 	}
-	
-	public void testWildCards1() throws Exception {
+
+	public void testWildCards1Serial() throws Exception {
+		testWildCards1(new SerialTestResultCollector());
+	}
+
+	public void testWildCards1Parallel() throws Exception {
+		testWildCards1(new ParallelTestResultCollector());
+	}
+
+	private void testWildCards1(TestResultCollector collector) throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
 		buf.append("no more\n");
@@ -137,7 +178,6 @@ public class FileSearchTests extends TestCase {
 		ResourceHelper.createFile(folder, "file1", buf.toString());
 		ResourceHelper.createFile(folder, "file2", buf.toString());
 
-		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("mor*", false, false);
 		
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
@@ -146,8 +186,16 @@ public class FileSearchTests extends TestCase {
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 6, results.length);
 	}
-	
-	public void testWildCards2() throws Exception {
+
+	public void testWildCards2Serial() throws Exception {
+		testWildCards2(new SerialTestResultCollector());
+	}
+
+	public void testWildCards2Parallel() throws Exception {
+		testWildCards2(new ParallelTestResultCollector());
+	}
+
+	private void testWildCards2(TestResultCollector collector) throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
 		buf.append("no more\n");
@@ -158,7 +206,6 @@ public class FileSearchTests extends TestCase {
 		ResourceHelper.createFile(folder, "file1", buf.toString());
 		ResourceHelper.createFile(folder, "file2", buf.toString());
 
-		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("mo?e", false, false);
 		
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
@@ -167,8 +214,16 @@ public class FileSearchTests extends TestCase {
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 4, results.length);
 	}
-	
-	public void testWildCards3() throws Exception {
+
+	public void testWildCards3Serial() throws Exception {
+		testWildCards3(new SerialTestResultCollector());
+	}
+
+	public void testWildCards3Parallel() throws Exception {
+		testWildCards3(new ParallelTestResultCollector());
+	}
+
+	private void testWildCards3(TestResultCollector collector) throws Exception {
 		
 		IProject project= JUnitSourceSetup.getStandardProject();
 		IFile openFile1= (IFile) project.findMember("junit/framework/TestCase.java");
@@ -185,7 +240,6 @@ public class FileSearchTests extends TestCase {
 			
 			long start= System.currentTimeMillis();
 
-			TestResultCollector collector= new TestResultCollector();
 			Pattern searchPattern= PatternConstructor.createPattern("\\w*\\(\\)", false, true);
 
 			// search in Junit sources
@@ -200,11 +254,18 @@ public class FileSearchTests extends TestCase {
 		} finally {
 			activePage.closeAllEditors(false);
 		}
-		
 
 	}
-	
-	public void testWholeWord() throws Exception {
+
+	public void testWholeWordSerial() throws Exception {
+		testWholeWord(new SerialTestResultCollector());
+	}
+
+	public void testWholeWordParallel() throws Exception {
+		testWholeWord(new ParallelTestResultCollector());
+	}
+
+	private void testWholeWord(TestResultCollector collector) throws Exception {
 		StringBuffer buf= new StringBuffer();
 		// nothing after
 		buf.append("hell\n"); // nothing before
@@ -230,28 +291,35 @@ public class FileSearchTests extends TestCase {
 		{
 			// wildcards, whole word = false: match all lines
 			Pattern searchPattern= PatternConstructor.createPattern("h?ll", false, true, false, false);
-			TestResultCollector collector= new TestResultCollector();
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
 		}
 		{
 			// wildcards, whole word = true: match only nothing and non-word chars before and after
 			Pattern searchPattern= PatternConstructor.createPattern("h?ll", false, true, false, true);
-			TestResultCollector collector= new TestResultCollector();
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals("Number of whole-word results", 10, collector.getNumberOfResults());
 		}
 		{
 			// regexp, whole word = false: match all lines
 			Pattern searchPattern= PatternConstructor.createPattern("h[eio]ll", true, true, false, false);
-			TestResultCollector collector= new TestResultCollector();
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
 		}
 	}
-	
 
-	public void testFileOpenInEditor() throws Exception {
+	public void testFileOpenInEditorSerial() throws Exception {
+		testFileOpenInEditor(new SerialTestResultCollector());
+	}
+
+	public void testFileOpenInEditorParallel() throws Exception {
+		testFileOpenInEditor(new ParallelTestResultCollector());
+	}
+
+	private void testFileOpenInEditor(TestResultCollector collector) throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
 		buf.append("hello\n");
@@ -264,7 +332,6 @@ public class FileSearchTests extends TestCase {
 		try {
 			IDE.openEditor(SearchPlugin.getActivePage(), file2, true);
 			
-			TestResultCollector collector= new TestResultCollector();
 			Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 
 			FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
@@ -279,8 +346,16 @@ public class FileSearchTests extends TestCase {
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
-	
-	public void testDerivedFiles() throws Exception {
+
+	public void testDerivedFilesSerial() throws Exception {
+		testDerivedFiles(new SerialTestResultCollector());
+	}
+
+	public void testDerivedFilesParallel() throws Exception {
+		testDerivedFiles(new ParallelTestResultCollector());
+	}
+
+	private void testDerivedFiles(TestResultCollector collector) throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("hello\n");
 		IFolder folder1= ResourceHelper.createFolder(fProject.getFolder("folder1"));
@@ -316,50 +391,58 @@ public class FileSearchTests extends TestCase {
 		TextSearchEngine engine= TextSearchEngine.create();
 		{
 			// visit all
-			TestResultCollector collector= new TestResultCollector();
 			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePattern, true);
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(5, collector.getNumberOfResults());
 		}
 		{
 			// visit non-derived
-			TestResultCollector collector= new TestResultCollector();
 			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePattern, false);
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(2, collector.getNumberOfResults());
 		}
 		{
 			// visit all in folder2
-			TestResultCollector collector= new TestResultCollector();
 			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder2 }, fileNamePattern, true);
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(2, collector.getNumberOfResults());
 		}
 		{
 			// visit non-derived in folder2
-			TestResultCollector collector= new TestResultCollector();
 			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder2 }, fileNamePattern, false);
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(0, collector.getNumberOfResults());
 		}
 		{
 			// visit all in folder3
-			TestResultCollector collector= new TestResultCollector();
 			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder3 }, fileNamePattern, true);
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(1, collector.getNumberOfResults());
 		}
 		{
 			// visit non-derived in folder3
-			TestResultCollector collector= new TestResultCollector();
 			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder3 }, fileNamePattern, false);
+			collector.reset();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(0, collector.getNumberOfResults());
 		}
 	}
 
-	
-	public void testFileNamePatterns() throws Exception {
+	public void testFileNamePatternsSerial() throws Exception {
+		testFileNamePatterns(new SerialTestResultCollector());
+	}
+
+	public void testFileNamePatternsParallel() throws Exception {
+		testFileNamePatterns(new ParallelTestResultCollector());
+	}
+
+
+	private void testFileNamePatterns(TestResultCollector collector) throws Exception {
 		IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
 		ResourceHelper.createFile(folder, "file1.x", "Test");
 		ResourceHelper.createFile(folder, "file2.x", "Test");
@@ -369,44 +452,44 @@ public class FileSearchTests extends TestCase {
 		Pattern searchPattern= PatternConstructor.createPattern("Test", false, false);
 		String[] fileNamePatterns= { "*" };
 				
-		TestResult[] results= performSearch(fileNamePatterns, searchPattern);
+		TestResult[] results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 4, results.length);
 		
 		fileNamePatterns= new String[] { "*.x" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 2, results.length);
 		
 		fileNamePatterns= new String[] { "*.x", "*.y*" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 3, results.length);
 		
 		fileNamePatterns= new String[] { "!*.x" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 2, results.length);
 		
 		fileNamePatterns= new String[] { "!*.x", "!*.y" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 1, results.length);
 		
 		fileNamePatterns= new String[] { "*", "!*.y" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 3, results.length);
 		
 		fileNamePatterns= new String[] { "*", "!*.*" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 0, results.length);
 		
 		fileNamePatterns= new String[] { "*.x", "*.y*", "!*.y" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 2, results.length);
 		
 		fileNamePatterns= new String[] { "file*", "!*.x*", "!*.y" };
-		results= performSearch(fileNamePatterns, searchPattern);
+		results= performSearch(collector, fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 1, results.length);
 	}
 	
-	private TestResult[] performSearch(String[] fileNamePatterns, Pattern searchPattern) {
-		TestResultCollector collector= new TestResultCollector();
+	private TestResult[] performSearch(TestResultCollector collector, String[] fileNamePatterns, Pattern searchPattern) {
+		collector.reset();
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, fileNamePatterns, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		

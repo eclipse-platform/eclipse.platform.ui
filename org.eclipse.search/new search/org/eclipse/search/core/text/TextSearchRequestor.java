@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Terry Parker <tparker@google.com> (Google Inc.) - Bug 441016 - Speed up text search by parallelizing it using JobGroups
  *******************************************************************************/
 
 package org.eclipse.search.core.text;
@@ -30,6 +31,14 @@ import org.eclipse.core.resources.IFile;
  * in this file. The end of the search is signaled with a call to {@link #endReporting()}.
  * Note that {@link #acceptFile(IFile)} is called for all files in the search scope,
  * even if no match can be found.
+ * </p>
+ * <p>
+ * {@link TextSearchEngine#search(TextSearchScope, TextSearchRequestor, java.util.regex.Pattern,
+ * org.eclipse.core.runtime.IProgressMonitor)} can perform parallel processing.
+ * To support parallel processing, subclasses of this class must synchronize access
+ * to any shared data accumulated by or accessed by overrides of the {@link #acceptFile(IFile)},
+ * {@link #reportBinaryFile(IFile)} and {@link #acceptPatternMatch(TextSearchMatchAccess)}
+ * methods, and override the {@link #canRunInParallel()} method to return true.
  * </p>
  * <p>
  * The order of the search results is unspecified and may vary from request to request;
@@ -75,6 +84,10 @@ public abstract class TextSearchRequestor {
 	 * <p>
 	 * The default behaviour is to search the file for matches.
 	 * </p>
+	 * <p>
+	 * If {@link #canRunInParallel()} returns true, this method may be called in parallel by different threads,
+	 * so any access or updates to collections of results or other shared state must be synchronized.
+	 * </p>
 	 * @param file the file resource to be searched.
 	 * @return If false, no pattern matches will be reported for the content of this file.
 	 * @throws CoreException implementors can throw a {@link CoreException} if accessing the resource fails or another
@@ -94,6 +107,10 @@ public abstract class TextSearchRequestor {
 	 * reported for this file with {@link #acceptPatternMatch(TextSearchMatchAccess)}.
 	 * </p>
 	 * <p>
+	 * If {@link #canRunInParallel()} returns true, this method may be called in parallel by different threads,
+	 * so any access or updates to collections of results or other shared state must be synchronized.
+	 * </p>
+	 * <p>
 	 * The default behaviour is to skip binary files
 	 * </p>
 	 *
@@ -106,6 +123,10 @@ public abstract class TextSearchRequestor {
 
 	/**
 	 * Accepts the given search match and decides if the search should continue for this file.
+	 * <p>
+	 * If {@link #canRunInParallel()} returns true, this method may be called in parallel by different threads,
+	 * so any access or updates to collections of results or other shared state must be synchronized.
+	 * </p>
 	 *
 	 * @param matchAccess gives access to information of the match found. The matchAccess is not a value
 	 * object. Its value might change after this method is finished, and the element might be reused.
@@ -117,4 +138,22 @@ public abstract class TextSearchRequestor {
 		return true;
 	}
 
+	/**
+	 * Reports whether this TextSearchRequestor supports executing the text search algorithm
+	 * in parallel.
+	 * <p>
+	 * Subclasses should override this method and return true if they desire faster search results
+	 * and their {@link #acceptFile(IFile)}, {@link #reportBinaryFile(IFile)} and
+	 * {@link #acceptPatternMatch(TextSearchMatchAccess)} methods are thread-safe.
+	 * </p>
+	 * <p>
+	 * The default behavior is to not use parallelism when running a text search.
+	 * </p>
+	 *
+	 * @return If true, the text search will be run in parallel.
+	 * @since 3.10
+	 */
+	public boolean canRunInParallel() {
+		return false;
+	}
 }

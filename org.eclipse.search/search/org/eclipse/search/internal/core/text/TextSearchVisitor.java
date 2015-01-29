@@ -214,8 +214,12 @@ public class TextSearchVisitor {
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= files.length;
 		fCurrentFile= null;
-		int jobCount = Math.round((files.length + FILES_PER_JOB - 1) / FILES_PER_JOB);
-		final JobGroup jobGroup= new TextSearchJobGroup("Text Search", NUMBER_OF_LOGICAL_THREADS, jobCount); //$NON-NLS-1$
+		int maxThreads= fCollector.canRunInParallel() ? NUMBER_OF_LOGICAL_THREADS : 1;
+		int jobCount= 1;
+		if (maxThreads > 1) {
+			jobCount= Math.round((files.length + FILES_PER_JOB - 1) / FILES_PER_JOB);
+		}
+		final JobGroup jobGroup= new TextSearchJobGroup("Text Search", maxThreads, jobCount); //$NON-NLS-1$
 		long startTime= TRACING ? System.currentTimeMillis() : 0;
 
 		Job monitorUpdateJob= new Job(SearchMessages.TextSearchVisitor_progress_updating_job) {

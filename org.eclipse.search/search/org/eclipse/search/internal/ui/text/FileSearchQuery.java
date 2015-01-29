@@ -63,6 +63,10 @@ public class FileSearchQuery implements ISearchQuery {
 
 		}
 
+		public boolean canRunInParallel() {
+			return true;
+		}
+
 		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsLightweightAutoRefresh && !file.exists())
 				return false;
