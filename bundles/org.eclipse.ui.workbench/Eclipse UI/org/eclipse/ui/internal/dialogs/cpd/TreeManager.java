@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -375,6 +375,9 @@ public class TreeManager {
 				// if the new state is 'GRAY' then -ALL- the parents are gray
 				while (changedItem.parent != null && changedItem.parent.checkState != CHECKSTATE_GRAY) {
 					changedItem.parent.internalSetCheckState(CHECKSTATE_GRAY);
+					if (changedItem.isChangedByUser()) {
+						changedItem.parent.setChangedByUser(true);
+					}
 					changedItem = changedItem.parent;
 				}
 			} else {
@@ -408,6 +411,9 @@ public class TreeManager {
 					changedItem.parent.internalSetCheckState(CHECKSTATE_UNCHECKED);
 				}
 				if(oldState != changedItem.parent.checkState) {
+					if (changedItem.isChangedByUser()) {
+						changedItem.parent.setChangedByUser(true);
+					}
 					synchParents(changedItem.parent);
 				}
 			}

@@ -3415,7 +3415,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		String hiddenItems = dummyPerspective.getPersistedState().get(ModeledPageLayout.HIDDEN_ITEMS_KEY);
 		persp.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, hiddenItems);
 		
-		// legacyWindow.getMenuManager().updateAll(true);
+		legacyWindow.getMenuManager().updateAll(true);
 		// ((ICoolBarManager2) ((WorkbenchWindow)
 		// getWorkbenchWindow()).getCoolBarManager2())
 		// .resetItemOrder();
