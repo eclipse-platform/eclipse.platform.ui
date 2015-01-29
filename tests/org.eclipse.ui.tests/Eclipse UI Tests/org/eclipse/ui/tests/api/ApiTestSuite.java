@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(IDeprecatedWorkbenchPageTest.class));
         addTest(new TestSuite(IActionFilterTest.class));
         addTest(new TestSuite(IPageListenerTest.class));
+        addTest(new TestSuite(IAggregateWorkingSetTest.class));
         addTest(new TestSuite(IPageServiceTest.class));
         addTest(new TestSuite(IPerspectiveRegistryTest.class));
         addTest(new TestSuite(IPerspectiveDescriptorTest.class));
@@ -65,7 +66,6 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(IWorkingSetTest.class));
         addTest(new TestSuite(IWorkingSetManagerTest.class));
         addTest(new TestSuite(IWorkingSetElementAdapterTests.class));
-        addTest(new TestSuite(IAggregateWorkingSetTest.class));
         addTest(new TestSuite(MockWorkingSetTest.class));
         addTest(new TestSuite(Bug42616Test.class));
         addTest(new TestSuite(StickyViewTest.class));
