@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *     Markus Schorn (Wind River Systems) -  bug 284447
  *     James Blackburn (Broadcom Corp.)   -  bug 340978
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 458832
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -62,8 +63,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  *Note:This class extends from PreferencePage,and there's no WorkspacePreferencePage class.
  *Hence when the IDE settings doesn't appear in this preference page, this page will be empty.
  */
-public class IDEWorkspacePreferencePage extends PreferencePage
-        implements IWorkbenchPreferencePage{
+public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Button autoBuildButton;
 
@@ -296,10 +296,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage
     }
 
 	/**
-     * Create the Refresh controls
-     * 
-     * @param parent
-     */
+	 * Create the Refresh controls
+	 *
+	 * @param parent
+	 */
     private void createAutoRefreshControls(Composite parent) {
 
         this.autoRefreshButton = new Button(parent, SWT.CHECK);
@@ -310,22 +310,20 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         this.lightweightRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshLightweightButtonText);
         this.lightweightRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshLightweightButtonToolTip);
 
-        boolean lightweightRefresh = ResourcesPlugin.getPlugin()
-                .getPluginPreferences().getBoolean(
-                		ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
-        boolean autoRefresh = ResourcesPlugin.getPlugin()
-		        .getPluginPreferences().getBoolean(
-		                ResourcesPlugin.PREF_AUTO_REFRESH);
-        
+		boolean lightweightRefresh = Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES,
+				ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
+		boolean autoRefresh = Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES,
+				ResourcesPlugin.PREF_AUTO_REFRESH, false, null);
+
         this.autoRefreshButton.setSelection(autoRefresh);
         this.lightweightRefreshButton.setSelection(lightweightRefresh);
     }
 
     /**
-     * Create a composite that contains the encoding controls
-     * 
-     * @param parent
-     */
+	 * Create a composite that contains the encoding controls
+	 *
+	 * @param parent
+	 */
     private void createEncodingEditorControls(Composite parent){    			
 		Composite encodingComposite = new Composite(parent,SWT.NONE);
 		encodingComposite.setLayout(new GridLayout());
