@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Dirk Fauth and others.
+ * Copyright (c) 2012, 2015 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Dirk Fauth <dirk.fauth@gmail.com> - initial API and implementation
+ *     Ragnar Nevries <r.eclipse@nevri.es> - Bug 458798
  ******************************************************************************/
 package org.eclipse.e4.core.internal.services;
 
@@ -48,15 +49,22 @@ public class ResourceBundleTranslationProvider {
 	 * the variable. This will be replaced automatically to a dot, if there is no translation found
 	 * with an underscore as separator.
 	 * </p>
-	 * As per request, this implementation also supports camel cased member variables to match the
-	 * appropriate property keys. The search order for the translation property key is as follows:
+	 * This implementation also supports camel cased member variables to match the appropriate
+	 * property keys. As a result, all combinations of replacing camel cased strings by
+	 * their "underscorified" version and replacing underscores by dots are considered. The order
+	 * is shown by the following example:
+	 * <p>
+	 * Let the property key to translate be <i>camelCase_Subtree</i>. Then the
+	 * {@link ResourceBundle} is browsed for the following keys (in that order):
+	 * </p>
 	 * <ol>
-	 * <li>key = property key (no modification)</li>
-	 * <li>underscorified key = property key (camel cased key is transformed to underscorified key)</li>
-	 * <li>dot separated key = property key (underscorified key is transformed to dot separated key)
-	 * </li>
-	 * <li>nothing matches -&gt; return key prefixed and suffixed with "!"</li>
+	 * <li>camelCase_Subtree</li>
+	 * <li>camel_case__subtree</li>
+	 * <li>camel.case..subtree</li>
+	 * <li>camelCase.Subtree</li>
+	 * <li>camel_case._subtree</li>
 	 * </ol>
+	 *
 	 *
 	 * @param key
 	 *            The key of the requested translation property.
@@ -64,27 +72,32 @@ public class ResourceBundleTranslationProvider {
 	 *         indicate that there is no translation available for the given key.
 	 */
 	public String translate(String key) {
-		String result = ""; //$NON-NLS-1$
+		String result = translate_rec(key);
+		if (result != null) {
+			return result;
+		} else {
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	private String translate_rec(String key) {
+		String result = null;
 		try {
-			if (this.resourceBundle == null) {
-				result = "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				// search for the key as is
+			if (this.resourceBundle != null) {
 				result = this.resourceBundle.getString(key);
 			}
 		} catch (MissingResourceException e) {
-			// key was not found as is, check if it is camel cased
-			String uKey = underscorify(key);
-			if (!key.equals(uKey)) {
-				// the underscorify method modified the key, so it seems it was camel cased
-				result = translate(uKey);
-			} else if (key.contains("_")) { //$NON-NLS-1$
-				// underscorify didn't modify the key, but the key contains the underscore
-				// so we check for the dot separated key
-				result = translate(key.replace('_', '.'));
-			} else {
-				// nothing matched, so we return the key itself marked with !
-				result = "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
+			// key was not found as is, check if it is camel cased or contains
+			// underscores
+
+			// try to de-camel-casify and recurse
+			if (key.matches(".*[A-Z].*")) { //$NON-NLS-1$
+				result = translate_rec(underscorify(key));
+			}
+
+			// if no succes, try to de-underscorify and recurse
+			if (result == null && key.contains("_")) { //$NON-NLS-1$
+				result = translate_rec(key.replace('_', '.')); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return result;

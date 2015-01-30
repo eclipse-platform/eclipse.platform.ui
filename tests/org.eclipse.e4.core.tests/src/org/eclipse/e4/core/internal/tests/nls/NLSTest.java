@@ -48,6 +48,7 @@ public class NLSTest extends TestCase {
 	private IEclipseContext context;
 	private Locale beforeLocale;
 
+	@Override
 	public void setUp() {
 		this.context = EclipseContextFactory.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
 		ContextInjectionFactory.setDefault(context);
@@ -57,6 +58,7 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("en"));
 	}
 
+	@Override
 	public void tearDown() {
 		Locale.setDefault(beforeLocale);
 	}
@@ -66,22 +68,34 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
+		SimpleMessages messages = o.simpleMessages;
+
 		//test all values are set
-		assertNotNull(o.simpleMessages);
-		assertNotNull(o.simpleMessages.message);
-		assertNotNull(o.simpleMessages.message_one);
-		assertNotNull(o.simpleMessages.messageOne);
-		assertNotNull(o.simpleMessages.message_two);
-		assertNotNull(o.simpleMessages.messageThree);
-		assertNotNull(o.simpleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("SimpleMessage", o.simpleMessages.message);
-		assertEquals("SimpleMessageUnderscore", o.simpleMessages.message_one);
-		assertEquals("SimpleMessageCamelCase", o.simpleMessages.messageOne);
-		assertEquals("SimpleMessageUnderscoreDot", o.simpleMessages.message_two);
-		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
-		assertEquals("The idea is from Tom", o.simpleMessages.messageFour);
+		assertEquals("SimpleMessage", messages.message);
+		assertEquals("SimpleMessageUnderscore", messages.message_one);
+		assertEquals("SimpleMessageCamelCase", messages.messageOne);
+		assertEquals("SimpleMessageUnderscoreDot", messages.message_two);
+		assertEquals("SimpleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified", messages.messageSeven_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
 	public void testSimpleMessagesDifferentLocale() {
@@ -89,23 +103,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
+		SimpleMessages messages = o.simpleMessages;
+
 		//test all values are set
-		assertNotNull(o.simpleMessages);
-		assertNotNull(o.simpleMessages.message);
-		assertNotNull(o.simpleMessages.message_one);
-		assertNotNull(o.simpleMessages.messageOne);
-		assertNotNull(o.simpleMessages.message_two);
-		assertNotNull(o.simpleMessages.messageThree);
-		assertNotNull(o.simpleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("SimpleNachricht", o.simpleMessages.message);
-		assertEquals("SimpleNachrichtUnderscore", o.simpleMessages.message_one);
-		assertEquals("SimpleNachrichtCamelCase", o.simpleMessages.messageOne);
-		assertEquals("SimpleNachrichtUnderscoreDot", o.simpleMessages.message_two);
+		assertEquals("SimpleNachricht", messages.message);
+		assertEquals("SimpleNachrichtUnderscore", messages.message_one);
+		assertEquals("SimpleNachrichtCamelCase", messages.messageOne);
+		assertEquals("SimpleNachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.simpleMessages.messageFour);
+		assertEquals("SimpleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testSimpleMessagesSkipDefaultLocaleForEquinoxRoot() {
@@ -120,23 +148,35 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
+		SimpleMessages messages = o.simpleMessages;
+
 		//test all values are set
-		assertNotNull(o.simpleMessages);
-		assertNotNull(o.simpleMessages.message);
-		assertNotNull(o.simpleMessages.message_one);
-		assertNotNull(o.simpleMessages.messageOne);
-		assertNotNull(o.simpleMessages.message_two);
-		assertNotNull(o.simpleMessages.messageThree);
-		assertNotNull(o.simpleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
-		assertEquals("SimpleMessage", o.simpleMessages.message);
-		assertEquals("SimpleMessageUnderscore", o.simpleMessages.message_one);
-		assertEquals("SimpleMessageCamelCase", o.simpleMessages.messageOne);
-		assertEquals("SimpleMessageUnderscoreDot", o.simpleMessages.message_two);
-		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
-		assertEquals("The idea is from Tom", o.simpleMessages.messageFour);
+		assertEquals("SimpleMessage", messages.message);
+		assertEquals("SimpleMessageUnderscore", messages.message_one);
+		assertEquals("SimpleMessageCamelCase", messages.messageOne);
+		assertEquals("SimpleMessageUnderscoreDot", messages.message_two);
+		assertEquals("SimpleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified", messages.messageSeven_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
 	public void testSimpleMessagesUseDefaultLocaleForInvalidLocale() {
@@ -147,23 +187,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestSimpleObject o = ContextInjectionFactory.make(TestSimpleObject.class, this.context);
 
+		SimpleMessages messages = o.simpleMessages;
+
 		//test all values are set
-		assertNotNull(o.simpleMessages);
-		assertNotNull(o.simpleMessages.message);
-		assertNotNull(o.simpleMessages.message_one);
-		assertNotNull(o.simpleMessages.messageOne);
-		assertNotNull(o.simpleMessages.message_two);
-		assertNotNull(o.simpleMessages.messageThree);
-		assertNotNull(o.simpleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//the default resource bundle should be used
-		assertEquals("SimpleNachricht", o.simpleMessages.message);
-		assertEquals("SimpleNachrichtUnderscore", o.simpleMessages.message_one);
-		assertEquals("SimpleNachrichtCamelCase", o.simpleMessages.messageOne);
-		assertEquals("SimpleNachrichtUnderscoreDot", o.simpleMessages.message_two);
+		assertEquals("SimpleNachricht", messages.message);
+		assertEquals("SimpleNachrichtUnderscore", messages.message_one);
+		assertEquals("SimpleNachrichtCamelCase", messages.messageOne);
+		assertEquals("SimpleNachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("SimpleMessageCamelCaseDot", o.simpleMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.simpleMessages.messageFour);
+		assertEquals("SimpleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("SimpleNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testMessages() {
@@ -171,22 +225,34 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
+		Messages messages = o.Messages;
+
 		//test all values are set
-		assertNotNull(o.Messages);
-		assertNotNull(o.Messages.message);
-		assertNotNull(o.Messages.message_one);
-		assertNotNull(o.Messages.messageOne);
-		assertNotNull(o.Messages.message_two);
-		assertNotNull(o.Messages.messageThree);
-		assertNotNull(o.Messages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("Message", o.Messages.message);
-		assertEquals("MessageUnderscore", o.Messages.message_one);
-		assertEquals("MessageCamelCase", o.Messages.messageOne);
-		assertEquals("MessageUnderscoreDot", o.Messages.message_two);
-		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
-		assertEquals("The idea is from Tom", o.Messages.messageFour);
+		assertEquals("Message", messages.message);
+		assertEquals("MessageUnderscore", messages.message_one);
+		assertEquals("MessageCamelCase", messages.messageOne);
+		assertEquals("MessageUnderscoreDot", messages.message_two);
+		assertEquals("MessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("MessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified", messages.messageSeven_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
 	public void testMessagesDifferentLocale() {
@@ -194,23 +260,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
+		Messages messages = o.Messages;
+
 		//test all values are set
-		assertNotNull(o.Messages);
-		assertNotNull(o.Messages.message);
-		assertNotNull(o.Messages.message_one);
-		assertNotNull(o.Messages.messageOne);
-		assertNotNull(o.Messages.message_two);
-		assertNotNull(o.Messages.messageThree);
-		assertNotNull(o.Messages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("Nachricht", o.Messages.message);
-		assertEquals("NachrichtUnderscore", o.Messages.message_one);
-		assertEquals("NachrichtCamelCase", o.Messages.messageOne);
-		assertEquals("NachrichtUnderscoreDot", o.Messages.message_two);
+		assertEquals("Nachricht", messages.message);
+		assertEquals("NachrichtUnderscore", messages.message_one);
+		assertEquals("NachrichtCamelCase", messages.messageOne);
+		assertEquals("NachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.Messages.messageFour);
+		assertEquals("MessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("NachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testMessagesSkipDefaultLocaleForEquinoxRoot() {
@@ -225,23 +305,35 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
+		Messages messages = o.Messages;
+
 		//test all values are set
-		assertNotNull(o.Messages);
-		assertNotNull(o.Messages.message);
-		assertNotNull(o.Messages.message_one);
-		assertNotNull(o.Messages.messageOne);
-		assertNotNull(o.Messages.message_two);
-		assertNotNull(o.Messages.messageThree);
-		assertNotNull(o.Messages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
-		assertEquals("Message", o.Messages.message);
-		assertEquals("MessageUnderscore", o.Messages.message_one);
-		assertEquals("MessageCamelCase", o.Messages.messageOne);
-		assertEquals("MessageUnderscoreDot", o.Messages.message_two);
-		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
-		assertEquals("The idea is from Tom", o.Messages.messageFour);
+		assertEquals("Message", messages.message);
+		assertEquals("MessageUnderscore", messages.message_one);
+		assertEquals("MessageCamelCase", messages.messageOne);
+		assertEquals("MessageUnderscoreDot", messages.message_two);
+		assertEquals("MessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("MessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified", messages.messageSeven_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("MessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
 	public void testMessagesUseDefaultLocaleForInvalidLocale() {
@@ -252,23 +344,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestMessagesObject o = ContextInjectionFactory.make(TestMessagesObject.class, this.context);
 
+		Messages messages = o.Messages;
+
 		//test all values are set
-		assertNotNull(o.Messages);
-		assertNotNull(o.Messages.message);
-		assertNotNull(o.Messages.message_one);
-		assertNotNull(o.Messages.messageOne);
-		assertNotNull(o.Messages.message_two);
-		assertNotNull(o.Messages.messageThree);
-		assertNotNull(o.Messages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//the default resource bundle should be used
-		assertEquals("Nachricht", o.Messages.message);
-		assertEquals("NachrichtUnderscore", o.Messages.message_one);
-		assertEquals("NachrichtCamelCase", o.Messages.messageOne);
-		assertEquals("NachrichtUnderscoreDot", o.Messages.message_two);
+		assertEquals("Nachricht", messages.message);
+		assertEquals("NachrichtUnderscore", messages.message_one);
+		assertEquals("NachrichtCamelCase", messages.messageOne);
+		assertEquals("NachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("MessageCamelCaseDot", o.Messages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.Messages.messageFour);
+		assertEquals("MessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("NachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("NachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testBundleMessages() {
@@ -276,22 +382,34 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
+		BundleMessages messages = o.bundleMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleMessages);
-		assertNotNull(o.bundleMessages.message);
-		assertNotNull(o.bundleMessages.message_one);
-		assertNotNull(o.bundleMessages.messageOne);
-		assertNotNull(o.bundleMessages.message_two);
-		assertNotNull(o.bundleMessages.messageThree);
-		assertNotNull(o.bundleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("BundleMessage", o.bundleMessages.message);
-		assertEquals("BundleMessageUnderscore", o.bundleMessages.message_one);
-		assertEquals("BundleMessageCamelCase", o.bundleMessages.messageOne);
-		assertEquals("BundleMessageUnderscoreDot", o.bundleMessages.message_two);
-		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
-		assertEquals("The idea is from Tom", o.bundleMessages.messageFour);
+		assertEquals("BundleMessage", messages.message);
+		assertEquals("BundleMessageUnderscore", messages.message_one);
+		assertEquals("BundleMessageCamelCase", messages.messageOne);
+		assertEquals("BundleMessageUnderscoreDot", messages.message_two);
+		assertEquals("BundleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified", messages.messageSeven_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
 	public void testBundleMessagesDifferentLocale() {
@@ -299,23 +417,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
+		BundleMessages messages = o.bundleMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleMessages);
-		assertNotNull(o.bundleMessages.message);
-		assertNotNull(o.bundleMessages.message_one);
-		assertNotNull(o.bundleMessages.messageOne);
-		assertNotNull(o.bundleMessages.message_two);
-		assertNotNull(o.bundleMessages.messageThree);
-		assertNotNull(o.bundleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("BundleNachricht", o.bundleMessages.message);
-		assertEquals("BundleNachrichtUnderscore", o.bundleMessages.message_one);
-		assertEquals("BundleNachrichtCamelCase", o.bundleMessages.messageOne);
-		assertEquals("BundleNachrichtUnderscoreDot", o.bundleMessages.message_two);
+		assertEquals("BundleNachricht", messages.message);
+		assertEquals("BundleNachrichtUnderscore", messages.message_one);
+		assertEquals("BundleNachrichtCamelCase", messages.messageOne);
+		assertEquals("BundleNachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.bundleMessages.messageFour);
+		assertEquals("BundleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testBundleMessagesSkipDefaultLocaleForEquinoxRoot() {
@@ -330,23 +462,35 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
+		BundleMessages messages = o.bundleMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleMessages);
-		assertNotNull(o.bundleMessages.message);
-		assertNotNull(o.bundleMessages.message_one);
-		assertNotNull(o.bundleMessages.messageOne);
-		assertNotNull(o.bundleMessages.message_two);
-		assertNotNull(o.bundleMessages.messageThree);
-		assertNotNull(o.bundleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
-		assertEquals("BundleMessage", o.bundleMessages.message);
-		assertEquals("BundleMessageUnderscore", o.bundleMessages.message_one);
-		assertEquals("BundleMessageCamelCase", o.bundleMessages.messageOne);
-		assertEquals("BundleMessageUnderscoreDot", o.bundleMessages.message_two);
-		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
-		assertEquals("The idea is from Tom", o.bundleMessages.messageFour);
+		assertEquals("BundleMessage", messages.message);
+		assertEquals("BundleMessageUnderscore", messages.message_one);
+		assertEquals("BundleMessageCamelCase", messages.messageOne);
+		assertEquals("BundleMessageUnderscoreDot", messages.message_two);
+		assertEquals("BundleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified", messages.messageSeven_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("BundleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
 	public void testBundleMessagesUseDefaultLocaleForInvalidLocale() {
@@ -357,23 +501,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestBundleObject o = ContextInjectionFactory.make(TestBundleObject.class, this.context);
 
+		BundleMessages messages = o.bundleMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleMessages);
-		assertNotNull(o.bundleMessages.message);
-		assertNotNull(o.bundleMessages.message_one);
-		assertNotNull(o.bundleMessages.messageOne);
-		assertNotNull(o.bundleMessages.message_two);
-		assertNotNull(o.bundleMessages.messageThree);
-		assertNotNull(o.bundleMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//the default resource bundle should be used
-		assertEquals("BundleNachricht", o.bundleMessages.message);
-		assertEquals("BundleNachrichtUnderscore", o.bundleMessages.message_one);
-		assertEquals("BundleNachrichtCamelCase", o.bundleMessages.messageOne);
-		assertEquals("BundleNachrichtUnderscoreDot", o.bundleMessages.message_two);
+		assertEquals("BundleNachricht", messages.message);
+		assertEquals("BundleNachrichtUnderscore", messages.message_one);
+		assertEquals("BundleNachrichtCamelCase", messages.messageOne);
+		assertEquals("BundleNachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("BundleMessageCamelCaseDot", o.bundleMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.bundleMessages.messageFour);
+		assertEquals("BundleMessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("BundleNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testClassBasedResourceBundle() {
@@ -381,22 +539,36 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
+		ResourceBundleClassMessages messages = o.bundleClassMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleClassMessages);
-		assertNotNull(o.bundleClassMessages.message);
-		assertNotNull(o.bundleClassMessages.message_one);
-		assertNotNull(o.bundleClassMessages.messageOne);
-		assertNotNull(o.bundleClassMessages.message_two);
-		assertNotNull(o.bundleClassMessages.messageThree);
-		assertNotNull(o.bundleClassMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("ResourceBundleClassMessage", o.bundleClassMessages.message);
-		assertEquals("ResourceBundleClassMessageUnderscore", o.bundleClassMessages.message_one);
-		assertEquals("ResourceBundleClassMessageCamelCase", o.bundleClassMessages.messageOne);
-		assertEquals("ResourceBundleClassMessageUnderscoreDot", o.bundleClassMessages.message_two);
-		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
-		assertEquals("The idea is from Tom", o.bundleClassMessages.messageFour);
+		assertEquals("ResourceBundleClassMessage", messages.message);
+		assertEquals("ResourceBundleClassMessageUnderscore", messages.message_one);
+		assertEquals("ResourceBundleClassMessageCamelCase", messages.messageOne);
+		assertEquals("ResourceBundleClassMessageUnderscoreDot", messages.message_two);
+		assertEquals("ResourceBundleClassCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testClassBasedResourceBundleDifferentLocale() {
@@ -404,23 +576,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
+		ResourceBundleClassMessages messages = o.bundleClassMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleClassMessages);
-		assertNotNull(o.bundleClassMessages.message);
-		assertNotNull(o.bundleClassMessages.message_one);
-		assertNotNull(o.bundleClassMessages.messageOne);
-		assertNotNull(o.bundleClassMessages.message_two);
-		assertNotNull(o.bundleClassMessages.messageThree);
-		assertNotNull(o.bundleClassMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("ResourceBundleClassNachricht", o.bundleClassMessages.message);
-		assertEquals("ResourceBundleClassNachrichtUnderscore", o.bundleClassMessages.message_one);
-		assertEquals("ResourceBundleClassNachrichtCamelCase", o.bundleClassMessages.messageOne);
-		assertEquals("ResourceBundleNachrichtMessageUnderscoreDot", o.bundleClassMessages.message_two);
+		assertEquals("ResourceBundleClassNachricht", messages.message);
+		assertEquals("ResourceBundleClassNachrichtUnderscore", messages.message_one);
+		assertEquals("ResourceBundleClassNachrichtCamelCase", messages.messageOne);
+		assertEquals("ResourceBundleNachrichtMessageUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.bundleClassMessages.messageFour);
+		assertEquals("ResourceBundleClassCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testClassBasedResourceBundleSkipDefaultLocaleForEquinoxRoot() {
@@ -435,23 +621,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
+		ResourceBundleClassMessages messages = o.bundleClassMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleClassMessages);
-		assertNotNull(o.bundleClassMessages.message);
-		assertNotNull(o.bundleClassMessages.message_one);
-		assertNotNull(o.bundleClassMessages.messageOne);
-		assertNotNull(o.bundleClassMessages.message_two);
-		assertNotNull(o.bundleClassMessages.messageThree);
-		assertNotNull(o.bundleClassMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
-		assertEquals("ResourceBundleClassMessage", o.bundleClassMessages.message);
-		assertEquals("ResourceBundleClassMessageUnderscore", o.bundleClassMessages.message_one);
-		assertEquals("ResourceBundleClassMessageCamelCase", o.bundleClassMessages.messageOne);
-		assertEquals("ResourceBundleClassMessageUnderscoreDot", o.bundleClassMessages.message_two);
-		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
-		assertEquals("The idea is from Tom", o.bundleClassMessages.messageFour);
+		assertEquals("ResourceBundleClassMessage", messages.message);
+		assertEquals("ResourceBundleClassMessageUnderscore", messages.message_one);
+		assertEquals("ResourceBundleClassMessageCamelCase", messages.messageOne);
+		assertEquals("ResourceBundleClassMessageUnderscoreDot", messages.message_two);
+		assertEquals("ResourceBundleClassCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourceBundleClassMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testClassBasedResourceBundleUseDefaultLocaleForInvalidLocale() {
@@ -462,23 +662,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestResourceBundleClassObject o = ContextInjectionFactory.make(TestResourceBundleClassObject.class, this.context);
 
+		ResourceBundleClassMessages messages = o.bundleClassMessages;
+
 		//test all values are set
-		assertNotNull(o.bundleClassMessages);
-		assertNotNull(o.bundleClassMessages.message);
-		assertNotNull(o.bundleClassMessages.message_one);
-		assertNotNull(o.bundleClassMessages.messageOne);
-		assertNotNull(o.bundleClassMessages.message_two);
-		assertNotNull(o.bundleClassMessages.messageThree);
-		assertNotNull(o.bundleClassMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//the default resource bundle should be used
-		assertEquals("ResourceBundleClassNachricht", o.bundleClassMessages.message);
-		assertEquals("ResourceBundleClassNachrichtUnderscore", o.bundleClassMessages.message_one);
-		assertEquals("ResourceBundleClassNachrichtCamelCase", o.bundleClassMessages.messageOne);
-		assertEquals("ResourceBundleNachrichtMessageUnderscoreDot", o.bundleClassMessages.message_two);
+		assertEquals("ResourceBundleClassNachricht", messages.message);
+		assertEquals("ResourceBundleClassNachrichtUnderscore", messages.message_one);
+		assertEquals("ResourceBundleClassNachrichtCamelCase", messages.messageOne);
+		assertEquals("ResourceBundleNachrichtMessageUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("ResourceBundleClassCamelCaseDot", o.bundleClassMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.bundleClassMessages.messageFour);
+		assertEquals("ResourceBundleClassCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourceBundleClassNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testResourcesBundle() {
@@ -486,22 +700,36 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
+		ResourcesMessages messages = o.resourcesMessages;
+
 		//test all values are set
-		assertNotNull(o.resourcesMessages);
-		assertNotNull(o.resourcesMessages.message);
-		assertNotNull(o.resourcesMessages.message_one);
-		assertNotNull(o.resourcesMessages.messageOne);
-		assertNotNull(o.resourcesMessages.message_two);
-		assertNotNull(o.resourcesMessages.messageThree);
-		assertNotNull(o.resourcesMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("ResourcesMessage", o.resourcesMessages.message);
-		assertEquals("ResourcesMessageUnderscore", o.resourcesMessages.message_one);
-		assertEquals("ResourcesMessageCamelCase", o.resourcesMessages.messageOne);
-		assertEquals("ResourcesMessageUnderscoreDot", o.resourcesMessages.message_two);
-		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
-		assertEquals("The idea is from Tom", o.resourcesMessages.messageFour);
+		assertEquals("ResourcesMessage", messages.message);
+		assertEquals("ResourcesMessageUnderscore", messages.message_one);
+		assertEquals("ResourcesMessageCamelCase", messages.messageOne);
+		assertEquals("ResourcesMessageUnderscoreDot", messages.message_two);
+		assertEquals("ResourcesMessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testResourcesBundleDifferentLocale() {
@@ -509,23 +737,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
+		ResourcesMessages messages = o.resourcesMessages;
+
 		//test all values are set
-		assertNotNull(o.resourcesMessages);
-		assertNotNull(o.resourcesMessages.message);
-		assertNotNull(o.resourcesMessages.message_one);
-		assertNotNull(o.resourcesMessages.messageOne);
-		assertNotNull(o.resourcesMessages.message_two);
-		assertNotNull(o.resourcesMessages.messageThree);
-		assertNotNull(o.resourcesMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//test the set values
-		assertEquals("ResourceNachricht", o.resourcesMessages.message);
-		assertEquals("ResourceNachrichtUnderscore", o.resourcesMessages.message_one);
-		assertEquals("ResourceNachrichtCamelCase", o.resourcesMessages.messageOne);
-		assertEquals("ResourceNachrichtUnderscoreDot", o.resourcesMessages.message_two);
+		assertEquals("ResourcesNachricht", messages.message);
+		assertEquals("ResourcesNachrichtUnderscore", messages.message_one);
+		assertEquals("ResourcesNachrichtCamelCase", messages.messageOne);
+		assertEquals("ResourcesNachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.resourcesMessages.messageFour);
+		assertEquals("ResourcesMessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testResourcesBundleSkipDefaultLocaleForEquinoxRoot() {
@@ -540,23 +782,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
+		ResourcesMessages messages = o.resourcesMessages;
+
 		//test all values are set
-		assertNotNull(o.resourcesMessages);
-		assertNotNull(o.resourcesMessages.message);
-		assertNotNull(o.resourcesMessages.message_one);
-		assertNotNull(o.resourcesMessages.messageOne);
-		assertNotNull(o.resourcesMessages.message_two);
-		assertNotNull(o.resourcesMessages.messageThree);
-		assertNotNull(o.resourcesMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//not the default resource bundle should be used (e.g. de when running on a machine with german OS)
 		//but the default resource bundle
-		assertEquals("ResourcesMessage", o.resourcesMessages.message);
-		assertEquals("ResourcesMessageUnderscore", o.resourcesMessages.message_one);
-		assertEquals("ResourcesMessageCamelCase", o.resourcesMessages.messageOne);
-		assertEquals("ResourcesMessageUnderscoreDot", o.resourcesMessages.message_two);
-		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
-		assertEquals("The idea is from Tom", o.resourcesMessages.messageFour);
+		assertEquals("ResourcesMessage", messages.message);
+		assertEquals("ResourcesMessageUnderscore", messages.message_one);
+		assertEquals("ResourcesMessageCamelCase", messages.messageOne);
+		assertEquals("ResourcesMessageUnderscoreDot", messages.message_two);
+		assertEquals("ResourcesMessageCamelCaseDot", messages.messageThree);
+		assertEquals("The idea is from Tom", messages.messageFour);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourcesMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 	public void testResourcesBundleUseDefaultLocaleForInvalidLocale() {
@@ -567,23 +823,37 @@ public class NLSTest extends TestCase {
 		this.context.set(TranslationService.LOCALE, Locale.FRENCH);
 		TestResourcesBundleObject o = ContextInjectionFactory.make(TestResourcesBundleObject.class, this.context);
 
+		ResourcesMessages messages = o.resourcesMessages;
+
 		//test all values are set
-		assertNotNull(o.resourcesMessages);
-		assertNotNull(o.resourcesMessages.message);
-		assertNotNull(o.resourcesMessages.message_one);
-		assertNotNull(o.resourcesMessages.messageOne);
-		assertNotNull(o.resourcesMessages.message_two);
-		assertNotNull(o.resourcesMessages.messageThree);
-		assertNotNull(o.resourcesMessages.messageFour);
+		assertNotNull(messages);
+		assertNotNull(messages.message);
+		assertNotNull(messages.message_one);
+		assertNotNull(messages.messageOne);
+		assertNotNull(messages.message_two);
+		assertNotNull(messages.messageThree);
+		assertNotNull(messages.messageFour);
+		assertNotNull(messages.messageFive_Sub);
+		assertNotNull(messages.messageSix_Sub);
+		assertNotNull(messages.messageSeven_Sub);
+		assertNotNull(messages.messageEight_Sub);
+		assertNotNull(messages.messageNine_Sub);
 
 		//the default resource bundle should be used
-		assertEquals("ResourceNachricht", o.resourcesMessages.message);
-		assertEquals("ResourceNachrichtUnderscore", o.resourcesMessages.message_one);
-		assertEquals("ResourceNachrichtCamelCase", o.resourcesMessages.messageOne);
-		assertEquals("ResourceNachrichtUnderscoreDot", o.resourcesMessages.message_two);
+		assertEquals("ResourcesNachricht", messages.message);
+		assertEquals("ResourcesNachrichtUnderscore", messages.message_one);
+		assertEquals("ResourcesNachrichtCamelCase", messages.messageOne);
+		assertEquals("ResourcesNachrichtUnderscoreDot", messages.message_two);
 		//for messageThree there is no key specified in de properties file, so there should be the fallback
-		assertEquals("ResourcesMessageCamelCaseDot", o.resourcesMessages.messageThree);
-		assertEquals("Die Idee ist von Tom", o.resourcesMessages.messageFour);
+		assertEquals("ResourcesMessageCamelCaseDot", messages.messageThree);
+		assertEquals("Die Idee ist von Tom", messages.messageFour);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreOriginal", messages.messageFive_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeCamelCasified", messages.messageSix_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeCamelCasifiedAndDeUnderscorified",
+				messages.messageSeven_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeUnderscorified", messages.messageEight_Sub);
+		assertEquals("ResourcesNachrichtCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified",
+				messages.messageNine_Sub);
 	}
 
 }

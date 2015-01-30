@@ -28,6 +28,13 @@ public class Messages {
 	//message with placeholder
 	public String messageFour;
 
+	// message with camel case and underscore
+	public String messageFive_Sub;
+	public String messageSix_Sub;
+	public String messageSeven_Sub;
+	public String messageEight_Sub;
+	public String messageNine_Sub;
+
 	@PostConstruct
 	public void format() {
 		messageFour = MessageFormat.format(messageFour, "Tom"); //$NON-NLS-1$
