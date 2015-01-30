@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Denis Zygann <d.zygann@web.de> - Bug 330453
+ *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -114,6 +115,10 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IPreferenceConstants.LAYOUT_DIRECTION, SWT.NONE);
 		node.putBoolean(IPreferenceConstants.BIDI_SUPPORT, false);
 		node.put(IPreferenceConstants.TEXT_DIRECTION, ""); //$NON-NLS-1$
+
+		// Auto-save
+		node.putBoolean(IPreferenceConstants.SAVE_AUTOMATICALLY, false);
+		node.putInt(IPreferenceConstants.SAVE_AUTOMATICALLY_INTERVAL, 20);
 
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()

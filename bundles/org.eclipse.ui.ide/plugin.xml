@@ -610,6 +610,14 @@
          <keywordReference id="org.eclipse.ui.ide.state"/>
       </page>
       <page
+            name="%PreferencePages.AutoSave"
+            category="org.eclipse.ui.preferencePages.Editors"
+            class="org.eclipse.ui.internal.ide.dialogs.AutoSavePreferencePage"
+            id="org.eclipse.ui.preferencePages.AutoSave">
+         <keywordReference id="org.eclipse.ui.ide.editors"/>
+         <keywordReference id="org.eclipse.ui.ide.dirty"/>
+      </page>
+      <page
             name="%PreferencePages.Perspectives"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.ide.dialogs.IDEPerspectivesPreferencePage"
@@ -2494,7 +2502,14 @@
             label="%askUserViaPopup">
       </strategy>
    </extension>
-
+   <extension
+         id="org.eclipse.ui.ide.autoSave"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="notexists"
+            uri="model/fragment.e4xmi">
+      </fragment>
+   </extension>
    <!-- Smart Import -->
    <extension
          point="org.eclipse.ui.menus">

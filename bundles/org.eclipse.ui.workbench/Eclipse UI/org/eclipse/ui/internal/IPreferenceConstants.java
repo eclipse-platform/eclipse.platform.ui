@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Denis Zygann <d.zygann@web.de> - Bug 330453
+ *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -263,5 +264,26 @@ public interface IPreferenceConstants {
 	 * @since 3.7
 	 */
 	public static final String LARGE_DOC_SIZE_FOR_EDITORS = "LARGE_DOC_SIZE_FOR_EDITORS"; //$NON-NLS-1$
+
+	/**
+	 * Preference id for whether the editors may save automatically.
+	 * <p>
+	 * The boolean default value for this preference is: <code>false</code>.
+	 * </p>
+	 *
+	 * @since 3.8
+	 */
+	public static final String SAVE_AUTOMATICALLY = "SAVE_AUTOMATICALLY"; //$NON-NLS-1$
+
+	/**
+	 * Preference value that specifies the time interval in seconds between
+	 * editors auto-saves.
+	 * <p>
+	 * The integer default value for this preference is: <code>60</code>.
+	 * </p>
+	 *
+	 * @since 3.8
+	 */
+	public static final String SAVE_AUTOMATICALLY_INTERVAL = "SAVE_AUTOMATICALLY_INTERVAL"; //$NON-NLS-1$
 
 }
