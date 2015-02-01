@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christian Janz  - <christian.janz@gmail.com> Fix for Bug 385592
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -37,14 +32,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -53,11 +46,9 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -1028,77 +1019,6 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(exceptionThrown, true);
 	}
 
-	/**
-	 * Tests showing multi-instance views (as fast views). This is a regression
-	 * test for bug 76669 - [Perspectives] NullPointerException in
-	 * Perspective.getFastViewWidthRatio()
-	 */
-	public void XXXtestShowViewMultFast() throws Throwable {
-		/*
-		 * javadoc: Shows the view identified by the given view id and secondary
-		 * id in this page and gives it focus. This allows multiple instances of
-		 * a particular view to be created. They are disambiguated using the
-		 * secondary id.
-		 */
-		MockViewPart view = (MockViewPart) fActivePage
-				.showView(MockViewPart.IDMULT);
-		assertNotNull(view);
-		assertTrue(view.getCallHistory().verifyOrder(
-				new String[] { "init", "createPartControl", "setFocus" }));
-		MockViewPart view2 = (MockViewPart) fActivePage.showView(
-				MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
-		assertNotNull(view2);
-		assertTrue(view2.getCallHistory().verifyOrder(
-				new String[] { "init", "createPartControl", "setFocus" }));
-		assertTrue(!view.equals(view2));
-
-//		IViewReference ref = (IViewReference) fActivePage.getReference(view);
-//		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
-//		facade.addFastView(fActivePage, ref);
-//		facade.addFastView(fActivePage, ref2);
-
-		// FIXME: No implementation
-		fail("facade.addFastView() contained no implementation");
-
-
-		fActivePage.activate(view);
-		assertEquals(view, fActivePage.getActivePart());
-
-		fActivePage.activate(view2);
-		assertEquals(view2, fActivePage.getActivePart());
-	}
-
-	/**
-	 * Tests saving the page state when there is a fast view that is also a
-	 * multi-instance view. This is a regression test for bug 76669 -
-	 * [Perspectives] NullPointerException in
-	 * Perspective.getFastViewWidthRatio()
-	 */
-	public void XXXtestBug76669() throws Throwable {
-//		MockViewPart view = (MockViewPart) fActivePage
-//				.showView(MockViewPart.IDMULT);
-//		MockViewPart view2 = (MockViewPart) fActivePage.showView(
-//				MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
-
-//		IViewReference ref = (IViewReference) fActivePage.getReference(view);
-//		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
-//		facade.addFastView(fActivePage, ref);
-//		facade.addFastView(fActivePage, ref2);
-
-		// FIXME: No implementation
-		fail("facade.addFastView() contained no implementation");
-
-		IMemento memento = XMLMemento.createWriteRoot("page");
-//		facade.saveState(fActivePage, memento);
-		// FIXME: No implementation
-		fail("facade.saveState() had no implementation");
-
-		IMemento persps = memento.getChild("perspectives");
-		IMemento persp = persps.getChildren("perspective")[0];
-		IMemento[] fastViews = persp.getChild("fastViews").getChildren("view");
-		assertEquals(2, fastViews.length);
-	}
-
 	public void testFindView() throws Throwable {
 		String id = MockViewPart.ID3;
 		// id of valid, but not open view
@@ -1967,50 +1887,6 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertTrue(fActivePage.isPartVisible(createdPart));
 
 		assertEquals(activePart, fActivePage.getActivePart());
-	}
-
-	/**
-	 * Test opening a perspective with a fast view.
-	 */
-	public void XXXtestOpenPerspectiveWithFastView() {
-
-		try {
-			fWin.getWorkbench().showPerspective(
-					PerspectiveWithFastView.PERSP_ID, fWin);
-		} catch (WorkbenchException e) {
-			fail("Unexpected WorkbenchException: " + e);
-		}
-
-//		IViewReference[] fastViews = facade.getFastViews(fActivePage);
-		// FIXME: No implementation
-		fail("facade.getFastViews() had no implementation");
-
-//		assertEquals(fastViews.length, 1);
-//		assertEquals(fastViews[0].getId(),
-//				"org.eclipse.ui.views.ResourceNavigator");
-		assertEquals(fActivePage.getViewReferences().length, 1);
-		assertTrue(fActivePage.getViewReferences()[0].isFastView());
-
-		IPerspectiveDescriptor persp = fActivePage.getPerspective();
-
-		ICommandService commandService = fWorkbench.getService(ICommandService.class);
-		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
-
-		HashMap<String, String> parameters = new HashMap<String, String>();
-		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID, persp.getId());
-
-		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
-
-		IHandlerService handlerService = fWorkbench
-				.getService(IHandlerService.class);
-		try {
-			handlerService.executeCommand(pCommand, null);
-		} catch (ExecutionException e1) {
-		} catch (NotDefinedException e1) {
-		} catch (NotEnabledException e1) {
-		} catch (NotHandledException e1) {
-		}
-
 	}
 
 	/**
@@ -3137,13 +3013,13 @@ public class IWorkbenchPageTest extends UITestCase {
 				.getReference(view);
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_MINIMIZED);
 
-		// since it's minimized, it should be a fast view
-		assertTrue("A minimized view should be a fast view", APITestUtils.isFastView(reference));
+		// since it's minimized
+		assertTrue("This view should be minimized", APITestUtils.isViewMinimized(reference));
 
 		// try to restore it
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_RESTORED);
-		// since it's maximized, it should not be a fast view
-		assertFalse("A restored view should not be a fast view", APITestUtils.isFastView(reference));
+		// since it's maximized
+		assertFalse("This view should not be restored", APITestUtils.isViewMinimized(reference));
 	}
 
 	/**

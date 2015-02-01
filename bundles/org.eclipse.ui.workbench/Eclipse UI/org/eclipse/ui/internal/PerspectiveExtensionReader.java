@@ -44,9 +44,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     private static final String VAL_STACK = "stack";//$NON-NLS-1$
 
-    private static final String VAL_FAST = "fast";//$NON-NLS-1$
-
-    private static final String VAL_TRUE = "true";//$NON-NLS-1$
+	private static final String VAL_TRUE = "true";//$NON-NLS-1$
 
     // VAL_FALSE added by dan_rubel@instantiations.com
     // TODO: this logic is backwards... we should be checking for true, but
@@ -209,12 +207,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
             logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_RELATIONSHIP);
             return false;
         }
-        if (!VAL_FAST.equals(relationship) && relative == null) {
-            logError(
-					element,
-					"Attribute '" + IWorkbenchRegistryConstants.ATT_RELATIVE + "' not defined.  This attribute is required when " + IWorkbenchRegistryConstants.ATT_RELATIONSHIP + "=\"" + relationship + "\"."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			return false;
-        }
 
         // Get the ratio.
         if (ratioString == null) {
@@ -234,7 +226,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
         // Get relationship details.
         boolean stack = false;
-        boolean fast = false;
         int intRelation = 0;
         if (relationship.equals(VAL_LEFT)) {
 			intRelation = IPageLayout.LEFT;
@@ -246,8 +237,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			intRelation = IPageLayout.BOTTOM;
 		} else if (relationship.equals(VAL_STACK)) {
 			stack = true;
-		} else if (relationship.equals(VAL_FAST)) {
-			fast = true;
 		} else {
 			return false;
 		}
@@ -265,16 +254,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			} else {
 				pageLayout.stackView(id, relative, false);
 			}
-        }
-
-        // If the view is a fast view...
-        else if (fast) {
-            if (ratio == IPageLayout.NULL_RATIO) {
-                // The ratio has not been specified.
-                pageLayout.addFastView(id);
-            } else {
-                pageLayout.addFastView(id, ratio);
-            }
         } else {
 
             // The view is a regular view.

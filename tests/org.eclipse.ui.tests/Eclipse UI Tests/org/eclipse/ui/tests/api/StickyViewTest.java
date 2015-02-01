@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
@@ -247,110 +248,6 @@ public class StickyViewTest extends UITestCase {
 			page.closePerspective(page.getPerspective(), false, false);
 		}
     }
-
-	/**
-	 * Test that a view marked as non-closable cannot be closed as a fast view.
-	 *
-	 * @throws Throwable
-	 * @since 3.1.1
-	 */
-	public void XXXtestPerspectiveCloseFastView() throws Throwable {
-		page.setPerspective(WorkbenchPlugin.getDefault()
-				.getPerspectiveRegistry().findPerspectiveWithId(
-						PerspectiveViewsBug88345.PERSP_ID));
-
-		try {
-			// the non-closeable view
-			IViewReference stickyRef = page
-					.findViewReference(MockViewPart.IDMULT);
-			IViewPart stickyView = (IViewPart) stickyRef.getPart(true);
-			page.activate(stickyView);
-
-			IViewReference viewRef = page
-					.findViewReference(PerspectiveViewsBug88345.NORMAL_VIEW_ID);
-
-			assertFalse(APITestUtils.isFastView(stickyRef));
-
-//			facade.addFastView(page, stickyRef);
-
-			// FIXME: No implementation
-			fail("facade.addFastView() had no implementation");
-
-			assertTrue(APITestUtils.isFastView(stickyRef));
-
-//			facade.addFastView(page, viewRef);
-			// FIXME: No implementation
-			fail("facade.addFastView() had no implementation");
-
-			assertTrue(APITestUtils.isFastView(viewRef));
-
-
-
-//			IContributionItem menuContribution = facade.getFVBContribution(page);
-			// FIXME: No implementation
-			fail("facade.getFVBContribution() not implemented");
-
-			// set the target of a normal view that is now a fast view
-			// close should be enabled
-//			facade.setFVBTarget(menuContribution, viewRef);
-//			checkEnabledMenuItem(page, menuContribution, "Close", true);
-
-			// set the target of our non-closeable fast view
-			// close should not be enabled
-//			facade.setFVBTarget(menuContribution, stickyRef);
-//			checkEnabledMenuItem(page, menuContribution, "Close", false);
-		} finally {
-			page.closePerspective(page.getPerspective(), false, false);
-		}
-	}
-
-	/**
-	 * Test that a fast view marked as non-moveable cannot be docked.
-	 *
-	 * @throws Throwable
-	 * @since 3.1.1
-	 */
-	public void XXXtestPerspectiveMoveFastView() throws Throwable {
-		page.setPerspective(WorkbenchPlugin.getDefault()
-				.getPerspectiveRegistry().findPerspectiveWithId(
-						PerspectiveViewsBug88345.PERSP_ID));
-
-		try {
-			// the non-moveable view
-			IViewReference stickyRef = page
-					.findViewReference(MockViewPart.IDMULT, "1");
-
-			IViewReference viewRef = page
-					.findViewReference(PerspectiveViewsBug88345.NORMAL_VIEW_ID);
-
-			assertFalse(APITestUtils.isFastView(viewRef));
-			assertTrue(APITestUtils.isFastView(stickyRef));
-
-//			facade.addFastView(page, viewRef);
-			// FIXME: No implementation
-			fail("facade.addFastView() had no implementation");
-
-			assertTrue(APITestUtils.isFastView(viewRef));
-
-//			IContributionItem menuContribution = facade.getFVBContribution(page);
-
-			// FIXME: No implementation
-			fail("facade.addFastView() had no implementation");
-
-
-			// set the target of a normal view that is now a fast view
-			// Fast View should be enabled
-//			facade.setFVBTarget(menuContribution, viewRef);
-//			checkEnabledMenuItem(page, menuContribution, "Fast View", true);
-
-			// set the target of our non-closeable fast view
-			// Fast View should not be enabled
-//			facade.setFVBTarget(menuContribution, stickyRef);
-//			checkEnabledMenuItem(page, menuContribution, "Fast View", false);
-		} finally {
-			page.closePerspective(page.getPerspective(), false, false);
-		}
-	}
 
 	/**
 	 * Find the supplied menu item and make sure it's enabled/disabled.

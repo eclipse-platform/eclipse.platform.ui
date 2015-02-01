@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems) -  bug 284447
  *     Christian Georgi (SAP)             -  bug 432480
+ *     Denis Zygann <d.zygann@web.de>      - bug 457390
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -236,7 +237,6 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		// show the shortcut bar and progress indicator, which are hidden by
 		// default
 		configurer.setShowPerspectiveBar(true);
-		configurer.setShowFastViewBars(true);
 		configurer.setShowProgressIndicator(true);
 
 		// add the drag and drop support for the editor area

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184, 441280
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -186,11 +187,6 @@ public interface IWorkbenchRegistryConstants {
 	 * Editor extensions attribute. Value <code>extensions</code>.
 	 */
 	public static String ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
-
-	/**
-	 * View ratio attribute. Value <code>fastViewWidthRatio</code>.
-	 */
-	public static String ATT_FAST_VIEW_WIDTH_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
 
 	/**
 	 * Editor filenames attribute. Value <code>filenames</code>.
@@ -1212,7 +1208,6 @@ public interface IWorkbenchRegistryConstants {
 	 * The name of the element storing some state.
 	 */
 	public static String TAG_STATE = "state"; //$NON-NLS-1$
-
 
 	/**
 	 * The name of the element describing splash handlers. Value

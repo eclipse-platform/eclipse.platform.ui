@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Chris Gross <schtoo@schtoo.com>
  *     - Fix for 99155 - allow standalone view placeholders
  *     Chris Gross chris.gross@us.ibm.com Bug 107443
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -170,7 +171,9 @@ public interface IPageLayout {
     /**
      * The default fast view ratio width.
      * @since 2.0
+     * @deprecated discontinued support for fast views
      */
+    @Deprecated
     public static final float DEFAULT_FASTVIEW_RATIO = 0.3f;
 
     /**
@@ -208,7 +211,9 @@ public interface IPageLayout {
      *
      * @param viewId the compound id of the view to be added
      * @since 2.0
+     * @deprecated discontinued support for fast views
      */
+    @Deprecated
     public void addFastView(String viewId);
 
     /**
@@ -221,7 +226,9 @@ public interface IPageLayout {
      * @param viewId the compound id of the view to be added
      * @param ratio the percentage of the workbench the fast view will cover
      * @since 2.0
+     * @deprecated discontinued support for fast views
      */
+    @Deprecated
     public void addFastView(String viewId, float ratio);
 
     /**

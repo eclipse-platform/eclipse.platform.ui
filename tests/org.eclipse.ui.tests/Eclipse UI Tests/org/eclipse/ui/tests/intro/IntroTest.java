@@ -28,7 +28,6 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.tests.api.PerspectiveWithFastView;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -47,10 +46,6 @@ public class IntroTest extends UITestCase {
     public IntroTest(String testName) {
         super(testName);
     }
-
-    public void testCloseInFastViewPerspective() {
-    	testClose(PerspectiveWithFastView.PERSP_ID);
-	}
 
     public void testCloseInEmptyPerspective() {
     	testClose(EmptyPerspective.PERSP_ID);

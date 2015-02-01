@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441184, 440136
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -71,11 +72,6 @@ public final class WorkbenchWindowConfigurer implements
      * The window title to set when the window's shell has been created.
      */
     private String windowTitle;
-
-    /**
-     * Whether the workbench window should show the fast view bars.
-     */
-    private boolean showFastViewBars = false;
 
     /**
      * Whether the workbench window should show the perspective bar
@@ -320,15 +316,14 @@ public final class WorkbenchWindowConfigurer implements
     }
 
     @Override
-	public boolean getShowFastViewBars() {
-        return showFastViewBars;
+    public boolean getShowFastViewBars() {
+        // not supported anymore
+        return false;
     }
 
     @Override
-	public void setShowFastViewBars(boolean show) {
-        showFastViewBars = show;
-        window.setFastViewBarVisible(show);
-        // @issue need to be able to reconfigure after window's controls created
+    public void setShowFastViewBars(boolean show) {
+        // not supported anymore
     }
 
     @Override

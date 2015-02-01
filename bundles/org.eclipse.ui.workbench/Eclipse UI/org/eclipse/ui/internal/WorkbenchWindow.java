@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
  *                                      through a fragment or other means
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431446, 433979, 440810, 441184
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -1345,8 +1346,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private boolean perspectiveBarVisible = true;
 
-	private boolean fastViewBarVisible = true;
-
 	private boolean statusLineVisible = true;
 
 	/**
@@ -2646,33 +2645,32 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * Tell the workbench window a visible state for the fastview bar. This is
-	 * only applicable if the window configurer also wishes the fast view bar to
-	 * be visible.
-	 *
-	 * @param visible
-	 *            <code>true</code> or <code>false</code>
-	 * @since 3.2
-	 */
-	public void setFastViewBarVisible(boolean visible) {
-		boolean oldValue = fastViewBarVisible;
-		fastViewBarVisible = visible;
-		if (oldValue != fastViewBarVisible) {
+     * Tell the workbench window a visible state for the fastview bar. This is
+     * only applicable if the window configurer also wishes the fast view bar to
+     * be visible.
+     *
+     * @param visible
+     *            <code>true</code> or <code>false</code>
+     * @since 3.2
+     * @deprecated discontinued support for fast views
+     */
+    @Deprecated
+    public void setFastViewBarVisible(boolean visible) {
+        // not supported anymore
+    }
 
-		}
-	}
-
-	/**
-	 * The workbench window take on the fastview bar. This is only applicable if
-	 * the window configurer also wishes the fast view bar to be visible.
+     /**
+	 * Returns the visible state for the fastview bar of the workbench window.
 	 *
-	 * @return <code>true</code> if the workbench window thinks the fastview bar
-	 *         should be visible.
+	 * @return <code>false</code>
 	 * @since 3.2
+	 * @deprecated discontinued support for fast views
 	 */
-	public boolean getFastViewBarVisible() {
-		return fastViewBarVisible;
-	}
+    @Deprecated
+    public boolean getFastViewBarVisible() {
+        // not supported anymore
+        return false;
+    }
 
 	/**
 	 * @param visible
@@ -2703,9 +2701,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return statusLineVisible;
 	}
 
-	public boolean getShowFastViewBars() {
-		return getWindowConfigurer().getShowFastViewBars();
-	}
+    /**
+     * @return <code>false</code>
+     * @deprecated discontinued support for fast views
+     */
+    @Deprecated
+    public boolean getShowFastViewBars() {
+        return false;
+    }
 
 	protected boolean showTopSeperator() {
 		return false;

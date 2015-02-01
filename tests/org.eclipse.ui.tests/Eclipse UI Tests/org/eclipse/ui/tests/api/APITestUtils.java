@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Denis Zygann <d.zygann@web.de> - Bug 457390
  ******************************************************************************/
 
 package org.eclipse.ui.tests.api;
@@ -65,23 +66,27 @@ public class APITestUtils {
 		}
 
 	}
+    /**
+     * This method checks, if the view is minimized.
+     * @param ref {@link IViewReference}
+     * @return <code>true</code>, if view is minimized, otherwise <code>false</code>
+     */
+    public static boolean isViewMinimized(IViewReference ref) {
+        MPart part = ((WorkbenchPartReference) ref).getModel();
+        MUIElement parent = part.getParent();
+        if (parent == null) {
+            MPlaceholder placeholder = part.getCurSharedRef();
+            if (placeholder != null) {
+                parent = placeholder.getParent();
+            }
+        }
 
-	public static boolean isFastView(IViewReference ref) {
-		MPart part = ((WorkbenchPartReference) ref).getModel();
-		MUIElement parent = part.getParent();
-		if (parent == null) {
-			MPlaceholder placeholder = part.getCurSharedRef();
-			if (placeholder != null) {
-				parent = placeholder.getParent();
-			}
-		}
-
-		if (parent != null) {
-			List<String> tags = parent.getTags();
-			return tags.contains(IPresentationEngine.MINIMIZED) || tags.contains(IPresentationEngine.MINIMIZED_BY_ZOOM);
-		}
-		return false;
-	}
+        if (parent != null) {
+            List<String> tags = parent.getTags();
+            return tags.contains(IPresentationEngine.MINIMIZED) || tags.contains(IPresentationEngine.MINIMIZED_BY_ZOOM);
+        }
+        return false;
+    }
 
 	public static void saveableHelperSetAutomatedResponse(final int response) {
 		SaveableHelper.testSetAutomatedResponse(response);
