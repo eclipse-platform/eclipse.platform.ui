@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [331716] Symlink test failures on Windows 7
  * Sergey Prigogin (Google) - [440283] Modify symlink tests to run on Windows with or without administrator privileges
  * 							  [445805] Make sure symlink tests are green when run on Windows with administrator privileges
+ *                            [458989] Add a test case for setting ATTRIBUTE_HIDDEN on a symlink on Windows
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
@@ -464,6 +465,9 @@ public class SymlinkTest extends FileSystemTest {
 		// Only activate this test if testing of symbolic links is possible.
 		if (!canCreateSymLinks())
 			return;
+		// ATTRIBUTE_EXECUTABLE is not supported on Windows, so
+		// SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES is false in this context.
+
 		//check that putInfo() "writes through" the symlink
 		makeLinkStructure();
 		illFile.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
@@ -477,6 +481,40 @@ public class SymlinkTest extends FileSystemTest {
 		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 
 		// Check that link properties are maintained even through putInfo
+		illFile = llFile.fetchInfo();
+		illDir = llDir.fetchInfo();
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+		assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
+	}
+
+	public void testSymlinkPutHidden() throws Exception {
+		if (!isAttributeSupported(EFS.ATTRIBUTE_HIDDEN))
+			return;
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
+			return;
+		// ATTRIBUTE_HIDDEN is supported only on Windows, so
+		// SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES is true in this context.
+
+		// Check that putInfo() applies the attribute to the symlink itself.
+		makeLinkStructure();
+		illFile.setAttribute(EFS.ATTRIBUTE_HIDDEN, true);
+		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES, getMonitor());
+		illFile = llFile.fetchInfo();
+		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_HIDDEN));
+		iFile = aFile.fetchInfo();
+		assertFalse(iFile.getAttribute(EFS.ATTRIBUTE_HIDDEN));
+
+		illDir.setAttribute(EFS.ATTRIBUTE_HIDDEN, true);
+		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
+		illDir = llDir.fetchInfo();
+		assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_HIDDEN));
+		iDir = aDir.fetchInfo();
+		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_HIDDEN));
+
+		// Check that link properties are maintained even through putInfo.
 		illFile = llFile.fetchInfo();
 		illDir = llDir.fetchInfo();
 		assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
