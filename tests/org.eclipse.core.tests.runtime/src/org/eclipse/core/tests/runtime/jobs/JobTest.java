@@ -10,12 +10,9 @@
  *     Stephan Wahlbrink  - Test fix for bug 200997.
  *     Dmitry Karasik - Test cases for bug 255384
  *     Jan Koehnlein - Test case for bug 60964 (454698)
-<<<<<<< master
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
-=======
  *     Thirumala Reddy Mutchukota (thirumala@google.com) -
  *     		Bug 105821, Support for Job#join with timeout and progress monitor
->>>>>>> d688b58 Bug 105821: Support Job#join with timeout and progress monitor.
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
