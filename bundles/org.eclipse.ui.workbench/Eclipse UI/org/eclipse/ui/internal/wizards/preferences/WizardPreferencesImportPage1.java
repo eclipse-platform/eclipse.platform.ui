@@ -51,26 +51,17 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         this("preferencesImportPage1");//$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getAllButtonText()
-     */
     @Override
 	protected String getAllButtonText() {
         return PreferencesMessages.WizardPreferencesImportPage1_all;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getChooseButtonText()
-     */
     @Override
 	protected String getChooseButtonText() {
         return PreferencesMessages.WizardPreferencesImportPage1_choose;
     }
 
    
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getTransfers()
-     */
     @Override
 	protected PreferenceTransferElement[] getTransfers() {
         if (validFromFile()) {
@@ -146,9 +137,6 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 		}
 	}
   
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#createTransferArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected void createTransferArea(Composite composite) {
         createDestinationGroup(composite);
@@ -228,44 +216,26 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         super.handleEvent(e);
     }
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getFileDialogTitle()
-     */
     @Override
 	protected String getFileDialogTitle(){
 		return PreferencesMessages.WizardPreferencesImportPage1_title;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getFileDialogStyle()
-	 */
 	@Override
 	protected int getFileDialogStyle() {
 		return SWT.OPEN | SWT.SHEET;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#validDestination()
-	 */
 	@Override
 	protected boolean validDestination() {
 		return super.validDestination() && validFromFile();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getInvalidDestinationMessage()
-	 */
 	@Override
 	protected String getInvalidDestinationMessage() {
 		return PreferencesMessages.WizardPreferencesImportPage1_invalidPrefFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#
-	 * shouldSaveTransferAll()
-	 */
 	@Override
 	protected boolean shouldSaveTransferAll() {
 		return false;
