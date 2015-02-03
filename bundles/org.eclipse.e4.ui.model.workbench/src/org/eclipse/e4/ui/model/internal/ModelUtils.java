@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,14 +78,14 @@ public class ModelUtils {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<MApplicationElement> merge(MApplicationElement container, EStructuralFeature feature, List<MApplicationElement> elements, String positionInList) {
 		EObject eContainer = (EObject) container;
 
 		if( feature.isMany() ) {
 			List<MApplicationElement> copy = new ArrayList<MApplicationElement>(elements);
 
-			List list = (List)eContainer.eGet(feature);
+			@SuppressWarnings("unchecked")
+			List<MApplicationElement> list= (List<MApplicationElement>)eContainer.eGet(feature);
 			boolean flag = true;
 			if( positionInList != null && positionInList.trim().length() != 0 ) {
 				int index = -1;
@@ -161,7 +161,7 @@ public class ModelUtils {
 		return Collections.emptyList();
 	}
 
-	private static void mergeList(List list,  List<MApplicationElement> elements, int index) {
+	private static void mergeList(List<MApplicationElement> list, List<MApplicationElement> elements, int index) {
 		MApplicationElement[] tmp = new MApplicationElement[elements.size()];
 		elements.toArray(tmp);
 		for(MApplicationElement element : tmp) {
