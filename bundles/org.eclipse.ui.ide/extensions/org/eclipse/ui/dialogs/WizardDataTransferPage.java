@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,13 +39,12 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */
-public abstract class WizardDataTransferPage extends WizardPage implements
-        Listener, IOverwriteQuery {
+public abstract class WizardDataTransferPage extends WizardPage implements Listener, IOverwriteQuery {
 
     // constants
     protected static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
-    protected static final int COMBO_HISTORY_LENGTH = 5;
+	protected static final int COMBO_HISTORY_LENGTH = 20;
 
     /**
      * Creates a new wizard page.
