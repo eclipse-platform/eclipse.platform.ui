@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -91,7 +92,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 	@Override
 	public void postProcess(MUIElement element) {
-		if (!(element instanceof MGenericStack<?>) || isMinimizedStack(element)) {
+		if (!(element instanceof MPerspectiveStack)
+				&& (!(element instanceof MGenericStack<?>) || isMinimizedStack(element))) {
 			return;
 		}
 
