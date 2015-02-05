@@ -24,13 +24,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  */
 public class PartServiceCreationFunction extends ContextFunction {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.eclipse.e4.core.services
-	 * .context.IEclipseContext, java.lang.Object[])
-	 */
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
 		// look for the top-most MWindow in the context chain:

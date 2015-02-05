@@ -38,13 +38,6 @@ public class PartServiceSaveHandler implements ISaveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.ISaveHandler#save(org.eclipse.e4.ui.model.application
-	 * .ui.basic.MPart, boolean)
-	 */
 	@Override
 	public boolean save(MPart dirtyPart, boolean confirm) {
 		if (confirm) {
@@ -73,12 +66,6 @@ public class PartServiceSaveHandler implements ISaveHandler {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.modeling.ISaveHandler#saveParts(java.util.Collection,
-	 * boolean)
-	 */
 	@Override
 	public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
 		if (confirm) {
@@ -109,22 +96,11 @@ public class PartServiceSaveHandler implements ISaveHandler {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.modeling.ISaveHandler#promptToSave(org.eclipse.e4.ui.model.
-	 * application.ui.basic.MPart)
-	 */
 	@Override
 	public Save promptToSave(MPart dirtyPart) {
 		return Save.YES;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.modeling.ISaveHandler#promptToSave(java.util.Collection)
-	 */
 	@Override
 	public Save[] promptToSave(Collection<MPart> dirtyParts) {
 		Save[] rc = new Save[dirtyParts.size()];
