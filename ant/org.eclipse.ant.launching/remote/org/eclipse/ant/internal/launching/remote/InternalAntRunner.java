@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * Portions Copyright  2000-2005 The Apache Software Foundation
  * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
@@ -8,6 +8,7 @@
  * 
  * Contributors:
  *     IBM Corporation - derived implementation
+ *     Rob Stryker - Bug 459188 - InternalAntRunner tries to set null user property
  *******************************************************************************/
 
 package org.eclipse.ant.internal.launching.remote;
@@ -1016,7 +1017,8 @@ public class InternalAntRunner {
 		setBuiltInProperties(project);
 		if (userProperties != null) {
 			for (Entry<String, String> entry : userProperties.entrySet()) {
-				project.setUserProperty(entry.getKey(), entry.getValue());
+				if (entry.getValue() != null)
+					project.setUserProperty(entry.getKey(), entry.getValue());
 			}
 		}
 	}

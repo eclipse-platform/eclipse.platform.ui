@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - derived implementation
  *     Blake Meike (blakem@world.std.com)- patch for bug 31691 and bug 34488
+ *     Rob Stryker - Bug 459188 - InternalAntRunner tries to set null user property
  *******************************************************************************/
 
 package org.eclipse.ant.internal.core.ant;
@@ -264,7 +265,8 @@ public class InternalAntRunner {
 						// do nothing
 					}
 				}
-				project.setUserProperty(entry.getKey(), value);
+				if (value != null)
+					project.setUserProperty(entry.getKey(), value);
 			}
 			// may have properties set (always have the Ant process ID)
 			// using the Arguments and not the Properties page
