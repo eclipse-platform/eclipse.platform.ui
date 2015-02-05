@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.examples.multipageeditor; singleton:=true
 Bundle-Version: 3.2.300.qualifier
-Bundle-ClassPath: multipageeditor.jar
 Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
@@ -14,6 +13,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
- org.eclipse.jface.text,
- org.eclipse.text
-Eclipse-LazyStart: true
+ org.eclipse.jface.text
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

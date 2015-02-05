@@ -41,10 +41,8 @@ public class MultiPageContributor extends MultiPageEditorActionBarContributor {
         return (editor == null ? null : editor.getAction(actionID));
     }
 
-    /* (non-JavaDoc)
-     * Method declared in MultiPageEditorActionBarContributor.
-     */
-    public void setActivePage(IEditorPart part) {
+    @Override
+	public void setActivePage(IEditorPart part) {
         if (activeEditorPart == part)
             return;
 
