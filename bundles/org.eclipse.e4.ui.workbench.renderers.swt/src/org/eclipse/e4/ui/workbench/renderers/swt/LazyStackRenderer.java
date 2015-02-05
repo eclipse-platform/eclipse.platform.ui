@@ -54,6 +54,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			if (!(element instanceof MGenericStack<?>))
 				return;
 
+			@SuppressWarnings("unchecked")
 			MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
 			if (stack.getRenderer() != LazyStackRenderer.this)
 				return;
@@ -94,6 +95,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			return;
 		}
 
+		@SuppressWarnings("unchecked")
 		MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
 		MUIElement selPart = stack.getSelectedElement();
 		if (selPart != null) {
