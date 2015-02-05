@@ -409,14 +409,14 @@ MenuManagerEventHelper.getInstance()
 				.toArray(new ContributionRecord[vals.size()])) {
 			if (record.menuModel == menuModel) {
 				record.dispose();
-				for (MMenuElement copy : record.generatedElements) {
+				for (MMenuElement copy : record.getGeneratedElements()) {
 					cleanUpCopy(record, copy);
 				}
-				for (MMenuElement copy : record.sharedElements) {
+				for (MMenuElement copy : record.getSharedElements()) {
 					cleanUpCopy(record, copy);
 				}
-				record.generatedElements.clear();
-				record.sharedElements.clear();
+				record.getGeneratedElements().clear();
+				record.getSharedElements().clear();
 				disposedRecords.add(record);
 			}
 		}

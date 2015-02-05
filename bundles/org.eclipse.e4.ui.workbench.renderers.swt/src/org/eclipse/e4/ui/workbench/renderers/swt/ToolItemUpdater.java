@@ -14,13 +14,11 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.workbench.Selector;
-import org.eclipse.swt.widgets.Display;
 
 public class ToolItemUpdater {
-	Display display = Display.getCurrent();
 
-	List<HandledContributionItem> itemsToCheck = new ArrayList<HandledContributionItem>();
-	final List<HandledContributionItem> orphanedToolItems = new ArrayList<HandledContributionItem>();
+	private List<HandledContributionItem> itemsToCheck = new ArrayList<HandledContributionItem>();
+	private final List<HandledContributionItem> orphanedToolItems = new ArrayList<HandledContributionItem>();
 
 	void registerItem(HandledContributionItem item) {
 		if (!itemsToCheck.contains(item)) {
@@ -34,8 +32,8 @@ public class ToolItemUpdater {
 
 	public void updateContributionItems(Selector selector) {
 		for (final HandledContributionItem hci : itemsToCheck) {
-			if (hci.model != null && hci.model.getParent() != null
-					&& selector.select(hci.model)) {
+			if (hci.getModel() != null && hci.getModel().getParent() != null
+					&& selector.select(hci.getModel())) {
 				hci.updateItemEnablement();
 			} else {
 				orphanedToolItems.add(hci);

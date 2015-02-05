@@ -42,10 +42,10 @@ public class ContributionRecord {
 	static final String STATIC_CONTEXT = "ContributionFactoryContext"; //$NON-NLS-1$
 
 	MMenu menuModel;
-	MMenuContribution menuContribution;
-	ArrayList<MMenuElement> generatedElements = new ArrayList<MMenuElement>();
-	HashSet<MMenuElement> sharedElements = new HashSet<MMenuElement>();
-	MenuManagerRenderer renderer;
+	private MMenuContribution menuContribution;
+	private ArrayList<MMenuElement> generatedElements = new ArrayList<MMenuElement>();
+	private HashSet<MMenuElement> sharedElements = new HashSet<MMenuElement>();
+	private MenuManagerRenderer renderer;
 	boolean isVisible = true;
 	private IEclipseContext infoContext;
 	private Runnable factoryDispose;

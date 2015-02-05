@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
@@ -37,9 +36,7 @@ import org.osgi.service.event.EventHandler;
 public class AreaRenderer extends SWTPartRenderer {
 
 	@Inject
-	Logger logger;
-	@Inject
-	IEventBroker eventBroker;
+	private IEventBroker eventBroker;
 
 	private EventHandler itemUpdater = new EventHandler() {
 		@Override

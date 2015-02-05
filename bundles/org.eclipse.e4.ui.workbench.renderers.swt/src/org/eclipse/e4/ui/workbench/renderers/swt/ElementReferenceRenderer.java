@@ -34,10 +34,10 @@ import org.eclipse.swt.widgets.Control;
 public class ElementReferenceRenderer extends SWTPartRenderer {
 	@Inject
 	@Named(WorkbenchRendererFactory.SHARED_ELEMENTS_STORE)
-	Map<MUIElement, Set<MPlaceholder>> renderedMap;
+	private Map<MUIElement, Set<MPlaceholder>> renderedMap;
 
 	@Inject
-	IPresentationEngine renderingEngine;
+	private IPresentationEngine renderingEngine;
 
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {

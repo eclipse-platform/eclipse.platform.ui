@@ -13,14 +13,12 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
@@ -42,9 +40,6 @@ import org.eclipse.swt.widgets.MenuItem;
 public class HandledMenuItemRenderer extends MenuItemRenderer {
 
 	private static final String HMI_STATIC_CONTEXT = "HMIR-staticContext"; //$NON-NLS-1$
-
-	@Inject
-	Logger logger;
 
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {

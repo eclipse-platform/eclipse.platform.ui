@@ -33,10 +33,10 @@ import org.eclipse.swt.widgets.Shell;
 public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 	@Inject
-	IPresentationEngine renderer;
+	private IPresentationEngine renderer;
 
 	@Inject
-	IEventBroker eventBroker;
+	private IEventBroker eventBroker;
 
 	@PostConstruct
 	public void init() {

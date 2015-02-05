@@ -107,7 +107,7 @@ public class HandledContributionItem extends ContributionItem {
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
-	MHandledItem model;
+	private MHandledItem model;
 	private Widget widget;
 	private Listener menuItemListener;
 	private LocalResourceManager localResourceManager;

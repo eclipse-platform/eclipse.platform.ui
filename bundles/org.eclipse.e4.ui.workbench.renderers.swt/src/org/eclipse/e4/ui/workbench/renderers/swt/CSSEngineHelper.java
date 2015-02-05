@@ -22,10 +22,10 @@ import org.w3c.dom.css.CSSValue;
  * used by renderers.
  */
 public class CSSEngineHelper {
-	IEclipseContext context;
-	Control control;
-	IStylingEngine engine;
-	CSSStyleDeclaration style;
+	private IEclipseContext context;
+	private Control control;
+	private IStylingEngine engine;
+	private CSSStyleDeclaration style;
 
 	/**
 	 * Create a CSSEngineHelper that can retrieve engine values for a particular

@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Widget;
 public class ToolBarRenderer extends SWTPartRenderer {
 	private MApplication application;
 
-	HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>> pendingCleanup = new HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>>();
+	private HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>> pendingCleanup = new HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>>();
 
 	@Override
 	public void init(IEclipseContext context) {
