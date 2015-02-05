@@ -41,33 +41,21 @@ public class JobChangeEvent implements IJobChangeEvent {
 	 */
 	boolean reschedule = false;
 
-	/* (non-Javadoc)
-	 * Method declared on IJobChangeEvent
-	 */
 	@Override
 	public long getDelay() {
 		return delay;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IJobChangeEvent
-	 */
 	@Override
 	public Job getJob() {
 		return job;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IJobChangeEvent
-	 */
 	@Override
 	public IStatus getResult() {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IJobChangeEvent
-	 */
 	@Override
 	public IStatus getJobGroupResult() {
 		return jobGroupResult;

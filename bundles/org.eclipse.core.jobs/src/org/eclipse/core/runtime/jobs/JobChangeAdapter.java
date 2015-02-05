@@ -23,55 +23,31 @@ package org.eclipse.core.runtime.jobs;
  * @since 3.0
  */
 public class JobChangeAdapter implements IJobChangeListener {
-	/* (non-Javadoc)
-	 * @see IJobChangeListener#aboutToRun(IJobChangeEvent)
-	 * This default implementation does nothing
-	 */
 	@Override
 	public void aboutToRun(IJobChangeEvent event) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see IJobChangeListener#awake(IJobChangeEvent)
-	 * This default implementation does nothing
-	 */
 	@Override
 	public void awake(IJobChangeEvent event) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see IJobChangeListener#done(IJobChangeEvent)
-	 * This default implementation does nothing
-	 */
 	@Override
 	public void done(IJobChangeEvent event) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see IJobChangeListener#running(IJobChangeEvent)
-	 * This default implementation does nothing
-	 */
 	@Override
 	public void running(IJobChangeEvent event) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see IJobChangeListener#scheduled(IJobChangeEvent)
-	 * This default implementation does nothing
-	 */
 	@Override
 	public void scheduled(IJobChangeEvent event) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see IJobChangeListener#sleeping(IJobChangeEvent)
-	 * This default implementation does nothing
-	 */
 	@Override
 	public void sleeping(IJobChangeEvent event) {
 		// do nothing
