@@ -5,8 +5,8 @@
 			<link style-id="content-link" label="Workbench basics" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/gettingStarted/intro/overview.htm" id="basics">
           		<text>Learn about basic Eclipse workbench concepts</text>
        		</link>
-       		<link style-id="content-link" label="Team support" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-26.htm" id="team">
-          		<text>Find out how to collaborate with other developers</text>
+       		<link style-id="content-link" label="Team support with CVS" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-26.htm" id="team">
+          		<text>Find out how to collaborate with other developers using CVS</text>
        		</link>
        	</group>
   	</extensionContent>
