@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 
     /**
      * Returns the formatted message for the given key in
-     * the resource bundle. 
+     * the resource bundle.
      *
      * @param key the resource name
      * @param args the message arguments

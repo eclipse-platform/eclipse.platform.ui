@@ -23,7 +23,7 @@ public class UserFileParser {
      *
      */
     private static IAdaptable getFabricatedResult() {
-        // returns fabricated input. 
+        // returns fabricated input.
         GroupElement root = new GroupElement(
                 MessageUtil.getString("Everybody"), null); //$NON-NLS-1$
         GroupElement userGroup = root.createSubGroup(MessageUtil

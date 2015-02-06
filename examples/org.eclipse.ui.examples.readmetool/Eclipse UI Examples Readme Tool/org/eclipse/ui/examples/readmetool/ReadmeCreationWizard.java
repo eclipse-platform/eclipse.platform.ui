@@ -26,28 +26,22 @@ public class ReadmeCreationWizard extends Wizard implements INewWizard {
 
     private ReadmeCreationPage mainPage;
 
-    /** (non-Javadoc)
-     * Method declared on Wizard.
-     */
-    public void addPages() {
+    @Override
+	public void addPages() {
         mainPage = new ReadmeCreationPage(workbench, selection);
         addPage(mainPage);
     }
 
-    /** (non-Javadoc)
-     * Method declared on IWorkbenchWizard
-     */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.workbench = workbench;
         this.selection = selection;
         setWindowTitle(MessageUtil.getString("New_Readme_File")); //$NON-NLS-1$
         setDefaultPageImageDescriptor(ReadmeImages.README_WIZARD_BANNER);
     }
 
-    /** (non-Javadoc)
-     * Method declared on IWizard
-     */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         return mainPage.finish();
     }
 }

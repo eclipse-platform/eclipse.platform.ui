@@ -33,10 +33,8 @@ public class ReadmeContentOutlineDragListener extends DragSourceAdapter {
         this.page = page;
     }
 
-    /* (non-Javadoc)
-     * Method declared on DragSourceListener
-     */
-    public void dragSetData(DragSourceEvent event) {
+    @Override
+	public void dragSetData(DragSourceEvent event) {
         if (PluginTransfer.getInstance().isSupportedType(event.dataType)) {
             byte[] segmentData = getSegmentText().getBytes();
             event.data = new PluginTransferData(ReadmeDropActionDelegate.ID,

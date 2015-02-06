@@ -23,26 +23,20 @@ public class PopupMenuActionDelegate implements IObjectActionDelegate {
 
     private IWorkbenchPart part;
 
-    /** (non-Javadoc)
-     * Method declared on IDropActionDelegate
-     */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         MessageDialog.openInformation(this.part.getSite().getShell(),
                 MessageUtil.getString("Property_Sheet_Example"), //$NON-NLS-1$
                 MessageUtil.getString("Popup_Menu_Action_executed")); //$NON-NLS-1$
     }
 
-    /** (non-Javadoc)
-     * Method declared on IActionDelegate
-     */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         //Ignored for this example
     }
 
-    /** (non-Javadoc)
-     * Method declared on IObjectActionDelegate
-     */
-    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+    @Override
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
         this.part = targetPart;
     }
 }

@@ -19,7 +19,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 
 /**
- * This class demonstrates the contribution of a custom control to the 
+ * This class demonstrates the contribution of a custom control to the
  * status line for the readme editor.  The control shows the
  * dirty status of the editor.
  */
@@ -38,10 +38,8 @@ public class DirtyStateContribution extends ControlContribution implements
         super("DirtyState"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * Method declared on ControlContribution
-     */
-    protected Control createControl(Composite parent) {
+    @Override
+	protected Control createControl(Composite parent) {
         // If the composite is good just return it.
         if (composite != null && !composite.isDisposed())
             return composite;
@@ -50,7 +48,7 @@ public class DirtyStateContribution extends ControlContribution implements
         composite = new Composite(parent, SWT.BORDER);
         composite.setData(this);
 
-        // Create label inside composite.	
+        // Create label inside composite.
         label = new Label(composite, SWT.NONE);
         label.setSize(80, 15);
 
@@ -74,10 +72,8 @@ public class DirtyStateContribution extends ControlContribution implements
         updateState();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertyListener
-     */
-    public void propertyChanged(Object source, int propID) {
+    @Override
+	public void propertyChanged(Object source, int propID) {
         if (source instanceof IEditorPart)
             updateState();
     }

@@ -24,19 +24,19 @@ public class GroupElement extends OrganizationElement {
 
     public static String P_CONTENTS = "contents"; //$NON-NLS-1$
 
-    private Vector subGroups;
+    private Vector<OrganizationElement> subGroups;
 
-    private Vector users;
+    private Vector<OrganizationElement> users;
 
     // must be synchronized to contain both the references of subGroups and users
-    private Vector contents;
+    private Vector<OrganizationElement> contents;
 
     /**
      * Constructor.
      * Creates a new GroupElement within the passed parent GroupElement,
      * gives it the passed name property, sets Icon.
      *
-     * @param name the name 
+     * @param name the name
      * @param parent the parent
      */
     public GroupElement(String name, GroupElement parent) {
@@ -107,26 +107,22 @@ public class GroupElement extends OrganizationElement {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         return getContents().toArray();
     }
 
     /**
      * Returns the content
      */
-    private Vector getContents() {
+    private Vector<OrganizationElement> getContents() {
         if (contents == null)
-            contents = new Vector();
+            contents = new Vector<>();
         return contents;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this.toString();
     }
 
@@ -140,38 +136,30 @@ public class GroupElement extends OrganizationElement {
     /**
      * Returns the subgroups
      */
-    private Vector getSubGroups() {
+    private Vector<OrganizationElement> getSubGroups() {
         if (subGroups == null)
-            subGroups = new Vector();
+            subGroups = new Vector<>();
         return subGroups;
     }
 
     /**
      * Returns the users
      */
-    private Vector getUsers() {
+    private Vector<OrganizationElement> getUsers() {
         if (users == null)
-            users = new Vector();
+            users = new Vector<>();
         return users;
     }
 
-    /* (non-Javadoc)
-     * Method declared on OrganizationElement
-     */
-    public boolean isGroup() {
+    @Override
+	public boolean isGroup() {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getForeground(java.lang.Object)
-     */
     public RGB getForeground(Object element) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
-     */
     public RGB getBackground(Object element) {
         return null;
     }

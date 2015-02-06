@@ -46,7 +46,8 @@ public class ReadmeContentOutlinePage extends ContentOutlinePage {
             super(label);
             getTreeViewer().addSelectionChangedListener(
                     new ISelectionChangedListener() {
-                        public void selectionChanged(SelectionChangedEvent event) {
+                        @Override
+						public void selectionChanged(SelectionChangedEvent event) {
                             setEnabled(!event.getSelection().isEmpty());
                         }
                     });
@@ -56,7 +57,8 @@ public class ReadmeContentOutlinePage extends ContentOutlinePage {
             this.shell = shell;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             MessageDialog.openInformation(shell, MessageUtil
                     .getString("Readme_Outline"), //$NON-NLS-1$
                     MessageUtil.getString("ReadmeOutlineActionExecuted")); //$NON-NLS-1$
@@ -71,11 +73,12 @@ public class ReadmeContentOutlinePage extends ContentOutlinePage {
         this.input = input;
     }
 
-    /**  
+    /**
      * Creates the control and registers the popup menu for this page
      * Menu id "org.eclipse.ui.examples.readmetool.outline"
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),

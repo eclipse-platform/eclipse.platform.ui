@@ -34,9 +34,9 @@ public abstract class OrganizationElement implements IAdaptable,
     private ImageDescriptor imageDescriptor;
 
     //
-    private static Vector descriptors;
+    private static Vector<PropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector();
+        descriptors = new Vector<>();
         PropertyDescriptor name = new TextPropertyDescriptor(
                 IBasicPropertyConstants.P_TEXT, MessageUtil.getString("name")); //$NON-NLS-1$
         descriptors.addElement(name);
@@ -46,7 +46,7 @@ public abstract class OrganizationElement implements IAdaptable,
      * Constructor.
      * Creates a new OrganizationElement within the passed parent GroupElement,
      *
-     * @param name the name 
+     * @param name the name
      * @param parent the parent
      */
     OrganizationElement(String name, GroupElement parent) {
@@ -61,10 +61,8 @@ public abstract class OrganizationElement implements IAdaptable,
         parent.delete(this);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAdaptable
-     */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         if (adapter == IPropertySource.class) {
             return this;
         }
@@ -77,28 +75,22 @@ public abstract class OrganizationElement implements IAdaptable,
     /**
      * Returns the descriptors
      */
-    static Vector getDescriptors() {
+    static Vector<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public ImageDescriptor getImageDescriptor(Object object) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object object) {
         return imageDescriptor;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public String getLabel(Object o) {
+    @Override
+	public String getLabel(Object o) {
         return getName();
     }
 
@@ -112,26 +104,26 @@ public abstract class OrganizationElement implements IAdaptable,
     /**
      * Returns the parent
      */
-    public Object getParent(Object o) {
+    @Override
+	public Object getParent(Object o) {
         return parent;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        return (IPropertyDescriptor[]) getDescriptors().toArray(
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+        return getDescriptors().toArray(
                 new IPropertyDescriptor[getDescriptors().size()]);
     }
 
-    /** 
+    /**
      * The <code>OrganizationElement</code> implementation of this
      * <code>IPropertySource</code> method returns the following properties
      *
      * 	1) P_NAME returns String, name of this element
      *  this property key is defined in <code>IBasicPropertyConstants</code>
      */
-    public Object getPropertyValue(Object propKey) {
+    @Override
+	public Object getPropertyValue(Object propKey) {
         if (propKey.equals(IBasicPropertyConstants.P_TEXT))
             return getName();
         return null;
@@ -145,10 +137,8 @@ public abstract class OrganizationElement implements IAdaptable,
         return false;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public boolean isPropertySet(Object property) {
+    @Override
+	public boolean isPropertySet(Object property) {
         return false;
     }
 
@@ -160,10 +150,8 @@ public abstract class OrganizationElement implements IAdaptable,
         return false;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public void resetPropertyValue(Object property) {
+    @Override
+	public void resetPropertyValue(Object property) {
     }
 
     /**
@@ -187,14 +175,15 @@ public abstract class OrganizationElement implements IAdaptable,
         parent = newParent;
     }
 
-    /** 
+    /**
      * The <code>OrganizationElement</code> implementation of this
      * <code>IPropertySource</code> method returns the following properties
      * defines the following Setable properties
      *
      *	1) P_NAME, expects String, sets the name of this OrganizationElement
      */
-    public void setPropertyValue(Object name, Object value) {
+    @Override
+	public void setPropertyValue(Object name, Object value) {
         if (name.equals(IBasicPropertyConstants.P_TEXT)) {
             setName((String) value);
             return;

@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This class implements a sample preference page that is 
+ * This class implements a sample preference page that is
  * added to the preference dialog based on the registration.
  */
 public class ReadmePreferencePage extends PreferencePage implements
@@ -92,7 +92,8 @@ public class ReadmePreferencePage extends PreferencePage implements
     /** (non-Javadoc)
      * Method declared on PreferencePage
      */
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IReadmeConstants.PREFERENCE_PAGE_CONTEXT);
 
@@ -210,21 +211,20 @@ public class ReadmePreferencePage extends PreferencePage implements
         return text;
     }
 
-    /** 
+    /**
      * The <code>ReadmePreferencePage</code> implementation of this
-     * <code>PreferencePage</code> method 
+     * <code>PreferencePage</code> method
      * returns preference store that belongs to the our plugin.
      * This is important because we want to store
      * our preferences separately from the workbench.
      */
-    protected IPreferenceStore doGetPreferenceStore() {
+    @Override
+	protected IPreferenceStore doGetPreferenceStore() {
         return ReadmePlugin.getDefault().getPreferenceStore();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPreferencePage
-     */
-    public void init(IWorkbench workbench) {
+    @Override
+	public void init(IWorkbench workbench) {
         // do nothing
     }
 
@@ -283,25 +283,19 @@ public class ReadmePreferencePage extends PreferencePage implements
         textField.setText(store.getString(IReadmeConstants.PRE_TEXT));
     }
 
-    /** (non-Javadoc)
-     * Method declared on ModifyListener
-     */
-    public void modifyText(ModifyEvent event) {
+    @Override
+	public void modifyText(ModifyEvent event) {
         //Do nothing on a modification in this example
     }
 
-    /* (non-Javadoc)
-     * Method declared on PreferencePage
-     */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
         super.performDefaults();
         initializeDefaults();
     }
 
-    /* (non-Javadoc)
-     * Method declared on PreferencePage
-     */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         storeValues();
         ReadmePlugin.getDefault().savePluginPreferences();
         return true;
@@ -343,17 +337,13 @@ public class ReadmePreferencePage extends PreferencePage implements
         vfiller.setLayoutData(gridData);
     }
 
-    /** (non-Javadoc)
-     * Method declared on SelectionListener
-     */
-    public void widgetDefaultSelected(SelectionEvent event) {
+    @Override
+	public void widgetDefaultSelected(SelectionEvent event) {
         //Handle a default selection. Do nothing in this example
     }
 
-    /** (non-Javadoc)
-     * Method declared on SelectionListener
-     */
-    public void widgetSelected(SelectionEvent event) {
+    @Override
+	public void widgetSelected(SelectionEvent event) {
         //Do nothing on selection in this example;
     }
 }

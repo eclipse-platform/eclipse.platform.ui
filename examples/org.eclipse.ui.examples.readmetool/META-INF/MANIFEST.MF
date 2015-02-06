@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.examples.readmetool; singleton:=true
 Bundle-Version: 3.3.200.qualifier
-Bundle-ClassPath: readmetool.jar
+Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.examples.readmetool.ReadmePlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
@@ -13,8 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.ui.ide,
  org.eclipse.jface.text,
- org.eclipse.text,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.editors
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.ui.examples.readmetool
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

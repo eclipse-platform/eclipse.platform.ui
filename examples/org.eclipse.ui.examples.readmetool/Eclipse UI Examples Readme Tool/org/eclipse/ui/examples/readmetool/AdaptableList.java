@@ -25,7 +25,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * and navigation.
  */
 public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
-    protected List children = new ArrayList();
+    protected List<IAdaptable> children = new ArrayList<>();
 
     /**
      * Creates a new adaptable list with the given children.
@@ -47,9 +47,9 @@ public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
      * Adds all the adaptable objects in the given enumeration to this list.
      * Returns this list.
      */
-    public AdaptableList add(Iterator iterator) {
+    public AdaptableList add(Iterator<IAdaptable> iterator) {
         while (iterator.hasNext()) {
-            add((IAdaptable) iterator.next());
+            add(iterator.next());
         }
         return this;
     }
@@ -63,10 +63,8 @@ public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
         return this;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAdaptable
-     */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         if (adapter == IWorkbenchAdapter.class)
             return this;
         return null;
@@ -79,31 +77,23 @@ public class AdaptableList implements IWorkbenchAdapter, IAdaptable {
         return children.toArray();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         return children.toArray();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public ImageDescriptor getImageDescriptor(Object object) {
+    @Override
+	public ImageDescriptor getImageDescriptor(Object object) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public String getLabel(Object object) {
+    @Override
+	public String getLabel(Object object) {
         return object == null ? "" : object.toString(); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchAdapter
-     */
-    public Object getParent(Object object) {
+    @Override
+	public Object getParent(Object object) {
         return null;
     }
 

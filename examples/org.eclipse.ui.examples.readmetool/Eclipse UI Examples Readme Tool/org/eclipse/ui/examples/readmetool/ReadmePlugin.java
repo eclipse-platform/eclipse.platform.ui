@@ -19,12 +19,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see AbstractUIPlugin for additional information on UI plugins
  */
 public class ReadmePlugin extends AbstractUIPlugin {
-    
+
     public static final String PLUGIN_ID = "org.eclipse.ui.examples.readmetool"; //$NON-NLS-1$
-    
+
     /**
      * Default instance of the receiver
-     */ 
+     */
     private static ReadmePlugin inst;
 
     /**

@@ -53,11 +53,10 @@ public class StreetAddress implements IPropertySource {
 
     public static final String P_STREET = MessageUtil.getString("street"); //$NON-NLS-1$
 
-    //
-    private static Vector descriptors;
+    private static Vector<TextPropertyDescriptor> descriptors;
 
     static {
-        descriptors = new Vector();
+        descriptors = new Vector<>();
         descriptors.addElement(new TextPropertyDescriptor(P_ID_BUILD_NO,
                 P_BUILD_NO));
         descriptors
@@ -92,10 +91,8 @@ public class StreetAddress implements IPropertySource {
         setStreetName(streetName);
     }
 
-    /* (non-Javadoc)
-     * Method declared on Object
-     */
-    public boolean equals(Object ob) {
+    @Override
+	public boolean equals(Object ob) {
         return toString().equals(ob.toString());
     }
 
@@ -120,26 +117,22 @@ public class StreetAddress implements IPropertySource {
     /**
      * Returns the descriptors
      */
-    private static Vector getDescriptors() {
+    private static Vector<TextPropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this.toString();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        return (IPropertyDescriptor[]) getDescriptors().toArray(
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+        return getDescriptors().toArray(
                 new IPropertyDescriptor[getDescriptors().size()]);
     }
 
-    /** 
+    /**
      * The <code>Name</code> implementation of this
      * <code>IPropertySource</code> method returns the following properties
      *
@@ -147,7 +140,8 @@ public class StreetAddress implements IPropertySource {
      * 	2) P_APTBOX returns java.lang.String
      *	3) P_STREET returns java.lang.String
      */
-    public Object getPropertyValue(Object propKey) {
+    @Override
+	public Object getPropertyValue(Object propKey) {
         if (propKey.equals(P_ID_BUILD_NO))
             return getBuildNo().toString();
         if (propKey.equals(P_ID_APTBOX))
@@ -166,17 +160,13 @@ public class StreetAddress implements IPropertySource {
         return streetName;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Object
-     */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return toString().hashCode();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public boolean isPropertySet(Object property) {
+    @Override
+	public boolean isPropertySet(Object property) {
         if (property.equals(P_ID_BUILD_NO))
             return getBuildNo() != BUILD_NO_DEFAULT;
         if (property.equals(P_ID_APTBOX))
@@ -186,10 +176,8 @@ public class StreetAddress implements IPropertySource {
         return false;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public void resetPropertyValue(Object property) {
+    @Override
+	public void resetPropertyValue(Object property) {
         if (property.equals(P_ID_BUILD_NO)) {
             setBuildNo(BUILD_NO_DEFAULT);
             return;
@@ -218,16 +206,17 @@ public class StreetAddress implements IPropertySource {
         buildNo = newBuildNo;
     }
 
-    /** 
+    /**
      * The <code>Name</code> implementation of this
-     * <code>IPropertySource</code> method 
+     * <code>IPropertySource</code> method
      * defines the following Setable properties
      *
      * 	1) P_BUILD_NO expects java.lang.Integer
      * 	2) P_APTBOX expects java.lang.String
      *	3) P_STREET expects java.lang.String
      */
-    public void setPropertyValue(Object name, Object value) {
+    @Override
+	public void setPropertyValue(Object name, Object value) {
         if (name.equals(P_ID_BUILD_NO)) {
             try {
                 setBuildNo(new Integer(Integer.parseInt((String) value)));
@@ -257,7 +246,8 @@ public class StreetAddress implements IPropertySource {
      * The value as displayed in the Property Sheet. Will not print default values
      * @return java.lang.String
      */
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer outStringBuffer = new StringBuffer();
         if (!getAptBox().equals(APTBOX_DEFAULT)) {
             outStringBuffer.append(getAptBox());

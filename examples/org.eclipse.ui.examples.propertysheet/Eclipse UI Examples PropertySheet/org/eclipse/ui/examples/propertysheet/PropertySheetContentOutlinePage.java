@@ -36,11 +36,12 @@ public class PropertySheetContentOutlinePage extends ContentOutlinePage {
         this.model = adaptable;
     }
 
-    /** 
+    /**
      * Creates the control and registers the popup menu for this page
      * Menu id "org.eclipse.ui.examples.propertysheet.outline"
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
         TreeViewer viewer = getTreeViewer();
         viewer.setContentProvider(new WorkbenchContentProvider());

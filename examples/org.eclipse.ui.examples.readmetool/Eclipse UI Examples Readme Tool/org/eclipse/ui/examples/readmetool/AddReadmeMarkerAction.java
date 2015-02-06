@@ -28,7 +28,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.osgi.framework.Bundle;
 
 /**
- * Action for creating a readme marker with a specfic id 
+ * Action for creating a readme marker with a specfic id
  * attribute value.
  */
 public class AddReadmeMarkerAction extends Action {
@@ -59,8 +59,9 @@ public class AddReadmeMarkerAction extends Action {
     /*
      * @see IAction#run()
      */
-    public void run() {
-        Map attributes = new HashMap(11);
+    @Override
+	public void run() {
+        Map<Object, Object> attributes = new HashMap<>(11);
 
         ITextSelection selection = (ITextSelection) textEditor
                 .getSelectionProvider().getSelection();
@@ -107,8 +108,8 @@ public class AddReadmeMarkerAction extends Action {
         }
     }
 
-    /** 
-     * Returns the resource on which to create the marker, 
+    /**
+     * Returns the resource on which to create the marker,
      * or <code>null</code> if there is no applicable resource. This
      * queries the editor's input using <code>getAdapter(IResource.class)</code>.
      *

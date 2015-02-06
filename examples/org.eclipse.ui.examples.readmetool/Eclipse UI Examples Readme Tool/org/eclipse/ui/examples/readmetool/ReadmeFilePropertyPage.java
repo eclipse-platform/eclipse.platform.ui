@@ -33,7 +33,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * This page will be added to the property page dialog
  * when the "Properties..." popup menu item is selected
- * for Readme files. 
+ * for Readme files.
  */
 public class ReadmeFilePropertyPage extends PropertyPage {
 
@@ -57,10 +57,8 @@ public class ReadmeFilePropertyPage extends PropertyPage {
         return composite;
     }
 
-    /** (non-Javadoc)
-     * Method declared on PreferencePage
-     */
-    public Control createContents(Composite parent) {
+    @Override
+	public Control createContents(Composite parent) {
 
         // ensure the page has no special buttons
         noDefaultAndApplyButton();
@@ -185,7 +183,8 @@ public class ReadmeFilePropertyPage extends PropertyPage {
     /** (non-Javadoc)
      * Method declared on PreferencePage
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         // nothing to do - read-only page
         return true;
     }

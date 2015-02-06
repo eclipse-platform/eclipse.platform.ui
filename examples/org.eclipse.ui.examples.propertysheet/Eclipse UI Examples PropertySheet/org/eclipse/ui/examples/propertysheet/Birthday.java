@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
@@ -45,7 +46,7 @@ public class Birthday implements IPropertySource {
 
     public static final String P_YEAR = MessageUtil.getString("year"); //$NON-NLS-1$
 
-    //default values	
+    //default values
     private static final Integer DAY_DEFAULT = new Integer(1);
 
     private static final Integer MONTH_DEFAULT = new Integer(1);
@@ -57,7 +58,8 @@ public class Birthday implements IPropertySource {
             "EEEE, MMMM d, yyyy"); //$NON-NLS-1$
 
     static private class DayLabelProvider extends LabelProvider {
-        public String getText(Object element) {
+        @Override
+		public String getText(Object element) {
             String[] dayValues = new String[] {
                     "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }; //$NON-NLS-31$ //$NON-NLS-30$ //$NON-NLS-29$ //$NON-NLS-28$ //$NON-NLS-27$ //$NON-NLS-26$ //$NON-NLS-25$ //$NON-NLS-24$ //$NON-NLS-23$ //$NON-NLS-22$ //$NON-NLS-21$ //$NON-NLS-20$ //$NON-NLS-19$ //$NON-NLS-18$ //$NON-NLS-17$ //$NON-NLS-16$ //$NON-NLS-15$ //$NON-NLS-14$ //$NON-NLS-13$ //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
             return dayValues[((Integer) element).intValue()];
@@ -65,7 +67,8 @@ public class Birthday implements IPropertySource {
     }
 
     static private class MonthLabelProvider extends LabelProvider {
-        public String getText(Object element) {
+        @Override
+		public String getText(Object element) {
             String[] monthValues = new String[] {
                     MessageUtil.getString("January"), MessageUtil.getString("February"), MessageUtil.getString("March"), MessageUtil.getString("April"), MessageUtil.getString("May"), MessageUtil.getString("June"), MessageUtil.getString("July"), MessageUtil.getString("August"), MessageUtil.getString("September"), MessageUtil.getString("October"), MessageUtil.getString("November"), MessageUtil.getString("December") }; //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
             return monthValues[((Integer) element).intValue()];
@@ -73,9 +76,9 @@ public class Birthday implements IPropertySource {
     }
 
     //
-    private static Vector descriptors;
+    private static Vector<PropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector();
+        descriptors = new Vector<>();
 
         ///
         String[] dayValues = new String[] {
@@ -126,14 +129,15 @@ public class Birthday implements IPropertySource {
     /**
      * Standard Accessor
      */
-    private static Vector getDescriptors() {
+    private static Vector<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this.toString();
     }
 
@@ -149,12 +153,13 @@ public class Birthday implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        return (IPropertyDescriptor[]) getDescriptors().toArray(
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+        return getDescriptors().toArray(
                 new IPropertyDescriptor[getDescriptors().size()]);
     }
 
-    /** 
+    /**
      * The <code>Birthday</code> implementation of this
      * <code>IPropertySource</code> method returns the following properties
      *
@@ -163,7 +168,8 @@ public class Birthday implements IPropertySource {
      *  3) P_YEAR returns java.lang.Integer
      *	4) P_STREET returns java.lang.String
      */
-    public Object getPropertyValue(Object propKey) {
+    @Override
+	public Object getPropertyValue(Object propKey) {
         if (propKey.equals(P_ID_DAY))
             return new Integer(getDay().intValue() - 1);
         if (propKey.equals(P_ID_MONTH))
@@ -185,7 +191,8 @@ public class Birthday implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public boolean isPropertySet(Object property) {
+    @Override
+	public boolean isPropertySet(Object property) {
         if (P_ID_DAY.equals(property))
             return getDay() != DAY_DEFAULT;
         if (P_ID_MONTH.equals(property))
@@ -198,7 +205,8 @@ public class Birthday implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public void resetPropertyValue(Object property) {
+    @Override
+	public void resetPropertyValue(Object property) {
         if (P_ID_DAY.equals(property)) {
             setDay(DAY_DEFAULT);
             return;
@@ -227,16 +235,17 @@ public class Birthday implements IPropertySource {
         month = newMonth;
     }
 
-    /** 
+    /**
      * The <code>Birthday</code> implementation of this
-     * <code>IPropertySource</code> method 
+     * <code>IPropertySource</code> method
      * defines the following Setable properties
      *
      * 	1) P_DAY expects java.lang.Integer
      * 	2) P_MONTH expects java.lang.Integer
      *  3) P_YEAR expects java.lang.Integer
      */
-    public void setPropertyValue(Object name, Object value) {
+    @Override
+	public void setPropertyValue(Object name, Object value) {
         if (P_ID_DAY.equals(name)) {
             setDay(new Integer(((Integer) value).intValue() + 1));
             return;
@@ -266,7 +275,8 @@ public class Birthday implements IPropertySource {
      * The value as displayed in the Property Sheet.
      * @return java.lang.String
      */
-    public String toString() {
+    @Override
+	public String toString() {
         Date bday = (new GregorianCalendar(getYear().intValue(), getMonth()
                 .intValue() - 1, getDay().intValue())).getTime();
         return formatter.format(bday);

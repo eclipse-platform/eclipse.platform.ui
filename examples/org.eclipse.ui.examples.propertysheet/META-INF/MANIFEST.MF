@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.examples.propertysheet; singleton:=true
 Bundle-Version: 3.2.300.qualifier
-Bundle-ClassPath: propertysheet.jar
 Bundle-Activator: org.eclipse.ui.examples.propertysheet.PropertySheetPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
@@ -18,4 +17,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.ui.examples.propertysheet
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

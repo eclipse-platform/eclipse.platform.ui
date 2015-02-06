@@ -51,9 +51,9 @@ public class Name implements IPropertySource {
 
     public static final String P_DESCRIPTORS = "properties"; //$NON-NLS-1$
 
-    static private Vector descriptors;
+    static private Vector<TextPropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector();
+        descriptors = new Vector<>();
         descriptors.addElement(new TextPropertyDescriptor(P_ID_FIRSTNAME,
                 P_FIRSTNAME));
         descriptors.addElement(new TextPropertyDescriptor(P_ID_LASTNAME,
@@ -82,14 +82,12 @@ public class Name implements IPropertySource {
     /**
      * Returns the descriptors
      */
-    private static Vector getDescriptors() {
+    private static Vector<TextPropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this.toString();
     }
 
@@ -114,15 +112,13 @@ public class Name implements IPropertySource {
         return lastName;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        return (IPropertyDescriptor[]) getDescriptors().toArray(
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+        return getDescriptors().toArray(
                 new IPropertyDescriptor[getDescriptors().size()]);
     }
 
-    /** 
+    /**
      * The <code>Name</code> implementation of this
      * <code>IPropertySource</code> method returns the following properties
      *
@@ -130,7 +126,8 @@ public class Name implements IPropertySource {
      * 	2) P_LASTNAME returns String, lastname
      *  3) P_MIDDLENAME returns String, middle
      */
-    public Object getPropertyValue(Object propKey) {
+    @Override
+	public Object getPropertyValue(Object propKey) {
         if (P_ID_FIRSTNAME.equals(propKey))
             return getFirstName();
         if (P_ID_LASTNAME.equals(propKey))
@@ -140,10 +137,8 @@ public class Name implements IPropertySource {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public boolean isPropertySet(Object key) {
+    @Override
+	public boolean isPropertySet(Object key) {
         if (key.equals(P_ID_FIRSTNAME))
             return getFirstName() != FIRSTNAME_DEFAULT;
         if (key.equals(P_ID_LASTNAME))
@@ -154,13 +149,14 @@ public class Name implements IPropertySource {
     }
 
     /**
-     * Implemented as part of IPropertySource framework. Sets the specified property 
+     * Implemented as part of IPropertySource framework. Sets the specified property
      * to its default value.
-     * 
+     *
      * @see 	IPropertySource#resetPropertyValue(Object)
      * @param 	property 	The property to reset.
      */
-    public void resetPropertyValue(Object property) {
+    @Override
+	public void resetPropertyValue(Object property) {
         if (P_ID_FIRSTNAME.equals(property)) {
             setFirstName(FIRSTNAME_DEFAULT);
             return;
@@ -196,16 +192,17 @@ public class Name implements IPropertySource {
         lastName = newLastName;
     }
 
-    /** 
+    /**
      * The <code>Name</code> implementation of this
-     * <code>IPropertySource</code> method 
+     * <code>IPropertySource</code> method
      * defines the following Setable properties
      *
      *	1) P_FIRST, expects String, sets the firstname of this OrganizationElement
      *  2) P_MIDDLENAME, expects String, sets middlename of this OrganizationElement
      *  3) P_LASTNAME, expects String, sets lastname of this OrganizationElement
      */
-    public void setPropertyValue(Object propName, Object val) {
+    @Override
+	public void setPropertyValue(Object propName, Object val) {
         if (P_ID_FIRSTNAME.equals(propName)) {
             setFirstName((String) val);
             return;
@@ -224,7 +221,8 @@ public class Name implements IPropertySource {
      * The value as displayed in the Property Sheet. Will not print default values
      * @return java.lang.String
      */
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer outStringBuffer = new StringBuffer();
         if (getFirstName() != FIRSTNAME_DEFAULT) {
             outStringBuffer.append(getFirstName());

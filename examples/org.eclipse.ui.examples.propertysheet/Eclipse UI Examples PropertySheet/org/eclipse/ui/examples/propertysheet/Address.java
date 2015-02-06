@@ -56,7 +56,7 @@ public class Address implements IPropertySource {
 
     public static final String P_DESCRIPTORS = "properties"; //$NON-NLS-1$
 
-    //default values	
+    //default values
     private static final StreetAddress STREET_DEFAULT = new StreetAddress();
 
     private static final String CITY_DEFAULT = MessageUtil
@@ -68,19 +68,19 @@ public class Address implements IPropertySource {
 
     //
     static private class ProvinceLabelProvider extends LabelProvider {
-        public String getText(Object element) {
+        @Override
+		public String getText(Object element) {
             String[] provinceValues = new String[] {
                     MessageUtil.getString("British_Columbia"), MessageUtil.getString("Alberta"), MessageUtil.getString("Saskatchewan"), MessageUtil.getString("Manitoba"), MessageUtil.getString("Ontario"), MessageUtil.getString("Quebec"), MessageUtil.getString("Newfoundland"), MessageUtil.getString("Prince_Edward_Island"), MessageUtil.getString("Nova_Scotia"), MessageUtil.getString("New_Brunswick"), MessageUtil.getString("Yukon"), MessageUtil.getString("North_West_Territories"), MessageUtil.getString("Nunavut") }; //$NON-NLS-13$ //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
             return provinceValues[((Integer) element).intValue()];
         }
     }
 
-    //
-    private static Vector descriptors;
+    private static Vector<PropertyDescriptor> descriptors;
 
     private static String[] provinceValues;
     static {
-        descriptors = new Vector();
+        descriptors = new Vector<>();
         provinceValues = new String[] {
                 MessageUtil.getString("British_Columbia"), MessageUtil.getString("Alberta"), MessageUtil.getString("Saskatchewan"), MessageUtil.getString("Manitoba"), MessageUtil.getString("Ontario"), MessageUtil.getString("Quebec"), MessageUtil.getString("Newfoundland"), MessageUtil.getString("Prince_Edward_Island"), MessageUtil.getString("Nova_Scotia"), MessageUtil.getString("New_Brunswick"), MessageUtil.getString("Yukon"), MessageUtil.getString("North_West_Territories"), MessageUtil.getString("Nunavut") }; //$NON-NLS-13$ //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
         descriptors.addElement(new PropertyDescriptor(P_ID_STREET, P_STREET));
@@ -92,7 +92,8 @@ public class Address implements IPropertySource {
         //add custom validator to propertyDescriptor limiting postalcode
         //values to XYXYXY, where X is a letter and Y is a digit
         propertyDescriptor.setValidator(new ICellEditorValidator() {
-            public String isValid(Object value) {
+            @Override
+			public String isValid(Object value) {
                 if (value == null)
                     return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
 
@@ -158,7 +159,7 @@ public class Address implements IPropertySource {
     /**
      * Creates a new address.
      *
-     * @param street the street 
+     * @param street the street
      * @param city the city
      * @param province the province
      * @param postalCode has the form XYXYXY: where X is a letter and Y is a digit
@@ -182,17 +183,15 @@ public class Address implements IPropertySource {
         return city;
     }
 
-    /* 
+    /**
      * Standard Accessor
      */
-    private static Vector getDescriptors() {
+    private static Vector<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
-    public Object getEditableValue() {
+    @Override
+	public Object getEditableValue() {
         return this.toString();
     }
 
@@ -208,12 +207,13 @@ public class Address implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        return (IPropertyDescriptor[]) getDescriptors().toArray(
+    @Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+        return getDescriptors().toArray(
                 new IPropertyDescriptor[getDescriptors().size()]);
     }
 
-    /** 
+    /**
      * The <code>Address</code> implementation of this
      * <code>IPropertySource</code> method returns the following properties
      *
@@ -222,7 +222,8 @@ public class Address implements IPropertySource {
      *  3) P_PROVINCE returns java.lang.String
      *	4) P_STREET returns StreetAddress
      */
-    public Object getPropertyValue(Object propKey) {
+    @Override
+	public Object getPropertyValue(Object propKey) {
         if (propKey.equals(P_ID_PROVINCE))
             return getProvince();
         if (propKey.equals(P_ID_STREET))
@@ -255,7 +256,8 @@ public class Address implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public boolean isPropertySet(Object property) {
+    @Override
+	public boolean isPropertySet(Object property) {
         if (property.equals(P_ID_PROVINCE))
             return getProvince() != PROVINCE_DEFAULT;
         if (property.equals(P_ID_STREET))
@@ -270,7 +272,8 @@ public class Address implements IPropertySource {
     /* (non-Javadoc)
      * Method declared on IPropertySource
      */
-    public void resetPropertyValue(Object property) {
+    @Override
+	public void resetPropertyValue(Object property) {
         if (P_ID_POSTALCODE.equals(property)) {
             setPostalCode(POSTALCODE_DEFAULT);
             return;
@@ -304,27 +307,28 @@ public class Address implements IPropertySource {
         this.postalCode = newPostalCode.toUpperCase();
     }
 
-    /** 
+    /**
      * The <code>Address</code> implementation of this
-     * <code>IPropertySource</code> method 
+     * <code>IPropertySource</code> method
      * defines the following Setable properties
      *
      * 	1) P_CITY expects java.lang.String
      * 	2) P_POSTALCODE expects java.lang.String
      *  3) P_PROVINCE expects java.lang.String
-     * 
-     * <p>P_ID_STREET is not set here since it is referenced 
+     *
+     * <p>P_ID_STREET is not set here since it is referenced
      * and set directly in StreetAddress.
      * According to IPropertySource, StreetAddress.getEditableValue
-     * should return a String which will be passed to this method  
-     * as the value. A new StreetAddress object should then be 
-     * created from the string. 
-     * An alternative would be to return the StreetAddress 
-     * directly in StreetAddress.getEditableValue and define a 
+     * should return a String which will be passed to this method
+     * as the value. A new StreetAddress object should then be
+     * created from the string.
+     * An alternative would be to return the StreetAddress
+     * directly in StreetAddress.getEditableValue and define a
      * cell editor for the StreetAddress property.
-     * This was ommitted for the sake of simplicity. 
+     * This was ommitted for the sake of simplicity.
      */
-    public void setPropertyValue(Object name, Object value) {
+    @Override
+	public void setPropertyValue(Object name, Object value) {
         if (P_ID_POSTALCODE.equals(name)) {
             setPostalCode((String) value);
             return;
@@ -357,7 +361,8 @@ public class Address implements IPropertySource {
      * The value as displayed in the Property Sheet.
      * @return java.lang.String
      */
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer outStringBuffer = new StringBuffer();
         final String comma_space = ", "; //$NON-NLS-1$
         final String space = " "; //$NON-NLS-1$

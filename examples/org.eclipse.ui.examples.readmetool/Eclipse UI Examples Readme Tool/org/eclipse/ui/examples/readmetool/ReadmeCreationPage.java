@@ -33,8 +33,8 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
 
 /**
- * This class is the only page of the Readme file resource creation wizard.  
- * It subclasses the standard file resource creation page class, 
+ * This class is the only page of the Readme file resource creation wizard.
+ * It subclasses the standard file resource creation page class,
  * and consequently inherits the file resource creation functionality.
  *
  * This page provides users with the choice of creating sample headings for
@@ -69,10 +69,8 @@ public class ReadmeCreationPage extends WizardNewFileCreationPage {
         this.workbench = workbench;
     }
 
-    /** (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         // inherit default container and name specification widgets
         super.createControl(parent);
         Composite composite = (Composite) getControl();
@@ -145,14 +143,15 @@ public class ReadmeCreationPage extends WizardNewFileCreationPage {
         return true;
     }
 
-    /** 
+    /**
      * The <code>ReadmeCreationPage</code> implementation of this
-     * <code>WizardNewFileCreationPage</code> method 
+     * <code>WizardNewFileCreationPage</code> method
      * generates sample headings for sections and subsections in the
      * newly-created Readme file according to the selections of self's
      * checkbox widgets
      */
-    protected InputStream getInitialContents() {
+    @Override
+	protected InputStream getInitialContents() {
         if (!sectionCheckbox.getSelection())
             return null;
 
@@ -183,14 +182,16 @@ public class ReadmeCreationPage extends WizardNewFileCreationPage {
     /** (non-Javadoc)
      * Method declared on WizardNewFileCreationPage.
      */
-    protected String getNewFileLabel() {
+    @Override
+	protected String getNewFileLabel() {
         return MessageUtil.getString("Readme_file_name"); //$NON-NLS-1$
     }
 
     /** (non-Javadoc)
      * Method declared on WizardNewFileCreationPage.
      */
-    public void handleEvent(Event e) {
+    @Override
+	public void handleEvent(Event e) {
         Widget source = e.widget;
 
         if (source == sectionCheckbox) {

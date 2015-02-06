@@ -38,20 +38,16 @@ public class SectionsDialog extends Dialog {
         this.input = input;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Window.
-     */
-    protected void configureShell(Shell newShell) {
+    @Override
+	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(MessageUtil.getString("Readme_Sections")); //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				IReadmeConstants.SECTIONS_DIALOG_CONTEXT);
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog
-     */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
 
         List list = new List(composite, SWT.BORDER);

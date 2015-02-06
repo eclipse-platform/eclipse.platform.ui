@@ -111,7 +111,7 @@ public class ReadmeModelFactory {
     }
 
     /**
-     * Parses the contents of the Readme file by looking for lines 
+     * Parses the contents of the Readme file by looking for lines
      * that start with a number.
      *
      * @param file  the file representing the Readme file

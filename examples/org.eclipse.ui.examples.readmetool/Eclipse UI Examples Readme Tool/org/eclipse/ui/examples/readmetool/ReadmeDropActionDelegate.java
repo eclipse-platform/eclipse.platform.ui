@@ -19,16 +19,14 @@ import org.eclipse.ui.part.IDropActionDelegate;
 /**
  * Adapter for handling the dropping of readme segments into
  * another plugin.  In this case, we expect the segments
- * to be dropped onto <code>IFile</code> object, or an adapter 
+ * to be dropped onto <code>IFile</code> object, or an adapter
  * that supports <code>IFile</code>.
  */
 public class ReadmeDropActionDelegate implements IDropActionDelegate {
     public static final String ID = "org_eclipse_ui_examples_readmetool_drop_actions"; //$NON-NLS-1$
 
-    /** (non-Javadoc)
-     * Method declared on IDropActionDelegate
-     */
-    public boolean run(Object source, Object target) {
+    @Override
+	public boolean run(Object source, Object target) {
         if (source instanceof byte[] && target instanceof IFile) {
             IFile file = (IFile) target;
             try {
