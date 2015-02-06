@@ -12,7 +12,7 @@
 
 package org.eclipse.ui.internal.help;
 
-import org.eclipse.e4.ui.internal.workbench.EHelpService;
+import org.eclipse.e4.ui.services.help.EHelpService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;

@@ -10,7 +10,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723, 445600
  ******************************************************************************/
 
-package org.eclipse.e4.ui.internal.workbench;
+package org.eclipse.e4.ui.services.help;
 
 /**
  * Provides services related to the help system.

@@ -21,6 +21,7 @@ Require-Bundle: org.eclipse.core.commands;bundle-version="[3.4.0,4.0.0)",
 Export-Package: org.eclipse.e4.ui.internal.services;x-friends:="org.eclipse.e4.ui.workbench.swt,org.eclipse.e4.ui.workbench",
  org.eclipse.e4.ui.services,
  org.eclipse.e4.ui.services.events;x-internal:=true,
+ org.eclipse.e4.ui.services.help;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.services.internal.events;x-internal:=true
 Bundle-Activator: org.eclipse.e4.ui.internal.services.Activator
 Service-Component: OSGI-INF/eventBroker.xml
