@@ -1287,7 +1287,7 @@ public class DebugPlugin extends Plugin {
 		throw new CoreException(status);
 	}
 
-	private static String[] parseArgumentsWindows(String args) {
+	private static String[] parseArgumentsWindows(String args, boolean split) {
 		// see http://msdn.microsoft.com/en-us/library/a1y7w461.aspx
 		List<String> result = new ArrayList<String>();
 
@@ -1308,10 +1308,16 @@ public class DebugPlugin extends Plugin {
 				if (ch == '"') {
 					for (; backslashes >= 2; backslashes-= 2) {
 						buf.append('\\');
+						if (split) {
+							buf.append('\\');
+						}
 					}
 					if (backslashes == 1) {
 						if (state == DEFAULT) {
 							state= ARG;
+						}
+						if (split) {
+							buf.append('\\');
 						}
 						buf.append('"');
 						backslashes= 0;
@@ -1344,6 +1350,9 @@ public class DebugPlugin extends Plugin {
 				case ARG:
 					if (ch == '"') {
 						state= IN_DOUBLE_QUOTE;
+						if (split) {
+							buf.append(ch);
+						}
 					} else {
 						state= ARG;
 						buf.append(ch);
@@ -1359,12 +1368,18 @@ public class DebugPlugin extends Plugin {
 							 */
 							buf.append('"');
 							i++;
+							if (split) {
+								buf.append(ch);
+							}
 						} else if (buf.length() == 0) {
 							// empty string on Windows platform. Account for bug in constructor of JDK's java.lang.ProcessImpl.
 							result.add("\"\""); //$NON-NLS-1$
 							state= DEFAULT;
 						} else {
 							state= ARG;
+							if (split) {
+								buf.append(ch);
+							}
 						}
 					} else {
 						buf.append(ch);
@@ -1382,7 +1397,7 @@ public class DebugPlugin extends Plugin {
 		return result.toArray(new String[result.size()]);
 	}
 
-	private static String[] parseArgumentsImpl(String args) {
+	private static String[] parseArgumentsImpl(String args, boolean split) {
 		// man sh, see topic QUOTING
 		List<String> result = new ArrayList<String>();
 
@@ -1411,10 +1426,19 @@ public class DebugPlugin extends Plugin {
 				case DEFAULT:
 				case ARG:
 					if (ch == '"') {
+						if (split) {
+							buf.append(ch);
+						}
 						state= IN_DOUBLE_QUOTE;
 					} else if (ch == '\'') {
+						if (split) {
+							buf.append(ch);
+						}
 						state= IN_SINGLE_QUOTE;
 					} else if (ch == '\\' && i + 1 < len) {
+						if (split) {
+							buf.append(ch);
+						}
 						state= ARG;
 						ch= args.charAt(++i);
 						buf.append(ch);
@@ -1426,9 +1450,15 @@ public class DebugPlugin extends Plugin {
 
 				case IN_DOUBLE_QUOTE:
 					if (ch == '"') {
+						if (split) {
+							buf.append(ch);
+						}
 						state= ARG;
 					} else if (ch == '\\' && i + 1 < len &&
 							(args.charAt(i + 1) == '\\' || args.charAt(i + 1) == '"')) {
+						if (split) {
+							buf.append(ch);
+						}
 						ch= args.charAt(++i);
 						buf.append(ch);
 					} else {
@@ -1438,6 +1468,9 @@ public class DebugPlugin extends Plugin {
 
 				case IN_SINGLE_QUOTE:
 					if (ch == '\'') {
+						if (split) {
+							buf.append(ch);
+						}
 						state= ARG;
 					} else {
 						buf.append(ch);
@@ -1456,12 +1489,17 @@ public class DebugPlugin extends Plugin {
 	}
 
 	/**
-	 * Parses the given command line into separate arguments that can be passed to
-	 * <code>DebugPlugin.exec(String[], File)</code>. Embedded quotes and slashes
-	 * are escaped.
+	 * Parses the given command line into separate arguments that can be passed
+	 * to <code>DebugPlugin.exec(String[], File)</code>. Embedded quotes and
+	 * backslashes are interpreted, i.e. the resulting arguments are in the form
+	 * that will be passed to an invoked process.
+	 * <p>
+	 * The reverse operation is {@link #renderArguments(String[], int[])}.
+	 * </p>
 	 *
 	 * @param args command line arguments as a single string
 	 * @return individual arguments
+	 * @see #renderArguments(String[], int[])
 	 * @since 3.1
 	 */
 	public static String[] parseArguments(String args) {
@@ -1470,26 +1508,50 @@ public class DebugPlugin extends Plugin {
 		}
 
 		if (Constants.OS_WIN32.equals(Platform.getOS())) {
-			return parseArgumentsWindows(args);
+			return parseArgumentsWindows(args, false);
 		}
 
-		return parseArgumentsImpl(args);
+		return parseArgumentsImpl(args, false);
 	}
 
 	/**
-	 * Renders the given array of strings into a single command line.
+	 * Splits the given command line into separate arguments that can be
+	 * concatenated with a space as joiner. Embedded quotes and backslashes are
+	 * kept as is (i.e. not interpreted).
+	 *
+	 * @param args command line arguments as a single string
+	 * @return individual arguments in original (
+	 * @since 3.10
+	 */
+	public static String[] splitArguments(String args) {
+		if (args == null) {
+			return new String[0];
+		}
+
+		if (Constants.OS_WIN32.equals(Platform.getOS())) {
+			return parseArgumentsWindows(args, true);
+		}
+
+		return parseArgumentsImpl(args, true);
+	}
+
+	/**
+	 * Renders the given array of argument strings into a single command line.
+	 * <p>
+	 * If an argument contains whitespace, it it quoted. Contained quotes or
+	 * backslashes will be escaped.
+	 * </p>
 	 * <p>
 	 * If <code>segments</code> is not <code>null</code>, the array is filled
 	 * with the offsets of the start positions of arguments 1 to
 	 * <code>arguments.length - 1</code>, as rendered in the resulting string.
 	 * </p>
 	 *
-	 * @param arguments
-	 *            the command line arguments
-	 * @param segments
-	 *            an array of size <code>arguments.length - 1</code> or
+	 * @param arguments the command line arguments
+	 * @param segments an array of size <code>arguments.length - 1</code> or
 	 *            <code>null</code>
 	 * @return the command line
+	 * @see #parseArguments(String)
 	 * @since 3.8
 	 */
 	public static String renderArguments(String[] arguments, int[] segments) {

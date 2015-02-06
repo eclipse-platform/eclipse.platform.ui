@@ -70,6 +70,16 @@ public class ArgumentParsingTests extends TestCase {
 					Arrays.asList(arguments2).toString());
 		}
 
+		String[] splitArguments = DebugPlugin.splitArguments(commandLine);
+		assertEquals(expectedArgs.length, splitArguments.length);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < splitArguments.length; i++) {
+			if (i > 0) {
+				sb.append(" "); //$NON-NLS-1$
+			}
+			sb.append(splitArguments[i]);
+		}
+		assertEquals(commandLine, sb.toString());
 	}
 
 	private static void runCommandLine(String commandLine, String[] arguments) throws IOException,
@@ -171,10 +181,10 @@ public class ArgumentParsingTests extends TestCase {
 
 	public void test100arg() throws Exception {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < 100; i++)
-		 {
+		for (int i = 0; i < 100; i++) {
 			buf.append("a "); //$NON-NLS-1$
 		}
+		buf.deleteCharAt(buf.length() - 1);
 		String[] args = new String[100];
 		Arrays.fill(args, "a"); //$NON-NLS-1$
 		execute(buf.toString(), args, buf.toString().trim());
