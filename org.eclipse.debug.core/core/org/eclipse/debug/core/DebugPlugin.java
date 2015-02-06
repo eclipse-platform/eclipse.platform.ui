@@ -1518,9 +1518,14 @@ public class DebugPlugin extends Plugin {
 	 * Splits the given command line into separate arguments that can be
 	 * concatenated with a space as joiner. Embedded quotes and backslashes are
 	 * kept as is (i.e. not interpreted).
+	 * <p>
+	 * Use this method to avoid e.g. losing quotes around an argument like
+	 * <code>"${env_var:A}"</code>, which may later be substituted by a string
+	 * that contains spaces.
+	 * </p>
 	 *
 	 * @param args command line arguments as a single string
-	 * @return individual arguments in original (
+	 * @return individual arguments in original form
 	 * @since 3.10
 	 */
 	public static String[] splitArguments(String args) {
