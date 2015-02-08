@@ -41,11 +41,11 @@ public class HistoryStoreTest extends ResourceTest {
 		String dump() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Expected:\n");
-			for (Iterator<Integer> i = expected.iterator(); i.hasNext();)
-				buffer.append("\t" + i.next() + "\n");
+			for (Integer integer : expected)
+				buffer.append("\t" + integer + "\n");
 			buffer.append("Actual:\n");
-			for (Iterator<Integer> i = actual.iterator(); i.hasNext();)
-				buffer.append("\t" + i.next() + "\n");
+			for (Integer integer : actual)
+				buffer.append("\t" + integer + "\n");
 			return buffer.toString();
 		}
 
@@ -68,8 +68,7 @@ public class HistoryStoreTest extends ResourceTest {
 				message += dump();
 				throw new VerificationFailedException(message);
 			}
-			for (Iterator<Integer> i = expected.iterator(); i.hasNext();) {
-				Integer status = i.next();
+			for (Integer status : expected) {
 				if (!actual.contains(status)) {
 					message = "Expected and actual results differ.\n";
 					message += dump();

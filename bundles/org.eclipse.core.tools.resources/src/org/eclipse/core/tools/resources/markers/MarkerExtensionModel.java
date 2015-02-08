@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2005 Geoff Longman and others.
+ * Copyright (c) 2003, 2015 Geoff Longman and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class MarkerExtensionModel {
 
 	static public class MarkerInfo {
 
-		public MarkerInfo(String id, boolean persistent, List supers, List attributes) {
+		public MarkerInfo(String id, boolean persistent, List<String> supers, List<String> attributes) {
 			this.id = id;
 			this.persistent = persistent;
 			this.declaredSupers = supers;
@@ -36,8 +36,8 @@ public class MarkerExtensionModel {
 		}
 
 		public boolean persistent;
-		public List declaredSupers = empty;
-		public List declaredAttributes = empty;
+		public List<String> declaredSupers = Collections.emptyList();
+		public List<String> declaredAttributes = Collections.emptyList();
 		public String id;
 	}
 
@@ -45,12 +45,11 @@ public class MarkerExtensionModel {
 		public void markerModelChanged(MarkerExtensionModel newModel);
 	}
 
-	static List empty = Collections.unmodifiableList(new ArrayList());
 	static public String RESOURCES_PROBLEM = IMarker.PROBLEM;
 	static public String RESOURCES_TASK = IMarker.TASK;
 	static public String RESOURCES_BOOKMARK = IMarker.BOOKMARK;
 	static public String RESOURCES_TEXT = IMarker.TEXT;
-	Map markerMap = new HashMap();
+	Map<String, MarkerInfo> markerMap = new HashMap<String, MarkerInfo>();
 
 	/**
 	 * Constructor for MarkerExtensionHandler.
@@ -62,7 +61,7 @@ public class MarkerExtensionModel {
 	}
 
 	public synchronized MarkerInfo getInfo(String id) {
-		return (MarkerInfo) markerMap.get(id);
+		return markerMap.get(id);
 	}
 
 	private void registerForExtensionChanges() {
@@ -93,8 +92,8 @@ public class MarkerExtensionModel {
 				IExtension extension = extensions[i];
 				String identifier = extension.getUniqueIdentifier();
 				boolean persistent = false;
-				ArrayList supersList = new ArrayList();
-				ArrayList attributes = new ArrayList();
+				ArrayList<String> supersList = new ArrayList<String>();
+				ArrayList<String> attributes = new ArrayList<String>();
 				IConfigurationElement[] configElements = extension.getConfigurationElements();
 				for (int j = 0; j < configElements.length; ++j) {
 					IConfigurationElement elt = configElements[j];
@@ -122,14 +121,13 @@ public class MarkerExtensionModel {
 	// a cruddy debugging tool. Dumps the model out in pseudo xml
 	// so it's easier to see the relationships!
 	private void dumpMarkerTypes() {
-		for (Iterator iter = markerMap.keySet().iterator(); iter.hasNext();) {
-			String type = (String) iter.next();
+		for (String type : markerMap.keySet()) {
 			dumpMarkerType(type, 0);
 		}
 	}
 
 	private void dumpMarkerType(String type, int indent) {
-		MarkerInfo mtype = (MarkerInfo) markerMap.get(type);
+		MarkerInfo mtype = markerMap.get(type);
 		printIndented(indent, "<marker type='" + type + "' ");
 		if (mtype == null) {
 			System.out.println("not-found='true'/>");
@@ -150,8 +148,7 @@ public class MarkerExtensionModel {
 			}
 			printlnIndented(indent + 1, "<supers>");
 			if (hasSupers) {
-				for (Iterator iter = mtype.declaredSupers.iterator(); iter.hasNext();) {
-					String superType = (String) iter.next();
+				for (String superType : mtype.declaredSupers) {
 					dumpMarkerType(superType, indent + 2);
 				}
 			}

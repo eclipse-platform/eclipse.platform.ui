@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002, 2006 Geoff Longman and others.
+ * Copyright (c) 2002, 2015 Geoff Longman and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  * IBM - Tightening integration with existing Platform
  **********************************************************************/
 package org.eclipse.core.tools.resources;
+
+import org.eclipse.jface.action.Action;
 
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -30,7 +32,7 @@ import org.eclipse.ui.*;
  */
 public class ResourceChangeView extends SpyView implements IResourceChangeListener {
 	class DeltaNode implements IAdaptable {
-		private ArrayList children;
+		private ArrayList<DeltaNode> children;
 		private int deltaFlags = -1;
 		private int deltaKind = -1;
 		private DeltaNode parent = null;
@@ -38,7 +40,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		private IResource resource;
 
 		public DeltaNode() {
-			children = new ArrayList();
+			children = new ArrayList<DeltaNode>();
 		}
 
 		public DeltaNode(IResourceDelta delta) {
@@ -51,14 +53,14 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			child.setParent(this);
 		}
 
-		public Object getAdapter(Class key) {
+		public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 			if (key != IResource.class)
 				return null;
 			return resource;
 		}
 
 		public DeltaNode[] getChildren() {
-			return (DeltaNode[]) children.toArray(new DeltaNode[children.size()]);
+			return children.toArray(new DeltaNode[children.size()]);
 		}
 
 		public int getDeltaFlags() {
@@ -122,8 +124,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		 */
 		public void run() {
 			typeFilter = type;
-			for (Iterator i = eventActions.iterator(); i.hasNext();) {
-				IAction action = (IAction) i.next();
+			for (Action action : eventActions) {
 				action.setChecked(action.equals(this));
 			}
 		}
@@ -334,7 +335,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		}
 	}
 
-	protected Set eventActions = new HashSet();
+	protected Set<Action> eventActions = new HashSet<Action>();
 	private Action PHANTOMS;
 	private Action POST_BUILD;
 
@@ -404,8 +405,8 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 	protected void fillPullDownBar(IMenuManager manager) {
 		manager.removeAll();
 
-		for (Iterator i = eventActions.iterator(); i.hasNext();)
-			manager.add((IAction) i.next());
+		for (Action action : eventActions)
+			manager.add(action);
 		manager.add(new Separator("phantoms")); //$NON-NLS-1$
 		manager.add(PHANTOMS);
 	}

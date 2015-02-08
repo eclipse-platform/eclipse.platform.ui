@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			if (!project.exists())
 				continue;
 			//check the project location
-			URI testLocation = locationURIFor(project, true);;
+			URI testLocation = locationURIFor(project, true);
 			if (testLocation == null)
 				continue;
 			boolean usingAnotherScheme = !inputLocation.getScheme().equals(testLocation.getScheme());
@@ -802,6 +802,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		getStore(source).move(destination, EFS.NONE, monitor);
 	}
 
+	@Deprecated
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH.equals(event.getProperty()))
 			lightweightAutoRefreshEnabled = Boolean.valueOf(event.getNewValue().toString());

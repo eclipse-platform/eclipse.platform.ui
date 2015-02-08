@@ -26,9 +26,7 @@ public class SyncInfoDumper extends MultiStrategyDumper {
 	static final byte INDEX = 1;
 	static final byte QNAME = 2;
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
-	 */
+	@Override
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();
 		IStringDumpingStrategy strategy;

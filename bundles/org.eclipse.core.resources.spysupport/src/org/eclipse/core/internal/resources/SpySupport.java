@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * Provides special internal access to the workspace resource implementation.
@@ -36,16 +37,17 @@ public class SpySupport {
 	 * @param resource the resource to get the properties from
 	 * @return the resource's session properties or <code>null</code>
 	 */
-	public static Map getSessionProperties(IResource resource) {
+	public static Map<QualifiedName, Object> getSessionProperties(IResource resource) {
 		ResourceInfo info = ((Resource) resource).getResourceInfo(true, false);
 		if (info == null)
 			return null;
 		return getSessionProperties(info);
 	}
-	public static Map getSessionProperties(ResourceInfo info) {
-		return info.sessionProperties == null ? null : (Map) info.sessionProperties.clone();
+	@SuppressWarnings("unchecked")
+	public static Map<QualifiedName, Object> getSessionProperties(ResourceInfo info) {
+		return info.sessionProperties == null ? null : (Map<QualifiedName, Object>) info.sessionProperties.clone();
 	}
-	public static Map getSyncInfo(ResourceInfo info) {
+	public static Map<QualifiedName, Object> getSyncInfo(ResourceInfo info) {
 		return info.syncInfo;
 	}
 	public static ElementTree getOldestTree() {
@@ -57,7 +59,7 @@ public class SpySupport {
 	public static IMarkerSetElement[] getElements(MarkerSet markerSet) {
 		return markerSet.elements;
 	}
-	public static Object[] getElements(MarkerAttributeMap markerMap) {
+	public static Object[] getElements(MarkerAttributeMap<?> markerMap) {
 		return markerMap.elements;
 	}
 	public static boolean isContentDescriptionCached(File file) {

@@ -29,11 +29,9 @@ import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
  * </pre>
  */
 class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
-	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
-	 */
+	@Override
 	public String dumpStringContents(DataInputStream dataInput) throws IOException {
-		StringBuffer contents = new StringBuffer();
+		StringBuilder contents = new StringBuilder();
 		String resourceName = dataInput.readUTF();
 
 		contents.append("Resource: "); //$NON-NLS-1$
@@ -44,7 +42,7 @@ class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 		return contents.toString();
 	}
 
-	private void dumpReadPartners(DataInputStream input, StringBuffer contents) throws IOException {
+	private void dumpReadPartners(DataInputStream input, StringBuilder contents) throws IOException {
 		int size = input.readInt();
 		for (int i = 0; i < size; i++) {
 			String qualifier = input.readUTF();
@@ -69,11 +67,8 @@ class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
-	 */
+	@Override
 	public String getFormatDescription() {
 		return "Sync info snapshot file version 3"; //$NON-NLS-1$
 	}
-
 }

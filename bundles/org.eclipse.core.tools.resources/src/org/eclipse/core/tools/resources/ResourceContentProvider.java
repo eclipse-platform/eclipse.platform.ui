@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,15 +83,14 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 */
 	protected void extractPersistentProperties(IResource resource) {
 		try {			
-			Map properties = ((Workspace) ResourcesPlugin.getWorkspace()).getPropertyManager().getProperties(resource);
+			Map<QualifiedName, String> properties = ((Workspace) ResourcesPlugin.getWorkspace()).getPropertyManager().getProperties(resource);
 			if (properties.isEmpty())
 				return;
 			// creates a node for persistent properties and populates it
 			TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_persistent_properties); //$NON-NLS-1$
 			getRootNode().addChild(propertiesRootNode);
-			for (Iterator i = properties.entrySet().iterator(); i.hasNext();) {
-				Map.Entry entry = (Map.Entry) i.next();
-				propertiesRootNode.addChild(createNode(entry.getKey().toString(), entry.getValue().toString()));
+			for (Map.Entry<QualifiedName, String> entry : properties.entrySet()) {
+				propertiesRootNode.addChild(createNode(entry.getKey().toString(), entry.getValue()));
 			}
 		} catch (CoreException ce) {
 			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_stored_properties, ce.toString()))); //$NON-NLS-1$
@@ -106,7 +105,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	protected void extractSessionProperties(IResource resource) {
 
 		// retrieves all session properties for the selected resource 
-		Map properties = org.eclipse.core.internal.resources.SpySupport.getSessionProperties(resource);
+		Map<QualifiedName, Object> properties = org.eclipse.core.internal.resources.SpySupport.getSessionProperties(resource);
 		if (properties == null || properties.size() == 0)
 			return;
 
@@ -114,9 +113,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_session_properties); //$NON-NLS-1$
 		getRootNode().addChild(propertiesRootNode);
 
-		Set set = properties.entrySet();
-		for (Iterator propertiesIter = set.iterator(); propertiesIter.hasNext();) {
-			Map.Entry entry = (Map.Entry) propertiesIter.next();
+		for (Map.Entry<QualifiedName, Object> entry : properties.entrySet()) {
 			propertiesRootNode.addChild(createNode(entry.getKey().toString(), entry.getValue()));
 		}
 
@@ -268,15 +265,13 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 */
 	protected void extractMarkerAttributes(TreeContentProviderNode markerNode, IMarker marker) throws CoreException {
 
-		Map attributes = marker.getAttributes();
+		Map<String, Object> attributes = marker.getAttributes();
 		if (attributes == null || attributes.size() == 0)
 			return;
 
 		// create a node (under markerNode) for each attribute found
-		Set entrySet = attributes.entrySet();
-		for (Iterator iterator = entrySet.iterator(); iterator.hasNext();) {
-			Map.Entry mapEntry = (Map.Entry) iterator.next();
-			String attributeName = (String) mapEntry.getKey();
+		for (Map.Entry<String, Object> mapEntry : attributes.entrySet()) {
+			String attributeName = mapEntry.getKey();
 			Object attributeValue = mapEntry.getValue();
 			// adds each attribute as a subnode under 
 			// this marker's node
@@ -293,17 +288,15 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 * @param info the resource info object from where to extract information
 	 */
 	protected void extractSyncInfo(ResourceInfo info) {
-		Map syncInfo = info.getSyncInfo(true);
-		if (syncInfo == null || syncInfo.size() == 0)
+		Map<QualifiedName, Object> syncInfo = info.getSyncInfo(true);
+		if (syncInfo == null || syncInfo.isEmpty())
 			return;
 
 		// creates a root node for all sync info		
 		TreeContentProviderNode syncInfoParentNode = createNode(Messages.resource_sync_info); //$NON-NLS-1$
 		getRootNode().addChild(syncInfoParentNode);
 
-		Set entrySet = syncInfo.entrySet();
-		for (Iterator syncInfoIterator = entrySet.iterator(); syncInfoIterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) syncInfoIterator.next();
+		for (Map.Entry<QualifiedName, Object> entry : syncInfo.entrySet()) {
 			// creates a sync info node	
 			String name = entry.getKey().toString();
 			String value = ByteUtil.byteArrayToString((byte[]) entry.getValue(), MAX_SYNC_INFO_BYTES);

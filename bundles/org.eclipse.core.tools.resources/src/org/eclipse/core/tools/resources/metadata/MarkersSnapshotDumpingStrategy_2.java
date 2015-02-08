@@ -42,14 +42,11 @@ import org.eclipse.core.tools.metadata.*;
  * </pre>
  */
 class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
-
-	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
-	 */
+	@Override
 	public String dumpStringContents(DataInputStream input) throws IOException, DumpException {
-		StringBuffer contents = new StringBuffer();
+		StringBuilder contents = new StringBuilder();
 		DataInputStream dataInput = new DataInputStream(input);
-		List markerTypes = new ArrayList();
+		List<String> markerTypes = new ArrayList<String>();
 		String resourceName = dataInput.readUTF();
 		contents.append("Resource: "); //$NON-NLS-1$
 		contents.append(resourceName);
@@ -58,7 +55,7 @@ class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 		return contents.toString();
 	}
 
-	private void dumpMarkers(DataInputStream input, StringBuffer contents, List markerTypes) throws IOException, DumpException {
+	private void dumpMarkers(DataInputStream input, StringBuilder contents, List<String> markerTypes) throws IOException, DumpException {
 		int markersSize = input.readInt();
 		contents.append("Markers ["); //$NON-NLS-1$
 		contents.append(markersSize);
@@ -76,7 +73,7 @@ class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 		}
 	}
 
-	private void dumpAttributes(DataInputStream input, StringBuffer contents) throws IOException, DumpException {
+	private void dumpAttributes(DataInputStream input, StringBuilder contents) throws IOException, DumpException {
 		int attributesSize = input.readShort();
 		contents.append("Attributes ["); //$NON-NLS-1$
 		contents.append(attributesSize);
@@ -108,7 +105,7 @@ class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 		}
 	}
 
-	private void dumpMarkerType(DataInputStream input, StringBuffer contents, List markerTypes) throws IOException, DumpException {
+	private void dumpMarkerType(DataInputStream input, StringBuilder contents, List<String> markerTypes) throws IOException, DumpException {
 
 		String markerType;
 		byte constant = input.readByte();
@@ -118,7 +115,7 @@ class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 				markerTypes.add(markerType);
 				break;
 			case MarkersSnapshotDumper.INDEX :
-				markerType = (String) markerTypes.get(input.readInt());
+				markerType = markerTypes.get(input.readInt());
 				break;
 			default :
 				throw new PartialDumpException("Invalid marker type constant found: " + constant, contents); //$NON-NLS-1$
@@ -128,9 +125,7 @@ class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 		contents.append('\n');
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
-	 */
+	@Override
 	public String getFormatDescription() {
 		return "Markers file version 2"; //$NON-NLS-1$
 	}

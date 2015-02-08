@@ -12,6 +12,8 @@
  **********************************************************************/
 package org.eclipse.core.tools.resources.markers;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -67,7 +69,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	protected MarkerViewPropertySheetPage propertyPage;
 
 	class SelectionProvider implements ISelectionProvider {
-		private List listeners = new ArrayList();
+		private List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
 		private ISelection selection;
 
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
@@ -85,8 +87,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		public synchronized void setSelection(ISelection selection) {
 			this.selection = selection;
 			SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-			for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-				ISelectionChangedListener listener = (ISelectionChangedListener) iter.next();
+			for (ISelectionChangedListener listener : listeners) {
 				listener.selectionChanged(event);
 			}
 		}
@@ -142,7 +143,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 					int count = selection.size();
 					int deleted = 1;
 					monitor.beginTask("deleting #" + deleted + " of " + count + " markers.", count);
-					for (Iterator iter = selection.iterator(); iter.hasNext();) {
+					for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 						IMarker marker = (IMarker) iter.next();
 						try {
 							marker.delete();
@@ -550,7 +551,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			propertyPage = new MarkerViewPropertySheetPage(this);
 			return propertyPage;

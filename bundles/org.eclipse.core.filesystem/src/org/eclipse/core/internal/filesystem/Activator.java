@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.core.internal.filesystem;
 
 import java.io.File;
+import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -37,12 +39,13 @@ public class Activator implements BundleActivator {
 			if (instance != null) {
 				BundleContext ctx = instance.context;
 				if (ctx != null) {
-					ServiceReference[] refs = ctx.getServiceReferences(Location.class.getName(), Location.INSTANCE_FILTER);
-					if (refs != null && refs.length == 1) {
-						Location location = (Location) ctx.getService(refs[0]);
+					Collection<ServiceReference<Location>> refs = ctx.getServiceReferences(Location.class, Location.INSTANCE_FILTER);
+					if (refs != null && refs.size() == 1) {
+						ServiceReference<Location> ref = refs.iterator().next();
+						Location location = ctx.getService(ref);
 						if (location != null) {
 							IPath instancePath = new Path(new File(location.getURL().getFile()).toString());
-							ctx.ungetService(refs[0]);
+							ctx.ungetService(ref);
 							return instancePath.append(".metadata/.plugins").append(Policy.PI_FILE_SYSTEM); //$NON-NLS-1$
 						}
 					}
@@ -61,7 +64,7 @@ public class Activator implements BundleActivator {
 		instance = this;
 	}
 
-	public static Enumeration findEntries(String path, String filePattern, boolean recurse) {
+	public static Enumeration<URL> findEntries(String path, String filePattern, boolean recurse) {
 		if (instance != null && instance.context != null)
 			return instance.context.getBundle().findEntries(path, filePattern, recurse);
 		return null;

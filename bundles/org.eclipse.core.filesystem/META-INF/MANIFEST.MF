@@ -13,6 +13,6 @@ Export-Package: org.eclipse.core.filesystem,
  org.eclipse.core.internal.filesystem.local;x-internal:=true,
  org.eclipse.core.internal.filesystem.local.unix;x-internal:=true
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.core.internal.filesystem.Activator

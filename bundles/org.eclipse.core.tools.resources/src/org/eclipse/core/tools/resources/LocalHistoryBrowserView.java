@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 			return null;
 		}
 
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			return null;
 		}
 	}
@@ -90,13 +90,13 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 		Node parent;
 		String name;
-		ArrayList children;
+		ArrayList<Object> children;
 
 		public Node(Node parent, String name) {
 			super();
 			this.parent = parent;
 			this.name = name;
-			this.children = new ArrayList();
+			this.children = new ArrayList<Object>();
 		}
 
 		public void addChild(Object child) {
@@ -116,11 +116,10 @@ public class LocalHistoryBrowserView extends ViewPart {
 		}
 
 		public Object getChild(String childName) {
-			for (Iterator i = children.iterator(); i.hasNext();) {
-				Object next = i.next();
-				if (next instanceof Node) {
-					if (((Node) next).getName().equals(childName))
-						return next;
+			for (Object child : children) {
+				if (child instanceof Node) {
+					if (((Node) child).getName().equals(childName))
+						return child;
 				}
 			}
 			return null;
@@ -167,9 +166,8 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 		public void initialize() {
 			invisibleRoot = new Node(null, "/"); //$NON-NLS-1$
-			Set allFiles = store.allFiles(Path.ROOT, IResource.DEPTH_INFINITE, null);
-			for (Iterator iterator = allFiles.iterator(); iterator.hasNext();) {
-				IPath path = (IPath) iterator.next();
+			Set<IPath> allFiles = store.allFiles(Path.ROOT, IResource.DEPTH_INFINITE, null);
+			for (IPath path : allFiles) {
 				Node current = invisibleRoot;
 				String[] segments = path.segments();
 				for (int i = 0; i < segments.length; i++) {

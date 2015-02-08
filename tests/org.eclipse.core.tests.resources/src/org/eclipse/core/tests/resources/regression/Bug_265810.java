@@ -184,7 +184,7 @@ public class Bug_265810 extends ResourceTest {
 					public boolean visit(IResourceDelta delta) {
 						IResource resource = delta.getResource();
 						if (resource instanceof IFile && !resource.getName().equals(".project"))
-							resourceDeltas.add(delta);
+							addToResourceDelta(delta);
 						if (delta.getAffectedChildren().length > 0)
 							return true;
 						return false;
@@ -195,4 +195,8 @@ public class Bug_265810 extends ResourceTest {
 			}
 		}
 	};
+
+	boolean addToResourceDelta(IResourceDelta delta) {
+		return resourceDeltas.add(delta);
+	}
 }

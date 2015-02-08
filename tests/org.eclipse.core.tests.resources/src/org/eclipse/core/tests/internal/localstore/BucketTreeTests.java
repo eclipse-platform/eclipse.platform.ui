@@ -103,10 +103,9 @@ public class BucketTreeTests extends ResourceTest {
 			Map<String, String> value = (Map<String, String>) entryValue;
 			int length = value.size();
 			destination.writeShort(length);
-			for (Iterator<Map.Entry<String, String>> i = value.entrySet().iterator(); i.hasNext();) {
-				Map.Entry<String, String> element = i.next();
-				destination.writeUTF(element.getKey());
-				destination.writeUTF(element.getValue());
+			for (Map.Entry<String, String> entry : value.entrySet()) {
+				destination.writeUTF(entry.getKey());
+				destination.writeUTF(entry.getValue());
 			}
 		}
 	}

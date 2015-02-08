@@ -14,10 +14,12 @@ package org.eclipse.core.tests.internal.resources;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.resources.*;
@@ -166,16 +168,15 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			Map<String, String> args = commands[i].getArguments();
 			Map<String, String> args2 = commands2[i].getArguments();
 			assertEquals(errorTag + ".2." + (i + 1) + "0", args.size(), args2.size());
-			Set<String> keys = args.keySet();
 			int x = 1;
-			for (Iterator<String> j = keys.iterator(); j.hasNext(); x++) {
-				Object key = j.next();
+			for (String key : args.keySet()) {
 				String value = args.get(key);
 				String value2 = args2.get(key);
 				if (value == null)
 					assertNull(errorTag + ".2." + (i + 1) + x, value2);
 				else
 					assertTrue(errorTag + ".3." + (i + 1) + x, args.get(key).equals((args2.get(key))));
+				x++;
 			}
 		}
 	}
@@ -186,15 +187,14 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			return;
 		}
 		assertEquals(errorTag + ".4.01", links.size(), links2.size());
-		Set<IPath> keys = links.keySet();
 		int x = 1;
-		for (Iterator<IPath> i = keys.iterator(); i.hasNext(); x++) {
-			IPath key = i.next();
+		for (IPath key : links.keySet()) {
 			LinkDescription value = links.get(key);
 			LinkDescription value2 = links2.get(key);
 			assertTrue(errorTag + ".4." + x, value.getProjectRelativePath().equals(value2.getProjectRelativePath()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
 			assertEquals(errorTag + ".6." + x, value.getLocationURI(), value2.getLocationURI());
+			x++;
 		}
 	}
 
@@ -552,8 +552,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			createFileInFileSystem(location, stream);
 			ProjectDescription projDesc = reader.read(location);
 			ensureDoesNotExistInFileSystem(location.toFile());
-			for (Iterator<LinkDescription> i = projDesc.getLinks().values().iterator(); i.hasNext();) {
-				LinkDescription link = i.next();
+			for (LinkDescription link : projDesc.getLinks().values()) {
 				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocationURI());
 			}
 		} finally {
@@ -575,8 +574,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			createFileInFileSystem(location, stream);
 			ProjectDescription projDesc = reader.read(location);
 			ensureDoesNotExistInFileSystem(location.toFile());
-			for (Iterator<LinkDescription> i = projDesc.getLinks().values().iterator(); i.hasNext();) {
-				LinkDescription link = i.next();
+			for (LinkDescription link : projDesc.getLinks().values()) {
 				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocationURI());
 			}
 		} finally {

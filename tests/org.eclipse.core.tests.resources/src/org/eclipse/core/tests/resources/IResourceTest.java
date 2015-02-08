@@ -270,12 +270,13 @@ public class IResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Returns an array of all projects in the given resource array. */
+	 * Returns an array of all projects in the given resource array.
+     */
 	protected IProject[] getProjects(IResource[] resources) {
-		ArrayList<IResource> list = new ArrayList<IResource>();
+		ArrayList<IProject> list = new ArrayList<IProject>();
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() == IResource.PROJECT) {
-				list.add(resources[i]);
+				list.add((IProject) resources[i]);
 			}
 		}
 		return list.toArray(new IProject[list.size()]);

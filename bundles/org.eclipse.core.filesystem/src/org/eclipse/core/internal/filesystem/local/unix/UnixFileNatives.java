@@ -12,6 +12,7 @@
 package org.eclipse.core.internal.filesystem.local.unix;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Enumeration;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -49,7 +50,7 @@ public abstract class UnixFileNatives {
 
 	private static boolean isLibraryPresent() {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
-		Enumeration entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
+		Enumeration<URL> entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
 		return entries != null && entries.hasMoreElements();
 	}
 

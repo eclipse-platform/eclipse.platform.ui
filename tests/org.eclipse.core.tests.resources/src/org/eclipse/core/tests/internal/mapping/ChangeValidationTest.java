@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.mapping;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
@@ -46,8 +47,7 @@ public class ChangeValidationTest extends ResourceTest {
 				actualMessages.add(message);
 		}
 		if (expectedMessages.length < actualMessages.size()) {
-			for (Iterator<String> iter = actualMessages.iterator(); iter.hasNext();) {
-				String actual = iter.next();
+			for (String actual : actualMessages) {
 				boolean found = false;
 				for (int i = 0; i < expectedMessages.length; i++) {
 					String expected = expectedMessages[i];
@@ -60,10 +60,9 @@ public class ChangeValidationTest extends ResourceTest {
 					fail("Unexpected message returned: " + actual);
 			}
 		} else {
-			for (int i = 0; i < expectedMessages.length; i++) {
-				String string = expectedMessages[i];
-				if (!actualMessages.contains(string)) {
-					fail("Expect message missing: " + string);
+			for (String expectedMessage : expectedMessages) {
+				if (!actualMessages.contains(expectedMessage)) {
+					fail("Expect message missing: " + expectedMessage);
 				}
 			}
 		}

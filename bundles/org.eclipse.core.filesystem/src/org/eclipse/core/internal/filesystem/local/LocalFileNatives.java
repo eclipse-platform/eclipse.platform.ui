@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
+import java.net.URL;
 import java.util.Enumeration;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileSystem;
@@ -47,7 +48,7 @@ abstract class LocalFileNatives {
 
 	private static boolean isLibraryPresent() {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
-		Enumeration entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
+		Enumeration<URL> entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
 		return entries != null && entries.hasMoreElements();
 	}
 

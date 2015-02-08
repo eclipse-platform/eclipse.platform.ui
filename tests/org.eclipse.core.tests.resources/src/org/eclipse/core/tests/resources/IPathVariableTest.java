@@ -116,9 +116,8 @@ public class IPathVariableTest extends ResourceTest {
 				message += dump();
 				throw new VerificationFailedException(message);
 			}
-			for (Iterator<Event> i = expected.iterator(); i.hasNext();) {
-				Event e = i.next();
-				if (!actual.contains(e)) {
+			for (Event event : expected) {
+				if (!actual.contains(event)) {
 					message = "Expected and actual results differ.\n";
 					message += dump();
 					throw new VerificationFailedException(message);
@@ -138,11 +137,11 @@ public class IPathVariableTest extends ResourceTest {
 		String dump() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Expected:\n");
-			for (Iterator<Event> i = expected.iterator(); i.hasNext();)
-				buffer.append("\t" + i.next() + "\n");
+			for (Event event : expected)
+				buffer.append("\t" + event + "\n");
 			buffer.append("Actual:\n");
-			for (Iterator<Event> i = actual.iterator(); i.hasNext();)
-				buffer.append("\t" + i.next() + "\n");
+			for (Event event : actual)
+				buffer.append("\t" + event + "\n");
 			return buffer.toString();
 		}
 	}

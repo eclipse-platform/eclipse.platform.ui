@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.resources;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IContainer;
-
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -41,7 +41,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run(IAction action) {
-		List resources = getSelectedResources();
+		List<IResource> resources = getSelectedResources();
 		try {
 			int count = countResources(resources);
 			showResourcesCount(resources, count);
@@ -57,9 +57,10 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * 
 	 * @return a list of resources
 	 */
-	private List getSelectedResources() {
+	@SuppressWarnings("rawtypes")
+	private List<IResource> getSelectedResources() {
 
-		List resources = new LinkedList();
+		List<IResource> resources = new LinkedList<IResource>();
 
 		ISelectionService selectionService = window.getSelectionService();
 		ISelection selection = selectionService.getSelection();
@@ -90,14 +91,14 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * @param count the number of resources found
 	 */
 
-	private void showResourcesCount(List resources, int count) {
+	private void showResourcesCount(List<IResource> resources, int count) {
 		StringBuffer message = new StringBuffer();
 		message.append("Number of resources visited: "); //$NON-NLS-1$
 		message.append(count);
 		message.append("\nStarting point(s): \n"); //$NON-NLS-1$
-		for (Iterator resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+		for (IResource resource : resources) {
 			message.append('\t');
-			message.append(((IResource) resourcesIter.next()).getFullPath());
+			message.append(resource.getFullPath());
 			message.append('\n');
 		}
 		MessageDialog.openInformation(window.getShell(), "Resource counting", message.toString()); //$NON-NLS-1$
@@ -136,12 +137,12 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * @throws CoreException if a visited resource does not exist
 	 * @see IResource#accept(org.eclipse.core.resources.IResourceVisitor)
 	 */
-	private int countResources(List resources) throws CoreException {
+	private int countResources(List<IResource> resources) throws CoreException {
 
 		ResourceCounterVisitor counter = new ResourceCounterVisitor();
 
-		for (Iterator resourcesIter = resources.iterator(); resourcesIter.hasNext();)
-			((IResource) resourcesIter.next()).accept(counter, IResource.DEPTH_INFINITE, IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+		for (IResource resource : resources)
+			resource.accept(counter, IResource.DEPTH_INFINITE, IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 
 		return counter.count;
 	}
@@ -193,25 +194,23 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * 
 	 * @param resourcesList a <code>List</code> object containing resource objects.
 	 */
-	private void eliminateRedundancies(List resourcesList) {
+	private void eliminateRedundancies(List<IResource> resourcesList) {
 		if (resourcesList.size() <= 1)
 			return;
 
 		//	we sort the resources list by path so it is easier to check for redundancies     
-		Collections.sort(resourcesList, new Comparator() {
-			public int compare(Object arg1, Object arg2) {
-				IResource resource1 = (IResource) arg1;
-				IResource resource2 = (IResource) arg2;
+		Collections.sort(resourcesList, new Comparator<IResource>() {
+			public int compare(IResource resource1, IResource resource2) {
 				return resource1.getFullPath().toString().compareTo(resource2.getFullPath().toString());
 			}
 		});
 
 		// We iterate through the list removing any resource which is descendant 
 		// from any resource previously visited 
-		Iterator resourcesIter = resourcesList.iterator();
-		IResource last = (IResource) resourcesIter.next();
+		Iterator<IResource> resourcesIter = resourcesList.iterator();
+		IResource last = resourcesIter.next();
 		while (resourcesIter.hasNext()) {
-			IResource current = (IResource) resourcesIter.next();
+			IResource current = resourcesIter.next();
 			if (last.getFullPath().isPrefixOf(current.getFullPath()))
 				resourcesIter.remove();
 			else

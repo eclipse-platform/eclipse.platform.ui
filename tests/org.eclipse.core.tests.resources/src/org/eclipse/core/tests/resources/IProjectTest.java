@@ -12,7 +12,8 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
@@ -2478,8 +2479,8 @@ public class IProjectTest extends ResourceTest {
 				fail("2.2", e);
 			}
 		} finally {
-			for (Iterator<IPath> i = pathsToDelete.iterator(); i.hasNext();) {
-				Workspace.clear(i.next().toFile());
+			for (IPath path : pathsToDelete) {
+				Workspace.clear(path.toFile());
 			}
 		}
 	}

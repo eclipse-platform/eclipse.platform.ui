@@ -37,6 +37,7 @@ public class SignaledBuilder extends IncrementalProjectBuilder {
 		reset();
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		instances.put(getProject(), this);
 		try {

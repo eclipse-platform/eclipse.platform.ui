@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class PropertiesIndexDumper extends AbstractDumper {
 		contents.append("entries: ");
 		contents.append(entryCount);
 		contents.append('\n');
-		List qualifierIndex = new ArrayList();		
+		List<String> qualifierIndex = new ArrayList<String>();
 		for (int i = 0; i < entryCount; i++) {
 			contents.append("Key: ");
 			contents.append(source.readUTF());
@@ -51,7 +51,7 @@ public class PropertiesIndexDumper extends AbstractDumper {
 						int index = source.readInt();
 						if (index < 0 || index >= qualifierIndex.size())
 							throw new DumpException("Invalid qualifier index: " + index + ". Table size is " + qualifierIndex.size());
-						qualifier = (String) qualifierIndex.get(index);
+						qualifier = qualifierIndex.get(index);
 						break;
 					default : {
 						contents.append("Invalid qualifier tag: ");

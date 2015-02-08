@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.mapping;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelStatus;
 import org.eclipse.core.runtime.*;
@@ -90,8 +91,7 @@ public class ChangeDescription {
 
 	private void ensureResourceCovered(IResource resource, List<IResource> list) {
 		IPath path = resource.getFullPath();
-		for (Iterator<IResource> iter = list.iterator(); iter.hasNext();) {
-			IResource root = iter.next();
+		for (IResource root : list) {
 			if (root.getFullPath().isPrefixOf(path)) {
 				return;
 			}

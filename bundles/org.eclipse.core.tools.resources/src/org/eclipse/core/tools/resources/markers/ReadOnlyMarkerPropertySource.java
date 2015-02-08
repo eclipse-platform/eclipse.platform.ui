@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2005 Geoff Longman and others.
+ * Copyright (c) 2003, 2015 Geoff Longman and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.core.tools.resources.markers;
 
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -46,20 +47,19 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
 	 */
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		ArrayList descriptors = new ArrayList();
+		ArrayList<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
 		findPropertyDescriptors(descriptors);
-		return (IPropertyDescriptor[]) descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
+		return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
 	}
 
-	private void findPropertyDescriptors(ArrayList descriptorList) {
+	private void findPropertyDescriptors(ArrayList<PropertyDescriptor> descriptorList) {
 		try {
-			Set attributesWithoutDescriptors = new HashSet(marker.getAttributes().keySet());
+			Set<String> attributesWithoutDescriptors = new HashSet<String>(marker.getAttributes().keySet());
 			findDeclaredPropertyDescriptorsFor(info, descriptorList, attributesWithoutDescriptors);
 			if (!attributesWithoutDescriptors.isEmpty()) {
 				// we have extra, undeclared attributes.
 				// we will create the correct property descriptor
-				for (Iterator iter = attributesWithoutDescriptors.iterator(); iter.hasNext();) {
-					String name = (String) iter.next();
+				for (String name : attributesWithoutDescriptors) {
 					PropertyDescriptor desc = new PropertyDescriptor(name, name);
 					desc.setCategory("undeclared attributes");
 					descriptorList.add(desc);
@@ -70,7 +70,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		}
 	}
 
-	private void findDeclaredPropertyDescriptorsFor(MarkerExtensionModel.MarkerInfo anInfo, ArrayList descriptorList, Set actualAttributeSet) {
+	private void findDeclaredPropertyDescriptorsFor(MarkerExtensionModel.MarkerInfo anInfo, List<PropertyDescriptor> descriptorList, Set<String> actualAttributeSet) {
 		if (anInfo == null)
 			return;
 		try {
@@ -81,15 +81,13 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		} catch (CoreException e) {
 			// ignore
 		}
-		for (Iterator iter = anInfo.declaredAttributes.iterator(); iter.hasNext();) {
-			String attr = (String) iter.next();
+		for (String attr : anInfo.declaredAttributes) {
 			PropertyDescriptor desc = new PropertyDescriptor(attr, attr);
 			desc.setCategory(anInfo.id);
 			descriptorList.add(desc);
 			actualAttributeSet.remove(attr);
 		}
-		for (Iterator iter = anInfo.declaredSupers.iterator(); iter.hasNext();) {
-			String superId = (String) iter.next();
+		for (String superId : anInfo.declaredSupers) {
 			MarkerExtensionModel.MarkerInfo superInfo = model.getInfo(superId);
 			if (superInfo == null) {
 				CoreResourcesToolsPlugin.logProblem("internal error. could not find supertype" + superId + "of marker" + info.id, IStatus.ERROR);

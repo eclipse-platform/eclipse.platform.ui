@@ -50,8 +50,8 @@ public class LocalFileNativesManager {
 			DELEGATE = new LocalFileHandler();
 		} else {
 			try {
-				Class c = LocalFileNativesManager.class.getClassLoader().loadClass("org.eclipse.core.internal.filesystem.java7.HandlerFactory"); //$NON-NLS-1$
-				DELEGATE = (NativeHandler) c.getMethod("getHandler", null).invoke(null, null); //$NON-NLS-1$
+				Class<?> c = LocalFileNativesManager.class.getClassLoader().loadClass("org.eclipse.core.internal.filesystem.java7.HandlerFactory"); //$NON-NLS-1$
+				DELEGATE = (NativeHandler) c.getMethod("getHandler", (Class<?>) null).invoke(null, (Object) null); //$NON-NLS-1$
 			} catch (ClassNotFoundException e) {
 				// Class was missing?
 				// Leave the delegate as default

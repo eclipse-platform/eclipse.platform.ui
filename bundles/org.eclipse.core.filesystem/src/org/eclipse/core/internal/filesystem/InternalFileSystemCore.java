@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 * element for the extension.  Once the file system has been created, the
 	 * map contains the IFileSystem instance for that scheme.
 	 */
-	private HashMap fileSystems;
+	private HashMap<String, Object> fileSystems;
 
 	/**
 	 * Returns the singleton instance of this class.
@@ -59,7 +59,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	public IFileSystem getFileSystem(String scheme) throws CoreException {
 		if (scheme == null)
 			throw new NullPointerException();
-		final HashMap registry = getFileSystemRegistry();
+		final HashMap<String, Object> registry = getFileSystemRegistry();
 		Object result = registry.get(scheme);
 		if (result == null)
 			Policy.error(EFS.ERROR_INTERNAL, NLS.bind(Messages.noFileSystem, scheme));
@@ -111,9 +111,9 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 * Returns the fully initialized file system registry
 	 * @return The file system registry
 	 */
-	private synchronized HashMap getFileSystemRegistry() {
+	private synchronized HashMap<String, Object> getFileSystemRegistry() {
 		if (fileSystems == null) {
-			fileSystems = new HashMap();
+			fileSystems = new HashMap<String, Object>();
 			IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {

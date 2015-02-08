@@ -33,13 +33,10 @@ import org.eclipse.core.tools.metadata.*;
  * </pre>
  */
 class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
-
-	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
-	 */
+	@Override
 	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
-		StringBuffer contents = new StringBuffer();
-		List readPartners = new ArrayList();
+		StringBuilder contents = new StringBuilder();
+		List<String> readPartners = new ArrayList<String>();
 		String resourceName;
 		while (dataInput.available() > 0) {
 			resourceName = dataInput.readUTF();
@@ -53,7 +50,7 @@ class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
 		return contents.toString();
 	}
 
-	private void dumpReadPartners(DataInputStream input, StringBuffer contents, List readPartners) throws DumpException, IOException {
+	private void dumpReadPartners(DataInputStream input, StringBuilder contents, List<String> readPartners) throws DumpException, IOException {
 		int size = input.readInt();
 
 		for (int i = 0; i < size; i++) {
@@ -71,7 +68,7 @@ class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
 					readPartners.add(qualifiedName);
 					break;
 				case SyncInfoDumper.INDEX :
-					qualifiedName = (String) readPartners.get(input.readInt());
+					qualifiedName = readPartners.get(input.readInt());
 					break;
 				default :
 					//if we get here then the sync info file is corrupt
@@ -91,15 +88,11 @@ class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
 			contents.append("): "); //$NON-NLS-1$
 			contents.append(ByteUtil.byteArrayToString(bytes, 64));
 			contents.append('\n');
-
 		}
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
-	 */
+	@Override
 	public String getFormatDescription() {
 		return "Sync info file version 3"; //$NON-NLS-1$
 	}
-
 }

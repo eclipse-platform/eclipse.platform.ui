@@ -20,18 +20,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * A builder that does not do anything.
  */
 public class SimpleBuilder extends IncrementalProjectBuilder {
+	/** contants */
+	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.simplebuilder";
 
 	protected int triggerForLastBuild;
 	protected static SimpleBuilder instance;
-
-	/** contants */
-	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.simplebuilder";
 
 	public SimpleBuilder() {
 		super();
 		instance = this;
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) {
 		triggerForLastBuild = kind;
 		return null;
@@ -41,9 +41,6 @@ public class SimpleBuilder extends IncrementalProjectBuilder {
 		return instance;
 	}
 
-	/**
-	 * 
-	 */
 	protected void startupOnInitialize() {
 	}
 

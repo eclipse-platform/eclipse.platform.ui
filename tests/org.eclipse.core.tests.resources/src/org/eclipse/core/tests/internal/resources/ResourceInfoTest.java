@@ -12,8 +12,7 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.io.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.ResourceInfo;
@@ -54,16 +53,16 @@ public class ResourceInfoTest extends ResourceTest {
 			assertEquals(message, expected[i], actual[i]);
 	}
 
-	static public void assertEquals(String message, Hashtable<?, ?> expected, Hashtable<?, ?> actual) {
+	static public void assertEquals(String message, Map<?, ?> expected, Map<?, ?> actual) {
 		if (expected == null && actual == null)
 			return;
 		if (expected == null || actual == null)
 			assertTrue(message, false);
 		assertEquals(message, expected.size(), actual.size());
-		for (Enumeration<?> e = expected.keys(); e.hasMoreElements();) {
-			Object key = e.nextElement();
+		for (Map.Entry<?, ?> entry : expected.entrySet()) {
+			Object key = entry.getKey();
 			assertTrue(message, actual.containsKey(key));
-			Object expectedValue = expected.get(key);
+			Object expectedValue = entry.getValue();
 			Object actualValue = actual.get(key);
 			if (expectedValue instanceof byte[] && actualValue instanceof byte[])
 				assertEquals(message, (byte[]) expectedValue, (byte[]) actualValue);

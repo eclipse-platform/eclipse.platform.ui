@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 	class UpdateAction extends Action {
 
-		class Counter implements Comparable {
+		class Counter implements Comparable<Counter> {
 			int count = 1;
 			String name;
 
@@ -50,8 +50,8 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 				count++;
 			}
 
-			public int compareTo(Object o) {
-				return ((Counter) o).getCount() - count;
+			public int compareTo(Counter o) {
+				return o.getCount() - count;
 			}
 
 			int getCount() {
@@ -74,10 +74,10 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 		int resourceCount;
 		DeepSize sessionPropertyMemory;
-		List sortedList;
+		List<Counter> sortedList;
 		int stringMemory;
 
-		final Map strings = new HashMap();
+		final Map<String, Counter> strings = new HashMap<String, Counter>();
 		int syncInfoCount;
 		int syncInfoMemory;
 		int teamPrivateCount;
@@ -102,7 +102,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 				stringMemory += basicSizeof(name);
 
 				//now want to count the number of duplicate equal but non-identical strings
-				Counter counter = (Counter) strings.get(name);
+				Counter counter = strings.get(name);
 				if (counter == null)
 					strings.put(name, new Counter(name));
 				else
@@ -111,7 +111,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		void analyzeStrings() {
-			sortedList = new ArrayList(strings.values());
+			sortedList = new ArrayList<Counter>(strings.values());
 			Collections.sort(sortedList);
 		}
 
@@ -125,22 +125,21 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			}
 		}
 
-		int basicSizeof(Map map) {
+		int basicSizeof(Map<?, ?> map) {
 			if (map == null)
 				return 0;
 
 			//formula taken from BundleStats
 			int count = (int) Math.round(44 + (16 + (map.size() * 1.25 * 4)) + (24 * map.size()));
 
-			for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
+			for (Map.Entry<?, ?> entry : map.entrySet()) {
 				count += sizeof(entry.getKey());
 				count += sizeof(entry.getValue());
 			}
 			return count;
 		}
 
-		int basicSizeof(MarkerAttributeMap markerMap) {
+		int basicSizeof(MarkerAttributeMap<?> markerMap) {
 			int count = DeepSize.OBJECT_HEADER_SIZE + 8;//object header plus two slots
 			Object[] elements = SpySupport.getElements(markerMap);
 			if (elements != null) {
@@ -200,7 +199,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 					MarkerSet markers = info.getMarkers();
 					if (markers != null)
 						markerCount += markers.size();
-					Map syncInfo = SpySupport.getSyncInfo(info);
+					Map<QualifiedName, Object> syncInfo = SpySupport.getSyncInfo(info);
 					if (syncInfo != null)
 						syncInfoCount += syncInfo.size();
 					return true;
@@ -274,7 +273,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (object instanceof byte[])
 				return DeepSize.ARRAY_HEADER_SIZE + ((byte[]) object).length;
 			if (object instanceof MarkerAttributeMap)
-				return basicSizeof((MarkerAttributeMap) object);
+				return basicSizeof((MarkerAttributeMap<?>) object);
 			if (object instanceof MarkerInfo)
 				return basicSizeof((MarkerInfo) object);
 			if (object instanceof MarkerSet)
@@ -282,7 +281,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (object instanceof Integer)
 				return DeepSize.OBJECT_HEADER_SIZE + 4;
 			if (object instanceof Map)
-				return basicSizeof((Map) object);
+				return basicSizeof((Map<?, ?>) object);
 			if (object instanceof QualifiedName) {
 				QualifiedName name = (QualifiedName) object;
 				return 20 + sizeof(name.getQualifier()) + sizeof(name.getLocalName());
@@ -317,14 +316,12 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		 * Sorts a set of entries whose keys are strings and values are Integer
 		 * objects, in decreasing order by the integer value.
 		 */
-		private List sortEntrySet(Set set) {
-			List result = new ArrayList();
+		private List<Map.Entry<Object, Integer>> sortEntrySet(Set<Map.Entry<Object, Integer>> set) {
+			List<Map.Entry<Object, Integer>> result = new ArrayList<Map.Entry<Object, Integer>>();
 			result.addAll(set);
-			Collections.sort(result, new Comparator() {
-				public int compare(Object arg0, Object arg1) {
-					Integer value1 = (Integer) ((Map.Entry) arg0).getValue();
-					Integer value2 = (Integer) ((Map.Entry) arg1).getValue();
-					return value2.intValue() - value1.intValue();
+			Collections.sort(result, new Comparator<Map.Entry<Object, Integer>>() {
+				public int compare(Map.Entry<Object, Integer> arg0, Map.Entry<Object, Integer> arg1) {
+					return arg1.getValue().intValue() - arg0.getValue().intValue();
 				}
 			});
 			return result;
@@ -351,17 +348,17 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			buffer.append("\tSync info: " + prettyPrint(syncInfoMemory) + "\n");
 			buffer.append("\tSession properties: " + prettyPrint(sessionSize) + "\n");
 			//breakdown of session property size by class
-			List sortedEntries = sortEntrySet(sessionPropertyMemory.getSizes().entrySet());
-			for (Iterator it = sortedEntries.iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				buffer.append("\t\t" + entry.getKey() + ": " + prettyPrint(((Integer) entry.getValue()).intValue()) + "\n");
+			@SuppressWarnings("unchecked")
+			List<Map.Entry<Object, Integer>> sortedEntries = sortEntrySet(sessionPropertyMemory.getSizes().entrySet());
+			for (Map.Entry<Object, Integer> entry : sortedEntries) {
+				buffer.append("\t\t" + entry.getKey() + ": " + prettyPrint(entry.getValue().intValue()) + "\n");
 			}
 
 			int max = 20;
 			int savings = 0;
 			buffer.append("The top " + max + " equal but non-identical strings are:\n");
-			for (int i = 0; i < sortedList.size() && ((Counter) sortedList.get(i)).getCount() > 1; i++) {
-				Counter c = (Counter) sortedList.get(i);
+			for (int i = 0; i < sortedList.size() && sortedList.get(i).getCount() > 1; i++) {
+				Counter c = sortedList.get(i);
 				if (i < max)
 					buffer.append("\t" + c.getName() + "->" + prettyPrint(c.getCount()) + "\n");
 				savings += ((c.getCount() - 1) * basicSizeof(c.getName()));

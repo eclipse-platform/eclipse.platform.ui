@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
@@ -243,8 +242,8 @@ public class IFileTest extends ResourceTest {
 	 * Makes sure file requirements are met (out of sync, workspace only, etc).
 	 */
 	public void refreshFiles() {
-		for (Iterator<IFile> it = allFiles.iterator(); it.hasNext();)
-			refreshFile(it.next());
+		for (IFile file : allFiles)
+			refreshFile(file);
 	}
 
 	protected void setUp() throws Exception {

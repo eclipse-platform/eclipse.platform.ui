@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -518,7 +518,6 @@ public class UnifiedTree {
 	 * Sorts the given array of strings in place.  This is
 	 * not using the sorting framework to avoid casting overhead.
 	 */
-	@SuppressWarnings("unchecked")
 	protected void quickSort(IFileInfo[] infos, int left, int right) {
 		int originalLeft = left;
 		int originalRight = right;

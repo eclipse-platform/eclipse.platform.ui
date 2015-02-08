@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.junit.Assert;
@@ -300,10 +299,9 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			}
 		}
 
-		Enumeration<IResource> keys = h.keys();
-		while (keys.hasMoreElements()) {
-			IResource childResource = keys.nextElement();
-			IResourceDelta childDelta = h.get(childResource);
+		for (Map.Entry<IResource, IResourceDelta> entry : h.entrySet()) {
+			IResource childResource = entry.getKey();
+			IResourceDelta childDelta = entry.getValue();
 			recordMissingChild(childResource.getFullPath(), childDelta.getKind(), true);
 		}
 
@@ -311,10 +309,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			internalVerifyDelta(affectedChildren[i]);
 		}
 
-		keys = h.keys();
-		while (keys.hasMoreElements()) {
-			IResource childResource = keys.nextElement();
-			IResourceDelta childDelta = h.get(childResource);
+		for (IResourceDelta childDelta : h.values()) {
 			internalVerifyDelta(childDelta);
 		}
 	}
@@ -444,18 +439,9 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * are met after iterating over a resource delta.
 	 */
 	private void finishVerification() {
-		Hashtable<IPath, IPath> resourcePaths = new Hashtable<IPath, IPath>();
+		HashSet<IPath> resourcePaths = new HashSet<IPath>(fExpectedChanges.keySet());
 
-		Enumeration<IPath> keys = fExpectedChanges.keys();
-		while (keys.hasMoreElements()) {
-			IPath key = keys.nextElement();
-			resourcePaths.put(key, key);
-		}
-
-		keys = resourcePaths.keys();
-		while (keys.hasMoreElements()) {
-			IPath resourcePath = keys.nextElement();
-
+		for (IPath resourcePath : resourcePaths) {
 			fMessage.append("Checking expectations for ");
 			fMessage.append(resourcePath);
 			fMessage.append("\n");

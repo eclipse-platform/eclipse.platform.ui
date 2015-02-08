@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.junit.Assert;
@@ -53,9 +54,9 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 		if (verified)
 			return;
 		// Add messages for the resources which weren't visited but were expected.
-		for (Iterator<IResource> i = expected.iterator(); i.hasNext();) {
+		for (IResource resource : expected) {
 			success = false;
-			log(i.next().getFullPath() + " was not visited.");
+			log(resource.getFullPath() + " was not visited.");
 		}
 		verified = true;
 	}

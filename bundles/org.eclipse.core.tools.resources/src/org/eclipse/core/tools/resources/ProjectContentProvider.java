@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 		// project's builder spec
 		Workspace workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		BuildManager manager = workspace.getBuildManager();
-		ArrayList allPersistInfo = null;
+		ArrayList<BuilderPersistentInfo> allPersistInfo = null;
 		try {
 			allPersistInfo = manager.getBuildersPersistentInfo(project);
 		} catch (CoreException ce) {
@@ -111,8 +111,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 			// extracts information from persistent info (if available) 
 			if (allPersistInfo != null) {
 				//find persistent info for this builder
-				for (Iterator it = allPersistInfo.iterator(); it.hasNext();) {
-					BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
+				for (BuilderPersistentInfo info : allPersistInfo) {
 					if (info.getBuilderName().equals(builderName)) {
 						extractBuilderPersistentInfo(builderNode, info);
 						break;
@@ -128,15 +127,14 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	 * @param builderNode the node where to add builder arguments nodes
 	 * @param builderArgs a map containing arguments for a builder
 	 */
-	protected void extractBuilderArguments(TreeContentProviderNode builderNode, Map builderArgs) {
-		if (builderArgs == null || builderArgs.size() == 0)
+	protected void extractBuilderArguments(TreeContentProviderNode builderNode, Map<String, String> builderArgs) {
+		if (builderArgs == null || builderArgs.isEmpty())
 			return;
 
 		TreeContentProviderNode builderArgsRoot = createNode("Builder args"); //$NON-NLS-1$
 		builderNode.addChild(builderArgsRoot);
-		for (Iterator builderArgsIter = builderArgs.entrySet().iterator(); builderArgsIter.hasNext();) {
-			Map.Entry entry = (Map.Entry) builderArgsIter.next();
-			TreeContentProviderNode builderArgNode = createNode((String) entry.getKey(), entry.getValue());
+		for (Map.Entry<String, String> entry : builderArgs.entrySet()) {
+			TreeContentProviderNode builderArgNode = createNode(entry.getKey(), entry.getValue());
 			builderArgsRoot.addChild(builderArgNode);
 		}
 	}

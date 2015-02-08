@@ -12,7 +12,6 @@
 package org.eclipse.core.tests.internal.utils;
 
 import java.util.*;
-import java.util.Map.Entry;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.ObjectMap;
@@ -131,7 +130,7 @@ public class ObjectMapTest extends ResourceTest {
 
 	public void testEntrySet() {
 		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
-		Set<Entry<Integer, Object>> entries = map.entrySet();
+		Set<Map.Entry<Integer, Object>> entries = map.entrySet();
 		for (int i = 0; i < MAXIMUM; i++)
 			assertTrue("1.0." + i, contains(entries, values[i]));
 	}
@@ -139,9 +138,8 @@ public class ObjectMapTest extends ResourceTest {
 	/**
 	 * The given set is a set of Map.Entry objects. 
 	 */
-	private boolean contains(Set<Entry<Integer, Object>> set, Object value) {
-		for (Iterator<Entry<Integer, Object>> i = set.iterator(); i.hasNext();) {
-			Map.Entry<Integer, Object> entry = i.next();
+	private boolean contains(Set<Map.Entry<Integer, Object>> set, Object value) {
+		for (Map.Entry<Integer, Object> entry : set) {
 			if (entry.getValue().equals(value))
 				return true;
 		}
@@ -164,7 +162,7 @@ public class ObjectMapTest extends ResourceTest {
 	 * Bug 62231 - empty ObjectMap.toHashMap() causes NullPointerException
 	 */
 	public void testBug_62231() {
-		ObjectMap<?, ?> map = new ObjectMap<Object, Object>();
+		ObjectMap<Object, Object> map = new ObjectMap<Object, Object>();
 		try {
 			map.entrySet();
 		} catch (NullPointerException e) {

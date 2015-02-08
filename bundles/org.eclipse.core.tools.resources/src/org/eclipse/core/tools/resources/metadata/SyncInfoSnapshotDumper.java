@@ -20,13 +20,10 @@ import org.eclipse.core.tools.metadata.*;
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumpingStrategy_3
  */
 public class SyncInfoSnapshotDumper extends MultiStrategyDumper {
-
 	static final byte INDEX = 1;
 	static final byte QNAME = 2;
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(DataInputStream)
-	 */
+	@Override
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();
 		if (versionId != 3)
@@ -34,9 +31,7 @@ public class SyncInfoSnapshotDumper extends MultiStrategyDumper {
 		return new SyncInfoSnapshotDumpingStrategy_3();
 	}
 
-	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(File)
-	 */
+	@Override
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);
 	}
