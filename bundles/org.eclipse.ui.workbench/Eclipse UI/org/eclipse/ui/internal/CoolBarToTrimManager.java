@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 430116
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457237
- *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 420956, 457198
+ *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 420956, 457198, 395601
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -545,10 +545,11 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			final ToolBarManager manager = renderer.getManager(el);
 			if (manager != null) {
 				boolean wasVisible = el.isVisible();
-				fill(el, manager);
+				boolean needUpdate = fill(el, manager);
 				// fix for bug 383569#25: if the toolbar model changed the
 				// visibility we must create (or remove) SWT toolbar widgets
-				if (el.isVisible() != wasVisible) {
+				if (needUpdate || el.isVisible() != wasVisible) {
+					manager.markDirty();
 					manager.update(true);
 				}
 				// TODO: Hack to work around Bug 370961
@@ -594,7 +595,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		}
 	}
 
-	private void fill(MToolBar container, IContributionManager manager) {
+	/**
+	 * @return true if the contribution manager needs to be updated because item
+	 *         visibility is changed
+	 */
+	private boolean fill(MToolBar container, IContributionManager manager) {
+		boolean needUpdate = false;
 		ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(container, null);
 
 		IContributionItem[] items = manager.getItems();
@@ -606,7 +612,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			MToolBarElement toolBarElem = renderer.getToolElement(item);
 			if (toolBarElem != null) {
 				if (container.isVisible()) {
-					applyOverridenVisibility(toolBarElem, item, manager);
+					needUpdate |= applyOverridenVisibility(toolBarElem, item, manager);
 					continue;
 				}
 				if (item.isSeparator() || item.isGroupMarker()) {
@@ -616,20 +622,20 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				// If the toolbar is hidden but one of the children is not,
 				// make both the child and the toolbar visible
 				if (isChildVisible(item, manager)) {
-					applyOverridenVisibility(toolBarElem, item, manager);
+					needUpdate |= applyOverridenVisibility(toolBarElem, item, manager);
 					container.setVisible(true);
 				}
 				continue;
 			}
 			if (item instanceof IToolBarContributionItem) {
 				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
-				fill(container, manager2);
+				needUpdate |= fill(container, manager2);
 			} else if (item instanceof IMenuManager) {
 				// No element to add in toolbar:
 				// let the menu manager control its contributions.
 				continue;
 			} else if (item instanceof IContributionManager) {
-				fill(container, (IContributionManager) item);
+				needUpdate |= fill(container, (IContributionManager) item);
 			} else if (item instanceof CommandContributionItem) {
 				MHandledToolItem toolItem = MenuHelper.createToolItem(application, (CommandContributionItem) item);
 				if (toolItem == null) {
@@ -662,26 +668,41 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				container.getChildren().add(toolItem);
 			}
 		}
+		return needUpdate;
 	}
 
-	private void applyOverridenVisibility(MToolBarElement modelItem, IContributionItem item,
+	/**
+	 * @return true if the contribution manager needs to be updated because item
+	 *         visibility is changed
+	 */
+	private boolean applyOverridenVisibility(MToolBarElement modelItem, IContributionItem item,
 			IContributionManager manager) {
+		boolean needUpdate = false;
 		Boolean overridenVisibility = getOverridenVisibility(item, manager);
 		Boolean prevChildVisible = (Boolean) modelItem.getTransientData().get(PREV_CHILD_VISIBLE);
 
 		if (overridenVisibility != null) {
 			if (prevChildVisible == null) {
+				boolean oldVisible = modelItem.isVisible();
+				if (oldVisible != overridenVisibility) {
+					needUpdate = true;
+				}
 				modelItem.getTransientData().put(PREV_CHILD_VISIBLE, modelItem.isVisible());
 				modelItem.setVisible(overridenVisibility);
 			} else {
-				return;
+				return needUpdate;
 			}
 		} else if (prevChildVisible != null) {
+			boolean oldVisible = modelItem.isVisible();
+			if (oldVisible != prevChildVisible) {
+				needUpdate = true;
+			}
 			modelItem.setVisible(prevChildVisible);
 			modelItem.getTransientData().remove(PREV_CHILD_VISIBLE);
 		} else {
-			return;
+			return needUpdate;
 		}
+		return needUpdate;
 	}
 
 	/**
