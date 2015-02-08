@@ -1944,6 +1944,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			} else {
 				contributionItem = menuMngrRenderer.getContribution(menuItem);
 			}
+			if (contributionItem == null) {
+				return dynamicEntry;
+			}
 			if (dynamicEntry != null
 					&& contributionItem.equals(dynamicEntry.getIContributionItem())) {
 				// If the last item added is the item meant to go before the
