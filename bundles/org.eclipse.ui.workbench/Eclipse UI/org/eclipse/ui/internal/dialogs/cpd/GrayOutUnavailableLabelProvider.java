@@ -52,12 +52,12 @@ class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider 
 	public Color getForeground(Object element) {
 		if (element instanceof DisplayItem) {
 			if (!CustomizePerspectiveDialog.isEffectivelyAvailable((DisplayItem) element, filter)) {
-				return display.getSystemColor(SWT.COLOR_GRAY);
+				return display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 		}
 		if (element instanceof ActionSet) {
 			if (!((ActionSet) element).isActive()) {
-				return display.getSystemColor(SWT.COLOR_GRAY);
+				return display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 		}
 		return null;
