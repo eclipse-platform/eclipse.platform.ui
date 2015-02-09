@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,12 @@ class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider 
 	public Color getForeground(Object element) {
 		if (element instanceof DisplayItem) {
 			if (!CustomizePerspectiveDialog.isEffectivelyAvailable((DisplayItem) element, filter)) {
-				return display.getSystemColor(SWT.COLOR_GRAY);
+				return display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 		}
 		if (element instanceof ActionSet) {
 			if (!((ActionSet) element).isActive()) {
-				return display.getSystemColor(SWT.COLOR_GRAY);
+				return display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 		}
 		return null;
