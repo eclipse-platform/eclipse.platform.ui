@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.editors.tests;singleton:=true
 Bundle-Version: 3.8.300.qualifier
-Bundle-Activator: org.eclipse.ui.editors.tests.EditorTestPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.editors.tests

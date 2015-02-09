@@ -53,7 +53,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 	protected void setUp() throws Exception {
 		//add the marker updater extension point
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		pointContributor= ContributorFactorySimple.createContributor(Long.toString(EditorTestPlugin.getDefault().getBundle().getBundleId()));
+		pointContributor= ContributorFactorySimple.createContributor(this);
 
 		try {
 			BufferedInputStream bis= new BufferedInputStream(getClass().getResourceAsStream("plugin.xml"));
@@ -66,7 +66,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 			registry.addContribution(bis, pointContributor, true, null, null, masterToken);
 		} catch (Exception ex) {
 			fail("update marker setup failed to execute");
-			EditorTestPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, EditorTestPlugin.PLUGIN_ID, ex.getMessage()));
+			log(ex);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 			t1.updateMarker(d, null, position);
 		} catch (CoreException e) {
 			fail("update marker failed to execute");
-			EditorTestPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, EditorTestPlugin.PLUGIN_ID, e.getMessage()));
+			log(e);
 		}
 
 		assertEquals("Wrong number of messages", 2, list.size());
@@ -129,6 +129,12 @@ public class MarkerAnnotationOrderTest extends TestCase {
 			return false;
 		}
 
+	}
+
+	private static void log(Exception ex) {
+		String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+		ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+		log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 	}
 
 }
