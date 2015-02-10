@@ -15,6 +15,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724, 366708, 418661
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
+ *     Snjezana Peco <snjeza.peco@gmail.com> - Bug 405542
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -73,7 +74,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobGroup;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -288,8 +288,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public static String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
 
 	private static final String WORKBENCH_AUTO_SAVE_BACKGROUND_JOB = "Workbench Auto-Save Background Job"; //$NON-NLS-1$
-
-	private JobGroup jobGroupWorkbenchAutoSave = new JobGroup(WORKBENCH_AUTO_SAVE_JOB, 1, 1);
 
 	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
 
@@ -1272,6 +1270,9 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * part of persist(false) during auto-save.
 	 */
 	private void persistWorkbenchModel() {
+		if (Job.getJobManager().find(WORKBENCH_AUTO_SAVE_JOB).length > 0) {
+			return;
+		}
 		final MApplication appCopy = (MApplication) EcoreUtil.copy((EObject) application);
 		if (detectWorkbenchCorruption(appCopy)) {
 			return;
@@ -1296,10 +1297,14 @@ public final class Workbench extends EventManager implements IWorkbench,
 				return Status.OK_STATUS;
 			}
 
+			@Override
+			public boolean belongsTo(Object family) {
+				return WORKBENCH_AUTO_SAVE_JOB.equals(family);
+			}
+
 		};
 		cleanAndSaveJob.setPriority(Job.SHORT);
 		cleanAndSaveJob.setSystem(true);
-		cleanAndSaveJob.setJobGroup(jobGroupWorkbenchAutoSave);
 		cleanAndSaveJob.schedule();
 	}
 
