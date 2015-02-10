@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,7 +273,7 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(CODEASSIST_AUTOINSERT, true);
 		store.setDefault(CODEASSIST_USER_DEFINED_TASKS, true);
 		store.setDefault(CODEASSIST_AUTOACTIVATION, true);
-		store.setDefault(CODEASSIST_AUTOACTIVATION_DELAY, 500);
+		store.setDefault(CODEASSIST_AUTOACTIVATION_DELAY, 0);
 		store.setDefault(CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 
 		store.setDefault(FORMATTER_TAB_CHAR, true);
