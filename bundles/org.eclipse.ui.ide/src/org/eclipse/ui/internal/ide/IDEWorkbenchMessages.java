@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@
  *     James Blackburn (Broadcom Corp.)   -  bug 340978
  * Christian Georgi (SAP) - Bug 423882 - Warn user if workspace is newer than IDE
  * Lars Vogel <Lars.Vogel@vogella.com> - Bug 431862
- * Christian Georgi (SAP)              - Bug 432480 - Show workspace location
+ * Christian Georgi (SAP SE)           - bug 432480, bug 458811
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -520,6 +520,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
 	public static String IDEWorkspacePreference_workspaceLocation;
 	public static String IDEWorkspacePreference_showLocationInWindowTitle;
+	public static String IDEWorkspacePreference_showLocationInWindowTitle_lockedByCommandLine;
 	public static String IDEWorkspacePreference_workspaceName;
 	public static String IDEWorkbenchPreference_workbenchSystemExplorer;
 
