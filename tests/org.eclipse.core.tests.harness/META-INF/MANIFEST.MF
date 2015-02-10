@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Core Tests Harness
 Bundle-SymbolicName: org.eclipse.core.tests.harness; singleton:=true
 Bundle-Version: 3.10.100.qualifier
+Bundle-ClassPath: testharness.jar
 Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.core.tests.harness,

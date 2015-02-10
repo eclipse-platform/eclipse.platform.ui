@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Core Tests Runtime
 Bundle-SymbolicName: org.eclipse.core.tests.runtime; singleton:=true
 Bundle-Version: 3.10.0.qualifier
+Bundle-ClassPath: runtimetests.jar
 Bundle-Activator: org.eclipse.core.tests.runtime.RuntimeTestsPlugin
 Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.core.tests.internal.preferences,

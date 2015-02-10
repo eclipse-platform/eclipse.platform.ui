@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.expressions.tests; singleton:=true
 Bundle-Version: 3.4.700.qualifier
+Bundle-ClassPath: expressionstests.jar
 Bundle-Activator: org.eclipse.core.internal.expressions.tests.ExpressionTestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
