@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Muskalla <b.muskalla@gmx.net>
  *     - Fix for bug 172574 - [IDE] DeleteProjectDialog inconsequent selection behavior
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 41431
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -469,6 +470,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
 		if (!fTestingMode) {
 			if (LTKLauncher.openDeleteWizard(getStructuredSelection())) {
+				CloseResourceAction.closeMatchingEditors(resources, true);
 				return;
 			}
 		}

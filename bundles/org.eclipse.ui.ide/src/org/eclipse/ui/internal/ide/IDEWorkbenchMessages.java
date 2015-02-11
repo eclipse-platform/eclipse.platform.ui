@@ -51,6 +51,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String ErrorClosing;
 	public static String ErrorOnSaveAll;
+	public static String ErrorOnCloseEditors;
 
 	public static String ResourceInfoPage_noResource;
 
