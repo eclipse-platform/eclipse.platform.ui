@@ -211,7 +211,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		Text workspacePath = new Text(groupComposite, SWT.READ_ONLY);
 		workspacePath.setBackground(workspacePath.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		workspacePath.setText(Platform.getLocation().toOSString());
-		workspacePath.setToolTipText(workspacePath.getText());
 		workspacePath.setSelection(workspacePath.getText().length());
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false)
 				.hint(convertHorizontalDLUsToPixels(200), SWT.DEFAULT).applyTo(workspacePath);
