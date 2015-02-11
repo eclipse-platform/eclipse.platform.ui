@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2012 Broadcom Corporation and others.
+ *  Copyright (c) 2010, 2015 Broadcom Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     James Blackburn (Broadcom Corp.) - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
@@ -149,7 +150,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// Set the rule call-back
 		builder.setRuleCallback(new BuilderRuleCallback() {
-			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				tb1.setStatus(TestBarrier.STATUS_START);
 				return project;
 			}
@@ -248,7 +249,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 			boolean called = false;
 
-			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				// Remove once Bug 331187 is fixed.
 				// Currently #getRule is called twice when building a specific build configuration (so as to minimized change in 
 				// 3.7 end-game.  As this test is trying to provoke a bug in the window between fetching a rule and applying it
@@ -339,7 +340,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// Set the rule call-back
 		builder.setRuleCallback(new BuilderRuleCallback() {
-			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				tb1.waitForStatus(TestBarrier.STATUS_START);
 				return getRules[0];
 			}

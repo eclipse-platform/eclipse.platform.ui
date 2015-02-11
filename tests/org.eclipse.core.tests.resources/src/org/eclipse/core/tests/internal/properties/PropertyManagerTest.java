@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.properties;
 
@@ -481,20 +482,20 @@ public class PropertyManagerTest extends LocalStoreTest {
 		String propValue1 = "this is the property value1";
 		String propValue2 = "this is the property value2";
 		String propValue3 = "this is the property value3";
-		Vector props = new Vector(3);
+		Vector<StoredProperty> props = new Vector<StoredProperty>(3);
 		props.addElement(new StoredProperty(propName1, propValue1));
 		props.addElement(new StoredProperty(propName2, propValue2));
 		props.addElement(new StoredProperty(propName3, propValue3));
 
 		// set the properties individually and retrieve them
-		for (Enumeration e = props.elements(); e.hasMoreElements();) {
-			StoredProperty prop = (StoredProperty) e.nextElement();
+		for (Enumeration<StoredProperty> e = props.elements(); e.hasMoreElements();) {
+			StoredProperty prop = e.nextElement();
 			manager.setProperty(target, prop.getName(), prop.getStringValue());
 			assertEquals("1.0." + prop.getName(), prop.getStringValue(), manager.getProperty(target, prop.getName()));
 		}
 		// check properties are be appropriately deleted (when set to null)
-		for (Enumeration e = props.elements(); e.hasMoreElements();) {
-			StoredProperty prop = (StoredProperty) e.nextElement();
+		for (Enumeration<StoredProperty> e = props.elements(); e.hasMoreElements();) {
+			StoredProperty prop = e.nextElement();
 			manager.setProperty(target, prop.getName(), null);
 			assertEquals("2.0." + prop.getName(), null, manager.getProperty(target, prop.getName()));
 		}

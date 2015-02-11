@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.mapping;
 
@@ -31,7 +32,7 @@ public class ChangeValidationTest extends ResourceTest {
 	}
 
 	private void assertStatusEqual(IStatus status, String[] expectedMessages) {
-		List actualMessages = new ArrayList();
+		List<String> actualMessages = new ArrayList<String>();
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
 			for (int i = 0; i < children.length; i++) {
@@ -45,8 +46,8 @@ public class ChangeValidationTest extends ResourceTest {
 				actualMessages.add(message);
 		}
 		if (expectedMessages.length < actualMessages.size()) {
-			for (Iterator iter = actualMessages.iterator(); iter.hasNext();) {
-				String actual = (String) iter.next();
+			for (Iterator<String> iter = actualMessages.iterator(); iter.hasNext();) {
+				String actual = iter.next();
 				boolean found = false;
 				for (int i = 0; i < expectedMessages.length; i++) {
 					String expected = expectedMessages[i];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.mapping;
 
@@ -28,19 +29,19 @@ public class ChangeDescription {
 	public static final String MOVED = "Moved {0}";
 	public static final String REMOVED = "Removed {0}";
 
-	private List addedRoots = new ArrayList();
-	private List changedRoots = new ArrayList();
-	private List closedProjects = new ArrayList();
-	private List copiedRoots = new ArrayList();
-	private List errors = new ArrayList();
-	private List movedRoots = new ArrayList();
-	private List removedRoots = new ArrayList();
+	private List<IResource> addedRoots = new ArrayList<IResource>();
+	private List<IResource> changedRoots = new ArrayList<IResource>();
+	private List<IResource> closedProjects = new ArrayList<IResource>();
+	private List<IResource> copiedRoots = new ArrayList<IResource>();
+	private List<Status> errors = new ArrayList<Status>();
+	private List<IResource> movedRoots = new ArrayList<IResource>();
+	private List<IResource> removedRoots = new ArrayList<IResource>();
 
 	public static String getMessageFor(String messageTemplate, IResource resource) {
 		return NLS.bind(messageTemplate, resource.getFullPath().toString());
 	}
 
-	private void accumulateStatus(IResource[] resources, List result, String message) {
+	private void accumulateStatus(IResource[] resources, List<ModelStatus> result, String message) {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			result.add(new ModelStatus(IStatus.WARNING, "org.eclipse.core.tests.resources", TestModelProvider.ID, getMessageFor(message, resource)));
@@ -53,23 +54,23 @@ public class ChangeDescription {
 
 	public IStatus asStatus() {
 		if (errors.isEmpty()) {
-			List result = new ArrayList();
-			accumulateStatus((IResource[]) addedRoots.toArray(new IResource[addedRoots.size()]), result, ADDED);
-			accumulateStatus((IResource[]) removedRoots.toArray(new IResource[removedRoots.size()]), result, REMOVED);
-			accumulateStatus((IResource[]) movedRoots.toArray(new IResource[movedRoots.size()]), result, MOVED);
-			accumulateStatus((IResource[]) copiedRoots.toArray(new IResource[copiedRoots.size()]), result, COPIED);
-			accumulateStatus((IResource[]) changedRoots.toArray(new IResource[changedRoots.size()]), result, CHANGED);
-			accumulateStatus((IResource[]) closedProjects.toArray(new IResource[closedProjects.size()]), result, CLOSED);
+			List<ModelStatus> result = new ArrayList<ModelStatus>();
+			accumulateStatus(addedRoots.toArray(new IResource[addedRoots.size()]), result, ADDED);
+			accumulateStatus(removedRoots.toArray(new IResource[removedRoots.size()]), result, REMOVED);
+			accumulateStatus(movedRoots.toArray(new IResource[movedRoots.size()]), result, MOVED);
+			accumulateStatus(copiedRoots.toArray(new IResource[copiedRoots.size()]), result, COPIED);
+			accumulateStatus(changedRoots.toArray(new IResource[changedRoots.size()]), result, CHANGED);
+			accumulateStatus(closedProjects.toArray(new IResource[closedProjects.size()]), result, CLOSED);
 			if (!result.isEmpty()) {
 				if (result.size() == 1)
-					return (IStatus) result.get(0);
-				return new MultiStatus("org.eclipse.core.tests.resources", 0, (IStatus[]) result.toArray(new IStatus[result.size()]), "Changes were validated", null);
+					return result.get(0);
+				return new MultiStatus("org.eclipse.core.tests.resources", 0, result.toArray(new IStatus[result.size()]), "Changes were validated", null);
 			}
 			return Status.OK_STATUS;
 		} else if (errors.size() == 1) {
-			return (IStatus) errors.get(0);
+			return errors.get(0);
 		}
-		return new MultiStatus("org.eclipse.core.tests.resources", 0, (IStatus[]) errors.toArray(new IStatus[errors.size()]), "Errors occurred", null);
+		return new MultiStatus("org.eclipse.core.tests.resources", 0, errors.toArray(new IStatus[errors.size()]), "Errors occurred", null);
 	}
 
 	private IResource createSourceResource(IResourceDelta delta) {
@@ -87,10 +88,10 @@ public class ChangeDescription {
 		return null;
 	}
 
-	private void ensureResourceCovered(IResource resource, List list) {
+	private void ensureResourceCovered(IResource resource, List<IResource> list) {
 		IPath path = resource.getFullPath();
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
-			IResource root = (IResource) iter.next();
+		for (Iterator<IResource> iter = list.iterator(); iter.hasNext();) {
+			IResource root = iter.next();
 			if (root.getFullPath().isPrefixOf(path)) {
 				return;
 			}

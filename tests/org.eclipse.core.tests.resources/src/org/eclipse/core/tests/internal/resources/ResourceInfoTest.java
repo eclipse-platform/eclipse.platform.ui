@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
@@ -53,13 +54,13 @@ public class ResourceInfoTest extends ResourceTest {
 			assertEquals(message, expected[i], actual[i]);
 	}
 
-	static public void assertEquals(String message, Hashtable expected, Hashtable actual) {
+	static public void assertEquals(String message, Hashtable<?, ?> expected, Hashtable<?, ?> actual) {
 		if (expected == null && actual == null)
 			return;
 		if (expected == null || actual == null)
 			assertTrue(message, false);
 		assertEquals(message, expected.size(), actual.size());
-		for (Enumeration e = expected.keys(); e.hasMoreElements();) {
+		for (Enumeration<?> e = expected.keys(); e.hasMoreElements();) {
 			Object key = e.nextElement();
 			assertTrue(message, actual.containsKey(key));
 			Object expectedValue = expected.get(key);

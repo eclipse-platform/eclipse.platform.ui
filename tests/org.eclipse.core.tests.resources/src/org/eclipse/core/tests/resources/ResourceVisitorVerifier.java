@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -17,7 +18,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 public class ResourceVisitorVerifier extends Assert implements IResourceVisitor {
-	Set expected;
+	Set<IResource> expected;
 	StringBuffer message;
 	boolean success = true;
 	boolean verified = false;
@@ -53,9 +54,9 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 		if (verified)
 			return;
 		// Add messages for the resources which weren't visited but were expected.
-		for (Iterator i = expected.iterator(); i.hasNext();) {
+		for (Iterator<IResource> i = expected.iterator(); i.hasNext();) {
 			success = false;
-			log(((IResource) i.next()).getFullPath() + " was not visited.");
+			log(i.next().getFullPath() + " was not visited.");
 		}
 		verified = true;
 	}
@@ -70,7 +71,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 	}
 
 	public void reset() {
-		expected = new HashSet();
+		expected = new HashSet<IResource>();
 		message = new StringBuffer();
 		verified = false;
 	}

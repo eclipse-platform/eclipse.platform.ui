@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
@@ -48,8 +49,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		super(name);
 	}
 
-	private HashMap buildBaselineDescriptors() {
-		HashMap result = new HashMap();
+	private HashMap<String, ProjectDescription> buildBaselineDescriptors() {
+		HashMap<String, ProjectDescription> result = new HashMap<String, ProjectDescription>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		ProjectDescription desc = new ProjectDescription();
@@ -61,7 +62,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		String[] natures = new String[1];
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
-		HashMap linkMap = new HashMap();
+		HashMap<IPath, LinkDescription> linkMap = new HashMap<IPath, LinkDescription>();
 		LinkDescription link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
 		linkMap.put(link.getProjectRelativePath(), link);
 		desc.setLinkDescriptions(linkMap);
@@ -81,7 +82,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		natures = new String[1];
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
-		linkMap = new HashMap();
+		linkMap = new HashMap<IPath, LinkDescription>();
 		link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
 		linkMap.put(link.getProjectRelativePath(), link);
 		link = createLinkDescription("link2", IResource.FOLDER, "d:/abc");
@@ -135,7 +136,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		commands[0].setBuilderName("org.eclipse.jdt.core.javabuilder");
 		commands[1] = desc.newCommand();
 		commands[1].setBuilderName("org.eclipse.ui.externaltools.ExternalToolBuilder");
-		Map argMap = new HashMap();
+		HashMap<String, String> argMap = new HashMap<String, String>();
 		argMap.put("!{tool_show_log}", "true");
 		argMap.put("!{tool_refresh}", "${none}");
 		argMap.put("!{tool_name}", "org.eclipse.ant.core extra builder");
@@ -162,35 +163,35 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals(errorTag + ".2.0", commands.length, commands2.length);
 		for (int i = 0; i < commands.length; i++) {
 			assertTrue(errorTag + ".2." + (i + 1) + "0", commands[i].getBuilderName().equals(commands2[i].getBuilderName()));
-			Map args = commands[i].getArguments();
-			Map args2 = commands2[i].getArguments();
+			Map<String, String> args = commands[i].getArguments();
+			Map<String, String> args2 = commands2[i].getArguments();
 			assertEquals(errorTag + ".2." + (i + 1) + "0", args.size(), args2.size());
-			Set keys = args.keySet();
+			Set<String> keys = args.keySet();
 			int x = 1;
-			for (Iterator j = keys.iterator(); j.hasNext(); x++) {
+			for (Iterator<String> j = keys.iterator(); j.hasNext(); x++) {
 				Object key = j.next();
-				String value = (String) args.get(key);
-				String value2 = (String) args2.get(key);
+				String value = args.get(key);
+				String value2 = args2.get(key);
 				if (value == null)
 					assertNull(errorTag + ".2." + (i + 1) + x, value2);
 				else
-					assertTrue(errorTag + ".3." + (i + 1) + x, ((String) args.get(key)).equals((args2.get(key))));
+					assertTrue(errorTag + ".3." + (i + 1) + x, args.get(key).equals((args2.get(key))));
 			}
 		}
 	}
 
-	private void compareLinks(int errorTag, HashMap links, HashMap links2) {
+	private void compareLinks(int errorTag, HashMap<IPath, LinkDescription> links, HashMap<IPath, LinkDescription> links2) {
 		if (links == null) {
 			assertNull(errorTag + ".4.0", links2);
 			return;
 		}
 		assertEquals(errorTag + ".4.01", links.size(), links2.size());
-		Set keys = links.keySet();
+		Set<IPath> keys = links.keySet();
 		int x = 1;
-		for (Iterator i = keys.iterator(); i.hasNext(); x++) {
-			IPath key = (IPath) i.next();
-			LinkDescription value = (LinkDescription) links.get(key);
-			LinkDescription value2 = (LinkDescription) links2.get(key);
+		for (Iterator<IPath> i = keys.iterator(); i.hasNext(); x++) {
+			IPath key = i.next();
+			LinkDescription value = links.get(key);
+			LinkDescription value2 = links2.get(key);
 			assertTrue(errorTag + ".4." + x, value.getProjectRelativePath().equals(value2.getProjectRelativePath()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
 			assertEquals(errorTag + ".6." + x, value.getLocationURI(), value2.getLocationURI());
@@ -227,8 +228,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		String[] natures2 = description2.getNatureIds();
 		compareNatures(errorTag, natures, natures2);
 
-		HashMap links = description.getLinks();
-		HashMap links2 = description2.getLinks();
+		HashMap<IPath, LinkDescription> links = description.getLinks();
+		HashMap<IPath, LinkDescription> links2 = description2.getLinks();
 		compareLinks(errorTag, links, links2);
 	}
 
@@ -396,7 +397,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
-		HashMap args = new HashMap(2);
+		HashMap<String, String> args = new HashMap<String, String>(2);
 		// key values are important
 		args.put("b", "ARGH!");
 		args.put("aA", "2 x ARGH!");
@@ -405,12 +406,12 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		commands[0].setBuilderName("MyCommand");
 		commands[0].setArguments(args);
 		description.setBuildSpec(commands);
-		HashMap linkDescriptions = new HashMap(2);
+		HashMap<IPath, LinkDescription> linkDescriptions = new HashMap<IPath, LinkDescription>(2);
 		LinkDescription link = createLinkDescription("pathB", IResource.FOLDER, locationB);
 		// key values are important
-		linkDescriptions.put("b", link);
+		linkDescriptions.put(link.getProjectRelativePath(), link);
 		link = createLinkDescription("pathA", IResource.FOLDER, locationA);
-		linkDescriptions.put("aA", link);
+		linkDescriptions.put(link.getProjectRelativePath(), link);
 		description.setLinkDescriptions(linkDescriptions);
 
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -491,7 +492,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
 		assertEquals("3.5", new String[0], projDesc.getNatureIds());
 		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
-		LinkDescription link = (LinkDescription) projDesc.getLinks().values().iterator().next();
+		LinkDescription link = projDesc.getLinks().values().iterator().next();
 		assertEquals("3.7", new Path("newLink"), link.getProjectRelativePath());
 		assertEquals("3.8", PATH_STRING, URIUtil.toPath(link.getLocationURI()).toString());
 	}
@@ -551,8 +552,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			createFileInFileSystem(location, stream);
 			ProjectDescription projDesc = reader.read(location);
 			ensureDoesNotExistInFileSystem(location.toFile());
-			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
-				LinkDescription link = (LinkDescription) i.next();
+			for (Iterator<LinkDescription> i = projDesc.getLinks().values().iterator(); i.hasNext();) {
+				LinkDescription link = i.next();
 				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocationURI());
 			}
 		} finally {
@@ -574,8 +575,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			createFileInFileSystem(location, stream);
 			ProjectDescription projDesc = reader.read(location);
 			ensureDoesNotExistInFileSystem(location.toFile());
-			for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext();) {
-				LinkDescription link = (LinkDescription) i.next();
+			for (Iterator<LinkDescription> i = projDesc.getLinks().values().iterator(); i.hasNext();) {
+				LinkDescription link = i.next();
 				assertEquals("1.0." + link.getProjectRelativePath(), LONG_LOCATION_URI, link.getLocationURI());
 			}
 		} finally {
@@ -614,7 +615,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	public void testMultipleProjectDescriptions() throws Throwable {
 		URL whereToLook = Platform.getBundle("org.eclipse.core.tests.resources").getEntry("MultipleProjectTestFiles/");
 		String[] members = {"abc.project", "def.project", "org.apache.lucene.project", "org.eclipse.ant.core.project"};
-		HashMap baselines = buildBaselineDescriptors();
+		HashMap<String, ProjectDescription> baselines = buildBaselineDescriptors();
 		ProjectDescriptionReader reader = new ProjectDescriptionReader();
 
 		for (int i = 0; i < members.length; i++) {
@@ -629,7 +630,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			InputSource in = new InputSource(is);
 			ProjectDescription description = reader.read(in);
 
-			compareProjectDescriptions(i + 1, description, (ProjectDescription) baselines.get(members[i]));
+			compareProjectDescriptions(i + 1, description, baselines.get(members[i]));
 		}
 	}
 
@@ -641,7 +642,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
-		HashMap args = new HashMap(3);
+		HashMap<String, String> args = new HashMap<String, String>(3);
 		args.put("ArgOne", "ARGH!");
 		args.put("ArgTwo", "2 x ARGH!");
 		args.put("NullArg", null);
@@ -688,7 +689,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
-		HashMap args = new HashMap(3);
+		HashMap<String, String> args = new HashMap<String, String>(3);
 		args.put("ArgOne", "ARGH!");
 		ICommand[] commands = new ICommand[1];
 		commands[0] = description.newCommand();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -32,7 +33,7 @@ public class NLTest extends ResourceTest {
 		return new TestSuite(NLTest.class);
 	}
 
-	public void getFileNames(List list, char begin, char end) {
+	public void getFileNames(List<String> list, char begin, char end) {
 		char current = begin;
 		int index = 0;
 		StringBuffer name = new StringBuffer();
@@ -57,7 +58,7 @@ public class NLTest extends ResourceTest {
 	}
 
 	public String[] getFileNames(String language) {
-		List names = new ArrayList(20);
+		List<String> names = new ArrayList<String>(20);
 		if (language.equalsIgnoreCase("en")) { // English
 			getFileNames(names, '\u0041', '\u005A'); // A - Z
 			getFileNames(names, '\u0061', '\u007A'); // a - z
@@ -75,7 +76,7 @@ public class NLTest extends ResourceTest {
 				language.equalsIgnoreCase("iw")) { // Hebrew
 			getFileNames(names, '\u0590', '\u05FF');
 		}
-		return (String[]) names.toArray(new String[names.size()]);
+		return names.toArray(new String[names.size()]);
 	}
 
 	public void testFileNames() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -133,7 +134,7 @@ public class IProjectDescriptionTest extends ResourceTest {
 		try {
 			IProjectDescription description = project.getDescription();
 			ICommand newCommand = description.newCommand();
-			Map args = new HashMap();
+			Map<String, String> args = new HashMap<String, String>();
 			args.put(key, value1);
 			newCommand.setArguments(args);
 			description.setBuildSpec(new ICommand[] {newCommand});
@@ -146,7 +147,7 @@ public class IProjectDescriptionTest extends ResourceTest {
 		try {
 			IProjectDescription description = project.getDescription();
 			ICommand command = description.getBuildSpec()[0];
-			Map args = command.getArguments();
+			Map<String, String> args = command.getArguments();
 			args.put(key, value2);
 			command.setArguments(args);
 			description.setBuildSpec(new ICommand[] {command});

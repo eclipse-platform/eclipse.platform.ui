@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -49,7 +50,7 @@ public class ProjectOrderTest extends ResourceTest {
 		try {
 			IProjectDescription pd = source.getDescription();
 			IProject[] a = pd.getReferencedProjects();
-			Set x = new HashSet();
+			Set<IProject> x = new HashSet<IProject>();
 			x.addAll(Arrays.asList(a));
 			x.add(target);
 			IProject[] r = new IProject[x.size()];
@@ -95,7 +96,7 @@ public class ProjectOrderTest extends ResourceTest {
 			IProject[] projects = new IProject[] {p4, p3, p2, p5, p1, p0};
 			IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
 			assertTrue("0.1", oldOrder[1].length == 0);
-			List x = Arrays.asList(oldOrder[0]);
+			List<IProject> x = Arrays.asList(oldOrder[0]);
 			assertTrue("0.2", x.size() == 6);
 			assertTrue("0.3", x.indexOf(p0) >= 0);
 			assertTrue("0.4", x.indexOf(p1) >= 0);
@@ -127,7 +128,7 @@ public class ProjectOrderTest extends ResourceTest {
 
 		IProject[] projects = new IProject[] {};
 		IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
-		List x = Arrays.asList(oldOrder[0]);
+		List<IProject> x = Arrays.asList(oldOrder[0]);
 		assertTrue("1.1", oldOrder[1].length == 0);
 		assertTrue("1.2", x.size() == 0);
 
@@ -332,7 +333,7 @@ public class ProjectOrderTest extends ResourceTest {
 			projects = new IProject[] {p1, p0};
 			oldOrder = ws.computePrerequisiteOrder(projects);
 			x = Arrays.asList(oldOrder[0]);
-			List unordered = Arrays.asList(oldOrder[1]);
+			List<IProject> unordered = Arrays.asList(oldOrder[1]);
 			assertTrue("1.10.1", oldOrder[1].length == 2);
 			assertTrue("1.10.2", x.size() == 0);
 			assertTrue("1.10.3", unordered.size() == 2);
@@ -346,7 +347,7 @@ public class ProjectOrderTest extends ResourceTest {
 			assertTrue("1.10.8", x.size() == 2);
 			assertTrue("1.10.9", x.indexOf(p0) >= 0);
 			assertTrue("1.10.10", x.indexOf(p1) >= 0);
-			List knot = Arrays.asList(order.knots[0]);
+			List<IProject> knot = Arrays.asList(order.knots[0]);
 			assertTrue("1.10.11", knot.size() == 2);
 			assertTrue("1.10.12", knot.indexOf(p0) >= 0);
 			assertTrue("1.10.13", knot.indexOf(p1) >= 0);
@@ -472,8 +473,8 @@ public class ProjectOrderTest extends ResourceTest {
 
 			IProject[] projects = new IProject[] {a, b, c, d, e, f, g, h};
 			IProject[][] oldOrder = ws.computePrerequisiteOrder(projects);
-			List x = Arrays.asList(oldOrder[0]);
-			List unordered = Arrays.asList(oldOrder[1]);
+			List<IProject> x = Arrays.asList(oldOrder[0]);
+			List<IProject> unordered = Arrays.asList(oldOrder[1]);
 			assertTrue("2.1", x.size() == 1);
 			assertTrue("2.2", x.indexOf(h) >= 0);
 			assertTrue("2.3", unordered.size() == 7);
@@ -511,21 +512,21 @@ public class ProjectOrderTest extends ResourceTest {
 			assertTrue("2.31", x.indexOf(g) < x.indexOf(h));
 			assertTrue("2.32", order.hasCycles);
 			assertTrue("2.33", order.knots.length == 3);
-			List k1 = Arrays.asList(order.knots[0]);
-			List k2 = Arrays.asList(order.knots[1]);
-			List k3 = Arrays.asList(order.knots[2]);
+			List<IProject> k1 = Arrays.asList(order.knots[0]);
+			List<IProject> k2 = Arrays.asList(order.knots[1]);
+			List<IProject> k3 = Arrays.asList(order.knots[2]);
 			// sort 3 groups
 			if (k2.indexOf(b) >= 0) {
-				List temp = k1;
+				List<IProject> temp = k1;
 				k1 = k2;
 				k2 = temp;
 			} else if (k3.indexOf(b) >= 0) {
-				List temp = k1;
+				List<IProject> temp = k1;
 				k1 = k3;
 				k3 = temp;
 			}
 			if (k3.indexOf(c) >= 0) {
-				List temp = k2;
+				List<IProject> temp = k2;
 				k2 = k3;
 				k3 = temp;
 			}

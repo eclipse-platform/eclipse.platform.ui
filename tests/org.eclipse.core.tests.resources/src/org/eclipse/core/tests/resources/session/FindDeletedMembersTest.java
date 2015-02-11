@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
@@ -229,7 +230,7 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 
 			df = folder.findDeletedMembersWithHistory(IResource.DEPTH_ONE, getMonitor());
 			assertEquals("1.14", 2, df.length);
-			List dfList = Arrays.asList(df);
+			List<IFile> dfList = Arrays.asList(df);
 			assertTrue("1.15", dfList.contains(file));
 			assertTrue("1.16", dfList.contains(folderAsFile));
 
@@ -280,7 +281,7 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 
 			df = root.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, getMonitor());
 			assertEquals("3.3", 3, df.length);
-			List dfList = Arrays.asList(df);
+			List<IFile> dfList = Arrays.asList(df);
 			assertTrue("3.3.1", dfList.contains(file1));
 			assertTrue("3.3.2", dfList.contains(file2));
 			assertTrue("3.3.3", dfList.contains(file3));

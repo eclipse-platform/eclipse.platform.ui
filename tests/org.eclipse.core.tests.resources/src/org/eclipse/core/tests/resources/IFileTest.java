@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -31,14 +32,14 @@ public class IFileTest extends ResourceTest {
 	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
 	public static final String WORKSPACE_ONLY = "WorkspaceOnlyFile";
 
-	ArrayList allFiles = new ArrayList();
-	ArrayList existingFiles = new ArrayList();
-	ArrayList localOnlyFiles = new ArrayList();
-	ArrayList nonExistingFiles = new ArrayList();
-	ArrayList outOfSyncFiles = new ArrayList();
+	ArrayList<IFile> allFiles = new ArrayList<IFile>();
+	ArrayList<IFile> existingFiles = new ArrayList<IFile>();
+	ArrayList<IFile> localOnlyFiles = new ArrayList<IFile>();
+	ArrayList<IFile> nonExistingFiles = new ArrayList<IFile>();
+	ArrayList<IFile> outOfSyncFiles = new ArrayList<IFile>();
 
 	IProject[] projects = null;
-	ArrayList workspaceOnlyFiles = new ArrayList();
+	ArrayList<IFile> workspaceOnlyFiles = new ArrayList<IFile>();
 
 	/**
 	 * Sets up the test suite for this class
@@ -176,7 +177,7 @@ public class IFileTest extends ResourceTest {
 	 * Returns some interesting input streams
 	 */
 	public InputStream[] interestingStreams() {
-		ArrayList streams = new ArrayList();
+		ArrayList<InputStream> streams = new ArrayList<InputStream>();
 
 		//empty stream
 		ByteArrayInputStream bis = new ByteArrayInputStream(new byte[0]);
@@ -242,8 +243,8 @@ public class IFileTest extends ResourceTest {
 	 * Makes sure file requirements are met (out of sync, workspace only, etc).
 	 */
 	public void refreshFiles() {
-		for (Iterator it = allFiles.iterator(); it.hasNext();)
-			refreshFile((IFile) it.next());
+		for (Iterator<IFile> it = allFiles.iterator(); it.hasNext();)
+			refreshFile(it.next());
 	}
 
 	protected void setUp() throws Exception {

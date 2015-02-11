@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -2439,7 +2440,7 @@ public class IProjectTest extends ResourceTest {
 		IResource[] resources = buildResources(project, children);
 		ensureExistsInWorkspace(project, true);
 		ensureExistsInWorkspace(resources, true);
-		Set pathsToDelete = new HashSet(5);
+		Set<IPath> pathsToDelete = new HashSet<IPath>(5);
 
 		try {
 			// move the project content
@@ -2477,8 +2478,8 @@ public class IProjectTest extends ResourceTest {
 				fail("2.2", e);
 			}
 		} finally {
-			for (Iterator i = pathsToDelete.iterator(); i.hasNext();) {
-				Workspace.clear(((IPath) i.next()).toFile());
+			for (Iterator<IPath> i = pathsToDelete.iterator(); i.hasNext();) {
+				Workspace.clear(i.next().toFile());
 			}
 		}
 	}

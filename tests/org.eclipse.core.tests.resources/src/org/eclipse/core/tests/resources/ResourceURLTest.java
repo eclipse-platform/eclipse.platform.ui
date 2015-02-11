@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.PlatformURLResourceConnection;
@@ -28,10 +28,7 @@ public class ResourceURLTest extends ResourceTest {
 	private static final String CONTENT = "content";
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
-	protected static Set nonExistingResources = new HashSet();
 	static boolean noSideEffects = false;
-
-	protected static Map unsynchronizedResources = new HashMap();
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ResourceURLTest.class.getName());

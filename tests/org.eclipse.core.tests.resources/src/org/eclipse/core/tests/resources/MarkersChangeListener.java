@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.Path;
  * A support class for the marker tests.
  */
 public class MarkersChangeListener implements IResourceChangeListener {
-	protected Hashtable changes;
+	protected Hashtable<IPath, Vector<IMarkerDelta>> changes;
 
 	public MarkersChangeListener() {
 		reset();
@@ -32,14 +33,14 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	public boolean checkChanges(IResource resource, IMarker[] added, IMarker[] removed, IMarker[] changed) {
 		IPath path = resource == null ? Path.ROOT : resource.getFullPath();
-		Vector v = (Vector) changes.get(path);
+		Vector<IMarkerDelta> v = changes.get(path);
 		if (v == null)
-			v = new Vector();
+			v = new Vector<IMarkerDelta>();
 		int numChanges = (added == null ? 0 : added.length) + (removed == null ? 0 : removed.length) + (changed == null ? 0 : changed.length);
 		if (numChanges != v.size())
 			return false;
 		for (int i = 0; i < v.size(); ++i) {
-			IMarkerDelta delta = (IMarkerDelta) v.elementAt(i);
+			IMarkerDelta delta = v.elementAt(i);
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED :
 					if (!contains(added, delta.getMarker()))
@@ -81,7 +82,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	}
 
 	public void reset() {
-		changes = new Hashtable(11);
+		changes = new Hashtable<IPath, Vector<IMarkerDelta>>(11);
 	}
 
 	/**
@@ -99,9 +100,9 @@ public class MarkersChangeListener implements IResourceChangeListener {
 			return;
 		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 			IPath path = delta.getFullPath();
-			Vector v = (Vector) changes.get(path);
+			Vector<IMarkerDelta> v = changes.get(path);
 			if (v == null) {
-				v = new Vector();
+				v = new Vector<IMarkerDelta>();
 				changes.put(path, v);
 			}
 			IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();

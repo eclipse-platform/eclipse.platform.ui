@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
@@ -408,7 +409,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = proj1.getDescription();
 			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
 			proj1.setDescription(desc, getMonitor());
-			proj1.build(IncrementalProjectBuilder.FULL_BUILD, SortBuilder.BUILDER_NAME, new HashMap(), null);
+			proj1.build(IncrementalProjectBuilder.FULL_BUILD, SortBuilder.BUILDER_NAME, new HashMap<String, String>(), null);
 			notified[0] = false;
 			//now turn on autobuild and see if the listener is notified again
 			setAutoBuilding(true);
@@ -700,10 +701,10 @@ public class BuilderTest extends AbstractBuilderTest {
 			assertEquals("4.0", 2, commands.length);
 			assertEquals("4.1", commands[0].getBuilderName(), SortBuilder.BUILDER_NAME);
 			assertEquals("4.2", commands[1].getBuilderName(), SortBuilder.BUILDER_NAME);
-			Map args = commands[0].getArguments();
-			assertEquals("4.3", "Build1", (String) args.get(TestBuilder.BUILD_ID));
+			Map<String, String> args = commands[0].getArguments();
+			assertEquals("4.3", "Build1", args.get(TestBuilder.BUILD_ID));
 			args = commands[1].getArguments();
-			assertEquals("4.4", "Build2", (String) args.get(TestBuilder.BUILD_ID));
+			assertEquals("4.4", "Build2", args.get(TestBuilder.BUILD_ID));
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}

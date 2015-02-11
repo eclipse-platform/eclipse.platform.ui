@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
@@ -60,7 +61,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		// Don't include the default build order here as it is equivalent to the 
 		// String default-default (ResourcesPlugin.PREF_BUILD_ORDER).
 		String[] descriptionProperties = {ResourcesPlugin.PREF_AUTO_BUILDING, ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, ResourcesPlugin.PREF_MAX_FILE_STATES, ResourcesPlugin.PREF_SNAPSHOT_INTERVAL};
-		List defaultPropertiesList = Arrays.asList(preferences.defaultPropertyNames());
+		List<String> defaultPropertiesList = Arrays.asList(preferences.defaultPropertyNames());
 		for (int i = 0; i < descriptionProperties.length; i++) {
 			String property = descriptionProperties[i];
 			assertTrue("2.0 - Description property is not default: " + property, defaultPropertiesList.contains(property));
@@ -85,8 +86,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertTrue("2.1", workspace.getDescription().getBuildOrder() != null);
 
 		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "x/y,:z/z");
-		List expectedList = Arrays.asList(new String[] {"x", "y,:z", "z"});
-		List actualList = Arrays.asList(workspace.getDescription().getBuildOrder());
+		List<String> expectedList = Arrays.asList(new String[] {"x", "y,:z", "z"});
+		List<String> actualList = Arrays.asList(workspace.getDescription().getBuildOrder());
 		assertEquals("2.2", expectedList, actualList);
 
 		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "");
@@ -130,7 +131,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		// 8 - PREF_SNAPSHOT_INTERVAL
 		modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
 
-		final List changedProperties = new LinkedList();
+		final List<String> changedProperties = new LinkedList<String>();
 		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
 				changedProperties.add(event.getProperty());

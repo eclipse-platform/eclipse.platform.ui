@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class MarkerAttributeChangeListener extends Assert implements IResourceChangeListener {
 	//Map of (Long(id) -> Map of (String(attribute key) -> Object(attribute value)))
-	private Map attributeMap = new HashMap();
+	private Map<Long, Map<String, Object>> attributeMap = new HashMap<Long, Map<String, Object>>();
 
 	//cache the exception because it can't be thrown from a listener
 	private AssertionFailedError error;
@@ -57,7 +58,7 @@ public class MarkerAttributeChangeListener extends Assert implements IResourceCh
 	private void checkDelta(IMarkerDelta[] deltas) throws AssertionFailedError {
 		assertEquals("wrong number of changes", attributeMap.size(), deltas.length);
 		for (int i = 0; i < deltas.length; i++) {
-			Map values = (Map) attributeMap.get(new Long(deltas[i].getId()));
+			Map<String, Object> values = attributeMap.get(new Long(deltas[i].getId()));
 			assertEquals("Changes different from expecations", deltas[i].getAttributes(), values);
 		}
 	}

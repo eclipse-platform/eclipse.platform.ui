@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
@@ -27,9 +28,9 @@ public class BucketTreeTests extends ResourceTest {
 	static class SimpleBucket extends Bucket {
 
 		static class SimpleEntry extends Entry {
-			private Map value;
+			private Map<String, String> value;
 
-			public SimpleEntry(IPath path, Map value) {
+			public SimpleEntry(IPath path, Map<String, String> value) {
 				super(path);
 				this.value = value;
 			}
@@ -39,7 +40,7 @@ public class BucketTreeTests extends ResourceTest {
 			}
 
 			public String getProperty(String key) {
-				return (String) value.get(key);
+				return value.get(key);
 			}
 
 			public Object getValue() {
@@ -59,12 +60,9 @@ public class BucketTreeTests extends ResourceTest {
 			return "simple_bucket.version";
 		}
 
+		@SuppressWarnings("unchecked")
 		protected Entry createEntry(IPath path, Object value) {
-			return new SimpleEntry(path, (Map) value);
-		}
-
-		public Map getValue(IPath key) {
-			return (Map) getEntryValue(key.toString());
+			return new SimpleEntry(path, (Map<String, String>) value);
 		}
 
 		protected byte getVersion() {
@@ -81,6 +79,7 @@ public class BucketTreeTests extends ResourceTest {
 
 		public void set(IPath path, String key, String value) {
 			String pathAsString = path.toString();
+			@SuppressWarnings("unchecked")
 			Map<String, String> existing = (Map<String, String>) getEntryValue(pathAsString);
 			if (existing == null) {
 				if (value != null) {
@@ -100,13 +99,14 @@ public class BucketTreeTests extends ResourceTest {
 		}
 
 		protected void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException {
-			Map value = (Map) entryValue;
+			@SuppressWarnings("unchecked")
+			Map<String, String> value = (Map<String, String>) entryValue;
 			int length = value.size();
 			destination.writeShort(length);
-			for (Iterator i = value.entrySet().iterator(); i.hasNext();) {
-				Map.Entry element = (Map.Entry) i.next();
-				destination.writeUTF((String) element.getKey());
-				destination.writeUTF((String) element.getValue());
+			for (Iterator<Map.Entry<String, String>> i = value.entrySet().iterator(); i.hasNext();) {
+				Map.Entry<String, String> element = i.next();
+				destination.writeUTF(element.getKey());
+				destination.writeUTF(element.getValue());
 			}
 		}
 	}

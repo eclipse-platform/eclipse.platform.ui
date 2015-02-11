@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
@@ -212,7 +213,7 @@ public class IProjectTest extends IResourceTest {
 		ICommand command = desc.newCommand();
 		command.setBuilderName("org.eclipse.core.tests.buildername");
 		ICommand[] commands = new ICommand[] {command};
-		Hashtable arguments = new Hashtable(2);
+		Hashtable<String, String> arguments = new Hashtable<String, String>(2);
 		arguments.put("param0", "arg0");
 		command.setArguments(arguments);
 		// Add buildspec to project 

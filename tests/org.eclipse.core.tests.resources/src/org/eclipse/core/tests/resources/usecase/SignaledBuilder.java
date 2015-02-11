@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
@@ -25,18 +26,18 @@ public class SignaledBuilder extends IncrementalProjectBuilder {
 	/**
 	 * associate IProject->SignaledBuilder
 	 */
-	private static HashMap instances = new HashMap(10);
+	private static HashMap<IProject, SignaledBuilder> instances = new HashMap<IProject, SignaledBuilder>(10);
 	protected boolean wasExecuted;
 
 	public static SignaledBuilder getInstance(IProject project) {
-		return (SignaledBuilder) instances.get(project);
+		return instances.get(project);
 	}
 
 	public SignaledBuilder() {
 		reset();
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		instances.put(getProject(), this);
 		try {
 			monitor.beginTask("Building.", 1);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
@@ -68,7 +69,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		baseTree.immutable();
 		final ElementTree tree = baseTree.newEmptyDelta();
 		modifyTree(tree);
-		final ArrayList elts = new ArrayList();
+		final ArrayList<Object> elts = new ArrayList<Object>();
 		final IElementContentVisitor visitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
 				elts.add(info);
@@ -118,7 +119,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		ElementTree tree = new ElementTree();
 		int n = 3;
 		setupElementTree(tree, n);
-		final ArrayList elts = new ArrayList();
+		final ArrayList<IPath> elts = new ArrayList<IPath>();
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
 				elts.add(requestor.requestPath());
@@ -147,13 +148,13 @@ public class ElementTreeIteratorTest extends WatsonTest {
 	}
 
 	protected void modifyTree(ElementTree tree) {
-		class MyStack extends Stack {
+		class MyStack extends Stack<IPath> {
 			/**
 			 * All serializable objects should have a stable serialVersionUID
 			 */
 			private static final long serialVersionUID = 1L;
 
-			public void pushAll(Object[] array) {
+			public void pushAll(IPath[] array) {
 				for (int i = 0; i < array.length; i++) {
 					push(array[i]);
 				}
@@ -163,7 +164,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		IPath[] children = tree.getChildren(Path.ROOT);
 		toModify.pushAll(children);
 		while (!toModify.isEmpty()) {
-			IPath visit = (IPath) toModify.pop();
+			IPath visit = toModify.pop();
 			tree.openElementData(visit);
 			toModify.pushAll(tree.getChildren(visit));
 		}

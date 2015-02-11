@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -42,10 +43,10 @@ public class MarkerSetTest extends ResourceTest {
 		System.arraycopy(array1, 0, m1, 0, array1.length);
 		IMarkerSetElement[] m2 = new IMarkerSetElement[array2.length];
 		System.arraycopy(array2, 0, m2, 0, array2.length);
-		java.util.Comparator compare = new java.util.Comparator() {
-			public int compare(Object o1, Object o2) {
-				long id1 = ((IMarkerSetElement) o1).getId();
-				long id2 = ((IMarkerSetElement) o2).getId();
+		java.util.Comparator<IMarkerSetElement> compare = new java.util.Comparator<IMarkerSetElement>() {
+			public int compare(IMarkerSetElement o1, IMarkerSetElement o2) {
+				long id1 = o1.getId();
+				long id2 = o2.getId();
 				if (id1 == id2)
 					return 0;
 				return id1 < id2 ? -1 : 1;

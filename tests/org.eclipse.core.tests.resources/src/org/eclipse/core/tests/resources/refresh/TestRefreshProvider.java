@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.refresh;
 
@@ -20,8 +21,8 @@ import org.eclipse.core.resources.refresh.*;
  * 
  */
 public class TestRefreshProvider extends RefreshProvider implements IRefreshMonitor {
-	private final ArrayList failures = new ArrayList();
-	private final HashSet monitoredResources = new HashSet();
+	private final ArrayList<AssertionFailedError> failures = new ArrayList<AssertionFailedError>();
+	private final HashSet<IResource> monitoredResources = new HashSet<IResource>();
 	private static TestRefreshProvider instance;
 
 	public static TestRefreshProvider getInstance() {
@@ -46,14 +47,14 @@ public class TestRefreshProvider extends RefreshProvider implements IRefreshMoni
 	 * Returns the failures, or an empty array if there were no failures.
 	 */
 	public AssertionFailedError[] getFailures() {
-		return (AssertionFailedError[]) failures.toArray(new AssertionFailedError[failures.size()]);
+		return failures.toArray(new AssertionFailedError[failures.size()]);
 	}
 
 	/**
 	 * Returns the resources that are currently being monitored by this refresh provider.
 	 */
 	public IResource[] getMonitoredResources() {
-		return (IResource[]) monitoredResources.toArray(new IResource[monitoredResources.size()]);
+		return monitoredResources.toArray(new IResource[monitoredResources.size()]);
 	}
 
 	/* (non-javadoc)

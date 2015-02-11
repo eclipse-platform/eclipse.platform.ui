@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
@@ -43,14 +44,14 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 	/**
 	 * Creates a tree of resources. 
 	 */
-	private List createTree(IFolder base, int filesPerFolder) {
+	private List<IResource> createTree(IFolder base, int filesPerFolder) {
 		IFolder[] folders = new IFolder[5];
 		folders[0] = base.getFolder("folder1");
 		folders[1] = base.getFolder("folder2");
 		folders[2] = folders[0].getFolder("folder3");
 		folders[3] = folders[2].getFolder("folder4");
 		folders[4] = folders[3].getFolder("folder5");
-		List resources = new ArrayList(filesPerFolder * folders.length);
+		List<IResource> resources = new ArrayList<IResource>(filesPerFolder * folders.length);
 		for (int i = 0; i < folders.length; i++)
 			resources.add(folders[i]);
 		ensureExistsInWorkspace(folders, true);
@@ -67,9 +68,9 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 	private void testGetProperty(int filesPerFolder, final int properties, int measurements, int repetitions) {
 		IProject proj1 = getWorkspace().getRoot().getProject("proj1");
 		final IFolder folder1 = proj1.getFolder("folder1");
-		final List allResources = createTree(folder1, filesPerFolder);
-		for (Iterator i = allResources.iterator(); i.hasNext();) {
-			IResource resource = (IResource) i.next();
+		final List<IResource> allResources = createTree(folder1, filesPerFolder);
+		for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
+			IResource resource = i.next();
 			for (int j = 0; j < properties; j++)
 				try {
 					resource.setPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + j), getPropertyValue(200));
@@ -81,8 +82,8 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		new PerformanceTestRunner() {
 			protected void test() {
 				for (int j = 0; j < properties; j++)
-					for (Iterator i = allResources.iterator(); i.hasNext();) {
-						IResource resource = (IResource) i.next();
+					for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
+						IResource resource = i.next();
 						try {
 							assertNotNull(resource.getPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + j)));
 						} catch (CoreException ce) {
@@ -114,7 +115,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 	private void testSetProperty(int filesPerFolder, int properties, int measurements, int repetitions) {
 		IProject proj1 = getWorkspace().getRoot().getProject("proj1");
 		final IFolder folder1 = proj1.getFolder("folder1");
-		final List allResources = createTree(folder1, filesPerFolder);
+		final List<IResource> allResources = createTree(folder1, filesPerFolder);
 		new PerformanceTestRunner() {
 
 			protected void tearDown() {
@@ -126,8 +127,8 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 			}
 
 			protected void test() {
-				for (Iterator i = allResources.iterator(); i.hasNext();) {
-					IResource resource = (IResource) i.next();
+				for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
+					IResource resource = i.next();
 					try {
 						resource.setPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + ((int) Math.random() * 50)), getPropertyValue(200));
 					} catch (CoreException ce) {

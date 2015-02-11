@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
@@ -37,7 +38,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		super(name);
 	}
 
-	protected void createFiles(IFileStore folder, Hashtable set) throws Exception {
+	protected void createFiles(IFileStore folder, Hashtable<String, String> set) throws Exception {
 		for (int i = 0; i < limit; i++) {
 			IFileStore child = folder.getChild("fsFile" + i);
 			OutputStream out = null;
@@ -56,7 +57,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		}
 	}
 
-	protected void createFiles(final IContainer target, final Hashtable set) throws CoreException {
+	protected void createFiles(final IContainer target, final Hashtable<String, String> set) throws CoreException {
 		final Workspace workspace = (Workspace) getWorkspace();
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -71,7 +72,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		workspace.run(operation, null);
 	}
 
-	protected void createResourcesInFileSystem(IFileStore folder, Hashtable set) throws Exception {
+	protected void createResourcesInFileSystem(IFileStore folder, Hashtable<String, String> set) throws Exception {
 		createFiles(folder, set);
 		for (int i = 0; i < limit; i++) {
 			IFileStore child = folder.getChild("fsFolder" + i);
@@ -82,7 +83,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		}
 	}
 
-	protected void createResourcesInWorkspace(IContainer target, Hashtable set) throws CoreException {
+	protected void createResourcesInWorkspace(IContainer target, Hashtable<String, String> set) throws CoreException {
 		createFiles(target, set);
 		for (int i = 0; i < limit; i++) {
 			IFolder child = target.getFolder(new Path("wbFolder" + i));
@@ -114,7 +115,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		/* Create a hash table to hold all resources the tree should visit.
 		 The resources are going to be removed from the hash table as
 		 the visitor visits it. */
-		final Hashtable set = new Hashtable();
+		final Hashtable<String, String> set = new Hashtable<String, String>();
 
 		/* create some workspace structure */
 		createResourcesInWorkspace(folder, set);
@@ -159,7 +160,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		/* Create a hash table to hold all resources the tree should visit.
 		 The resources are going to be removed from the hash table as
 		 the visitor visits it. */
-		final Hashtable set = new Hashtable();
+		final Hashtable<String, String> set = new Hashtable<String, String>();
 
 		/* create some workspace structure */
 		createResourcesInWorkspace(folder, set);
@@ -215,7 +216,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		/* Create a hash table to hold all resources the tree should visit.
 		 The resources are going to be removed from the hash table as
 		 the visitor visits it. */
-		final Hashtable set = new Hashtable();
+		final Hashtable<String, String> set = new Hashtable<String, String>();
 
 		/* create some workspace structure */
 		createResourcesInWorkspace(project, set);

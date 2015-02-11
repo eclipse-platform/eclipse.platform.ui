@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.utils;
 
 import java.util.*;
+import java.util.Map.Entry;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.ObjectMap;
@@ -50,7 +52,7 @@ public class ObjectMapTest extends ResourceTest {
 	public void testPut() {
 
 		// create the objects to insert into the map
-		ObjectMap map = new ObjectMap();
+		ObjectMap<Integer, Object> map = new ObjectMap<Integer, Object>();
 		int max = 100;
 		Object[] values = new Object[max];
 		for (int i = 0; i < max; i++)
@@ -58,7 +60,7 @@ public class ObjectMapTest extends ResourceTest {
 
 		// add each object to the map
 		for (int i = 0; i < values.length; i++) {
-			Object key = new Integer(i);
+			Integer key = new Integer(i);
 			map.put(key, values[i]);
 			assertTrue("2.0." + i, map.containsKey(key));
 			assertTrue("2.1." + i, map.containsValue(values[i]));
@@ -68,21 +70,21 @@ public class ObjectMapTest extends ResourceTest {
 		// make sure they are all still there
 		assertEquals("3.0", max, map.size());
 		for (int i = 0; i < values.length; i++) {
-			Object key = new Integer(i);
+			Integer key = new Integer(i);
 			assertTrue("3.1." + i, map.containsKey(key));
 			assertNotNull("3.2." + i, map.get(key));
 		}
 	}
 
 	public void testPutEmptyMap() {
-		ObjectMap map = new ObjectMap(new HashMap());
+		ObjectMap<Object, Object> map = new ObjectMap<Object, Object>(new HashMap<Object, Object>());
 		map.put(new Object(), new Object());
 	}
 
 	public void testRemove() {
 
 		// populate the map
-		ObjectMap map = populateMap(MAXIMUM);
+		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
 
 		// remove each element
 		for (int i = MAXIMUM - 1; i >= 0; i--) {
@@ -100,7 +102,7 @@ public class ObjectMapTest extends ResourceTest {
 	}
 
 	public void testContains() {
-		ObjectMap map = populateMap(MAXIMUM);
+		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
 
 		for (int i = 0; i < MAXIMUM; i++) {
 			assertTrue("2.0." + i, map.containsKey(new Integer(i)));
@@ -114,22 +116,22 @@ public class ObjectMapTest extends ResourceTest {
 	}
 
 	public void testValues() {
-		ObjectMap map = populateMap(MAXIMUM);
+		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
 
-		Collection result = map.values();
+		Collection<Object> result = map.values();
 		for (int i = 0; i < MAXIMUM; i++)
 			assertTrue("2.0." + i, result.contains(values[i]));
 	}
 
 	public void testKeySet() {
-		ObjectMap map = populateMap(MAXIMUM);
-		Set keys = map.keySet();
+		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
+		Set<Integer> keys = map.keySet();
 		assertEquals("1.0", MAXIMUM, keys.size());
 	}
 
 	public void testEntrySet() {
-		ObjectMap map = populateMap(MAXIMUM);
-		Set entries = map.entrySet();
+		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
+		Set<Entry<Integer, Object>> entries = map.entrySet();
 		for (int i = 0; i < MAXIMUM; i++)
 			assertTrue("1.0." + i, contains(entries, values[i]));
 	}
@@ -137,18 +139,18 @@ public class ObjectMapTest extends ResourceTest {
 	/**
 	 * The given set is a set of Map.Entry objects. 
 	 */
-	private boolean contains(Set set, Object value) {
-		for (Iterator i = set.iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
+	private boolean contains(Set<Entry<Integer, Object>> set, Object value) {
+		for (Iterator<Entry<Integer, Object>> i = set.iterator(); i.hasNext();) {
+			Map.Entry<Integer, Object> entry = i.next();
 			if (entry.getValue().equals(value))
 				return true;
 		}
 		return false;
 	}
 
-	private ObjectMap populateMap(int max) {
+	private ObjectMap<Integer, Object> populateMap(int max) {
 		// populate the map
-		ObjectMap map = new ObjectMap();
+		ObjectMap<Integer, Object> map = new ObjectMap<Integer, Object>();
 		values = new Object[max];
 		for (int i = 0; i < max; i++) {
 			values[i] = new Long(System.currentTimeMillis());
@@ -162,7 +164,7 @@ public class ObjectMapTest extends ResourceTest {
 	 * Bug 62231 - empty ObjectMap.toHashMap() causes NullPointerException
 	 */
 	public void testBug_62231() {
-		ObjectMap map = new ObjectMap();
+		ObjectMap<?, ?> map = new ObjectMap<Object, Object>();
 		try {
 			map.entrySet();
 		} catch (NullPointerException e) {
@@ -174,6 +176,6 @@ public class ObjectMapTest extends ResourceTest {
 		} catch (NullPointerException e) {
 			fail("1.1");
 		}
-		
+
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -73,7 +74,7 @@ public class Bug_097608 extends ResourceTest {
 		Arrays.fill(chars, 'a');
 		String value = new String(chars);
 
-		Map markerAttributes = new HashMap();
+		Map<String, String> markerAttributes = new HashMap<String, String>();
 		markerAttributes.put(IMarker.MESSAGE, value);
 
 		IMarker marker = null;

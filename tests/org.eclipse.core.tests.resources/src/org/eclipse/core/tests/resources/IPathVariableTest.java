@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -101,8 +102,8 @@ public class IPathVariableTest extends ResourceTest {
 			}
 		}
 
-		List expected = new ArrayList();
-		List actual = new ArrayList();
+		List<Event> expected = new ArrayList<Event>();
+		List<Event> actual = new ArrayList<Event>();
 
 		void addExpectedEvent(int type, String name, IPath value) {
 			expected.add(new Event(type, name, value));
@@ -115,8 +116,8 @@ public class IPathVariableTest extends ResourceTest {
 				message += dump();
 				throw new VerificationFailedException(message);
 			}
-			for (Iterator i = expected.iterator(); i.hasNext();) {
-				Event e = (Event) i.next();
+			for (Iterator<Event> i = expected.iterator(); i.hasNext();) {
+				Event e = i.next();
 				if (!actual.contains(e)) {
 					message = "Expected and actual results differ.\n";
 					message += dump();
@@ -126,8 +127,8 @@ public class IPathVariableTest extends ResourceTest {
 		}
 
 		void reset() {
-			expected = new ArrayList();
-			actual = new ArrayList();
+			expected = new ArrayList<Event>();
+			actual = new ArrayList<Event>();
 		}
 
 		public void pathVariableChanged(IPathVariableChangeEvent event) {
@@ -137,10 +138,10 @@ public class IPathVariableTest extends ResourceTest {
 		String dump() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Expected:\n");
-			for (Iterator i = expected.iterator(); i.hasNext();)
+			for (Iterator<Event> i = expected.iterator(); i.hasNext();)
 				buffer.append("\t" + i.next() + "\n");
 			buffer.append("Actual:\n");
-			for (Iterator i = actual.iterator(); i.hasNext();)
+			for (Iterator<Event> i = actual.iterator(); i.hasNext();)
 				buffer.append("\t" + i.next() + "\n");
 			return buffer.toString();
 		}
@@ -182,7 +183,7 @@ public class IPathVariableTest extends ResourceTest {
 			fail("1.0", e);
 		}
 		names = manager.getPathVariableNames();
-		List list = Arrays.asList(names);
+		List<String> list = Arrays.asList(names);
 		assertTrue("1.2", list.contains("one"));
 
 		// add another

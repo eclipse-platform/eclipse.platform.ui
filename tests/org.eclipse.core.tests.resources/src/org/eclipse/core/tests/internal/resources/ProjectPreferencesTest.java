@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
@@ -99,16 +100,16 @@ public class ProjectPreferencesTest extends ResourceTest {
 		IScopeContext instanceContext = new InstanceScope();
 		ensureExistsInWorkspace(project, true);
 
-		ArrayList list = new ArrayList();
+		ArrayList<IScopeContext[]> list = new ArrayList<IScopeContext[]>();
 		list.add(null);
 		list.add(new IScopeContext[0]);
 		list.add(new IScopeContext[] {null});
-		IScopeContext[][] contextsWithoutScope = (IScopeContext[][]) list.toArray(new IScopeContext[list.size()][]);
+		IScopeContext[][] contextsWithoutScope = list.toArray(new IScopeContext[list.size()][]);
 
-		list = new ArrayList();
+		list = new ArrayList<IScopeContext[]>();
 		list.add(new IScopeContext[] {projectContext});
 		list.add(new IScopeContext[] {null, projectContext});
-		IScopeContext[][] contextsWithScope = (IScopeContext[][]) list.toArray(new IScopeContext[list.size()][]);
+		IScopeContext[][] contextsWithScope = list.toArray(new IScopeContext[list.size()][]);
 
 		// set a preference value in the instance scope
 		IPreferencesService service = Platform.getPreferencesService();

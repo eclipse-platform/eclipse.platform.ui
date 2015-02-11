@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -26,7 +27,7 @@ public class IResourceTest extends ResourceTest {
 	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
-	protected static Set nonExistingResources = new HashSet();
+	protected static Set<IResource> nonExistingResources = new HashSet<IResource>();
 	static boolean noSideEffects = false;
 	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 
@@ -68,7 +69,7 @@ public class IResourceTest extends ResourceTest {
 	 */
 	protected static final int S_WORKSPACE_ONLY = 0;
 	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
-	protected static Set unsynchronizedResources = new HashSet();
+	protected static Set<IResource> unsynchronizedResources = new HashSet<IResource>();
 
 	/* the delta verifier */
 	ResourceDeltaVerifier verifier;
@@ -77,8 +78,8 @@ public class IResourceTest extends ResourceTest {
 	 * @return Set
 	 * @param dir 
 	 */
-	static protected Set getAllFilesForDirectory(File dir) {
-		Set result = new HashSet(50);
+	static protected Set<File> getAllFilesForDirectory(File dir) {
+		Set<File> result = new HashSet<File>(50);
 		String[] members = dir.list();
 		if (members != null) {
 			for (int i = 0; i < members.length; i++) {
@@ -96,8 +97,8 @@ public class IResourceTest extends ResourceTest {
 	 * @return Set
 	 * @param resource IResource
 	 */
-	static protected Set getAllFilesForResource(IResource resource, boolean considerUnsyncLocalFiles) throws CoreException {
-		Set result = new HashSet(50);
+	static protected Set<File> getAllFilesForResource(IResource resource, boolean considerUnsyncLocalFiles) throws CoreException {
+		Set<File> result = new HashSet<File>(50);
 		if (resource.getLocation() != null && (resource.getType() != IResource.PROJECT || ((IProject) resource).isOpen())) {
 			java.io.File file = resource.getLocation().toFile();
 			if (considerUnsyncLocalFiles) {
@@ -128,8 +129,8 @@ public class IResourceTest extends ResourceTest {
 	 * @return Set
 	 * @param resource IResource
 	 */
-	static protected Set getAllResourcesForResource(IResource resource) throws CoreException {
-		Set result = new HashSet(50);
+	static protected Set<IResource> getAllResourcesForResource(IResource resource) throws CoreException {
+		Set<IResource> result = new HashSet<IResource>(50);
 		if (resource.exists()) {
 			result.add(resource);
 			if (resource.getType() != IResource.FILE && resource.isAccessible()) {
@@ -271,13 +272,13 @@ public class IResourceTest extends ResourceTest {
 	/**
 	 * Returns an array of all projects in the given resource array. */
 	protected IProject[] getProjects(IResource[] resources) {
-		ArrayList list = new ArrayList();
+		ArrayList<IResource> list = new ArrayList<IResource>();
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() == IResource.PROJECT) {
 				list.add(resources[i]);
 			}
 		}
-		return (IProject[]) list.toArray(new IProject[list.size()]);
+		return list.toArray(new IProject[list.size()]);
 	}
 
 	/**
@@ -393,7 +394,7 @@ public class IResourceTest extends ResourceTest {
 			nonExistingProject.open(null);
 			nonExistingProject.delete(true, null);
 
-			Vector resources = new Vector();
+			Vector<IResource> resources = new Vector<IResource>();
 			resources.addElement(openProject);
 			for (int i = 0; i < resourcesInOpenProject.length; i++) {
 				resources.addElement(resourcesInOpenProject[i]);
@@ -539,7 +540,7 @@ public class IResourceTest extends ResourceTest {
 		noSideEffects = true;
 
 		class LoggingResourceVisitor implements IResourceVisitor {
-			Vector visitedResources = new Vector();
+			Vector<IResource> visitedResources = new Vector<IResource>();
 
 			void clear() {
 				visitedResources.removeAllElements();
@@ -595,7 +596,7 @@ public class IResourceTest extends ResourceTest {
 				IResource resource = (IResource) args[0];
 				LoggingResourceVisitor visitor = (LoggingResourceVisitor) args[1];
 				//Boolean includePhantoms = (Boolean) args[2];
-				Vector visitedResources = visitor.visitedResources;
+				Vector<IResource> visitedResources = visitor.visitedResources;
 				if (visitor == shallowVisitor) {
 					return visitedResources.size() == 1 && visitedResources.elementAt(0).equals(resource);
 				} else if (visitor == deepVisitor) {
@@ -957,15 +958,17 @@ public class IResourceTest extends ResourceTest {
 				}
 				if (!getAllFilesForResource(resource, force.booleanValue()).isEmpty())
 					return false;
-				Set oldFiles = (Set) oldState[1];
-				for (Iterator i = oldFiles.iterator(); i.hasNext();) {
-					File oldFile = (File) i.next();
+				@SuppressWarnings("unchecked")
+				Set<File> oldFiles = (Set<File>) oldState[1];
+				for (Iterator<File> i = oldFiles.iterator(); i.hasNext();) {
+					File oldFile = i.next();
 					if (oldFile.exists())
 						return false;
 				}
-				Set oldResources = (Set) oldState[2];
-				for (Iterator i = oldResources.iterator(); i.hasNext();) {
-					IResource oldResource = (IResource) i.next();
+				@SuppressWarnings("unchecked")
+				Set<IResource> oldResources = (Set<IResource>) oldState[2];
+				for (Iterator<IResource> i = oldResources.iterator(); i.hasNext();) {
+					IResource oldResource = i.next();
 					if (oldResource.exists() || getWorkspace().getRoot().findMember(oldResource.getFullPath()) != null)
 						return false;
 				}
@@ -1415,7 +1418,7 @@ public class IResourceTest extends ResourceTest {
 
 		// setup
 		IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] {"/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"});
-		final Map table = new HashMap(resources.length);
+		final Map<IPath, Long> table = new HashMap<IPath, Long>(resources.length);
 
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -1497,7 +1500,7 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		// touch all the resources. this will update the modification stamp
-		final Map tempTable = new HashMap(resources.length);
+		final Map<IPath, Long> tempTable = new HashMap<IPath, Long>(resources.length);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (resource.getType() != IResource.ROOT) {
@@ -2035,7 +2038,7 @@ public class IResourceTest extends ResourceTest {
 		assertEquals("value1", project.getSessionProperty(qn1));
 		assertEquals("value2", project.getSessionProperty(qn2));
 
-		Map props = project.getPersistentProperties();
+		Map<QualifiedName, ?> props = project.getPersistentProperties();
 		assertEquals(2, props.size());
 		assertEquals("value1", props.get(qn1));
 		assertEquals("value2", props.get(qn2));

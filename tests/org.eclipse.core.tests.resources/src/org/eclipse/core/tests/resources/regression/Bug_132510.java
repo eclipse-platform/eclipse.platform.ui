@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -37,8 +38,8 @@ public class Bug_132510 extends ResourceTest {
 		IPath path2 = new Path("/a/c/");
 		LinkDescription link = new LinkDescription();
 		desc.setLinkLocation(path1, link);
-		HashMap linkMap = desc.getLinks();
-		Iterator it = linkMap.values().iterator();
+		HashMap<IPath, LinkDescription> linkMap = desc.getLinks();
+		Iterator<LinkDescription> it = linkMap.values().iterator();
 		desc.setLinkLocation(path2, link);
 		try {
 			it.next();

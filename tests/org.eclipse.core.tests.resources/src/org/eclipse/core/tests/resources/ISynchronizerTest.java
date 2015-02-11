@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -103,7 +104,7 @@ public class ISynchronizerTest extends ResourceTest {
 		synchronizer.add(qname);
 
 		// setup the sync bytes
-		final Hashtable table = new Hashtable(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {
 				if (resource.getType() == IResource.ROOT)
@@ -130,7 +131,7 @@ public class ISynchronizerTest extends ResourceTest {
 						return true;
 					} else
 						assertNotNull("1.1." + resource.getFullPath(), actual);
-					byte[] expected = (byte[]) table.get(resource.getFullPath());
+					byte[] expected = table.get(resource.getFullPath());
 					assertEquals("1.2." + resource.getFullPath(), expected, actual);
 				} catch (CoreException e) {
 					fail("1.3." + resource.getFullPath(), e);
@@ -171,7 +172,7 @@ public class ISynchronizerTest extends ResourceTest {
 						return true;
 					} else
 						assertNotNull("3.1." + resource.getFullPath(), actual);
-					byte[] expected = (byte[]) table.get(resource.getFullPath());
+					byte[] expected = table.get(resource.getFullPath());
 					assertEquals("3.2." + resource.getFullPath(), expected, actual);
 				} catch (CoreException e) {
 					fail("3.3." + resource.getFullPath(), e);
@@ -221,7 +222,7 @@ public class ISynchronizerTest extends ResourceTest {
 		synchronizer.add(qname);
 
 		// setup the sync bytes
-		final Hashtable table = new Hashtable(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {
 				if (resource.getType() == IResource.ROOT)
@@ -248,7 +249,7 @@ public class ISynchronizerTest extends ResourceTest {
 						return true;
 					} else
 						assertNotNull("1.1." + resource.getFullPath(), actual);
-					byte[] expected = (byte[]) table.get(resource.getFullPath());
+					byte[] expected = table.get(resource.getFullPath());
 					assertEquals("1.2." + resource.getFullPath(), expected, actual);
 				} catch (CoreException e) {
 					fail("1.3." + resource.getFullPath(), e);
@@ -291,7 +292,7 @@ public class ISynchronizerTest extends ResourceTest {
 						return true;
 					} else
 						assertNotNull("3.1." + resource.getFullPath(), actual);
-					byte[] expected = (byte[]) table.get(resource.getFullPath());
+					byte[] expected = table.get(resource.getFullPath());
 					assertEquals("3.2." + resource.getFullPath(), expected, actual);
 				} catch (CoreException e) {
 					fail("3.3." + resource.getFullPath(), e);
@@ -498,7 +499,7 @@ public class ISynchronizerTest extends ResourceTest {
 	}
 
 	public void testSave() {
-		final Hashtable table = new Hashtable(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		final QualifiedName qname = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
 		final Synchronizer synchronizer = (Synchronizer) ResourcesPlugin.getWorkspace().getSynchronizer();
 
@@ -535,7 +536,7 @@ public class ISynchronizerTest extends ResourceTest {
 			fail("1.0", e);
 		}
 		final DataOutputStream output = o1;
-		final List list = new ArrayList(5);
+		final List<QualifiedName> list = new ArrayList<QualifiedName>(5);
 		visitor = new IResourceVisitor() {
 			public boolean visit(final IResource resource) {
 				try {
@@ -615,7 +616,7 @@ public class ISynchronizerTest extends ResourceTest {
 					return true;
 				} else
 					assertNotNull("4.1." + resource.getFullPath(), actual);
-				byte[] expected = (byte[]) table.get(resource.getFullPath());
+				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("4.2." + resource.getFullPath(), expected, actual);
 				return true;
 			}
@@ -761,7 +762,7 @@ public class ISynchronizerTest extends ResourceTest {
 		final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
 
 		// setup the sync bytes
-		final Hashtable table = new Hashtable(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
@@ -783,7 +784,7 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT)
 					return true;
 				try {
-					synchronizer.setSyncInfo(qname, resource, (byte[]) table.get(resource.getFullPath()));
+					synchronizer.setSyncInfo(qname, resource, table.get(resource.getFullPath()));
 					assertTrue("1.0." + resource.getFullPath(), false);
 				} catch (CoreException e) {
 				}
@@ -838,7 +839,7 @@ public class ISynchronizerTest extends ResourceTest {
 		visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) {
 				try {
-					synchronizer.setSyncInfo(qname, resource, (byte[]) table.get(resource.getFullPath()));
+					synchronizer.setSyncInfo(qname, resource, table.get(resource.getFullPath()));
 				} catch (CoreException e) {
 					fail("4.0." + resource.getFullPath(), e);
 				}
@@ -861,7 +862,7 @@ public class ISynchronizerTest extends ResourceTest {
 						return true;
 					} else
 						assertNotNull("5.1." + resource.getFullPath(), actual);
-					byte[] expected = (byte[]) table.get(resource.getFullPath());
+					byte[] expected = table.get(resource.getFullPath());
 					assertEquals("5.2." + resource.getFullPath(), expected, actual);
 				} catch (CoreException e) {
 					fail("5.3." + resource.getFullPath(), e);
@@ -906,7 +907,7 @@ public class ISynchronizerTest extends ResourceTest {
 						return true;
 					} else
 						assertNotNull("7.1." + resource.getFullPath(), actual);
-					byte[] expected = (byte[]) table.get(resource.getFullPath());
+					byte[] expected = table.get(resource.getFullPath());
 					assertEquals("7.2." + resource.getFullPath(), expected, actual);
 				} catch (CoreException e) {
 					fail("7.3." + resource.getFullPath(), e);

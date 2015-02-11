@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -114,26 +115,26 @@ public class Comparator {
 		if (obj0 instanceof byte[] && obj1 instanceof byte[]) {
 			return equals((byte[]) obj0, (byte[]) obj1);
 		} else if (obj0 instanceof Enumeration && obj1 instanceof Enumeration) {
-			return equals((Enumeration) obj0, (Enumeration) obj1);
+			return equals((Enumeration<?>) obj0, (Enumeration<?>) obj1);
 		} else if (obj0 instanceof Hashtable && obj1 instanceof Hashtable) {
-			return equals((Hashtable) obj0, (Hashtable) obj1);
+			return equals((Hashtable<?, ?>) obj0, (Hashtable<?, ?>) obj1);
 		} else if (obj0 instanceof ICommand[] && obj1 instanceof ICommand[]) {
 			return equals((ICommand[]) obj0, (ICommand[]) obj1);
 		} else if (obj0 instanceof Object[] && obj1 instanceof Object[]) {
 			return equals((Object[]) obj0, (Object[]) obj1);
 		} else if (obj0 instanceof Vector && obj1 instanceof Vector) {
-			return equals((Vector) obj0, (Vector) obj1);
+			return equals((Vector<?>) obj0, (Vector<?>) obj1);
 		}
 
 		return obj0.equals(obj1);
 	}
 
-	public static boolean equals(Enumeration e, Object[] obj) {
+	public static boolean equals(Enumeration<?> e, Object[] obj) {
 		return equals(e, obj, true);
 	}
 
-	public static boolean equals(Enumeration e, Object[] obj1, boolean isOrderImportant) {
-		Vector v = new Vector();
+	public static boolean equals(Enumeration<?> e, Object[] obj1, boolean isOrderImportant) {
+		Vector<Object> v = new Vector<Object>();
 
 		while (e.hasMoreElements()) {
 			v.addElement(e.nextElement());
@@ -145,7 +146,7 @@ public class Comparator {
 		return equals(obj0, obj1, isOrderImportant);
 	}
 
-	public static boolean equals(Enumeration e0, Enumeration e1) {
+	public static boolean equals(Enumeration<?> e0, Enumeration<?> e1) {
 		if (e0 == e1) {
 			return true;
 		}
@@ -167,7 +168,7 @@ public class Comparator {
 		return true;
 	}
 
-	public static boolean equals(Hashtable ht0, Hashtable ht1) {
+	public static boolean equals(Hashtable<?, ?> ht0, Hashtable<?, ?> ht1) {
 		if (ht0 == ht1) {
 			return true;
 		}
@@ -180,7 +181,7 @@ public class Comparator {
 			return false;
 		}
 
-		Enumeration keys0 = ht0.keys();
+		Enumeration<?> keys0 = ht0.keys();
 		while (keys0.hasMoreElements()) {
 			Object key = keys0.nextElement();
 			if (!equals(ht0.get(key), ht1.get(key))) {
@@ -191,7 +192,7 @@ public class Comparator {
 		return true;
 	}
 
-	public static boolean equals(Vector c0, Vector c1) {
+	public static boolean equals(Vector<?> c0, Vector<?> c1) {
 		if (c0 == c1) {
 			return true;
 		}

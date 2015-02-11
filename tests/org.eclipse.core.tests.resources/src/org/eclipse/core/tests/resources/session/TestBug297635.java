@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2013 IBM Corporation and others.
+ *  Copyright (c) 2010, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
@@ -76,6 +77,7 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void test2() {
 		// install the bundle again
 		// we need to restart the org.eclipse.core.resources bundle to read the tree file again
@@ -100,11 +102,11 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		ensureExistsInWorkspace(file, getRandomContents());
 
 		// get access to SaveManager#savedStates to verify that tress are being kept there
-		Map savedStates = null;
+		Map<String, SavedState> savedStates = null;
 		try {
 			Field field = SaveManager.class.getDeclaredField("savedStates");
 			field.setAccessible(true);
-			savedStates = (Map) field.get(((Workspace) getWorkspace()).getSaveManager());
+			savedStates = (Map<String, SavedState>) field.get(((Workspace) getWorkspace()).getSaveManager());
 		} catch (IllegalArgumentException e) {
 			fail("2.0", e);
 		} catch (IllegalAccessException e) {
@@ -123,7 +125,7 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		}
 
 		// assert the saved state for Bundle01, trees should not be null
-		assertStateTrees((SavedState) savedStates.get(BUNDLE01_ID), false);
+		assertStateTrees(savedStates.get(BUNDLE01_ID), false);
 
 		try {
 			((Workspace) getWorkspace()).getSaveManager().save(ISaveContext.SNAPSHOT, true, null, getMonitor());
@@ -132,7 +134,7 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		}
 
 		// assert the saved state for Bundle01, trees should be null after a snapshot save
-		assertStateTrees((SavedState) savedStates.get(BUNDLE01_ID), true);
+		assertStateTrees(savedStates.get(BUNDLE01_ID), true);
 	}
 
 	private void assertStateTrees(SavedState savedState, boolean isNull) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
@@ -33,14 +34,14 @@ public class Snapshot2Test extends SnapshotTest {
 	}
 
 	protected static String[] defineHierarchy1() {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		String[] old = Snapshot1Test.defineHierarchy1();
 		for (int i = 0; i < old.length; i++)
 			result.add(old[i]);
 		result.add(new Path(PROJECT_1).append("added file").toString());
 		result.add(new Path(PROJECT_1).append("yet another file").toString());
 		result.add(new Path(PROJECT_1).append("a folder").addTrailingSeparator().toString());
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	protected static String[] defineHierarchy2() {

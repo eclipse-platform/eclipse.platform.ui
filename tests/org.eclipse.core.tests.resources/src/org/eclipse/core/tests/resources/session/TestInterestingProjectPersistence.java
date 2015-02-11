@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
@@ -96,7 +97,7 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 			//create a project and configure builder
 			IProjectDescription description = project1.getDescription();
 			ICommand command = description.newCommand();
-			Map args = command.getArguments();
+			Map<String, String> args = command.getArguments();
 			args.put(TestBuilder.BUILD_ID, "Project1Build1");
 			command.setBuilderName(DeltaVerifierBuilder.BUILDER_NAME);
 			command.setArguments(args);
@@ -122,14 +123,14 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 		try {
 			file1.setContents(getRandomContents(), true, true, getMonitor());
 			project1.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-			ArrayList received = builder.getReceivedDeltas();
+			ArrayList<IProject> received = builder.getReceivedDeltas();
 
 			//should have received only a delta for project1
 			assertEquals("1.0", 1, received.size());
 			assertTrue("1.1", received.contains(project1));
 
 			//should be no empty deltas
-			ArrayList empty = builder.getEmptyDeltas();
+			ArrayList<IProject> empty = builder.getEmptyDeltas();
 			assertEquals("1.2", 0, empty.size());
 
 			//save
@@ -153,7 +154,7 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 
 			//build
 			project1.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-			ArrayList received = builder.getReceivedDeltas();
+			ArrayList<IProject> received = builder.getReceivedDeltas();
 
 			//should have received deltas for 1, 2, and 4
 			assertEquals("1.0", 3, received.size());
@@ -163,7 +164,7 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 			assertTrue("1.4", received.contains(project4));
 
 			//delta for project4 should be empty
-			ArrayList empty = builder.getEmptyDeltas();
+			ArrayList<IProject> empty = builder.getEmptyDeltas();
 			assertEquals("1.2", 1, empty.size());
 			assertTrue("1.3", empty.contains(project4));
 

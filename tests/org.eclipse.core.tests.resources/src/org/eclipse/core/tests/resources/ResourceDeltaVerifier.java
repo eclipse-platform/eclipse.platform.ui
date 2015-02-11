@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -93,7 +94,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	/**
 	 * Table of IPath -> ExpectedChange
 	 */
-	private Hashtable fExpectedChanges = new Hashtable();
+	private Hashtable<IPath, ExpectedChange> fExpectedChanges = new Hashtable<IPath, ExpectedChange>();
 	boolean fIsDeltaValid = true;
 	private StringBuffer fMessage = new StringBuffer();
 	/**
@@ -217,7 +218,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	private void checkChanges(IResourceDelta delta) {
 		IResource resource = delta.getResource();
 
-		ExpectedChange expectedChange = (ExpectedChange) fExpectedChanges.remove(resource.getFullPath());
+		ExpectedChange expectedChange = fExpectedChanges.remove(resource.getFullPath());
 
 		int status = delta.getKind();
 		int changeFlags = delta.getFlags();
@@ -242,12 +243,12 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		IResourceDelta[] changedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 
-		Hashtable h = new Hashtable(affectedChildren.length + 1);
+		Hashtable<IResource, IResourceDelta> h = new Hashtable<IResource, IResourceDelta>(affectedChildren.length + 1);
 
 		for (int i = 0; i < addedChildren.length; ++i) {
 			IResourceDelta childDelta1 = addedChildren[i];
 			IResource childResource = childDelta1.getResource();
-			IResourceDelta childDelta2 = (IResourceDelta) h.get(childResource);
+			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
 				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(), IResourceDelta.ADDED);
 			} else {
@@ -261,7 +262,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		for (int i = 0; i < changedChildren.length; ++i) {
 			IResourceDelta childDelta1 = changedChildren[i];
 			IResource childResource = childDelta1.getResource();
-			IResourceDelta childDelta2 = (IResourceDelta) h.get(childResource);
+			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
 				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(), IResourceDelta.CHANGED);
 			} else {
@@ -275,7 +276,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		for (int i = 0; i < removedChildren.length; ++i) {
 			IResourceDelta childDelta1 = removedChildren[i];
 			IResource childResource = childDelta1.getResource();
-			IResourceDelta childDelta2 = (IResourceDelta) h.get(childResource);
+			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
 				recordDuplicateChild(childResource.getFullPath(), childDelta2.getKind(), childDelta1.getKind(), IResourceDelta.REMOVED);
 			} else {
@@ -289,7 +290,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		for (int i = 0; i < affectedChildren.length; ++i) {
 			IResourceDelta childDelta1 = affectedChildren[i];
 			IResource childResource = childDelta1.getResource();
-			IResourceDelta childDelta2 = (IResourceDelta) h.remove(childResource);
+			IResourceDelta childDelta2 = h.remove(childResource);
 			if (childDelta2 == null) {
 				int kind = childDelta1.getKind();
 				//these kinds should have been added to h earlier
@@ -299,10 +300,10 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			}
 		}
 
-		Enumeration keys = h.keys();
+		Enumeration<IResource> keys = h.keys();
 		while (keys.hasMoreElements()) {
-			IResource childResource = (IResource) keys.nextElement();
-			IResourceDelta childDelta = (IResourceDelta) h.get(childResource);
+			IResource childResource = keys.nextElement();
+			IResourceDelta childDelta = h.get(childResource);
 			recordMissingChild(childResource.getFullPath(), childDelta.getKind(), true);
 		}
 
@@ -312,8 +313,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 		keys = h.keys();
 		while (keys.hasMoreElements()) {
-			IResource childResource = (IResource) keys.nextElement();
-			IResourceDelta childDelta = (IResourceDelta) h.get(childResource);
+			IResource childResource = keys.nextElement();
+			IResourceDelta childDelta = h.get(childResource);
 			internalVerifyDelta(childDelta);
 		}
 	}
@@ -335,7 +336,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			}
 		}
 
-		ExpectedChange expectedChange = (ExpectedChange) fExpectedChanges.get(resource.getFullPath());
+		ExpectedChange expectedChange = fExpectedChanges.get(resource.getFullPath());
 
 		if (expectedChange != null) {
 			IPath expectedMovedFromPath = expectedChange.getMovedFromPath();
@@ -443,23 +444,23 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * are met after iterating over a resource delta.
 	 */
 	private void finishVerification() {
-		Hashtable resourcePaths = new Hashtable();
+		Hashtable<IPath, IPath> resourcePaths = new Hashtable<IPath, IPath>();
 
-		Enumeration keys = fExpectedChanges.keys();
+		Enumeration<IPath> keys = fExpectedChanges.keys();
 		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
+			IPath key = keys.nextElement();
 			resourcePaths.put(key, key);
 		}
 
 		keys = resourcePaths.keys();
 		while (keys.hasMoreElements()) {
-			IPath resourcePath = (IPath) keys.nextElement();
+			IPath resourcePath = keys.nextElement();
 
 			fMessage.append("Checking expectations for ");
 			fMessage.append(resourcePath);
 			fMessage.append("\n");
 
-			ExpectedChange expectedChange = (ExpectedChange) fExpectedChanges.remove(resourcePath);
+			ExpectedChange expectedChange = fExpectedChanges.remove(resourcePath);
 			if (expectedChange != null) {
 				recordMissingActualChange(expectedChange.getKind(), expectedChange.getChangeFlags());
 			}
