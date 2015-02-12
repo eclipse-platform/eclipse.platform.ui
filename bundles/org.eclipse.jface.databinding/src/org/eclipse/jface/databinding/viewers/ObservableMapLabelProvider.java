@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164247, 164134
  *     Matthew Hall - bug 302860
+ *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459761
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -18,7 +19,6 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
@@ -34,8 +34,7 @@ import org.eclipse.swt.graphics.Image;
  * @since 1.1
  * 
  */
-public class ObservableMapLabelProvider extends LabelProvider implements
-		ILabelProvider, ITableLabelProvider {
+public class ObservableMapLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	/**
 	 * Observable maps typically mapping from viewer elements to label values.
