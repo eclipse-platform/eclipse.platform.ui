@@ -415,3 +415,4 @@ org.eclipse.jdt.core.formatter.wrap_before_or_operator_multicatch=true
 org.eclipse.jdt.core.formatter.wrap_outer_expressions_when_nested=true
 org.eclipse.jdt.core.incompatibleJDKLevel=ignore
 org.eclipse.jdt.core.incompleteClasspath=error
+org.eclipse.jdt.core.javaFormatter=org.eclipse.jdt.core.defaultJavaFormatter
