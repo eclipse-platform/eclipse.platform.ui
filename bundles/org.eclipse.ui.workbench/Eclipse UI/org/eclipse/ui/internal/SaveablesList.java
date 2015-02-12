@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -360,15 +361,15 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		for (Iterator it = partsToClose.iterator(); it.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) it.next();
 			postCloseInfo.partsClosing.add(part);
-			if (part instanceof ISaveablePart) {
-				ISaveablePart saveablePart = (ISaveablePart) part;
-				if (save && !saveablePart.isSaveOnCloseNeeded()) {
+			ISaveablePart saveable = SaveableHelper.getSaveable(part);
+			if (saveable != null) {
+				if (save && !saveable.isSaveOnCloseNeeded()) {
 					// pretend for now that this part is not closing
 					continue;
 				}
 			}
-			if (save && part instanceof ISaveablePart2) {
-				ISaveablePart2 saveablePart2 = (ISaveablePart2) part;
+			if (save && saveable instanceof ISaveablePart2) {
+				ISaveablePart2 saveablePart2 = (ISaveablePart2) saveable;
 				// TODO show saveablePart2 before prompting, see
 				// EditorManager.saveAll
 				int response = SaveableHelper.savePart(saveablePart2, window,
@@ -722,7 +723,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		if (part instanceof ISaveablesSource) {
 			ISaveablesSource source = (ISaveablesSource) part;
 			return source.getSaveables();
-		} else if (part instanceof ISaveablePart) {
+		} else if (SaveableHelper.isSaveable(part)) {
 			return new Saveable[] { new DefaultSaveable(part) };
 		} else {
 			return new Saveable[0];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -45,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.IJobRunnable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -170,7 +172,7 @@ public class SaveableHelper {
 	 */
 	private static boolean saveModels(ISaveablesSource modelSource, final IWorkbenchWindow window, final boolean confirm) {
 		Saveable[] selectedModels = modelSource.getActiveSaveables();
-		final ArrayList dirtyModels = new ArrayList();
+		final ArrayList<Saveable> dirtyModels = new ArrayList<Saveable>();
 		for (int i = 0; i < selectedModels.length; i++) {
 			Saveable model = selectedModels[i];
 			if (model.isDirty()) {
@@ -188,8 +190,8 @@ public class SaveableHelper {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				monitorWrap.beginTask(WorkbenchMessages.Save, dirtyModels.size());
 				try {
-					for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
-						Saveable model = (Saveable) i.next();
+					for (Iterator<Saveable> i = dirtyModels.iterator(); i.hasNext();) {
+						Saveable model = i.next();
 						// handle case where this model got saved as a result of
 						// saving another
 						if (!model.isDirty()) {
@@ -352,8 +354,7 @@ public class SaveableHelper {
 			final IJobRunnable[] backgroundSaveRunnable = new IJobRunnable[1];
 			try {
 				SubMonitor subMonitor = SubMonitor.convert(progressMonitor, 3);
-				backgroundSaveRunnable[0] = model.doSave(
-						subMonitor.newChild(2), shellProvider);
+				backgroundSaveRunnable[0] = model.doSave(subMonitor.newChild(2), shellProvider);
 				if (backgroundSaveRunnable[0] == null) {
 					// no further work needs to be done
 					return;
@@ -361,11 +362,9 @@ public class SaveableHelper {
 				if (blockUntilSaved) {
 					// for now, block on close by running the runnable in the UI
 					// thread
-					IStatus result = backgroundSaveRunnable[0].run(subMonitor
-							.newChild(1));
+					IStatus result = backgroundSaveRunnable[0].run(subMonitor.newChild(1));
 					if (!result.isOK()) {
-						StatusUtil.handleStatus(result, StatusManager.SHOW,
-								shellProvider.getShell());
+						StatusUtil.handleStatus(result, StatusManager.SHOW, shellProvider.getShell());
 						progressMonitor.setCanceled(true);
 					}
 					return;
@@ -373,9 +372,8 @@ public class SaveableHelper {
 				// for the job family, we use the model object because based on
 				// the family we can display the busy state with an animated tab
 				// (see the calls to showBusyForFamily() below).
-				Job saveJob = new Job(NLS.bind(
-						WorkbenchMessages.EditorManager_backgroundSaveJobName,
-						model.getName())) {
+				Job saveJob = new Job(
+						NLS.bind(WorkbenchMessages.EditorManager_backgroundSaveJobName, model.getName())) {
 					@Override
 					public boolean belongsTo(Object family) {
 						if (family instanceof DynamicFamily) {
@@ -391,11 +389,9 @@ public class SaveableHelper {
 				};
 				// we will need the associated parts (for disabling their UI)
 				((InternalSaveable) model).setBackgroundSaveJob(saveJob);
-				SaveablesList saveablesList = (SaveablesList) PlatformUI
-						.getWorkbench().getService(
-								ISaveablesLifecycleListener.class);
-				final IWorkbenchPart[] parts = saveablesList
-						.getPartsForSaveable(model);
+				SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
+						.getService(ISaveablesLifecycleListener.class);
+				final IWorkbenchPart[] parts = saveablesList.getPartsForSaveable(model);
 
 				// this will cause the parts tabs to show the ongoing background operation
 				for (int i = 0; i < parts.length; i++) {
@@ -429,8 +425,7 @@ public class SaveableHelper {
 				// we can get from the parts...
 				notifySaveAction(parts);
 			} catch (CoreException e) {
-				StatusUtil.handleStatus(e.getStatus(), StatusManager.SHOW,
-						shellProvider.getShell());
+				StatusUtil.handleStatus(e.getStatus(), StatusManager.SHOW, shellProvider.getShell());
 				progressMonitor.setCanceled(true);
 			}
 		} finally {
@@ -439,11 +434,11 @@ public class SaveableHelper {
 	}
 
 	private static void notifySaveAction(final IWorkbenchPart[] parts) {
-		Set wwindows = new HashSet();
+		Set<IWorkbenchWindow> wwindows = new HashSet<IWorkbenchWindow>();
 		for (int i = 0; i < parts.length; i++) {
 			wwindows.add(parts[i].getSite().getWorkbenchWindow());
 		}
-		for (Iterator it = wwindows.iterator(); it.hasNext();) {
+		for (Iterator<IWorkbenchWindow> it = wwindows.iterator(); it.hasNext();) {
 			WorkbenchWindow wwin = (WorkbenchWindow) it.next();
 			wwin.fireBackgroundSaveStarted();
 		}
@@ -457,7 +452,7 @@ public class SaveableHelper {
 	 * @return true if the user canceled.
 	 */
 	private static boolean waitForBackgroundSaveJob(final Saveable model) {
-		List models = new ArrayList();
+		List<Saveable> models = new ArrayList<Saveable>();
 		models.add(model);
 		return waitForBackgroundSaveJobs(models);
 	}
@@ -484,7 +479,7 @@ public class SaveableHelper {
 			return true;
 		}
 		// remove saveables that are no longer dirty from the list
-		for (Iterator it = modelsToSave.iterator(); it.hasNext();) {
+		for (Iterator<?> it = modelsToSave.iterator(); it.hasNext();) {
 			Saveable model = (Saveable) it.next();
 			if (!model.isDirty()) {
 				it.remove();
@@ -493,11 +488,35 @@ public class SaveableHelper {
 		return false;
 	}
 
-	private static class DynamicFamily extends HashSet {
+	private static class DynamicFamily extends HashSet<Object> {
 		private static final long serialVersionUID = 1L;
-		public DynamicFamily(Collection collection) {
+
+		public DynamicFamily(Collection<?> collection) {
 			super(collection);
 		}
+	}
+
+	public static ISaveablePart getSaveable(Object o) {
+		if (o instanceof ISaveablePart) {
+			return (ISaveablePart) o;
+		}
+		return Util.getAdapter(o, ISaveablePart.class);
+	}
+
+	public static boolean isSaveable(Object o) {
+		return getSaveable(o) != null;
+	}
+
+	public static ISaveablePart2 getSaveable2(Object o) {
+		ISaveablePart saveable = getSaveable(o);
+		if (saveable instanceof ISaveablePart2) {
+			return (ISaveablePart2) saveable;
+		}
+		return Util.getAdapter(o, ISaveablePart2.class);
+	}
+
+	public static boolean isSaveable2(Object o) {
+		return getSaveable2(o) != null;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Steven Spungin <steven@spungin.tv> - Bug 436908
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  ******************************************************************************/
 
 package org.eclipse.ui.internal.e4.compatibility;
@@ -368,8 +369,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 					}
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
-					if (wrapped instanceof ISaveablePart) {
-						((MDirtyable) part).setDirty(((ISaveablePart) wrapped).isDirty());
+					ISaveablePart saveable = SaveableHelper.getSaveable(wrapped);
+					if (saveable != null) {
+						((MDirtyable) part).setDirty(saveable.isDirty());
 					}
 					break;
 				case IWorkbenchPartConstants.PROP_INPUT:
@@ -411,8 +413,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 	@Persist
 	void doSave() {
-		if (wrapped instanceof ISaveablePart) {
-			SaveableHelper.savePart((ISaveablePart) wrapped, wrapped, getReference().getSite()
+		ISaveablePart saveable = SaveableHelper.getSaveable(wrapped);
+		if (saveable != null) {
+			SaveableHelper.savePart(saveable, wrapped, getReference().getSite()
 					.getWorkbenchWindow(), false);
 		}
 		// ContextInjectionFactory.invoke(wrapped, Persist.class, part.getContext(), null);

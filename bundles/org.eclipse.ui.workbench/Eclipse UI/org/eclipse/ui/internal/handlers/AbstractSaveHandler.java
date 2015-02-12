@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  ******************************************************************************/
-
 package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.AbstractEvaluationHandler;
 import org.eclipse.ui.internal.InternalHandlerUtil;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.internal.SaveableHelper;
 
 /**
  * @since 3.7
@@ -34,8 +34,9 @@ public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 	private Expression enabledWhen;
 
 	public AbstractSaveHandler() {
-		if (dirtyStateTracker == null)
+		if (dirtyStateTracker == null) {
 			dirtyStateTracker = new DirtyStateTracker();
+		}
 	}
 
 	@Override
@@ -47,11 +48,6 @@ public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 					return AbstractSaveHandler.this.evaluate(context);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.core.expressions.Expression#collectExpressionInfo(org.eclipse.core.expressions.ExpressionInfo)
-				 */
 				@Override
 				public void collectExpressionInfo(ExpressionInfo info) {
 					info.addVariableNameAccess(ISources.ACTIVE_PART_NAME);
@@ -65,28 +61,19 @@ public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 
 	protected ISaveablePart getSaveablePart(IEvaluationContext context) {
 		IWorkbenchPart activePart = InternalHandlerUtil.getActivePart(context);
-
-		if (activePart instanceof ISaveablePart)
-			return (ISaveablePart) activePart;
-
-		ISaveablePart part = Util.getAdapter(activePart, ISaveablePart.class);
-		if (part != null)
+		ISaveablePart part = SaveableHelper.getSaveable(activePart);
+		if (part != null) {
 			return part;
-
+		}
 		return InternalHandlerUtil.getActiveEditor(context);
 	}
 
 	protected ISaveablePart getSaveablePart(ExecutionEvent event) {
-
 		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
-		if (activePart instanceof ISaveablePart) {
-			return (ISaveablePart) activePart;
-		}
-
-		ISaveablePart part = Util.getAdapter(activePart, ISaveablePart.class);
-		if (part != null)
+		ISaveablePart part = SaveableHelper.getSaveable(activePart);
+		if (part != null) {
 			return part;
-
+		}
 		return HandlerUtil.getActiveEditor(event);
 	}
 
