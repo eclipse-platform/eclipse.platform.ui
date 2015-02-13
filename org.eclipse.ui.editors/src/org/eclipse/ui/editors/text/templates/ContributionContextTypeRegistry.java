@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -231,8 +231,14 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 			if (type != null) {
 
 				TemplateVariableResolver resolver= (TemplateVariableResolver) element.createExecutableExtension(CLASS);
+				if (resolver.getType() != null) {
+					throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, resolver.getClass() + "() must call super() and not set the variable's type", null)); //$NON-NLS-1$
+				}
 				resolver.setType(type);
 
+				if (resolver.getDescription() != null) {
+					throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, resolver.getClass() + "() must call super() and not set the variable's description", null)); //$NON-NLS-1$
+				}
 				String desc= element.getAttribute(DESCRIPTION);
 				resolver.setDescription(desc == null ? "" : desc); //$NON-NLS-1$
 
