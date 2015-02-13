@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel (Lars.Vogel@gmail.com) - Bug 331690
+ *     Dirk Fauth (dirk.fauth@googlemail.com) - Bug 459285
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
@@ -227,7 +228,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles removals from the perspective
-	 * 
+	 *
 	 * @param event
 	 */
 
@@ -236,15 +237,21 @@ public class MinMaxAddon {
 	private void subscribeTopicChildren(
 			@UIEventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
 		final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-		if (!(changedElement instanceof MPerspectiveStack)
-				|| modelService.getTopLevelWindowFor(changedElement) == null)
+		MWindow window = modelService.getTopLevelWindowFor(changedElement);
+
+		// this method is intended to update the minimized stacks in a trim
+		// if the removed element is no perspective and the top level window
+		// is not a trimmed window, we don't need to do anything here
+		if (!(changedElement instanceof MPerspectiveStack) || window == null
+				|| !(window instanceof MTrimmedWindow)) {
 			return;
+		}
 
 		if (UIEvents.isREMOVE(event)) {
 			for (Object removedElement : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
 				MUIElement removed = (MUIElement) removedElement;
 				String perspectiveId = removed.getElementId();
-				MWindow window = modelService.getTopLevelWindowFor(changedElement);
+
 				MTrimBar bar = modelService.getTrim((MTrimmedWindow) window, SideValue.TOP);
 
 				// gather up any minimized stacks for this perspective...
@@ -267,7 +274,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles changes of the perspective
-	 * 
+	 *
 	 * @param event
 	 */
 
@@ -888,7 +895,12 @@ public class MinMaxAddon {
 	}
 
 	private void createTrim(MUIElement element) {
-		MTrimmedWindow window = (MTrimmedWindow) getWindowFor(element);
+		MWindow win = getWindowFor(element);
+		if (!(win instanceof MTrimmedWindow)) {
+			return;
+		}
+
+		MTrimmedWindow window = (MTrimmedWindow) win;
 		Shell winShell = (Shell) window.getWidget();
 
 		// Is there already a TrimControl there ?
