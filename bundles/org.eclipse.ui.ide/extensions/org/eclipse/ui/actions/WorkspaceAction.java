@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 *            a progress monitor
 	 * @return The result of the execution
 	 */
-	final IStatus execute(List resources, IProgressMonitor monitor) {
+	final IStatus execute(List<IResource> resources, IProgressMonitor monitor) {
 		MultiStatus errors = null;
 		// 1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
 		if (shouldPerformResourcePruning()) {
@@ -156,10 +156,10 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		// call setTaskName as its the only was to assure the task name is
 		// set in the monitor (see bug 31824)
 		monitor.setTaskName(getOperationMessage());
-		Iterator resourcesEnum = resources.iterator();
+		Iterator<IResource> resourcesEnum = resources.iterator();
 		try {
 			while (resourcesEnum.hasNext()) {
-				IResource resource = (IResource) resourcesEnum.next();
+				IResource resource = resourcesEnum.next();
 				try {
 					// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity
 					// issues
@@ -277,7 +277,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * @return <code>true</code> if <code>child</code> is a descendent of
 	 *         any of the elements of <code>resources</code>
 	 */
-	boolean isDescendent(List resources, IResource child) {
+	boolean isDescendent(List<IResource> resources, IResource child) {
 		IResource parent = child.getParent();
 		return parent != null
 				&& (resources.contains(parent) || isDescendent(resources,
@@ -294,11 +294,11 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 *         after pruning.
 	 * @see #shouldPerformResourcePruning
 	 */
-	List pruneResources(List resourceCollection) {
-		List prunedList = new ArrayList(resourceCollection);
-		Iterator elementsEnum = prunedList.iterator();
+	List<IResource> pruneResources(List<IResource> resourceCollection) {
+		List<IResource> prunedList = new ArrayList<IResource>(resourceCollection);
+		Iterator<IResource> elementsEnum = prunedList.iterator();
 		while (elementsEnum.hasNext()) {
-			IResource currentResource = (IResource) elementsEnum.next();
+			IResource currentResource = elementsEnum.next();
 			if (isDescendent(prunedList, currentResource)) {
 				elementsEnum.remove(); // Removes currentResource
 			}
@@ -395,8 +395,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		if (!super.updateSelection(selection) || selection.isEmpty()) {
 			return false;
 		}
-		for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
-			IResource r = (IResource) i.next();
+		for (IResource r : getSelectedResources()) {
 			if (!r.isAccessible()) {
 				return false;
 			}
@@ -412,7 +411,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 *
 	 * @return list of resource elements (element type: <code>IResource</code>)
 	 */
-	protected List getActionResources() {
+	protected List<IResource> getActionResources() {
 		return getSelectedResources();
 	}
 
@@ -461,7 +460,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 */
 	public void runInBackground(ISchedulingRule rule, final Object[] jobFamilies) {
 		// obtain a copy of the selected resources before the job is forked
-		final List resources = new ArrayList(getActionResources());
+		final List<IResource> resources = new ArrayList<IResource>(getActionResources());
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
 
 			@Override
