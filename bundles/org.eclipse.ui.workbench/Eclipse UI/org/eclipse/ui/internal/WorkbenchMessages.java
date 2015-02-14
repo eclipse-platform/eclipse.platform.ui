@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Tristan Hume - <trishume@gmail.com> -
  * 		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  * 		Implemented workbench auto-save to correctly restore state in case of crash.
+ * Andrey Loskutov <loskutov@gmx.de> - Bug 388476
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -480,6 +481,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_currentThemeDescription;
 	public static String ViewsPreference_currentThemeFormat;
 	public static String ViewsPreference_enableAnimations;
+	public static String ViewsPreference_enableMRU;
 	public static String ViewsPreference_useColoredLabels;
 	// public static String ViewsPreference_override;
 	// public static String ViewsPreference_restartRequestJobName;

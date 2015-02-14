@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2015 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Thibault Le Ouay <thibaultleouay@gmail.com> - Bug 443094
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 388476
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
 import org.eclipse.e4.ui.css.swt.dom.CTabFolderElement;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -185,15 +187,40 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimize-visible", null));
 	}
 
+	@SuppressWarnings("restriction")
 	@Test
 	public void testMRUVisible() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { mru-visible: true}");
-		assertEquals(true, folderToTest.getMRUVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
-		folderToTest.getShell().close();
-		folderToTest = createTestCTabFolder("CTabFolder { mru-visible: false}");
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
-		assertEquals(false, folderToTest.getMRUVisible());
+		final boolean mruControlledByCSSDefault = CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS();
+		try {
+			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(true);
+			CTabFolder folderToTest = createTestCTabFolder("CTabFolder { mru-visible: true}");
+			assertEquals(true, folderToTest.getMRUVisible());
+			assertEquals("true", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
+			folderToTest.getShell().close();
+			folderToTest = createTestCTabFolder("CTabFolder { mru-visible: false}");
+			assertEquals("false", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
+			assertEquals(false, folderToTest.getMRUVisible());
+		} finally {
+			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(mruControlledByCSSDefault);
+		}
+	}
+
+	@SuppressWarnings("restriction")
+	@Test
+	public void testMRUVisibleCSSControlOff() {
+		final boolean mruControlledByCSSDefault = CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS();
+		try {
+			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(false);
+			CTabFolder folderToTest = createTestCTabFolder("CTabFolder { mru-visible: true}");
+			assertEquals(false, folderToTest.getMRUVisible());
+			assertEquals("false", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
+			folderToTest.getShell().close();
+			folderToTest = createTestCTabFolder("CTabFolder { mru-visible: false}");
+			assertEquals("false", engine.retrieveCSSProperty(folderToTest, "mru-visible", null));
+			assertEquals(false, folderToTest.getMRUVisible());
+		} finally {
+			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(mruControlledByCSSDefault);
+		}
 	}
 
 	@Test

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -21,10 +21,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
@@ -64,6 +69,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -106,11 +113,43 @@ import org.w3c.dom.css.CSSValue;
  * IPresentation.STYLE_OVERRIDE_KEY key
  *
  */
-public class StackRenderer extends LazyStackRenderer {
+public class StackRenderer extends LazyStackRenderer implements IPreferenceChangeListener {
 	/**
 	 *
 	 */
 	private static final String THE_PART_KEY = "thePart"; //$NON-NLS-1$
+
+	/**
+	 * Key to control the default default value of the "most recently used"
+	 * order enablement
+	 */
+	public static final String MRU_KEY_DEFAULT = "enableMRUDefault"; //$NON-NLS-1$
+
+	/**
+	 * Key to control the actual boolean preference of the "most recently used"
+	 * order enablement
+	 */
+	public static final String MRU_KEY = "enableMRU"; //$NON-NLS-1$
+
+	/**
+	 * Key to switch if the "most recently used" behavior controlled via CSS or
+	 * preferences
+	 */
+	public static final String MRU_CONTROLLED_BY_CSS_KEY = "MRUControlledByCSS"; //$NON-NLS-1$
+
+	/*
+	 * org.eclipse.ui.internal.dialogs.ViewsPreferencePage controls currently
+	 * the MRU behavior via IEclipsePreferences, so that CSS values from the
+	 * themes aren't used.
+	 *
+	 * TODO once we can use preferences from CSS (and update the value on the
+	 * fly) we can switch this default to true, see discussion on bug 388476.
+	 */
+	private static final boolean MRU_CONTROLLED_BY_CSS_DEFAULT = false;
+
+	@Inject
+	@Preference(nodePath = "org.eclipse.e4.ui.workbench.renderers.swt")
+	private IEclipsePreferences preferences;
 
 	@Inject
 	@Named(WorkbenchRendererFactory.SHARED_ELEMENTS_STORE)
@@ -162,7 +201,7 @@ public class StackRenderer extends LazyStackRenderer {
 	// Manages CSS styling based on active part changes
 	private EventHandler stylingHandler;
 
-	private boolean ignoreTabSelChanges = false;
+	private boolean ignoreTabSelChanges;
 
 	List<CTabItem> getItemsToSet(MPart part) {
 		List<CTabItem> itemsToSet = new ArrayList<CTabItem>();
@@ -304,6 +343,9 @@ public class StackRenderer extends LazyStackRenderer {
 	@PostConstruct
 	public void init() {
 		super.init(eventBroker);
+
+		preferences.addPreferenceChangeListener(this);
+		preferenceChange(null);
 
 		// TODO: Refactor using findItemForPart(MPart) method
 		itemUpdater = new EventHandler() {
@@ -583,7 +625,7 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleOverride = getStyleOverride(pStack);
 		int style = styleOverride == -1 ? SWT.BORDER : styleOverride;
 		final CTabFolder ctf = new CTabFolder(parentComposite, style);
-		ctf.setMRUVisible(getInitialMRUValue(ctf));
+		ctf.setMRUVisible(getMRUValue(ctf));
 
 		// Adjust the minimum chars based on the location
 		int location = modelService.getElementLocation(element);
@@ -604,10 +646,10 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private boolean getInitialMRUValue(Control control) {
-		boolean result = false;
 		CSSRenderingUtils util = context.get(CSSRenderingUtils.class);
-		if (util == null)
-			return result;
+		if (util == null) {
+			return getMRUValueFromPreferences();
+		}
 
 		CSSValue value = util.getCSSValue(control,
 				"MPartStack", "swt-mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -615,10 +657,34 @@ public class StackRenderer extends LazyStackRenderer {
 		if (value == null) {
 			value = util.getCSSValue(control, "MPartStack", "mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (value == null)
-			return result;
-
+		if (value == null) {
+			return getMRUValueFromPreferences();
+		}
 		return Boolean.parseBoolean(value.getCssText());
+	}
+
+	private boolean getMRUValue(Control control) {
+		if (CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS()) {
+			return getInitialMRUValue(control);
+		}
+		return getMRUValueFromPreferences();
+	}
+
+	private boolean getMRUValueFromPreferences() {
+		boolean initialMRUValue = preferences.getBoolean(MRU_KEY_DEFAULT, true);
+		boolean actualValue = preferences.getBoolean(MRU_KEY, initialMRUValue);
+		return actualValue;
+	}
+
+	private void updateMRUValue(CTabFolder ctf) {
+		boolean actualMRUValue = getMRUValue(ctf);
+		ctf.setMRUVisible(actualMRUValue);
+	}
+
+	@Override
+	public void preferenceChange(PreferenceChangeEvent event) {
+		boolean mruControlledByCSS = preferences.getBoolean(MRU_CONTROLLED_BY_CSS_KEY, MRU_CONTROLLED_BY_CSS_DEFAULT);
+		CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(mruControlledByCSS);
 	}
 
 	/**
@@ -765,6 +831,7 @@ public class StackRenderer extends LazyStackRenderer {
 		} finally {
 			adjusting = false;
 		}
+		updateMRUValue(ctf);
 	}
 
 	@Override
@@ -787,7 +854,7 @@ public class StackRenderer extends LazyStackRenderer {
 				cti.setControl((Control) element.getWidget());
 			return;
 		}
-
+		updateMRUValue(ctf);
 		int createFlags = SWT.NONE;
 		if (part != null && isClosable(part)) {
 			createFlags |= SWT.CLOSE;
@@ -1104,6 +1171,13 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 			}
 		});
+
+		ctf.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				updateMRUValue(ctf);
+			}
+		});
 	}
 
 	public void showAvailableItems(MElementContainer<?> stack, CTabFolder ctf) {
@@ -1111,7 +1185,7 @@ public class StackRenderer extends LazyStackRenderer {
 		final BasicPartList editorList = new BasicPartList(ctf.getShell(),
 				SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL,
 				ctxt.get(EPartService.class), stack, this,
-				getInitialMRUValue(ctf));
+                getMRUValueFromPreferences());
 		editorList.setInput();
 
 		Point size = editorList.computeSizeHint();
