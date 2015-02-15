@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Nikolay Botev - bug 240651
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 459964
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -57,8 +58,9 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
-	private String descriptorId;
-	private IMemento editorState;
+	private final String descriptorId;
+	private final IMemento editorState;
+	private final String factoryId;
 
 	public EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			IEditorInput input, EditorDescriptor descriptor, IMemento editorState) {
@@ -67,14 +69,22 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		this.descriptor = descriptor;
 		this.editorState = editorState;
 
+		String factory = null;
 		if (descriptor == null) {
-			try {
 				String memento = getModel().getPersistedState().get(MEMENTO_KEY);
 				if (memento == null) {
 					descriptorId = EditorRegistry.EMPTY_EDITOR_ID;
 				} else {
-					XMLMemento createReadRoot = XMLMemento
-							.createReadRoot(new StringReader(memento));
+					XMLMemento createReadRoot;
+					try {
+						createReadRoot = XMLMemento
+								.createReadRoot(new StringReader(memento));
+					} catch (WorkbenchException e) {
+						WorkbenchPlugin.log(e);
+						descriptorId = EditorRegistry.EMPTY_EDITOR_ID;
+						factoryId = null;
+						return;
+					}
 					IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
 							.getEditorRegistry();
 					descriptorId = createReadRoot.getString(IWorkbenchConstants.TAG_ID);
@@ -86,13 +96,16 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 					String ttip = createReadRoot.getString(IWorkbenchConstants.TAG_TOOLTIP);
 					part.getTransientData().put(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY,
 							ttip);
+
+					IMemento inputMem = createReadRoot.getChild(IWorkbenchConstants.TAG_INPUT);
+					if (inputMem != null) {
+						factory = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+					}
 				}
-			} catch (WorkbenchException e) {
-				WorkbenchPlugin.log(e);
-			}
 		} else {
 			descriptorId = this.descriptor.getId();
 		}
+		factoryId = factory;
 	}
 
 	boolean persist() {
@@ -196,20 +209,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		IEditorPart editor = getEditor(false);
 		if (editor == null) {
 			if (input == null) {
-				String memento = getModel().getPersistedState().get(MEMENTO_KEY);
-				if (memento != null) {
-					try {
-						XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(
-								memento));
-						IMemento inputMem = createReadRoot.getChild(IWorkbenchConstants.TAG_INPUT);
-						if (inputMem != null) {
-							return inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-						}
-					} catch (WorkbenchException e) {
-						return null;
-					}
-				}
-				return null;
+				return factoryId;
 			}
 
 			IPersistableElement persistable = input.getPersistable();
