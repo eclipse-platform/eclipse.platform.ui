@@ -30,7 +30,6 @@ public final class Messages extends NLS {
 	public static String EventLoopMonitorThread_external_exception_error_1;
 	public static String EventLoopMonitorThread_invalid_argument_error_1;
 	public static String EventLoopMonitorThread_invalid_logger_type_error_4;
-	public static String EventLoopMonitorThread_invalid_parameters_error;
 	public static String EventLoopMonitorThread_logging_disabled_error;
 	public static String EventLoopMonitorThread_warning_threshold_error_1;
 	public static String EventLoopMonitorThread_max_event_loop_depth_exceeded_1;
