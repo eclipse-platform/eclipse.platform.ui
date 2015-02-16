@@ -3,9 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.tests.rcp; singleton:=true
 Bundle-Version: 3.3.200.qualifier
-Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.core.runtime.compatibility,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.junit,
  org.eclipse.test.performance,
