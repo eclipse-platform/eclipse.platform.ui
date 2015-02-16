@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.ui;
 
 import java.util.Map;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
@@ -81,5 +79,5 @@ public interface IWorkbenchPart3 extends IWorkbenchPart2 {
 	 * 
 	 * @return A Map of the properties. Must not be <code>null</code>.
 	 */
-	public Map getPartProperties();
+	public Map<String, String> getPartProperties();
 }

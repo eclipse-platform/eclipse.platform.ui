@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,9 +80,6 @@ public abstract class WorkbenchPart extends EventManager implements
         super();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPart.
-     */
     @Override
 	public void addPropertyListener(IPropertyListener l) {
         addListenerObject(l);
@@ -175,9 +172,6 @@ public abstract class WorkbenchPart extends EventManager implements
                 ISharedImages.IMG_DEF_VIEW);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPart.
-     */
     @Override
 	public IWorkbenchPartSite getSite() {
         return partSite;
@@ -195,9 +189,6 @@ public abstract class WorkbenchPart extends EventManager implements
         return title;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPart.
-     */
     @Override
 	public Image getTitleImage() {
         if (titleImage != null) {
@@ -206,19 +197,11 @@ public abstract class WorkbenchPart extends EventManager implements
         return getDefaultImage();
     }
 
-    /* (non-Javadoc)
-     * Gets the title tool tip text of this part.
-     *
-     * @return the tool tip text
-     */
     @Override
 	public String getTitleToolTip() {
         return toolTip;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchPart.
-     */
     @Override
 	public void removePropertyListener(IPropertyListener l) {
         removeListenerObject(l);
@@ -484,27 +467,17 @@ public abstract class WorkbenchPart extends EventManager implements
 
     }
     
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.IWorkbenchPartOrientation#getOrientation()
-     */
     @Override
 	public int getOrientation(){
 		//By default use the orientation in Window
     	return Window.getDefaultOrientation();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart3#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
     @Override
 	public void addPartPropertyListener(IPropertyChangeListener listener) {
     	partChangeListeners.add(listener);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart3#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
     @Override
 	public void removePartPropertyListener(IPropertyChangeListener listener) {
     	partChangeListeners.remove(listener);
@@ -525,15 +498,12 @@ public abstract class WorkbenchPart extends EventManager implements
 		}
     }
     
-    private Map partProperties = new HashMap();
+	private Map<String, String> partProperties = new HashMap<String, String>();
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart3#setPartProperty(java.lang.String, java.lang.String)
-     */
     @Override
 	public void setPartProperty(String key, String value) {
-    	String oldValue = (String) partProperties.get(key);
-    	if (value==null) {
+		String oldValue = partProperties.get(key);
+		if (value == null) {
     		partProperties.remove(key);
     	} else {
     		partProperties.put(key, value);
@@ -541,19 +511,13 @@ public abstract class WorkbenchPart extends EventManager implements
     	firePartPropertyChanged(key, oldValue, value);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart3#getPartProperty(java.lang.String)
-     */
     @Override
 	public String getPartProperty(String key) {
-    	return (String)partProperties.get(key);
+		return partProperties.get(key);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart3#getPartProperties()
-     */
     @Override
-	public Map getPartProperties() {
+	public Map<String, String> getPartProperties() {
     	return Collections.unmodifiableMap(partProperties);
     }
 }

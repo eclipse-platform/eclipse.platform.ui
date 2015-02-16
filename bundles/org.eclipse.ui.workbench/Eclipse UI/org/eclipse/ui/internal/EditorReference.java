@@ -17,7 +17,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +35,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableEditor;
@@ -164,15 +162,13 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		editorMem.putString(IWorkbenchConstants.TAG_PART_NAME, getPartName());
 
 		if (editor instanceof IWorkbenchPart3) {
-			Map properties = ((IWorkbenchPart3) editor).getPartProperties();
+			Map<String, String> properties = ((IWorkbenchPart3) editor).getPartProperties();
 			if (!properties.isEmpty()) {
 				IMemento propBag = editorMem.createChild(IWorkbenchConstants.TAG_PROPERTIES);
-				Iterator i = properties.entrySet().iterator();
-				while (i.hasNext()) {
-					Map.Entry entry = (Map.Entry) i.next();
+				for (Map.Entry<String, String> entry : properties.entrySet()) {
 					IMemento p = propBag.createChild(IWorkbenchConstants.TAG_PROPERTY,
-							(String) entry.getKey());
-					p.putTextData((String) entry.getValue());
+ entry.getKey());
+					p.putTextData(entry.getValue());
 				}
 			}
 		}
@@ -359,8 +355,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		if (element == null) {
 			editorSite.setExtensionId(descriptor.getId());
 		}
-		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
-				editorSite));
+		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor));
 		IEditorPart editor = (IEditorPart) part;
 		try {
 			editor.init(editorSite, getEditorInput());
@@ -417,8 +412,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 * share a single editor action bar, so this implementation may return an
 	 * existing action bar vector.
 	 */
-	private static EditorActionBars createEditorActionBars(WorkbenchPage page,
-			EditorDescriptor desc, final IEditorSite site) {
+	private static EditorActionBars createEditorActionBars(WorkbenchPage page, EditorDescriptor desc) {
 		// Get the editor type.
 		String type = desc.getId();
 
