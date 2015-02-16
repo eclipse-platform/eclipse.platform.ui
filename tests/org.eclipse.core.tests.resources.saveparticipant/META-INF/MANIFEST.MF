@@ -8,7 +8,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.core.tests.resources.saveparticipant
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.tests.harness,
- org.eclipse.core.runtime.compatibility,
+ org.eclipse.core.runtime,
  org.junit,
  org.eclipse.core.tests.resources,
  org.eclipse.core.tests.resources.saveparticipant1,
