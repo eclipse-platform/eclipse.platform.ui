@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * It is not intended to be subclassed.
  * </p>
  * <p>
- * The amount of resources which can be transferred is limited to {@value #MAX_RESOURCES_TO_TRANSFER} elements.
+ * The amount of resources which can be transferred is limited to <code>MAX_RESOURCES_TO_TRANSFER</code> elements.
  * </p>
  * @see org.eclipse.jface.viewers.StructuredViewer
  * @see org.eclipse.swt.dnd.DropTarget
