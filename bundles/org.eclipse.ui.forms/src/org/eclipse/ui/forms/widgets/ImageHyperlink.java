@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Event;
  * control vertical alignment (supported values are SWT.TOP, SWT.BOTTOM and
  * SWT.CENTER).
  * <p>
- * The class does not need to be sublassed but it is allowed to do so if some
+ * The class does not need to be subclassed but it is allowed to do so if some
  * aspect of the image hyperlink needs to be modified.
  * <p>
  * <dl>
@@ -95,8 +95,10 @@ public class ImageHyperlink extends Hyperlink {
 	
 	protected void paintHyperlink(GC gc, Rectangle bounds) {
 		Image image = null;
-		if (!isEnabled())
+		if (!isEnabled()) {
+			createDisabledImage();
 			image = disabledImage;
+		}
 		else {
 			if ((state & ACTIVE) != 0)
 				image = activeImage;
@@ -257,11 +259,14 @@ public class ImageHyperlink extends Hyperlink {
 		this.image = image;
 		if (disabledImage != null)
 			disabledImage.dispose();
-		if (image != null && !image.isDisposed())
-			disabledImage = new Image(image.getDevice(), image, SWT.IMAGE_DISABLE);
 		if (image == null) {
 			disabledImage = null;
 		}
+	}
+
+	private void createDisabledImage() {
+		if (this.image != null && !this.image.isDisposed())
+			disabledImage = new Image(this.image.getDevice(), this.image, SWT.IMAGE_DISABLE);
 	}
 
 	private Point computeMaxImageSize() {
