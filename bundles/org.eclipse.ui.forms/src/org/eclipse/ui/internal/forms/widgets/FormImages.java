@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -35,7 +36,7 @@ public class FormImages {
 	}
 
 	private ResourceManagerManger manager = new ResourceManagerManger();
-	private HashMap descriptors;
+	private Map descriptors;
 	
 	private FormImages() {
 	}
@@ -348,24 +349,26 @@ public class FormImages {
 	private synchronized Image getGradient(AbstractImageDescriptor desc, Display display) {
 		checkHashMaps();
 		Image result = manager.getResourceManager(display).createImage(desc);
-		descriptors.put(result, desc);
+		descriptors.put(new Integer(result.hashCode()), desc);
 		return result;
 	}
 	
 	public synchronized boolean markFinished(Image image, Display display) {
 		checkHashMaps();
-		AbstractImageDescriptor desc = (AbstractImageDescriptor)descriptors.get(image);
+		Integer imageHashCode = new Integer(image.hashCode());
+		AbstractImageDescriptor desc = (AbstractImageDescriptor)descriptors.get(imageHashCode);
 		if (desc != null) {
 			LocalResourceManager resourceManager = manager.getResourceManager(display);
 			resourceManager.destroyImage(desc);
 			if (resourceManager.find(desc) == null) {
-				descriptors.remove(image);
+				descriptors.remove(imageHashCode);
 				validateHashMaps();
 			}
 			return true;
 		}
 		// if the image was not found, dispose of it for the caller
 		image.dispose();
+		validateHashMaps();
 		return false;
 	}
 
