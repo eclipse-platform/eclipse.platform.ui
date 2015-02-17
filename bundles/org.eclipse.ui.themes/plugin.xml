@@ -89,6 +89,24 @@
         id="org.eclipse.e4.ui.css.theme.high-contrast"
         label="%theme.high-contrast">
    </theme>
+  <theme
+        basestylesheeturi="css/e4_presentation_gtk.css"
+        id="org.eclipse.e4.ui.css.theme.e4_presentation"
+        label="%theme.presentation"
+        os="linux">
+  </theme>
+  <theme
+        basestylesheeturi="css/e4_presentation_win.css"
+        id="org.eclipse.e4.ui.css.theme.e4_presentation"
+        label="%theme.presentation"
+        os="win32">
+  </theme>
+  <theme
+        basestylesheeturi="css/e4_presentation_mac.css"
+        id="org.eclipse.e4.ui.css.theme.e4_presentation"
+        label="%theme.presentation"
+        os="macosx">
+  </theme>
 
    <themeAssociation
 		themeId="org.eclipse.e4.ui.css.theme.e4_classic"
