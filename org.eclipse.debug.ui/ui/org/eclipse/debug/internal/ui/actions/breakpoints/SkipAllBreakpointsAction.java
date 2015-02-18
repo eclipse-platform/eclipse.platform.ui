@@ -45,6 +45,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindowActionDelegate, IActionDelegate2, IBreakpointManagerListener {
 	
 	public static final String ACTION_ID = "org.eclipse.debug.ui.actions.SkipAllBreakpoints"; //$NON-NLS-1$
+	public static final String ACTION_DEFINITION_ID = "org.eclipse.debug.ui.commands.SkipAllBreakpoints"; //$NON-NLS-1$
 	
 	//The real action if this is an action delegate
 	private IAction fAction;

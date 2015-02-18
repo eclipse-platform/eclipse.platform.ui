@@ -246,7 +246,9 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		setAction(ACTION_GOTO_MARKER, action);
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction(ACTION_SHOW_MODEL_BREAKPOINT, new ShowTargetBreakpointsAction(this));
-		setAction(ACTION_SKIP_BREAKPOINTS, new SkipAllBreakpointsAction(this));
+		SkipAllBreakpointsAction skipAll = new SkipAllBreakpointsAction(this);
+		setAction(ACTION_SKIP_BREAKPOINTS, skipAll);
+		skipAll.setActionDefinitionId(SkipAllBreakpointsAction.ACTION_DEFINITION_ID);
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 
 		fClipboard = new Clipboard(getSite().getShell().getDisplay());

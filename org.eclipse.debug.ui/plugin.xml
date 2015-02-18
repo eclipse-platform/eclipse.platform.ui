@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2014 IBM Corporation and others.
+     Copyright (c) 2005, 2015 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -2047,6 +2047,11 @@ M4 = Platform-specific fourth key
             
             commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M1+M3+B"
+            
+            commandId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             commandId="org.eclipse.debug.ui.commands.eof"
             contextId="org.eclipse.debug.ui.console"
@@ -2506,6 +2511,7 @@ M4 = Platform-specific fourth key
             adaptableType="org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
+         <!-- "class" below is intentionally empty, see https://bugs.eclipse.org/396822#c3 ff. -->
          <factory 
             class="" 
             adaptableType="org.eclipse.ui.part.FileEditorInput">
