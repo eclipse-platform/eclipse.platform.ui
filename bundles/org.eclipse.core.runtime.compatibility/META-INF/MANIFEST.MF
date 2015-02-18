@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-Version: 3.2.200.qualifier
+Bundle-SymbolicName: org.eclipse.core.runtime.compatibility; singleton:=true
+Bundle-Vendor: %providerName
+Bundle-Activator: org.eclipse.core.internal.plugins.CompatibilityActivator
+Bundle-Localization: plugin
+Export-Package: org.eclipse.core.boot,
+ org.eclipse.core.internal.boot;x-internal:=true,
+ org.eclipse.core.internal.compatibility;x-internal:=true,
+ org.eclipse.core.internal.model;x-internal:=true,
+ org.eclipse.core.internal.plugins;x-internal:=true,
+ org.eclipse.core.runtime.model
+Require-Bundle: 
+ org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
+ org.eclipse.update.configurator;bundle-version="[3.1.100,4.0.0)";visibility:=reexport
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: 
+ J2SE-1.4,
+ CDC-1.0/Foundation-1.0,
+ J2SE-1.3
+Import-Package: javax.xml.parsers,
+ org.xml.sax,
+ org.xml.sax.helpers
