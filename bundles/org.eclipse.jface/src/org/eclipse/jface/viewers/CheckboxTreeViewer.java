@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460380
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -422,18 +423,21 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
         if (widget instanceof TreeItem) {
             ((TreeItem) widget).setChecked(state);
             return true;
-        }
+		}
         return false;
     }
 
     /**
-     * Sets the checked state for the children of the given item.
-     *
-     * @param item the item
-     * @param state <code>true</code> if the item should be checked,
-     *  and <code>false</code> if it should be unchecked
-     */
-    private void setCheckedChildren(Item item, boolean state) {
+	 * Sets the checked state for the children of the given item.
+	 *
+	 * @param item
+	 *            the item
+	 * @param state
+	 *            <code>true</code> if the item should be checked, and
+	 *            <code>false</code> if it should be unchecked
+	 * @since 3.11
+	 */
+	protected void setCheckedChildren(Item item, boolean state) {
         createChildren(item);
         Item[] items = getChildren(item);
         if (items != null) {
