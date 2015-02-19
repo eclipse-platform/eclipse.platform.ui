@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 BestSolution.at and others.
+ * Copyright (c) 2011, 2014, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Dirk Fauth <dirk.fauth@gmail.com> - modifications to instance creation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - modifications to instance creation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460308
  ******************************************************************************/
 package org.eclipse.e4.core.internal.services;
 
@@ -196,8 +197,8 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		}
 
 		// always create a provider, if there is no resource bundle found, simply the modified keys
-		// will
-		// be returned by this provider to show that there is something wrong on loading it
+		// will be returned by this provider to show that there is something
+		// wrong on loading it
 		ResourceBundleTranslationProvider provider = new ResourceBundleTranslationProvider(
 				resourceBundle);
 
@@ -211,7 +212,10 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 					fields[i].setAccessible(true);
 				}
 
-				fields[i].set(instance, provider.translate(fields[i].getName()));
+				if (fields[i].getType().isAssignableFrom(String.class)) {
+					fields[i].set(instance,
+							provider.translate(fields[i].getName()));
+				}
 			}
 		} catch (InstantiationException e) {
 			if (logService != null)
