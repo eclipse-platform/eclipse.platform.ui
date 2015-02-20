@@ -86,7 +86,7 @@ public class FileLink implements IConsoleHyperlink {
 						if (editorPart instanceof ITextEditor) {
 							textEditor = (ITextEditor) editorPart;
 						} else {
-							textEditor = (ITextEditor) editorPart.getAdapter(ITextEditor.class);
+							textEditor = editorPart.getAdapter(ITextEditor.class);
 						}
 						if (textEditor != null) {
 							IEditorInput input = editorPart.getEditorInput();

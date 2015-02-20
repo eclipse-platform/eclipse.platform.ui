@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class ShowTypesAction extends Action {
 			return;
 		}
 		
-		IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)getView().getAdapter(IDebugModelPresentation.class);
+		IDebugModelPresentation debugLabelProvider= getView().getAdapter(IDebugModelPresentation.class);
 		if (debugLabelProvider != null) {
 			Boolean typesStatus = on ? Boolean.TRUE : Boolean.FALSE;
 			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, typesStatus);

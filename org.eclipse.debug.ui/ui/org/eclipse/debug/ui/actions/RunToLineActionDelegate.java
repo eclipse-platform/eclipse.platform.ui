@@ -194,7 +194,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			IWorkbenchWindow workbenchWindow = part.getSite().getWorkbenchWindow();
 			IDebugContextService service = manager.getContextService(workbenchWindow);
 			service.addDebugContextListener(fContextListener);
-			fPartTarget  = (IRunToLineTarget) part.getAdapter(IRunToLineTarget.class);
+			fPartTarget  = part.getAdapter(IRunToLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on

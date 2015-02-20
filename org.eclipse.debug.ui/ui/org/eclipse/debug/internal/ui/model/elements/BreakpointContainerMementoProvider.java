@@ -34,7 +34,7 @@ public class BreakpointContainerMementoProvider extends DebugElementMementoProvi
 			IBreakpointContainer container = (IBreakpointContainer) element;
 			IAdaptable category = container.getCategory();
 			if (category != null) {
-				IWorkbenchAdapter adapter = (IWorkbenchAdapter) category.getAdapter(IWorkbenchAdapter.class);
+				IWorkbenchAdapter adapter = category.getAdapter(IWorkbenchAdapter.class);
 				if (adapter != null) {
 					return adapter.getLabel(category);
 				}

@@ -61,7 +61,7 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
             if (!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(workingSets[i].getId())) {
 		        IAdaptable[] elements = workingSets[i].getElements();
 		        for (int j = 0; j < elements.length; j++) {
-		            IResource resource = (IResource) elements[j].getAdapter(IResource.class);
+		            IResource resource = elements[j].getAdapter(IResource.class);
 		            if (resource != null) {
 		                if (parents.contains(resource)) {
 		                	result.add(new WorkingSetCategory(workingSets[i]));

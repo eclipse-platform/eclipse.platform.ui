@@ -304,7 +304,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	@Override
 	public synchronized void launchRemoved(final ILaunch launch) {
-        ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
+        ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
         if (trigger != null) {
             trigger.removeSuspendTriggerListener(this);
         }
@@ -339,7 +339,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	@Override
 	public synchronized void launchAdded(ILaunch launch) {
-        ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
+        ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
         if (trigger != null) {
             trigger.addSuspendTriggerListener(this);
         }
@@ -502,7 +502,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 								String type = launchConfiguration.getType().getIdentifier();
 								ViewContextService service = ViewContextManager.getDefault().getService(window);
 								if (service != null) {
-									IContextService contextServce = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+									IContextService contextServce = PlatformUI.getWorkbench().getAdapter(IContextService.class);
 									String[] ids = service.getEnabledPerspectives();
 									IContextActivation[] activations = new IContextActivation[ids.length];
 									for (int i = 0; i < ids.length; i++) {

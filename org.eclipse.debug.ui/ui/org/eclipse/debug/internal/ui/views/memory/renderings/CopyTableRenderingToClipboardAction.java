@@ -95,7 +95,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 				IMemoryBlock memBlock = fRendering.getMemoryBlock();
 				if (memBlock instanceof IMemoryBlockExtension)
 				{
-					TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)fRendering.getAdapter(TableRenderingContentDescriptor.class);
+					TableRenderingContentDescriptor descriptor = fRendering.getAdapter(TableRenderingContentDescriptor.class);
 					if (descriptor == null)
 						{
 						try {

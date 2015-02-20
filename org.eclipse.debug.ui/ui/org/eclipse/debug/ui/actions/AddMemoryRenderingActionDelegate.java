@@ -272,7 +272,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		}
 		else if (elmt instanceof IAdaptable)
 		{
-			target = (IAddMemoryRenderingsTarget)((IAdaptable)elmt).getAdapter(IAddMemoryRenderingsTarget.class);
+			target = ((IAdaptable)elmt).getAdapter(IAddMemoryRenderingsTarget.class);
 		}
 		return target;
 	}

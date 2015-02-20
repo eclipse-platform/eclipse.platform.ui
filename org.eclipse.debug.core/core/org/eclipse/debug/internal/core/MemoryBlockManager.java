@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,7 +242,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 				}
 			}
 			else {
-				IMemoryBlockRetrieval mbRetrieval = (IMemoryBlockRetrieval) block.getAdapter(IMemoryBlockRetrieval.class);
+				IMemoryBlockRetrieval mbRetrieval = block.getAdapter(IMemoryBlockRetrieval.class);
 				// standard memory block always uses the debug target as the memory block retrieval
 				if (mbRetrieval == null) {
 					mbRetrieval = block.getDebugTarget();

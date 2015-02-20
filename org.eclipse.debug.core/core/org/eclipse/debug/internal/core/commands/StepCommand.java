@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public abstract class StepCommand extends AbstractDebugCommand {
 			if (object instanceof IStackFrame) {
 				frame = (IStackFrame) object;
 			} else if (object instanceof IAdaptable) {
-				frame = (IStackFrame)((IAdaptable)object).getAdapter(IStackFrame.class);
+				frame = ((IAdaptable)object).getAdapter(IStackFrame.class);
 			}
 			if (frame != null) {
 				if (!threads.add(frame.getThread())) {

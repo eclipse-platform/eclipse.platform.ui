@@ -516,7 +516,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			}
 
 			// ask decorator to decorate to ensure consistent label
-			ILabelDecorator decorator = (ILabelDecorator) fMemoryBlocks[i].getAdapter(ILabelDecorator.class);
+			ILabelDecorator decorator = fMemoryBlocks[i].getAdapter(ILabelDecorator.class);
 			if (decorator != null)
 				text = decorator.decorateText(text, fMemoryBlocks[i]);
 

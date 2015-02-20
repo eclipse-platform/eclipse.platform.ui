@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,9 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 
 	public TableRenderingLabelProviderEx(AbstractTableRendering rendering) {
 		super(rendering);
-		fLabelProvider = (ILabelProvider) rendering.getAdapter(ILabelProvider.class);
-		fColorProvider = (IColorProvider) rendering.getAdapter(IColorProvider.class);
-		fFontProvider = (IFontProvider) rendering.getAdapter(IFontProvider.class);
+		fLabelProvider = rendering.getAdapter(ILabelProvider.class);
+		fColorProvider = rendering.getAdapter(IColorProvider.class);
+		fFontProvider = rendering.getAdapter(IFontProvider.class);
 	}
 
 	/*

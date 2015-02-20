@@ -34,7 +34,7 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate
      */
     @Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-        IBreakpointTypeCategory category = (IBreakpointTypeCategory) breakpoint.getAdapter(IBreakpointTypeCategory.class);
+        IBreakpointTypeCategory category = breakpoint.getAdapter(IBreakpointTypeCategory.class);
         if (category != null) {
             return new IAdaptable[]{category};
         }

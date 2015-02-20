@@ -1386,7 +1386,7 @@ public class LaunchView extends AbstractDebugView
 				Object object = selection.getFirstElement();
 				if (object instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) object;
-					IShowInSource show = (IShowInSource) adaptable.getAdapter(IShowInSource.class);
+					IShowInSource show = adaptable.getAdapter(IShowInSource.class);
 					if (show != null) {
 						return show.getShowInContext();
 					}
@@ -1407,7 +1407,7 @@ public class LaunchView extends AbstractDebugView
 				Object object = selection.getFirstElement();
 				if (object instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) object;
-					IShowInTargetList show = (IShowInTargetList) adaptable.getAdapter(IShowInTargetList.class);
+					IShowInTargetList show = adaptable.getAdapter(IShowInTargetList.class);
 					if (show != null) {
 						return show.getShowInTargetIds();
 					}
@@ -1524,7 +1524,7 @@ public class LaunchView extends AbstractDebugView
     @Override
 	public synchronized void viewerUpdatesBegin() {
         IWorkbenchSiteProgressService progressService = 
-            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+            getSite().getAdapter(IWorkbenchSiteProgressService.class);
         if (progressService != null) {
             progressService.incrementBusy();
         }
@@ -1536,7 +1536,7 @@ public class LaunchView extends AbstractDebugView
     @Override
 	public synchronized void viewerUpdatesComplete() {
         IWorkbenchSiteProgressService progressService = 
-            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+            getSite().getAdapter(IWorkbenchSiteProgressService.class);
         if (progressService != null) {
             progressService.decrementBusy();
         }       

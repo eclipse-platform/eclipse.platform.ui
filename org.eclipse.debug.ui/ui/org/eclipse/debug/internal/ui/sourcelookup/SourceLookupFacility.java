@@ -434,7 +434,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				if (editor instanceof ITextEditor) {					
 					textEditor = (ITextEditor)editor;
 				} else {
-					textEditor = (ITextEditor) editor.getAdapter(ITextEditor.class);
+					textEditor = editor.getAdapter(ITextEditor.class);
 				}
 				if (textEditor != null) {
 					positionEditor(textEditor, frame);

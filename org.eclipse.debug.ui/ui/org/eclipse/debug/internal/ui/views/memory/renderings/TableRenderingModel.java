@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,7 +264,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 
 		clearCache();
 
-		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor) rendering.getAdapter(TableRenderingContentDescriptor.class);
+		TableRenderingContentDescriptor descriptor = rendering.getAdapter(TableRenderingContentDescriptor.class);
 		boolean alignAddress = true;
 		if (descriptor != null && !descriptor.isAlignAddressToBoundary()) {
 			alignAddress = descriptor.isAlignAddressToBoundary();
@@ -301,7 +301,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 
 		int addressableSize = rendering.getAddressableSize();
 
-		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor) rendering.getAdapter(TableRenderingContentDescriptor.class);
+		TableRenderingContentDescriptor descriptor = rendering.getAdapter(TableRenderingContentDescriptor.class);
 		boolean alignAddress = true;
 		if (descriptor != null && !descriptor.isAlignAddressToBoundary()) {
 			alignAddress = descriptor.isAlignAddressToBoundary();

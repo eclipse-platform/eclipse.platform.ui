@@ -151,7 +151,7 @@ public class SelectedResourceManager  {
 				IWorkbenchPart part = page.getActivePart();
 				if(part instanceof IEditorPart) {
 					IEditorPart epart = (IEditorPart) part;
-					resource = (IResource) epart.getEditorInput().getAdapter(IResource.class);
+					resource = epart.getEditorInput().getAdapter(IResource.class);
 				}
 				else if(part != null) {
 					IWorkbenchPartSite site = part.getSite();
@@ -165,7 +165,7 @@ public class SelectedResourceManager  {
 									Iterator<?> iterator = ss.iterator();
 									while (iterator.hasNext() && resource == null) {
 										Object next = iterator.next();
-										resource = (IResource) Platform.getAdapterManager().getAdapter(next, IResource.class);
+										resource = Platform.getAdapterManager().getAdapter(next, IResource.class);
 									}
 								}
 							}

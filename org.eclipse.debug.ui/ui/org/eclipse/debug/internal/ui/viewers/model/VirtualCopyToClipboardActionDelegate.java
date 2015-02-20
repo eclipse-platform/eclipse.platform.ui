@@ -112,7 +112,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	@Override
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
-			IDebugView adapter= (IDebugView)getView().getAdapter(IDebugView.class);
+			IDebugView adapter= getView().getAdapter(IDebugView.class);
 			if (adapter != null) {
 				if (adapter.getViewer() instanceof TreeModelViewer) {
 					setViewer((TreeModelViewer) adapter.getViewer());

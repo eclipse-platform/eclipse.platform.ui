@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -85,6 +86,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
+
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
@@ -146,98 +148,99 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
-    @Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
         if (adapterType.isInstance(adaptableObject)) {
-			return adaptableObject;
+			return (T) adaptableObject;
 		}
         
         if (adapterType.equals(IAsynchronousContentAdapter.class)) {
             if (adaptableObject instanceof IMemoryBlockRetrieval) {
-            	return fgAsyncMemoryRetrieval;
+				return (T) fgAsyncMemoryRetrieval;
             }
             if (adaptableObject instanceof IMemoryBlock) {
-            	return fgAsyncMemoryBlock;
+				return (T) fgAsyncMemoryBlock;
             }
         }
         
         if (adapterType.equals(IElementContentProvider.class)) {
             if (adaptableObject instanceof ILaunchManager) {
-                return fgCPLaunchManger;
+				return (T) fgCPLaunchManger;
             }
             if (adaptableObject instanceof ILaunch) {
-                return fgCPLaunch;
+				return (T) fgCPLaunch;
             }
             if (adaptableObject instanceof IProcess) {
-                return fgCPProcess;
+				return (T) fgCPProcess;
             }
             if (adaptableObject instanceof IDebugTarget) {
-            	return fgCPTarget;
+				return (T) fgCPTarget;
             }
             if (adaptableObject instanceof IMemoryBlockRetrieval)
             {
-            	return fgCPMemoryRetrieval;
+				return (T) fgCPMemoryRetrieval;
             }
             if (adaptableObject instanceof IThread) {
-            	return fgCPThread;
+				return (T) fgCPThread;
             }
             if (adaptableObject instanceof IStackFrame) {
-            	return fgCPFrame;
+				return (T) fgCPFrame;
             }
             if (adaptableObject instanceof IVariable) {
-            	return fgCPVariable;
+				return (T) fgCPVariable;
             }
             if (adaptableObject instanceof IExpressionManager) {
-            	return fgCPExpressionManager;
+				return (T) fgCPExpressionManager;
             }           
             if (adaptableObject instanceof IExpression) {
-            	return fgCPExpression;
+				return (T) fgCPExpression;
             }
             if (adaptableObject instanceof IRegisterGroup) {
-            	return fgCPRegisterGroup;
+				return (T) fgCPRegisterGroup;
             }
             if (adaptableObject instanceof IMemoryBlock) {
-            	return fgCPMemoryBlock;
+				return (T) fgCPMemoryBlock;
             }            
             if (adaptableObject instanceof DefaultBreakpointsViewInput) {
-            	return fgCPBreakpointManager;
+				return (T) fgCPBreakpointManager;
             }
             if (adaptableObject instanceof IBreakpoint) {
-            	return fgCPBreakpoint;
+				return (T) fgCPBreakpoint;
             }
         }        
         
         if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
         	if (adaptableObject instanceof IMemoryBlock) {
-        		return fgMemoryBlockLabelAdapter;
+				return (T) fgMemoryBlockLabelAdapter;
         	}
         	
         	if (adaptableObject instanceof MemorySegment) {
-        		return fgTableRenderingLineLabelAdapter;
+				return (T) fgTableRenderingLineLabelAdapter;
         	}
-        	return fgDebugLabelAdapter;
+			return (T) fgDebugLabelAdapter;
         }
         
         if (adapterType.equals(IElementLabelProvider.class)) {
         	if (adaptableObject instanceof IVariable) {
-        		return fgLPVariable;
+				return (T) fgLPVariable;
         	}
         	if (adaptableObject instanceof IExpression) {
-        		return fgLPExpression;
+				return (T) fgLPExpression;
         	}
         	if (adaptableObject instanceof IRegisterGroup) {
-        		return fgLPRegisterGroup;
+				return (T) fgLPRegisterGroup;
         	}
         	if (adaptableObject instanceof IMemoryBlock) {
-        		return fgLPMemoryBlock;
+				return (T) fgLPMemoryBlock;
         	} 
         	if (adaptableObject instanceof IBreakpoint) {
-        		return fgLPBreakpoint;
+				return (T) fgLPBreakpoint;
         	}
         	if (adaptableObject instanceof IBreakpointContainer) {
-        		return fgLPBreakpointContainer;
+				return (T) fgLPBreakpointContainer;
         	}     	
-        	return fgLPDebugElement;
+			return (T) fgLPDebugElement;
         }        
         
         if (adapterType.equals(IModelProxyFactory.class)) {
@@ -249,72 +252,72 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         			adaptableObject instanceof DefaultBreakpointsViewInput ||
         			adaptableObject instanceof IBreakpoint ||
         			adaptableObject instanceof IBreakpointContainer) {
-				return fgModelProxyFactoryAdapter;
+				return (T) fgModelProxyFactoryAdapter;
 			}
         }
         
         if (adapterType.equals(ISourceDisplay.class)) {
         	if (adaptableObject instanceof IStackFrame) {
-        		return fgStackFrameSourceDisplayAdapter;
+				return (T) fgStackFrameSourceDisplayAdapter;
         	}
         }
         
         if (adapterType.equals(IModelSelectionPolicyFactory.class)) {
         	if (adaptableObject instanceof IDebugElement) {
-        		return fgModelSelectionPolicyFactoryAdapter;
+				return (T) fgModelSelectionPolicyFactoryAdapter;
         	}
         }
         
         if (adapterType.equals(IColumnPresentationFactory.class)) {
             if (adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager) {
-                return fgVariableColumnFactory;
+				return (T) fgVariableColumnFactory;
             }
         }   
         
         if (adapterType.equals(IElementMementoProvider.class)) {
         	if (adaptableObject instanceof IStackFrame) {
-        		return fgMPFrame;
+				return (T) fgMPFrame;
         	}
         	if (adaptableObject instanceof IVariable) {
-        		return fgMPVariable;
+				return (T) fgMPVariable;
         	}
         	if (adaptableObject instanceof IRegisterGroup) {
-        		return fgMPRegisterGroup;
+				return (T) fgMPRegisterGroup;
         	}
         	if (adaptableObject instanceof IExpression) {
-        		return fgMPExpression;
+				return (T) fgMPExpression;
         	}
         	if (adaptableObject instanceof IExpressionManager) {
-        		return fgMPExpressionManager;
+				return (T) fgMPExpressionManager;
         	}
         	if (adaptableObject instanceof IMemoryBlockRetrieval) {
-        		return fgMPMemory;
+				return (T) fgMPMemory;
         	}
         	if (adaptableObject instanceof IBreakpoint) {
-        		return fgMPBreakpoint;
+				return (T) fgMPBreakpoint;
         	}
         	if (adaptableObject instanceof IBreakpointContainer) {
-        		return fgMPBreakpointContainer;
+				return (T) fgMPBreakpointContainer;
         	}
         	if (adaptableObject instanceof DefaultBreakpointsViewInput) {
-        		return fgMPBreakpointManagerInput;
+				return (T) fgMPBreakpointManagerInput;
         	}
         }
         
         if (adapterType.equals(IElementEditor.class)) {
         	if (adaptableObject instanceof IVariable) {
-        		return fgEEVariable;
+				return (T) fgEEVariable;
         	}
             if (adaptableObject instanceof IWatchExpression) {
-                return fgEEWatchExpression;
+				return (T) fgEEWatchExpression;
             }
         }
         
         if (adapterType.equals(IViewerInputProvider.class)) {
         	if (adaptableObject instanceof IStackFrame) {
-        		return fgStackFrameViewerInputProvider;
+				return (T) fgStackFrameViewerInputProvider;
         	} else {
-        	    return fgDefaultViewerInputProvider;
+				return (T) fgDefaultViewerInputProvider;
         	}
         }         
         
@@ -325,7 +328,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
     @Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
         return new Class[] {
         		IAsynchronousLabelAdapter.class,
         		IAsynchronousContentAdapter.class,

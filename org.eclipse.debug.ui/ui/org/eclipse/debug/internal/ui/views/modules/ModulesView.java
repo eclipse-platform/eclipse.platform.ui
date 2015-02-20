@@ -131,7 +131,7 @@ public class ModulesView extends VariablesView {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
 			if (adaptable.getAdapter(IHelpContextIdProvider.class) != null) {
-				IHelpContextIdProvider provider = (IHelpContextIdProvider) adaptable
+				IHelpContextIdProvider provider = adaptable
 						.getAdapter(IHelpContextIdProvider.class);
 				String helpId = provider.getHelpContextId(IDebugHelpContextIds.MODULES_VIEW);
 				if (helpId != null) {
@@ -164,7 +164,7 @@ public class ModulesView extends VariablesView {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
 			if (adaptable.getAdapter(ILabelProvider.class) != null) {
-				ILabelProvider provider = (ILabelProvider) adaptable
+				ILabelProvider provider = adaptable
 						.getAdapter(ILabelProvider.class);
 				String label = provider.getText(this);
 				if (label != null)
@@ -179,7 +179,7 @@ public class ModulesView extends VariablesView {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
 			if (adaptable.getAdapter(ILabelProvider.class) != null) {
-				ILabelProvider provider = (ILabelProvider) adaptable
+				ILabelProvider provider = adaptable
 						.getAdapter(ILabelProvider.class);
 				Image image = provider.getImage(this);
 				if (image != null)

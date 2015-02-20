@@ -109,7 +109,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		FontData fontData = super.getFontData(elementPath, presentationContext, columnId);
 		if (fontData == null && element instanceof IAdaptable) {
 			
-            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
+            IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
                 fontData = adapter.getFont(element);
             }
@@ -124,7 +124,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		RGB rgb = super.getForeground(elementPath, presentationContext, columnId);
 		if (rgb == null && element instanceof IAdaptable) {
 			
-            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
+            IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
             	rgb = adapter.getForeground(element);
             }
@@ -139,7 +139,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		RGB rgb = super.getBackground(elementPath, presentationContext, columnId);
 		if (rgb == null && element instanceof IAdaptable) {
 			
-            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
+            IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
             	rgb = adapter.getBackground(element);
             }

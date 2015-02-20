@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+
 import org.eclipse.debug.core.ILaunch;
+
 import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 
 /**
@@ -27,8 +29,9 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized Object getAdapter(Object adaptableObject, Class adapterType) {
+	public synchronized <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(ISuspendTrigger.class)) {
 			if (adaptableObject instanceof ILaunch) {
 				LaunchSuspendTrigger trigger = fSuspendTriggers.get(adaptableObject);
@@ -36,7 +39,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 					trigger = new LaunchSuspendTrigger((ILaunch) adaptableObject, this);
 					fSuspendTriggers.put(adaptableObject, trigger);
 				}
-				return trigger;
+				return (T) trigger;
 			}
 		}
 		return null;
@@ -46,7 +49,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[]{ISuspendTrigger.class};
 	}
 	

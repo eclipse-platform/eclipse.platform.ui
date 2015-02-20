@@ -43,7 +43,7 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
             if (category != null) {
-	            IWorkbenchAdapter adapter = (IWorkbenchAdapter) category.getAdapter(IWorkbenchAdapter.class);
+	            IWorkbenchAdapter adapter = category.getAdapter(IWorkbenchAdapter.class);
 	            if (adapter != null) {
 	                return adapter.getImageDescriptor(category);
 	            }
@@ -62,7 +62,7 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
             if (category != null) {
-	            IWorkbenchAdapter adapter = (IWorkbenchAdapter) category.getAdapter(IWorkbenchAdapter.class);
+	            IWorkbenchAdapter adapter = category.getAdapter(IWorkbenchAdapter.class);
 	            if (adapter != null) {
 	                return adapter.getLabel(category);
 	            }
@@ -88,7 +88,7 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
-            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) category.getAdapter(IWorkbenchAdapter2.class);
+            IWorkbenchAdapter2 adapter = category.getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
                 return adapter.getForeground(category);
             }
@@ -104,7 +104,7 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
-            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) category.getAdapter(IWorkbenchAdapter2.class);
+            IWorkbenchAdapter2 adapter = category.getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
                 return adapter.getBackground(category);
             }
@@ -120,7 +120,7 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         if (object instanceof IBreakpointContainer) {
             IBreakpointContainer container = (IBreakpointContainer) object;
             IAdaptable category = container.getCategory();
-            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) category.getAdapter(IWorkbenchAdapter2.class);
+            IWorkbenchAdapter2 adapter = category.getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
                 return adapter.getFont(category);
             }

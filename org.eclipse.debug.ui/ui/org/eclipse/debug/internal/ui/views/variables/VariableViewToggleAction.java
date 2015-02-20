@@ -123,7 +123,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	}
 	
 	protected StructuredViewer getStructuredViewer() {
-		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
+		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {

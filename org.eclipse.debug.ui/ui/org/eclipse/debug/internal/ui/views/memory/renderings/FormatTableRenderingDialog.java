@@ -410,7 +410,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 		private int getDefaultRowSize()
 		{
 			int size = -1;
-			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
 				if (elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL))
@@ -425,7 +425,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 		private int getDefaultColumnSize()
 		{
 			int size = -1;
-			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
 				if (elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
@@ -465,7 +465,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			int columnSize = fColumnSizes[fColumnControl.getSelectionIndex()];
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
 			
-			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			
 			if (elmt != null && elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL)
 				&& elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
@@ -549,7 +549,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 		
 		private int getDefaultFromPersistableElement(String propertyId) {
 			int defaultValue = -1;
-			IPersistableDebugElement elmt = (IPersistableDebugElement)fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
 				try {

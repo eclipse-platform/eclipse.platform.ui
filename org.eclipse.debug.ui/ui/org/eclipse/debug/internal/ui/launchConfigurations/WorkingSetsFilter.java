@@ -101,7 +101,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 		for(int i = 0; i < wsets.length; i++) {	
 			IAdaptable[] elements = wsets[i].getElements();
 			for(int j = 0; j < elements.length; j++) {
-				lres = (IResource)elements[j].getAdapter(IResource.class);
+				lres = elements[j].getAdapter(IResource.class);
 				if(lres != null) {
 					if(parents.contains(lres)) {
 						return true;

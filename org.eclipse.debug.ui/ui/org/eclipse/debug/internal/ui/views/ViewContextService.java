@@ -623,7 +623,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 */
 	ViewContextService(IWorkbenchWindow window) {
 		fWindow = window;
-		fContextService = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+		fContextService = PlatformUI.getWorkbench().getAdapter(IContextService.class);
         fDebugContextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
 		loadContextToViewExtensions();
         applyUserViewBindings();

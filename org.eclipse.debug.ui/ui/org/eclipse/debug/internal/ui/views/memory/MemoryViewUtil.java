@@ -78,13 +78,13 @@ public class MemoryViewUtil {
 		if (!(elem instanceof IAdaptable))
 			return false;
 
-		IMemoryBlockRetrieval memRetrieval = (IMemoryBlockRetrieval) ((IAdaptable) elem).getAdapter(IMemoryBlockRetrieval.class);
+		IMemoryBlockRetrieval memRetrieval = ((IAdaptable) elem).getAdapter(IMemoryBlockRetrieval.class);
 
 		IDebugTarget debugTarget = null;
 		if (elem instanceof IDebugElement) {
 			debugTarget = ((IDebugElement) elem).getDebugTarget();
 		} else {
-			debugTarget = (IDebugTarget) ((IAdaptable) elem).getAdapter(IDebugTarget.class);
+			debugTarget = ((IAdaptable) elem).getAdapter(IDebugTarget.class);
 		}
 
 		if (memRetrieval == null) {
@@ -197,7 +197,7 @@ public class MemoryViewUtil {
 		// check if the object can adapt to a memory block retrieval
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) object;
-			retrieval = (IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class);
+			retrieval = adaptable.getAdapter(IMemoryBlockRetrieval.class);
 		}
 
 		// if cannot adapt and the object itself is already an

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,7 +198,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 					debugTargets.add(targets[j]);
 				}
 			} else if (next instanceof IProcess) {
-				IDebugTarget target= (IDebugTarget)((IProcess)next).getAdapter(IDebugTarget.class);
+				IDebugTarget target= ((IProcess)next).getAdapter(IDebugTarget.class);
 				if (target != null) {
 					debugTargets.add(target);
 				}

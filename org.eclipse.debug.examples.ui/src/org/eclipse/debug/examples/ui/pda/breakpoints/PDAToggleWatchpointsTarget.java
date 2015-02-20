@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	    	// current source line.
 	        ITextEditor editorPart = (ITextEditor)part;
 	        int lineNumber = ((ITextSelection)selection).getStartLine();
-	        IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
+	        IResource resource = editorPart.getEditorInput().getAdapter(IResource.class);
 	        String var = variableAndFunctionName[0];
 	        String fcn = variableAndFunctionName[1];
 	        toggleWatchpoint(resource, lineNumber, fcn, var, fAccessModeEnabled, fModificationModeEnabled);

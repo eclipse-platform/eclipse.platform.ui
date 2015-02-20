@@ -1516,7 +1516,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public synchronized void viewerUpdatesBegin() {
 		fTriggerDetailsJob.cancel();
         IWorkbenchSiteProgressService progressService = 
-            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+            getSite().getAdapter(IWorkbenchSiteProgressService.class);
         if (progressService != null) {
             progressService.incrementBusy();
         }
@@ -1531,7 +1531,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			fTriggerDetailsJob.schedule();
 		}
         IWorkbenchSiteProgressService progressService = 
-            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+            getSite().getAdapter(IWorkbenchSiteProgressService.class);
         if (progressService != null) {
             progressService.decrementBusy();
         }       

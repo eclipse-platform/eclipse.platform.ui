@@ -832,7 +832,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                         debugTargets.add(targets[j]);
                     }
                 } else if (next instanceof IProcess) {
-                    IDebugTarget target = (IDebugTarget)((IProcess)next).getAdapter(IDebugTarget.class);
+                    IDebugTarget target = ((IProcess)next).getAdapter(IDebugTarget.class);
                     if (target != null) {
                         debugTargets.add(target);
                     }
@@ -840,7 +840,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     // Allow non-standard debug model element return an IDebugTarget
                     // element that could be used for implementing breakpoint filtering.
                     // Bug 333517.
-    				IDebugTarget target = (IDebugTarget) ((IAdaptable)next).getAdapter(IDebugTarget.class);
+    				IDebugTarget target = ((IAdaptable)next).getAdapter(IDebugTarget.class);
     				if (target != null) {
     				    debugTargets.add(target);
     				}

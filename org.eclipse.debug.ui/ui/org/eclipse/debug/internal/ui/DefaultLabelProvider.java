@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			return null;
 		}
 		if (key == null && element instanceof IAdaptable) {
-			IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter de= ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
 			if (de != null) {
 				ImageDescriptor descriptor= de.getImageDescriptor(element);
 				if( descriptor != null) {
@@ -298,7 +298,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 
 	public String getAdapterLabel(Object object) {
 		if (object instanceof IAdaptable) {
-			IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) object).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter de= ((IAdaptable) object).getAdapter(IWorkbenchAdapter.class);
 			if (de != null) {
 				return de.getLabel(object);
 			}

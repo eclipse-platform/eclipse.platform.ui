@@ -235,7 +235,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			for(int i = 0; i < pages.length; i++) {
 				IEditorPart[] eparts = pages[i].getDirtyEditors();
 				for(int j = 0; j < eparts.length; j++) {
-					IResource resource = (IResource)eparts[j].getEditorInput().getAdapter(IResource.class);
+					IResource resource = eparts[j].getEditorInput().getAdapter(IResource.class);
 					if(resource != null) {
 						for(int k = 0; k < projects.length; k++) {
 							if(projects[k].equals(resource.getProject())) {

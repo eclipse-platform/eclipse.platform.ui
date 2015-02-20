@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
             if (element instanceof IWatchExpression) {
                 list.add(element);
             } else if (element instanceof IAdaptable) {
-                IWatchExpression expr = (IWatchExpression)((IAdaptable)element).getAdapter(IWatchExpression.class);
+                IWatchExpression expr = ((IAdaptable)element).getAdapter(IWatchExpression.class);
                 if (expr != null) {
                     list.add(expr);
                 } else {

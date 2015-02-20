@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,12 +22,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -63,6 +65,7 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -74,6 +77,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.debug.ui.memory.MemoryRenderingElement;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -83,8 +87,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -98,6 +104,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -129,6 +136,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
@@ -1293,7 +1301,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				columnSize = syncColSize;
 			}
 		} else {
-			IPersistableDebugElement elmt = (IPersistableDebugElement) getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			int defaultColSize = -1;
 
 			if (elmt != null) {
@@ -1329,7 +1337,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 		} else {
 			int defaultRowSize = -1;
-			IPersistableDebugElement elmt = (IPersistableDebugElement) getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null) {
 				if (elmt.supportsProperty(this, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL)) {
 					defaultRowSize = getDefaultFromPersistableElement(IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL);
@@ -1371,7 +1379,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	private int getDefaultFromPersistableElement(String propertyId) {
 		int defaultValue = -1;
-		IPersistableDebugElement elmt = (IPersistableDebugElement) getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+		IPersistableDebugElement elmt = getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 		if (elmt != null) {
 			try {
 				Object valueMB = elmt.getProperty(this, propertyId);
@@ -1933,23 +1941,24 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 
 		if (adapter == IColorProvider.class) {
-			return getColorProviderAdapter();
+			return (T) getColorProviderAdapter();
 		}
 
 		if (adapter == ILabelProvider.class) {
-			return getLabelProviderAdapter();
+			return (T) getLabelProviderAdapter();
 		}
 
 		if (adapter == IFontProvider.class) {
-			return getFontProviderAdapter();
+			return (T) getFontProviderAdapter();
 		}
 
 		if (adapter == IModelChangedListener.class) {
-			return fModelChangedListener;
+			return (T) fModelChangedListener;
 		}
 
 		if (adapter == IWorkbenchAdapter.class) {
@@ -1977,11 +1986,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 					}
 				};
 			}
-			return fWorkbenchAdapter;
+			return (T) fWorkbenchAdapter;
 		}
 
 		if (adapter == TableRenderingContentDescriptor.class) {
-			return getContentDescriptor();
+			return (T) getContentDescriptor();
 		}
 
 		return super.getAdapter(adapter);
@@ -2675,7 +2684,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 *         <code>null</code>
 	 */
 	protected IColorProvider getColorProviderAdapter() {
-		return (IColorProvider) getMemoryBlock().getAdapter(IColorProvider.class);
+		return getMemoryBlock().getAdapter(IColorProvider.class);
 	}
 
 	/**
@@ -2692,7 +2701,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 *         <code>null</code>
 	 */
 	protected ILabelProvider getLabelProviderAdapter() {
-		return (ILabelProvider) getMemoryBlock().getAdapter(ILabelProvider.class);
+		return getMemoryBlock().getAdapter(ILabelProvider.class);
 	}
 
 	/**
@@ -2709,7 +2718,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 *         <code>null</code>
 	 */
 	protected IFontProvider getFontProviderAdapter() {
-		return (IFontProvider) getMemoryBlock().getAdapter(IFontProvider.class);
+		return getMemoryBlock().getAdapter(IFontProvider.class);
 	}
 
 	/**
@@ -2724,7 +2733,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 *         <code>null</code>
 	 */
 	protected IMemoryBlockTablePresentation getTablePresentationAdapter() {
-		return (IMemoryBlockTablePresentation) getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
+		return getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
 	}
 
 	/**
@@ -3178,8 +3187,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 		fActivated = true;
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
-		IContextService contextSupport = (IContextService) workbench.getAdapter(IContextService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
+		IContextService contextSupport = workbench.getAdapter(IContextService.class);
 
 		if (commandSupport != null && contextSupport != null) {
 			fContext.add(contextSupport.activateContext(ID_ASYNC_TABLE_RENDERING_CONTEXT));
@@ -3217,7 +3226,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	private void activatePageActions() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 		if (commandSupport != null) {
 			Command nextPage = commandSupport.getCommand(ID_NEXT_PAGE_COMMAND);
 			if (fNextPageHandler == null) {
@@ -3252,8 +3261,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 		fActivated = false;
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
-		IContextService contextSupport = (IContextService) workbench.getAdapter(IContextService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
+		IContextService contextSupport = workbench.getAdapter(IContextService.class);
 
 		if (commandSupport != null && contextSupport != null) {
 			// remove handler

@@ -444,7 +444,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	 * @return the decorated label for the specified <code>IMemoryBlock</code>
 	 */
 	private String decorateLabel(final IMemoryBlock memBlk, String label) {
-		ILabelDecorator decorator = (ILabelDecorator) memBlk.getAdapter(ILabelDecorator.class);
+		ILabelDecorator decorator = memBlk.getAdapter(ILabelDecorator.class);
 		if (decorator != null) {
 			label = decorator.decorateText(label, memBlk);
 		}

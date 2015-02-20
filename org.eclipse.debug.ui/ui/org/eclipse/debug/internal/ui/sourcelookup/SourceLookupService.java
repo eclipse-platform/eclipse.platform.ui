@@ -1,5 +1,5 @@
 /*******************************************************************************
-  * Copyright (c) 2005, 2010 IBM Corporation and others.
+  * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,11 +86,11 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			ISourceDisplay adapter = (ISourceDisplay) adaptable.getAdapter(ISourceDisplay.class);
+			ISourceDisplay adapter = adaptable.getAdapter(ISourceDisplay.class);
 			if (adapter == null && !(context instanceof PlatformObject)) {
 	        	// for objects that don't properly subclass PlatformObject to inherit default
 	        	// adapters, just delegate to the adapter factory
-	        	adapter = (ISourceDisplay) new DebugElementAdapterFactory().getAdapter(context, ISourceDisplay.class);
+	        	adapter = new DebugElementAdapterFactory().getAdapter(context, ISourceDisplay.class);
 	        }
 			if (adapter != null) {						
 				adapter.displaySource(context, page, forceSourceLookup);

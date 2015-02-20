@@ -51,7 +51,7 @@ public class BreakpointPersistableElementAdapter implements IPersistableElement 
         IMarker marker = fBreakpoint.getMarker();
         if (marker != null) {
             IResource resource = marker.getResource();
-            IPersistableElement pe = (IPersistableElement) resource.getAdapter(IPersistableElement.class);
+            IPersistableElement pe = resource.getAdapter(IPersistableElement.class);
             if (pe != null) {
                 long id = marker.getId();
                 String longString = Long.toString(id);

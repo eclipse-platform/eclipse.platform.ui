@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class PDARunToLineAdapter implements IRunToLineTarget {
 		int lineNumber = textSelection.getStartLine() + 1;
 		if (lineNumber > 0) {
 			if (target instanceof IAdaptable) {
-				IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
+				IDebugTarget debugTarget = ((IAdaptable)target).getAdapter(IDebugTarget.class);
 				if (debugTarget != null) {
 					//#ifdef ex7
 //#					// TODO: Exercise 7 - perform the run-to-line with a run-to-line breakpoint and handler

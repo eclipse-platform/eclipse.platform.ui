@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class ViewerAdapterService {
     	IElementLabelProvider lp = (IElementLabelProvider)getAdapter(element, IElementLabelProvider.class);
     	if (lp == null && element instanceof String) {
     		// there are no adapters registered for Strings
-    		return (IElementLabelProvider) new DebugElementAdapterFactory().getAdapter(element, IElementLabelProvider.class);
+    		return new DebugElementAdapterFactory().getAdapter(element, IElementLabelProvider.class);
     	}
     	return lp;
     }		    

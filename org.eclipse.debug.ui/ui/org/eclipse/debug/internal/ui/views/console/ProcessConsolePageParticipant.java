@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -24,14 +25,17 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -161,19 +165,20 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    @Override
-	public Object getAdapter(Class required) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> required) {
         if (IShowInSource.class.equals(required)) {
-            return this;
+			return (T) this;
         }
         if (IShowInTargetList.class.equals(required)) {
-            return this; 
+			return (T) this;
         }
         //CONTEXTLAUNCHING
         if(ILaunchConfiguration.class.equals(required)) {
         	ILaunch launch = getProcess().getLaunch();
         	if(launch != null) {
-        		return launch.getLaunchConfiguration();
+				return (T) launch.getLaunchConfiguration();
         	}
         	return null;
         }
@@ -189,7 +194,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         if (process == null) {
             return null;
         } 
-        IDebugTarget target = (IDebugTarget)process.getAdapter(IDebugTarget.class);
+        IDebugTarget target = process.getAdapter(IDebugTarget.class);
         ISelection selection = null;
         if (target == null) {
             selection = new TreeSelection(new TreePath(new Object[]{

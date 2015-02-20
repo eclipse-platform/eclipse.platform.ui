@@ -182,11 +182,11 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			return;
 		}
 		if (selection.getAdapter(ILaunch.class) != null ) {
-			launch = (ILaunch) selection.getAdapter(ILaunch.class);
+			launch = selection.getAdapter(ILaunch.class);
 			locator = launch.getSourceLocator();			
 		} 
 		else if (selection.getAdapter(IDebugElement.class) != null ) {
-			launch = ((IDebugElement)selection.getAdapter(IDebugElement.class)).getLaunch();
+			launch = selection.getAdapter(IDebugElement.class).getLaunch();
 			locator = launch.getSourceLocator();					
 		}
 		else {

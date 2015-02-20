@@ -206,7 +206,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    if (target instanceof IExpression) {
 	        return (IExpression)target;
 	    } else if (target instanceof IAdaptable) {
-	        return (IExpression)((IAdaptable)target).getAdapter(IExpression.class);
+	        return ((IAdaptable)target).getAdapter(IExpression.class);
 	    }
 	    return null;
 	}
@@ -500,7 +500,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @return factory or <code>null</code>
      */
     private IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
-        return (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);      
+        return variable.getAdapter(IWatchExpressionFactoryAdapter.class);      
     }
 
     /**
@@ -511,7 +511,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      */
     private IWatchExpressionFactoryAdapter2 getFactory2(Object element) {
         if (element instanceof IAdaptable) {
-            return (IWatchExpressionFactoryAdapter2)((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class);
+            return ((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class);
         }
         return null;
     }

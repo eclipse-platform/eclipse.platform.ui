@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+
 import org.eclipse.debug.core.commands.IStepOverHandler;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.SequencerControl;
@@ -50,63 +51,64 @@ public class MidiAdapterFactory implements IAdapterFactory {
 	
 	private static IModelProxyFactory fgCheckboxModelProxyFactory = new CheckboxModelProxyFactory();
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (IElementContentProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof MidiLaunch) {
-				return fgSequencerContentProvider;
+				return (T) fgSequencerContentProvider;
 			}
 			if (adaptableObject instanceof Track) {
-				return fgTackContentProvider;
+				return (T) fgTackContentProvider;
 			}
 		}
 		if (IElementLabelProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof Track) {
-				return fgTrackLabelProvider;
+				return (T) fgTrackLabelProvider;
 			}
 			if (adaptableObject instanceof SequencerControl) {
-				return fgControlLabelProvider;
+				return (T) fgControlLabelProvider;
 			}
 			if (adaptableObject instanceof MidiEvent) {
-				return fgMidiEventLabelProvdier;
+				return (T) fgMidiEventLabelProvdier;
 			}
 		}
 		
 		if (IColumnPresentationFactory.class.equals(adapterType)) {
 			if (adaptableObject instanceof MidiLaunch) {
-				return fgSequencerColumnFactory;
+				return (T) fgSequencerColumnFactory;
 			}
 			if (adaptableObject instanceof Track) {
-				return fgTrackColumnFactory;
+				return (T) fgTrackColumnFactory;
 			}
 		}
 		if (IElementEditor.class.equals(adapterType)) {
 			if (adaptableObject instanceof SequencerControl) {
-				return new ControlEditor();
+				return (T) new ControlEditor();
 			}
 		}
 		
 		if (IModelProxyFactory.class.equals(adapterType)) {
 			if (adaptableObject instanceof MidiLaunch) {
-				return fgSequencerModelProxyFactory;
+				return (T) fgSequencerModelProxyFactory;
 			} else if (adaptableObject instanceof Track) {
-				return fgCheckboxModelProxyFactory;
+				return (T) fgCheckboxModelProxyFactory;
 			} else if (adaptableObject instanceof MidiEvent) {
-				return fgCheckboxModelProxyFactory;
+				return (T) fgCheckboxModelProxyFactory;
 			}
 		}
 		if (IElementMementoProvider.class.equals(adapterType)) {
-			return fgMementoProvider;
+			return (T) fgMementoProvider;
 		}
 		if (IStepOverHandler.class.equals(adapterType)) {
-			return fgStepOverHandler;
+			return (T) fgStepOverHandler;
 		}
 		
 		return null;
 	}
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[]{IElementContentProvider.class, IElementLabelProvider.class, IStepOverHandler.class,};
 	}
 }

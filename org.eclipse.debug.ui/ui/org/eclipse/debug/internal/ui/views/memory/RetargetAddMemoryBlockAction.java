@@ -93,7 +93,7 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 		if (standardMemRetrieval instanceof IAddMemoryBlocksTarget) {
 			target = (IAddMemoryBlocksTarget) standardMemRetrieval;
 		} else if (standardMemRetrieval instanceof IAdaptable) {
-			target = (IAddMemoryBlocksTarget) ((IAdaptable) standardMemRetrieval).getAdapter(IAddMemoryBlocksTarget.class);
+			target = ((IAdaptable) standardMemRetrieval).getAdapter(IAddMemoryBlocksTarget.class);
 		}
 		return target;
 	}

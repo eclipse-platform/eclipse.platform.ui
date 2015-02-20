@@ -584,7 +584,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			Object element = ss.getFirstElement();
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
-				IModelSelectionPolicyFactory factory =  (IModelSelectionPolicyFactory) adaptable.getAdapter(IModelSelectionPolicyFactory.class);
+				IModelSelectionPolicyFactory factory =  adaptable.getAdapter(IModelSelectionPolicyFactory.class);
 				if (factory != null) {
 					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
 				}

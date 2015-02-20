@@ -113,7 +113,7 @@ public class PrintTableRenderingAction extends Action
 			charsPerByte = 4;
 		
 		int addressSizeInBytes = 0;
-		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)fRendering.getAdapter(TableRenderingContentDescriptor.class);
+		TableRenderingContentDescriptor descriptor = fRendering.getAdapter(TableRenderingContentDescriptor.class);
 		if (descriptor == null)
 		{
 			// special for address column

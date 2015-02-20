@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			if (tableRenderingContext.getRendering() != null && tableRenderingContext.getRendering() instanceof AbstractAsyncTableRendering)
 			{
 				AbstractAsyncTableRendering tableRendering = (AbstractAsyncTableRendering)tableRenderingContext.getRendering();
-				TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class);
+				TableRenderingContentDescriptor descriptor = tableRendering.getAdapter(TableRenderingContentDescriptor.class);
 				if (descriptor != null)
 				{
 					String addressStr = getColumnText(element, 0, tableRendering, descriptor);
@@ -63,7 +63,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 					
 					for (int i=0; i<=numColumns; i++)
 					{
-						labels[i+1] = getColumnText(element, i+1, tableRendering, (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class));
+						labels[i+1] = getColumnText(element, i+1, tableRendering, tableRendering.getAdapter(TableRenderingContentDescriptor.class));
 					}
 					
 					labels[labels.length - 1 ] = IInternalDebugCoreConstants.EMPTY_STRING;
@@ -79,7 +79,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 
 		if (columnIndex == 0)
 		{
-			IMemoryBlockTablePresentation presentation = (IMemoryBlockTablePresentation)tableRendering.getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
+			IMemoryBlockTablePresentation presentation = tableRendering.getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
 			if (presentation != null)
 			{
 				String rowLabel = presentation.getRowLabel(tableRendering.getMemoryBlock(), ((MemorySegment)element).getAddress());
@@ -116,7 +116,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 					return IInternalDebugCoreConstants.EMPTY_STRING;
 			}
 			
-			ILabelProvider labelProvider = (ILabelProvider)tableRendering.getAdapter(ILabelProvider.class);
+			ILabelProvider labelProvider = tableRendering.getAdapter(ILabelProvider.class);
 			if (labelProvider != null && columnIndex > 0)
 			{
 				MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex, tableRendering);
@@ -173,7 +173,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			if (segment.getBytes().length != tableRendering.getBytesPerLine())
 				return null;
 			
-			ILabelProvider labelProvider = (ILabelProvider)tableRendering.getAdapter(ILabelProvider.class);
+			ILabelProvider labelProvider = tableRendering.getAdapter(ILabelProvider.class);
 			if (labelProvider != null && columnIndex > 0)
 			{
 				MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex, tableRendering);
@@ -243,7 +243,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			if (segment.getBytes().length != tableRendering.getBytesPerLine())
 				return null;
 			
-			IFontProvider fontProvider = (IFontProvider)tableRendering.getAdapter(IFontProvider.class);
+			IFontProvider fontProvider = tableRendering.getAdapter(IFontProvider.class);
 			if (fontProvider != null && columnIndex > 0)
 			{
 				MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex, tableRendering);
@@ -296,7 +296,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			if (segment.getBytes().length != tableRendering.getBytesPerLine())
 				return null;
 			
-			IColorProvider colorProvider = (IColorProvider)tableRendering.getAdapter(IColorProvider.class);
+			IColorProvider colorProvider = tableRendering.getAdapter(IColorProvider.class);
 			if (colorProvider != null && columnIndex > 0)
 			{
 				MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex, tableRendering);
@@ -321,7 +321,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			if (segment.getBytes().length != tableRendering.getBytesPerLine())
 				return null;
 			
-			IColorProvider colorProvider = (IColorProvider)tableRendering.getAdapter(IColorProvider.class);
+			IColorProvider colorProvider = tableRendering.getAdapter(IColorProvider.class);
 			if (colorProvider != null && columnIndex > 0)
 			{
 				MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex, tableRendering);

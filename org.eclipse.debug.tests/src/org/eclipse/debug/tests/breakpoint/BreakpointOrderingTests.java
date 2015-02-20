@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,15 +39,15 @@ import org.eclipse.ui.IEditorInput;
 
 /**
  * Test the ordering used in the breakpoints view.
- * 
+ *
  * Using a special Comparator which sorts breakpoint texts like file:1, file:2 and file:11 in a numerical ordering.
  */
 public class BreakpointOrderingTests extends TestCase {
-	
+
 	public BreakpointOrderingTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Test only implementation of IBreakpoint.
 	 */
@@ -59,7 +59,7 @@ public class BreakpointOrderingTests extends TestCase {
 		TestBreakpoint(String text) {
 			this(text, IBreakpoint.BREAKPOINT_MARKER);
 		}
-		
+
 		TestBreakpoint(String text, final String markerType) {
 			fText = text;
 			final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
@@ -77,14 +77,14 @@ public class BreakpointOrderingTests extends TestCase {
 			catch ( CoreException e ) {
 				fail("Unexpected exception: " + e.toString()); //$NON-NLS-1$
 			}
-			
+
 		}
-		
+
 		void ReportFailure(String msg) throws CoreException {
 			throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, msg));
 		}
-		
-		
+
+
 		String getText() {
 			return fText;
 		}
@@ -141,11 +141,11 @@ public class BreakpointOrderingTests extends TestCase {
 		@Override
 		public void setRegistered(boolean registered) throws CoreException {
 			fail("not implemented in test"); //$NON-NLS-1$
-			
+
 		}
 
 		@Override
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
@@ -160,7 +160,7 @@ public class BreakpointOrderingTests extends TestCase {
 
 		TestLineBreakpoint(String text, int lineNum) {
 			super(text, IBreakpoint.LINE_BREAKPOINT_MARKER);
-			fLineNum = lineNum;		
+			fLineNum = lineNum;
 		}
 
 		@Override
@@ -233,9 +233,9 @@ public class BreakpointOrderingTests extends TestCase {
 		public Control getControl() {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
-		}};	
-	
-	// Test debug model presentation for label text retrieval. 
+		}};
+
+	// Test debug model presentation for label text retrieval.
 	IDebugModelPresentation fDebugModelPres = new IDebugModelPresentation() {
 
 		@Override
@@ -256,7 +256,7 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		@Override
-		public void setAttribute(String attribute, Object value) {			
+		public void setAttribute(String attribute, Object value) {
 			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
@@ -292,10 +292,10 @@ public class BreakpointOrderingTests extends TestCase {
 			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}};
-	
+
 	// Test vector with some UNIX paths
 	TestBreakpoint[] createTestBreakpoints0() {
-		TestBreakpoint[] fTestBps = { 
+		TestBreakpoint[] fTestBps = {
  new TestBreakpoint(""), //$NON-NLS-1$
 		new TestBreakpoint("/file/text.c"), //$NON-NLS-1$
 		new TestBreakpoint("/file/text.c:1"), //$NON-NLS-1$
@@ -317,11 +317,11 @@ public class BreakpointOrderingTests extends TestCase {
 		new TestLineBreakpoint("/file/text.c:y", 0), //$NON-NLS-1$
 		};
 		return fTestBps;
-	}	
-		
-	// Check plain numbers 
+	}
+
+	// Check plain numbers
 	TestBreakpoint[] createTestBreakpoints1() {
-		TestBreakpoint[] fTestBps = { 
+		TestBreakpoint[] fTestBps = {
  new TestLineBreakpoint("0", 0), //$NON-NLS-1$
 		new TestLineBreakpoint("1", 1), //$NON-NLS-1$
 		new TestLineBreakpoint("1_a", 1), //$NON-NLS-1$
@@ -337,11 +337,11 @@ public class BreakpointOrderingTests extends TestCase {
 		new TestLineBreakpoint("112b", 112), //$NON-NLS-1$
 		};
 		return fTestBps;
-	}	
-			
+	}
+
 	// Test consistent behavior with leading 0's
 	TestBreakpoint[] createTestBreakpoints2() {
-		TestBreakpoint[] fTestBps = { 
+		TestBreakpoint[] fTestBps = {
  new TestLineBreakpoint("0", 0), //$NON-NLS-1$
 		new TestLineBreakpoint("00", 0), //$NON-NLS-1$
 		new TestLineBreakpoint("0000", 0), //$NON-NLS-1$
@@ -351,18 +351,18 @@ public class BreakpointOrderingTests extends TestCase {
 		new TestLineBreakpoint("10000", 10000), //$NON-NLS-1$
 		};
 		return fTestBps;
-	}	
-			
+	}
+
 	// Test Win32 paths
 	TestBreakpoint[] createTestBreakpoints3() {
-		TestBreakpoint[] fTestBps = { 
+		TestBreakpoint[] fTestBps = {
  new TestLineBreakpoint(":a", 0), //$NON-NLS-1$
 		new TestLineBreakpoint("c:\\file\\text.c:1", 1), //$NON-NLS-1$
 		new TestLineBreakpoint("c:\\file\\text.c:2", 2), //$NON-NLS-1$
 		new TestLineBreakpoint("d:\\file\\text.c:3", 3), //$NON-NLS-1$
 		};
 		return fTestBps;
-	}	
+	}
 
 	public void testBreakpointOrdering0() throws CoreException {
 		executeTest(createTestBreakpoints0());
@@ -376,7 +376,7 @@ public class BreakpointOrderingTests extends TestCase {
 	public void testBreakpointOrdering3() throws CoreException {
 		executeTest(createTestBreakpoints3());
 	}
-	
+
 
 	/**
 	 * Test expected ordering.
@@ -400,14 +400,14 @@ public class BreakpointOrderingTests extends TestCase {
 					if (!ltCheck) {
 						System.err.println("Less Comparison in between " + inner + " and " + outer + " (" + testBps[inner].getText() + " and " + testBps[outer].getText() + ") failed"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 						failed = true;
-					}					
-				}			
+					}
+				}
 			}
 			assertFalse(failed);
 		} finally {
 			for (int index = 0; index < testBps.length; index++) {
 				testBps[index].delete();
 			}
-		}		
+		}
 	}
 }

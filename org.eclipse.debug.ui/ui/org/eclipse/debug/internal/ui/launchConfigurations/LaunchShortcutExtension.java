@@ -117,7 +117,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	 * Registers command handlers for launch shortcut key bindings
 	 */
     private void registerLaunchCommandHandlers() {
-        IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+        IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
         if(handlerService != null) {
 			for (String mode : getModes()) {
 	            String id = getId() + "." + mode; //$NON-NLS-1$

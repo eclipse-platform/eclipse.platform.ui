@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 				Object source = event.getSource();
 				if (source instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) source;
-					ILaunch launch = (ILaunch) adaptable.getAdapter(ILaunch.class);
+					ILaunch launch = adaptable.getAdapter(ILaunch.class);
 					if (fLaunch.equals(launch)) {
 						// only notify for this launch
 						notifySuspend(event);						

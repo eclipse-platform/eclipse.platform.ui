@@ -106,7 +106,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fContainer = container;
 		fMemoryBlock = block;
 		
-		fLabelDecorator = (ILabelDecorator)fMemoryBlock.getAdapter(ILabelDecorator.class);
+		fLabelDecorator = fMemoryBlock.getAdapter(ILabelDecorator.class);
 	}
 
 	/* (non-Javadoc)

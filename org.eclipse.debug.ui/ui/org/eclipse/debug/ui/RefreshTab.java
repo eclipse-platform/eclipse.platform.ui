@@ -457,7 +457,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			IAdaptable[] elements = workingSet.getElements();
 			IResource[] resources = new IResource[elements.length];
 			for (int i = 0; i < resources.length; i++) {
-				resources[i]= (IResource) elements[i].getAdapter(IResource.class);
+				resources[i]= elements[i].getAdapter(IResource.class);
 			}
 			return RefreshUtil.toMemento(resources);
 		}

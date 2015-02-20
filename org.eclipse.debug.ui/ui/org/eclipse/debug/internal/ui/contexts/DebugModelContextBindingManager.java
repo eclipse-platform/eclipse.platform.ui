@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	// singleton manager
 	private static DebugModelContextBindingManager fgManager;
 	
-	private static IContextService fgContextService = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+	private static IContextService fgContextService = PlatformUI.getWorkbench().getAdapter(IContextService.class);
 	
 	public static DebugModelContextBindingManager getDefault() {
 		if (fgManager == null) {
@@ -300,7 +300,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 */
 	private String[] getDebugModelIds(Object object) {
 		if (object instanceof IAdaptable) {
-            IDebugModelProvider modelProvider= (IDebugModelProvider)((IAdaptable)object).getAdapter(IDebugModelProvider.class);
+            IDebugModelProvider modelProvider= ((IAdaptable)object).getAdapter(IDebugModelProvider.class);
 			if (modelProvider != null) {
 				String[] modelIds= modelProvider.getModelIdentifiers();
 				if (modelIds != null) {
@@ -324,7 +324,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	public static ILaunch getLaunch(Object object) {
 		ILaunch launch = null;
 		if (object instanceof IAdaptable) {
-			launch = (ILaunch) ((IAdaptable)object).getAdapter(ILaunch.class);
+			launch = ((IAdaptable)object).getAdapter(ILaunch.class);
 		}
 		if (launch == null && object instanceof IDebugElement) {
 			launch = ((IDebugElement) object).getLaunch();

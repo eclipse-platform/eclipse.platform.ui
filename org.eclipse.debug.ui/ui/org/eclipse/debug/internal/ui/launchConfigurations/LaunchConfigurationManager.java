@@ -974,7 +974,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			return isSharedConfig(((IEditorPart) receiver).getEditorInput());
 		}
 		else if (receiver instanceof IAdaptable) {
-			IFile file = (IFile) ((IAdaptable)receiver).getAdapter(IFile.class);
+			IFile file = ((IAdaptable)receiver).getAdapter(IFile.class);
 			if (file != null) {
 				return isSharedConfig(file);
 			}

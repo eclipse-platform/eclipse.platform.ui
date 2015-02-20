@@ -133,14 +133,14 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         fCallerAction = callerAction;
         fCallerAction.setMenuCreator(this);
         
-        fEditor= (ITextEditor)(targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class));
+        fEditor= targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class);
         
         if (fEditor != null) {
             if (fEditor instanceof ITextEditorExtension) {
                 ((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
             }
 
-            fRulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
+            fRulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
         }
 
     }

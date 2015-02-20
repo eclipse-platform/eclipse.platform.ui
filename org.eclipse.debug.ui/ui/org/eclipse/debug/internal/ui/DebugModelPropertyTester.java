@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,10 +43,10 @@ public class DebugModelPropertyTester extends PropertyTester {
 		if (MODEL_TYPE_PROPERTY.equals(property)){
 			IDebugTarget target = null;
 			if(receiver instanceof IProcess) {
-				target = (IDebugTarget) ((IProcess)receiver).getAdapter(IDebugTarget.class);
+				target = ((IProcess)receiver).getAdapter(IDebugTarget.class);
 			}
 			else if(receiver instanceof IDebugElement) { 
-				target = (IDebugTarget) ((IDebugElement)receiver).getAdapter(IDebugTarget.class);
+				target = ((IDebugElement)receiver).getAdapter(IDebugTarget.class);
 			}
 			if(target != null) {
 				// check that the expected value argument is valid
@@ -60,10 +60,10 @@ public class DebugModelPropertyTester extends PropertyTester {
 			}
 			IDebugModelProvider modelProvider = null;
 			if (receiver instanceof IAdaptable) {
-				modelProvider = (IDebugModelProvider) ((IAdaptable)receiver).getAdapter(IDebugModelProvider.class);
+				modelProvider = ((IAdaptable)receiver).getAdapter(IDebugModelProvider.class);
 			} else {
 				modelProvider =
-					(IDebugModelProvider) Platform.getAdapterManager().
+					Platform.getAdapterManager().
 						getAdapter(receiver, IDebugModelProvider.class);
 			}
 		    if (modelProvider != null) {

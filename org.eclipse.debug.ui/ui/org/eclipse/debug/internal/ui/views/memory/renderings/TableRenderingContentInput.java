@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,12 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import java.math.BigInteger;
 
 import org.eclipse.core.runtime.PlatformObject;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
+
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 
@@ -105,10 +107,11 @@ public class TableRenderingContentInput extends PlatformObject {
 	
 	public void updateContentBaseAddress() throws DebugException {
 		IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
-		if (memoryBlock instanceof IMemoryBlockExtension)
+		if (memoryBlock instanceof IMemoryBlockExtension) {
 			fMemoryBlockBaseAddress = ((IMemoryBlockExtension)memoryBlock).getBigBaseAddress();
-		else
+		} else {
 			fMemoryBlockBaseAddress = BigInteger.valueOf(memoryBlock.getStartAddress());
+		}
 	}
 	
 	/**
@@ -123,16 +126,18 @@ public class TableRenderingContentInput extends PlatformObject {
 				if(memoryBlock instanceof IMemoryBlockExtension)
 				{
 					BigInteger startAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockStartAddress();
-					if (startAddress != null)
+					if (startAddress != null) {
 						fStartAddress =  startAddress;
+					}
 				}
 			} catch (DebugException e) {
 				// default to 0 if we have trouble getting the start address
 				fStartAddress =  BigInteger.valueOf(0);			
 			}
 			
-			if (fStartAddress == null)
+			if (fStartAddress == null) {
 				fStartAddress =  BigInteger.valueOf(0);
+			}
 		}
 		return fStartAddress; 
 	}
@@ -150,8 +155,9 @@ public class TableRenderingContentInput extends PlatformObject {
 				BigInteger endAddress;
 				try {
 					endAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockEndAddress();
-					if (endAddress != null)
+					if (endAddress != null) {
 						fEndAddress = endAddress;
+					}
 				} catch (DebugException e) {
 					fEndAddress = null;
 				}
@@ -172,8 +178,9 @@ public class TableRenderingContentInput extends PlatformObject {
 				}
 			}
 			
-			if (fEndAddress == null)
+			if (fEndAddress == null) {
 				fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
+			}
 		}
 		return fEndAddress;
 	}
@@ -188,17 +195,20 @@ public class TableRenderingContentInput extends PlatformObject {
 		fNumLines = numLines;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == AbstractTableRendering.class)
 		{
-			if (fRendering instanceof AbstractTableRendering)
-				return fRendering;
+			if (fRendering instanceof AbstractTableRendering) {
+				return (T) fRendering;
+			}
 		}
 		if (adapter == AbstractAsyncTableRendering.class)
 		{
-			if (fRendering instanceof AbstractAsyncTableRendering)
-				return fRendering;
+			if (fRendering instanceof AbstractAsyncTableRendering) {
+				return (T) fRendering;
+			}
 		}
 		
 		return super.getAdapter(adapter);

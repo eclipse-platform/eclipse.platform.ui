@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -42,8 +43,10 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingConte
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProvider;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProviderEx;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -51,8 +54,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -63,6 +68,7 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.TableCursor;
@@ -97,6 +103,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -1037,7 +1044,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		}
 		else
 		{
-			IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			int defaultColSize = -1;
 			
 			if (elmt != null)
@@ -1079,7 +1086,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		else
 		{
 			int defaultRowSize = -1;
-			IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+			IPersistableDebugElement elmt = getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 			if (elmt != null)
 			{
 				if (elmt.supportsProperty(this, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL))
@@ -1103,7 +1110,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 	private int getDefaultFromPersistableElement(String propertyId) {
 		int defaultValue = -1;
-		IPersistableDebugElement elmt = (IPersistableDebugElement)getMemoryBlock().getAdapter(IPersistableDebugElement.class);
+		IPersistableDebugElement elmt = getMemoryBlock().getAdapter(IPersistableDebugElement.class);
 		if (elmt != null)
 		{
 			try {
@@ -3426,23 +3433,24 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		
 		if (adapter == IColorProvider.class) {
-			return getColorProviderAdapter();
+			return (T) getColorProviderAdapter();
 		}
 		
 		if (adapter == ILabelProvider.class) {
-			return getLabelProviderAdapter();
+			return (T) getLabelProviderAdapter();
 		}
 		
 		if (adapter == IFontProvider.class) {
-			return getFontProviderAdapter();
+			return (T) getFontProviderAdapter();
 		}
 		
 		if (adapter == IMemoryBlockTablePresentation.class) {
-			return getTablePresentationAdapter();
+			return (T) getTablePresentationAdapter();
 		}
 		
 		if (adapter == IWorkbenchAdapter.class)
@@ -3471,7 +3479,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 					}
 				};
 			}
-			return fWorkbenchAdapter;
+			return (T) fWorkbenchAdapter;
 		}
 		
 		if (adapter == IMemoryBlockConnection.class) {
@@ -3537,7 +3545,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 					}
 				};
 			}
-			return fConnection;
+			return (T) fConnection;
 		}	
 		
 		return super.getAdapter(adapter);
@@ -3587,7 +3595,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	protected IColorProvider getColorProviderAdapter()
 	{
-		return (IColorProvider)getMemoryBlock().getAdapter(IColorProvider.class);
+		return getMemoryBlock().getAdapter(IColorProvider.class);
 	}
 	
 	/**
@@ -3604,7 +3612,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	protected ILabelProvider getLabelProviderAdapter()
 	{
-		return (ILabelProvider)getMemoryBlock().getAdapter(ILabelProvider.class);
+		return getMemoryBlock().getAdapter(ILabelProvider.class);
 	}
 	
 	/**
@@ -3621,7 +3629,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	protected IFontProvider getFontProviderAdapter()
 	{
-		return (IFontProvider)getMemoryBlock().getAdapter(IFontProvider.class);
+		return getMemoryBlock().getAdapter(IFontProvider.class);
 	}
 	
 	/**
@@ -3636,7 +3644,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	protected IMemoryBlockTablePresentation getTablePresentationAdapter()
 	{
-		return (IMemoryBlockTablePresentation)getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
+		return getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
 	}
 	
 	private boolean isDynamicLoad()

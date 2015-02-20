@@ -80,7 +80,7 @@ public abstract class DebugPopup extends PopupDialog {
     protected String getInfoText() {
     	if (getCommandId() != null && getActionText() != null) {
 	        IWorkbench workbench = PlatformUI.getWorkbench();
-	        IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
+	        IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 	        String formattedBinding = bindingService.getBestActiveBindingFormattedFor(getCommandId());
 	        
 	        String infoText = null;
@@ -198,7 +198,7 @@ public abstract class DebugPopup extends PopupDialog {
                 }
             };
 
-            fHandlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+            fHandlerService = workbench.getAdapter(IHandlerService.class);
             fActivation = fHandlerService.activateHandler(commandId, fCloseHandler);
         }
 

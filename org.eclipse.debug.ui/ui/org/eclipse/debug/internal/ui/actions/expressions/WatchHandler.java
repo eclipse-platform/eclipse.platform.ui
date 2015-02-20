@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems and others.
+ * Copyright (c) 2008, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ public class WatchHandler extends AbstractHandler {
      * @return factory or <code>null</code>
      */
     static IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
-        return (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);      
+        return variable.getAdapter(IWatchExpressionFactoryAdapter.class);      
     }
 
     /**
@@ -130,7 +130,7 @@ public class WatchHandler extends AbstractHandler {
      */
     static IWatchExpressionFactoryAdapter2 getFactory2(Object element) {
         if (element instanceof IAdaptable) {
-            return (IWatchExpressionFactoryAdapter2)((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class);
+            return ((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class);
         }
         return null;
     }
