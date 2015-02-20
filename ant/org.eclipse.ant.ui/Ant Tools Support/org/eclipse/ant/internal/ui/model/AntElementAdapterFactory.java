@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.model;
 
 import org.eclipse.core.resources.IResource;
+
 import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
@@ -23,12 +24,13 @@ public class AntElementAdapterFactory implements IAdapterFactory {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof AntElementNode) {
 			AntElementNode node = (AntElementNode) adaptableObject;
 			if (IResource.class.equals(adapterType)) {
-				return node.getIFile();
+				return (T) node.getIFile();
 			}
 		}
 		return null;
@@ -40,7 +42,7 @@ public class AntElementAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IResource.class };
 	}
 

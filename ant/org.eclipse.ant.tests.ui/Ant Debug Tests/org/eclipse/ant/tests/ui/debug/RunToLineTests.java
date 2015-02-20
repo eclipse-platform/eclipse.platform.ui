@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 				@Override
 				public void run() {
 					ITextEditor editor = (ITextEditor) fEditor;
-					IRunToLineTarget adapter = (IRunToLineTarget) editor.getAdapter(IRunToLineTarget.class);
+					IRunToLineTarget adapter = editor.getAdapter(IRunToLineTarget.class);
 					assertNotNull("no run to line adapter", adapter); //$NON-NLS-1$
 					IDocumentProvider documentProvider = editor.getDocumentProvider();
 					assertNotNull("The document provider should not be null for: " + editor.getTitle(), documentProvider); //$NON-NLS-1$

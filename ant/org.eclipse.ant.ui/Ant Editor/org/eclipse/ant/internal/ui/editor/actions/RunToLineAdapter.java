@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 
 				IBreakpoint breakpoint = null;
 				Map<String, Object> attributes = getRunToLineAttributes();
-				IFile file = (IFile) input.getAdapter(IFile.class);
+				IFile file = input.getAdapter(IFile.class);
 				if (file == null) {
 					errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.2"); //$NON-NLS-1$
 				} else {
@@ -78,7 +78,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					breakpoint.setPersisted(false);
 					errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.3"); //$NON-NLS-1$
 					if (target instanceof IAdaptable) {
-						IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable) target).getAdapter(IDebugTarget.class);
+						IDebugTarget debugTarget = ((IAdaptable) target).getAdapter(IDebugTarget.class);
 						if (debugTarget != null) {
 							RunToLineHandler handler = new RunToLineHandler(debugTarget, target, breakpoint);
 							handler.run(new NullProgressMonitor());

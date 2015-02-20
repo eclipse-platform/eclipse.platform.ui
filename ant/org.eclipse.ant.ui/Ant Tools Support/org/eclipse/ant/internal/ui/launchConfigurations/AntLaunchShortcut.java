@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 					launch((AntElementNode) object, mode);
 					return;
 				}
-				IResource resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
+				IResource resource = ((IAdaptable) object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!(AntUtil.isKnownAntFile(resource))) {
 						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
@@ -147,7 +147,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		IEditorPart editor = page.getActiveEditor();
 		if (editor != null) {
 			IEditorInput editorInput = editor.getEditorInput();
-			ILocationProvider locationProvider = (ILocationProvider) editorInput.getAdapter(ILocationProvider.class);
+			ILocationProvider locationProvider = editorInput.getAdapter(ILocationProvider.class);
 			if (locationProvider != null) {
 				filePath = locationProvider.getPath(editorInput);
 				if (filePath != null) {
@@ -485,13 +485,13 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput input = editor.getEditorInput();
-		IFile file = (IFile) input.getAdapter(IFile.class);
+		IFile file = input.getAdapter(IFile.class);
 		IPath filepath = null;
 		if (file != null) {
 			filepath = file.getFullPath();
 		}
 		if (filepath == null) {
-			ILocationProvider locationProvider = (ILocationProvider) input.getAdapter(ILocationProvider.class);
+			ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
 			if (locationProvider != null) {
 				filepath = locationProvider.getPath(input);
 			}
@@ -554,7 +554,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 					// the user for which config to run and specify the correct target
 					return new ILaunchConfiguration[0];
 				}
-				IResource resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
+				IResource resource = ((IAdaptable) object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!(AntUtil.isKnownAntFile(resource))) {
 						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
@@ -585,13 +585,13 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editor) {
 		IEditorInput input = editor.getEditorInput();
-		IFile file = (IFile) input.getAdapter(IFile.class);
+		IFile file = input.getAdapter(IFile.class);
 		IPath filepath = null;
 		if (file != null) {
 			filepath = file.getLocation();
 		}
 		if (filepath == null) {
-			ILocationProvider locationProvider = (ILocationProvider) input.getAdapter(ILocationProvider.class);
+			ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
 			if (locationProvider != null) {
 				filepath = locationProvider.getPath(input);
 			}
@@ -615,7 +615,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object object = structuredSelection.getFirstElement();
 			if (object instanceof IAdaptable) {
-				IResource resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
+				IResource resource = ((IAdaptable) object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!(AntUtil.isKnownAntFile(resource))) {
 						if (AntUtil.isKnownBuildfileName(resource.getName())) {
@@ -641,6 +641,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	@Override
 	public IResource getLaunchableResource(IEditorPart editor) {
 		IEditorInput input = editor.getEditorInput();
-		return (IFile) input.getAdapter(IFile.class);
+		return input.getAdapter(IFile.class);
 	}
 }

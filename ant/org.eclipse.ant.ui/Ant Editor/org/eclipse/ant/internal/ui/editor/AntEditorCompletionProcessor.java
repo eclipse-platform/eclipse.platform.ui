@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2015 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -1902,7 +1902,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	}
 
 	private String getIterationGestureMessage(String showMessage) {
-		final IBindingService bindingSvc = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		final IBindingService bindingSvc = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		TriggerSequence[] triggers = bindingSvc.getActiveBindingsFor(getContentAssistCommand());
 		String message;
 		if (triggers.length > 0) {
@@ -1914,7 +1914,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	}
 
 	private ParameterizedCommand getContentAssistCommand() {
-		final ICommandService commandSvc = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		final ICommandService commandSvc = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		final Command command = commandSvc.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		ParameterizedCommand pCmd = new ParameterizedCommand(command, null);
 		return pCmd;

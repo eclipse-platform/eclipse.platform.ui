@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Richard Hoefter and others.
+ * Copyright (c) 2004, 2015 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class ExportUtil {
 		if (selection instanceof IStructuredSelection) {
 			for (Iterator<IAdaptable> iter = ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
 				IAdaptable adaptable = iter.next();
-				return (IResource) adaptable.getAdapter(IResource.class);
+				return adaptable.getAdapter(IResource.class);
 			}
 		}
 		return null;

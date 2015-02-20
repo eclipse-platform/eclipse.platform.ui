@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2015 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -36,9 +36,12 @@ import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
+
 import org.eclipse.core.resources.IFile;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -53,14 +56,18 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
+
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
@@ -481,10 +488,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class key) {
+	public <T> T getAdapter(Class<T> key) {
 		if (key == IShowInSource.class) {
-			return this;
+			return (T) this;
 		}
 		return null;
 	}

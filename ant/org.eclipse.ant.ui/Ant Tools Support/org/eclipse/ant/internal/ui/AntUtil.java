@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -638,7 +638,7 @@ public final class AntUtil {
 			if (resource.getType() == IResource.FILE) {
 				file = (IFile) resource;
 			} else {
-				file = (IFile) resource.getAdapter(IFile.class);
+				file = resource.getAdapter(IFile.class);
 			}
 			if (file != null) {
 				IContentType fileType = IDE.getContentType(file);
