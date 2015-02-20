@@ -174,11 +174,14 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		Trace.trace(Trace.FINEST, "Opening browser: " + input); //$NON-NLS-1$
 		if (input instanceof IPathEditorInput) {
 			IPathEditorInput pei = (IPathEditorInput) input;
-			IPath path = pei.getPath();
+			final IPath path= pei.getPath();
 			URL url = null;
 			try {
-				if (path != null)
+				if (path != null) {
+					setPartName(path.lastSegment());
 					url = path.toFile().toURI().toURL();
+				}
+				if (url != null)
 					initialURL= url.toExternalForm();
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error getting URL to file"); //$NON-NLS-1$
@@ -189,7 +192,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 				site.getWorkbenchWindow().getActivePage().activate(this);
 			}
 			
-			setPartName(path.lastSegment());
 			if (url != null)
 				setTitleToolTip(url.getFile());
 
