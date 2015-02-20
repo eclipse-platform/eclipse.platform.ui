@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
@@ -26,7 +27,7 @@ public class AdapterFactory implements IAdapterFactory {
 		this.workspace = ResourcesPlugin.getWorkspace();
 	}
 
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof Exif) {
 			if (IFile.class.equals(adapterType)) {
 				URI uri = ((Exif) adaptableObject).getUri();
@@ -36,7 +37,7 @@ public class AdapterFactory implements IAdapterFactory {
 					if (files.length == 1) {
 						IFile file = files[0];
 						if (file.exists()) {
-							return file;
+							return adapterType.cast(file);
 						}
 					}
 				}
@@ -45,7 +46,7 @@ public class AdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { Exif.class };
 	}
 
