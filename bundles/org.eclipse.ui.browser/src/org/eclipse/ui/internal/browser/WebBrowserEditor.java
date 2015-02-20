@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
@@ -178,7 +179,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			try {
 				if (path != null)
 					url = path.toFile().toURI().toURL();
-				initialURL = url.toExternalForm();
+					initialURL= url.toExternalForm();
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error getting URL to file"); //$NON-NLS-1$
 			}
@@ -222,7 +223,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			if (oldImage != null && !oldImage.isDisposed())
 				oldImage.dispose();
 		} else {
-		    IPathEditorInput pinput = (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
+			IPathEditorInput pinput = input.getAdapter(IPathEditorInput.class);
 			if (pinput != null) {
 				init(site, pinput);
 			} else {

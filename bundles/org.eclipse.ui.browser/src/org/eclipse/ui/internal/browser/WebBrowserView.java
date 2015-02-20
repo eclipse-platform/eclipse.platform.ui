@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class WebBrowserView extends ViewPart implements
 	
 	private URL getURLFromAdaptable(IAdaptable adapt) {
 		// test for path
-		IPath path = (IPath) adapt.getAdapter(IPath.class);
+		IPath path= adapt.getAdapter(IPath.class);
 		if (path != null) {
 			File file = path.toFile();
 			if (file.exists() && isWebFile(file.getName()))
@@ -140,7 +140,7 @@ public class WebBrowserView extends ViewPart implements
 					return null;
 				}
 		}
-		return (URL)adapt.getAdapter(URL.class);
+		return adapt.getAdapter(URL.class);
 	}
 
 	public void removeSelectionListener() {
