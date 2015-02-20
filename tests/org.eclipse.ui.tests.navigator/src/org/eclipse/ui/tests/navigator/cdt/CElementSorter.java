@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.cdt;
 
@@ -123,9 +124,9 @@ public class CElementSorter extends ViewerSorter {
 
 		final Comparator comparator = getComparator();
 		if (cat1 == PROJECTS) {
-			IWorkbenchAdapter a1 = (IWorkbenchAdapter) ((IAdaptable) e1)
+			IWorkbenchAdapter a1 = ((IAdaptable) e1)
 					.getAdapter(IWorkbenchAdapter.class);
-			IWorkbenchAdapter a2 = (IWorkbenchAdapter) ((IAdaptable) e2)
+			IWorkbenchAdapter a2 = ((IAdaptable) e2)
 					.getAdapter(IWorkbenchAdapter.class);
 			return comparator.compare(a1.getLabel(e1), a2.getLabel(e2));
 		}

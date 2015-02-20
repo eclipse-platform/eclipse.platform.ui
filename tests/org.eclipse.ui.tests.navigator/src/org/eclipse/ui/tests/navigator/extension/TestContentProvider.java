@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.extension;
 
@@ -98,9 +99,9 @@ public class TestContentProvider implements ITreeContentProvider,
 		if(parentElement instanceof IProject)
 			return (IProject) parentElement;
 		else if(parentElement instanceof IAdaptable)
-			return (IProject) ((IAdaptable) parentElement).getAdapter(IProject.class);
+			return ((IAdaptable) parentElement).getAdapter(IProject.class);
 		else
-			return (IProject) Platform.getAdapterManager().getAdapter(parentElement, IProject.class);
+			return Platform.getAdapterManager().getAdapter(parentElement, IProject.class);
 	}
 
 	/**

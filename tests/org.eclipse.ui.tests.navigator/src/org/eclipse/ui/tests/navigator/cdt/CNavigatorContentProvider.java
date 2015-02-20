@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Francis Upton IV (Oakland Software) - adapted for CNF tests
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.cdt;
 
@@ -180,7 +181,7 @@ public class CNavigatorContentProvider implements
 			if (element instanceof IResource) {
 				resource = (IResource) element;
 			} else if (element instanceof IAdaptable) {
-				resource = (IResource) ((IAdaptable) element)
+				resource = ((IAdaptable) element)
 						.getAdapter(IResource.class);
 			}
 			if (resource != null) {
