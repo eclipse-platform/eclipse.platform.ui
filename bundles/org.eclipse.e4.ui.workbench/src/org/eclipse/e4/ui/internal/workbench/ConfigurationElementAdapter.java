@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
@@ -19,17 +20,16 @@ public class ConfigurationElementAdapter extends ModelHandlerBase implements IAd
 
 	public static final String CLASS_IMPL = "classImpl"; //$NON-NLS-1$
 
-	public ConfigurationElementAdapter() {
-		super();
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adapterType.isInstance(this)) {
+			return adapterType.cast(this);
+		}
+		return null;
 	}
 
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		return this;
-	}
-
-	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { ModelHandlerBase.class };
 	}
 
