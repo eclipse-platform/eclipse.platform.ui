@@ -12,6 +12,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431340, 431348, 426535, 433234
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431868
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442214
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 411639
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -154,6 +155,7 @@ import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.misc.ExternalEditor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -161,6 +163,7 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
@@ -3867,13 +3870,50 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return null;
 		}
 		if (!modelToPerspectiveMapping.containsKey(mperspective)) {
-			Perspective p = new Perspective(
-					(PerspectiveDescriptor) getPerspectiveDesc(mperspective.getElementId()),
-					mperspective, this);
+			boolean fixedPerspective = false;
+			PerspectiveDescriptor perspectiveDesc = (PerspectiveDescriptor) getPerspectiveDesc(mperspective.getElementId());
+			if (perspectiveDesc == null) {
+				fixedPerspective = true;
+				perspectiveDesc = fixOrphanPerspective(mperspective);
+			}
+			Perspective p = new Perspective(perspectiveDesc, mperspective, this);
 			modelToPerspectiveMapping.put(mperspective, p);
 			p.initActionSets();
+			if (fixedPerspective) {
+				UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SAVED, mperspective);
+			}
 		}
 		return modelToPerspectiveMapping.get(mperspective);
+	}
+
+	/**
+	 * An 'orphan' perspective is one that was originally created through a
+	 * contribution but whose contributing bundle is no longer available. In
+	 * order to allow it to behave correctly within the environment (for Close,
+	 * Reset...) we turn it into a 'custom' perspective on its first activation.
+	 *
+	 * @return
+	 */
+	private PerspectiveDescriptor fixOrphanPerspective(MPerspective mperspective) {
+		PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();
+		String perspId = mperspective.getElementId();
+		String label = mperspective.getLabel();
+		String msg = "Perspective with name '" + label + "' and id '" + perspId + "' has been made into a local copy"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		IStatus status = StatusUtil.newStatus(IStatus.WARNING, msg, null);
+		StatusManager.getManager().handle(status, StatusManager.LOG);
+
+		String newDescId = NLS.bind(WorkbenchMessages.Perspective_localCopyLabel, label);
+		while (reg.findPerspectiveWithId(newDescId) != null) {
+			newDescId = NLS.bind(WorkbenchMessages.Perspective_localCopyLabel, newDescId);
+		}
+		PerspectiveDescriptor pd = new PerspectiveDescriptor(perspId, label, null);
+		PerspectiveDescriptor newDesc = reg.createPerspective(newDescId, pd);
+		mperspective.setElementId(newDesc.getId());
+		mperspective.setLabel(newDesc.getLabel());
+		sortedPerspectives.add(newDesc);
+		modelService.cloneElement(mperspective, application);
+		newDesc.setHasCustomDefinition(true);
+		return newDesc;
 	}
 
 	@Override
