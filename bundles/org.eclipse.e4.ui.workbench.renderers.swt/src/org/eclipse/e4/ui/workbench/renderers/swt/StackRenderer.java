@@ -1450,12 +1450,35 @@ public class StackRenderer extends LazyStackRenderer {
 			return new ArrayList<MPart>();
 		}
 
+		int thisPartIdx = getPartIndex(part, container);
+		if (thisPartIdx == -1) {
+			return new ArrayList<MPart>();
+		}
 		List<MUIElement> children = container.getChildren();
-		int thisPartIdx = children.indexOf(part);
 		final int start = left ? 0 : thisPartIdx + 1;
 		final int end = left ? thisPartIdx : children.size();
 
 		return getCloseableSiblingParts(part, children, start, end);
+	}
+
+	private int getPartIndex(MPart part, MElementContainer<MUIElement> container) {
+		List<MUIElement> children = container.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			MUIElement child = children.get(i);
+			MPart otherPart = null;
+			if (child instanceof MPart) {
+				otherPart = (MPart) child;
+			} else if (child instanceof MPlaceholder) {
+				MUIElement otherItem = ((MPlaceholder) child).getRef();
+				if (otherItem instanceof MPart) {
+					otherPart = (MPart) otherItem;
+				}
+			}
+			if (otherPart == part) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	private List<MPart> getCloseableSiblingParts(MPart part) {
