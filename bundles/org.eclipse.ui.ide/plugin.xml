@@ -2380,5 +2380,16 @@
              </or>
       </definition>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="*">
+         <!--
+              disable "print" button which is defined by org.eclipse.ui.actions.ActionFactory.PRINT
+              and contributed by org.eclipse.ui.internal.ide.WorkbenchActionBuilder
+         -->
+         <hiddenToolBarItem id="print">
+         </hiddenToolBarItem>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
