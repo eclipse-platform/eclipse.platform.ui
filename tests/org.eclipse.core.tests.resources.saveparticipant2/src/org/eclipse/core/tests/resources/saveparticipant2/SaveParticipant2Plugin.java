@@ -32,7 +32,11 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 	/** constants */
 	private static final String SAVE_NUMBER_LOCATION = "saveNumber";
 
+	private static SaveParticipant2Plugin instance;
+
 	public SaveParticipant2Plugin() {
+		super();
+		instance = this;
 		deltaVerifier = new ResourceDeltaVerifier();
 	}
 
@@ -78,7 +82,7 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 	}
 
 	public String getPluginId() {
-		return "org.eclipse.core.tests.resources.saveparticipant2"; //$NON-NLS-1$
+		return getBundle().getSymbolicName();
 	}
 
 	/**
@@ -203,5 +207,9 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 		} finally {
 			output.close();
 		}
+	}
+
+	public static SaveParticipant2Plugin getInstance() {
+		return instance;
 	}
 }
