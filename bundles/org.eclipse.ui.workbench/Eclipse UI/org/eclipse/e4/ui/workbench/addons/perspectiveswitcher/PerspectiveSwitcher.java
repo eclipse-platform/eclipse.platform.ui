@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sopot Cela <sopotcela@gmail.com> - Bug 391961
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 380233
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
@@ -632,6 +633,7 @@ public class PerspectiveSwitcher {
 		final Menu menu = new Menu(psTB);
 		menu.setData(persp);
 		if (persp.getParent().getSelectedElement() == persp) {
+			addCustomizeItem(menu);
 			addSaveAsItem(menu);
 			addResetItem(menu);
 		}
@@ -753,6 +755,35 @@ public class PerspectiveSwitcher {
 				if (!status.isOK())
 					StatusManager.getManager().handle(status,
 							StatusManager.SHOW | StatusManager.LOG);
+			}
+		});
+	}
+
+	private void addCustomizeItem(final Menu menu) {
+		final MenuItem customizeMenuItem = new MenuItem(menu, SWT.Activate);
+		customizeMenuItem.setText(WorkbenchMessages.PerspectiveBar_customize);
+		final IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+		customizeMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (psTB.isDisposed()) {
+					return;
+				}
+				IHandlerService handlerService = workbenchWindow.getService(IHandlerService.class);
+				IStatus status = Status.OK_STATUS;
+				try {
+					handlerService.executeCommand(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE, null);
+				} catch (ExecutionException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotDefinedException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotEnabledException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotHandledException e) {
+				}
+				if (!status.isOK()) {
+					StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
+				}
 			}
 		});
 	}
