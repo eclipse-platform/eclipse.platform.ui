@@ -368,8 +368,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_overwriteNoMergeNoLinkQuestion;
 	public static String CopyFilesAndFoldersOperation_deepCopyQuestion;
 	public static String CopyFilesAndFoldersOperation_deepMoveQuestion;
-	public static String CopyFilesAndFoldersOperation_copyNameTwoArgs;
-	public static String CopyFilesAndFoldersOperation_copyNameOneArg;
 	public static String CopyFilesAndFoldersOperation_destinationAccessError;
 	public static String CopyFilesAndFoldersOperation_destinationDescendentError;
 	public static String CopyFilesAndFoldersOperation_overwriteProblem;
