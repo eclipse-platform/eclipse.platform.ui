@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-    
+
 <!-- IDE extension points -->
    <extension-point id="markerHelp" name="%ExtPoint.markerHelp" schema="schema/markerHelp.exsd"/>
    <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders" schema="schema/markerImageProviders.exsd"/>
@@ -20,12 +20,12 @@
             name="%ImportExportWizards.Category.Basic"
             id="org.eclipse.ui.Basic">
       </category>
-      
+
       <wizard
             name="%ImportWizards.Preferences"
             icon="$nl$/icons/full/obj16/importpref_obj.png"
             id="org.eclipse.ui.wizards.import.Preferences"
-            category="org.eclipse.ui.Basic"            
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.ExtensionFactory:preferencesImportWizard">
          <description>
             %ImportWizards.PreferencesDescription
@@ -37,7 +37,7 @@
       <wizard
             name="%ImportWizards.FileSystem"
             icon="$nl$/icons/full/etool16/importdir_wiz.png"
-            category="org.eclipse.ui.Basic"            
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
             id="org.eclipse.ui.wizards.import.FileSystem">
          <description>
@@ -50,7 +50,7 @@
       <wizard
             name="%ImportWizards.ExternalProject"
             icon="$nl$/icons/full/etool16/newprj_wiz.png"
-            category="org.eclipse.ui.Basic"            
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard"
             id="org.eclipse.ui.wizards.import.ExternalProject">
          <description>
@@ -63,7 +63,7 @@
       <wizard
             name="%ImportWizards.ZipFile"
             icon="$nl$/icons/full/etool16/importzip_wiz.png"
-            category="org.eclipse.ui.Basic"            
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
             id="org.eclipse.ui.wizards.import.ZipFile">
          <description>
@@ -84,7 +84,7 @@
             name="%ImportExportWizards.Category.Basic"
             id="org.eclipse.ui.Basic">
       </category>
-               
+
       <wizard
             name="%ExportWizards.Preferences"
             icon="icons/full/obj16/exportpref_obj.png"
@@ -97,7 +97,7 @@
          <keywordReference
                id="org.eclipse.ui.ide.settings">
          </keywordReference>
-      </wizard>         
+      </wizard>
       <wizard
             name="%ExportWizards.FileSystem"
             icon="icons/full/etool16/exportdir_wiz.png"
@@ -117,7 +117,7 @@
       <wizard
             name="%ExportWizards.ZipFile"
             icon="icons/full/etool16/exportzip_wiz.png"
-            category="org.eclipse.ui.Basic"            
+            category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
             id="org.eclipse.ui.wizards.export.ZipFile">
          <description>
@@ -290,37 +290,37 @@
             visible="false"
             id="org.eclipse.ui.WorkingSetModificationActionSet">
             <action
-          		class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:false"
-	            definitionId="org.eclipse.ui.navigate.removeFromWorkingSet"
-      		    icon="$nl$/icons/full/elcl16/removefromworkset.png"
-	            id="removeFromWorkingSet"
-	            label="%RemoveFromWorkingSetAction.label"
-          		menubarPath="edit/additions"
-          		style="pulldown"
-          		toolbarPath="workingSets"
-          		tooltip="%RemoveFromWorkingSetAction.tooltip">
-     			<enablement>
-        			<objectClass
-           	   			name="org.eclipse.core.runtime.IAdaptable">
-        			</objectClass>
-     			</enablement>
-  			</action>
-			<action
-        		class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:true"
-        		definitionId="org.eclipse.ui.navigate.addToWorkingSet"
-        		icon="$nl$/icons/full/elcl16/addtoworkset.png"
-        		id="addToWorkingSet"
-        		label="%AddToWorkingSetAction.label"
-        		menubarPath="edit/additions"
-        		style="pulldown"
- 		        toolbarPath="workingSets"
-        		tooltip="%AddToWorkingSetAction.tooltip">
-     			<enablement>
-        			<objectClass
-           	   			name="org.eclipse.core.runtime.IAdaptable">
-        			</objectClass>
-     			</enablement>
-  			</action>
+                class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:false"
+                definitionId="org.eclipse.ui.navigate.removeFromWorkingSet"
+                icon="$nl$/icons/full/elcl16/removefromworkset.png"
+                id="removeFromWorkingSet"
+                label="%RemoveFromWorkingSetAction.label"
+                menubarPath="edit/additions"
+                style="pulldown"
+                toolbarPath="workingSets"
+                tooltip="%RemoveFromWorkingSetAction.tooltip">
+                <enablement>
+                    <objectClass
+                        name="org.eclipse.core.runtime.IAdaptable">
+                    </objectClass>
+                 </enablement>
+              </action>
+            <action
+                class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:true"
+                definitionId="org.eclipse.ui.navigate.addToWorkingSet"
+                icon="$nl$/icons/full/elcl16/addtoworkset.png"
+                id="addToWorkingSet"
+                label="%AddToWorkingSetAction.label"
+                menubarPath="edit/additions"
+                style="pulldown"
+                toolbarPath="workingSets"
+                tooltip="%AddToWorkingSetAction.tooltip">
+                <enablement>
+                    <objectClass
+                        name="org.eclipse.core.runtime.IAdaptable">
+                    </objectClass>
+                 </enablement>
+              </action>
       </actionSet>
       <actionSet
             label="%WindowWorkingSetsActionSet.label"
@@ -336,7 +336,7 @@
                menubarPath="window/additions"
                style="pulldown"
                toolbarPath="workingSets"
-               tooltip="%SelectWorkingSetsAction.tooltip"/>                     
+               tooltip="%SelectWorkingSetsAction.tooltip"/>
       </actionSet>
         <actionSet
             label="%openFilesActionSet.label"
@@ -352,8 +352,8 @@
                id="org.eclipse.ui.openLocalFile">
          </action>
       </actionSet>
-   </extension>   
-   
+   </extension>
+
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
@@ -376,18 +376,18 @@
       <decorator
             lightweight="true"
             adaptable="true"
-			location="TOP_RIGHT"
+            location="TOP_RIGHT"
             label="%DecoratorSymlinkResource.label"
             class="org.eclipse.ui.internal.ide.SymlinkDecorator"
-			state="true"
+            state="true"
             id="org.eclipse.ui.SymlinkDecorator">
-			<description>
-				%DecoratorSymlinkResource.description
-			</description>
+            <description>
+                %DecoratorSymlinkResource.description
+            </description>
             <enablement>
-	            <objectClass
-	                  name="org.eclipse.core.runtime.PlatformObject">
-	            </objectClass>
+                <objectClass
+                      name="org.eclipse.core.runtime.PlatformObject">
+                </objectClass>
             </enablement>
       </decorator>
       <decorator
@@ -443,7 +443,7 @@
       </decorator>
    </extension>
    <extension
-   		point="org.eclipse.ui.keywords">
+           point="org.eclipse.ui.keywords">
     <keyword
             label="%PreferenceKeywords.Editing"
             id="org.eclipse.ui.ide.editing"/>
@@ -540,7 +540,7 @@
       <keyword
             id="org.eclipse.ui.ide.settings"
             label="%PreferenceKeywords.Settings"/>
-   </extension>      
+   </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -625,23 +625,23 @@
             class="org.eclipse.ui.internal.ide.dialogs.IDEWorkspacePreferencePage"
             id="org.eclipse.ui.preferencePages.Workspace"
             name="%PreferencePages.Workspace">
-         <keywordReference id="org.eclipse.ui.ide.workspace"/>         
-         <keywordReference id="org.eclipse.ui.ide.encoding"/>         
+         <keywordReference id="org.eclipse.ui.ide.workspace"/>
+         <keywordReference id="org.eclipse.ui.ide.encoding"/>
       </page>
       <page
-      		category="org.eclipse.ui.preferencePages.Workspace"
+            category="org.eclipse.ui.preferencePages.Workspace"
             name="%PreferencePages.BuildOrder"
             class="org.eclipse.ui.internal.ide.dialogs.BuildOrderPreferencePage"
             id="org.eclipse.ui.preferencePages.BuildOrder">
       </page>
-      
+
        <page
             name="%PreferencePages.FileStates"
             category="org.eclipse.ui.preferencePages.Workspace"
             class="org.eclipse.ui.internal.ide.dialogs.FileStatesPage"
             id="org.eclipse.ui.preferencePages.FileStates">
       </page>
-      
+
       <page
             name="%PreferencePages.LinkedResources"
             category="org.eclipse.ui.preferencePages.Workspace"
@@ -713,8 +713,8 @@
             id="org.eclipse.ui.views.AllMarkersView"
             name="%Views.AllMarkers">
       </view>
-     
-    
+
+
    </extension>
    <extension
          point="org.eclipse.ui.ide.resourceFilters">
@@ -798,7 +798,7 @@
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject"/>
          </enabledWhen>
-      </page>    
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -978,7 +978,7 @@
             id="org.eclipse.ui.ide.deleteCompleted"
             name="%command.deleteCompleted.name">
       </command>
-   	  <command
+         <command
             description="%command.markCompleted.description"
             id="org.eclipse.ui.ide.markCompleted"
             name="%command.markCompleted.name">
@@ -1016,21 +1016,21 @@
             description="%command.showInSystemExplorer.description">
       </command>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.navigate.goToResource"
             icon="$nl$/icons/full/elcl16/gotoobj_tsk.png" />
    </extension>
-   
+
    <extension
-   		 point="org.eclipse.ui.bindings">
+            point="org.eclipse.ui.bindings">
       <key
-      		commandId="org.eclipse.ui.window.showKeyAssist"
-      		contextId="org.eclipse.ui.contexts.dialogAndWindow"
-      		sequence="M1+M2+L"
-      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+            commandId="org.eclipse.ui.window.showKeyAssist"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+M2+L"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
             sequence="M1+1"
@@ -1102,9 +1102,9 @@
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.ui.views.showView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-            <parameter 
-            	id="org.eclipse.ui.views.showView.viewId"
-            	value="org.eclipse.ui.views.ProblemView" />
+            <parameter
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.ui.views.ProblemView" />
       </key>
       <key
             platform="carbon"
@@ -1117,9 +1117,9 @@
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.ui.views.showView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-            <parameter 
-            	id="org.eclipse.ui.views.showView.viewId" 
-            	value="org.eclipse.ui.views.ProblemView" />
+            <parameter
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.ui.views.ProblemView" />
       </key>
       <key
             sequence="M2+M3+Q O"
@@ -1127,8 +1127,8 @@
             commandId="org.eclipse.ui.views.showView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
             <parameter
-            	id="org.eclipse.ui.views.showView.viewId"
-            	value="org.eclipse.ui.views.ContentOutline" />
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.ui.views.ContentOutline" />
       </key>
       <key
             platform="carbon"
@@ -1142,8 +1142,8 @@
             commandId="org.eclipse.ui.views.showView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
             <parameter
-            	id="org.eclipse.ui.views.showView.viewId" 
-            	value="org.eclipse.ui.views.ContentOutline" />
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.ui.views.ContentOutline" />
       </key>
       <key
             commandId="org.eclipse.ui.window.quickAccess"
@@ -1151,7 +1151,7 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.spy"
-      		contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+M3+F3"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
    </extension>
@@ -1159,7 +1159,7 @@
    <extension
          point="org.eclipse.ui.systemSummarySections">
       <section
-      		id="15.UpdateSection"
+            id="15.UpdateSection"
             sectionTitle="%About.updateSummaryTitle"
             class="org.eclipse.ui.internal.ide.dialogs.ConfigurationLogUpdateSection">
       </section>
@@ -1178,17 +1178,17 @@
             icon="/icons/full/obj16/keyspref_obj.png"
             name="%KeysPreference.Name">
             <mapping scope="instance">
-            	<entry node="org.eclipse.ui.workbench">
-            	   <key name="org.eclipse.ui.commands"/>
-            	</entry>
-            	<entry node="org.eclipse.ui">
-            	   <key name="KEY_CONFIGURATION_ID"/>
-            	</entry>
+                <entry node="org.eclipse.ui.workbench">
+                   <key name="org.eclipse.ui.commands"/>
+                </entry>
+                <entry node="org.eclipse.ui">
+                   <key name="KEY_CONFIGURATION_ID"/>
+                </entry>
             </mapping>
-			<description>
-            	%KeysPreference.Description
-		    </description>
-	   </transfer>
+            <description>
+                %KeysPreference.Description
+            </description>
+       </transfer>
        <transfer
              icon="$nl$/icons/full/eview16/problems_view.png"
              id="org.eclipse.ui.ide.problemFilters"
@@ -1258,7 +1258,7 @@
           </description>
        </transfer>
    </extension>
-   
+
    <!-- Adaptor factory for IWorkingSet to IContributorResourceAdapter, IWorkbenchAdapter, ResourceMapping -->
       <extension
          id="org.eclipse.ui.ide.resourceMappingAdapters"
@@ -1308,7 +1308,7 @@
           </adapter>
        </factory>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.activitySupport">
       <triggerPoint id="org.eclipse.ui.ide.natures">
@@ -1317,7 +1317,7 @@
                value="false"/>
       </triggerPoint>
    </extension>
-  
+
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerContentGenerator
@@ -1358,7 +1358,7 @@
                scope="ON_ANY"
                values="org.eclipse.ui.internal.views.markers.AllErrorsParameters">
          </markerFieldConfiguration>
-     
+
          <markerFieldConfiguration
                enabled="false"
                id="org.eclipse.ui.ide.selectedWarningsGrouping"
@@ -1366,14 +1366,14 @@
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.SelectedWarningsParameters">
          </markerFieldConfiguration>
-         
+
          <markerFieldConfiguration
                enabled="false"
                id="org.eclipse.ui.ide.selectedErrorsWarningsGrouping"
                name="%MarkerFilterGrouping.SelectedErrorsWarnings"
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
-         </markerFieldConfiguration> 
+         </markerFieldConfiguration>
           <markerFieldConfiguration
                enabled="false"
                id="org.eclipse.ui.ide.projectErrorsWarningsGrouping"
@@ -1381,7 +1381,7 @@
                scope="ON_ANY_IN_SAME_CONTAINER"
                values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
          </markerFieldConfiguration>
-         
+
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
                visible="true">
@@ -1660,7 +1660,7 @@
             id="org.eclipse.ui.ide.allSeverityField"
             name="%Field.Description">
       </markerField>
-     
+
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -1715,25 +1715,25 @@
               <visibleWhen
                     checkEnabled="false">
                  <and>
-                 	<or>
-                   		 <with variable="activePart">
-                   				<instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
-                        		<test args="org.eclipse.ui.ide.allMarkersGenerator"
-                          		property="org.eclipse.ui.ide.contentGenerator"/>
-                    	</with>
-                   		<with variable="activePart">
-                   				<instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
-                      			<test args="org.eclipse.ui.ide.problemsGenerator"
-                       	   			property="org.eclipse.ui.ide.contentGenerator"/>
-                    	</with>
-                 	</or>
-               		<with variable="selection">
-                          	<iterate ifEmpty="false" operator="and">
-                          		<adapt type="org.eclipse.core.resources.IMarker" >
-                            			<test value="org.eclipse.core.resources.problemmarker"
-                          				property="org.eclipse.ui.ide.marker.superType"/>
-                          		</adapt>	
-                          	</iterate>
+                     <or>
+                         <with variable="activePart">
+                              <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
+                                  <test args="org.eclipse.ui.ide.allMarkersGenerator"
+                                      property="org.eclipse.ui.ide.contentGenerator"/>
+                         </with>
+                         <with variable="activePart">
+                             <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
+                                 <test args="org.eclipse.ui.ide.problemsGenerator"
+                                     property="org.eclipse.ui.ide.contentGenerator"/>
+                         </with>
+                     </or>
+                     <with variable="selection">
+                         <iterate ifEmpty="false" operator="and">
+                             <adapt type="org.eclipse.core.resources.IMarker" >
+                                 <test value="org.eclipse.core.resources.problemmarker"
+                                     property="org.eclipse.ui.ide.marker.superType"/>
+                             </adapt>
+                         </iterate>
                     </with>
                  </and>
               </visibleWhen>
@@ -1809,19 +1809,19 @@
                    </iterate>
                 </with>
                 </and>
-               
+
              </visibleWhen>
          </command>
-         <separator 
+         <separator
                name="additions"
                visible="true" >
          </separator>
       </menuContribution>
-  
-    
+
+
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.ProblemView">
-         <menu 
+         <menu
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
@@ -2043,7 +2043,7 @@
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.menus.showInMenu">
- 	     <command
+          <command
              commandId="org.eclipse.ui.ide.showInSystemExplorer"
              label="%command.showInSystemExplorer.menu.name"
              mnemonic="%command.showInSystemExplorer.menu.mnemonic"
@@ -2125,21 +2125,21 @@
          <activeWhen>
              <and>
                  <with variable="activePart">
-                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
-                 	<or>
-                        <test args="org.eclipse.ui.ide.allMarkersGenerator"
-                          		property="org.eclipse.ui.ide.contentGenerator"/>
-                        <test args="org.eclipse.ui.ide.problemsGenerator"
-                          		property="org.eclipse.ui.ide.contentGenerator"/>
-                 	</or>
+                     <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
+                     <or>
+                         <test args="org.eclipse.ui.ide.allMarkersGenerator"
+                             property="org.eclipse.ui.ide.contentGenerator"/>
+                         <test args="org.eclipse.ui.ide.problemsGenerator"
+                             property="org.eclipse.ui.ide.contentGenerator"/>
+                     </or>
                  </with>
-               		<with variable="selection">
-                          	<iterate ifEmpty="false" operator="and">
-                          		<adapt type="org.eclipse.core.resources.IMarker" >
-                            			<test value="org.eclipse.core.resources.problemmarker"
-                          				property="org.eclipse.ui.ide.marker.superType"/>
-                          		</adapt>	
-                          	</iterate>
+                     <with variable="selection">
+                         <iterate ifEmpty="false" operator="and">
+                             <adapt type="org.eclipse.core.resources.IMarker" >
+                                 <test value="org.eclipse.core.resources.problemmarker"
+                                     property="org.eclipse.ui.ide.marker.superType"/>
+                              </adapt>
+                         </iterate>
                     </with>
                  </and>
          </activeWhen>
@@ -2312,7 +2312,7 @@
    <extension
          point="org.eclipse.core.resources.filterMatchers">
       <filterMatcher
-      		id="org.eclipse.ui.ide.patternFilterMatcher"
+            id="org.eclipse.ui.ide.patternFilterMatcher"
             argumentType="string"
             class="org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher"
             description="%filterProvider.description"
@@ -2320,7 +2320,7 @@
             ordering="first">
       </filterMatcher>
       <filterMatcher
-      		id="org.eclipse.ui.ide.orFilterMatcher"
+            id="org.eclipse.ui.ide.orFilterMatcher"
             argumentType="filterMatchers"
             class="org.eclipse.ui.internal.ide.misc.OrFileInfoMatcher"
             description="%orFilterProvider.description"
@@ -2328,7 +2328,7 @@
             ordering="first">
       </filterMatcher>
       <filterMatcher
-      		id="org.eclipse.ui.ide.andFilterMatcher"
+            id="org.eclipse.ui.ide.andFilterMatcher"
             argumentType="filterMatchers"
             class="org.eclipse.ui.internal.ide.misc.AndFileInfoMatcher"
             description="%andFilterProvider.description"
@@ -2336,7 +2336,7 @@
             ordering="first">
       </filterMatcher>
       <filterMatcher
-      		id="org.eclipse.ui.ide.notFilterMatcher"
+            id="org.eclipse.ui.ide.notFilterMatcher"
             argumentType="filterMatcher"
             class="org.eclipse.ui.internal.ide.misc.NotFileInfoMatcher"
             description="%notFilterProvider.description"
