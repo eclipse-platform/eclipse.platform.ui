@@ -521,6 +521,7 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorSelection_chooseAnEditor;
 	public static String EditorSelection_internal;
 	public static String EditorSelection_external;
+	public static String EditorSelection_rememberEditor;
 	public static String EditorSelection_browse;
 	public static String EditorSelection_title;
 

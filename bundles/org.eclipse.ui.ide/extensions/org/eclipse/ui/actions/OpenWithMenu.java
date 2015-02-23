@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
  *     						have Open With-->Other
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 378485
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -42,6 +44,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
 
 import com.ibm.icu.text.Collator;
@@ -60,12 +63,12 @@ import com.ibm.icu.text.Collator;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenWithMenu extends ContributionItem {
+
     private IWorkbenchPage page;
 
-    private IAdaptable file;
+	private IAdaptable adaptable;
 
-    private IEditorRegistry registry = PlatformUI.getWorkbench()
-            .getEditorRegistry();
+	private IEditorRegistry registry;
 
     /**
      * The id of this action.
@@ -77,16 +80,16 @@ public class OpenWithMenu extends ContributionItem {
      */
     private static final int MATCH_BOTH = IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID;
 
-    /*
-     * Compares the labels from two IEditorDescriptor objects
-     */
-    private static final Comparator comparer = new Comparator() {
+	/**
+	 * Compares the labels from two IEditorDescriptor objects
+	 */
+	private static final Comparator<IEditorDescriptor> comparer = new Comparator<IEditorDescriptor>() {
         private Collator collator = Collator.getInstance();
 
         @Override
-		public int compare(Object arg0, Object arg1) {
-            String s1 = ((IEditorDescriptor) arg0).getLabel();
-            String s2 = ((IEditorDescriptor) arg1).getLabel();
+		public int compare(IEditorDescriptor arg0, IEditorDescriptor arg1) {
+            String s1 = arg0.getLabel();
+            String s2 = arg1.getLabel();
             return collator.compare(s1, s2);
         }
     };
@@ -114,7 +117,8 @@ public class OpenWithMenu extends ContributionItem {
     public OpenWithMenu(IWorkbenchPage page, IAdaptable file) {
         super(ID);
         this.page = page;
-        this.file = file;
+		this.adaptable = file;
+		registry = PlatformUI.getWorkbench().getEditorRegistry();
     }
 
     /**
@@ -138,18 +142,14 @@ public class OpenWithMenu extends ContributionItem {
     private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
         ImageDescriptor imageDesc = null;
         if (editorDesc == null) {
-            imageDesc = registry
-                    .getImageDescriptor(getFileResource().getName());
+			imageDesc = registry.getImageDescriptor(getFileResource().getName());
 			//TODO: is this case valid, and if so, what are the implications for content-type editor bindings?
         } else {
             imageDesc = editorDesc.getImageDescriptor();
         }
         if (imageDesc == null) {
-            if (editorDesc.getId().equals(
-                    IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
-				imageDesc = registry
-                        .getSystemExternalEditorImageDescriptor(getFileResource()
-                                .getName());
+			if (editorDesc.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
+				imageDesc = registry.getSystemExternalEditorImageDescriptor(getFileResource().getName());
 			}
         }
         return imageDesc;
@@ -166,8 +166,7 @@ public class OpenWithMenu extends ContributionItem {
             final IEditorDescriptor preferredEditor) {
         // XXX: Would be better to use bold here, but SWT does not support it.
         final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-        boolean isPreferred = preferredEditor != null
-                && descriptor.getId().equals(preferredEditor.getId());
+		boolean isPreferred = preferredEditor != null && descriptor.getId().equals(preferredEditor.getId());
         menuItem.setSelection(isPreferred);
         menuItem.setText(descriptor.getLabel());
         Image image = getImage(descriptor);
@@ -207,13 +206,10 @@ public class OpenWithMenu extends ContributionItem {
 			public void handleEvent(Event event) {
                 switch (event.type) {
                 case SWT.Selection:
-                   	EditorSelectionDialog dialog = new EditorSelectionDialog(
-							menu.getShell());
-					dialog
-							.setMessage(NLS
-									.bind(
-											IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription,
-											fileResource.getName()));
+					EditorSelectionDialog dialog = new EditorSelectionDialog(menu.getShell());
+					String fileName = fileResource.getName();
+					dialog.setFileName(fileName);
+					dialog.setMessage(NLS.bind(IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription, fileName));
 					if (dialog.open() == Window.OK) {
 						IEditorDescriptor editor = dialog.getSelectedEditor();
 						if (editor != null) {
@@ -232,7 +228,7 @@ public class OpenWithMenu extends ContributionItem {
      */
     @Override
 	public void fill(Menu menu, int index) {
-		final IFile file= getFileResource();
+		final IFile file = getFileResource();
         if (file == null) {
             return;
         }
@@ -240,13 +236,14 @@ public class OpenWithMenu extends ContributionItem {
 		IContentType contentType= IDE.getContentType(file);
 		FileEditorInput editorInput= new FileEditorInput(file);
 
-        IEditorDescriptor defaultEditor = registry
-                .findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may be null
+		IEditorDescriptor defaultEditor = registry.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may
+																											// be
+																											// null
 		final IEditorDescriptor preferredEditor= IDE.getDefaultEditor(file); // may be null
 
-		IEditorDescriptor[] editors= registry.getEditors(file.getName(), contentType);
+		IEditorDescriptor[] editors = registry.getEditors(file.getName(), contentType);
 
-		editors= IDE.overrideEditorAssociations(editorInput, contentType, editors);
+		editors = IDE.overrideEditorAssociations(editorInput, contentType, editors);
 
         Collections.sort(Arrays.asList(editors), comparer);
 
@@ -254,14 +251,13 @@ public class OpenWithMenu extends ContributionItem {
 
         //Check that we don't add it twice. This is possible
         //if the same editor goes to two mappings.
-        ArrayList alreadyMapped = new ArrayList();
+		List<IEditorDescriptor> alreadyMapped = new ArrayList<>();
 
         for (int i = 0; i < editors.length; i++) {
 			IEditorDescriptor editor= editors[i];
             if (!alreadyMapped.contains(editor)) {
                 createMenuItem(menu, editor, preferredEditor);
-                if (defaultEditor != null
-                        && editor.getId().equals(defaultEditor.getId())) {
+				if (defaultEditor != null && editor.getId().equals(defaultEditor.getId())) {
 					defaultFound = true;
 				}
                 alreadyMapped.add(editor);
@@ -279,13 +275,11 @@ public class OpenWithMenu extends ContributionItem {
         }
 
         // Add system editor (should never be null)
-        IEditorDescriptor descriptor = registry
-                .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		IEditorDescriptor descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
         createMenuItem(menu, descriptor, preferredEditor);
 
         // Add system in-place editor (can be null)
-        descriptor = registry
-                .findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+		descriptor = registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
         if (descriptor != null) {
             createMenuItem(menu, descriptor, preferredEditor);
         }
@@ -295,19 +289,18 @@ public class OpenWithMenu extends ContributionItem {
         createOtherMenuItem(menu);
     }
 
-
     /**
      * Converts the IAdaptable file to IFile or null.
      */
     private IFile getFileResource() {
-        if (this.file instanceof IFile) {
-            return (IFile) this.file;
+		IFile file = Util.getAdapter(adaptable, IFile.class);
+		if (file != null) {
+			return file;
         }
-        IResource resource = this.file.getAdapter(IResource.class);
+		IResource resource = Util.getAdapter(adaptable, IResource.class);
         if (resource instanceof IFile) {
             return (IFile) resource;
         }
-
         return null;
     }
 

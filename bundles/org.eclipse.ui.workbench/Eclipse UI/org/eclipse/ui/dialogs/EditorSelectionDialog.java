@@ -10,7 +10,7 @@
  *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
  *     						have Open With-->Other
  *     Helena Halperin - Bug 298747 [EditorMgmt] Bidi Incorrect file type direction in mirrored "Editor Selection" dialog
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 460555 
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 378485, 460555
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -41,6 +41,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -51,12 +52,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -153,6 +156,14 @@ public class EditorSelectionDialog extends Dialog {
 
 	private TreeViewer editorTableViewer;
 
+	private String fileName;
+
+	private Button fileTypeButton;
+
+	private Button fileNameButton;
+
+	private Button rememberEditorButton;
+
 	private static final String[] Executable_Filters;
 
 	private static final int TABLE_WIDTH = 200;
@@ -234,20 +245,22 @@ public class EditorSelectionDialog extends Dialog {
 		textLabel.setLayoutData(data);
 		textLabel.setFont(font);
 
-		internalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
+		Composite group = new Composite(contents, SWT.SHADOW_NONE);
+		data = new GridData();
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = SWT.FILL;
+		data.horizontalSpan = 2;
+		group.setLayout(new RowLayout(SWT.HORIZONTAL));
+		group.setLayoutData(data);
+
+		internalButton = new Button(group, SWT.RADIO | SWT.LEFT);
 		internalButton.setText(WorkbenchMessages.EditorSelection_internal);
 		internalButton.addListener(SWT.Selection, listener);
-		data = new GridData();
-		data.horizontalSpan = 1;
-		internalButton.setLayoutData(data);
 		internalButton.setFont(font);
 
-		externalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
+		externalButton = new Button(group, SWT.RADIO | SWT.LEFT);
 		externalButton.setText(WorkbenchMessages.EditorSelection_external);
 		externalButton.addListener(SWT.Selection, listener);
-		data = new GridData();
-		data.horizontalSpan = 1;
-		externalButton.setLayoutData(data);
 		externalButton.setFont(font);
 
 		editorTable = new FilteredTree(contents, SWT.SINGLE | SWT.BORDER, new PatternFilter(), true);
@@ -289,8 +302,56 @@ public class EditorSelectionDialog extends Dialog {
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, browseExternalEditorsButton
 				.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		data.horizontalSpan = 2;
 		browseExternalEditorsButton.setLayoutData(data);
 		browseExternalEditorsButton.setFont(font);
+
+		if (fileName != null) {
+
+			rememberEditorButton = new Button(contents, SWT.CHECK | SWT.LEFT);
+			rememberEditorButton.setText(WorkbenchMessages.EditorSelection_rememberEditor);
+			rememberEditorButton.addListener(SWT.Selection, listener);
+			data = new GridData();
+			data.horizontalSpan = 2;
+			rememberEditorButton.setLayoutData(data);
+			rememberEditorButton.setFont(font);
+
+			group = new Composite(contents, SWT.SHADOW_NONE);
+			group.setLayout(new GridLayout(2, false));
+			data = new GridData();
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalAlignment = SWT.FILL;
+			data.horizontalSpan = 2;
+			data.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+			group.setLayoutData(data);
+
+			String fileType = getFileType();
+			if (!fileType.isEmpty()) {
+				fileTypeButton = new Button(group, SWT.RADIO | SWT.LEFT);
+				fileTypeButton.setText("*." + fileType); //$NON-NLS-1$
+				fileTypeButton.addListener(SWT.Selection, listener);
+				data = new GridData();
+				data.horizontalSpan = 1;
+				data.grabExcessHorizontalSpace = true;
+				fileTypeButton.setLayoutData(data);
+				fileTypeButton.setFont(font);
+				fileTypeButton.setSelection(true);
+				fileTypeButton.setEnabled(false);
+			}
+
+			fileNameButton = new Button(group, SWT.RADIO | SWT.LEFT);
+			fileNameButton.setText(fileName);
+			fileNameButton.addListener(SWT.Selection, listener);
+			data = new GridData();
+			data.horizontalSpan = 1;
+			data.grabExcessHorizontalSpace = true;
+			fileNameButton.setLayoutData(data);
+			fileNameButton.setFont(font);
+			fileNameButton.setEnabled(false);
+			if (fileType.isEmpty()) {
+				fileNameButton.setSelection(true);
+			}
+		}
 
 		restoreWidgetValues(); // Place buttons to the appropriate state
 
@@ -306,7 +367,18 @@ public class EditorSelectionDialog extends Dialog {
 				updateEnableState();
 			}
 		});
-		return contents;
+	    return contents;
+	}
+
+	private String getFileType() {
+		if (fileName == null) {
+			return ""; //$NON-NLS-1$
+		}
+		int lastDot = fileName.lastIndexOf('.');
+		if (lastDot == -1 || lastDot >= fileName.length() - 2) {
+			return ""; //$NON-NLS-1$
+		}
+		return fileName.substring(lastDot + 1, fileName.length());
 	}
 
 	protected void fillEditorTable() {
@@ -511,6 +583,56 @@ public class EditorSelectionDialog extends Dialog {
 		settings
 				.put(STORE_ID_INTERNAL_EXTERNAL, !internalButton.getSelection());
 		settings.put(STORE_ID_DESCR, selectedEditor.getId());
+		String editorId = selectedEditor.getId();
+		settings.put(STORE_ID_DESCR, editorId);
+		if (rememberEditorButton == null || !rememberEditorButton.getSelection()) {
+			return;
+		}
+		EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
+		boolean useFileName = fileNameButton.getSelection();
+		updateFileMappings(reg, useFileName);
+		if (useFileName) {
+			reg.setDefaultEditor(fileName, editorId);
+		} else {
+			reg.setDefaultEditor("*." + getFileType(), editorId); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Make sure EditorRegistry has editor mapping for the file name/type
+	 */
+	private void updateFileMappings(EditorRegistry reg, boolean useFileName) {
+		IFileEditorMapping[] mappings = reg.getFileEditorMappings();
+		boolean hasMapping = false;
+		String fileType = getFileType();
+		for (IFileEditorMapping mapping : mappings) {
+			if (useFileName) {
+				if (fileName.equals(mapping.getLabel())) {
+					hasMapping = true;
+					break;
+				}
+			} else {
+				if (fileType.equals(mapping.getExtension())) {
+					hasMapping = true;
+					break;
+				}
+
+			}
+		}
+		if (hasMapping) {
+			return;
+		}
+		FileEditorMapping mapping;
+		if (useFileName) {
+			mapping = new FileEditorMapping(fileName, null);
+		} else {
+			mapping = new FileEditorMapping(null, fileType);
+		}
+		List<IFileEditorMapping> newMappings = new ArrayList<IFileEditorMapping>();
+		newMappings.addAll(Arrays.asList(mappings));
+		newMappings.add(mapping);
+		FileEditorMapping[] array = newMappings.toArray(new FileEditorMapping[newMappings.size()]);
+		reg.setFileEditorMappings(array);
 	}
 
 	/**
@@ -521,6 +643,18 @@ public class EditorSelectionDialog extends Dialog {
 	 */
 	public void setMessage(String aMessage) {
 		message = aMessage;
+	}
+
+	/**
+	 * Set the file name which can be used to store the selected editor
+	 * preference
+	 *
+	 * @param fileName
+	 *            the file name
+	 * @since 3.107
+	 */
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	/**
@@ -540,6 +674,13 @@ public class EditorSelectionDialog extends Dialog {
 		boolean enableExternal = externalButton.getSelection();
 		browseExternalEditorsButton.setEnabled(enableExternal);
 		updateOkButton();
+		if (rememberEditorButton != null) {
+			boolean selection = rememberEditorButton.getSelection();
+			fileNameButton.setEnabled(selection);
+			if (!getFileType().isEmpty()) {
+				fileTypeButton.setEnabled(selection);
+			}
+		}
 	}
 
 	@Override
