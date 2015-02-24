@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -310,7 +310,7 @@ public abstract class Plugin implements BundleActivator {
 	 * it puts there. It is recommended for plug-in preference settings and 
 	 * other configuration parameters.
 	 * </p>
-	 * @throws IllegalStateException, when the system is running with no data area (-data @none),
+	 * @throws IllegalStateException when the system is running with no data area (-data @none),
 	 * or when a data area has not been set yet.
 	 * @return a local file system path
 	 *  XXX Investigate the usage of a service factory (see also platform.getStateLocation)
@@ -349,7 +349,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated Replaced by {@link IEclipsePreferences}. Preferences are now stored according
 	 * to scopes in the {@link IPreferencesService}. The return value of this method corresponds to
 	 * a combination of the {@link InstanceScope} and the {@link DefaultScope}. To set preferences
-	 * for your plug-in, use <tt>new InstanceScope().getNode(&lt&yourPluginId&gt;)</tt>.  To set default
+	 * for your plug-in, use <tt>new InstanceScope().getNode(&lt;yourPluginId&gt;)</tt>.  To set default
 	 * preferences for your plug-in, use <tt>new DefaultScope().getNode(&lt;yourPluginId&gt;)</tt>.
 	 * To lookup an integer preference value for your plug-in, use 
 	 * <tt>Platform.getPreferencesService().getInt(&lt;yourPluginId&gt;, &lt;preferenceKey&gt;, &lt;defaultValue&gt;, null)</tt>.
@@ -449,8 +449,8 @@ public abstract class Plugin implements BundleActivator {
 	 * This class should be contributed via the
 	 * <code>org.eclipse.core.runtime.preferences</code> extension point.
 	 * <pre>
-	 * 	&lt;extension point=&quo;org.eclipse.core.runtime.preferences&quo;&gt;
-	 *			&lt;initializer class=&quo;com.example.MyPreferenceInitializer&quo;/&gt;
+	 * 	&lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
+	 *			&lt;initializer class=&quot;com.example.MyPreferenceInitializer&quot;/&gt;
 	 *		&lt;/extension&gt;
 	 *		...
 	 *		package com.example;
