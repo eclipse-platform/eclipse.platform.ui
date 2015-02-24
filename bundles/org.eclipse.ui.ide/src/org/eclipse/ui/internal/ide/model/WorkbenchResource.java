@@ -128,7 +128,7 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
      * <code>contentTypeId</code>. It is possible that this method call could
      * cause the resource to be read. It is also possible (through poor plug-in
      * design) for this method to load plug-ins.
-     * 
+     *
      * @param resource
      *            The resource for which the content type should be determined;
      *            must not be <code>null</code>.
@@ -168,7 +168,7 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
     /**
      * Tests whether a session or persistent property on the resource or its project
      * matches the given value.
-     * 
+     *
      * @param resource
      *            the resource to check
      * @param persistentFlag
@@ -215,16 +215,16 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
                     return false;
                 }
                 return expectedVal == null || expectedVal.equals(actualVal);
-            } 
+            }
 
             Object actualVal = resToCheck.getSessionProperty(key);
              if (actualVal == null) {
 				return false;
 			}
-              
+
              return expectedVal == null
                         || expectedVal.equals(actualVal.toString());
-            
+
         } catch (CoreException e) {
             // ignore
         }

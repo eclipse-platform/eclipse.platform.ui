@@ -91,7 +91,7 @@ public class ZipFileExporter implements IFileExporter {
         long localTimeStamp = contents.getLocalTimeStamp();
         if(localTimeStamp != IResource.NULL_STAMP)
         	entry.setTime(localTimeStamp);
-        
+
         outputStream.putNextEntry(entry);
     	InputStream contentStream = contents.getContents(false);
         try {

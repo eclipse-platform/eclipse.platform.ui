@@ -17,9 +17,9 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 /**
  * MarkerGroupingEntry is the configuration object for the markerGroupingEntry
  * extension.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class MarkerGroupingEntry {
 
@@ -52,7 +52,7 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Set the receiver as the default grouping entry for type markerType.
-	 * 
+	 *
 	 * @param markerType
 	 *            String
 	 */
@@ -63,7 +63,7 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Return the id for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getId() {
@@ -72,7 +72,7 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Set the group for the receiver.
-	 * 
+	 *
 	 * @param group
 	 */
 	public void setGroup(MarkerGroup group) {
@@ -82,7 +82,7 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Get the label of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getLabel() {
@@ -91,7 +91,7 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Return the priority of the receiver.
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getPriority() {
@@ -100,7 +100,7 @@ public class MarkerGroupingEntry {
 
 	/**
 	 * Return the marker group for the receiver.
-	 * 
+	 *
 	 * @return FieldMarkerGroup
 	 */
 	public MarkerGroup getMarkerGroup() {

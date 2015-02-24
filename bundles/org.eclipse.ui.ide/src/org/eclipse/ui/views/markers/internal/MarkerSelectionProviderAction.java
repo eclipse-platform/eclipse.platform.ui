@@ -29,14 +29,14 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * MarkerSelectionProviderAction is the abstract super class of the selection
  * provider actions used by marker views.
- * 
+ *
  */
 public abstract class MarkerSelectionProviderAction extends
 		SelectionProviderAction {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param provider
 	 * @param text
 	 */
@@ -48,7 +48,7 @@ public abstract class MarkerSelectionProviderAction extends
 
 	/**
 	 * Get the selected markers in the receiver.
-	 * 
+	 *
 	 * @return IMarker[]
 	 */
 	IMarker[] getSelectedMarkers() {
@@ -58,7 +58,7 @@ public abstract class MarkerSelectionProviderAction extends
 
 	/**
 	 * Return the selected markers for the structured selection.
-	 * 
+	 *
 	 * @param structured
 	 *            IStructuredSelection
 	 * @return IMarker[]
@@ -82,7 +82,7 @@ public abstract class MarkerSelectionProviderAction extends
 
 	/**
 	 * Get the selected marker in the receiver.
-	 * 
+	 *
 	 * @return IMarker
 	 */
 	IMarker getSelectedMarker() {

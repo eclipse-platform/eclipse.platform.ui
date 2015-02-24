@@ -30,9 +30,9 @@ import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Default Handler for 'Build Project' command
- * 
+ *
  * @since 4.3
- * 
+ *
  */
 public class BuildProjectHandler extends AbstractHandler {
 
@@ -80,7 +80,7 @@ public class BuildProjectHandler extends AbstractHandler {
 		return new BuildAction(window,
 				IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}
-	
+
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		boolean enabled = false;
@@ -94,5 +94,5 @@ public class BuildProjectHandler extends AbstractHandler {
 		}
 		setBaseEnabled(enabled);
 	}
-	
+
 }

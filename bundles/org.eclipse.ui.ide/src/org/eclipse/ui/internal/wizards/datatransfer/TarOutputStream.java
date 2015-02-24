@@ -21,14 +21,14 @@ import java.io.OutputStream;
  * @since 3.1
  */
 public class TarOutputStream extends FilterOutputStream {
-	
+
 	private int byteswritten = 0;
 	private int datapos = 0;
 	private long cursize = 0;
 
 	/**
 	 * Creates a new tar output stream.
-	 * 
+	 *
 	 * @param out the stream to write to
 	 */
 	public TarOutputStream(OutputStream out) {
@@ -59,7 +59,7 @@ public class TarOutputStream extends FilterOutputStream {
 	/**
 	 * Close the current entry in the tar file.  Must be called
 	 * after each entry is completed.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void closeEntry() throws IOException {
@@ -74,7 +74,7 @@ public class TarOutputStream extends FilterOutputStream {
 	/**
 	 *  The checksum of a tar file header is simply the sum of the bytes in
 	 *  the header.
-	 * 
+	 *
 	 * @param header
 	 * @return checksum
 	 */
@@ -88,7 +88,7 @@ public class TarOutputStream extends FilterOutputStream {
 
 	/**
 	 * Adds an entry for a new file in the tar archive.
-	 * 
+	 *
 	 * @param e TarEntry describing the file
 	 * @throws IOException
 	 */
@@ -97,7 +97,7 @@ public class TarOutputStream extends FilterOutputStream {
 		String filename = e.getName();
 		String prefix = null;
 		int pos, i;
-		
+
 		/* Split filename into name and prefix if necessary. */
 		byte[] filenameBytes = filename.getBytes("UTF8"); //$NON-NLS-1$
 		if (filenameBytes.length > 99) {
@@ -112,12 +112,12 @@ public class TarOutputStream extends FilterOutputStream {
 				throw new IOException("filename too long"); //$NON-NLS-1$
 			}
 		}
-		
+
 		/* Filename. */
 		pos = 0;
 		System.arraycopy(filenameBytes, 0, header, 0, filenameBytes.length);
 		pos += 100;
-		
+
 		/* File mode. */
 		StringBuffer mode = new StringBuffer(Long.toOctalString(e.getMode()));
 		while(mode.length() < 7) {
@@ -127,35 +127,35 @@ public class TarOutputStream extends FilterOutputStream {
 			header[pos + i] = (byte) mode.charAt(i);
 		}
 		pos += 8;
-		
+
 		/* UID. */
 		header[pos] = '0';
 		pos += 8;
-		
+
 		/* GID. */
 		header[pos] = '0';
 		pos += 8;
-		
+
 		/* Length of the file. */
 		String length = Long.toOctalString(e.getSize());
 		for(i = 0; i < length.length(); i++) {
 			header[pos + i] = (byte) length.charAt(i);
 		}
 		pos += 12;
-		
+
 		/* mtime */
 		String mtime = Long.toOctalString(e.getTime());
 		for(i = 0; i < mtime.length(); i++) {
 			header[pos + i] = (byte) mtime.charAt(i);
 		}
 		pos += 12;
-		
+
 		/* "Blank" out the checksum. */
 		for(i = 0; i < 8; i++) {
 			header[pos + i] = ' ';
 		}
 		pos += 8;
-		
+
 		/* Link flag. */
 		header[pos] = (byte) e.getFileType();
 		pos += 1;
@@ -170,22 +170,22 @@ public class TarOutputStream extends FilterOutputStream {
 		}
 		header[pos + 5] = 0;
 		pos += 8;
-		
+
 		/* Username. */
 		String uname = "nobody"; //$NON-NLS-1$
 		for(i = 0; i < uname.length(); i++) {
 			header[pos + i] = (byte) uname.charAt(i);
 		}
 		pos += 32;
-		
-		
+
+
 		/* Group name. */
 		String gname = "nobody"; //$NON-NLS-1$
 		for(i = 0; i < gname.length(); i++) {
 			header[pos + i] = (byte) gname.charAt(i);
 		}
 		pos += 32;
-		
+
 		/* Device major. */
 		pos += 8;
 
@@ -210,7 +210,7 @@ public class TarOutputStream extends FilterOutputStream {
 
 		cursize = 512;
 		write(header, 0, 512);
-		
+
 		cursize = e.getSize();
 	}
 

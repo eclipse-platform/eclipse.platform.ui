@@ -24,7 +24,7 @@ import org.eclipse.ui.IEditorInput;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.8
  */
 public interface IEditorAssociationOverride {
@@ -32,7 +32,7 @@ public interface IEditorAssociationOverride {
 	/**
 	 * Allows to override the given editor descriptors for the given editor input with different
 	 * ones.
-	 * 
+	 *
 	 * @param editorInput the editor input for the editor
 	 * @param contentType the content type of the input or <code>null</code> if not available
 	 * @param editorDescriptors the current association for the given input
@@ -43,7 +43,7 @@ public interface IEditorAssociationOverride {
 
 	/**
 	 * Allows to override the given editor descriptors for the given file name with different ones.
-	 * 
+	 *
 	 * @param fileName the name of the file for which to choose the editor
 	 * @param contentType the content type of the input or <code>null</code> if not available
 	 * @param editorDescriptors the current association for the given input
@@ -60,7 +60,7 @@ public interface IEditorAssociationOverride {
 	 * the user for the given input. This is the case when
 	 * <code>IFile#getPersistentProperty(IDE.EDITOR_KEY) != null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param editorInput the editor input for the editor
 	 * @param contentType the content type of the input or <code>null</code> if not available
 	 * @param editorDescriptor the current association for the given input or <code>null</code> if
@@ -73,7 +73,7 @@ public interface IEditorAssociationOverride {
 	/**
 	 * Allows to override the given editor descriptor for the given input with a different one.
 	 * Normally, this is used to override the default editor for the given input.
-	 * 
+	 *
 	 * @param fileName the name of the file for which to choose the editor
 	 * @param contentType the content type of the input or <code>null</code> if not available
 	 * @param editorDescriptor the current association for the given input or <code>null</code> if

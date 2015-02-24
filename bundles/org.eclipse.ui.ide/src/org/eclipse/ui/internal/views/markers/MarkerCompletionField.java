@@ -27,9 +27,9 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * MarkerCompletionField is the class that specifies the completion entry.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerCompletionField extends MarkerField {
 
@@ -39,7 +39,7 @@ public class MarkerCompletionField extends MarkerField {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
+		 *
 		 * @param viewer
 		 */
 		public CompletionEditingSupport(ColumnViewer viewer) {
@@ -50,7 +50,7 @@ public class MarkerCompletionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
 		 */
 		@Override
@@ -63,7 +63,7 @@ public class MarkerCompletionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
 		 */
 		@Override
@@ -73,7 +73,7 @@ public class MarkerCompletionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
 		 */
 		@Override
@@ -84,7 +84,7 @@ public class MarkerCompletionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
 		 *      java.lang.Object)
 		 */
@@ -119,7 +119,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
 	 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 	 */
@@ -130,7 +130,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	@Override
@@ -140,7 +140,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/**
 	 * Return the image for task completion.
-	 * 
+	 *
 	 * @return Image
 	 */
 	private Image getCompleteImage() {
@@ -160,7 +160,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/**
 	 * Return the constant that indicates whether or not the receiver is done
-	 * 
+	 *
 	 * @param item
 	 * @return 1 if it is done, 0 if it not and -1 if it cannot be determined.
 	 */
@@ -190,7 +190,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getEditingSupport(org.eclipse.jface.viewers.ColumnViewer)
 	 */
 	@Override
@@ -201,7 +201,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/**
 	 * Get the image for item.
-	 * 
+	 *
 	 * @param element
 	 * @return Image
 	 */
@@ -220,7 +220,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override
@@ -230,7 +230,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	@Override

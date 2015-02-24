@@ -116,7 +116,7 @@ class MarkerType {
 
     /**
      * Returns whether this marker type is considered to be a subtype of
-     * the given marker type. 
+     * the given marker type.
      *
      * @return boolean <code>true</code>if this type is the same as (or a subtype of) the given type
      */

@@ -104,13 +104,13 @@ public class RenameResourceAction extends WorkspaceAction {
 	private static String RESOURCE_EXISTS_MESSAGE = IDEWorkbenchMessages.RenameResourceAction_overwriteQuestion;
 
 	private static String PROJECT_EXISTS_MESSAGE = IDEWorkbenchMessages.RenameResourceAction_overwriteProjectQuestion;
-	
+
 	private static String PROJECT_EXISTS_TITLE = IDEWorkbenchMessages.RenameResourceAction_projectExists;
 
 	/**
 	 * Creates a new action. Using this constructor directly will rename using a
 	 * dialog rather than the inline editor of a ResourceNavigator.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell for any dialogs
 	 * @deprecated see {@link #RenameResourceAction(IShellProvider)}
@@ -124,7 +124,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * Creates a new action. Using this constructor directly will rename using a
 	 * dialog rather than the inline editor of a ResourceNavigator.
-	 * 
+	 *
 	 * @param provider
 	 *            the IShellProvider for any dialogs
 	 * @since 3.4
@@ -133,7 +133,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		super(provider, IDEWorkbenchMessages.RenameResourceAction_text);
 		initAction();
 	}
-	
+
 	private void initAction(){
 		setToolTipText(IDEWorkbenchMessages.RenameResourceAction_toolTip);
 		setId(ID);
@@ -142,7 +142,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	}
 	/**
 	 * Creates a new action.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell for any dialogs
 	 * @param tree
@@ -155,10 +155,10 @@ public class RenameResourceAction extends WorkspaceAction {
 		this.navigatorTree = tree;
 		this.treeEditor = new TreeEditor(tree);
 	}
-	
+
 	/**
 	 * Creates a new action.
-	 * 
+	 *
 	 * @param provider
 	 *            the shell provider for any dialogs
 	 * @param tree
@@ -173,7 +173,7 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/**
 	 * Check if the user wishes to overwrite the supplied resource
-	 * 
+	 *
 	 * @returns true if there is no collision or delete was successful
 	 * @param shell
 	 *            the shell to create the dialog in
@@ -214,7 +214,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * Check if the supplied resource is read only or null. If it is then ask
 	 * the user if they want to continue. Return true if the resource is not
 	 * read only or if the user has given permission.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	private boolean checkReadOnlyAndNull(IResource currentResource) {
@@ -256,7 +256,7 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/**
 	 * Create the text editor widget.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to rename
 	 */
@@ -346,7 +346,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * Returns the elements that the action is to be performed on. Return the
 	 * resource cached by the action as we cannot rely on the selection being
 	 * correct for inlined text.
-	 * 
+	 *
 	 * @return list of resource elements (element type: <code>IResource</code>)
 	 */
 	@Override
@@ -386,7 +386,7 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/**
 	 * Get the Tree being edited.
-	 * 
+	 *
 	 * @returnTree
 	 */
 	private Tree getTree() {
@@ -395,7 +395,7 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/**
 	 * Return the new name to be given to the target resource.
-	 * 
+	 *
 	 * @return java.lang.String
 	 * @param resource
 	 *            the resource to query status on
@@ -435,7 +435,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * Return the new name to be given to the target resource or
 	 * <code>null<code>
-	 * if the query was canceled. Rename the currently selected resource using the table editor. 
+	 * if the query was canceled. Rename the currently selected resource using the table editor.
 	 * Continue the action when the user is done.
 	 *
 	 * @param resource the resource to rename
@@ -506,7 +506,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * Return the currently selected resource. Only return an IResouce if there
 	 * is one and only one resource selected.
-	 * 
+	 *
 	 * @return IResource or <code>null</code> if there is zero or more than
 	 *         one resources selected.
 	 */
@@ -532,7 +532,7 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/**
 	 * Save the changes and dispose of the text widget.
-	 * 
+	 *
 	 * @param resource -
 	 *            the resource to move.
 	 */
@@ -612,7 +612,7 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/**
 	 * Set the text action handler.
-	 * 
+	 *
 	 * @param actionHandler
 	 *            the action handler
 	 */
@@ -623,7 +623,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * Returns the model provider ids that are known to the client that
 	 * instantiated this operation.
-	 * 
+	 *
 	 * @return the model provider ids that are known to the client that
 	 *         instantiated this operation.
 	 * @since 3.2
@@ -636,7 +636,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * Sets the model provider ids that are known to the client that
 	 * instantiated this operation. Any potential side effects reported by these
 	 * models during validation will be ignored.
-	 * 
+	 *
 	 * @param modelProviderIds
 	 *            the model providers known to the client who is using this
 	 *            operation.
@@ -648,9 +648,9 @@ public class RenameResourceAction extends WorkspaceAction {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.WorkspaceAction#createOperation(org.eclipse.core.runtime.IStatus[])
-	 * 
+	 *
 	 * Overridden to create and execute an undoable operation that performs the
 	 * rename.
 	 * @since 3.3

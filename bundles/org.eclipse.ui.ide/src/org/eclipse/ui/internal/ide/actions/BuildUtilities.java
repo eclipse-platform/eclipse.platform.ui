@@ -37,13 +37,13 @@ import org.eclipse.ui.ide.ResourceUtil;
  * This class contains convenience methods used by the various build commands
  * to determine enablement.  These utilities cannot be factored into a common
  * class because some build actions are API and some are not.
- * 
+ *
  * @since 3.1
  */
 public class BuildUtilities {
 	/**
 	 * Extracts the selected projects from a selection.
-	 * 
+	 *
 	 * @param selection The selection to analyze
 	 * @return The selected projects
 	 */
@@ -77,7 +77,7 @@ public class BuildUtilities {
 
 	/**
 	 * Finds and returns the selected projects in the given window
-	 * 
+	 *
 	 * @param window The window to find the selection in
 	 * @return The selected projects, or an empty array if no selection could be found.
 	 */
@@ -138,7 +138,7 @@ public class BuildUtilities {
 	/**
 	 * Returns whether one of the projects has a builder whose trigger setting
 	 * for the given trigger matches the given value.
-	 * 
+	 *
 	 * @param projects The projects to check
 	 * @param trigger The trigger to look for
 	 * @param value The trigger value to look for

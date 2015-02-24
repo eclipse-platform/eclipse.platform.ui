@@ -22,9 +22,9 @@ import org.eclipse.ui.part.ShowInContext;
 /**
  * MarkerShowInAdapter is the adapter for ExtendedMarkersViews to get an
  * IShowInSource.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerShowInAdapter implements IAdapterFactory {
 
@@ -32,7 +32,7 @@ public class MarkerShowInAdapter implements IAdapterFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 	 *      java.lang.Class)
 	 */
@@ -61,7 +61,7 @@ public class MarkerShowInAdapter implements IAdapterFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	@Override

@@ -26,7 +26,7 @@ public class WorkbenchStatus extends WorkbenchAdapter implements IAdaptable {
 
     /**
      * Creates a workbench status for the given status.
-     * 
+     *
      * @param status the status
      */
     public WorkbenchStatus(IStatus status) {
@@ -71,7 +71,7 @@ public class WorkbenchStatus extends WorkbenchAdapter implements IAdaptable {
 
     /**
      * Returns the wrapped status object.
-     * 
+     *
      * @return the wrapped status object
      */
     public IStatus getStatus() {

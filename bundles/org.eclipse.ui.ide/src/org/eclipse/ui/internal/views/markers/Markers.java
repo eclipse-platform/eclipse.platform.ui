@@ -31,9 +31,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 /**
  * The Markers object contains the MarkerEntry(s) collected and updated by the
  * system, also maintains the categories that markers are grouped into.
- * 
+ *
  * @since 3.6
- * 
+ *
  */
 class Markers {
 
@@ -61,7 +61,7 @@ class Markers {
 
 	/**
 	 * Update with newly collected markers
-	 * 
+	 *
 	 * @param markerEntries
 	 *            the new marker entries
 	 * @param sortAndGroup
@@ -108,7 +108,7 @@ class Markers {
 
 	/**
 	 * Sort the contained marker entries and build categories if required.
-	 * 
+	 *
 	 * @param monitor
 	 */
 	synchronized boolean sortAndMakeCategories(IProgressMonitor monitor) {
@@ -182,15 +182,15 @@ class Markers {
 
 	/**
 	 * get marker limit to show, if any.
-	 * 
+	 *
 	 * @param available
 	 */
 	private int getShowingLimit(int available) {
-		
+
 		boolean limitsEnabled = builder.getGenerator().isMarkerLimitsEnabled();
 		if(!limitsEnabled)
 			return available;
-		
+
 		int limit = builder.getGenerator().getMarkerLimits();
 		int effLimit = limit;
 		if (available < effLimit || limit <= 0) {
@@ -201,7 +201,7 @@ class Markers {
 
 	/**
 	 * Sort Markers according to groups, and Group them into categories
-	 * 
+	 *
 	 * @param monitor
 	 * @param newMarkers
 	 * @return MarkerCategory
@@ -232,12 +232,12 @@ class Markers {
 	 * indices in the map. The O(N) complexity requires the use of a few data
 	 * structures. But the speed benefit is tremendous at a very small price of
 	 * few extra references.
-	 * 
+	 *
 	 * @param entries
 	 * @param group
 	 * @param k
 	 * @return {@link Map}
-	 * 
+	 *
 	 */
 	private Map groupMarkerEntries(MarkerEntry[] entries, MarkerGroup group,
 			int k, IProgressMonitor monitor) {
@@ -286,7 +286,7 @@ class Markers {
 	/**
 	 * Returns an array of marker counts where getMarkerCounts()[severity] is
 	 * the number of markers in the list with the given severity.
-	 * 
+	 *
 	 * @return an array of {@link Integer} where index indicates
 	 *         [errors,warnings,infos,others]
 	 */
@@ -302,7 +302,7 @@ class Markers {
 	 * Returns an array of marker counts for the given MarkerEntry array , where
 	 * getMarkerCounts()[severity] is the number of markers in the list with the
 	 * given severity.
-	 * 
+	 *
 	 * @return an array of {@link Integer} where index indicates
 	 *         [errors,warnings,infos,others]
 	 */
@@ -333,7 +333,7 @@ class Markers {
 
 	/**
 	 * Return the {@link MarkerItem} that maps to marker.
-	 * 
+	 *
 	 * @param marker
 	 * @return {@link MarkerItem}
 	 */
@@ -405,7 +405,7 @@ class Markers {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -418,7 +418,7 @@ class Markers {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

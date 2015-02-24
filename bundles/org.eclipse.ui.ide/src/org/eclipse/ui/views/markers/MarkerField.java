@@ -37,20 +37,20 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 /**
  * MarkerField is the abstract superclass of the definition of the content
  * providers for columns in a Markers View.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public abstract class MarkerField {
 
 	private IConfigurationElement configurationElement;
 	private ResourceManager imageManager;
 	private ImageRegistry imageRegistry;
-	
+
 	/**
 	 * Annotate the image with indicators for whether or not help or quick fix
 	 * are available.
-	 * 
+	 *
 	 * @param item
 	 *            the item being decorated
 	 * @param image
@@ -115,7 +115,7 @@ public abstract class MarkerField {
 	}
 	/**
 	 * Compare item1 and item2 for sorting purposes.
-	 * 
+	 *
 	 * @param item1
 	 * @param item2
 	 * @return Either:
@@ -149,17 +149,17 @@ public abstract class MarkerField {
 
 	/**
 	 * Return the text to be displayed in the column header for this field.
-	 * 
+	 *
 	 * @return String
 	 * @see #getColumnTooltipText() this is the default column tooltip text
 	 */
 	public String getColumnHeaderText() {
 		return getName();
 	}
-	
+
 	/**
 	 * Return the name of this field.
-	 * 
+	 *
 	 * @return String
 	 * @since 3.6
 	 */
@@ -170,7 +170,7 @@ public abstract class MarkerField {
 
 	/**
 	 * Return the text for the column tooltip.
-	 * 
+	 *
 	 * @return String
 	 * @see #getColumnHeaderText()
 	 */
@@ -181,7 +181,7 @@ public abstract class MarkerField {
 	/**
 	 * Get the configuration element for the receiver. This is used by the
 	 * markerSupport internals to retreive the values defined in the extenstion.
-	 * 
+	 *
 	 * @return IConfigurationElement
 	 */
 	public final IConfigurationElement getConfigurationElement() {
@@ -190,7 +190,7 @@ public abstract class MarkerField {
 
 	/**
 	 * Get the number of characters that should be reserved for the receiver.
-	 * 
+	 *
 	 * @param control
 	 *            the control to scale from
 	 * @return int
@@ -202,7 +202,7 @@ public abstract class MarkerField {
 	/**
 	 * Return the editing support for entries for this field. Return null if it
 	 * cannot be in-line edited.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer this will be applied to
 	 * @return {@link EditingSupport} or <code>null</code>.
@@ -213,7 +213,7 @@ public abstract class MarkerField {
 
 	/**
 	 * Return the image manager used by the receiver.
-	 * 
+	 *
 	 * @return ResourceManager
 	 */
 	protected ResourceManager getImageManager() {
@@ -231,7 +231,7 @@ public abstract class MarkerField {
 
 	/**
 	 * Set the configuration element used by the receiver.
-	 * 
+	 *
 	 * @param element
 	 */
 	public final void setConfigurationElement(IConfigurationElement element) {
@@ -241,7 +241,7 @@ public abstract class MarkerField {
 	/**
 	 * Set the imageManager. This is not normally required to be send if using a
 	 * {@link MarkerSupportView} as this is done for you.
-	 * 
+	 *
 	 * @param manager
 	 */
 	public final void setImageManager(ResourceManager manager) {
@@ -250,7 +250,7 @@ public abstract class MarkerField {
 
 	/**
 	 * Update the contents of the cell.
-	 * 
+	 *
 	 * @param cell
 	 */
 	public void update(ViewerCell cell) {

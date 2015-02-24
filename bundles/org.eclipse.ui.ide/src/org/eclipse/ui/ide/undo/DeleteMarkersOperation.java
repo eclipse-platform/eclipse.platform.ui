@@ -23,18 +23,18 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * A DeleteMarkersOperation represents an undoable operation for deleting one or
  * more markers in the workspace. Clients may call the public API from a
  * background thread.
- * 
+ *
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class DeleteMarkersOperation extends AbstractMarkersOperation {
 
 	/**
 	 * Create an undoable operation that can delete the specified markers.
-	 * 
+	 *
 	 * @param markers
 	 *            the markers to be deleted
 	 * @param name

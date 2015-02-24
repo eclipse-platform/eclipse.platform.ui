@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
+ *   IBM Corporation - initial API and implementation
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be activated and used by other components.
  *   Simon Scholz <simon.scholz@vogella.com> - Bug 448060
  *******************************************************************************/
@@ -36,10 +36,10 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * Dialog to allow the user to select from a list of marker
  * resolutions.
  * <p>
- * This dialog may be instantiated, it is not intented to 
+ * This dialog may be instantiated, it is not intented to
  * be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -70,7 +70,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
      * <p>
      * There must be at least one resolution.
      * </p>
-     * 
+     *
      * @param shell the parent shell
      * @param markerResolutions the resolutions to display
      */
@@ -99,7 +99,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 
         // Create label
         createMessageArea(composite);
-        // Create list viewer	
+        // Create list viewer
         listViewer = new ListViewer(composite, SWT.SINGLE | SWT.H_SCROLL
                 | SWT.V_SCROLL | SWT.BORDER);
         GridData data = new GridData(GridData.FILL_BOTH);
@@ -107,7 +107,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
         data.widthHint = convertWidthInCharsToPixels(LIST_WIDTH);
         listViewer.getList().setLayoutData(data);
         listViewer.getList().setFont(parent.getFont());
-        // Set the label provider		
+        // Set the label provider
         listViewer.setLabelProvider(new LabelProvider() {
             @Override
 			public String getText(Object element) {

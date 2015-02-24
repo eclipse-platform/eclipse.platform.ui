@@ -212,7 +212,7 @@ class FiltersDialog extends TrayDialog {
 
         /**
          * Creates the working set filter selection widgets.
-         * 
+         *
          * @param parent the parent composite of the working set widgets
          */
         WorkingSetGroup(Composite parent) {
@@ -234,7 +234,7 @@ class FiltersDialog extends TrayDialog {
 
 		/**
 		 * Returns whether or not a working set filter should be used
-		 * 
+		 *
 		 * @return true=a working set filter should be used false=a working set filter should not be
 		 *         used
 		 */
@@ -245,7 +245,7 @@ class FiltersDialog extends TrayDialog {
         /**
          * Returns the selected working set filter or null if none
          * is selected.
-         * 
+         *
          * @return the selected working set filter or null if none
          * 	is selected.
          */
@@ -255,7 +255,7 @@ class FiltersDialog extends TrayDialog {
 
         /**
          * Sets the working set filter selection.
-         * 
+         *
          * @param selected true=a working set filter should be used
          * 	false=no working set filter should be used
          */
@@ -296,7 +296,7 @@ class FiltersDialog extends TrayDialog {
 
         /**
          * Sets the specified working set.
-         * 
+         *
          * @param workingSet the working set
          */
         void setWorkingSet(IWorkingSet workingSet) {
@@ -355,7 +355,7 @@ class FiltersDialog extends TrayDialog {
 
     /**
      * Creates a new filters dialog.
-     * 
+     *
      * @param parentShell the parent shell
      */
     public FiltersDialog(Shell parentShell) {
@@ -379,7 +379,7 @@ class FiltersDialog extends TrayDialog {
 
     /**
      * Check state change.
-     * 
+     *
      * @param event the event
      */
     public void checkStateChanged(CheckStateChangedEvent event) {
@@ -502,7 +502,7 @@ class FiltersDialog extends TrayDialog {
 
     /**
      * Creates a separator line above the OK/Cancel buttons bar
-     * 
+     *
      * @param parent the parent composite
      */
     void createSeparatorLine(Composite parent) {
@@ -964,7 +964,7 @@ class FiltersDialog extends TrayDialog {
 
 	/**
 	 * Handles selection on a check box or combo box.
-	 * 
+	 *
 	 * @param e the selection event
 	 */
     void widgetSelected(SelectionEvent e) {

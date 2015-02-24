@@ -23,9 +23,9 @@ import org.eclipse.ui.internal.ConfigurationInfo;
 /**
  * Copies the build ID to the clipboard. Useful for debugging and bug
  * reporting/verification.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 

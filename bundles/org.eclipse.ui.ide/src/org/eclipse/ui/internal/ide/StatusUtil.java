@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Utility class to create status objects.
- * 
+ *
  * PRIVATE This class is an internal implementation class and should not be
  * referenced or sub-classed outside of the workbench
- * 
+ *
  * @since 3.0
  */
 public class StatusUtil {
@@ -56,7 +56,7 @@ public class StatusUtil {
 
 	/**
 	 * This method must not be called outside the workbench.
-	 * 
+	 *
 	 * Utility method for creating status.
 	 */
 	protected static IStatus newStatus(IStatus[] stati, String message,
@@ -69,10 +69,10 @@ public class StatusUtil {
 				stati, message, exception);
 	}
 
-	
+
 	/**
 	 * This method must not be called outside the workbench.
-	 * 
+	 *
 	 * Utility method for creating status.
 	 * @param severity
 	 * @param message
@@ -97,10 +97,10 @@ public class StatusUtil {
 				statusMessage, exception);
 	}
 
-	
+
 	/**
 	 * This method must not be called outside the workbench.
-	 * 
+	 *
 	 * Utility method for creating status.
 	 * @param children
 	 * @param message
@@ -125,5 +125,5 @@ public class StatusUtil {
 		return newStatus(stati, message, exception);
 	}
 
-	
+
 }

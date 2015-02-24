@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *      IBM Corporation - initial API and implementation 
+ *      IBM Corporation - initial API and implementation
  * 		Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
  *******************************************************************************/
 
@@ -89,7 +89,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 
     private static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
 
-    private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$	
+    private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
 
     private static final String TAG_FILTER_ON_DESCRIPTION = "filterOnDescription"; //$NON-NLS-1$
 
@@ -109,7 +109,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 
     private static final String TAG_COMPLETION_FILTER = "completionFilter"; //$NON-NLS-1$
 
-    private static final String TAG_FILTER_ON_MARKER_LIMIT = "filterOnMarkerLimit"; //$NON-NLS-1$ 
+    private static final String TAG_FILTER_ON_MARKER_LIMIT = "filterOnMarkerLimit"; //$NON-NLS-1$
 
     private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 
@@ -138,7 +138,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         //	markerLimit = TasksFilter.MINIMUM_MARKER_LIMIT;
         //} else if (markerLimit > TasksFilter.MAXIMUM_MARKER_LIMIT) {
         //	markerLimit = TasksFilter.MAXIMUM_MARKER_LIMIT;
-        //} 
+        //}
 
         this.markerLimit = markerLimit;
     }
@@ -175,13 +175,13 @@ class TasksFilter extends ViewerFilter implements Cloneable {
     /**
      * Returns if the given resource is enclosed by a working set element.
      * The IContainmentAdapter of each working set element is used for the
-     * containment test. If there is no IContainmentAdapter for a working 
-     * set element, a simple resource based test is used. 
-     * 
+     * containment test. If there is no IContainmentAdapter for a working
+     * set element, a simple resource based test is used.
+     *
      * @param element resource to test for enclosure by a working set
-     * 	element 
-     * @return true if element is enclosed by a working set element and 
-     * 	false otherwise. 
+     * 	element
+     * @return true if element is enclosed by a working set element and
+     * 	false otherwise.
      */
     private boolean isEnclosed(IResource element) {
         IPath elementPath = element.getFullPath();
@@ -195,9 +195,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
             IContainmentAdapter containmentAdapter = (IContainmentAdapter) workingSetElement
                     .getAdapter(IContainmentAdapter.class);
 
-            // if there is no IContainmentAdapter defined for the working  
-            // set element type fall back to using resource based  
-            // containment check 
+            // if there is no IContainmentAdapter defined for the working
+            // set element type fall back to using resource based
+            // containment check
             if (containmentAdapter != null) {
                 if (containmentAdapter.contains(workingSetElement, element,
                         IContainmentAdapter.CHECK_CONTEXT
@@ -215,17 +215,17 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 
     /**
      * Returns if the given resource is enclosed by a working set element.
-     * A resource is enclosed if it is either a parent of a working set 
+     * A resource is enclosed if it is either a parent of a working set
      * element, a child of a working set element or a working set element
      * itself.
      * Simple path comparison is used. This is only guaranteed to return
-     * correct results for resource working set elements. 
-     * 
+     * correct results for resource working set elements.
+     *
      * @param element resource to test for enclosure by a working set
      * 	element
-     * @param elementPath full, absolute path of the element to test 
-     * @return true if element is enclosed by a working set element and 
-     * 	false otherwise. 
+     * @param elementPath full, absolute path of the element to test
+     * @return true if element is enclosed by a working set element and
+     * 	false otherwise.
      */
     private boolean isEnclosedResource(IResource element, IPath elementPath,
             IAdaptable workingSetElement) {
@@ -305,7 +305,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 
     /**
      * Restores the saved working set, if any.
-     * 
+     *
      * @param the saved working set name or null
      */
     private void restoreWorkingSet(String workingSetName) {
@@ -388,9 +388,9 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 
     /**
      * Returns whether the specified marker should be filter out or not.
-     * 
+     *
      * @param marker the marker to test
-     * @return 
+     * @return
      * 	true=the marker should not be filtered out
      * 	false=the marker should be filtered out
      */
@@ -406,11 +406,11 @@ class TasksFilter extends ViewerFilter implements Cloneable {
     }
 
     /**
-     * Returns whether the specified marker delta should be filter out 
+     * Returns whether the specified marker delta should be filter out
      * or not.
-     * 
+     *
      * @param markerDelta the marker delta to test
-     * @return 
+     * @return
      * 	true=the marker delta should not be filtered out
      * 	false=the marker delta should be filtered out
      */
@@ -425,7 +425,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         return false;
     }
 
-    /* 
+    /*
      * WARNING: selectByAttributes(IMarker) and selectByAttributes(IMarkerDelta) must correspond.
      */
 

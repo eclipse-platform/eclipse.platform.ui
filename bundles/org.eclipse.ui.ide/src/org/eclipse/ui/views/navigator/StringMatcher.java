@@ -14,7 +14,7 @@ import java.util.Vector;
 
 /**
  * A string pattern matcher, supporting ?*? and ??? wildcards.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -58,14 +58,14 @@ import java.util.Vector;
     }
 
     /**
-     * StringMatcher constructor takes in a String object that is a simple 
+     * StringMatcher constructor takes in a String object that is a simple
      * pattern which may contain '*' for 0 and many characters and
-     * '?' for exactly one character.  
+     * '?' for exactly one character.
      *
-     * Literal '*' and '?' characters must be escaped in the pattern 
+     * Literal '*' and '?' characters must be escaped in the pattern
      * e.g., "\*" means literal "*", etc.
      *
-     * Escaping any other character (including the escape character itself), 
+     * Escaping any other character (including the escape character itself),
      * just results in that character in the pattern.
      * e.g., "\a" means "a" and "\\" means "\"
      *
@@ -95,13 +95,13 @@ import java.util.Vector;
     }
 
     /**
-     * Find the first occurrence of the pattern between <code>start</code)(inclusive) 
-     * and <code>end</code>(exclusive).  
-     * @param <code>text</code>, the String object to search in 
+     * Find the first occurrence of the pattern between <code>start</code)(inclusive)
+     * and <code>end</code>(exclusive).
+     * @param <code>text</code>, the String object to search in
      * @param <code>start</code>, the starting index of the search range, inclusive
      * @param <code>end</code>, the ending index of the search range, exclusive
-     * @return an <code>StringMatcher.Position</code> object that keeps the starting 
-     * (inclusive) and ending positions (exclusive) of the first occurrence of the 
+     * @return an <code>StringMatcher.Position</code> object that keeps the starting
+     * (inclusive) and ending positions (exclusive) of the first occurrence of the
      * pattern in the specified range of the text; return null if not found or subtext
      * is empty (start==end). A pair of zeros is returned if pattern is empty string
      * Note that for pattern like "*abc*" with leading and trailing stars, position of "abc"
@@ -159,21 +159,21 @@ import java.util.Vector;
     }
 
     /**
-     * match the given <code>text</code> with the pattern 
+     * match the given <code>text</code> with the pattern
      * @return true if matched eitherwise false
-     * @param <code>text</code>, a String object 
+     * @param <code>text</code>, a String object
      */
     public boolean match(String text) {
         return match(text, 0, text.length());
     }
 
     /**
-     * Given the starting (inclusive) and the ending (exclusive) poisitions in the   
-     * <code>text</code>, determine if the given substring matches with aPattern  
+     * Given the starting (inclusive) and the ending (exclusive) poisitions in the
+     * <code>text</code>, determine if the given substring matches with aPattern
      * @return true if the specified portion of the text matches the pattern
-     * @param String <code>text</code>, a String object that contains the substring to match 
+     * @param String <code>text</code>, a String object that contains the substring to match
      * @param int <code>start<code> marks the starting position (inclusive) of the substring
-     * @param int <code>end<code> marks the ending index (exclusive) of the substring 
+     * @param int <code>end<code> marks the ending index (exclusive) of the substring
      */
     public boolean match(String text, int start, int end) {
         if (null == text) {
@@ -332,11 +332,11 @@ import java.util.Vector;
         temp.copyInto(fSegments);
     }
 
-    /** 
+    /**
      * @param <code>text</code>, a string which contains no wildcard
      * @param <code>start</code>, the starting index in the text for search, inclusive
      * @param <code>end</code>, the stopping point of search, exclusive
-     * @return the starting index in the text of the pattern , or -1 if not found 
+     * @return the starting index in the text of the pattern , or -1 if not found
      */
     protected int posIn(String text, int start, int end) {//no wild card in pattern
         int max = end - fLength;
@@ -358,13 +358,13 @@ import java.util.Vector;
         return -1;
     }
 
-    /** 
+    /**
      * @param <code>text</code>, a simple regular expression that may only contain '?'(s)
      * @param <code>start</code>, the starting index in the text for search, inclusive
      * @param <code>end</code>, the stopping point of search, exclusive
      * @param <code>p</code>, a simple regular expression that may contains '?'
      * @param <code>caseIgnored</code>, wether the pattern is not casesensitive
-     * @return the starting index in the text of the pattern , or -1 if not found 
+     * @return the starting index in the text of the pattern , or -1 if not found
      */
     protected int regExpPosIn(String text, int start, int end, String p) {
         int plen = p.length();
@@ -379,7 +379,7 @@ import java.util.Vector;
     }
 
     /**
-     * 
+     *
      * @return boolean
      * @param <code>text</code>, a String to match
      * @param <code>start</code>, int that indicates the starting index of match, inclusive
@@ -420,13 +420,13 @@ import java.util.Vector;
         return true;
     }
 
-    /** 
+    /**
      * @param <code>text</code>, the string to match
      * @param <code>start</code>, the starting index in the text for search, inclusive
      * @param <code>end</code>, the stopping point of search, exclusive
      * @param code>p</code>, a string that has no wildcard
      * @param <code>ignoreCase</code>, boolean indicating wether code>p</code> is case sensitive
-     * @return the starting index in the text of the pattern , or -1 if not found 
+     * @return the starting index in the text of the pattern , or -1 if not found
      */
     protected int textPosIn(String text, int start, int end, String p) {
 

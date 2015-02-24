@@ -71,7 +71,7 @@ public class FileEditorInputFactory implements IElementFactory {
 
     /**
      * Returns the element factory id for this class.
-     * 
+     *
      * @return the element factory id
      */
     public static String getFactoryId() {

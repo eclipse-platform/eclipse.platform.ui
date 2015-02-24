@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.ide.dialogs.RelativePathVariableGroup;
 /**
  * Dialog to let the user customise how files and resources are created in a project
  * hierarchy after the user drag and drop items on a workspace container.
- * 
+ *
  * Files and folders can be created either by copying the source objects, creating
  * linked resources, and/or creating virtual folders.
  * @noextend This class is not intended to be subclassed by clients.
@@ -76,7 +76,7 @@ public class ImportTypeDialog extends TrayDialog {
 	 * Recreate the file and folder hierarchy using groups and links
 	 */
 	public final static int IMPORT_VIRTUAL_FOLDERS_AND_LINKS = 2;
-	
+
 	private Button copyButton = null;
 
 	private int currentSelection;
@@ -90,13 +90,13 @@ public class ImportTypeDialog extends TrayDialog {
 	private IResource receivingResource = null;
 	private Button shadowCopyButton = null;
 	private String variable = null;
-	
+
 	private RelativePathVariableGroup relativePathVariableGroup;
-	
+
 	/**
 	 * Creates the Import Type Dialog when resources are dragged and dropped from an Eclipse
 	 * view.
-	 * 
+	 *
 	 * @param shell
 	 * 			the parent Shell
 	 * @param dropOperation
@@ -110,11 +110,11 @@ public class ImportTypeDialog extends TrayDialog {
 			IResource[] sources, IContainer target) {
 		this(shell, selectAppropriateMask(dropOperation, sources, target), RelativePathVariableGroup.getPreferredVariable(sources, target));
 	}
-	
+
 	/**
 	 * Creates the Import Type Dialog when files are dragged and dropped from the
 	 * operating system's shell (Windows Explorer on Windows Platform, for example).
-	 * 
+	 *
 	 * @param shell
 	 * 			the parent Shell
 	 * @param dropOperation
@@ -127,14 +127,14 @@ public class ImportTypeDialog extends TrayDialog {
 	public ImportTypeDialog(Shell shell, int dropOperation, String[] names, IContainer target) {
 		this(shell, selectAppropriateMask(dropOperation, names, target), RelativePathVariableGroup.getPreferredVariable(names, target));
 	}
-	
+
 	/**
 	 * @param parentShell
 	 * @param operationMask
 	 */
 	private ImportTypeDialog(Shell parentShell, int operationMask, String preferredVariable) {
 		super(parentShell);
-		
+
 		this.preferredVariable = preferredVariable;
 		this.operationMask = operationMask;
 		currentSelection = 0;
@@ -158,7 +158,7 @@ public class ImportTypeDialog extends TrayDialog {
 	public boolean close() {
 		return super.close();
 	}
-	
+
 	/**
 	 * Get the user selection from the dialog.
 	 * @return The current selection (one of IMPORT_COPY, IMPORT_VIRTUAL_FOLDERS_AND_LINKS, IMPORT_LINK and IMPORT_MOVE)
@@ -166,7 +166,7 @@ public class ImportTypeDialog extends TrayDialog {
 	public int getSelection() {
 		return currentSelection;
 	}
-	
+
 	/**
 	 * Get the selected variable if the selection is either IMPORT_VIRTUAL_FOLDERS_AND_LINKS or IMPORT_LINK
 	 * @return The currently selected variable, or AUTOMATIC or ABSOLUTE_PATH
@@ -174,14 +174,14 @@ public class ImportTypeDialog extends TrayDialog {
 	public String getVariable() {
 		return variable;
 	}
-	
+
 	/** Set the project that is the destination of the import operation
 	 * @param resource
 	 */
 	public void setResource(IResource resource) {
 		receivingResource = resource;
 	}
-	
+
 	private boolean hasFlag(int flag) {
 		return (operationMask & flag) != 0;
 	}
@@ -199,7 +199,7 @@ public class ImportTypeDialog extends TrayDialog {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	private void refreshSelection() {
 		if (copyButton != null)
 			copyButton.setSelection(currentSelection == IMPORT_COPY);
@@ -273,7 +273,7 @@ public class ImportTypeDialog extends TrayDialog {
  		composite.setLayoutData(gridData);
  		composite.setFont(parent.getFont());
 
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
@@ -297,7 +297,7 @@ public class ImportTypeDialog extends TrayDialog {
 				refreshSelection();
 			}
 		};
-		
+
 		if (hasFlag(IMPORT_COPY)) {
 			copyButton = new Button(composite, SWT.RADIO);
 			copyButton.setText(hasFlag(IMPORT_FILES_ONLY) ? IDEWorkbenchMessages.ImportTypeDialog_copyFiles: IDEWorkbenchMessages.ImportTypeDialog_copyFilesAndDirectories);
@@ -307,7 +307,7 @@ public class ImportTypeDialog extends TrayDialog {
 			copyButton.addSelectionListener(listener);
 			copyButton.setFont(parent.getFont());
 		}
-		
+
 		if (hasFlag(IMPORT_MOVE)) {
 			moveButton = new Button(composite, SWT.RADIO);
 			moveButton.setText(hasFlag(IMPORT_FILES_ONLY) ? IDEWorkbenchMessages.ImportTypeDialog_moveFiles:IDEWorkbenchMessages.ImportTypeDialog_moveFilesAndDirectories);
@@ -353,21 +353,21 @@ public class ImportTypeDialog extends TrayDialog {
 					return variable;
 				}
 			});
-			
+
 			int groupIndent = 0;
-			
+
 			if (!linkIsOnlyChoice) {
 				Button tmp = new Button(composite, SWT.CHECK);
 				tmp.setText("."); //$NON-NLS-1$
 				groupIndent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 				tmp.dispose();
-				
+
 				Label tmpLabel = new Label(composite, SWT.NONE);
 				tmpLabel.setText("."); //$NON-NLS-1$
 				groupIndent -= tmpLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 				tmpLabel.dispose();
 			}
-			
+
 			Composite variableGroup = new Composite(composite, 0);
 			gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gridData.horizontalIndent = groupIndent;
@@ -386,7 +386,7 @@ public class ImportTypeDialog extends TrayDialog {
 			else
 				relativePathVariableGroup.selectVariable(preferredVariable);
 		}
-		
+
 		if (linkIsOnlyChoice) {
 			currentSelection = IMPORT_LINK;
 			parent.getShell().setText(IDEWorkbenchMessages.ImportTypeDialog_titleFilesLinking);
@@ -424,7 +424,7 @@ public class ImportTypeDialog extends TrayDialog {
  		composite.setLayoutData(gridData);
 		composite.setFont(parent.getFont());
 
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.marginTop= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -444,7 +444,7 @@ public class ImportTypeDialog extends TrayDialog {
 		}
 		return composite;
 	}
-	
+
 	/**
 	 * @param resources
 	 * 		The list of items that were dragged
@@ -491,11 +491,11 @@ public class ImportTypeDialog extends TrayDialog {
 			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
 		return mask;
 	}
-	
+
 	/**
 	 * Select the most appropriate mode that should be used for the dialog given
 	 * the items dropped on the container, the container type, and the drop operation.
-	 * 
+	 *
 	 * @param dropOperation
 	 * @param names
 	 * 		The list of items that were dragged

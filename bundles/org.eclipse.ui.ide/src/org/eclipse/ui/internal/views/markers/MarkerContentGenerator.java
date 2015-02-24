@@ -53,9 +53,9 @@ import org.eclipse.ui.views.markers.internal.Util;
 /**
  * MarkerContentGenerator is the representation of the markerContentGenerator
  * extension point.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerContentGenerator {
 
@@ -69,7 +69,7 @@ public class MarkerContentGenerator {
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT_ENABLED = "markerLimitEnabled"; //$NON-NLS-1$
-	
+
 	/*Use this to indicate filter change rather than a null*/
 	private final Collection FILTERS_CHANGED = Collections.EMPTY_SET;
 
@@ -88,20 +88,20 @@ public class MarkerContentGenerator {
 
 	/**
 	 * focusResources
-	 * 
+	 *
 	 */
 	private IResource[] selectedResources = MarkerSupportInternalUtilities.EMPTY_RESOURCE_ARRAY;
-	
+
 	private Collection currentResources = Collections.EMPTY_SET;
 
 	private CachedMarkerBuilder builder;
 	private String viewId;
 
 	private IPropertyChangeListener filterPreferenceListener;
-	
+
 	/**
 	 * Create a new MarkerContentGenerator
-	 * 
+	 *
 	 * @param generatorDescriptor
 	 * @param builder
 	 * @param viewId
@@ -117,7 +117,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Attach the generator to a builder
-	 * 
+	 *
 	 * @param builder
 	 */
 	void setBuilder(CachedMarkerBuilder builder) {
@@ -145,7 +145,7 @@ public class MarkerContentGenerator {
 	/**
 	 * Return whether or not all of {@link MarkerTypesModel} arein the
 	 * selectedTypes.
-	 * 
+	 *
 	 * @param selectedTypes
 	 * @return boolean
 	 */
@@ -155,7 +155,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Get the all of the fields that this content generator is using.
-	 * 
+	 *
 	 * @return {@link MarkerField}[]
 	 */
 	MarkerField[] getAllFields() {
@@ -164,7 +164,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Get the fields that this content generator is displaying.
-	 * 
+	 *
 	 * @return {@link MarkerField}[]
 	 */
 	MarkerField[] getVisibleFields() {
@@ -173,7 +173,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Set the visible fields.
-	 * 
+	 *
 	 * @param visible
 	 */
 	void setVisibleFields(Collection visible) {
@@ -186,7 +186,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the fields not being shown currently.
-	 * 
+	 *
 	 * @return Object[]
 	 */
 	Object[] getHiddenFields() {
@@ -219,7 +219,7 @@ public class MarkerContentGenerator {
 		if (memento == null) {
 			return;
 		}
-		
+
 		Integer limits = memento.getInteger(TAG_MARKER_LIMIT);
 		if (limits != null) {
 			markerLimits = limits.intValue();
@@ -229,34 +229,34 @@ public class MarkerContentGenerator {
 		if (limitsEnabled != null) {
 			markerLimitsEnabled = limitsEnabled.booleanValue();
 		}
-		
+
 		if (memento.getChildren(TAG_COLUMN_VISIBILITY).length != 0) {
 
 			IMemento[] visible = memento.getChildren(TAG_COLUMN_VISIBILITY);
 			Collection newVisible = new ArrayList();
-	
+
 			MarkerField[] all = getAllFields();
 			Hashtable allTable = new Hashtable();
-	
+
 			for (int i = 0; i < all.length; i++) {
 				allTable.put(all[i].getConfigurationElement().getAttribute(
 						MarkerSupportInternalUtilities.ATTRIBUTE_ID), all[i]);
 			}
-	
+
 			for (int i = 0; i < visible.length; i++) {
 				String key = visible[i].getID();
 				if (allTable.containsKey(key)) {
 					newVisible.add(allTable.get(key));
 				}
 			}
-	
+
 			visibleFields = new MarkerField[newVisible.size()];
 			newVisible.toArray(visibleFields);
 		}
 	}
 
 	private void initDefaults() {
-		
+
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
 				.getPreferenceStore();
 		markerLimitsEnabled = store
@@ -273,7 +273,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return a collection of all of the configuration fields for this generator
-	 * 
+	 *
 	 * @return Collection of {@link FilterConfigurationArea}
 	 */
 	Collection createFilterConfigurationFields() {
@@ -298,7 +298,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return all of the filters for the receiver.
-	 * 
+	 *
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
 	Collection getAllFilters() {
@@ -313,7 +313,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the currently enabled filters.
-	 * 
+	 *
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
 	Collection getEnabledFilters() {
@@ -358,7 +358,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Add group to the enabled filters.
-	 * 
+	 *
 	 * @param group
 	 */
 	void toggleFilter(MarkerFieldFilterGroup group) {
@@ -376,7 +376,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Update the filters.
-	 * 
+	 *
 	 * @param filters
 	 * @param andFilters
 	 */
@@ -390,7 +390,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Set whether the filters are being ANDed or ORed.
-	 * 
+	 *
 	 * @param and
 	 */
 	void setAndFilters(boolean and) {
@@ -399,34 +399,34 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return whether the filters are being ANDed or ORed.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean andFilters() {
 		return andFilters;
 	}
-	
+
 	/**
 	 * @return Returns the markerLimits.
 	 */
 	public int getMarkerLimits() {
 		return markerLimits;
 	}
-	
+
 	/**
 	 * @param markerLimits The markerLimits to set.
 	 */
 	public void setMarkerLimits(int markerLimits) {
 		this.markerLimits = markerLimits;
 	}
-	
+
 	/**
 	 * @return Returns the markerLimitsEnabled.
 	 */
 	public boolean isMarkerLimitsEnabled() {
 		return markerLimitsEnabled;
 	}
-	
+
 	/**
 	 * @param markerLimitsEnabled The markerLimitsEnabled to set.
 	 */
@@ -457,7 +457,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Get the name of the filters preference for the receiver,
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getLegacyFiltersPreferenceName() {
@@ -470,7 +470,7 @@ public class MarkerContentGenerator {
 	}
 
 	private void loadLimitSettings(IMemento memento) {
-		
+
 		if (memento == null)
 			return;
 
@@ -483,12 +483,12 @@ public class MarkerContentGenerator {
 		if (limitsEnabled != null) {
 			markerLimitsEnabled = limitsEnabled.booleanValue();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Load the settings from the memento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	private void loadFilterSettings(IMemento memento) {
@@ -516,7 +516,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the filters defined in memento string.
-	 * 
+	 *
 	 * @param mementoString
 	 */
 	private void loadFiltersFrom(String mementoString) {
@@ -568,7 +568,7 @@ public class MarkerContentGenerator {
 	/**
 	 * Load the group with id from the child if there is a matching system group
 	 * registered.
-	 * 
+	 *
 	 * @param child
 	 * @param id
 	 * @return <code>true</code> if a matching group was found
@@ -589,7 +589,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the legacy filter into the system.
-	 * 
+	 *
 	 * @param child
 	 */
 	private void loadLegacyFilter(IMemento child) {
@@ -601,7 +601,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the pre-3.4 filters.
-	 * 
+	 *
 	 * @param mementoString
 	 */
 	private void loadLegacyFiltersFrom(String mementoString) {
@@ -622,7 +622,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the user supplied filter
-	 * 
+	 *
 	 * @param child
 	 */
 	private void loadUserFilter(IMemento child) {
@@ -633,7 +633,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Restore the pre-3.4 filters.
-	 * 
+	 *
 	 * @param memento
 	 */
 	private void restoreLegacyFilters(IMemento memento) {
@@ -653,7 +653,7 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void writeFiltersPreference() {
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
@@ -695,15 +695,15 @@ public class MarkerContentGenerator {
 	}
 
 	private void writeLimitSettings(XMLMemento memento) {
-		
+
 		memento.putInteger(TAG_MARKER_LIMIT, markerLimits);
 		memento.putBoolean(TAG_MARKER_LIMIT_ENABLED, markerLimitsEnabled);
 
 	}
-	
+
 	/**
 	 * Write the settings for the filters to the memento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	private void writeFiltersSettings(XMLMemento memento) {
@@ -723,7 +723,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the id of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getId() {
@@ -747,7 +747,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Get the list of initially visible fields
-	 * 
+	 *
 	 * @return {@link MarkerField}[]
 	 */
 	MarkerField[] getInitialVisible() {
@@ -756,7 +756,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Get the group called groupName from the receiver
-	 * 
+	 *
 	 * @param groupName
 	 * @return MarkerGroup or <code>null</code>
 	 */
@@ -772,7 +772,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Get the markerGroups associated with the receiver.
-	 * 
+	 *
 	 * @return Collection of {@link MarkerGroup}
 	 */
 	Collection getMarkerGroups() {
@@ -781,7 +781,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the markerTypes for the receiver.
-	 * 
+	 *
 	 * @return Collection of {@link MarkerType}
 	 */
 	public Collection getMarkerTypes() {
@@ -790,7 +790,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the markerTypes for the receiver.
-	 * 
+	 *
 	 * @return Array of type Ids
 	 */
 	public String[] getTypes() {
@@ -806,7 +806,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the name for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	String getName() {
@@ -815,7 +815,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return the type for typeId.
-	 * 
+	 *
 	 * @param typeId
 	 * @return {@link MarkerType} or <code>null</code> if it is not found.
 	 */
@@ -868,7 +868,7 @@ public class MarkerContentGenerator {
 	 * Update the focus resources from list. If there is an update required
 	 * return <code>true</code>. This method assumes that there are filters on
 	 * resources enabled.
-	 * 
+	 *
 	 * @param elements
 	 */
 	void internalUpdateSelectedElements(Object[] elements) {
@@ -888,7 +888,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Update the receiver for a change in selection.
-	 * 
+	 *
 	 * @param newElements
 	 * @param forceUpdate <code>true</code> if update must be done, <code>false</code> to only update when needed
 	 */
@@ -905,7 +905,7 @@ public class MarkerContentGenerator {
 	/**
 	 * Return whether or not the list contains a resource that will require
 	 * update.
-	 * 
+	 *
 	 * @return boolean <code>true</code> if update is required.
 	 */
 	boolean updateNeededForSelection(Object[] newElements) {
@@ -968,17 +968,17 @@ public class MarkerContentGenerator {
 	 * which happens real quickly.Also when filters are Anded we get a chance to
 	 * gather only on resources that actually matter.And we get a tool to check
 	 * at various places.
-	 * 
+	 *
 	 * @return list of resource we want to collect markers for taking various
 	 *         enabled filters into account.
-	 * 
+	 *
 	 */
 	Collection getResourcesForBuild() {
 		currentResources = MarkerResourceUtil.computeResources(
 				getSelectedResources(), getEnabledFilters(), andFilters());
 		return currentResources;
 	}
-	
+
 	/*
 	 * See Bug 296695: This method is trickier than it may seem/appears to be.If
 	 * it is ever desired to use this, it would need to be *RE-IMPLEMENTED* and
@@ -1039,7 +1039,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Refresh gathered markers entries
-	 * 
+	 *
 	 * @param monitor
 	 */
 	Collection generateMarkerEntries(IProgressMonitor monitor) {
@@ -1111,7 +1111,7 @@ public class MarkerContentGenerator {
 	/**
 	 * A helper to the
 	 * {@link #gatherMarkers(String[], boolean, Collection, IProgressMonitor)}
-	 * 
+	 *
 	 * @param resources
 	 * @param typeId
 	 * @param includeSubTypes

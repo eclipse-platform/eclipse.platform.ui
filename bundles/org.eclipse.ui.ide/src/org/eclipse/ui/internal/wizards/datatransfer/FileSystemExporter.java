@@ -30,11 +30,11 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class FileSystemExporter {
 	private static final int DEFAULT_BUFFER_SIZE = 16*1024;
-	
+
     /**
      *  Creates the specified file system directory at <code>destinationPath</code>.
      *  This creates a new file system directory.
-     *  
+     *
      *  @param destinationPath location to which files will be written
      */
     public void createFolder(IPath destinationPath) {
@@ -43,10 +43,10 @@ public class FileSystemExporter {
 
     /**
      *  Writes the passed resource to the specified location recursively.
-     *  
+     *
      *  @param resource the resource to write out to the file system
      *  @param destinationPath location where the resource will be written
-     *  @exception CoreException if the operation fails 
+     *  @exception CoreException if the operation fails
      *  @exception IOException if an I/O error occurs when writing files
      */
     public void write(IResource resource, IPath destinationPath)

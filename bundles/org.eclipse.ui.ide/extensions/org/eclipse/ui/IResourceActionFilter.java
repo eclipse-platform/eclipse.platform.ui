@@ -12,10 +12,10 @@ package org.eclipse.ui;
 
 /**
  * Describes the public attributes for a resource and the acceptable values
- * each may have.  
+ * each may have.
  * <p>
- * A popup menu extension may use these constants to describe its object target.  
- * Each identifies an attribute name or possible value.  
+ * A popup menu extension may use these constants to describe its object target.
+ * Each identifies an attribute name or possible value.
  * <p>
  * Clients are not expected to implement this interface.
  * </p>
@@ -24,7 +24,7 @@ package org.eclipse.ui;
  */
 public interface IResourceActionFilter extends IActionFilter {
     /**
-     * An attribute indicating the file name (value <code>"name"</code>).  
+     * An attribute indicating the file name (value <code>"name"</code>).
      * The attribute value in xml is unconstrained.  "*" may be used at the start or
      * the end to represent "one or more characters".
      */
@@ -56,7 +56,7 @@ public interface IResourceActionFilter extends IActionFilter {
     public static final String PROJECT_NATURE = "projectNature"; //$NON-NLS-1$
 
     /**
-     * An attribute indicating a persistent property on the selected resource 
+     * An attribute indicating a persistent property on the selected resource
      * (value <code>"persistentProperty"</code>).
      * If the value is a simple string, then this simply tests for existence of the property on the resource.
      * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
@@ -65,7 +65,7 @@ public interface IResourceActionFilter extends IActionFilter {
     public static final String PERSISTENT_PROPERTY = "persistentProperty"; //$NON-NLS-1$
 
     /**
-     * An attribute indicating a persistent property on the selected resource's project. 
+     * An attribute indicating a persistent property on the selected resource's project.
      * (value <code>"projectPersistentProperty"</code>).
      * If the value is a simple string, then this simply tests for existence of the property on the resource.
      * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
@@ -74,7 +74,7 @@ public interface IResourceActionFilter extends IActionFilter {
     public static final String PROJECT_PERSISTENT_PROPERTY = "projectPersistentProperty"; //$NON-NLS-1$
 
     /**
-     * An attribute indicating a session property on the selected resource 
+     * An attribute indicating a session property on the selected resource
      * (value <code>"sessionProperty"</code>).
      * If the value is a simple string, then this simply tests for existence of the property on the resource.
      * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
@@ -83,7 +83,7 @@ public interface IResourceActionFilter extends IActionFilter {
     public static final String SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
 
     /**
-     * An attribute indicating a session property on the selected resource's project. 
+     * An attribute indicating a session property on the selected resource's project.
      * (value <code>"projectSessionProperty"</code>).
      * If the value is a simple string, then this simply tests for existence of the property on the resource.
      * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property

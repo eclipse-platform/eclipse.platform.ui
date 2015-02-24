@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
+ *   IBM Corporation - initial API and implementation
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *      font should be activated and used by other components.
  *******************************************************************************/
@@ -46,7 +46,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * <p>
  * Example:
  * <pre>
- *	FileSelectionDialog dialog = 
+ *	FileSelectionDialog dialog =
  *		new FileSelectionDialog(getShell(), rootElement, msg);
  *	dialog.setInitialSelections(selectedResources);
  *	dialog.open();
@@ -210,7 +210,7 @@ public class FileSelectionDialog extends SelectionDialog {
     }
 
     /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns 
+     * Returns a content provider for <code>FileSystemElement</code>s that returns
      * only files as children.
      */
     private ITreeContentProvider getFileProvider() {
@@ -226,7 +226,7 @@ public class FileSelectionDialog extends SelectionDialog {
     }
 
     /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns 
+     * Returns a content provider for <code>FileSystemElement</code>s that returns
      * only folders as children.
      */
     private ITreeContentProvider getFolderProvider() {
@@ -245,7 +245,7 @@ public class FileSelectionDialog extends SelectionDialog {
      * Initializes this dialog's controls.
      */
     private void initializeDialog() {
-        // initialize page	
+        // initialize page
         if (getInitialElementSelections().isEmpty()) {
 			getOkButton().setEnabled(false);
 		} else {
@@ -259,7 +259,7 @@ public class FileSelectionDialog extends SelectionDialog {
 
     /**
      * The <code>FileSelectionDialog</code> implementation of this
-     * <code>Dialog</code> method builds a list of the selected files for later 
+     * <code>Dialog</code> method builds a list of the selected files for later
      * retrieval by the client and closes this dialog.
      */
     @Override

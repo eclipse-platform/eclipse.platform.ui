@@ -109,7 +109,7 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
  * MarkerView is the abstract super class of the marker based views.
- * 
+ *
  */
 public abstract class MarkerView extends TableView {
 
@@ -146,7 +146,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		@Override
@@ -158,7 +158,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		@Override
@@ -169,7 +169,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
 		@Override
@@ -219,7 +219,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		@Override
@@ -307,7 +307,7 @@ public abstract class MarkerView extends TableView {
 
 		/**
 		 * Add the category to the list of expanded categories.
-		 * 
+		 *
 		 * @param category
 		 */
 		public void addExpandedCategory(MarkerCategory category) {
@@ -317,7 +317,7 @@ public abstract class MarkerView extends TableView {
 
 		/**
 		 * Remove the category from the list of expanded ones.
-		 * 
+		 *
 		 * @param category
 		 */
 		public void removeExpandedCategory(MarkerCategory category) {
@@ -327,7 +327,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
 		@Override
@@ -337,7 +337,7 @@ public abstract class MarkerView extends TableView {
 
 		/**
 		 * Preserve the selection for reselection after the next update.
-		 * 
+		 *
 		 * @param selection
 		 */
 		public void saveSelection(ISelection selection) {
@@ -358,7 +358,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		@Override
@@ -382,7 +382,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 		 */
 		@Override
@@ -409,7 +409,7 @@ public abstract class MarkerView extends TableView {
 		/**
 		 * Returns whether or not the given even contains marker deltas for this
 		 * view.
-		 * 
+		 *
 		 * @param event
 		 *            the resource change event
 		 * @return <code>true</code> if the event contains at least one
@@ -453,7 +453,7 @@ public abstract class MarkerView extends TableView {
 		/**
 		 * Return the currently selected concrete marker or <code>null</code>
 		 * if there isn't one.
-		 * 
+		 *
 		 * @return ConcreteMarker
 		 */
 		private ConcreteMarker getSelectedConcreteMarker() {
@@ -470,7 +470,7 @@ public abstract class MarkerView extends TableView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
 		 */
 		@Override
@@ -531,7 +531,7 @@ public abstract class MarkerView extends TableView {
 		preferenceListener = new IPropertyChangeListener() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			@Override
@@ -549,7 +549,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the current markers for the receiver.
-	 * 
+	 *
 	 * @return MarkerList
 	 */
 	public MarkerList getCurrentMarkers() {
@@ -558,7 +558,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the marker adapter for the receiver.
-	 * 
+	 *
 	 * @return MarkerAdapter
 	 */
 	protected MarkerAdapter getMarkerAdapter() {
@@ -567,7 +567,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Update for the change in the contents.
-	 * 
+	 *
 	 * @param monitor
 	 */
 	public void updateForContentsRefresh(IProgressMonitor monitor) {
@@ -578,7 +578,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite,
 	 *      org.eclipse.ui.IMemento)
 	 */
@@ -647,7 +647,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Write the filter settings to the memento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	protected void writeFiltersSettings(XMLMemento memento) {
@@ -661,14 +661,14 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the name of the filters preference for instances of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	abstract String getFiltersPreferenceName();
 
 	/**
 	 * Restore the filters from the mimento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	void restoreFilters(IMemento memento) {
@@ -707,7 +707,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Create a default filter for the receiver.
-	 * 
+	 *
 	 */
 	private void createDefaultFilter() {
 		MarkerFilter filter = createFilter(MarkerMessages.MarkerFilter_defaultFilterName);
@@ -716,7 +716,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Create a filter called name.
-	 * 
+	 *
 	 * @param name
 	 * @return MarkerFilter
 	 */
@@ -724,14 +724,14 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Return the memento tag for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	protected abstract String getSectionTag();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -752,7 +752,7 @@ public abstract class MarkerView extends TableView {
 		getViewer().getControl().addHelpListener(new HelpListener() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
 			 */
 			@Override
@@ -773,7 +773,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
@@ -808,7 +808,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#viewerSelectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	@Override
@@ -831,7 +831,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#dispose()
 	 */
 	@Override
@@ -867,7 +867,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createActions()
 	 */
 	@Override
@@ -897,7 +897,7 @@ public abstract class MarkerView extends TableView {
 		setPreferencesAction(new ViewPreferencesAction() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.ui.preferences.ViewPreferencesAction#openViewPreferencesDialog()
 			 */
 			@Override
@@ -912,7 +912,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Open a dialog to set the preferences.
-	 * 
+	 *
 	 * @param markerEnablementPreferenceName
 	 * @param markerLimitPreferenceName
 	 */
@@ -931,7 +931,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the name of the marker enablement preference.
-	 * 
+	 *
 	 * @return String
 	 */
 	abstract String getMarkerLimitPreferenceName();
@@ -940,7 +940,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#initToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	@Override
@@ -952,7 +952,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#registerGlobalActions(org.eclipse.ui.IActionBars)
 	 */
 	@Override
@@ -964,7 +964,7 @@ public abstract class MarkerView extends TableView {
 		propertiesAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES);
 		undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 		redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
-		
+
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
 				copyAction);
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
@@ -1025,7 +1025,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the array of selected markers.
-	 * 
+	 *
 	 * @return IMarker[]
 	 */
 	private IMarker[] getSelectedMarkers() {
@@ -1042,7 +1042,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
@@ -1069,7 +1069,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Return whether or not any of the types in the receiver can be editable.
-	 * 
+	 *
 	 * @return <code>true</code> if it is possible to have an editable marker
 	 *         in this view.
 	 */
@@ -1079,14 +1079,14 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Fill the context menu for the receiver.
-	 * 
+	 *
 	 * @param manager
 	 */
 	abstract void fillContextMenuAdditions(IMenuManager manager);
 
 	/**
 	 * Get the filters for the receiver.
-	 * 
+	 *
 	 * @return MarkerFilter[]
 	 */
 	protected final MarkerFilter[] getUserFilters() {
@@ -1097,7 +1097,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#handleOpenEvent(org.eclipse.jface.viewers.OpenEvent)
 	 */
 	@Override
@@ -1109,7 +1109,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#saveSelection(org.eclipse.ui.IMemento)
 	 */
 	protected void saveSelection(IMemento memento) {
@@ -1192,7 +1192,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Update the focus resources of the filters.
-	 * 
+	 *
 	 * @param elements
 	 */
 	protected final void updateFilterSelection(Object[] elements) {
@@ -1227,7 +1227,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Add the resources for the mapping to resources.
-	 * 
+	 *
 	 * @param resources
 	 * @param mapping
 	 */
@@ -1254,7 +1254,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Update the focus markers for the supplied elements.
-	 * 
+	 *
 	 * @param elements
 	 */
 	void updateFocusMarkers(Object[] elements) {
@@ -1365,7 +1365,7 @@ public abstract class MarkerView extends TableView {
 	 * <p>
 	 * This method is called whenever a selection changes in this view.
 	 * </p>
-	 * 
+	 *
 	 * @param selection
 	 *            a valid selection or <code>null</code>
 	 */
@@ -1409,7 +1409,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Open a dialog on the filters
-	 * 
+	 *
 	 */
 	public final void openFiltersDialog() {
 
@@ -1440,7 +1440,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Set the filters to newFilters.
-	 * 
+	 *
 	 * @param newFilters
 	 */
 	void setFilters(MarkerFilter[] newFilters) {
@@ -1449,7 +1449,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Clear the cache of enabled filters.
-	 * 
+	 *
 	 */
 	void clearEnabledFilters() {
 		enabledFilters = null;
@@ -1478,7 +1478,7 @@ public abstract class MarkerView extends TableView {
 	/**
 	 * Given a selection of IMarker, reveals the corresponding elements in the
 	 * viewer
-	 * 
+	 *
 	 * @param structuredSelection
 	 * @param reveal
 	 */
@@ -1511,7 +1511,7 @@ public abstract class MarkerView extends TableView {
 	/**
 	 * Returns the total number of markers. Should not be called while the
 	 * marker list is still updating.
-	 * 
+	 *
 	 * @return the total number of markers in the workspace (including
 	 *         everything that doesn't pass the filters)
 	 */
@@ -1529,7 +1529,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#showBusy(boolean)
 	 */
 	@Override
@@ -1548,7 +1548,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the filters that are currently enabled.
-	 * 
+	 *
 	 * @return MarkerFilter[]
 	 */
 	MarkerFilter[] getEnabledFilters() {
@@ -1565,7 +1565,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Find the filters enabled in the view.
-	 * 
+	 *
 	 * @return Collection of MarkerFilter
 	 */
 	protected Collection findEnabledFilters() {
@@ -1581,7 +1581,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get all of the filters applied to the receiver.
-	 * 
+	 *
 	 * @return MarkerFilter[]
 	 */
 	MarkerFilter[] getAllFilters() {
@@ -1590,7 +1590,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
@@ -1606,7 +1606,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Create the show in menu if there is a single selection.
-	 * 
+	 *
 	 * @param menu
 	 */
 	void createShowInMenu(IMenuManager menu) {
@@ -1643,7 +1643,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Refresh the marker counts
-	 * 
+	 *
 	 * @param monitor
 	 */
 	void refreshMarkerCounts(IProgressMonitor monitor) {
@@ -1659,7 +1659,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Returns the marker limit or -1 if unlimited
-	 * 
+	 *
 	 * @return int
 	 */
 	int getMarkerLimit() {
@@ -1677,14 +1677,14 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Get the name of the marker limit preference.
-	 * 
+	 *
 	 * @return String
 	 */
 	abstract String getMarkerEnablementPreferenceName();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#createViewerInput()
 	 */
 	@Override
@@ -1695,7 +1695,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Add a listener for the end of the update.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addUpdateFinishListener(IJobChangeListener listener) {
@@ -1705,7 +1705,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Remove a listener for the end of the update.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removeUpdateFinishListener(IJobChangeListener listener) {
@@ -1715,14 +1715,14 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Create a listener for working set changes.
-	 * 
+	 *
 	 * @return IPropertyChangeListener
 	 */
 	private IPropertyChangeListener getWorkingSetListener() {
 		workingSetListener = new IPropertyChangeListener() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			@Override
@@ -1737,7 +1737,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Schedule an update of the markers with a delay of time
-	 * 
+	 *
 	 * @param time
 	 */
 	void scheduleMarkerUpdate(int time) {
@@ -1755,7 +1755,7 @@ public abstract class MarkerView extends TableView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#createTree(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -1764,7 +1764,7 @@ public abstract class MarkerView extends TableView {
 		tree.addTreeListener(new TreeAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.TreeAdapter#treeCollapsed(org.eclipse.swt.events.TreeEvent)
 			 */
 			@Override
@@ -1775,7 +1775,7 @@ public abstract class MarkerView extends TableView {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.TreeAdapter#treeExpanded(org.eclipse.swt.events.TreeEvent)
 			 */
 			@Override

@@ -20,9 +20,9 @@ import org.eclipse.ui.views.markers.internal.TaskFilter;
 
 /**
  * PriorityMarkerFieldFilter is the field filter for priority in markers
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 
@@ -43,7 +43,7 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 			return;
 		selectedPriorities = priority.intValue();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
@@ -68,9 +68,9 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 			} catch (NumberFormatException eNumberFormat) {
 			}
 		}
-		
-	
-		
+
+
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
@@ -78,7 +78,7 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public void initialize(ProblemFilter problemFilter) {
 		//There is no problem filter support for priority
-		
+
 	}
 
 

@@ -23,8 +23,8 @@ import org.eclipse.core.resources.IFile;
  * File-oriented editors should support this as a valid input type, and allow
  * full read-write editing of its content.
  * </p><p>
- * A default implementation of this interface is provided by 
- * org.eclipse.ui.part.FileEditorInput.  
+ * A default implementation of this interface is provided by
+ * org.eclipse.ui.part.FileEditorInput.
  * </p><p>
  * All editor inputs must implement the <code>IAdaptable</code> interface;
  * extensions are managed by the platform's adapter manager.

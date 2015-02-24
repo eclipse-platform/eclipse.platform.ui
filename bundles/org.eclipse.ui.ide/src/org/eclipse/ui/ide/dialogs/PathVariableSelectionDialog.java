@@ -39,9 +39,9 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 
 /**
- * A selection dialog which shows the path variables defined in the 
+ * A selection dialog which shows the path variables defined in the
  * workspace.
- * The <code>getResult</code> method returns the name(s) of the 
+ * The <code>getResult</code> method returns the name(s) of the
  * selected path variable(s).
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -53,9 +53,9 @@ import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
  *    new PathVariableSelectionDialog(getShell(), IResource.FOLDER);
  *	dialog.open();
  *	String[] result = (String[]) dialog.getResult();
- * </pre> 	
+ * </pre>
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class PathVariableSelectionDialog extends SelectionDialog {
@@ -71,7 +71,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
      * Creates a path variable selection dialog.
      *
      * @param parentShell the parent shell
-     * @param variableType the type of variables that are displayed in 
+     * @param variableType the type of variables that are displayed in
      * 	this dialog. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
      * 	logically ORed together.
      */
@@ -144,24 +144,24 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 
     @Override
 	protected Control createDialogArea(Composite parent) {
-        // create composite 
+        // create composite
         Composite dialogArea = (Composite) super.createDialogArea(parent);
 
         pathVariablesGroup.createContents(dialogArea);
         return dialogArea;
     }
 
-    
+
     @Override
 	public boolean close() {
         pathVariablesGroup.dispose();
         return super.close();
     }
 
-  
+
     @Override
 	protected void okPressed() {
-		//Sets the dialog result to the selected path variable name(s). 
+		//Sets the dialog result to the selected path variable name(s).
         if (pathVariablesGroup.performOk()) {
             PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
                     .getSelection();
@@ -179,7 +179,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 
     /**
      * Sets the dialog result to the concatenated variable name and extension.
-     * 
+     *
      * @param variable variable selected in the variables list and extended
      * 	by <code>extensionFile</code>
      * @param extensionFile file selected to extend the variable.
@@ -199,7 +199,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
     }
 
     /**
-     * Updates the enabled state of the Extend button based on the 
+     * Updates the enabled state of the Extend button based on the
      * current variable selection.
      */
     private void updateExtendButtonState() {
@@ -224,7 +224,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			} else {
 				extendButton.setEnabled(false);
 			}
-                
+
         } else {
 			extendButton.setEnabled(false);
 		}
@@ -232,7 +232,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 
 	/**
 	 * Sets the resource for which the path variable is being edited.
-	 * 
+	 *
 	 * @param resource
 	 * @since 3.6
 	 */

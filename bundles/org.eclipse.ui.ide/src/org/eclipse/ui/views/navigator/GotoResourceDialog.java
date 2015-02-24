@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 /**
  * Shows a list of resources to the user with a text entry field for a string
  * pattern used to filter the list of resources.
- * 
+ *
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated

@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.MoveResourceAction;
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
  * to show the result of the move.
  * It also delegates to MoveProjectAction as needed.
- * 
+ *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */

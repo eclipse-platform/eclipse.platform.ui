@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * Selection dialog to select files and/or folders on the file system. Use
  * setInput to set input to an IFileStore that points to a folder.
- * 
+ *
  * @since 2.1
  */
 public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
@@ -77,7 +77,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 		/**
 		 * Creates a new instance of the receiver.
-		 * 
+		 *
 		 * @param showFiles
 		 *            <code>true</code> files and folders are returned by the
 		 *            receiver. <code>false</code> only folders are returned.
@@ -160,7 +160,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 		/**
 		 * Creates a new instance of the receiver.
-		 * 
+		 *
 		 * @param multiSelect
 		 *            <code>true</code> if multi selection is allowed.
 		 *            <code>false</code> if only single selection is allowed.
@@ -195,7 +195,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 				}
 			}
-			
+
 			// Return an ok status with no message as SelectionStatusDialog will display default ok message
 			return new Status(IStatus.OK, pluginId, IDEResourceInfoUtils.EMPTY_STRING);
 		}
@@ -203,7 +203,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 	/**
 	 * Creates a new instance of the receiver.
-	 * 
+	 *
 	 * @param parent
 	 * @param multiSelect
 	 *            <code>true</code> if multi selection is allowed.

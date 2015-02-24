@@ -130,7 +130,7 @@ public abstract class IDERegistryReader {
      * Implement this method to read element's attributes.
      * If children should also be read, then implementor
      * is responsible for calling <code>readElementChildren</code>.
-     * Implementor is also responsible for logging missing 
+     * Implementor is also responsible for logging missing
      * attributes.
      *
      * @return true if element was recognized, false if not.

@@ -41,15 +41,15 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Utility class that manages promotion of activites in response to workspace changes.
- * 
+ *
  * @since 3.0
  */
 public class IDEWorkbenchActivityHelper {
 
     private static final String NATURE_POINT = "org.eclipse.ui.ide.natures"; //$NON-NLS-1$
-    
+
     /**
-     * Resource listener that reacts to new projects (and associated natures) 
+     * Resource listener that reacts to new projects (and associated natures)
      * coming into the workspace.
      */
     private IResourceChangeListener listener;
@@ -64,12 +64,12 @@ public class IDEWorkbenchActivityHelper {
      * Lock for the list of nature ids to be processed.
      */
 	private final IDEWorkbenchActivityHelper lock;
-	
+
 	/**
 	 * The update job.
 	 */
 	private WorkbenchJob fUpdateJob;
-	
+
 	/**
 	 * The collection of natures to process.
 	 */
@@ -93,7 +93,7 @@ public class IDEWorkbenchActivityHelper {
     }
 
     /**
-     * Create a new <code>IDEWorkbenchActivityHelper</code> which will listen 
+     * Create a new <code>IDEWorkbenchActivityHelper</code> which will listen
      * for workspace changes and promote activities accordingly.
      */
     private IDEWorkbenchActivityHelper() {
@@ -148,7 +148,7 @@ public class IDEWorkbenchActivityHelper {
 
     /**
      * Get a change listener for listening to resource changes.
-     * 
+     *
      * @return the resource change listeners
      */
     private IResourceChangeListener getChangeListener() {
@@ -249,7 +249,7 @@ public class IDEWorkbenchActivityHelper {
 		}
 		if (needsUpdate) {
 			if (fUpdateJob == null) {
-				fUpdateJob = new WorkbenchJob(IDEWorkbenchMessages.IDEWorkbenchActivityHelper_jobName) { 
+				fUpdateJob = new WorkbenchJob(IDEWorkbenchMessages.IDEWorkbenchActivityHelper_jobName) {
 					@Override
 					public IStatus runInUIThread(
 							IProgressMonitor monitor) {

@@ -39,7 +39,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	public static final String TAG_DIALOG_SECTION = "sorter"; //$NON-NLS-1$
 
-	private static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$ 
+	private static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$
 
 	private static final String TAG_DIRECTION = "direction"; //$NON-NLS-1$
 
@@ -86,7 +86,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/**
 	 * Return a TableSorter based on the supplied fields.
-	 * 
+	 *
 	 * @param sortingFields
 	 */
 	static TableComparator createTableSorter(IField[] sortingFields) {
@@ -167,7 +167,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/**
 	 * Return the field at the top priority.
-	 * 
+	 *
 	 * @return IField
 	 */
 	public IField getTopField() {
@@ -206,7 +206,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	/**
 	 * Compare obj1 and obj2 at depth. If continueSearching continue searching
 	 * below depth to continue the comparison.
-	 * 
+	 *
 	 * @param obj1
 	 * @param obj2
 	 * @param depth
@@ -263,7 +263,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -310,14 +310,14 @@ public class TableComparator extends ViewerComparator implements Comparator {
 					resetState();
 					return;
 				}
-				
+
 				int fieldIndex = Integer.parseInt(priority);
-				
+
 				//Make sure it is not old data from a different sized array
 				if(fieldIndex < fields.length) {
 					priorities[i] = fieldIndex;
 				}
-				
+
 				String direction = settings.get(TAG_DIRECTION + i);
 				if (direction == null) {
 					resetState();
@@ -345,7 +345,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/**
 	 * Sort the array of markers in lastMarkers in place.
-	 * 
+	 *
 	 * @param viewer
 	 * @param lastMarkers
 	 */
@@ -357,7 +357,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	/**
 	 * Sorts the given elements in-place, modifying the given array from index
 	 * start to index end. <
-	 * 
+	 *
 	 * @param viewer
 	 * @param elements
 	 * @param start

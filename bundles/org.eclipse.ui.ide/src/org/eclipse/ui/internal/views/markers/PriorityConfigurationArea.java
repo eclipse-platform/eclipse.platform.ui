@@ -23,9 +23,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 /**
  * The PriorityConfigurationArea is the configuration area for the task
  * priority.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class PriorityConfigurationArea extends FilterConfigurationArea {
 
@@ -43,7 +43,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	@Override
@@ -54,12 +54,12 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createContents(Composite parent) {
-		
+
 		parent.setLayout(new GridLayout(3,false));
 
 		highButton = new Button(parent, SWT.CHECK);
@@ -67,7 +67,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 		highButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -83,7 +83,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 		normalButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -98,7 +98,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 		lowButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -111,7 +111,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 
 	/**
 	 * Update he priorities set based on the constant and the selection value.
-	 * 
+	 *
 	 * @param constant
 	 * @param enabled
 	 */
@@ -139,7 +139,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 				.setSelection((PriorityMarkerFieldFilter.PRIORITY_HIGH & priorities) > 0);
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#getTitle()
 	 */

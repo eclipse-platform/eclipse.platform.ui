@@ -27,7 +27,7 @@ import org.eclipse.ui.IFileEditorInput;
 public class FileInputAdapterFactory implements IAdapterFactory {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 	 *      java.lang.Class)
 	 */
@@ -42,7 +42,7 @@ public class FileInputAdapterFactory implements IAdapterFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	@Override

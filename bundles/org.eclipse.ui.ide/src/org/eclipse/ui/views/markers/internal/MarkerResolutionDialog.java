@@ -62,9 +62,9 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
  * The MarkerResolutionDialog is the dialog used to select a marker resolution.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class MarkerResolutionDialog extends TitleAreaDialog {
 
@@ -92,7 +92,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Create a new instance of the receiver with the given resolutions.
-	 * 
+	 *
 	 * @param shell
 	 * @param marker
 	 *            the marker to show
@@ -112,7 +112,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -123,7 +123,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -166,7 +166,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			@Override
@@ -176,7 +176,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
@@ -198,7 +198,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					/*
 					 * (non-Javadoc)
-					 * 
+					 *
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
 					@Override
@@ -283,7 +283,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	/**
 	 * Choose a good whitespace position for a page break. Start in the middle
 	 * of the message.
-	 * 
+	 *
 	 * @param message
 	 * @return int -1 if there is no whitespace to choose.
 	 */
@@ -303,7 +303,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		resolutionsComparator = new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
@@ -317,7 +317,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Create the buttons for the table.
-	 * 
+	 *
 	 * @param control
 	 * @return Composite
 	 */
@@ -338,7 +338,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -356,7 +356,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -374,7 +374,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		addMatching.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -396,7 +396,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Return the single selected WorkbenchMarkerResolution if there is one.
-	 * 
+	 *
 	 * @return WorkbenchMarkerResolution or <code>null</code> if there is no
 	 *         selection or the selection is not a WorkbenchMarkerResolution.
 	 */
@@ -412,7 +412,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Return the marker resolution that is currenly selected/
-	 * 
+	 *
 	 * @return IMarkerResolution or <code>null</code> if there is no
 	 *         selection.
 	 */
@@ -431,7 +431,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	/**
 	 * Add all of the markers that have resolutions compatible with the
 	 * receiver.
-	 * 
+	 *
 	 * @return boolean <code>true</code> if the operation completed.
 	 */
 	protected boolean addMatchingMarkers(
@@ -454,7 +454,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see java.lang.Runnable#run()
 			 */
 			@Override
@@ -486,7 +486,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	/**
 	 * Spin the event loop and see if the cancel button was pressed. If it was
 	 * then clear the flags and return <code>true</code>.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	private boolean progressCancelled() {
@@ -502,7 +502,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Create the table for the markers/
-	 * 
+	 *
 	 * @param control
 	 */
 	private void createMarkerTable(Composite control) {
@@ -514,7 +514,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		markersTable.setContentProvider(new IStructuredContentProvider() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			@Override
@@ -524,7 +524,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			@Override
@@ -542,7 +542,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
@@ -557,7 +557,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
 			 *      int)
 			 */
@@ -571,7 +571,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
 			 *      int)
 			 */
@@ -590,7 +590,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 			 */
 			@Override
@@ -601,7 +601,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 			 */
 			@Override
@@ -612,7 +612,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 			 *      java.lang.String)
 			 */
@@ -623,7 +623,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 			 */
 			@Override
@@ -636,7 +636,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		markersTable.addCheckStateListener(new ICheckStateListener() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
 			@Override
@@ -678,7 +678,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Set the dialog to be complete.
-	 * 
+	 *
 	 * @param complete
 	 */
 	protected void setComplete(boolean complete) {
@@ -688,7 +688,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/**
 	 * Return all of the resolutions to choose from in the receiver.
-	 * 
+	 *
 	 * @return IMarkerResolution[]
 	 */
 	public IMarkerResolution[] getResolutions() {
@@ -697,7 +697,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#create()
 	 */
 	@Override
@@ -712,7 +712,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
@@ -760,7 +760,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
 	@Override
@@ -772,7 +772,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		}
 		super.cancelPressed();
 	}
-	
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()

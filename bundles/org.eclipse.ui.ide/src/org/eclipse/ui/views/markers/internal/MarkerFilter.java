@@ -44,7 +44,7 @@ public class MarkerFilter implements Cloneable {
 
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 
-	
+
 	/**
 	 * The tag for the scope.
 	 */
@@ -119,7 +119,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param filterName
 	 *            The human readable name for the filter
 	 * @param rootTypes
@@ -142,7 +142,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * List all types known to this MarkerFilter.
-	 * 
+	 *
 	 * @param types
 	 *            list to be filled in with types
 	 */
@@ -171,7 +171,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Adds all markers in the given set of resources to the given list
-	 * 
+	 *
 	 * @param resultList
 	 * @param resources
 	 * @param markerTypeId
@@ -311,7 +311,7 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Subclasses should override to determine if the given marker passes the
 	 * filter.
-	 * 
+	 *
 	 * @param marker
 	 * @return <code>true</code> if the marker passes the filter and
 	 *         <code>false</code> otherwise
@@ -322,7 +322,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Searches the workspace for markers that pass this filter.
-	 * 
+	 *
 	 * @return Collection of markers.
 	 */
 	Collection findMarkers(IProgressMonitor mon, boolean ignoreExceptions)
@@ -377,7 +377,7 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Return the resources in the working set. If it is empty then return the
 	 * workspace root.
-	 * 
+	 *
 	 * @return IResource[]
 	 */
 	IResource[] getResourcesInWorkingSet() {
@@ -408,7 +408,7 @@ public class MarkerFilter implements Cloneable {
 	 * Returns a set of strings representing the full pathnames to every
 	 * resource directly or indirectly contained in the working set. A resource
 	 * is in the working set iff its path name can be found in this set.
-	 * 
+	 *
 	 * @return Set
 	 */
 	private Set getWorkingSetAsSetOfPaths() {
@@ -448,7 +448,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Returns the set of projects that contain the given set of resources.
-	 * 
+	 *
 	 * @param resources
 	 * @return IProject[]
 	 */
@@ -464,7 +464,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Return the projects for the elements.
-	 * 
+	 *
 	 * @param elements
 	 *            collection of IResource or IResourceMapping
 	 * @return Collection of IProject
@@ -490,7 +490,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Return whether or not the receiver would select the marker.
-	 * 
+	 *
 	 * @param marker
 	 * @return boolean
 	 */
@@ -510,7 +510,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Returns whether the specified marker should be filter out or not.
-	 * 
+	 *
 	 * @param marker
 	 *            the marker to test
 	 * @return true=the marker should not be filtered out false=the marker
@@ -579,7 +579,7 @@ public class MarkerFilter implements Cloneable {
 	 * Previous versions of this method used IContainmentAdapter for containment
 	 * tests. For performance reasons, this is no longer possible. Code that
 	 * relies on this behavior should be updated appropriately.
-	 * 
+	 *
 	 * @param element
 	 *            resource to test for enclosure by a working set element
 	 * @return true if element is enclosed by a working set element and false
@@ -612,7 +612,7 @@ public class MarkerFilter implements Cloneable {
 	 * <li><code>MarkerFilter.ON_WORKING_SET</code> if showing items in some
 	 * working set.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getOnResource() {
@@ -621,7 +621,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Sets the type of filtering by selection.
-	 * 
+	 *
 	 * @param onResource
 	 *            must be one of:
 	 *            <ul>
@@ -647,7 +647,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Sets the focused resources.
-	 * 
+	 *
 	 * @param resources
 	 */
 	public void setFocusResource(IResource[] resources) {
@@ -668,7 +668,7 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * <b>Warning:</b> for internal package use only. Return the root marker
 	 * types.
-	 * 
+	 *
 	 * @return the root marker types.
 	 */
 	public List getRootTypes() {
@@ -678,7 +678,7 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * <b>Warning:</b> for internal package use only. Return the selected
 	 * types.
-	 * 
+	 *
 	 * @return the selected marker types to be displayed.
 	 */
 	public List getSelectedTypes() {
@@ -687,7 +687,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Find the typeModel entry that matches id.
-	 * 
+	 *
 	 * @param id
 	 *            the ID for a marker type
 	 * @return MarkerType or <code>null</code> if it is not found.
@@ -732,7 +732,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Restore the state in the memento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	public final void restoreState(IMemento memento) {
@@ -744,7 +744,7 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * Restore the state of the receiver in the supplied settings. This is kept
 	 * for backwards compatibility with 3.1 dialog settings.
-	 * 
+	 *
 	 * @param settings
 	 */
 	public void restoreFilterSettings(IDialogSettings settings) {
@@ -827,7 +827,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Set the selected types based on the value.
-	 * 
+	 *
 	 * @param selectedTypesValue
 	 */
 	void generateSelectedTypes(String selectedTypesValue) {
@@ -847,7 +847,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Find the markerType matching typeName
-	 * 
+	 *
 	 * @param typeName
 	 * @return MarkerType
 	 */
@@ -857,7 +857,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Restore the state of the receiver in the supplied settings.
-	 * 
+	 *
 	 * @param memento
 	 */
 	protected void restoreFilterSettings(IMemento memento) {
@@ -934,7 +934,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Save the filter settings for the receiver.
-	 * 
+	 *
 	 * @param settings
 	 */
 	public void saveFilterSettings(IMemento settings) {
@@ -965,7 +965,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Get the name of the receiver
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getName() {
@@ -974,7 +974,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Make a clone of the receiver.
-	 * 
+	 *
 	 * @return MarkerFilter
 	 * @throws CloneNotSupportedException
 	 */
@@ -984,7 +984,7 @@ public class MarkerFilter implements Cloneable {
 
 	/**
 	 * Set the selected types.
-	 * 
+	 *
 	 * @param selectedTypes
 	 *            List of MarkerType.
 	 */

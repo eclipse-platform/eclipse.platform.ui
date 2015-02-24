@@ -40,7 +40,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     /**
      * Creates a <code>ZipFileStructureProvider</code>, which will operate
      * on the passed zip file.
-     * 
+     *
      * @param sourceFile the zip file used to create this structure provider
      */
     public ZipFileStructureProvider(ZipFile sourceFile) {
@@ -155,7 +155,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 
     /**
      * Returns the zip file that this provider provides structure for.
-     * 
+     *
      * @return the zip file this provider provides structure for
      */
     public ZipFile getZipFile() {

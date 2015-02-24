@@ -20,7 +20,7 @@ import org.eclipse.core.filesystem.IFileStore;
  *
  */
 public interface IFileStoreFilter {
-	
+
 	/**
 	 * Return whether or not this store is accepted by the receiver.
 	 * @param store IFileStore

@@ -25,9 +25,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 /**
  * SortFieldContribution is the contribution that allows the user to choose
  * which field will become the primary sort field.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class SortFieldContribution extends MarkersContribution {
 
@@ -47,7 +47,7 @@ public class SortFieldContribution extends MarkersContribution {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
 	@Override
@@ -83,7 +83,7 @@ public class SortFieldContribution extends MarkersContribution {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 			 *      int)
 			 */
@@ -95,7 +95,7 @@ public class SortFieldContribution extends MarkersContribution {
 				item.addListener(SWT.Selection, new Listener() {
 					/*
 					 * (non-Javadoc)
-					 * 
+					 *
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
 					@Override
@@ -116,7 +116,7 @@ public class SortFieldContribution extends MarkersContribution {
 
 	/**
 	 * Return the IContributionItem for field.
-	 * 
+	 *
 	 * @param field
 	 * @return IContributionItem
 	 */
@@ -125,7 +125,7 @@ public class SortFieldContribution extends MarkersContribution {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 			 *      int)
 			 */
@@ -145,7 +145,7 @@ public class SortFieldContribution extends MarkersContribution {
 
 			/**
 			 * Return the menu item listener for selection of a field.
-			 * 
+			 *
 			 * @param field
 			 * @param view
 			 * @return Listener
@@ -155,7 +155,7 @@ public class SortFieldContribution extends MarkersContribution {
 				return new Listener() {
 					/*
 					 * (non-Javadoc)
-					 * 
+					 *
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
 					@Override

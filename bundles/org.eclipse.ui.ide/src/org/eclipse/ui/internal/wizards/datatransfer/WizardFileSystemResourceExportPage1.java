@@ -72,7 +72,7 @@ public class WizardFileSystemResourceExportPage1 extends
     private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.FileExport_selectDestinationMessage;
 
     private static final String SELECT_DESTINATION_TITLE = DataTransferMessages.FileExport_selectDestinationTitle;
- 
+
 
     /**
      *	Create an instance of this class
@@ -449,7 +449,7 @@ public class WizardFileSystemResourceExportPage1 extends
 				setMessage(
 					NLS.bind(DataTransferMessages.FileExport_damageWarning, threatenedContainer),
 					WARNING);
-			
+
 		} else {
             setErrorMessage(NLS.bind(DataTransferMessages.FileExport_conflictingContainer, conflictingContainer));
             giveFocusToDestination();
@@ -487,7 +487,7 @@ public class WizardFileSystemResourceExportPage1 extends
     /**
      * Returns the name of a container with a location that encompasses targetDirectory.
      * Returns null if there is no conflict.
-     * 
+     *
      * @param targetDirectory the path of the directory to check.
      * @return the conflicting container name or <code>null</code>
      */
@@ -498,7 +498,7 @@ public class WizardFileSystemResourceExportPage1 extends
         // cannot export into workspace root
         if(testPath.equals(rootPath))
         	return rootPath.lastSegment();
-        
+
         //Are they the same?
         if(testPath.matchingFirstSegments(rootPath) == rootPath.segmentCount()){
         	String firstSegment = testPath.removeFirstSegments(rootPath.segmentCount()).segment(0);
@@ -509,11 +509,11 @@ public class WizardFileSystemResourceExportPage1 extends
         return null;
 
     }
-    
+
     /**
 	 * Returns the name of a {@link IProject} with a location that includes
 	 * targetDirectory. Returns null if there is no such {@link IProject}.
-	 * 
+	 *
 	 * @param targetDirectory
 	 *            the path of the directory to check.
 	 * @return the overlapping project name or <code>null</code>
@@ -527,6 +527,6 @@ public class WizardFileSystemResourceExportPage1 extends
     	}
     	return null;
     }
-    
+
 
 }

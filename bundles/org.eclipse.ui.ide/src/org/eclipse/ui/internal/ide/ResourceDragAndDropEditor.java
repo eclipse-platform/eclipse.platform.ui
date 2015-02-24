@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Group;
 
 /**
  * A class to handle editing of the Line delimiter preferences in core.
- * 
+ *
  * @since 3.1
  */
 public class ResourceDragAndDropEditor {
@@ -34,14 +34,14 @@ public class ResourceDragAndDropEditor {
 		String[] labels;
 		String[] values;
 		Button[] buttons;
-		
+
 		public PreferenceGroup(String title, String pref, String[] labels, String[] values) {
 			this.preferenceKey = pref;
 			this.title = title;
 			this.labels = labels;
 			this.values = values;
 		}
-		
+
 		public void createControl(Composite parent) {
 			Font font = parent.getFont();
 			group = new Group(parent, SWT.NONE);
@@ -63,7 +63,7 @@ public class ResourceDragAndDropEditor {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		public void doLoad() {
 			String resourcePreference = getStoredValue(false);
@@ -80,7 +80,7 @@ public class ResourceDragAndDropEditor {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		public void loadDefault() {
 			String value = getStoredValue(true);
@@ -88,8 +88,8 @@ public class ResourceDragAndDropEditor {
 		}
 		/**
 		 * Returns the value that is currently stored for the encoding.
-		 * @param useDefault 
-		 * 
+		 * @param useDefault
+		 *
 		 * @return the currently stored encoding
 		 */
 		public String getStoredValue(boolean useDefault) {
@@ -111,7 +111,7 @@ public class ResourceDragAndDropEditor {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		public void store() {
 			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
@@ -127,16 +127,16 @@ public class ResourceDragAndDropEditor {
 				if (buttons[i] != null && !buttons[i].isDisposed())
 					buttons[i].setEnabled(enableLinking);
 			}
-			
+
 		}
 	}
-	
+
 	PreferenceGroup folderPref;
 	PreferenceGroup virtualFolderPref;
 	/**
 	 * Creates a new drag and drop resource editor with the given preference name, label
 	 * and parent.
-	 * 
+	 *
 	 * @param composite
 	 *            the parent of the field editor's control
 	 */
@@ -146,7 +146,7 @@ public class ResourceDragAndDropEditor {
 				new String[] {
 				IDEWorkbenchMessages.Prompt,
 				IDEWorkbenchMessages.linkedResourcesPreference_copy,
-				IDEWorkbenchMessages.LinkedResourcesPreference_link, 
+				IDEWorkbenchMessages.LinkedResourcesPreference_link,
 				IDEWorkbenchMessages.LinkedResourcesPreference_linkAndVirtualFolder },
 				new String[] {IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT,
 				IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_MOVE_COPY,
@@ -156,7 +156,7 @@ public class ResourceDragAndDropEditor {
 				IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE,
 				new String[] {
 				IDEWorkbenchMessages.LinkedResourcesPreference_promptVirtual,
-				IDEWorkbenchMessages.LinkedResourcesPreference_linkVirtual, 
+				IDEWorkbenchMessages.LinkedResourcesPreference_linkVirtual,
 				IDEWorkbenchMessages.LinkedResourcesPreference_linkAndVirtualFolderVirtual },
 				new String[] {IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT,
 				IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_LINK,
@@ -167,7 +167,7 @@ public class ResourceDragAndDropEditor {
 	/**
 	 * Creates this field editor's main control containing all of its basic
 	 * controls.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */

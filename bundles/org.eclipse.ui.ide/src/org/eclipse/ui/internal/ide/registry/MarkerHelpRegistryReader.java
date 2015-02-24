@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * This class is used to read marker help context ids and 
+ * This class is used to read marker help context ids and
  * resolutions from the platform registry.
  */
 public class MarkerHelpRegistryReader extends IDERegistryReader {
@@ -32,7 +32,7 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
 
     private static final String TAG_RESOLUTION_GENERATOR = "markerResolutionGenerator";//$NON-NLS-1$
 
-    private static final String TAG_ATTRIBUTE = "attribute";//$NON-NLS-1$ 
+    private static final String TAG_ATTRIBUTE = "attribute";//$NON-NLS-1$
 
     private static final String ATT_TYPE = "markerType";//$NON-NLS-1$
 
@@ -45,8 +45,8 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
      * and add it to the given marker help registry.
      * <p>
      * Warning:
-     * The marker help registry must be passed in because this 
-     * method is called during the process of setting up the 
+     * The marker help registry must be passed in because this
+     * method is called during the process of setting up the
      * marker help registry and at this time it has not been
      * safely setup with the plugin.
      * </p>

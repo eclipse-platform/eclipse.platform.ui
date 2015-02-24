@@ -172,7 +172,7 @@ public class ResourcePropertySource implements IPropertySource {
             final ResourceAttributes attributes = element.getResourceAttributes();
 			if (attributes == null || attributes.isReadOnly()) {
 				return IDEPropertiesMessages.ResourceProperty_false;
-			} 
+			}
 			return IDEPropertiesMessages.ResourceProperty_true;
         }
         if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
@@ -195,14 +195,14 @@ public class ResourcePropertySource implements IPropertySource {
     }
 
     /**
-     * Returns whether the given resource is a linked resource bound 
+     * Returns whether the given resource is a linked resource bound
      * to a path variable.
-     * 
+     *
      * @param resource resource to test
-     * @return boolean <code>true</code> the given resource is a linked 
-     * 	resource bound to a path variable. <code>false</code> the given 
+     * @return boolean <code>true</code> the given resource is a linked
+     * 	resource bound to a path variable. <code>false</code> the given
      * 	resource is either not a linked resource or it is not using a
-     * 	path variable.  
+     * 	path variable.
      */
     private boolean isPathVariable(IResource resource) {
         if (!resource.isLinked()) {
@@ -248,7 +248,7 @@ public class ResourcePropertySource implements IPropertySource {
 	public void setPropertyValue(Object name, Object value) {
     }
 
-    /** 
+    /**
      * Get the java.io.File equivalent of the passed
      * IFile. If the location does not exist then return
      * <code>null</code>

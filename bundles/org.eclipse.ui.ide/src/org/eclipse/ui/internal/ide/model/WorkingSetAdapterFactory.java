@@ -108,7 +108,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 	 *      java.lang.Class)
 	 */
@@ -142,7 +142,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	@Override

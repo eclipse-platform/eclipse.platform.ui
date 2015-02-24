@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
  * the list does not change frequently.
  */
 public class MarkerTypesModel {
-	
+
 	/**
 	 * Return the singleton implementation.
 	 * @return MarkerTypesModel

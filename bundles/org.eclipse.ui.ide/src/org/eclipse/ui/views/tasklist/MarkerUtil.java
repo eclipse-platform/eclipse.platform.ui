@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
  * Utility class for accessing marker attributes.
  */
 class MarkerUtil implements IMarkerConstants {
-	
+
    private static Map imageDescriptors;
 
     private static ImageRegistry imageRegistry = new ImageRegistry();
@@ -40,7 +40,7 @@ class MarkerUtil implements IMarkerConstants {
     private static MessageFormat line = new MessageFormat(TaskListMessages.TaskList_line);
 
     private static MessageFormat lineAndLocation = new MessageFormat(
-            TaskListMessages.TaskList_lineAndLocation); 
+            TaskListMessages.TaskList_lineAndLocation);
 
     static {
         createImageDescriptors();
@@ -148,7 +148,7 @@ class MarkerUtil implements IMarkerConstants {
     }
 
     /**
-     * Returns the text to be used for the complete state of a task. 
+     * Returns the text to be used for the complete state of a task.
      * Returns the empty string for markers that are not tasks.
      */
     public static String getCompleteText(IMarker marker) {
@@ -167,15 +167,15 @@ class MarkerUtil implements IMarkerConstants {
      */
     public static String getKindText(IMarker marker) {
         if (isMarkerType(marker, IMarker.TASK)) {
-            return TaskListMessages.TaskList_task; 
+            return TaskListMessages.TaskList_task;
         }
         switch (getSeverity(marker)) {
         case IMarker.SEVERITY_ERROR:
-            return TaskListMessages.TaskList_error; 
+            return TaskListMessages.TaskList_error;
         case IMarker.SEVERITY_WARNING:
-            return TaskListMessages.TaskList_warning; 
+            return TaskListMessages.TaskList_warning;
         case IMarker.SEVERITY_INFO:
-            return TaskListMessages.TaskList_info; 
+            return TaskListMessages.TaskList_info;
         }
         return ""; //$NON-NLS-1$
     }
@@ -377,13 +377,13 @@ class MarkerUtil implements IMarkerConstants {
 
         switch (getPriority(marker)) {
         case IMarker.PRIORITY_HIGH:
-            return TaskListMessages.TaskList_high; 
+            return TaskListMessages.TaskList_high;
         case IMarker.PRIORITY_NORMAL:
             return TaskListMessages.TaskList_normal;
         case IMarker.PRIORITY_LOW:
             return TaskListMessages.TaskList_low;
         }
-        return ""; //$NON-NLS-1$		
+        return ""; //$NON-NLS-1$
     }
 
     /**

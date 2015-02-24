@@ -22,7 +22,7 @@ public class BackAction extends FrameAction {
 
     /**
      * Constructs a new action for the specified frame list.
-     * 
+     *
      * @param frameList the frame list
      */
     public BackAction(FrameList frameList) {

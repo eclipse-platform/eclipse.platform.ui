@@ -41,7 +41,7 @@ public class TaskFilter extends MarkerFilter {
 
 	final static boolean DEFAULT_CONTAINS = true;
 
-	final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$	
+	final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$
 
 	final static boolean DEFAULT_DONE = false;
 
@@ -65,13 +65,13 @@ public class TaskFilter extends MarkerFilter {
 
 	private int priority;
 
-	private boolean selectByPriority = false; 
+	private boolean selectByPriority = false;
 
 	private boolean selectByDone = false;
 
 	/**
 	 * Create a new instance of the receiver with the default name.
-	 * 
+	 *
 	 */
 	public TaskFilter() {
 		this(MarkerMessages.MarkerFilter_defaultFilterName);
@@ -79,7 +79,7 @@ public class TaskFilter extends MarkerFilter {
 
 	/**
 	 * Create a new instance of the receiver with the supplied name.
-	 * 
+	 *
 	 * @param newName
 	 */
 	public TaskFilter(String newName) {
@@ -197,7 +197,7 @@ public class TaskFilter extends MarkerFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
 	@Override
@@ -244,7 +244,7 @@ public class TaskFilter extends MarkerFilter {
 		}
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.ui.IMemento)
 	 */
@@ -290,7 +290,7 @@ public class TaskFilter extends MarkerFilter {
 
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.ui.IMemento)
 	 */

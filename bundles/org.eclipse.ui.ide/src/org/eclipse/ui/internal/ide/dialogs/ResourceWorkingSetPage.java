@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *      IBM Corporation - initial API and implementation 
+ *      IBM Corporation - initial API and implementation
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font
  * 		should be activated and used by other components.
  *******************************************************************************/
@@ -63,12 +63,12 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * A resource working set page allows the user to edit an 
+ * A resource working set page allows the user to edit an
  * existing working set and create a new working set.
  * <p>
  * Working set elements are presented as a simple resource tree.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class ResourceWorkingSetPage extends WizardPage implements
@@ -90,7 +90,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
      */
     public ResourceWorkingSetPage() {
         super(
-                "resourceWorkingSetPage", //$NON-NLS-1$ 
+                "resourceWorkingSetPage", //$NON-NLS-1$
                 IDEWorkbenchMessages.ResourceWorkingSetPage_title,
                 IDEInternalWorkbenchImages
                         .getImageDescriptor(IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ));
@@ -100,7 +100,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
     /**
      * Adds working set elements contained in the given container to the list
      * of checked resources.
-     * 
+     *
      * @param collectedResources list of collected resources
      * @param container container to collect working set elements for
      */
@@ -129,13 +129,13 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Overrides method in WizardPage.
-     * 
+     *
      * @see org.eclipse.jface.wizard.WizardPage#createControl(Composite)
      */
     @Override
 	public void createControl(Composite parent) {
     	initializeDialogUnits(parent);
-    	
+
         Composite composite = new Composite(parent, SWT.NULL);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -220,7 +220,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		
+
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_selectAll_label);
 		selectAllButton.setToolTipText(IDEWorkbenchMessages.ResourceWorkingSetPage_selectAll_toolTip);
@@ -260,19 +260,19 @@ public class ResourceWorkingSetPage extends WizardPage implements
 			}
 		});
 		setButtonLayoutData(deselectAllButton);
-		
+
 		initializeCheckedState();
         if (workingSet != null) {
             text.setText(workingSet.getName());
         }
         setPageComplete(false);
-        
+
         Dialog.applyDialogFont(composite);
     }
 
     /**
      * Collects all checked resources in the specified container.
-     * 
+     *
      * @param checkedResources the output, list of checked resources
      * @param container the container to collect checked resources in
      */
@@ -305,7 +305,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Implements IWorkingSetPage.
-     * 
+     *
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
      */
     @Override
@@ -327,7 +327,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Implements IWorkingSetPage.
-     * 
+     *
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
      */
     @Override
@@ -337,7 +337,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Returns the name entered in the working set name field.
-     * 
+     *
      * @return the name entered in the working set name field.
      */
     private String getWorkingSetName() {
@@ -346,7 +346,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Called when the checked state of a tree item changes.
-     * 
+     *
      * @param event the checked state change event.
      */
     private void handleCheckStateChange(final CheckStateChangedEvent event) {
@@ -368,8 +368,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Displays an error message when a CoreException occured.
-     * 
-     * @param exception the CoreException 
+     *
+     * @param exception the CoreException
      * @param shell parent shell for the message box
      * @param title the mesage box title
      * @param message additional error message
@@ -388,7 +388,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
     }
 
     /**
-     * Sets the checked state of tree items based on the initial 
+     * Sets the checked state of tree items based on the initial
      * working set, if any.
      */
     private void initializeCheckedState() {
@@ -456,7 +456,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Implements IWorkingSetPage.
-     * 
+     *
      * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(IWorkingSet)
      */
     @Override
@@ -474,11 +474,11 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
     /**
      * Sets the checked state of the container's members.
-     * 
+     *
      * @param container the container whose children should be checked/unchecked
-     * @param state true=check all members in the container. false=uncheck all 
+     * @param state true=check all members in the container. false=uncheck all
      * 	members in the container.
-     * @param checkExpandedState true=recurse into sub-containers and set the 
+     * @param checkExpandedState true=recurse into sub-containers and set the
      * 	checked state. false=only set checked state of members of this container
      */
     private void setSubtreeChecked(IContainer container, boolean state,
@@ -509,7 +509,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
             } else {
                 tree.setGrayChecked(element, false);
             }
-            // unchecked state only needs to be set when the container is 
+            // unchecked state only needs to be set when the container is
             // checked or grayed
             if (element instanceof IContainer && (state || elementGrayChecked)) {
                 setSubtreeChecked((IContainer) element, state, true);
@@ -518,10 +518,10 @@ public class ResourceWorkingSetPage extends WizardPage implements
     }
 
     /**
-     * Check and gray the resource parent if all resources of the 
+     * Check and gray the resource parent if all resources of the
      * parent are checked.
-     * 
-     * @param child the resource whose parent checked state should 
+     *
+     * @param child the resource whose parent checked state should
      * 	be set.
      */
     private void updateParentState(IResource child) {
@@ -552,7 +552,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
     }
 
     /**
-     * Validates the working set name and the checked state of the 
+     * Validates the working set name and the checked state of the
      * resource tree.
      */
     private void validateInput() {
@@ -561,7 +561,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         String newText = text.getText();
 
         if (newText.equals(newText.trim()) == false) {
-            errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace; 
+            errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace;
         } else if (firstCheck) {
             firstCheck = false;
             return;

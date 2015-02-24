@@ -17,9 +17,9 @@ import org.eclipse.core.resources.IResource;
 /**
  * FileMarkerPropertyTester is a property tester for a marker entry to see if it
  * is a marker that has a file behind it.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class FileMarkerPropertyTester extends PropertyTester {
 

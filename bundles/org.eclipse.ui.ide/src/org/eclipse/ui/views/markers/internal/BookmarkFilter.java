@@ -31,7 +31,7 @@ public class BookmarkFilter extends MarkerFilter {
 
 	/**
 	 * Create a new instance of the recevier with the default name.
-	 * 
+	 *
 	 */
 	public BookmarkFilter() {
 		this(MarkerMessages.MarkerFilter_defaultFilterName);
@@ -39,7 +39,7 @@ public class BookmarkFilter extends MarkerFilter {
 
 	/**
 	 * Create a new instance of the recevier with the filterName
-	 * 
+	 *
 	 * @param filterName
 	 */
 	public BookmarkFilter(String filterName) {
@@ -83,7 +83,7 @@ public class BookmarkFilter extends MarkerFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#resetState()
 	 */
 	@Override
@@ -95,7 +95,7 @@ public class BookmarkFilter extends MarkerFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#restoreFilterSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
 	@Override
@@ -140,7 +140,7 @@ public class BookmarkFilter extends MarkerFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerFilter#saveFilterSettings(org.eclipse.ui.IMemento)
 	 */
 	@Override

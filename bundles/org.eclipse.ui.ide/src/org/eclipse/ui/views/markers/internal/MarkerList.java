@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Represents a list of ConcreteMarkers.
  */
 public class MarkerList {
-	
+
 	private int[] markerCounts = null;
 
 	private ConcreteMarker[] markers;
@@ -54,7 +54,7 @@ public class MarkerList {
 
 	/**
 	 * Creates a list containing the given set of markers
-	 * 
+	 *
 	 * @param markers
 	 */
 	public MarkerList(ConcreteMarker[] markers) {
@@ -77,7 +77,7 @@ public class MarkerList {
 
 	/**
 	 * Returns the marker table or lazily creates it if it doesn't exist yet
-	 * 
+	 *
 	 * @return a map of IMarker onto ConcreteMarker, containing all the
 	 *         ConcreteMarkers in the list
 	 */
@@ -97,7 +97,7 @@ public class MarkerList {
 	/**
 	 * Returns an existing marker from the list that is associated with the
 	 * given IMarker
-	 * 
+	 *
 	 * @param toFind
 	 *            the IMarker to lookup in the list
 	 * @return the ConcreteMarker that corresponds to the given IMarker
@@ -105,7 +105,7 @@ public class MarkerList {
 	public ConcreteMarker getMarker(IMarker toFind) {
 		return (ConcreteMarker) getMarkerMap().get(toFind);
 	}
-	
+
 	/**
 	 * Return the list of IMarkers contained in the receiver.
 	 * @return IMarker[]
@@ -113,7 +113,7 @@ public class MarkerList {
 	public IMarker[] getIMarkers(){
 		IMarker[] iMarkers = new IMarker[markers.length];
 		for (int i = 0; i < markers.length; i++) {
-			iMarkers[i] = markers[i].getMarker();			
+			iMarkers[i] = markers[i].getMarker();
 		}
 		return iMarkers;
 	}
@@ -171,7 +171,7 @@ public class MarkerList {
 
 	/**
 	 * Computes the set of markers that match the given filter
-	 * 
+	 *
 	 * @param filters
 	 *            the filters to apply
 	 * @param mon
@@ -196,7 +196,7 @@ public class MarkerList {
 	/**
 	 * Returns a new MarkerList containing all markers in the workspace of the
 	 * specified types
-	 * 
+	 *
 	 * @param types
 	 * @return IMarker[]
 	 * @throws CoreException
@@ -217,7 +217,7 @@ public class MarkerList {
 
 	/**
 	 * Returns the markers in the list. Read-only.
-	 * 
+	 *
 	 * @return an array of markers in the list
 	 */
 	public ConcreteMarker[] toArray() {
@@ -226,7 +226,7 @@ public class MarkerList {
 
 	/**
 	 * Returns the markers in this list. Read-only.
-	 * 
+	 *
 	 * @return the markers in the list
 	 */
 	// public Collection getMarkers() {
@@ -234,7 +234,7 @@ public class MarkerList {
 	// }
 	/**
 	 * Returns the number of items in the list
-	 * 
+	 *
 	 * @return the number of items
 	 */
 	public int getItemCount() {
@@ -243,7 +243,7 @@ public class MarkerList {
 
 	/**
 	 * Returns the number of error markers in the list
-	 * 
+	 *
 	 * @return the number of errors
 	 */
 	public int getErrors() {
@@ -252,7 +252,7 @@ public class MarkerList {
 
 	/**
 	 * Returns the number of info markers in the list
-	 * 
+	 *
 	 * @return the number of info markers
 	 */
 	public int getInfos() {
@@ -261,7 +261,7 @@ public class MarkerList {
 
 	/**
 	 * Returns the number of warning markers in the list
-	 * 
+	 *
 	 * @return the number of warning markers
 	 */
 	public int getWarnings() {
@@ -271,7 +271,7 @@ public class MarkerList {
 	/**
 	 * Returns an array of marker counts where getMarkerCounts()[severity] is
 	 * the number of markers in the list with the given severity.
-	 * 
+	 *
 	 * @return an array of marker counts
 	 */
 	private int[] getMarkerCounts() {
@@ -296,7 +296,7 @@ public class MarkerList {
 	/**
 	 * Get the array that is the internal representation of the marker list
 	 * without making a copy.
-	 * 
+	 *
 	 * @return Object[]
 	 */
 	public Object[] getArray() {
@@ -305,7 +305,7 @@ public class MarkerList {
 
 	/**
 	 * Get the size of the receiver.
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getSize() {
@@ -314,7 +314,7 @@ public class MarkerList {
 
 	/**
 	 * Return the markers at index
-	 * 
+	 *
 	 * @param index
 	 * @return ConcreteMarker
 	 */
@@ -329,19 +329,19 @@ public class MarkerList {
 	 */
 	public void updateMarkers(Collection addedMarkers,Collection removedMarkers) {
 		List list = new ArrayList(asList());
-		list.addAll(addedMarkers);		
-		list.removeAll(removedMarkers);	
+		list.addAll(addedMarkers);
+		list.removeAll(removedMarkers);
 		markers = new ConcreteMarker[list.size()];
 		list.toArray(markers);
 	}
-	
+
 	/**
 	 * Refresh all of the markers in the receiver.
 	 */
 	public void refreshAll() {
 		for (int i = 0; i < markers.length; i++) {
 			markers[i].refresh();
-		}		
+		}
 	}
 
 	/**
@@ -351,6 +351,6 @@ public class MarkerList {
 		for (int i = 0; i < markers.length; i++) {
 			markers[i].setGroup(null);
 		}
-		
+
 	}
 }

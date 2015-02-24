@@ -46,7 +46,7 @@ import org.eclipse.ui.internal.ide.dialogs.OpenResourceDialog;
 /**
  * Implements the open resource action. Opens a dialog prompting for a file and
  * opens the selected file in an editor.
- * 
+ *
  * @since 2.1
  */
 public final class OpenResourceHandler extends Action implements IHandler,
@@ -146,7 +146,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 
 	/**
 	 * Query the user for the resources that should be opened
-	 * 
+	 *
 	 * @return the resource that should be opened.
 	 */
 	private final Object[] queryFileResource() {

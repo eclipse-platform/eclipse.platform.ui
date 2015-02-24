@@ -40,7 +40,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 
 	/**
 	 * Create a DeleteResourcesOperation
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to be deleted
 	 * @param label

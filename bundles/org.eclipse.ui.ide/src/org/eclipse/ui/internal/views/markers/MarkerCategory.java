@@ -17,9 +17,9 @@ import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 class MarkerCategory extends MarkerSupportItem {
-	
+
 	boolean refreshing;
-	
+
 	int start;
 
 	int end;
@@ -35,7 +35,7 @@ class MarkerCategory extends MarkerSupportItem {
 	/**
 	 * Create a new instance of the receiver that has the markers between
 	 * startIndex and endIndex showing.
-	 * 
+	 *
 	 * @param markers
 	 * @param startIndex
 	 * @param endIndex
@@ -52,7 +52,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
 	 */
@@ -72,7 +72,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildrenCount
 	 * ()
@@ -84,7 +84,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
@@ -118,7 +118,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/**
 	 * Get the highest severity in the receiver.
-	 * 
+	 *
 	 * @return int
 	 */
 	int getHighestSeverity() {
@@ -141,7 +141,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/**
 	 * Return the name of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	String getName() {
@@ -150,7 +150,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
 	 */
 	@Override
@@ -160,7 +160,7 @@ class MarkerCategory extends MarkerSupportItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
 	 */
 	@Override

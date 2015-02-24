@@ -21,9 +21,9 @@ import org.eclipse.core.resources.IMarker;
 /**
  * EditablePropertyTester is a property tester for the editable property of the
  * selected marker.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class EditablePropertyTester extends PropertyTester {
 

@@ -16,9 +16,9 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * The MarkerViewLabelProvider is a label provider for an individual field.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class MarkerViewLabelProvider extends ColumnLabelProvider {
 
@@ -26,7 +26,7 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Create a MarkerViewLabelProvider on a field
-	 * 
+	 *
 	 * @param field
 	 */
 	MarkerViewLabelProvider(IField field) {
@@ -36,7 +36,7 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang.Object)
 	 */
 	@Override
@@ -46,7 +46,7 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.Object)
 	 */
 	@Override
@@ -54,5 +54,5 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 		return field.getImage(element);
 	}
 
-	
+
 }

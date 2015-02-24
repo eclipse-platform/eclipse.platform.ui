@@ -38,13 +38,13 @@ import org.eclipse.ui.internal.ide.misc.DisjointSet;
 
 /**
  * This action closes all projects that are unrelated to the selected projects. A
- * project is unrelated if it is not directly or transitively referenced by one 
+ * project is unrelated if it is not directly or transitively referenced by one
  * of the selected projects, and does not directly or transitively reference
  * one of the selected projects.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see IDEActionFactory#CLOSE_UNRELATED_PROJECTS
  * @since 3.3
  */
@@ -60,7 +60,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	private List oldSelection = Collections.EMPTY_LIST;
 
-	
+
 	/**
 	 * Builds the connected component set for the input projects.
 	 * The result is a DisjointSet where all related projects belong
@@ -94,11 +94,11 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	/**
 	 * Creates this action.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell to use for parenting any dialogs created by this
 	 *            action.
-	 *            
+	 *
 	 * @deprecated {@link #CloseUnrelatedProjectsAction(IShellProvider)}
 	 */
 	@Deprecated
@@ -106,10 +106,10 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		super(shell, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
 		initAction();
 	}
-	
+
 	/**
 	 * Creates this action.
-	 * 
+	 *
 	 * @param provider
 	 *            The shell to use for parenting any dialogs created by this
 	 *            action.
@@ -119,17 +119,17 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		super(provider, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
 		initAction();
 	}
-	
+
 	@Override
 	public void run() {
 		if(promptForConfirmation())
 				super.run();
 	}
-   
+
    /**
 	 * Returns whether to close unrelated projects.
 	 * Consults the preference and prompts the user if necessary.
-	 * 
+	 *
 	 * @return <code>true</code> if unrelated projects should be closed, and
 	 *         <code>false</code> otherwise.
 	 */

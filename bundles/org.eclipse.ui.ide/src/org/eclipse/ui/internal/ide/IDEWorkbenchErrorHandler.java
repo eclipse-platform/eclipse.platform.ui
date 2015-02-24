@@ -40,7 +40,7 @@ import com.ibm.icu.text.MessageFormat;
  * returned from IDEWorkbenchAdvisor#getWorkbenchErrorHandler(). All handled
  * statuses are checked against severity and logged using logging facility (by
  * superclass).
- * 
+ *
  * @since 3.3
  */
 public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
@@ -68,10 +68,10 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	private static String MSG_FATAL_ERROR_Recursive = IDEWorkbenchMessages.FatalError_RecursiveError;
 
 	private static String MSG_FATAL_ERROR_Title = IDEWorkbenchMessages.InternalError;
-	
+
 	// cache handled statuses
-	private final Map map = Collections.synchronizedMap(new WeakHashMap()); 
- 	
+	private final Map map = Collections.synchronizedMap(new WeakHashMap());
+
 	/**
 	 * @param configurer
 	 */
@@ -283,7 +283,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 		/**
 		 * Updates the dialog message
-		 * 
+		 *
 		 * @param message
 		 *            new message
 		 */

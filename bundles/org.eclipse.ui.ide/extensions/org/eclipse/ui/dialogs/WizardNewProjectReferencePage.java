@@ -32,7 +32,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * Standard project reference page for a wizard that creates a 
+ * Standard project reference page for a wizard that creates a
  * project resource.
  * <p>
  * This page may be used by clients as-is; it may be also be

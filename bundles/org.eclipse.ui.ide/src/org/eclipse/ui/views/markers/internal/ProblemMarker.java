@@ -13,7 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * 
+ *
  */
 public class ProblemMarker extends ConcreteMarker {
 

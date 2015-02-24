@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * selection facilities.
  * </p>
  * <p>
- * Subclasses must implement 
+ * Subclasses must implement
  * <ul>
  *   <li><code>createSourceGroup</code></li>
  * </ul>
@@ -68,7 +68,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     private Button containerBrowseButton;
 
     /**
-     * Creates an import wizard page. If the initial resource selection 
+     * Creates an import wizard page. If the initial resource selection
      * contains exactly one container resource then it will be used as the default
      * import destination.
      *
@@ -97,8 +97,8 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     }
 
     /**
-     * The <code>WizardImportPage</code> implementation of this 
-     * <code>WizardDataTransferPage</code> method returns <code>true</code>. 
+     * The <code>WizardImportPage</code> implementation of this
+     * <code>WizardDataTransferPage</code> method returns <code>true</code>.
      * Subclasses may override this method.
      */
     @Override
@@ -259,7 +259,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
     }
 
     /**
-     * The <code>WizardImportPage</code> implementation of this 
+     * The <code>WizardImportPage</code> implementation of this
      * <code>Listener</code> method handles all events and enablements for controls
      * on this page. Subclasses may extend.
      */

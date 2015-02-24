@@ -82,13 +82,13 @@ public class BuildAction extends WorkspaceAction {
     private List/*<IBuildConfiguration>*/ projectConfigsToBuild = null;
 
     /**
-     * Creates a new action of the appropriate type. The action id is 
+     * Creates a new action of the appropriate type. The action id is
      * <code>ID_BUILD</code> for incremental builds and <code>ID_REBUILD_ALL</code>
      * for full builds.
      *
      * @param shell the shell for any dialogs
      * @param type the type of build; one of
-     *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or 
+     *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or
      *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
      * @deprecated See {@link #BuildAction(IShellProvider, int)}
      */
@@ -97,12 +97,12 @@ public class BuildAction extends WorkspaceAction {
         super(shell, "");//$NON-NLS-1$
         initAction(type);
     }
-    
+
     /**
 	 * Creates a new action of the appropriate type. The action id is
 	 * <code>ID_BUILD</code> for incremental builds and
 	 * <code>ID_REBUILD_ALL</code> for full builds.
-	 * 
+	 *
 	 * @param provider
 	 *            the shell provider for any dialogs
 	 * @param type
@@ -186,7 +186,7 @@ public class BuildAction extends WorkspaceAction {
 	}
 
 	/**
-	 * This collection of project build configs, derived from the selected 
+	 * This collection of project build configs, derived from the selected
 	 * resources, is passed to the workspace for building.  The Workspace
 	 * is responsible for resolving references.
 	 * @return List of project build configurations to build.
@@ -246,7 +246,7 @@ public class BuildAction extends WorkspaceAction {
 		}
 		return super.isEnabled();
 	}
-    
+
     /**
      * Returns whether the user's preference is set to automatically save modified
      * resources before a manual build is done.
@@ -310,7 +310,7 @@ public class BuildAction extends WorkspaceAction {
 				monitor.beginTask("", 10000); //$NON-NLS-1$
 				monitor.setTaskName(getOperationMessage());
 				try {
-					// Backwards compatibility: check shouldPerformResourcePruning(). 
+					// Backwards compatibility: check shouldPerformResourcePruning().
 					// Previously if this returned true, the full reference graph is built, otherwise just build the selected configurations
 					ResourcesPlugin.getWorkspace().build(configs, kind, shouldPerformResourcePruning(), new SubProgressMonitor(monitor, 10000));
 				} catch (CoreException e) {

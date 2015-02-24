@@ -50,7 +50,7 @@ public class TreeFrame extends Frame {
     /**
      * Constructs a frame for the specified tree viewer.
      * The frame's input, name and tool tip text are not set.
-     * 
+     *
      * @param viewer the tree viewer
      */
     public TreeFrame(AbstractTreeViewer viewer) {
@@ -60,9 +60,9 @@ public class TreeFrame extends Frame {
     /**
      * Constructs a frame for the specified tree viewer.
      * The frame's input element is set to the specified input element.
-     * The frame's name and tool tip text are set to the text for the input 
+     * The frame's name and tool tip text are set to the text for the input
      * element, as provided by the viewer's label provider.
-     * 
+     *
      * @param viewer the tree viewer
      * @param input the input element
      */
@@ -80,7 +80,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Returns the expanded elements.
-     * 
+     *
      * @return the expanded elements
      */
     public Object[] getExpandedElements() {
@@ -89,7 +89,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Returns the input element.
-     * 
+     *
      * @return the input element
      */
     public Object getInput() {
@@ -98,7 +98,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Returns the selection.
-     * 
+     *
      * @return the selection
      */
     public ISelection getSelection() {
@@ -107,7 +107,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Returns the tree viewer.
-     * 
+     *
      * @return the tree viewer
      */
     public AbstractTreeViewer getViewer() {
@@ -116,7 +116,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Restore IPersistableElements from the specified memento.
-     * 
+     *
      * @param memento memento to restore elements from
      * @return list of restored elements. May be empty.
      */
@@ -139,7 +139,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Restore the frame from the specified memento.
-     * 
+     *
      * @param memento memento to restore frame from
      */
     public void restoreState(IMemento memento) {
@@ -180,7 +180,7 @@ public class TreeFrame extends Frame {
     /**
      * Save the specified elements to the given memento.
      * The elements have to be adaptable to IPersistableElement.
-     * 
+     *
      * @param elements elements to persist
      * @param memento memento to persist elements in
      */
@@ -201,7 +201,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Save the frame state in the given memento.
-     * 
+     *
      * @param memento memento to persist the frame state in.
      */
     public void saveState(IMemento memento) {
@@ -235,7 +235,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Sets the input element.
-     * 
+     *
      * @param input the input element
      */
     public void setInput(Object input) {
@@ -244,7 +244,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Sets the expanded elements.
-     * 
+     *
      * @param expandedElements the expanded elements
      */
     public void setExpandedElements(Object[] expandedElements) {
@@ -253,7 +253,7 @@ public class TreeFrame extends Frame {
 
     /**
      * Sets the selection.
-     * 
+     *
      * @param selection the selection
      */
     public void setSelection(ISelection selection) {

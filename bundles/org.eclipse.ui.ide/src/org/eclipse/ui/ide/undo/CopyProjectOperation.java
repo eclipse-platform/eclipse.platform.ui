@@ -35,12 +35,12 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * A CopyProjectOperation represents an undoable operation for copying a
  * project, also specifying the location of its contents. Clients may call the
  * public API from a background thread.
- * 
+ *
  * <p>
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
  */
@@ -55,7 +55,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	/**
 	 * Create a CopyProjectOperation that copies the specified project and sets
 	 * its location to the specified location.
-	 * 
+	 *
 	 * @param project
 	 *            the project to be copied
 	 * @param name

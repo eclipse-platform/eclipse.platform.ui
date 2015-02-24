@@ -1750,7 +1750,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * <p>
 	 * See bug 401632 why we can't use {@link IWorkbenchPage#isPartVisible(IWorkbenchPart)}.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if this view is visible, <code>false</code> otherwise
 	 */
 	boolean isVisible() {

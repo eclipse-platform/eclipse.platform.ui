@@ -434,13 +434,13 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
     /**
      *	Set the initial checked state of the passed list element to true.
-     *	
-     *	@param element the element in the list to select 
+     *
+     *	@param element the element in the list to select
      */
     public void initialCheckListItem(Object element) {
         Object parent = treeContentProvider.getParent(element);
         currentTreeSelection = parent;
-        //As this is not done from the UI then set the box for updating from the selection to false 
+        //As this is not done from the UI then set the box for updating from the selection to false
         listItemChecked(element, true, false);
         updateHierarchy(parent);
     }
@@ -448,7 +448,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     /**
      *	Set the initial checked state of the passed element to true,
      *	as well as to all of its children and associated list elements
-     *	
+     *
      *	@param element the element in the tree to select
      */
     public void initialCheckTreeItem(Object element) {
@@ -568,7 +568,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     /**
      * Select or deselect all of the elements in the tree depending on the value of the selection
      * boolean. Be sure to update the displayed files as well.
-     * 
+     *
      * @param selection boolean indicating whether or not to select all elements
      */
     public void setAllSelections(final boolean selection) {
@@ -608,7 +608,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     /**
      * Set the root of the widget to be new Root. Regenerate all of the tables and lists from this
      * value.
-     * @param newRoot 
+     * @param newRoot
      */
     public void setRoot(Object newRoot) {
         this.root = newRoot;
@@ -723,7 +723,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 			return;
 		}
 
-        // now update upwards in the tree hierarchy 
+        // now update upwards in the tree hierarchy
         if (state) {
 			grayCheckHierarchy(parent);
 		} else {

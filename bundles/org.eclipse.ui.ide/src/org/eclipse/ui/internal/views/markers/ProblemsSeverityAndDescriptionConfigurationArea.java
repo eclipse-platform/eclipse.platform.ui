@@ -27,10 +27,10 @@ public class ProblemsSeverityAndDescriptionConfigurationArea extends
 	 */
 	@Override
 	public void createContents(Composite parent) {
-	
+
 		super.createContents(parent);
 		createSeverityGroup(parent);
-	
+
 	}
 
 }

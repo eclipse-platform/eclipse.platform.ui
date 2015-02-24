@@ -25,9 +25,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * GroupsContribution is the contribution for the marker groupings.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class GroupsContribution extends MarkersContribution {
 
@@ -40,7 +40,7 @@ public class GroupsContribution extends MarkersContribution {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
 	@Override
@@ -69,7 +69,7 @@ public class GroupsContribution extends MarkersContribution {
 
 	/**
 	 * Return the IContributionItem for group.
-	 * 
+	 *
 	 * @param group
 	 * @return IContributionItem
 	 */
@@ -78,7 +78,7 @@ public class GroupsContribution extends MarkersContribution {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
 			 *      int)
 			 */
@@ -104,7 +104,7 @@ public class GroupsContribution extends MarkersContribution {
 
 			/**
 			 * Return the menu item listener for selection of a filter.
-			 * 
+			 *
 			 * @param group
 			 * @param view
 			 * @return Listener
@@ -114,7 +114,7 @@ public class GroupsContribution extends MarkersContribution {
 				return new Listener() {
 					/*
 					 * (non-Javadoc)
-					 * 
+					 *
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
 					@Override

@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 public class TarFileExporter implements IFileExporter {
     private TarOutputStream outputStream;
     private GZIPOutputStream gzipOutputStream;
-    
+
 
     /**
      *	Create an instance of this class.
@@ -78,7 +78,7 @@ public class TarFileExporter implements IFileExporter {
 		if (location == null) {
 			throw new FileNotFoundException(contents.getFullPath().toOSString());
 		}
-    	
+
     	InputStream contentStream = contents.getContents(false);
     	entry.setSize(EFS.getStore(location).fetchInfo().getLength());
     	outputStream.putNextEntry(entry);
@@ -94,7 +94,7 @@ public class TarFileExporter implements IFileExporter {
 			}
         }
 
-    	outputStream.closeEntry();    	
+    	outputStream.closeEntry();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class TarFileExporter implements IFileExporter {
         newEntry.setFileType(TarEntry.DIRECTORY);
         outputStream.putNextEntry(newEntry);
     }
-    
+
     /**
      *  Write the passed resource to the current archive.
      *

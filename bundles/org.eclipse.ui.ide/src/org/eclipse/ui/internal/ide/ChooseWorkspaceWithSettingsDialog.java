@@ -52,9 +52,9 @@ import org.eclipse.ui.preferences.SettingsTransfer;
 /**
  * The ChooseWorkspaceWithSettingsDialog is the dialog used to switch workspaces
  * with an optional settings export.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
@@ -79,7 +79,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Open a new instance of the receiver.
-	 * 
+	 *
 	 * @param parentShell
 	 * @param launchData
 	 * @param suppressAskAgain
@@ -104,7 +104,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Create the controls for selecting the controls we are going to export.
-	 * 
+	 *
 	 * @param workArea
 	 */
 	private void createSettingsControls(Composite workArea) {
@@ -114,7 +114,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				toolkit.dispose();
-				
+
 			}});
 		final ScrolledForm form = toolkit.createScrolledForm(workArea);
 		form.setBackground(workArea.getBackground());
@@ -172,7 +172,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Create the buttons for the settings transfer.
-	 * 
+	 *
 	 * @param toolkit
 	 * @param sectionClient
 	 * @return boolean <code>true</code> if any were selected
@@ -227,7 +227,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Get the settings for the receiver based on the entries in section.
-	 * 
+	 *
 	 * @param section
 	 * @return String[] or <code>null</code>
 	 */
@@ -275,7 +275,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Save the ids of the selected elements.
-	 * 
+	 *
 	 * @param selectionIDs
 	 */
 	private void saveSettings(String[] selectionIDs) {
@@ -292,7 +292,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 	/**
 	 * Take the values from element and execute the class for path.
-	 * 
+	 *
 	 * @param elem
 	 * @param path
 	 * @return IStatus the result of the settings transfer.

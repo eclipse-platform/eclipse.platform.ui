@@ -33,7 +33,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * This action displays a list of resolutions for the selected marker
- * 
+ *
  * @since 2.0
  */
 public class ActionResolveMarker extends MarkerSelectionProviderAction {
@@ -42,7 +42,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param markerView
 	 * @param provider
 	 */
@@ -119,7 +119,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 
 	/**
 	 * Handle the exception.
-	 * 
+	 *
 	 * @param exception
 	 */
 	private void handleException(Exception exception) {
@@ -132,7 +132,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 
 	/**
 	 * Return the description of the marker.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getMarkerDescription() {
@@ -141,7 +141,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	@Override

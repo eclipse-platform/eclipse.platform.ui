@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.ide.registry;
 
 /**
  * Instances of this class represent the result of a specific marker
- * query. Specifically they contain an ordered collection of marker 
+ * query. Specifically they contain an ordered collection of marker
  * attribute values.
  */
 
@@ -32,7 +32,7 @@ public class MarkerQueryResult {
      * <p>
      * The values may not be empty.
      * </p>
-     * 
+     *
      * @param markerAttributeValues the target marker's attribute values
      */
     public MarkerQueryResult(String[] markerAttributeValues) {

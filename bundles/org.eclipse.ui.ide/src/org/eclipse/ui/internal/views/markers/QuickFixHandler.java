@@ -41,9 +41,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * QuickFixHandler is the command handler for the quick fix dialog.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class QuickFixHandler extends MarkerViewHandler {
 
@@ -56,14 +56,14 @@ public class QuickFixHandler extends MarkerViewHandler {
 		public QuickFixWizardDialog(Shell parentShell, IWizard newWizard) {
 			super(parentShell, newWizard);
 			setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER
-					| SWT.MODELESS | SWT.RESIZE | getDefaultOrientation());	
+					| SWT.MODELESS | SWT.RESIZE | getDefaultOrientation());
 		}
 
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
@@ -151,7 +151,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 						view.getSite().getShell(),
 						MarkerMessages.resolveMarkerAction_dialogTitle,
 						MarkerMessages.MarkerResolutionDialog_NoResolutionsFoundForMultiSelection);
-				
+
 			}
 		} else {
 
@@ -172,7 +172,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 	/**
 	 * Checks whether the given extent contains all all but the first element from the given members
 	 * array.
-	 * 
+	 *
 	 * @param extent the array which should contain the elements
 	 * @param members the elements to check
 	 * @return <code>true</code> if all but the first element are inside the extent

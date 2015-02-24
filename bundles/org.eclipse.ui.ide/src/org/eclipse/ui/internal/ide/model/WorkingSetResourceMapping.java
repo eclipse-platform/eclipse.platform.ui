@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkingSet;
 public class WorkingSetResourceMapping extends ResourceMapping {
 
 	private IWorkingSet set;
-	
+
 	/**
 	 * Create the resource mapping
 	 * @param workingSet the working set
@@ -118,7 +118,7 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
 	 */

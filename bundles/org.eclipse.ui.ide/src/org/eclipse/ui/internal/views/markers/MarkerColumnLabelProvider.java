@@ -21,9 +21,9 @@ import org.eclipse.ui.views.markers.MarkerField;
 
 /**
  * The MarkerColumnLabelProvider is a label provider for an individual column.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
@@ -32,7 +32,7 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Create a MarkerViewLabelProvider on a field.
-	 * 
+	 *
 	 * @param field
 	 */
 	MarkerColumnLabelProvider(MarkerField field) {
@@ -45,7 +45,7 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
 	@Override
@@ -56,7 +56,7 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	@Override

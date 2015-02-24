@@ -16,13 +16,13 @@ import org.eclipse.ui.internal.ide.Policy;
 
 /**
  * FieldCategory is the field for showing categories of markers.
- * 
+ *
  */
 public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	@Override
@@ -32,7 +32,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
 	 */
 	@Override
@@ -42,7 +42,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 	 */
 	@Override
@@ -52,7 +52,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
 	@Override
@@ -62,7 +62,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	@Override
@@ -100,7 +100,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	@Override
@@ -110,7 +110,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -121,7 +121,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
 	@Override
@@ -131,7 +131,7 @@ public class FieldCategory extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */
 	@Override

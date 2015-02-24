@@ -31,8 +31,8 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
     private FilterSelectionAction filterAction;
 
     /**
-     * Constructor. 
-     * 
+     * Constructor.
+     *
      * @param navigator
      */
     public SortAndFilterActionGroup(IResourceNavigator navigator) {

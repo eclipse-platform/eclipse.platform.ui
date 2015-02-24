@@ -36,7 +36,7 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * A class to handle editing of the line delimiter preferences in core.
- * 
+ *
  * @since 3.1
  */
 public class LineDelimiterEditor {
@@ -58,7 +58,7 @@ public class LineDelimiterEditor {
 
 	/**
 	 * Creates a new line delimiter editor for workspace.
-	 * 
+	 *
 	 * @param composite
 	 *            the parent of the field editor's control
 	 */
@@ -68,7 +68,7 @@ public class LineDelimiterEditor {
 
 	/**
 	 * Creates a new line delimiter editor for the given project.
-	 * 
+	 *
 	 * @param composite
 	 *            the parent of the field editor's control
 	 * @param project
@@ -82,7 +82,7 @@ public class LineDelimiterEditor {
 	/**
 	 * Creates this field editor's main control containing all of its basic
 	 * controls.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */
@@ -180,7 +180,7 @@ public class LineDelimiterEditor {
 
 	/**
 	 * Returns the value that is currently stored for the line delimiter.
-	 * 
+	 *
 	 * @param node
 	 *            preferences node from which the value should be read
 	 * @return the currently stored line delimiter
@@ -200,7 +200,7 @@ public class LineDelimiterEditor {
 	 * Answer the <code>Preferences</code> for the receiver, this will be a
 	 * project preferences if the receiver is editing project preferences,
 	 * otherwise instance preferences.
-	 * 
+	 *
 	 * @param project
 	 *            the project for which the line editor will be modified
 	 * @return the preferences
@@ -215,7 +215,7 @@ public class LineDelimiterEditor {
 
 	/**
 	 * Returns the default setting for the object being shown.
-	 * 
+	 *
 	 * @return the default setting for the object being shown
 	 */
 	private String[] getChoices() {
@@ -284,7 +284,7 @@ public class LineDelimiterEditor {
 
 	/**
 	 * Set whether or not the controls in the field editor are enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            The enabled state.
 	 */

@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
@@ -55,7 +55,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Get the instance of the registry.
-	 * 
+	 *
 	 * @return MarkerSupportRegistry
 	 */
 	public static FileSystemSupportRegistry getInstance() {
@@ -136,7 +136,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Process the extension and register the result with the tracker.
-	 * 
+	 *
 	 * @param tracker
 	 * @param extension
 	 */
@@ -155,7 +155,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return a new FileSystemContribution.
-	 * 
+	 *
 	 * @param element
 	 * @return FileSystemContribution or <code>null</code> if there is an
 	 *         exception.
@@ -198,7 +198,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return the FileSystemConfiguration defined in the receiver.
-	 * 
+	 *
 	 * @return FileSystemConfiguration[]
 	 */
 	public FileSystemConfiguration[] getConfigurations() {
@@ -220,7 +220,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Return the default file system configuration (the local file system
 	 * extension in the ide plug-in).
-	 * 
+	 *
 	 * @return FileSystemConfiguration
 	 */
 	public FileSystemConfiguration getDefaultConfiguration() {
@@ -229,7 +229,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return whether or not there is only one file system registered.
-	 * 
+	 *
 	 * @return <code>true</code> if there is only one file system.
 	 */
 	public boolean hasOneFileSystem() {

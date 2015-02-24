@@ -54,17 +54,17 @@ class MarkCompletedAction extends TaskAction {
             }
     		Map attrs = new HashMap();
     		attrs.put(IMarker.DONE, Boolean.TRUE);
-    		IUndoableOperation op = new UpdateMarkersOperation((IMarker [])markers.toArray(new IMarker [markers.size()]), 
+    		IUndoableOperation op = new UpdateMarkersOperation((IMarker [])markers.toArray(new IMarker [markers.size()]),
     				attrs, getText(), true);
     		execute(op, getText(), null, null);
 
         }
-        
+
     }
 
     /**
      * Returns whether this action should be enabled for the given selection.
-     * 
+     *
      * @param selection the selection
      * @return enablement
      */

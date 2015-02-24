@@ -17,15 +17,15 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * MarkerTypeField is the field that defines the marker type.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class MarkerTypeField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override

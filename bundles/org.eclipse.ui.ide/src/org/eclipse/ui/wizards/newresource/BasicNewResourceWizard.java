@@ -76,7 +76,7 @@ public abstract class BasicNewResourceWizard extends Wizard implements
     }
 
     /**
-     * The <code>BasicNewResourceWizard</code> implementation of this 
+     * The <code>BasicNewResourceWizard</code> implementation of this
      * <code>IWorkbenchWizard</code> method records the given workbench and
      * selection, and initializes the default banner image for the pages
      * by calling <code>initializeDefaultPageImageDescriptor</code>.
@@ -124,7 +124,7 @@ public abstract class BasicNewResourceWizard extends Wizard implements
      *
      * @param resource the resource to be selected and revealed
      * @param window the workbench window to select and reveal the resource
-     * 
+     *
      * @see ISetSelectionTarget
      */
     public static void selectAndReveal(IResource resource,

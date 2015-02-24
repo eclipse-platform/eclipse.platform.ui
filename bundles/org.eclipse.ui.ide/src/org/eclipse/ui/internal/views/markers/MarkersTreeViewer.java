@@ -18,16 +18,16 @@ import org.eclipse.swt.widgets.Tree;
 
 /**
  * The MarkersTreeViewer is a viewer that optimizes the expandToLevel method.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 
 public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
@@ -38,7 +38,7 @@ public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param parent
 	 */
 	public MarkersTreeViewer(Composite parent) {
@@ -47,7 +47,7 @@ public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param tree
 	 */
 	public MarkersTreeViewer(Tree tree) {
@@ -64,7 +64,7 @@ public class MarkersTreeViewer extends TreeViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.AbstractTreeViewer#doUpdateItem(org.eclipse
 	 * .swt.widgets.Item, java.lang.Object)

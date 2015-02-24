@@ -30,11 +30,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 /**
  * FileDescription is a lightweight description that describes a file to be
  * created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class FileDescription extends AbstractResourceDescription {
 
@@ -50,7 +50,7 @@ public class FileDescription extends AbstractResourceDescription {
 	 * Create a FileDescription that can be used to later restore the given
 	 * file. The file typically already exists, but this constructor will not
 	 * fail if the file does not exist.
-	 * 
+	 *
 	 * @param file
 	 *            the file to be restored.
 	 */
@@ -74,7 +74,7 @@ public class FileDescription extends AbstractResourceDescription {
 	 * path is specified, this file should represent a link to another location.
 	 * The content description describes any state that should be used when the
 	 * file resource is created.
-	 * 
+	 *
 	 * @param file
 	 *            the file to be described
 	 * @param linkLocation
@@ -95,7 +95,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordStateFromHistory(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -114,7 +114,7 @@ public class FileDescription extends AbstractResourceDescription {
 			this.fileContentDescription = new IFileContentDescription() {
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
 				 */
 				@Override
@@ -124,7 +124,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getContents()
 				 */
 				@Override
@@ -134,7 +134,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
 				 */
 				@Override
@@ -147,7 +147,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createResourceHandle()
 	 */
 	@Override
@@ -159,7 +159,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -214,7 +214,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#isValid()
 	 */
 	@Override
@@ -228,7 +228,7 @@ public class FileDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#getName()
 	 */
 	@Override
@@ -250,10 +250,10 @@ public class FileDescription extends AbstractResourceDescription {
 		return states[0];
 
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource)
 	 */
 	@Override

@@ -16,9 +16,9 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * The ContentProvider to the TreeViewer used in Markers View.
- * 
+ *
  * @since 3.6
- * 
+ *
  */
 class MarkerViewerContentProvider implements ITreeContentProvider {
 
@@ -35,7 +35,7 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
 	 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -47,7 +47,7 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	@Override
@@ -57,7 +57,7 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java
 	 * .lang.Object)
 	 */
@@ -71,30 +71,30 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements
 	 * (java.lang.Object)
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		//use clone 
+		//use clone
 		return getLimitedChildren(((Markers) input).getElements());
 	}
 
 	/**
 	 * Get the children limited by the marker limits.
-	 * 
+	 *
 	 * @param children
 	 * @return Object[]
 	 */
 	private Object[] getLimitedChildren(Object[] children) {
-		
+
 		boolean limitsEnabled = markersView.getGenerator().isMarkerLimitsEnabled();
 		int limits = markersView.getGenerator().getMarkerLimits();
-		
+
 		if (!limitsEnabled || limits <= 0 || limits > children.length)
 			return children;
-		
+
 		Object[] newChildren = new Object[limits];
 		System.arraycopy(children, 0, newChildren, 0, limits);
 		return newChildren;
@@ -102,7 +102,7 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(
 	 * java.lang.Object)
 	 */
@@ -116,7 +116,7 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java
 	 * .lang.Object)
 	 */

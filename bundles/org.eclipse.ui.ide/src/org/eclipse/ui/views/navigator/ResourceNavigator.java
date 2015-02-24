@@ -141,7 +141,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	 * event we're effectively not using a working set.
 	 */
     private boolean emptyWorkingSet = false;
-    
+
     /**
 	 * Settings constant for section name (value <code>ResourceNavigator</code>).
 	 */
@@ -167,7 +167,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * True iff we've already scheduled an asynchronous call to linkToEditor
      */
     private boolean linkScheduled = false;
-    
+
     // Persistance tags.
     private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
 
@@ -221,7 +221,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             String property = event.getProperty();
             Object newValue = event.getNewValue();
             Object oldValue = event.getOldValue();
-           
+
             if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)
                     && oldValue == workingSet) {
                 setWorkingSet(null);
@@ -252,10 +252,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     };
 
 	private CollapseAllHandler collapseAllHandler;
-	
+
 	/**
 	 * Helper to open and activate editors.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private OpenAndLinkWithEditorHelper openAndLinkWithEditorHelper;
@@ -354,7 +354,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Returns the help context id to use for this view.
-     * 
+     *
      * @since 2.0
      */
     protected String getHelpContextId() {
@@ -363,7 +363,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Initializes and registers the context menu.
-     * 
+     *
      * @since 2.0
      */
     protected void initContextMenu() {
@@ -383,7 +383,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Creates the viewer.
-     * 
+     *
      * @param parent the parent composite
      * @since 2.0
      */
@@ -401,7 +401,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Sets the content provider for the viewer.
-     * 
+     *
      * @param viewer the viewer
      * @since 2.0
      */
@@ -411,7 +411,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Sets the label provider for the viewer.
-     * 
+     *
      * @param viewer the viewer
      * @since 2.0
      */
@@ -423,7 +423,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Adds the filters to the viewer.
-     * 
+     *
      * @param viewer the viewer
      * @since 2.0
      */
@@ -451,7 +451,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Adds the listeners to the viewer.
-     * 
+     *
      * @param viewer the viewer
      * @since 2.0
      */
@@ -468,7 +468,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 handleDoubleClick(event);
             }
         });
-        
+
 		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(viewer) {
 			@Override
 			protected void activate(ISelection selection) {
@@ -481,7 +481,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 						page.activate(editor);
 					}
 				}
-				
+
 			}
 
 			@Override
@@ -517,7 +517,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 			}
 
 		};
-        
+
 
         viewer.getControl().addKeyListener(new KeyListener() {
             @Override
@@ -530,7 +530,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 handleKeyReleased(event);
             }
         });
-        
+
         openAndLinkWithEditorHelper.setLinkWithEditor(linkingEnabled);
     }
 
@@ -548,7 +548,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         if (collapseAllHandler != null) {
 			collapseAllHandler.dispose();
 		}
-        
+
         if (getActionGroup() != null) {
             getActionGroup().dispose();
         }
@@ -557,14 +557,14 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 && control.isDisposed() == false) {
             control.removeListener(SWT.DragDetect, dragDetectListener);
         }
-        
+
         super.dispose();
     }
 
     /**
      * An editor has been activated.  Sets the selection in this navigator
      * to be the editor's input, if linking is enabled.
-     * 
+     *
      * @param editor the active editor
      * @since 2.0
      */
@@ -611,7 +611,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * If the resource is a container, it uses that.
      * If the resource is a file, it uses its parent folder.
      * If a resource could not be obtained, it uses the workspace root.
-     * 
+     *
      * @since 2.0
      */
     protected IAdaptable getInitialInput() {
@@ -674,7 +674,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	 * Return the sorter. If a comparator was set using
 	 * {@link #setComparator(ResourceComparator)}, this method will return
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated as of 3.3, use {@link ResourceNavigator#getComparator()}
 	 */
@@ -692,7 +692,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Returns the comparator.  If a sorter was set using
 	 * {@link #setSorter(ResourceSorter)}, this method will return
 	 * <code>null</code>.
-     * 
+     *
      * @return the <code>ResourceComparator</code>
      * @since 3.3
      */
@@ -726,7 +726,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
      * Returns the shell to use for opening dialogs.
      * Used in this class, and in the actions.
-     * 
+     *
      * @return the shell
      * @deprecated use getViewSite().getShell()
      */
@@ -784,7 +784,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 			}
             return path.makeRelative().toString();
         }
-        
+
         String text = ((ILabelProvider) getTreeViewer().getLabelProvider())
         	.getText(element);
         if(text == null) {
@@ -795,7 +795,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
 	/**
 	 * Handles an open event from the viewer. Opens an editor on the selected file.
-	 * 
+	 *
 	 * @param event the open event
 	 * @since 2.0
 	 * @deprecated As of 3.5, replaced by {@link #handleOpen(ISelection)}
@@ -807,7 +807,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
 	/**
 	 * Handles an open event from the viewer. Opens an editor on the selected file.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @since 3.5
 	 */
@@ -820,7 +820,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
      * Handles a double-click event from the viewer.
      * Expands or collapses a folder when double-clicked.
-     * 
+     *
      * @param event the double-click event
      * @since 2.0
      */
@@ -847,7 +847,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
      * Handles a selection changed event from the viewer.
      * Updates the status line and the action bars, and links to editor (if option enabled).
-     * 
+     *
      * @param event the selection event
      * @since 2.0
      */
@@ -862,7 +862,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
      * Handles a key press event from the viewer.
      * Delegates to the action group.
-     * 
+     *
      * @param event the key event
      * @since 2.0
      */
@@ -872,7 +872,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Handles a key release in the viewer.  Does nothing by default.
-     * 
+     *
      * @param event the key event
      * @since 2.0
      */
@@ -890,7 +890,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Adds drag and drop support to the navigator.
-     * 
+     *
      * @since 2.0
      */
     protected void initDragAndDrop() {
@@ -915,7 +915,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Creates the frame source and frame list, and connects them.
-     * 
+     *
      * @since 2.0
      */
     protected FrameList createFrameList() {
@@ -927,7 +927,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Initializes the sorter.
-     * 
+     *
      * @deprecated as of 3.3, use {@link ResourceNavigator#initResourceComparator()} instead
      */
     @Deprecated
@@ -951,7 +951,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
         setSorter(new ResourceSorter(sortType));
     }
-    
+
     /**
      * Initializes the comparator.
 	 * @since 3.3
@@ -984,7 +984,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         String workingSetName = settings.get(STORE_WORKING_SET);
 
         IWorkingSet workingSet = null;
-        
+
         if (workingSetName != null && workingSetName.equals("") == false) { //$NON-NLS-1$
 			IWorkingSetManager workingSetManager = getPlugin().getWorkbench()
 					.getWorkingSetManager();
@@ -1009,7 +1009,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
 	 * Returns whether the navigator selection automatically tracks the active
 	 * editor.
-	 * 
+	 *
 	 * @return <code>true</code> if linking is enabled, <code>false</code>
 	 *         if not
 	 * @since 2.0 (this was protected in 2.0, but was made public in 2.1)
@@ -1021,7 +1021,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
 	/**
 	 * Brings the corresponding editor to top if the selected resource is open.
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated As of 3.5, replaced by {@link #linkToEditor(ISelection)}
 	 */
@@ -1032,14 +1032,14 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
 	/**
 	 * Brings the corresponding editor to top if the selected resource is open.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	protected void linkToEditor(ISelection selection) {
 
     	if (this != this.getSite().getPage().getActivePart())
     		return;
-    	
+
         Object obj = getSingleElement(selection);
 		if (obj instanceof IFile) {
             IFile file = (IFile) obj;
@@ -1058,7 +1058,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     protected void makeActions() {
     	MainActionGroup group = new MainActionGroup(this);
         setActionGroup(group);
-        
+
         IHandlerService service = getSite().getService(IHandlerService.class);
 		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR,
     			new ActionHandler(group.toggleLinkingAction));
@@ -1350,7 +1350,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Sets the resource sorter.
-     * 
+     *
      * @param sorter the resource sorter
      * @since 2.0
      * @deprecated as of 3.3, use {@link ResourceNavigator#setComparator(ResourceComparator)}
@@ -1373,10 +1373,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         // update the sort actions' checked state
         updateActionBars((IStructuredSelection) viewer.getSelection());
     }
-    
+
     /**
      * Sets the resource comparator
-     * 
+     *
      * @param comparator the resource comparator
      * @since 3.3
      */
@@ -1407,9 +1407,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         TreeViewer treeViewer = getTreeViewer();
         Object[] expanded = treeViewer.getExpandedElements();
         ISelection selection = treeViewer.getSelection();
-        
+
         boolean refreshNeeded = internalSetWorkingSet(workingSet);
-        
+
         workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
         if (workingSet != null) {
             settings.put(STORE_WORKING_SET, workingSet.getName());
@@ -1430,7 +1430,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
 	/**
 	 * Set the internal working set fields specific to the navigator.
-	 * 
+	 *
 	 * @param workingSet
 	 *            the new working set
 	 * @since 3.2
@@ -1445,7 +1445,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Updates the action bar actions.
-     * 
+     *
      * @param selection the current selection
      * @since 2.0
      */
@@ -1471,7 +1471,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Updates the title text and title tool tip.
      * Called whenever the input of the viewer changes.
      * Called whenever the input of the viewer changes.
-     * 
+     *
      * @since 2.0
      */
     public void updateTitle() {
@@ -1505,7 +1505,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Returns the action group.
-     * 
+     *
      * @return the action group
      */
     protected ResourceNavigatorActionGroup getActionGroup() {
@@ -1514,7 +1514,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Sets the action group.
-     * 
+     *
      * @param actionGroup the action group
      */
     protected void setActionGroup(ResourceNavigatorActionGroup actionGroup) {
@@ -1603,10 +1603,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             }
         };
     }
-    
+
 	/**
 	 * Returns the selected element if the selection consists of a single element only.
-	 * 
+	 *
 	 * @param s the selection
 	 * @return the selected first element or null
 	 * @since 3.5

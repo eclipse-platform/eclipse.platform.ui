@@ -64,10 +64,10 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	/**
 	 * Creates a new action.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell for any dialogs
-	 *    
+	 *
 	 * @deprecated {@link #OpenResourceAction(IShellProvider)}
 	 */
 	@Deprecated
@@ -78,7 +78,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	/**
 	 * Creates a new action.
-	 * 
+	 *
 	 * @param provider
 	 * 				the shell for any dialogs
 	 * @since 3.4
@@ -152,7 +152,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	/**
 	 * Returns the preference for whether to open required projects when opening
 	 * a project. Consults the preference and prompts the user if necessary.
-	 * 
+	 *
 	 * @return <code>true</code> if referenced projects should be opened, and
 	 *         <code>false</code> otherwise.
 	 */

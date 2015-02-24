@@ -31,11 +31,11 @@ public class WorkbenchFile extends WorkbenchResource {
 	 * to cache the result of doing a proper content type lookup. This will be
 	 * set by the ContentTypeDecorator (if enabled) and used instead of the
 	 * "guessed" content type in {@link #getBaseImage(IResource)}.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static QualifiedName IMAGE_CACHE_KEY = new QualifiedName(WorkbenchPlugin.PI_WORKBENCH, "WorkbenchFileImage"); //$NON-NLS-1$
-	
+
 	/**
      *	Answer the appropriate base image to use for the passed resource, optionally
      *	considering the passed open status as well iff appropriate for the type of

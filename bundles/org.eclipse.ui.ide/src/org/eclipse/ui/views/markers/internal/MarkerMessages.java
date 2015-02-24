@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * MarkerMessages is the class that handles the messages for the markers.
- * 
+ *
  */
 public class MarkerMessages extends NLS {
 
@@ -69,14 +69,14 @@ public class MarkerMessages extends NLS {
 	public static String selectAllAction_calculating;
 	public static String selectAllAction_applying;
 	public static String propertiesAction_title;
-	
+
 	public static String deleteActionConfirmTitle;
 	public static String deleteActionConfirmMessage;
 
 	public static String filtersDialog_title;
 	public static String configureFiltersCommand_title;
 	public static String configureFiltersDialog_title;
-	
+
 	public static String configEditDialog_name;
 
 	public static String filtersDialog_showItemsOfType;
@@ -216,7 +216,7 @@ public class MarkerMessages extends NLS {
 	public static String MarkerFilter_renameName;
 	public static String MarkerFilter_showAllCommand_title;
 	public static String MarkerFilter_ConfigureContentsCommand_title;
-	
+
 	public static String MarkerFilterDialog_title;
 	public static String MarkerFilterDialog_message;
 	public static String MarkerFilterDialog_emptyMessage;
@@ -234,7 +234,7 @@ public class MarkerMessages extends NLS {
 	public static String MarkerPreferences_HiddenColumnsTitle;
 	public static String MarkerPreferences_AtLeastOneVisibleColumn;
 	public static String MarkerPreferences_WidthOfShownColumn;
-	
+
 	public static String ProblemFilterDialog_System_Filters_Title;
 	public static String ProblemFilterDialog_All_Problems;
 	public static String ProblemFilterDialog_Selected_Types;

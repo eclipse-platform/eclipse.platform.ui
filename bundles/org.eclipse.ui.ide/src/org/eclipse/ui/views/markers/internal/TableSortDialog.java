@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de>: 
+ *     Sebastian Davids <sdavids@gmx.de>:
  *         Fix for Bug 77336 [Markers] [Dialogs] TableSortDialog does not use dialog font
  *******************************************************************************/
 
@@ -102,11 +102,11 @@ public class TableSortDialog extends TrayDialog {
 		}
 
         initializeDialogUnits(composite);
-        
+
         createPrioritiesArea(composite);
         createRestoreDefaultsButton(composite);
         createSeparatorLine(composite);
-        
+
         Dialog.applyDialogFont(composite);
 
         return composite;
@@ -119,7 +119,7 @@ public class TableSortDialog extends TrayDialog {
     private void createPrioritiesArea(Composite parent) {
         Composite prioritiesArea = new Composite(parent, SWT.NULL);
         prioritiesArea.setLayout(new GridLayout(3, false));
-        
+
         int[] priorities = sorter.getPriorities();
 
         ascendingButtons = new Button[priorities.length];
@@ -129,7 +129,7 @@ public class TableSortDialog extends TrayDialog {
         initPriotityText();
 
         Label sortByLabel = new Label(prioritiesArea, SWT.NULL);
-        sortByLabel.setText(MarkerMessages.sortDialog_label); 
+        sortByLabel.setText(MarkerMessages.sortDialog_label);
         GridData data = new GridData();
         data.horizontalSpan = 3;
         sortByLabel.setLayoutData(data);
@@ -139,7 +139,7 @@ public class TableSortDialog extends TrayDialog {
             Label numberLabel = new Label(prioritiesArea, SWT.NULL);
             numberLabel
                     .setText(NLS
-                            .bind(MarkerMessages.sortDialog_columnLabel,new Integer(i + 1))); 
+                            .bind(MarkerMessages.sortDialog_columnLabel,new Integer(i + 1)));
 
             priorityCombos[i] = new Combo(prioritiesArea, SWT.READ_ONLY);
             priorityCombos[i].setLayoutData(new GridData(
@@ -147,7 +147,7 @@ public class TableSortDialog extends TrayDialog {
 
             Composite directionGroup = new Composite(prioritiesArea, SWT.NONE);
             directionGroup.setLayout(new GridLayout(2, false));
-            
+
             ascendingButtons[i] = new Button(directionGroup, SWT.RADIO);
             ascendingButtons[i].setText(getAscendingText(i));
             ascendingButtons[i].addSelectionListener(new SelectionAdapter() {
@@ -267,7 +267,7 @@ public class TableSortDialog extends TrayDialog {
 		default:
 			return MarkerMessages.sortDirectionDescending_text;
 	}
-	
+
 }
 
     /**
@@ -287,7 +287,7 @@ public class TableSortDialog extends TrayDialog {
 			default:
 				return MarkerMessages.sortDirectionAscending_text;
 		}
-		
+
 	}
 
     /**
@@ -386,7 +386,7 @@ public class TableSortDialog extends TrayDialog {
     }
 
     /**
-     * Set the layout data of the button to a GridData with 
+     * Set the layout data of the button to a GridData with
      * appropriate heights and widths.
      * @param button
      */

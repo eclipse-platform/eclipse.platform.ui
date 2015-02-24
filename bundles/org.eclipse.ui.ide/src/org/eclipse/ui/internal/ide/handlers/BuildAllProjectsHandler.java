@@ -24,13 +24,13 @@ import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
  * Default handler for 'Build All' command.
- * 
+ *
  * @since 3.6
  */
 public class BuildAllProjectsHandler extends AbstractHandler {
-	
+
 	/**
-	 * @throws ExecutionException  
+	 * @throws ExecutionException
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -47,7 +47,7 @@ public class BuildAllProjectsHandler extends AbstractHandler {
     	}
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
 	 */

@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A disjoint set is a generic data structure that represents a collection of 
+ * A disjoint set is a generic data structure that represents a collection of
  * sets that are assumed to be disjoint (no object exists in more than
  * one set).
  * <p>
@@ -105,7 +105,7 @@ public class DisjointSet {
 	}
 
 	/**
-	 * Unions the set represented by token x with the set represented by 
+	 * Unions the set represented by token x with the set represented by
 	 * token y. Has no effect if either x or y is not in the disjoint set, or
 	 * if they already belong to the same set.
 	 * @param x The first set to union

@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * This class will perform an incremental build on a working set.
- * 
+ *
  * @since 3.0
  */
 public class BuildSetAction extends Action {
@@ -63,8 +63,8 @@ public class BuildSetAction extends Action {
 		window.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
 		IProject[] projects = BuildUtilities.extractProjects(workingSet.getElements());
 		if (projects.length == 0) {
-			MessageDialog.openInformation(window.getShell(), 
-					IDEWorkbenchMessages.BuildSetAction_noBuildTitle, 
+			MessageDialog.openInformation(window.getShell(),
+					IDEWorkbenchMessages.BuildSetAction_noBuildTitle,
 					IDEWorkbenchMessages.BuildSetAction_noProjects);
 			return;
 		}

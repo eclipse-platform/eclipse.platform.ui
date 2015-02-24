@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *        IBM Corporation - initial API and implementation 
+ *        IBM Corporation - initial API and implementation
  *   Sebastian Davids <sdavids@gmx.de>
  *     - Fix for bug 20510 - Add Bookmark action has wrong label in navigator or
  *       packages view
@@ -60,10 +60,10 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	/**
 	 * Creates a new bookmark action. By default, prompts the user for the
 	 * bookmark name.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell for any dialogs
-	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)} 
+	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)}
 	 */
 	@Deprecated
 	public AddBookmarkAction(Shell shell) {
@@ -72,12 +72,12 @@ public class AddBookmarkAction extends SelectionListenerAction {
 
 	/**
 	 * Creates a new bookmark action.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell for any dialogs
 	 * @param promptForName
 	 *            whether to ask the user for the bookmark name
-	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)} 
+	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)}
 	 */
 	@Deprecated
 	public AddBookmarkAction(final Shell shell, boolean promptForName) {
@@ -88,13 +88,13 @@ public class AddBookmarkAction extends SelectionListenerAction {
 			public Shell getShell() {
 				return shell;
 			} };
-			
+
 		initAction(promptForName);
 	}
-	
+
 	/**
 	 * Creates a new bookmark action.
-	 * 
+	 *
 	 * @param provider
 	 *            the shell provider for any dialogs. Must not be
 	 *            <code>null</code>

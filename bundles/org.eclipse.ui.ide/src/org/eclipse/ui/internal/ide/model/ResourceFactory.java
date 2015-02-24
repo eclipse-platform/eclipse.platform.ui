@@ -51,8 +51,8 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
     /**
      * Create a ResourceFactory.  This constructor is typically used
      * for our IPersistableElement side.
-     * 
-     * @param input the resource of this factory 
+     *
+     * @param input the resource of this factory
      */
     public ResourceFactory(IResource input) {
         res = input;
@@ -72,7 +72,7 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         String type = memento.getString(TAG_TYPE);
         if (type == null) {
-            // Old format memento. Create an IResource using findMember. 
+            // Old format memento. Create an IResource using findMember.
             // Will return null for resources in closed projects.
             res = root.findMember(new Path(fileName));
         } else {

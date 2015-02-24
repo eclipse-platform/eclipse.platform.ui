@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * For creating folder resources that currently do not exist, 
+ * For creating folder resources that currently do not exist,
  * along a given workspace path.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.

@@ -30,20 +30,20 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * An AbstractResourcesOperation represents an undoable operation that
  * manipulates resources. It provides implementations for resource rename,
  * delete, creation, and modification. It also assigns the workspace undo
- * context as the undo context for operations of this type. 
- * 
+ * context as the undo context for operations of this type.
+ *
  * Resource operations record a snapshot of the workspace state when they
  * are created.  It is expected that an operation will be created and
  * executed without there being any intermediate changes to the resources
  * described in the operation between construction of the operation and
  * execution of the operation.
- * 
+ *
  * Clients may call the public API from a background thread.
- * 
+ *
  * This class is not intended to be subclassed by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 
@@ -67,7 +67,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Create an Abstract Resources Operation
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to be modified
 	 * @param label
@@ -82,7 +82,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Create an Abstract Resources Operation
-	 * 
+	 *
 	 * @param resourceDescriptions
 	 *            the resourceDescriptions describing resources to be created
 	 * @param label
@@ -98,7 +98,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	/**
 	 * Delete any resources known by this operation. Store enough information to
 	 * undo and redo the operation.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use for the operation
 	 * @param uiInfo
@@ -124,7 +124,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	/**
 	 * Recreate any resources known by this operation. Store enough information
 	 * to undo and redo the operation.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use for the operation
 	 * @param uiInfo
@@ -149,7 +149,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * successful. A status severity of <code>ERROR</code> indicates that the
 	 * operation is no longer valid. Other status severities are open to
 	 * interpretation by the caller.
-	 * 
+	 *
 	 * Note this method may be called on initial creation of a resource, or when
 	 * a create or delete operation is being undone or redone. Therefore, this
 	 * method should check conditions that can change over the life of the
@@ -158,7 +158,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * caller (such as the action that creates the operation) so that the user
 	 * is not continually prompted or warned about conditions that were
 	 * acceptable at the time of original execution.
-	 * 
+	 *
 	 * @param allowOverwrite
 	 *            a boolean that specifies whether resource creation should be
 	 *            allowed to overwrite an existent resource.
@@ -190,7 +190,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * status severity of <code>ERROR</code> indicates that the operation is
 	 * no longer valid. Other status severities are open to interpretation by
 	 * the caller.
-	 * 
+	 *
 	 * Note this method may be called on initial deletion of a resource, or when
 	 * a create or delete operation is being undone or redone. Therefore, this
 	 * method should check conditions that can change over the life of the
@@ -240,7 +240,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	/**
 	 * Set the array of resource descriptions describing resources to be
 	 * restored when undoing or redoing this operation.
-	 * 
+	 *
 	 * @param descriptions
 	 *            the array of resource descriptions
 	 */
@@ -262,7 +262,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Compute a scheduling rule for creating resources.
-	 * 
+	 *
 	 * @return a scheduling rule appropriate for creating the resources
 	 *         specified in the resource descriptions
 	 */
@@ -290,7 +290,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Compute a scheduling rule for deleting resources.
-	 * 
+	 *
 	 * @return a scheduling rule appropriate for deleting the resources
 	 *         specified in the receiver.
 	 */

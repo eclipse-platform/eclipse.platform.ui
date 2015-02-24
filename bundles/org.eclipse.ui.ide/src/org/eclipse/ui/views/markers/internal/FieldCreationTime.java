@@ -110,7 +110,7 @@ public class FieldCreationTime extends AbstractField {
 			return 0;
 		}
     }
-    
+
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
@@ -118,7 +118,7 @@ public class FieldCreationTime extends AbstractField {
 	public int getDefaultDirection() {
 		return TableComparator.ASCENDING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */

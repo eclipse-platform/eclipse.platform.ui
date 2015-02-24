@@ -28,7 +28,7 @@ public class ResourceFilterPage extends PropertyPage {
 	ResourceFilterGroup groupWidget;
 
 	/**
-	 * 
+	 *
 	 */
 	public ResourceFilterPage() {
 		groupWidget = new ResourceFilterGroup();

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 /**
  * A dialog that allows a user to browse, edit, add, and remove path variables
  * for a given project.
- * 
+ *
  * @since 3.6
  */
 public class PathVariableEditDialog extends SelectionDialog {
@@ -34,7 +34,7 @@ public class PathVariableEditDialog extends SelectionDialog {
 
 	/**
 	 * Creates a path variable selection dialog.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
@@ -105,7 +105,7 @@ public class PathVariableEditDialog extends SelectionDialog {
 
 	/**
 	 * Sets the project for which variables are being edited
-	 * 
+	 *
 	 * @param resource
 	 *            The project whose variables are being edited
 	 */

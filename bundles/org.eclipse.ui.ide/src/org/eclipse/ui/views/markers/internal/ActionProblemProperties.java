@@ -42,7 +42,7 @@ public class ActionProblemProperties extends MarkerSelectionProviderAction {
      */
     @Override
 	public void run() {
- 
+
     	IMarker marker = getSelectedMarker();
         DialogMarkerProperties dialog = new DialogProblemProperties(part
                 .getSite().getShell());

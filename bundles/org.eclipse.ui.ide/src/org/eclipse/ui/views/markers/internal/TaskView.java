@@ -126,12 +126,12 @@ public class TaskView extends MarkerView {
 						if (e.getCause() instanceof CoreException) {
 							ErrorDialog.openError(
 									getSite().getShell(),
-									MarkerMessages.errorModifyingTask, null, ((CoreException)e.getCause()).getStatus()); 
+									MarkerMessages.errorModifyingTask, null, ((CoreException)e.getCause()).getStatus());
 						} else {
 							// something rather unexpected occurred.
-							IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingTask, e); 
+							IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingTask, e);
 						}
-					}				
+					}
 				}
 			}
 		}
@@ -193,7 +193,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getDialogSettings()
 	 */
 	@Override
@@ -236,7 +236,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	@Override
@@ -252,7 +252,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getAllFields()
 	 */
 	@Override
@@ -281,7 +281,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
 	 */
 	@Override
@@ -296,7 +296,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFiltersDialog()
 	 */
 	@Override
@@ -310,7 +310,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFilter(java.lang.String)
 	 */
 	@Override
@@ -320,7 +320,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getSectionTag()
 	 */
 	@Override
@@ -330,7 +330,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerEnablementPreferenceName()
 	 */
 	@Override
@@ -340,7 +340,7 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerLimitPreferenceName()
 	 */
 	@Override
@@ -350,14 +350,14 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFiltersPreferenceName()
 	 */
 	@Override
 	String getFiltersPreferenceName() {
 		return IDEInternalPreferences.TASKS_FILTERS;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.TableView#updateDirectionIndicator(org.eclipse.swt.widgets.TreeColumn)
 	 */
@@ -368,14 +368,14 @@ public class TaskView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerName()
 	 */
 	@Override
 	protected String getMarkerName() {
 		return MarkerMessages.task_title;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()

@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 
 /**
- * Standard action for opening an editor on local file(s). 
+ * Standard action for opening an editor on local file(s).
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>

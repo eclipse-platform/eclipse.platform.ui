@@ -47,7 +47,7 @@ public class ExternalProjectImportWizard extends Wizard implements
 	private WizardProjectsImportPage mainPage;
 	private IStructuredSelection currentSelection = null;
 	private String initialPath = null;
-	
+
     /**
      * Constructor for ExternalProjectImportWizard.
      */
@@ -57,7 +57,7 @@ public class ExternalProjectImportWizard extends Wizard implements
 
     /**
      * Constructor for ExternalProjectImportWizard.
-     * 
+     *
      * @param initialPath Default path for wizard to import
      * @since 3.5
      */
@@ -68,14 +68,14 @@ public class ExternalProjectImportWizard extends Wizard implements
         setNeedsProgressMonitor(true);
         IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
         		.getDialogSettings();
-        
+
 		IDialogSettings wizardSettings = workbenchSettings
 		        .getSection(EXTERNAL_PROJECT_SECTION);
 		if (wizardSettings == null) {
 			wizardSettings = workbenchSettings
 		            .addNewSection(EXTERNAL_PROJECT_SECTION);
 		}
-		setDialogSettings(wizardSettings);        
+		setDialogSettings(wizardSettings);
     }
 
     /* (non-Javadoc)

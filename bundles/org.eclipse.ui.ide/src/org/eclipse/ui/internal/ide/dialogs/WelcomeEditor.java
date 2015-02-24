@@ -83,7 +83,7 @@ public class WelcomeEditor extends EditorPart {
 
     private final static int VERT_SCROLL_INCREMENT = 20;
 
-    // width at which wrapping will stop and a horizontal scroll bar will be 
+    // width at which wrapping will stop and a horizontal scroll bar will be
     // introduced
     private final static int WRAP_MIN_WIDTH = 150;
 
@@ -139,7 +139,7 @@ public class WelcomeEditor extends EditorPart {
     }
 
     /**
-     * Finds the next text 
+     * Finds the next text
      */
     private StyledText nextText(StyledText text) {
         int index = 0;
@@ -158,7 +158,7 @@ public class WelcomeEditor extends EditorPart {
     }
 
     /**
-     * Finds the previous text 
+     * Finds the previous text
      */
     private StyledText previousText(StyledText text) {
         int index = 0;
@@ -184,7 +184,7 @@ public class WelcomeEditor extends EditorPart {
     }
 
     /**
-     * Returns the copy action. 
+     * Returns the copy action.
      */
     protected WelcomeEditorCopyAction getCopyAction() {
         return copyAction;
@@ -441,7 +441,7 @@ public class WelcomeEditor extends EditorPart {
                     return;
                 }
 
-                // When page down is pressed, move the cursor to the next item in the 
+                // When page down is pressed, move the cursor to the next item in the
                 // welcome page.   Note that this operation wraps (pages to the top item
                 // when the last item is reached).
                 if (event.keyCode == SWT.PAGE_DOWN) {
@@ -449,7 +449,7 @@ public class WelcomeEditor extends EditorPart {
                     return;
                 }
 
-                // When page up is pressed, move the cursor to the previous item in the 
+                // When page up is pressed, move the cursor to the previous item in the
                 // welcome page.  Note that this operation wraps (pages to the bottom item
                 // when the first item is reached).
                 if (event.keyCode == SWT.PAGE_UP) {
@@ -485,7 +485,7 @@ public class WelcomeEditor extends EditorPart {
         styledText.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
-                // enable/disable copy action			
+                // enable/disable copy action
                 StyledText text = (StyledText) e.widget;
 				copyAction.setEnabled(text.isTextSelected());
             }
@@ -645,7 +645,7 @@ public class WelcomeEditor extends EditorPart {
                         Point p = text.computeSize(extent, SWT.DEFAULT, false);
                         ((GridData) text.getLayoutData()).widthHint = p.x;
                     }
-                    // reset the scrolled composite height since the height of the 
+                    // reset the scrolled composite height since the height of the
                     // styled text widgets have changed
                     Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                             true);
@@ -828,7 +828,7 @@ public class WelcomeEditor extends EditorPart {
     }
 
     /**
-     * The <code>WorkbenchPart</code> implementation of this 
+     * The <code>WorkbenchPart</code> implementation of this
      * <code>IWorkbenchPart</code> method disposes the title image
      * loaded by <code>setInitializationData</code>. Subclasses may extend.
      */
@@ -872,7 +872,7 @@ public class WelcomeEditor extends EditorPart {
      */
     @Override
 	public void doSaveAs() {
-        // do nothing	
+        // do nothing
     }
 
     /**
@@ -968,7 +968,7 @@ public class WelcomeEditor extends EditorPart {
 
     /**
      * Read the contents of the welcome page
-     * 
+     *
      * @param is the <code>InputStream</code> to parse
      * @throws IOException if there is a problem parsing the stream.
      */
@@ -991,7 +991,7 @@ public class WelcomeEditor extends EditorPart {
                 .getWelcomePageURL();
 
         if (url == null) {
-			// should not happen 
+			// should not happen
             return;
 		}
 

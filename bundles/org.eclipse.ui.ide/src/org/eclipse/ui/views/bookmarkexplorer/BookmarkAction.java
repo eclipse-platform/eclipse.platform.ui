@@ -41,7 +41,7 @@ abstract class BookmarkAction extends SelectionProviderAction {
     public BookmarkNavigator getView() {
         return view;
     }
-    
+
 	/**
 	 * Execute the specified undoable operation
 	 */

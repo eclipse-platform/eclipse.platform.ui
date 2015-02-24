@@ -15,7 +15,7 @@ package org.eclipse.ui.internal.views.markers;
  */
 public class MockMarkerEntry extends MarkerEntry{
 	/**
-	 * 
+	 *
 	 */
 	public String name;
 	/**

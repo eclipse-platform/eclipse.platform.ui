@@ -29,7 +29,7 @@ public class CreateProjectOperation extends AbstractCreateResourcesOperation {
 
 	/**
 	 * Create a CreateProjectOperation
-	 * 
+	 *
 	 * @param projectDescription
 	 *            the project to be created
 	 * @param label

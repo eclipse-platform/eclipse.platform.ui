@@ -225,7 +225,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
     }
 
     /**
-     * Returns the current project location path as entered by 
+     * Returns the current project location path as entered by
      * the user, or its anticipated initial value.
      *
      * @return the project location path, its anticipated initial value, or <code>null</code>
@@ -264,7 +264,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
     /**
      * Returns the value of the project name field
      * with leading and trailing spaces removed.
-     * 
+     *
      * @return the project name in the field
      */
     private String getProjectNameFieldValue() {
@@ -278,7 +278,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
     /**
      * Returns the value of the project location field
      * with leading and trailing spaces removed.
-     * 
+     *
      * @return the project location directory in the field
      */
     private String getProjectLocationFieldValue() {
@@ -317,7 +317,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
     }
 
     /**
-     * Returns whether this page's controls currently all contain valid 
+     * Returns whether this page's controls currently all contain valid
      * values.
      *
      * @return <code>true</code> if all controls are valid, and
@@ -371,7 +371,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
     /**
      * Set the project name using either the name of the
-     * parent of the file or the name entry in the xml for 
+     * parent of the file or the name entry in the xml for
      * the file
      */
     private void setProjectName(File projectFile) {
@@ -469,7 +469,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
         } catch (InterruptedException e) {
             return null;
         } catch (InvocationTargetException e) {
-            // ie.- one of the steps resulted in a core exception	
+            // ie.- one of the steps resulted in a core exception
             Throwable t = e.getTargetException();
             if (t instanceof CoreException) {
                 if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {

@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.IProgressConstants2;
 /**
  * The abstract superclass for actions which invoke commands implemented in
  * org.eclipse.core.* on a set of selected resources.
- * 
+ *
  * It iterates over all selected resources; errors are collected and displayed
  * to the user via a problems dialog at the end of the operation. User requests
  * to cancel the operation are passed along to the core.
@@ -78,7 +78,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 
 	/**
 	 * Creates a new action with the given text.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell (for the modal progress dialog and error messages)
 	 * @param text
@@ -96,10 +96,10 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 				return shell;
 			} };
 	}
-	
+
 	/**
 	 * Creates a new action with the given text.
-	 * 
+	 *
 	 * @param provider
 	 *            the shell provider (for the modal progress dialog and error
 	 *            messages)
@@ -119,7 +119,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * <p>
 	 * Note that this method must be called from UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param message
 	 *            the message
 	 */
@@ -138,7 +138,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * Note that if an action is running in the background, the same action
 	 * instance can be executed multiple times concurrently. This method must
 	 * not access or modify any mutable state on action class.
-	 * 
+	 *
 	 * @param monitor
 	 *            a progress monitor
 	 * @return The result of the execution
@@ -186,9 +186,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * <p>
 	 * Subclasses must implement this method.
 	 * </p>
-	 * 
+	 *
 	 * @return the message
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected abstract String getOperationMessage();
@@ -201,9 +201,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * problems occurred."). Subclasses may reimplement to provide something
 	 * more suited to the particular action.
 	 * </p>
-	 * 
+	 *
 	 * @return the problems message
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected String getProblemsMessage() {
@@ -217,9 +217,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * a generic title (localized counterpart of "Problems"). Subclasses may
 	 * reimplement to provide something more suited to the particular action.
 	 * </p>
-	 * 
+	 *
 	 * @return the problems dialog title
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected String getProblemsTitle() {
@@ -229,7 +229,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	/**
 	 * Returns the shell for this action. This shell is used for the modal
 	 * progress and error dialogs.
-	 * 
+	 *
 	 * @return the shell
 	 */
 	Shell getShell() {
@@ -250,26 +250,26 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * {@link #createOperation(IStatus[])} and provide an empty implementation
 	 * for this method.
 	 * </p>
-	 * 
+	 *
 	 * @param resource
 	 *            one of the selected resources
 	 * @param monitor
 	 *            a progress monitor
 	 * @exception CoreException
 	 *                if the operation fails
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	@Deprecated
 	protected void invokeOperation(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
-		
+
 	}
 
 	/**
 	 * Returns whether the given resource is a descendent of any of the
 	 * resources in the given list.
-	 * 
+	 *
 	 * @param resources
 	 *            the list of resources (element type: <code>IResource</code>)
 	 * @param child
@@ -287,7 +287,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	/**
 	 * Performs pruning on the given list of resources, as described in
 	 * <code>shouldPerformResourcePruning</code>.
-	 * 
+	 *
 	 * @param resourceCollection
 	 *            the list of resources (element type: <code>IResource</code>)
 	 * @return the list of resources (element type: <code>IResource</code>)
@@ -309,7 +309,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	/**
 	 * Records the core exception to be displayed to the user once the action is
 	 * finished.
-	 * 
+	 *
 	 * @param error
 	 *            a <code>CoreException</code>
 	 */
@@ -372,10 +372,10 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * <code>true</code>. Subclasses should reimplement to return
 	 * <code>false</code> if pruning is not required.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if pruning should be performed, and
 	 *         <code>false</code> if pruning is not desired
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected boolean shouldPerformResourcePruning() {
@@ -409,7 +409,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * return the selected resources.
 	 * <p>
 	 * Subclasses may override this method.
-	 * 
+	 *
 	 * @return list of resource elements (element type: <code>IResource</code>)
 	 */
 	protected List getActionResources() {
@@ -418,7 +418,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 
 	/**
 	 * Run the action in the background rather than with the progress dialog.
-	 * 
+	 *
 	 * @param rule
 	 *            The rule to apply to the background job or <code>null</code>
 	 *            if there isn't one.
@@ -429,14 +429,14 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 
 	/**
 	 * Run the action in the background rather than with the progress dialog.
-	 * 
+	 *
 	 * @param rule
 	 *            The rule to apply to the background job or <code>null</code>
 	 *            if there isn't one.
 	 * @param jobFamily
 	 *            a single family that the job should belong to or
 	 *            <code>null</code> if none.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void runInBackground(ISchedulingRule rule, Object jobFamily) {
@@ -449,14 +449,14 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 
 	/**
 	 * Run the action in the background rather than with the progress dialog.
-	 * 
+	 *
 	 * @param rule
 	 *            The rule to apply to the background job or <code>null</code>
 	 *            if there isn't one.
 	 * @param jobFamilies
 	 *            the families the job should belong to or <code>null</code>
 	 *            if none.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void runInBackground(ISchedulingRule rule, final Object[] jobFamilies) {
@@ -501,11 +501,11 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * {@link #invokeOperation(IResource, IProgressMonitor)} or override this
 	 * method to provide a different operation. Subclasses typically override
 	 * this method when an undoable operation is to be provided.
-	 * 
+	 *
 	 * @param errorStatus
 	 *            an array of error status objects to which the result of
 	 *            running the operation should be added.
-	 * 
+	 *
 	 * @return the operation to perform when this action runs.
 	 * @since 3.3
 	 */

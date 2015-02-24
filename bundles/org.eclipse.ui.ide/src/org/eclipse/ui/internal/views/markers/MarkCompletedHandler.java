@@ -31,15 +31,15 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 /**
  * MarkCompletedHandler is the handler for marking the current selection as
  * completed.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkCompletedHandler extends MarkerViewHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
@@ -51,7 +51,7 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 					new IRunnableWithProgress() {
 						/*
 						 * (non-Javadoc)
-						 * 
+						 *
 						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 						 */
 						@Override

@@ -32,7 +32,7 @@ class GotoTaskAction extends TaskAction {
 
     /**
      * Creates the action.
-     * 
+     *
      * @param tasklist the task list
      * @param id the id
      */
@@ -61,7 +61,7 @@ class GotoTaskAction extends TaskAction {
                 IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
             } catch (PartInitException e) {
                 DialogUtil.openError(page.getWorkbenchWindow().getShell(),
-                        TaskListMessages.GotoTask_errorMessage, 
+                        TaskListMessages.GotoTask_errorMessage,
                         e.getMessage(), e);
             }
         }

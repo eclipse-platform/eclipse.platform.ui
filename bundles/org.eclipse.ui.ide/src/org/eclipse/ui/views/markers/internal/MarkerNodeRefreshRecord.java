@@ -18,7 +18,7 @@ class MarkerNodeRefreshRecord{
 	Collection removedMarkers;
 	Collection addedMarkers;
 	Collection changedMarkers;
-	
+
 	/**
 	 * Create a new instance of the receiver with the supplied markers.
 	 * @param removed
@@ -37,15 +37,15 @@ class MarkerNodeRefreshRecord{
 	 */
 	public void remove(MarkerNode node) {
 		removedMarkers.add(node);
-		
+
 	}
-	
+
 	/**
 	 * Add the node to the list of adds.
 	 * @param node
 	 */
 	public void add(MarkerNode node) {
 		addedMarkers.add(node);
-		
+
 	}
 }

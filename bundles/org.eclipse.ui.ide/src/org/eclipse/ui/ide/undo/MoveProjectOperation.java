@@ -35,10 +35,10 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- * 
+ *
  */
 public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 
@@ -47,7 +47,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	/**
 	 * Create a MoveProjectOperation that moves the specified project contents
 	 * to a new location.
-	 * 
+	 *
 	 * @param project
 	 *            the project to be moved
 	 * @param location
@@ -79,7 +79,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	private IProject getProject() {
 		return (IProject) resources[0];
 	}
-	
+
 	@Override
 	protected boolean isDestinationPathValid(IResource resource, int index) {
 		// path has already been validated in #computeMoveOrCopyStatus()
@@ -124,7 +124,7 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			throws CoreException {
 		doExecute(monitor, uiInfo);
 	}
-	
+
 	/*
 	 * Move the project to its new location, returning its previous location.
 	 */
@@ -132,19 +132,19 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			throws CoreException {
 		monitor
 				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_moveProjectProgress);
-	
+
 		IProjectDescription description = project.getDescription();
 		// Record the original path so this can be undone
 		URI newDestinationURI = description.getLocationURI();
 		// Set the new location into the project's description
 		description.setLocationURI(locationURI);
-	
+
 		project.move(description, IResource.FORCE | IResource.SHALLOW, monitor);
-	
+
 		// Now adjust the projectLocation so this can be undone/redone.
 		return newDestinationURI;
 	}
-	
+
 	/*
 	 * Map undo to move status.
 	 */

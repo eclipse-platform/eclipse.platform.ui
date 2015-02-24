@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * MarkerDescription is a lightweight description of a marker that can be used
  * to describe a marker to be created or updated.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class MarkerDescription {
 	String type;
@@ -34,9 +34,9 @@ public class MarkerDescription {
 	IResource resource;
 
 	/**
-	 * 
+	 *
 	 * Create a marker description from the specified marker.
-	 * 
+	 *
 	 * @param marker
 	 *            the marker to be described
 	 * @throws CoreException
@@ -51,7 +51,7 @@ public class MarkerDescription {
 	/**
 	 * Create a marker description from the specified marker type, attributes,
 	 * and resource.
-	 * 
+	 *
 	 * @param type
 	 *            the type of marker to be created.
 	 * @param attributes
@@ -67,7 +67,7 @@ public class MarkerDescription {
 
 	/**
 	 * Create a marker from the marker description.
-	 * 
+	 *
 	 * @return the created marker
 	 * @throws CoreException
 	 */
@@ -79,7 +79,7 @@ public class MarkerDescription {
 
 	/**
 	 * Update an existing marker using the attributes in the marker description.
-	 * 
+	 *
 	 * @param marker
 	 *            the marker to be updated
 	 * @throws CoreException
@@ -90,7 +90,7 @@ public class MarkerDescription {
 
 	/**
 	 * Return the resource associated with this marker.
-	 * 
+	 *
 	 * @return the resource associated with this marker
 	 */
 	public IResource getResource() {
@@ -99,7 +99,7 @@ public class MarkerDescription {
 
 	/**
 	 * Return the marker type associated with this marker.
-	 * 
+	 *
 	 * @return the string marker type of this marker
 	 */
 	public String getType() {

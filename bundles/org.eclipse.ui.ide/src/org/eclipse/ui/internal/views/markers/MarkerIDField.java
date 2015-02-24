@@ -17,13 +17,13 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class MarkerIDField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override
@@ -35,7 +35,7 @@ public class MarkerIDField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
 	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * The MarkersChangeListener is IResourceChangeListener that waits for any
  * change in the markers in workspace that are of the view's interest. Schedules
  * an update if we have a change that affects the view.
- * 
+ *
  * @since 3.6
  */
 class MarkersChangeListener implements IResourceChangeListener {
@@ -38,12 +38,12 @@ class MarkersChangeListener implements IResourceChangeListener {
 	private boolean receiving;
 
 	//private static final int UPDATE_TEST_CHECK_LIMIT = 1500;
-	
+
 	// The time the build started. A -1 indicates no build in progress.
 	private long preBuildTime;
-	
+
 	/**
-	 * 
+	 *
 	 * @param view
 	 *            the marker view the listener is listening for
 	 * @param builder
@@ -78,16 +78,16 @@ class MarkersChangeListener implements IResourceChangeListener {
 
 	/**
 	 * Checks if the workspace is building
-	 * 
+	 *
 	 */
 	boolean workspaceBuilding() {
 			return preBuildTime > 0;
 	}
-	
+
 	/**
 	 * Tells the listener to become responsive to changes for the specified
 	 * types of markers.
-	 * 
+	 *
 	 * @param typeIds
 	 *            the ids of the IMarker types
 	 * @param includeSubTypes
@@ -109,7 +109,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org
 	 * .eclipse.core.resources.IResourceChangeEvent)
@@ -138,7 +138,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 			// if (!needsUpdate(event)) {
 			// return;
 			// }
-			
+
 			if (!builder.isIncremental()) {
 				handleMarkerChange(event);
 				return;
@@ -171,7 +171,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 	private void handleMarkerChange(IResourceChangeEvent event) {
 		builder.getUpdateScheduler().scheduleUpdate();
 	}
-	
+
 	/**
 	 * Markers have not changed
 	 */
@@ -180,16 +180,16 @@ class MarkersChangeListener implements IResourceChangeListener {
 	}
 
 	/**
-	 * Handle changes incrementally. 
+	 * Handle changes incrementally.
 	 * The following performs incremental updation
 	 * of the markers that were gathered initially, and keeps them synched at
 	 * any point with the markers of interest in Workspace. Unfortunately marker
 	 * operations cannot be locked so locking between gathering of markers and
 	 * marker deltas is not possible.
-	 * 
+	 *
 	 * Note : this method of updating is NOT used and tested yet and has holes
 	 * but left out SOLELY for further investigation(*).
-	 * 
+	 *
 	 * @param event
 	 */
 	private void handleIncrementalChange(IResourceChangeEvent event) {
@@ -260,7 +260,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 
 	/**
 	 * Helper to {@link #hasApplicableTypes(IResourceChangeEvent)}
-	 * 
+	 *
 	 * @param types
 	 * @param typeId
 	 */
@@ -272,7 +272,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 		}
 		return false;
 	}
-	
+
 //	/**
 //	 * Note: This has been left commented out for further
 //	 * investigation(*),instead we we use the above for just checking types.
@@ -280,7 +280,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 //	 * But again in such a case, the view would be a contributed as well.And, it
 //	 * is the responsibility of the field filter code to ensure the select
 //	 * method of filter remains fast.
-//	 * 
+//	 *
 //	 */
 //	private boolean needsUpdate(IResourceChangeEvent event) {
 //		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
@@ -321,15 +321,15 @@ class MarkersChangeListener implements IResourceChangeListener {
 //	/**
 //	 * Check if a marker change, removal, or addition is of interest to the
 //	 * view.
-//	 * 
+//	 *
 //	 * <ul>
 //	 * <li>Set the MarkerEntry to be stale, if discovered at any point of time
 //	 * of its use.This will greatly speed up lot of parts of the view.</li>
 //	 * <li>Instead of testing all marker changes, test only upto a maximum limit
 //	 * beyond which we schedule an update anyway.</li>
-//	 * 
+//	 *
 //	 * </ul>
-//	 * 
+//	 *
 //	 * @param marker
 //	 * @param kind
 //	 */
@@ -354,7 +354,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 //	/**
 //	 * Returns whether or not the given marker addition is of interest to the
 //	 * view.
-//	 * 
+//	 *
 //	 * @param presentEntries
 //	 *            current marker entries
 //	 * @param marker
@@ -373,7 +373,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 //
 //	/**
 //	 * Returns whether or not markers were removed from the view.
-//	 * 
+//	 *
 //	 * @param presentEntriest
 //	 *            current marker entries
 //	 * @param marker
@@ -399,7 +399,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 //
 //	/**
 //	 * Returns whether or not markers were removed from the view.
-//	 * 
+//	 *
 //	 * @param presentEntriest
 //	 *            current marker entries
 //	 * @param marker
@@ -428,14 +428,14 @@ class MarkersChangeListener implements IResourceChangeListener {
 	private void preBuild() {
 		preBuildTime = System.currentTimeMillis();
 	}
-	
+
 	/**
 	 * Post-build has happened.
 	 */
 	private void postBuild() {
 		preBuildTime = -1;
 	}
-	
+
 	/**
 	 * @return Returns the view.
 	 */
@@ -473,31 +473,31 @@ class MarkerUpdate {
  * Manages scheduling of marker updates and the view ,also various other methods
  * related to scheduling updates.This class should be used for update
  * scheduling to avoid confusion.
- * 
+ *
  * Note: the reason for keeping this class is because the update scheduling is
  * so closely related to Marker change events.
- * 
+ *
  * @since 3.6
  */
 class MarkerUpdateScheduler {
-	
+
 	static final int SHORT_DELAY = 150;
 	static final int LONG_DELAY = 10000;
 	static final long TIME_OUT = 30000;
 
 	private CachedMarkerBuilder builder;
 	private ExtendedMarkersView view;
-	
+
 	private MarkerUpdateJob updateJob;
 	private UIUpdateJob uiUpdateJob;
-	
+
 	private final Object schedulingLock;
-	
+
 	private MarkerUpdateTimer updateTimer;
 
 	/**
-	 * @param view 
-	 * @param builder 
+	 * @param view
+	 * @param builder
 	 */
 	public MarkerUpdateScheduler(ExtendedMarkersView view,
 			CachedMarkerBuilder builder) {
@@ -506,7 +506,7 @@ class MarkerUpdateScheduler {
 		schedulingLock = new Object();
 		updateTimer = new MarkerUpdateTimer();
 	}
-	
+
 	/**
 	 * Always use this to schedule update job
 	 * @return Returns the schedulingLock.
@@ -609,9 +609,9 @@ class MarkerUpdateScheduler {
 
 	/**
 	 * Schedule only an UI update
-	 * 
+	 *
 	 * @param delay
-	 * 
+	 *
 	 */
 	void scheduleUIUpdate(long delay) {
 		uiUpdateJob = view.scheduleUpdate(delay);
@@ -619,7 +619,7 @@ class MarkerUpdateScheduler {
 
 	/**
 	 * Cancel any marker update if pending.
-	 * 
+	 *
 	 */
 	void cancelUpdate() {
 		builder.cancelUpdate();
@@ -627,15 +627,15 @@ class MarkerUpdateScheduler {
 
 	/**
 	 * Cancel any UI update if pending.
-	 * 
+	 *
 	 */
 	void cancelQueuedUIUpdates() {
 		view.cancelQueuedUpdates();
 	}
-	
+
 	///**
 	// * Indicate the status message on UI.
-	// * 
+	// *
 	// * @param messsage
 	// *            the status to display
 	// */
@@ -645,7 +645,7 @@ class MarkerUpdateScheduler {
 	////See Bug 294303
 	///**
 	// * Indicate the status message on UI.
-	// * 
+	// *
 	// * @param messsage
 	// *            the status to display
 	// * @param updateUI
@@ -656,7 +656,7 @@ class MarkerUpdateScheduler {
 	//	view.indicateUpdating(messsage != null ? messsage
 	//			: MarkerMessages.MarkerView_queueing_updates, updateUI);
 	//}
-	
+
 
 	/**
 	 * //Fix for Bug 294959.There is another patch(more exhaustive in terms
@@ -666,18 +666,18 @@ class MarkerUpdateScheduler {
 	 * problems on a machine It would be worth looking at that.An
 	 * optimization to ensure we do not update too often, yet be responsive
 	 * and not miss any change.
-	 * 
+	 *
 	 * Note that we re-schedule the update every time.This is to ensure we
 	 * do not miss out an update even if another update was externally(UI)
 	 * scheduled, and finished much earlier(The changes before that have
 	 * been taken care of by the that update).Also we mandate updating once
 	 * in TIME-OUT.To change behaviour, changes in the DELAY parameters will
 	 * suffice. For example, setting TIME_OUT much larger value, and so on.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	class MarkerUpdateTimer {
-		
+
 		/**
 		 * This is to allow batching together any changes that may arrive in
 		 * after a post-build, in a short interval.This controls how we
@@ -689,7 +689,7 @@ class MarkerUpdateScheduler {
 		//this to account for an ordinary change that may come in
 		//after post build
 		private static final long AFTER_MARGIN = 2;
-		
+
 		private long timeB4Update;
 
 		private long timerValidStart;

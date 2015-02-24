@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Red Hat, Inc - Was ZipFileStructureProvider, performed changes from 
+ *     Red Hat, Inc - Was ZipFileStructureProvider, performed changes from
  *     IImportStructureProvider to ILeveledImportStructureProvider
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * This class provides information regarding the context structure and content
  * of specified zip file entry objects.
- * 
+ *
  * @since 3.1
  */
 public class ZipLeveledStructureProvider implements
@@ -47,7 +47,7 @@ public class ZipLeveledStructureProvider implements
 	/**
 	 * Creates a <code>ZipFileStructureProvider</code>, which will operate on
 	 * the passed zip file.
-	 * 
+	 *
 	 * @param sourceFile
 	 *            The source file to create the ZipLeveledStructureProvider
 	 *            around
@@ -59,7 +59,7 @@ public class ZipLeveledStructureProvider implements
 	}
 
 	/**
-	 * Creates a new container zip entry with the specified name, iff it has 
+	 * Creates a new container zip entry with the specified name, iff it has
 	 * not already been created. If the parent of the given element does not
 	 * already exist it will be recursively created as well.
 	 * @param pathname The path representing the container
@@ -176,7 +176,7 @@ public class ZipLeveledStructureProvider implements
 
 	/**
 	 * Returns the entry that this importer uses as the root sentinel.
-	 * 
+	 *
 	 * @return java.util.zip.ZipEntry
 	 */
 	@Override
@@ -186,7 +186,7 @@ public class ZipLeveledStructureProvider implements
 
 	/**
 	 * Returns the zip file that this provider provides structure for.
-	 * 
+	 *
 	 * @return The zip file
 	 */
 	public ZipFile getZipFile() {
@@ -209,7 +209,7 @@ public class ZipLeveledStructureProvider implements
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Initializes this object's children table based on the contents of the
 	 * specified source file.

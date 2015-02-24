@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 /**
  * AttributeMarkerGrouping is the configuration element for the
  * markerAttributeGrouping extension.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class AttributeMarkerGrouping {
-	
+
 	private static final String DEFAULT_GROUPING_ENTRY = "defaultGroupingEntry";//$NON-NLS-1$
 
 	private static final String MARKER_TYPE = "markerType";//$NON-NLS-1$
@@ -57,7 +57,7 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Return the id of the default grouping.
-	 * 
+	 *
 	 * @return String or <code>null</code> if it is not defined.
 	 */
 	public String getDefaultGroupingEntry() {
@@ -66,7 +66,7 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Return the id of the marker type for this type.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getMarkerType() {
@@ -75,7 +75,7 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Return the name of the attribute for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getAttribute() {
@@ -84,7 +84,7 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Return the IConfigurationElement for the receiver.
-	 * 
+	 *
 	 * @return IConfigurationElement
 	 */
 	public IConfigurationElement getElement() {
@@ -93,7 +93,7 @@ public class AttributeMarkerGrouping {
 
 	/**
 	 * Add markerGroup to the list of referenced groups.
-	 * 
+	 *
 	 * @param markerGroup
 	 */
 	public void addGroup(MarkerGroup markerGroup) {

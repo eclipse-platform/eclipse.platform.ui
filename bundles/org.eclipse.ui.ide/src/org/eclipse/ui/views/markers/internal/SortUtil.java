@@ -20,7 +20,7 @@ import java.util.SortedSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * 
+ *
  */
 class SortUtil {
 
@@ -38,7 +38,7 @@ class SortUtil {
     	Collection start = elements.asList();
         Collection result = new ArrayList(start.size());
 
-        mon.beginTask(MarkerMessages.SortUtil_finding_first, 1000); 
+        mon.beginTask(MarkerMessages.SortUtil_finding_first, 1000);
 
         getFirst(result, start, c, k, mon, 1000);
 
@@ -140,10 +140,10 @@ class SortUtil {
     /**
      * Divides the items in the input collection into three sets based on whether they are less than,
      * equal to, or greater than the test item.
-     * 
+     *
      * If the given monitor is cancelled (possibly by another thread), the operation will
-     * be aborted. In this case, the insertions may only be partially complete. 
-     * 
+     * be aborted. In this case, the insertions may only be partially complete.
+     *
      * @param less
      * @param more
      * @param equal
@@ -157,7 +157,7 @@ class SortUtil {
             IProgressMonitor mon) {
         mon
                 .beginTask(
-                        MarkerMessages.SortUtil_partitioning, input.size()); 
+                        MarkerMessages.SortUtil_partitioning, input.size());
 
         if (toTest == null || c == null) {
             int counter = 0;
@@ -187,7 +187,7 @@ class SortUtil {
 
     /**
      * Removes and returns the first n items from the given collection.
-     * 
+     *
      * @param collection
      * @param numToRemove
      * @return List
@@ -211,7 +211,7 @@ class SortUtil {
     /**
      * Finds and returns the greatest element in the given collection, or null if the collection
      * is empty.
-     *  
+     *
      * @param toSearch collection to search
      * @param c comparator used to determine the greatest item
      * @return the greatest item in the collection

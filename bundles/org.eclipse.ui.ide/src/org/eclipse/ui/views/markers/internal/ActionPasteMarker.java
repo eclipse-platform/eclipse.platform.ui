@@ -48,7 +48,7 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
 
 	/**
 	 * Creates the action.
-	 * 
+	 *
 	 * @param part
 	 * @param provider
 	 * @param markerName

@@ -30,7 +30,7 @@ public class ArchiveFileManipulations {
 	/**
 	 * Determine whether the file with the given filename is in .tar.gz or .tar
 	 * format.
-	 * 
+	 *
 	 * @param fileName
 	 *            file to test
 	 * @return true if the file is in tar format
@@ -63,7 +63,7 @@ public class ArchiveFileManipulations {
 	/**
 	 * Determine whether the file with the given filename is in .zip or .jar
 	 * format.
-	 * 
+	 *
 	 * @param fileName
 	 *            file to test
 	 * @return true if the file is in tar format
@@ -93,9 +93,9 @@ public class ArchiveFileManipulations {
 
 	/**
 	 * Closes the given structure provider.
-	 * 
+	 *
 	 * @param structureProvider
-	 *            The structure provider to be closed, can be <code>null</code>				 
+	 *            The structure provider to be closed, can be <code>null</code>
 	 * @param shell
 	 *            The shell to display any possible Dialogs in
 	 */
@@ -111,7 +111,7 @@ public class ArchiveFileManipulations {
 	/**
 	 * Attempts to close the passed zip file, and answers a boolean indicating
 	 * success.
-	 * 
+	 *
 	 * @param file
 	 *            The zip file to attempt to close
 	 * @param shell
@@ -130,11 +130,11 @@ public class ArchiveFileManipulations {
 
 		return true;
 	}
-	
+
 	/**
 	 * Attempts to close the passed tar file, and answers a boolean indicating
 	 * success.
-	 * 
+	 *
 	 * @param file
 	 *            The tar file to attempt to close
 	 * @param shell
@@ -151,13 +151,13 @@ public class ArchiveFileManipulations {
 					shell);
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * Display an error dialog with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message
 	 */

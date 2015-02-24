@@ -173,7 +173,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Return whether or not this configuration element has a resolution for the
 	 * marker.
-	 * 
+	 *
 	 * @param marker
 	 * @param element
 	 * @return boolean <code>true</code> if there is a resolution.
@@ -271,7 +271,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 
 	/**
 	 * Adds a help query to the registry.
-	 * 
+	 *
 	 * @param query
 	 *            a marker query
 	 * @param result
@@ -287,7 +287,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 
 	/**
 	 * Adds a resolution query to the registry.
-	 * 
+	 *
 	 * @param query
 	 *            a marker query
 	 * @param result
@@ -303,7 +303,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 
 	/**
 	 * Adds a query to the given table.
-	 * 
+	 *
 	 * @param table
 	 *            the table to which the query is added
 	 * @param query

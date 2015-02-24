@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 
 /**
  * The quick start (Welcome...) action.
- * 
+ *
  * @deprecated the IDE now uses the new intro mechanism
  */
 @Deprecated
@@ -109,7 +109,7 @@ public class QuickStartAction extends Action implements
 
     /**
      * Prompts the user for a feature that has a welcome page.
-     * 
+     *
      * @return the chosen feature, or <code>null</code> if none was chosen
      */
     private AboutInfo promptForFeature() throws WorkbenchException {
@@ -155,7 +155,7 @@ public class QuickStartAction extends Action implements
 
     /**
      * Opens the welcome page for the given feature.
-     * 
+     *
      * @param featureId the about info for the feature
      * @return <code>true</code> if successful, <code>false</code> otherwise
      * @throws WorkbenchException
@@ -171,7 +171,7 @@ public class QuickStartAction extends Action implements
     /**
      * Returns the about info for the feature with the given id, or <code>null</code>
      * if there is no such feature.
-     * 
+     *
      * @return the about info for the feature with the given id, or <code>null</code>
      *   if there is no such feature.
      */
@@ -189,7 +189,7 @@ public class QuickStartAction extends Action implements
 
     /**
      * Opens the welcome page for a feature.
-     * 
+     *
      * @param feature the about info for the feature
      * @return <code>true</code> if successful, <code>false</code> otherwise
      */
@@ -224,7 +224,7 @@ public class QuickStartAction extends Action implements
         if (page == null) {
         	return false;
         }
-        
+
         page.setEditorAreaVisible(true);
 
         // create input

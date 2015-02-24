@@ -24,7 +24,7 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * The Problems view is supplied by the IDE to show problems.
- * 
+ *
  * @since 3.4
  */
 public class ProblemsView extends MarkerSupportView {
@@ -34,7 +34,7 @@ public class ProblemsView extends MarkerSupportView {
 	 */
 	public ProblemsView() {
 		super(MarkerSupportRegistry.PROBLEMS_GENERATOR);
-		
+
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ProblemsView extends MarkerSupportView {
 	protected IUndoContext getUndoContext() {
 		return WorkspaceUndoUtil.getProblemsUndoContext();
 	}
-	
+
 	@Override
 	protected String getDeleteOperationName(IMarker[] markers) {
 		Assert.isLegal(markers.length > 0);

@@ -34,7 +34,7 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * Writes information about the update configurer into the system summary.
- * 
+ *
  * @since 3.0
  */
 public class ConfigurationLogUpdateSection implements ISystemSummarySection {

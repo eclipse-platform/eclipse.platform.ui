@@ -28,7 +28,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 /**
  * A command handler to show a resource in the Navigator view given the resource
  * path.
- * 
+ *
  * @since 3.2
  */
 public class ShowResourceByPathHandler extends AbstractHandler {

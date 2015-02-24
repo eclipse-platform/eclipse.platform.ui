@@ -23,9 +23,9 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * A LinkedResourceDecorator decorates an element's image with a linked 
- * resource overlay. 
- * 
+ * A LinkedResourceDecorator decorates an element's image with a linked
+ * resource overlay.
+ *
  * @since 2.1
  */
 public class LinkedResourceDecorator implements ILightweightLabelDecorator {
@@ -81,7 +81,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
     /**
      * Adds the linked resource overlay if the given element is a linked
      * resource.
-     * 
+     *
      * @param element element to decorate
      * @param decoration  The decoration we are adding to
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object, IDecoration)

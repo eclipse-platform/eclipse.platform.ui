@@ -18,7 +18,7 @@ public interface IFilter {
 
     /**
      * Filters the list of elements. Removes the elements that need to filtered out from the list.
-     * 
+     *
      * @param elements
      */
     public Object[] filter(Object[] elements);

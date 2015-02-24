@@ -50,7 +50,7 @@ public class FieldDone extends AbstractField {
 	public Image getDescriptionImage() {
 		return getImage(DESCRIPTION_IMAGE_PATH);
 	}
-	
+
 	/**
 	 * Get the image at path.
 	 * @param path
@@ -60,12 +60,12 @@ public class FieldDone extends AbstractField {
 		return JFaceResources.getResources().createImageWithDefault(
 				IDEWorkbenchPlugin
 						.getIDEImageDescriptor(path));
-		
+
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 	 */
 	@Override
@@ -75,7 +75,7 @@ public class FieldDone extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
 	@Override
@@ -85,7 +85,7 @@ public class FieldDone extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	@Override
@@ -95,7 +95,7 @@ public class FieldDone extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class FieldDone extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -132,7 +132,7 @@ public class FieldDone extends AbstractField {
 		int value2 = marker2.getDone();
 		return value1 - value2;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
@@ -140,7 +140,7 @@ public class FieldDone extends AbstractField {
 	public int getDefaultDirection() {
 		return TableComparator.ASCENDING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *        IBM Corporation - initial API and implementation 
+ *        IBM Corporation - initial API and implementation
  *        Sebastian Davids <sdavids@gmx.de> - Images for menu items (27481)
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
@@ -20,13 +20,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * This is the action group for all the resource navigator actions.
  * It delegates to several subgroups for most of the actions.
- * 
+ *
  * @see GotoActionGroup
  * @see OpenActionGroup
  * @see RefactorActionGroup
  * @see SortAndFilterActionGroup
  * @see WorkspaceActionGroup
- * 
+ *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
@@ -37,10 +37,10 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
      * The resource navigator.
      */
     protected IResourceNavigator navigator;
-	
+
     /**
      * Constructs a new navigator action group and creates its actions.
-     * 
+     *
      * @param navigator the resource navigator
      */
     public ResourceNavigatorActionGroup(IResourceNavigator navigator) {
@@ -53,7 +53,7 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
      */
     protected ImageDescriptor getImageDescriptor(String relativePath) {
        return IDEWorkbenchPlugin.getIDEImageDescriptor(relativePath);
-     
+
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
     /**
      * Runs the default action in the group.
      * Does nothing by default.
-     * 
+     *
      * @param selection the current selection
      */
     public void runDefaultAction(IStructuredSelection selection) {

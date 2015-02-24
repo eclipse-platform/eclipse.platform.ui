@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.ide.dialogs.CleanDialog;
  * state for all projects in the workspace, and deletes all problem markers.
  * The next time a build is run, projects will have to be built from scratch.
  * Technically this is only necessary if an incremental builder misbehaves.
- * 
+ *
  * @since 3.0
  */
 public class BuildCleanAction extends Action implements ActionFactory.IWorkbenchAction {
@@ -30,7 +30,7 @@ public class BuildCleanAction extends Action implements ActionFactory.IWorkbench
 
 	/**
 	 * Creates a new BuildCleanAction
-	 * 
+	 *
 	 * @param window The window for parenting this action
 	 */
 	public BuildCleanAction(IWorkbenchWindow window) {

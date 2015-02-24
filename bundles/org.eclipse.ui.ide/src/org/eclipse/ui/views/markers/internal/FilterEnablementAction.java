@@ -14,7 +14,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 
 /**
- * The FilterEnablementAction is an action for enabling 
+ * The FilterEnablementAction is an action for enabling
  * or disabling a filter.
  *
  */
@@ -33,9 +33,9 @@ class FilterEnablementAction extends Action {
 		setChecked(filter.isEnabled());
 		markerFilter = filter;
 		markerView = view;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */

@@ -17,9 +17,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
- * A resource working set filter filters resources from a view that 
+ * A resource working set filter filters resources from a view that
  * are neither a parent nor children of a working set element.
- * 
+ *
  * @since 2.0
  */
 public class ResourceWorkingSetFilter extends ViewerFilter {
@@ -29,8 +29,8 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 
     /**
      * Returns the active working set the filter is working with.
-     * 
-     * @return the active working set 
+     *
+     * @return the active working set
      */
     public IWorkingSet getWorkingSet() {
         return workingSet;
@@ -38,7 +38,7 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 
     /**
      * Sets the active working set.
-     * 
+     *
      * @param workingSet the working set the filter should work with
      */
     public void setWorkingSet(IWorkingSet workingSet) {
@@ -47,7 +47,7 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 
     /**
      * Determines if an element should be filtered out.
-     * 
+     *
      * @see ViewerFilter#select(Viewer, Object, Object)
      */
     @Override
@@ -73,13 +73,13 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
     /**
      * Returns if the given resource is enclosed by a working set element.
      * The IContainmentAdapter of each working set element is used for the
-     * containment test. If there is no IContainmentAdapter for a working 
-     * set element, a simple resource based test is used. 
-     * 
+     * containment test. If there is no IContainmentAdapter for a working
+     * set element, a simple resource based test is used.
+     *
      * @param element resource to test for enclosure by a working set
-     * 	element 
-     * @return true if element is enclosed by a working set element and 
-     * 	false otherwise. 
+     * 	element
+     * @return true if element is enclosed by a working set element and
+     * 	false otherwise.
      */
     private boolean isEnclosed(IResource element) {
         IPath elementPath = element.getFullPath();
@@ -96,9 +96,9 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
             IContainmentAdapter containmentAdapter = (IContainmentAdapter) workingSetElement
                     .getAdapter(IContainmentAdapter.class);
 
-            // if there is no IContainmentAdapter defined for the working  
-            // set element type fall back to using resource based  
-            // containment check 
+            // if there is no IContainmentAdapter defined for the working
+            // set element type fall back to using resource based
+            // containment check
             if (containmentAdapter != null) {
                 if (containmentAdapter.contains(workingSetElement, element,
                         IContainmentAdapter.CHECK_CONTEXT
@@ -117,17 +117,17 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 
     /**
      * Returns if the given resource is enclosed by a working set element.
-     * A resource is enclosed if it is either a parent of a working set 
+     * A resource is enclosed if it is either a parent of a working set
      * element, a child of a working set element or a working set element
      * itself.
      * Simple path comparison is used. This is only guaranteed to return
-     * correct results for resource working set elements. 
-     * 
+     * correct results for resource working set elements.
+     *
      * @param element resource to test for enclosure by a working set
      * 	element
-     * @param elementPath full, absolute path of the element to test 
-     * @return true if element is enclosed by a working set element and 
-     * 	false otherwise. 
+     * @param elementPath full, absolute path of the element to test
+     * @return true if element is enclosed by a working set element and
+     * 	false otherwise.
      */
     private boolean isEnclosedResource(IResource element, IPath elementPath,
             IAdaptable workingSetElement) {
@@ -155,9 +155,9 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
     }
 
     /**
-     * Filters out elements that are neither a parent nor a child of 
+     * Filters out elements that are neither a parent nor a child of
      * a working set element.
-     * 
+     *
      * @see ViewerFilter#filter(Viewer, Object, Object[])
      */
     @Override

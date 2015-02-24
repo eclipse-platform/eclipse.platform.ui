@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * The TableViewLabelProvider is the content provider for marker views.
- * 
+ *
  */
 public class TableViewLabelProvider extends LabelProvider implements
 		ITableLabelProvider, IFontProvider {
@@ -29,7 +29,7 @@ public class TableViewLabelProvider extends LabelProvider implements
 
 	/**
 	 * Create a neew instance of the receiver.
-	 * 
+	 *
 	 * @param fields
 	 */
 	public TableViewLabelProvider(IField[] fields) {
@@ -38,7 +38,7 @@ public class TableViewLabelProvider extends LabelProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
 	 *      int)
 	 */
@@ -52,7 +52,7 @@ public class TableViewLabelProvider extends LabelProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
 	 *      int)
 	 */

@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
  * menu.add(closeProjectAction);
  * </pre>
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class IDEActionFactory {
@@ -71,7 +71,7 @@ public final class IDEActionFactory {
      * This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory ADD_TASK = new ActionFactory("addTask", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.EDIT_ADD_TASK) { 
+    		IWorkbenchCommandConstants.EDIT_ADD_TASK) {
         /* (non-javadoc) method declared on ActionFactory */
         @Override
 		public IWorkbenchAction create(IWorkbenchWindow window) {
@@ -91,7 +91,7 @@ public final class IDEActionFactory {
      * This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory BOOKMARK = new ActionFactory("bookmark", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK) { 
+    		IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK) {
         /* (non-javadoc) method declared on ActionFactory */
         @Override
 		public IWorkbenchAction create(IWorkbenchWindow window) {
@@ -217,11 +217,11 @@ public final class IDEActionFactory {
      * Close unrelated projects.
      * <p>
      * This action closes all projects that are unrelated to the selected projects. A
-     * project is unrelated if it is not directly or transitively referenced by one 
+     * project is unrelated if it is not directly or transitively referenced by one
      * of the selected projects, and does not directly or transitively reference
      * one of the selected projects.
      * </p>
-     * This action is a {@link RetargetAction} with 
+     * This action is a {@link RetargetAction} with
      * id "closeUnrelatedProjects". This action maintains its enablement state.
      * @see IProject#getReferencedProjects()
      * @see IProject#getReferencingProjects()
@@ -239,7 +239,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
             action.setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId(getCommandId()); 
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -282,7 +282,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.OpenResourceAction_text);
             action.setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId(getCommandId()); 
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -326,7 +326,7 @@ public final class IDEActionFactory {
     /**
      * IDE-specific workbench action (id: "quickStart"): Quick start.
      * This action maintains its enablement state.
-     * 
+     *
      * @deprecated the IDE now uses the new intro mechanism
      */
     @Deprecated
@@ -347,7 +347,7 @@ public final class IDEActionFactory {
     /**
      * IDE-specific workbench action (id: "rebuildAll"): Full build.
      * This action maintains its enablement state.
-     * 
+     *
      * @deprecated as of 3.0, this action no longer appears in the UI (was deprecated in 3.1)
      */
     @Deprecated
@@ -368,9 +368,9 @@ public final class IDEActionFactory {
 
     /**
      * IDE-specific workbench action (id: "rebuildProject"): Rebuild project.
-     * This action is a {@link RetargetAction} with 
+     * This action is a {@link RetargetAction} with
      * id "rebuildProject". This action maintains its enablement state.
-     * 
+     *
      * @deprecated as of 3.0, this action no longer appears in the UI (was deprecated in 3.1)
      */
     @Deprecated

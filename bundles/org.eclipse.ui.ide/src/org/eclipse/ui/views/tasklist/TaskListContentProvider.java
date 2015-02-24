@@ -56,11 +56,11 @@ class TaskListContentProvider implements IStructuredContentProvider,
 
     private IResource input;
 
-    /* cached counts of tasks, errors, warnings and infos for the visible 
+    /* cached counts of tasks, errors, warnings and infos for the visible
      * markers, maintained incrementally */
     private int[] visibleMarkerCounts = null;
 
-    /* cached count of all markers in workspace matching supported root types 
+    /* cached count of all markers in workspace matching supported root types
      * (tasks & problems), maintained incrementally */
     private int totalMarkerCount = -1;
 
@@ -104,7 +104,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
     /**
      * Returns a one-line string containing a summary of the number
      * of selected tasks and problems.
-     * 
+     *
      * @param selection the current selection
      */
     public String getStatusSummarySelected(IStructuredSelection selection) {
@@ -114,13 +114,13 @@ class TaskListContentProvider implements IStructuredContentProvider,
     }
 
     /**
-     * Returns a one-line string containing a summary of the number of 
+     * Returns a one-line string containing a summary of the number of
      * given tasks, errors, warnings, and infos.
      */
     private String getStatusSummaryBreakdown(int[] counts) {
         return NLS.bind(
-				TaskListMessages.TaskList_statusSummaryBreakdown, 
-				new Object []{ 
+				TaskListMessages.TaskList_statusSummaryBreakdown,
+				new Object []{
 						new Integer(counts[TASKS]),
 						new Integer(counts[ERRORS]),
 						new Integer(counts[WARNINGS]),
@@ -161,8 +161,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
     }
 
     /**
-     * Returns the count of all markers in the workspace which can be shown in 
-     * the task list. This is computed once, then maintained incrementally by 
+     * Returns the count of all markers in the workspace which can be shown in
+     * the task list. This is computed once, then maintained incrementally by
      * the delta processing.
      */
     private int getTotalMarkerCount() {
@@ -333,12 +333,12 @@ class TaskListContentProvider implements IStructuredContentProvider,
     }
 
     /**
-     * Updates the viewer given the lists of added, removed, and changes 
+     * Updates the viewer given the lists of added, removed, and changes
      * markers. This is called inside an syncExec.
      */
     private void updateViewer(List additions, List removals, List changes) {
 
-        // The widget may have been destroyed by the time this is run.  
+        // The widget may have been destroyed by the time this is run.
         // Check for this and do nothing if so.
         Control ctrl = viewer.getControl();
 
@@ -347,11 +347,11 @@ class TaskListContentProvider implements IStructuredContentProvider,
         }
 
         //update the viewer based on the marker changes.
-        //process removals before additions, to avoid multiple equal elements in 
+        //process removals before additions, to avoid multiple equal elements in
         //the viewer
         if (removals.size() > 0) {
 
-            // Cancel any open cell editor.  We assume that the one being edited 
+            // Cancel any open cell editor.  We assume that the one being edited
             // is the one being removed.
             viewer.cancelEditing();
             viewer.remove(removals.toArray());
@@ -437,7 +437,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
     }
 
     /**
-     * The workbench has changed.  Process the delta and issue updates to the 
+     * The workbench has changed.  Process the delta and issue updates to the
      * viewer, inside the UI thread.
      *
      * @see IResourceChangeListener#resourceChanged
@@ -445,7 +445,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
     @Override
 	public void resourceChanged(final IResourceChangeEvent event) {
         /*
-         * gather all marker changes from the delta. be sure to do this in the 
+         * gather all marker changes from the delta. be sure to do this in the
          * calling thread, as the delta is destroyed when this method returns
          */
         IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
@@ -471,9 +471,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
             for (int j = 0; j < TasksFilter.ROOT_TYPES.length; j++) {
                 if (markerDelta.isSubtypeOf(TasksFilter.ROOT_TYPES[j])) {
 
-                    /* 
-                     * Updates the total count of markers given the applicable 
-                     * marker deltas. 
+                    /*
+                     * Updates the total count of markers given the applicable
+                     * marker deltas.
                      */
                     if (totalMarkerCount != -1) {
                         switch (iKind) {
@@ -487,12 +487,12 @@ class TaskListContentProvider implements IStructuredContentProvider,
                     }
 
                     /*
-                     * Partition the marker deltas into one of the three given 
+                     * Partition the marker deltas into one of the three given
                      * lists depending on
                      * the type of delta (add, remove, or change).
-                     * The resulting lists contain the corresponding markers, 
+                     * The resulting lists contain the corresponding markers,
                      * not the deltas.
-                     * Deltas which are not under the current focus resource are 
+                     * Deltas which are not under the current focus resource are
                      * discarded.
                      * This also updates the marker counts.
                      */
@@ -520,10 +520,10 @@ class TaskListContentProvider implements IStructuredContentProvider,
                             break;
                         case IResourceDelta.CHANGED:
                             changes.add(marker);
-                            /* 
-                             * Assume attribute changes don't affect marker 
-                             * counts. This is only true if problem severities 
-                             * can't change. 
+                            /*
+                             * Assume attribute changes don't affect marker
+                             * counts. This is only true if problem severities
+                             * can't change.
                              */
                             break;
                         }
@@ -541,8 +541,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
         }
 
         /*
-         * do the required viewer updates in the UI thread need to use syncExec; 
-         * see 1G95PU8: ITPUI:WIN2000 - Changing task description flashes old 
+         * do the required viewer updates in the UI thread need to use syncExec;
+         * see 1G95PU8: ITPUI:WIN2000 - Changing task description flashes old
          * description
          */
         viewer.getControl().getDisplay().syncExec(new Runnable() {
@@ -562,10 +562,10 @@ class TaskListContentProvider implements IStructuredContentProvider,
                 }
 
                 /* Update the task list's status message.
-                 * XXX: Quick and dirty solution here.  
+                 * XXX: Quick and dirty solution here.
                  * Would be better to have a separate model for the tasks and
-                 * have both the content provider and the task list register for 
-                 * updates. XXX: Do this inside the syncExec, since we're 
+                 * have both the content provider and the task list register for
+                 * updates. XXX: Do this inside the syncExec, since we're
                  * talking to status line widget.
                  */
                 taskList.markersChanged();

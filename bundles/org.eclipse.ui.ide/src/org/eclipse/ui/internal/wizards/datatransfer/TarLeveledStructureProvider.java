@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Red Hat, Inc - Was TarFileStructureProvider, performed changes from 
+ *     Red Hat, Inc - Was TarFileStructureProvider, performed changes from
  *     IImportStructureProvider to ILeveledImportStructureProvider
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * This class provides information regarding the context structure and content
  * of specified tar file entry objects.
- * 
+ *
  * @since 3.1
  */
 public class TarLeveledStructureProvider implements
@@ -46,7 +46,7 @@ public class TarLeveledStructureProvider implements
 	/**
 	 * Creates a <code>TarFileStructureProvider</code>, which will operate on
 	 * the passed tar file.
-	 * 
+	 *
 	 * @param sourceFile
 	 *            the source TarFile
 	 */
@@ -57,7 +57,7 @@ public class TarLeveledStructureProvider implements
 	}
 
 	/**
-	 * Creates a new container tar entry with the specified name, iff it has 
+	 * Creates a new container tar entry with the specified name, iff it has
 	 * not already been created. If the parent of the given element does not
 	 * already exist it will be recursively created as well.
 	 * @param pathname The path representing the container
@@ -133,7 +133,7 @@ public class TarLeveledStructureProvider implements
 
 	/**
 	 * Returns the resource attributes for this file.
-	 * 
+	 *
 	 * @param element
 	 * @return the attributes of the file
 	 */
@@ -167,7 +167,7 @@ public class TarLeveledStructureProvider implements
 
 	/**
 	 * Returns the entry that this importer uses as the root sentinel.
-	 * 
+	 *
 	 * @return TarEntry entry
 	 */
 	@Override
@@ -177,7 +177,7 @@ public class TarLeveledStructureProvider implements
 
 	/**
 	 * Returns the tar file that this provider provides structure for.
-	 * 
+	 *
 	 * @return TarFile file
 	 */
 	public TarFile getTarFile() {
@@ -199,20 +199,20 @@ public class TarLeveledStructureProvider implements
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Initializes this object's children table based on the contents of the
 	 * specified source file.
 	 */
 	protected void initialize() {
 		children = new HashMap(1000);
-		
+
 		children.put(root, new ArrayList());
 		Enumeration entries = tarFile.entries();
 		while (entries.hasMoreElements()) {
 			TarEntry entry = (TarEntry) entries.nextElement();
 			IPath path = new Path(entry.getName()).addTrailingSeparator();
-			
+
 			if (entry.getFileType() == TarEntry.DIRECTORY) {
 				createContainer(path);
 			} else
@@ -227,7 +227,7 @@ public class TarLeveledStructureProvider implements
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */

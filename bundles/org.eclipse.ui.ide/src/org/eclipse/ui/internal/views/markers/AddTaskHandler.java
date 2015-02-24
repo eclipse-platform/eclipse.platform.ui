@@ -17,15 +17,15 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * AddTaskHandler is the handler for adding a new task to the task list.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class AddTaskHandler extends MarkerViewHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override

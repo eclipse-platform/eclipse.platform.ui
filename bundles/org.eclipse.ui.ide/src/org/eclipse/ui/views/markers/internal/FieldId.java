@@ -119,7 +119,7 @@ public class FieldId implements IField {
 	public int getPreferredWidth() {
 		return 0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#isShowing()
 	 */
@@ -128,13 +128,13 @@ public class FieldId implements IField {
 		// Never show id
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#setShowing(boolean)
 	 */
 	@Override
 	public void setShowing(boolean showing) {
 		// Ignore
-		
+
 	}
 }

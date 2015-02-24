@@ -50,7 +50,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Implements drop behaviour for drag and drop operations
  * that land on the resource navigator.
- * 
+ *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
@@ -69,7 +69,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 
     /**
      * Constructs a new drop adapter.
-     * 
+     *
      * @param viewer the navigator's viewer
      */
     public NavigatorDropAdapter(StructuredViewer viewer) {
@@ -144,7 +144,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 
     /**
      * Returns the resource selection from the LocalSelectionTransfer.
-     * 
+     *
      * @return the resource selection from the LocalSelectionTransfer
      */
     private IResource[] getSelectedResources() {
@@ -374,7 +374,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
                 getCurrentTransfer()));
 
         IContainer target = getActualTarget((IResource) getCurrentTarget());
-        
+
         boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
@@ -385,7 +385,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 				}
 			}
 		}
-		
+
 		if (shouldLinkAutomatically) {
 			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
 	                getShell());

@@ -25,7 +25,7 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
 /**
  * ActionDeleteCompleted is the action for deleting completed markers.
- * 
+ *
  */
 public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 
@@ -33,7 +33,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 
 	/**
 	 * Constructs an ActionDeleteCompleted instance
-	 * 
+	 *
 	 * @param part
 	 * @param provider
 	 */
@@ -45,7 +45,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	@Override
@@ -101,7 +101,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	@Override

@@ -23,18 +23,18 @@ import org.eclipse.ui.views.markers.MarkerItem;
 /**
  * The TypeMarkerGroup is a MarkerGroup used for the sorting by type which
  * cannot be expressed currently using the markerSupport extension point.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class TypeMarkerGroup extends MarkerGroup {
 
 	private Map entries=new HashMap();
 	/**
 	 * TypeMarkerField is the MarkerField used for MarkerGroupungs
-	 * 
+	 *
 	 * @since 3.4
-	 * 
+	 *
 	 */
 	class TypeMarkerField extends GroupMarkerField {
 
@@ -48,7 +48,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 		 */
 		@Override
@@ -78,7 +78,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 			return Util.EMPTY_STRING;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.views.markers.internal.MarkerGroup.GroupMarkerField#compare(org.eclipse.ui.views.markers.MarkerItem, org.eclipse.ui.views.markers.MarkerItem)
 		 */
@@ -93,7 +93,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	public TypeMarkerGroup(String name) {
@@ -109,10 +109,10 @@ public class TypeMarkerGroup extends MarkerGroup {
 		field = new FieldCategory();
 		markerField = new TypeMarkerField();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.views.markers.internal.MarkerGroup#findGroupValue(java
 	 * .lang.String, org.eclipse.core.resources.IMarker)
@@ -142,7 +142,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 	public String getId() {
 		return Util.TYPE_MARKER_GROUPING_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerGroup#getTitle()
 	 */
@@ -165,7 +165,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 			}
 		};
 	}
-	
+
 	private class TypesMarkerGroupingEntry extends MarkerGroupingEntry {
 		public TypesMarkerGroupingEntry(String label) {
 			super(label);

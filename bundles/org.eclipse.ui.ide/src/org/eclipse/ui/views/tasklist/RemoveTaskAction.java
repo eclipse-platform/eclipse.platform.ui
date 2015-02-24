@@ -32,7 +32,7 @@ class RemoveTaskAction extends TaskAction {
 
     /**
      * Creates the action.
-     * 
+     *
      * @param tasklist the task list
      * @param id the id
      */

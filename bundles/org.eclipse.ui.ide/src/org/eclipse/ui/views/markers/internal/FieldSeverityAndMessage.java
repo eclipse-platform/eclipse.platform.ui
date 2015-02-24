@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 /**
  * The FieldSeverityAndMessage is the field that
  * displays severities and messages.
- * 
+ *
  */
 public class FieldSeverityAndMessage extends FieldMessage {
 
@@ -34,7 +34,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	@Override
@@ -74,7 +74,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -84,7 +84,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 				|| !(obj2 instanceof ProblemMarker)) {
 			return 0;
 		}
-		
+
 		ProblemMarker marker1 = (ProblemMarker) obj1;
 		ProblemMarker marker2 = (ProblemMarker) obj2;
 
@@ -95,10 +95,10 @@ public class FieldSeverityAndMessage extends FieldMessage {
 					marker2.getDescriptionKey());
 		return severity2 - severity1;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
 	@Override

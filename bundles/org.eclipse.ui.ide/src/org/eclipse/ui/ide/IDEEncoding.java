@@ -33,13 +33,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * This class provides all its functionality via static methods.
  * It is not intended to be instantiated or subclassed.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.WorkbenchEncoding
  * @see org.eclipse.core.resources.ResourcesPlugin
  * @since 3.1
  */
 public final class IDEEncoding {
-	
+
 	private IDEEncoding () {
         // prevent instantiation
 	}
@@ -69,7 +69,7 @@ public final class IDEEncoding {
 	/**
 	 * Get all of the available encodings including any that were saved as a
 	 * preference in the IDE or in core resources.
-	 * 
+	 *
 	 * @return List of String
 	 */
 	public static List getIDEEncodings() {
@@ -89,7 +89,7 @@ public final class IDEEncoding {
 	/**
 	 * Get the current value of the encoding preference. If the value is not set
 	 * return <code>null</code>.
-	 * 
+	 *
 	 * @return String
 	 */
 	public static String getResourceEncoding() {
@@ -103,7 +103,7 @@ public final class IDEEncoding {
 
 	/**
 	 * Add value to the list of workbench encodings.
-	 * 
+	 *
 	 * @param value
 	 */
 	public static void addIDEEncoding(String value) {
@@ -149,13 +149,13 @@ public final class IDEEncoding {
 
 	/**
 	 * Get the value of the encodings preference.
-	 * 
+	 *
 	 * @return List
 	 */
 	private static List getIDEEncodingsPreference() {
-		
+
 		boolean updateRequired = false;
-		
+
 		String encodings = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(
 				IDE_ENCODINGS_PREFERENCE);
 
@@ -181,9 +181,9 @@ public final class IDEEncoding {
 				WorkbenchPlugin.log(NLS.bind(IDEWorkbenchMessages.WorkbenchEncoding_invalidCharset, string));
 				updateRequired = true;
 			}
-				
+
 		}
-		
+
 		if(updateRequired) {
 			writeEncodingsPreference(null, result);
 		}
@@ -201,7 +201,7 @@ public final class IDEEncoding {
 	/**
 	 * Get the displayable string for the byte order marking from the supplied
 	 * file description.
-	 * 
+	 *
 	 * @param description
 	 *            The description to query. May be <code>null</code>.
 	 * @return String or <code>null</code> if the byte order mark cannot be

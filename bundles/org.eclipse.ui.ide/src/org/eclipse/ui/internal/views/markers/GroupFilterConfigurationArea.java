@@ -20,13 +20,13 @@ import org.eclipse.ui.views.markers.FilterConfigurationArea;
  *
  */
 abstract class GroupFilterConfigurationArea extends FilterConfigurationArea {
-	
+
 	/**
 	 * Apply to the group
 	 * @param group
 	 */
 	public abstract void applyToGroup(MarkerFieldFilterGroup group);
-	
+
 	/**
 	 * Initialise from the group
 	 * @param group

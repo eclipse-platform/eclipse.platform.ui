@@ -16,9 +16,9 @@ import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
 /**
  * FileSystemContribution is the representation of the configuration element
  * defined by
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class FileSystemConfiguration {
 

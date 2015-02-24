@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 /**
  * FolderDescription is a lightweight description that describes a folder to be
  * created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class FolderDescription extends ContainerDescription {
 
@@ -39,7 +39,7 @@ public class FolderDescription extends ContainerDescription {
 	 * Create a FolderDescription from the specified folder handle. Typically
 	 * used when the folder handle represents a resource that actually exists,
 	 * although it will not fail if the resource is non-existent.
-	 * 
+	 *
 	 * @param folder
 	 *            the folder to be described
 	 * @param virtual
@@ -54,7 +54,7 @@ public class FolderDescription extends ContainerDescription {
 	 * Create a FolderDescription from the specified folder handle. If the
 	 * folder to be created should be linked to a different location, specify
 	 * the location.
-	 * 
+	 *
 	 * @param folder
 	 *            the folder to be described
 	 * @param linkLocation
@@ -69,7 +69,7 @@ public class FolderDescription extends ContainerDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#createResourceHandle()
 	 */
 	@Override
@@ -81,7 +81,7 @@ public class FolderDescription extends ContainerDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */

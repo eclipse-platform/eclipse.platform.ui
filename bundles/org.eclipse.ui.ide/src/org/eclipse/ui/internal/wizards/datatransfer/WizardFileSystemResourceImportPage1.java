@@ -89,13 +89,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     protected Button createVirtualFoldersButton;
 
     protected Button createLinksInWorkspaceButton;
-    
+
 	protected Button advancedButton;
 
     protected RelativePathVariableGroup relativePathVariableGroup;
-    
+
     protected String pathVariable;
-    
+
     protected Button sourceBrowseButton;
 
     protected Button selectTypesButton;
@@ -106,7 +106,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     //A boolean to indicate if the user has typed anything
     private boolean entryChanged = false;
-    
+
     private FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
 
     // dialog store id constants
@@ -338,7 +338,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		createLinksInWorkspaceButton.setFont(parent.getFont());
         createLinksInWorkspaceButton.setText(DataTransferMessages.FileImport_createLinksInWorkspace);
         createLinksInWorkspaceButton.setSelection(false);
-        
+
         createLinksInWorkspaceButton.addSelectionListener(new SelectionAdapter() {
         	@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -349,7 +349,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		Button tmp= new Button(linkedResourceComposite, SWT.CHECK);
         int indent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         tmp.dispose();
-        
+
         // create virtual folders check
 		createVirtualFoldersButton= new Button(linkedResourceComposite, SWT.CHECK);
 		createVirtualFoldersButton.setFont(parent.getFont());
@@ -405,8 +405,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         }, DataTransferMessages.FileImport_importElementsAs
         );
         relativePathVariableGroup.createContents(relativeGroup);
-        
-        
+
+
         updateWidgetEnablements();
 		relativePathVariableGroup.setSelection(true);
 
@@ -416,7 +416,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
 	/**
 	 * Shows/hides the advanced option widgets.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private void handleAdvancedButtonSelect() {
@@ -850,16 +850,16 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      */
     protected boolean importResources(List fileSystemObjects) {
         ImportOperation operation;
-        
+
         boolean shouldImportTopLevelFoldersRecursively = selectionGroup.isEveryItemChecked() &&
         											!createTopLevelFolderCheckbox.getSelection() &&
         											(createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) &&
         											(createVirtualFoldersButton != null && createVirtualFoldersButton.getSelection() == false);
-		
+
 		File sourceDirectory = getSourceDirectory();
 		if (createTopLevelFolderCheckbox.getSelection() && sourceDirectory.getParentFile() != null)
         	sourceDirectory = sourceDirectory.getParentFile();
-        
+
         if (shouldImportTopLevelFoldersRecursively)
             operation = new ImportOperation(getContainerFullPath(),
                     sourceDirectory, fileSystemStructureProvider,
@@ -982,15 +982,15 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	            boolean createVirtualFolders = settings
 	            		.getBoolean(STORE_CREATE_VIRTUAL_FOLDERS_ID);
 	            createVirtualFoldersButton.setSelection(createVirtualFolders);
-	
+
 	            boolean createLinkedResources = settings
 	    				.getBoolean(STORE_CREATE_LINKS_IN_WORKSPACE_ID);
 	            createLinksInWorkspaceButton.setSelection(createLinkedResources);
-	
+
 	            boolean pathVariableSelected = settings
 						.getBoolean(STORE_PATH_VARIABLE_SELECTED_ID);
 	            relativePathVariableGroup.setSelection(pathVariableSelected);
-	
+
 	            pathVariable = settings.get(STORE_PATH_VARIABLE_NAME_ID);
 	            if (pathVariable != null)
 	            	relativePathVariableGroup.selectVariable(pathVariable);
@@ -1026,13 +1026,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             if (createVirtualFoldersButton != null) {
 	            settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
 	            		createVirtualFoldersButton.getSelection());
-	
+
 	            settings.put(STORE_CREATE_LINKS_IN_WORKSPACE_ID,
 	            		createLinksInWorkspaceButton.getSelection());
-	
+
 	            settings.put(STORE_PATH_VARIABLE_SELECTED_ID,
 	            		relativePathVariableGroup.getSelection());
-	
+
 	            settings.put(STORE_PATH_VARIABLE_NAME_ID,
 	            		pathVariable);
             }
@@ -1232,7 +1232,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	    	}
 			relativePathVariableGroup.setEnabled(createLinksInWorkspaceButton.getSelection());
 			createVirtualFoldersButton.setEnabled(createLinksInWorkspaceButton.getSelection());
-	
+
 			if (!selectionGroup.isEveryItemChecked() ||
 				(createTopLevelFolderCheckbox.getSelection())) {
 	        	createVirtualFoldersButton.setSelection(true);
@@ -1277,10 +1277,10 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	        	setMessage(null);
 	        	setErrorMessage(DataTransferMessages.FileImport_haveToCreateLinksUnderAVirtualFolder);
 				return false;
-        		
+
         	}
 		}
-        
+
 		enableButtonGroup(true);
 		setErrorMessage(null);
         return true;
@@ -1290,7 +1290,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * Returns whether the source location conflicts
      * with the destination resource. This will occur if
      * the source is already under the destination.
-     * 
+     *
      * @param sourcePath the path to check
      * @return <code>true</code> if there is a conflict, <code>false</code> if not
      */
@@ -1301,7 +1301,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         if (container == null) {
 			return false;
 		}
-        
+
         IPath destinationLocation = getSpecifiedContainer().getLocation();
         if (destinationLocation != null) {
             return destinationLocation.isPrefixOf(sourcePath);

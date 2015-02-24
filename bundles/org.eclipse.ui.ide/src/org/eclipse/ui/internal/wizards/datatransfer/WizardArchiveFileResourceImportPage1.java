@@ -57,7 +57,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"; //$NON-NLS-1$
 
     private final static String STORE_SELECTED_TYPES_ID = "WizardZipFileResourceImportPage1.STORE_SELECTED_TYPES_ID"; //$NON-NLS-1$
-	
+
 	private final String[] fileImportMask;
 
     /**
@@ -69,7 +69,7 @@ public class WizardArchiveFileResourceImportPage1 extends
             IStructuredSelection selection) {
         this(aWorkbench, selection, null);
     }
-	
+
 	/**
      *	Creates an instance of this class
      * @param aWorkbench IWorkbench
@@ -79,10 +79,10 @@ public class WizardArchiveFileResourceImportPage1 extends
     public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
             IStructuredSelection selection, String[] fileImportMask) {
         super("zipFileImportPage1", aWorkbench, selection); //$NON-NLS-1$
-		
+
         setTitle(DataTransferMessages.ArchiveExport_exportTitle);
         setDescription(DataTransferMessages.ArchiveImport_description);
-		
+
 		if(fileImportMask == null)
 			this.fileImportMask = FILE_IMPORT_MASK;
 		else
@@ -175,7 +175,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     	}
     	return ensureZipSourceIsValid();
     }
-    
+
     /**
      * The Finish button was pressed.  Try to do the required work now and answer
      * a boolean indicating success.  If <code>false</code> is returned then the
@@ -196,7 +196,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     /**
      * Closes the structure provider and sets
      * the field to <code>null</code>.
-     * 
+     *
      * @since 3.4
      */
 	private void disposeStructureProvider() {
@@ -382,11 +382,11 @@ public class WizardArchiveFileResourceImportPage1 extends
     		ZipFile zipFile = getSpecifiedZipSourceFile();
     		importStructureProvider = new ZipLeveledStructureProvider(zipFile);
     	}
-    	
+
     	if (importStructureProvider == null) {
     		return false;
     	}
-    	
+
 		ImportOperation operation = new ImportOperation(getContainerFullPath(),
 				importStructureProvider.getRoot(), importStructureProvider, this,
 				fileSystemObjects);
@@ -394,7 +394,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 		operation.setContext(getShell());
 		if (!executeImportOperation(operation))
 			return false;
-		
+
 		ArchiveFileManipulations.closeStructureProvider(importStructureProvider, getShell());
 		return true;
     }
@@ -513,7 +513,7 @@ public class WizardArchiveFileResourceImportPage1 extends
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
         	return false;
         }
-        
+
         enableButtonGroup(true);
         setErrorMessage(null);
         return true;

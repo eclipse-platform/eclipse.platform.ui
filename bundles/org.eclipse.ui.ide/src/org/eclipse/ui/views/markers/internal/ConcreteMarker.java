@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
-import com.ibm.icu.text.CollationKey; 
-import com.ibm.icu.text.Collator; 
+import com.ibm.icu.text.CollationKey;
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -37,7 +37,7 @@ public class ConcreteMarker extends MarkerNode{
     private CollationKey resourceNameKey;
 
     private int line;
-    
+
     private String locationString;
 
     private long creationTime;
@@ -54,7 +54,7 @@ public class ConcreteMarker extends MarkerNode{
 	private MarkerNode markerCategory;
 
 	private String shortFolder;
-	
+
 	private Object group;
 
 	public ConcreteMarker(IMarker toCopy) {
@@ -65,7 +65,7 @@ public class ConcreteMarker extends MarkerNode{
     /**
      * Clears any cached information. This frees up some memory, but will slow down
      * the next comparison operation. It is a good idea to call this on a set of markers
-     * after sorting them, in order to reduce their memory cost. 
+     * after sorting them, in order to reduce their memory cost.
      */
     public void clearCache() {
         resourceNameKey = null;
@@ -82,10 +82,10 @@ public class ConcreteMarker extends MarkerNode{
         resourceName = Util.getResourceName(marker);
         inFolder = Util.getContainerName(marker);
         shortFolder = null;
-        line = marker.getAttribute(IMarker.LINE_NUMBER, -1);  
+        line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
         locationString = marker.getAttribute(IMarker.LOCATION,
 				Util.EMPTY_STRING);
-		
+
         try {
             creationTime = marker.getCreationTime();
         } catch (CoreException e) {
@@ -95,9 +95,9 @@ public class ConcreteMarker extends MarkerNode{
         try {
             type = marker.getType();
         } catch (CoreException e1) {
-            type = Util.EMPTY_STRING; 
+            type = Util.EMPTY_STRING;
         }
-        
+
         // store the marker ID locally
         id = marker.getId();
     }
@@ -150,7 +150,7 @@ public class ConcreteMarker extends MarkerNode{
     public long getCreationTime() {
         return creationTime;
     }
-    
+
     /**
      * The underlying marker ID value.
      * @return the marker's ID.
@@ -185,7 +185,7 @@ public class ConcreteMarker extends MarkerNode{
 	 */
 	public void setCategory(MarkerNode category) {
 		markerCategory = category;
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -249,7 +249,7 @@ public class ConcreteMarker extends MarkerNode{
 	public void setGroup(Object group) {
 		this.group = group;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getConcreteRepresentative()
 	 */

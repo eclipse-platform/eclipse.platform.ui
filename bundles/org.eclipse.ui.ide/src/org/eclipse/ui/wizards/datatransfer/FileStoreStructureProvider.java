@@ -24,9 +24,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * FileStoreStructureProvider is the structure provider for {@link IFileStore}
  * based file structures.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class FileStoreStructureProvider implements IImportStructureProvider {
 
@@ -37,7 +37,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getChildren(java.lang.Object)
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	/**
 	 * Log the exception.
-	 * 
+	 *
 	 * @param exception
 	 */
 	private void logException(CoreException exception) {
@@ -63,7 +63,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getContents(java.lang.Object)
 	 */
 	@Override
@@ -79,7 +79,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getFullPath(java.lang.Object)
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getLabel(java.lang.Object)
 	 */
 	@Override
@@ -99,7 +99,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#isFolder(java.lang.Object)
 	 */
 	@Override

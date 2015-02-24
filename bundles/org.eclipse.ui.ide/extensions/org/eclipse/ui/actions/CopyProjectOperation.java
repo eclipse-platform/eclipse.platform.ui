@@ -62,7 +62,7 @@ public class CopyProjectOperation {
 	/**
 	 * Validates that the copy of the project will not have undesirable side
 	 * effects.
-	 * 
+	 *
 	 * @param shell
 	 *            a shell
 	 * @param project
@@ -92,7 +92,7 @@ public class CopyProjectOperation {
 
 	/**
 	 * Create a new operation initialized with a shell.
-	 * 
+	 *
 	 * @param shell
 	 *            parent shell for error dialogs
 	 */
@@ -102,7 +102,7 @@ public class CopyProjectOperation {
 
 	/**
 	 * Paste a copy of the project on the clipboard to the workspace.
-	 * 
+	 *
 	 * @param project
 	 *            The project that is beign copied.
 	 */
@@ -142,7 +142,7 @@ public class CopyProjectOperation {
 
 	/**
 	 * Copies the project to the new values.
-	 * 
+	 *
 	 * @param project
 	 *            the project to copy
 	 * @param projectName
@@ -225,7 +225,7 @@ public class CopyProjectOperation {
     /**
      * Returns the model provider ids that are known to the client
      * that instantiated this operation.
-     * 
+     *
      * @return the model provider ids that are known to the client
      * that instantiated this operation.
 	 * @since 3.2
@@ -238,7 +238,7 @@ public class CopyProjectOperation {
 	 * Sets the model provider ids that are known to the client that
 	 * instantiated this operation. Any potential side effects reported by these
 	 * models during validation will be ignored.
-	 * 
+	 *
 	 * @param modelProviderIds
 	 *            the model providers known to the client who is using this
 	 *            operation.

@@ -29,8 +29,8 @@ import org.eclipse.ui.internal.ide.undo.IFileContentDescription;
  * be linked to the file at the specified location. If a link location is not
  * specified, the file will be created in the location specified by the handle,
  * and the entire containment path of the file will be created if it does not
- * exist.  The file should not already exist, and the existence of the 
- * containment path should not be changed between the time this operation 
+ * exist.  The file should not already exist, and the existence of the
+ * containment path should not be changed between the time this operation
  * is created and the time it is executed.
  * <p>
  * Clients may call the public API from a background thread.
@@ -46,7 +46,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 	/**
 	 * Create a CreateFileOperation
-	 * 
+	 *
 	 * @param fileHandle
 	 *            the file to be created
 	 * @param linkLocation
@@ -111,7 +111,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 			}
 		};
 	}
-	
+
 	@Override
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeExecutionStatus(monitor);

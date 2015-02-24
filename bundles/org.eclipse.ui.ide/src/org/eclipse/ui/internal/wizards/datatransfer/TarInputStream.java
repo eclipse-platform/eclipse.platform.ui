@@ -18,7 +18,7 @@ import java.io.InputStream;
  * Input stream for reading files in ustar format (tar) compatible
  * with the specification in IEEE Std 1003.1-2001.  Also supports
  * long filenames encoded using the GNU @LongLink extension.
- * 
+ *
  * @since 3.1
  */
 public class TarInputStream extends FilterInputStream
@@ -32,7 +32,7 @@ public class TarInputStream extends FilterInputStream
 
 	/**
 	 * Creates a new tar input stream on the given input stream.
-	 * 
+	 *
 	 * @param in input stream
 	 * @throws TarException
 	 * @throws IOException
@@ -48,7 +48,7 @@ public class TarInputStream extends FilterInputStream
 	/**
 	 * Create a new tar input stream, skipping ahead to the given entry
 	 * in the file.
-	 * 
+	 *
 	 * @param in input stream
 	 * @param entry skips to this entry in the file
 	 * @throws TarException
@@ -62,7 +62,7 @@ public class TarInputStream extends FilterInputStream
 	/**
 	 *  The checksum of a tar file header is simply the sum of the bytes in
 	 *  the header.
-	 * 
+	 *
 	 * @param header
 	 * @return checksum
 	 */
@@ -76,7 +76,7 @@ public class TarInputStream extends FilterInputStream
 
 	/**
 	 * Skips ahead to the position of the given entry in the file.
-	 * 
+	 *
 	 * @param entry
 	 * @returns false if the entry has already been passed
 	 * @throws TarException
@@ -105,14 +105,14 @@ public class TarInputStream extends FilterInputStream
 
 	/**
 	 * Returns true if the header checksum is correct.
-	 * 
+	 *
 	 * @param header
 	 * @return true if this header has a valid checksum
 	 */
 	private boolean isValidTarHeader(byte[] header) {
 		long fileChecksum, calculatedChecksum;
 		int pos, i;
-		
+
 		pos = 148;
 		StringBuffer checksumString = new StringBuffer();
 		for(i = 0; i < 8; i++) {
@@ -149,7 +149,7 @@ public class TarInputStream extends FilterInputStream
 	/**
 	 * Returns the next entry in the tar file.  Does not handle
 	 * GNU @LongLink extensions.
-	 * 
+	 *
 	 * @return the next entry in the tar file
 	 * @throws TarException
 	 * @throws IOException
@@ -190,11 +190,11 @@ public class TarInputStream extends FilterInputStream
 			if(filepos > 0) {
 				return null;
 			}
-			
+
 			// Invalid stream.
 			throw new TarException("not in tar format"); //$NON-NLS-1$
 		}
-		
+
 		// Validate checksum.
 		if(!isValidTarHeader(header)) {
 			throw new TarException("not in tar format"); //$NON-NLS-1$
@@ -213,7 +213,7 @@ public class TarInputStream extends FilterInputStream
 			String prefix = new String(header, 345, pos - 345, "UTF8"); //$NON-NLS-1$
 			name = prefix + "/" + name; //$NON-NLS-1$
 		}
-		
+
 		TarEntry entry;
 		if(longLinkName != null) {
 			entry = new TarEntry(longLinkName, filepos);
@@ -224,7 +224,7 @@ public class TarInputStream extends FilterInputStream
 		if(header[156] != 0) {
 			entry.setFileType(header[156]);
 		}
-		
+
 		pos = 100;
 		StringBuffer mode = new StringBuffer();
 		for(i = 0; i < 8; i++) {
@@ -245,7 +245,7 @@ public class TarInputStream extends FilterInputStream
 		} catch(NumberFormatException nfe) {
 			throw new TarException(DataTransferMessages.TarImport_invalid_tar_format, nfe);
 		}
-		
+
 		pos = 100 + 24;
 		StringBuffer size = new StringBuffer();
 		for(i = 0; i < 12; i++) {
@@ -281,7 +281,7 @@ public class TarInputStream extends FilterInputStream
 	/**
 	 * Moves ahead to the next file in the tar archive and returns
 	 * a TarEntry object describing it.
-	 * 
+	 *
 	 * @return the next entry in the tar file
 	 * @throws TarException
 	 * @throws IOException

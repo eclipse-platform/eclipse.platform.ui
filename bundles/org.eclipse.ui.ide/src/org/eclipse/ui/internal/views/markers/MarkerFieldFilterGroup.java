@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Broadcom Corp. - James Blackburn -  Fix for Bug 305529 -  
+ *     Broadcom Corp. - James Blackburn -  Fix for Bug 305529 -
  *     					[Markers] NPE in MarkerFieldEditor if MarkerFieldConfiguration scope is unset
  *******************************************************************************/
 
@@ -48,9 +48,9 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
 
 /**
  * MarkerFieldFilterGroup is the representation of a grouping of marker filters.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 class MarkerFieldFilterGroup {
 
@@ -60,7 +60,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * The attribute values for the scope
-	 * 
+	 *
 	 */
 
 	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
@@ -90,7 +90,7 @@ class MarkerFieldFilterGroup {
 	 * Constant for on working set.
 	 */
 	static final int ON_WORKING_SET = 4;
-	
+
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
 	private static final String TAG_FIELD_FILTER_ENTRY = "fieldFilter"; //$NON-NLS-1$
@@ -108,7 +108,7 @@ class MarkerFieldFilterGroup {
 	protected MarkerFieldFilter[] fieldFilters;
 	private int scope;
 	private int limit;
-	
+
 	private String name;
 	private String id;
 
@@ -121,7 +121,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param configurationElement
 	 * @param markerBuilder
 	 */
@@ -148,7 +148,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Get the root types for the receiver
-	 * 
+	 *
 	 * @return Collection of {@link MarkerType}
 	 */
 	Collection getAllTypes() {
@@ -157,7 +157,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Get the filters registered on the receiver.
-	 * 
+	 *
 	 * @return MarkerFieldFilter[]
 	 */
 	private MarkerFieldFilter[] getFieldFilters() {
@@ -197,7 +197,7 @@ class MarkerFieldFilterGroup {
 	/**
 	 * Return the MarkerFieldFilter for field or <code>null</code> if there
 	 * isn't one.
-	 * 
+	 *
 	 * @param field
 	 * @return MarkerFieldFilter
 	 */
@@ -212,7 +212,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return the id of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getID() {
@@ -228,7 +228,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return the name of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getName() {
@@ -245,7 +245,7 @@ class MarkerFieldFilterGroup {
 	/**
 	 * Return the resources in the working set. If it is empty then return the
 	 * workspace root.
-	 * 
+	 *
 	 * @return IResource[]
 	 */
 	IResource[] getResourcesInWorkingSet() {
@@ -258,7 +258,7 @@ class MarkerFieldFilterGroup {
 			if(((AggregateWorkingSet) workingSet).getComponents().length==0)
 				return new IResource[] { ResourcesPlugin.getWorkspace().getRoot()};
 		}
-		
+
 		IAdaptable[] elements = workingSet.getElements();
 		List result = new ArrayList(elements.length);
 
@@ -276,7 +276,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return the value of the scope.
-	 * 
+	 *
 	 * @return int
 	 * @see #ON_ANY
 	 * @see #ON_ANY_IN_SAME_CONTAINER
@@ -290,7 +290,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Get the values defined for the receiver.
-	 * 
+	 *
 	 * @return Map of values to apply to a {@link MarkerFieldFilter}
 	 */
 	private Map getValues() {
@@ -315,7 +315,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Get the working set for the receiver.
-	 * 
+	 *
 	 * @return IWorkingSet
 	 */
 	IWorkingSet getWorkingSet() {
@@ -327,12 +327,12 @@ class MarkerFieldFilterGroup {
 	 */
 	private void computeWorkingSetResources() {
 		if(workingSet!=null){
-			 /* MarkerFieldFilterGroup will have to re-get the resources in 
+			 /* MarkerFieldFilterGroup will have to re-get the resources in
 			 * a working set for every marker it filters using the select method
-			 * Or we may do this once before the markers are filtered.		 
+			 * Or we may do this once before the markers are filtered.
 			 */
 			wSetResources=getResourcesInWorkingSet();
-		}else{			
+		}else{
 			wSetResources = new IResource[] { ResourcesPlugin.getWorkspace()
 					.getRoot() };
 		}
@@ -375,7 +375,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return whether or not the receiver is enabled.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isEnabled() {
@@ -384,7 +384,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return whether or not this is a system or user group.
-	 * 
+	 *
 	 * @return boolean <code>true</code> if it is a system group.
 	 */
 	public boolean isSystem() {
@@ -393,7 +393,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Load the settings from the legacy child.
-	 * 
+	 *
 	 * @param memento
 	 */
 	void legacyLoadSettings(IMemento memento) {
@@ -435,7 +435,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Load the current settings from the child.
-	 * 
+	 *
 	 * @param memento -
 	 *            the memento to load from
 	 */
@@ -457,7 +457,7 @@ class MarkerFieldFilterGroup {
 		if (stringValue != null && stringValue.length() > 0) {
 			setLimit(Integer.parseInt(stringValue));
 		}
-		
+
 		Map filterMap = new HashMap();
 		MarkerFieldFilter[] filters = getFieldFilters();
 		for (int i = 0; i < filters.length; i++) {
@@ -497,7 +497,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Make a working copy of the receiver.
-	 * 
+	 *
 	 * @return MarkerFieldFilterGroup or <code> null</code> if it failed.
 	 */
 	MarkerFieldFilterGroup makeWorkingCopy() {
@@ -511,7 +511,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Populate the clone and return true if successful.
-	 * 
+	 *
 	 * @param clone
 	 */
 	protected boolean populateClone(MarkerFieldFilterGroup clone) {
@@ -545,7 +545,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Process the scope attribute.
-	 * 
+	 *
 	 * @return int
 	 */
 	private int processScope() {
@@ -569,7 +569,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Save the settings for the receiver in the memento.
-	 * 
+	 *
 	 * @param memento
 	 */
 	void saveFilterSettings(IMemento memento) {
@@ -601,10 +601,10 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return whether or not this IMarker is being shown.
-	 * 
+	 *
 	 * @param marker
 	 * @return <code>true</code> if it is being shown
-	 */	
+	 */
 	public boolean select(IMarker marker) {
 		testEntry.setMarker(marker);
 		return select(testEntry);
@@ -612,10 +612,10 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return whether or not this MarkerEntry can be shown.
-	 * @param testEntry 
-	 * 
+	 * @param testEntry
+	 *
 	 * @return <code>true</code> if it can be shown
-	 */	
+	 */
 	public boolean select(MarkerEntry testEntry) {
 		MarkerFieldFilter[] filters = getFieldFilters();
 		if (scope == ON_WORKING_SET && workingSet != null) {
@@ -642,7 +642,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set whether or not the receiver is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            The enabled to set.
 	 */
@@ -652,7 +652,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set the name of the receiver.
-	 * 
+	 *
 	 * @param newName
 	 */
 	public void setName(String newName) {
@@ -662,7 +662,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set the scope of the receiver.
-	 * 
+	 *
 	 * @param newScope
 	 */
 	public void setScope(int newScope) {
@@ -671,13 +671,13 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set the working set of the receiver.
-	 * 
+	 *
 	 * @param workingSet
 	 */
 	void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
 	}
-	
+
 	/**
 	 * @return Returns -1 for no limit else the limit.
 	 */
@@ -695,17 +695,17 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Refresh the MarkerFieldFilterGroup .
-	 */	
+	 */
 	void refresh() {
 		if (getScope() == ON_WORKING_SET) {
 			computeWorkingSetResources();
 		}
 	}
-	
+
 	public boolean selectByFilters(MarkerEntry entry) {
 		return select(entry);
 	}
-	
+
 	public boolean selectByScope(MarkerEntry entry, IResource[] resources) {
 		int scopeVal = getScope();
 		switch (scopeVal) {

@@ -50,9 +50,9 @@ import com.ibm.icu.text.MessageFormat;
  * This class is responsible for tracking various registries
  * font, preference, graphics, dialog store.
  *
- * This class is explicitly referenced by the 
+ * This class is explicitly referenced by the
  * IDE workbench plug-in's  "plugin.xml"
- * 
+ *
  * @since 3.0
  */
 public class IDEWorkbenchPlugin extends AbstractUIPlugin {
@@ -84,7 +84,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 
     public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
-	
+
 	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
 	private static final int PROBLEMS_VIEW_CREATION_DELAY= 6000;
@@ -167,14 +167,14 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Logs the given message to the platform log.
-     * 
+     *
      * If you have an exception in hand, call log(String, Throwable) instead.
-     * 
+     *
      * If you have a status object in hand call log(String, IStatus) instead.
-     * 
+     *
      * This convenience method is for internal use by the IDE Workbench only and
      * must not be called outside the IDE Workbench.
-     * 
+     *
      * @param message
      *            A high level UI message describing when the problem happened.
      */
@@ -185,12 +185,12 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Logs the given message and throwable to the platform log.
-     * 
+     *
      * If you have a status object in hand call log(String, IStatus) instead.
-     * 
+     *
      * This convenience method is for internal use by the IDE Workbench only and
      * must not be called outside the IDE Workbench.
-     * 
+     *
      * @param message
      *            A high level UI message describing when the problem happened.
      * @param t
@@ -200,15 +200,15 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
         IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
         log(message, status);
     }
-    
+
     /**
      * Logs the given throwable to the platform log, indicating the class and
      * method from where it is being logged (this is not necessarily where it
      * occurred).
-     * 
+     *
      * This convenience method is for internal use by the IDE Workbench only and
      * must not be called outside the IDE Workbench.
-     * 
+     *
      * @param clazz
      *            The calling class.
      * @param methodName
@@ -221,13 +221,13 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
                 new Object[] { clazz.getName(), methodName, t });
         log(msg, t);
     }
-    
+
     /**
      * Logs the given message and status to the platform log.
-     * 
+     *
      * This convenience method is for internal use by the IDE Workbench only and
      * must not be called outside the IDE Workbench.
-     * 
+     *
      * @param message
      *            A high level UI message describing when the problem happened.
      *            May be <code>null</code>.
@@ -282,7 +282,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     /**
      * Returns the about information of all known features,
      * omitting any features which are missing this information.
-     * 
+     *
      * @return a possibly empty list of about infos
      */
     public AboutInfo[] getFeatureInfos() {
@@ -305,15 +305,15 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the about information of the primary feature.
-     * 
-     * @return info about the primary feature, or <code>null</code> if there 
+     *
+     * @return info about the primary feature, or <code>null</code> if there
      * is no primary feature or if this information is unavailable
      */
     public AboutInfo getPrimaryInfo() {
         IProduct product = Platform.getProduct();
         return product == null ? null : new AboutInfo(product);
     }
-	
+
 	/**
 	 * Get the workbench image with the given path relative to
 	 * ICON_PATH.
@@ -333,7 +333,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return resourceManager;
 	}
-	
+
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);

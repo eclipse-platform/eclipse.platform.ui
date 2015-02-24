@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * DialogBookmarkFilter is the filter dialog for bookmarks
- * 
+ *
  */
 public class DialogBookmarkFilter extends DialogMarkerFilter {
 
@@ -43,12 +43,12 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 
 		private String contains = MarkerMessages.filtersDialog_contains;
 
-		private String doesNotContain = 
+		private String doesNotContain =
 			MarkerMessages.filtersDialog_doesNotContain;
 
 		/**
 		 * Create a description group.
-		 * 
+		 *
 		 * @param parent
 		 */
 		public DescriptionGroup(Composite parent) {
@@ -109,7 +109,7 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 
 		public void setDescription(String text) {
 			if (text == null) {
-				description.setText(""); //$NON-NLS-1$ 
+				description.setText(""); //$NON-NLS-1$
 			} else {
 				description.setText(text);
 			}
@@ -140,7 +140,7 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#createAttributesArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -165,9 +165,9 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 		BookmarkFilter bookmark = (BookmarkFilter) filter;
 		bookmark.setContains(descriptionGroup.getContains());
 		bookmark.setDescription(descriptionGroup.getDescription().trim());
-	
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
@@ -187,11 +187,11 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 		super.updateEnabledState(enabled);
 		descriptionGroup.updateEnablement(enabled);
 	}
-	
+
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markerview.FiltersDialog#resetPressed()
 	 */
 	@Override
@@ -204,7 +204,7 @@ public class DialogBookmarkFilter extends DialogMarkerFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#newFilter(java.lang.String)
 	 */
 	@Override

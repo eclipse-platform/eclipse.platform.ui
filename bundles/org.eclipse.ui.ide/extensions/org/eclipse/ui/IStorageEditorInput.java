@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.CoreException;
  * that are the same. The <code>IWorbenchPage.openEditor</code> APIs
  * are dependent on this to find an editor with the same input.
  * </p><p>
- * Clients should implement this interface to declare new types of 
+ * Clients should implement this interface to declare new types of
  * <code>IStorage</code> editor inputs.
  * </p><p>
  * File-oriented editors should support this as a valid input type, and display
  * its content for viewing (but not allow modification).
- * Within the editor, the "save" and "save as" operations should create a new 
+ * Within the editor, the "save" and "save as" operations should create a new
  * file resource within the workspace.
  * </p><p>
  * All editor inputs must implement the <code>IAdaptable</code> interface;

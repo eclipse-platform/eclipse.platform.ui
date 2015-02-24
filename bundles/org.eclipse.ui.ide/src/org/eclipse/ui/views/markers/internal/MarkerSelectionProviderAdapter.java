@@ -51,7 +51,7 @@ class MarkerSelectionProviderAdapter implements ISelectionProvider {
         theSelection = selection;
         final SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
         Object[] listenersArray = listeners.toArray();
-        
+
         for (int i = 0; i < listenersArray.length; i++) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listenersArray[i];
             SafeRunner.run(new SafeRunnable() {

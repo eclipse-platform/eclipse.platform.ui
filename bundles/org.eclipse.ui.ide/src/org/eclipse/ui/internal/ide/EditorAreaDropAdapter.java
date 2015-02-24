@@ -94,7 +94,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
         /* Open Editor for generic IEditorInput */
         if (EditorInputTransfer.getInstance().isSupportedType(
                 event.currentDataType)) {
-            /* event.data is an array of EditorInputData, which contains an IEditorInput and 
+            /* event.data is an array of EditorInputData, which contains an IEditorInput and
              * the corresponding editorId */
             Assert.isTrue(event.data instanceof EditorInputTransfer.EditorInputData[]);
             EditorInputTransfer.EditorInputData[] editorInputs = (EditorInputTransfer.EditorInputData []) event.data;
@@ -123,7 +123,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
             for (int i = 0; i < files.length; i++) {
                 if (files[i] instanceof IFile) {
                     IFile file = (IFile) files[i];
-                    
+
                     if (!file.isPhantom())
                     	openNonExternalEditor(page, file);
                 }
@@ -153,7 +153,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
      * an editor, we never open an external editor in this case (since external
      * editors appear in their own window and not in the editor area).
      * The operation fails silently if there is no suitable editor to open.
-     * 
+     *
      * @param page the workbench page
      * @param file the file to open
      * @return the editor part that was opened, or <code>null</code> if no editor
@@ -207,7 +207,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
      * an editor, we never open an external editor in this case (since external
      * editors appear in their own window and not in the editor area).
      * The operation fails silently if there is no suitable editor to open.
-     * 
+     *
      * @param page the workbench page
      * @param marker the marker to open
      * @return the editor part that was opened, or <code>null</code> if no editor
@@ -264,7 +264,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
      * editor in this case (since external editors appear in their own window and
      * not in the editor area). The operation fails silently if the editor
      * cannot be opened.
-     * 
+     *
      * @param page the workbench page
      * @param editorInput the editor input
      * @param editorId the editor id

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
+ *   IBM Corporation - initial API and implementation
  *   Sebastian Davids <sdavids@gmx.de> - Collapse all action (25826)
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
@@ -23,7 +23,7 @@ public class CollapseAllAction extends ResourceNavigatorAction {
 
     /**
      * Creates the action.
-     * 
+     *
      * @param navigator the resource navigator
      * @param label the label for the action
      */

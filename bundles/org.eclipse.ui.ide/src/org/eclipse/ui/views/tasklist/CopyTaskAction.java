@@ -29,7 +29,7 @@ import org.eclipse.ui.part.MarkerTransfer;
  * Copies a task to the clipboard.
  */
 class CopyTaskAction extends TaskAction {
- 
+
 	/**
      * Creates the action.
 	 * @param tasklist the task list

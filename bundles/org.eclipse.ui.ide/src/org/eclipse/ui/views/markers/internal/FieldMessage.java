@@ -16,9 +16,9 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * The message field is the field for the description of the marker.
- * 
+ *
  * @since 3.1
- * 
+ *
  */
 public class FieldMessage extends AbstractField {
 
@@ -30,7 +30,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	@Override
@@ -40,7 +40,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
 	 */
 	@Override
@@ -50,7 +50,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 	 */
 	@Override
@@ -60,7 +60,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	@Override
@@ -97,7 +97,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -117,7 +117,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class FieldMessage extends AbstractField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */
 	@Override

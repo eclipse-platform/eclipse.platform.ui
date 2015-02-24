@@ -78,7 +78,7 @@ import com.ibm.icu.text.Collator;
 /**
  * Shows a list of resources to the user with a text entry field for a string
  * pattern used to filter the list of resources.
- * 
+ *
  * @since 3.3
  */
 public class FilteredResourcesSelectionDialog extends
@@ -122,7 +122,7 @@ public class FilteredResourcesSelectionDialog extends
 
 	/**
 	 * Creates a new instance of the class
-	 * 
+	 *
 	 * @param shell
 	 *            the parent shell
 	 * @param multi
@@ -189,7 +189,7 @@ public class FilteredResourcesSelectionDialog extends
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
 	}
-	
+
 	@Override
 	public void setTitle(String title) {
 		super.setTitle(title);
@@ -198,7 +198,7 @@ public class FilteredResourcesSelectionDialog extends
 
 	/**
 	 * Adds or replaces subtitle of the dialog
-	 * 
+	 *
 	 * @param text
 	 *            the new subtitle
 	 */
@@ -407,7 +407,7 @@ public class FilteredResourcesSelectionDialog extends
 				IResource resource2 = (IResource) o2;
 				String s1 = resource1.getName();
 				String s2 = resource2.getName();
-				
+
 				// Compare names without extension first
 				int s1Dot = s1.lastIndexOf('.');
 				int s2Dot = s2.lastIndexOf('.');
@@ -416,7 +416,7 @@ public class FilteredResourcesSelectionDialog extends
 				int comparability = collator.compare(n1, n2);
 				if (comparability != 0)
 					return comparability;
-				
+
 				// Compare full names
 				if (s1Dot != -1 || s2Dot != -1) {
 					comparability = collator.compare(s1, s2);
@@ -428,7 +428,7 @@ public class FilteredResourcesSelectionDialog extends
 				if (searchContainer != null) {
 					IContainer c1 = resource1.getParent();
 					IContainer c2 = resource2.getParent();
-					
+
 					// Return paths 'closer' to the searchContainer first
 					comparability = pathDistance(c1) - pathDistance(c2);
 					if (comparability != 0)
@@ -460,7 +460,7 @@ public class FilteredResourcesSelectionDialog extends
 	 * - Closest distance is if the item is the same folder as the search container.<br>
 	 * - Next are folders inside the search container.<br>
 	 * - After all those, distance increases with decreasing matching prefix folder count.<br>
-	 * 
+	 *
 	 * @param item
 	 *            parent of the resource being examined
 	 * @return the "distance" of the passed in IResource from the search
@@ -479,21 +479,21 @@ public class FilteredResourcesSelectionDialog extends
 		IPath itemPath = item.getFullPath();
 		if (itemPath.equals(containerPath))
 			return 0;
-		
+
 		int matching = containerPath.matchingFirstSegments(itemPath);
 		if (matching == 0)
 			return Integer.MAX_VALUE / 2;
-		
+
 		int containerSegmentCount = containerPath.segmentCount();
 		if (matching == containerSegmentCount) {
-			// inside searchContainer: 
+			// inside searchContainer:
 			return itemPath.segmentCount() - matching;
 		}
-		
+
 		//outside searchContainer:
 		return Integer.MAX_VALUE / 4 + containerSegmentCount - matching;
 	}
-	
+
 	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider,
 			ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
@@ -504,11 +504,11 @@ public class FilteredResourcesSelectionDialog extends
 					.beginTask(
 							WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
 							members.length);
-			
+
 			ResourceProxyVisitor visitor = new ResourceProxyVisitor(
 					contentProvider, (ResourceFilter) itemsFilter,
 					progressMonitor);
-			
+
 			if (visitor.visit(container.createProxy())) {
 				for (int i= 0; i < members.length; i++) {
 					IResource member = members[i];
@@ -519,7 +519,7 @@ public class FilteredResourcesSelectionDialog extends
 						break;
 				}
 			}
-			
+
 		}
 		progressMonitor.done();
 	}
@@ -594,7 +594,7 @@ public class FilteredResourcesSelectionDialog extends
 
 			return str;
 		}
-		
+
 		@Override
 		public StyledString getStyledText(Object element) {
 			if (!(element instanceof IResource)) {
@@ -610,7 +610,7 @@ public class FilteredResourcesSelectionDialog extends
 				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				str.append(res.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
 			}
-			
+
 //Debugging:
 //			int pathDistance = pathDistance(res.getParent());
 //			if (pathDistance != Integer.MAX_VALUE / 2) {
@@ -619,7 +619,7 @@ public class FilteredResourcesSelectionDialog extends
 //				else
 //					str.append(" (" + pathDistance + " folders down from current selection)", StyledString.QUALIFIER_STYLER);
 //			}
-			
+
 			return str;
 		}
 
@@ -700,7 +700,7 @@ public class FilteredResourcesSelectionDialog extends
 
 		/**
 		 * Sets the active working set.
-		 * 
+		 *
 		 * @param workingSet
 		 *            the working set the filter should work with
 		 */
@@ -731,7 +731,7 @@ public class FilteredResourcesSelectionDialog extends
 
 		/**
 		 * Creates new ResourceProxyVisitor instance.
-		 * 
+		 *
 		 * @param contentProvider
 		 * @param resourceFilter
 		 * @param progressMonitor
@@ -790,7 +790,7 @@ public class FilteredResourcesSelectionDialog extends
 		 * @since 3.6
 		 */
 		private SearchPattern relativeContainerPattern;
-		
+
 		/**
 		 * Camel case pattern for the name part of the file name (without extension). Is <code>null</code> if there's no extension.
 		 * @since 3.6
@@ -801,12 +801,12 @@ public class FilteredResourcesSelectionDialog extends
 		 * @since 3.6
 		 */
 		SearchPattern extensionPattern;
-		
+
 		private int filterTypeMask;
 
 		/**
 		 * Creates new ResourceFilter instance
-		 * 
+		 *
 		 * @param container
 		 * @param showDerived
 		 *            flag which determine showing derived elements
@@ -822,9 +822,9 @@ public class FilteredResourcesSelectionDialog extends
 
 		/**
 		 * Creates new ResourceFilter instance
-		 * 
+		 *
 		 * @param container
-		 * @param searchContainer 
+		 * @param searchContainer
 		 *            IContainer to use for performing relative search
 		 * @param showDerived
 		 *            flag which determine showing derived elements
@@ -837,24 +837,24 @@ public class FilteredResourcesSelectionDialog extends
 			String stringPattern = getPattern();
 			int matchRule = getMatchRule();
 			String filenamePattern;
-			
+
 			int sep = stringPattern.lastIndexOf(IPath.SEPARATOR);
 			if (sep != -1) {
 				filenamePattern = stringPattern.substring(sep + 1, stringPattern.length());
 				if ("*".equals(filenamePattern)) //$NON-NLS-1$
 					filenamePattern= "**"; //$NON-NLS-1$
-				
+
 				if (sep > 0) {
 					if (filenamePattern.length() == 0) // relative patterns don't need a file name
 						filenamePattern= "**"; //$NON-NLS-1$
-						
+
 					String containerPattern = stringPattern.substring(0, sep);
-					
+
 					if (searchContainer != null) {
 						relativeContainerPattern = new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 						relativeContainerPattern.setPattern(searchContainer.getFullPath().append(containerPattern).toString());
 					}
-					
+
 					if (!containerPattern.startsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
 						containerPattern = IPath.SEPARATOR + containerPattern;
 					this.containerPattern= new SearchPattern(SearchPattern.RULE_EXACT_MATCH | SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
@@ -875,7 +875,7 @@ public class FilteredResourcesSelectionDialog extends
 			} else {
 				filenamePattern= stringPattern;
 			}
-			
+
 			int lastPatternDot = filenamePattern.lastIndexOf('.');
 			if (lastPatternDot != -1) {
 				if (matchRule != SearchPattern.RULE_EXACT_MATCH) {
@@ -950,8 +950,8 @@ public class FilteredResourcesSelectionDialog extends
 				}
 				return true;
 			}
-			
-			return false;			
+
+			return false;
 		}
 
 		private boolean nameMatches(String name) {
@@ -1007,7 +1007,7 @@ public class FilteredResourcesSelectionDialog extends
 
 		/**
 		 * Check show derived flag for a filter
-		 * 
+		 *
 		 * @return true if filter allow derived resources false if not
 		 */
 		public boolean isShowDerived() {

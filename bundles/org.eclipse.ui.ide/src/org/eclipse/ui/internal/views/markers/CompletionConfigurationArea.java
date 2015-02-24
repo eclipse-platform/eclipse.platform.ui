@@ -23,9 +23,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 /**
  * CompletionConfigurationField is the field for the configuration of filters
  * based on configurations.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class CompletionConfigurationArea extends FilterConfigurationArea {
 
@@ -51,7 +51,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -67,7 +67,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 		completeButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -83,7 +83,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 		incompleteButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -98,7 +98,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 	/**
 	 * Update the completion value based on the constant and the selection
 	 * value.
-	 * 
+	 *
 	 * @param constant
 	 * @param enabled
 	 */
@@ -113,7 +113,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	@Override
@@ -126,7 +126,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 				.setSelection((CompletionFieldFilter.NOT_COMPLETED & completionState) > 0);
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#getTitle()
 	 */

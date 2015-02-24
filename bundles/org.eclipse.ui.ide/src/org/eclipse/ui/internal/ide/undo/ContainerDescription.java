@@ -31,11 +31,11 @@ import org.eclipse.ui.ide.undo.ResourceDescription;
 /**
  * ContainerDescription is a lightweight description that describes a container
  * to be created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public abstract class ContainerDescription extends AbstractResourceDescription {
 
@@ -44,7 +44,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	URI location;
 
 	UIResourceFilterDescription[] filters;
-	
+
 	String defaultCharSet;
 
 	AbstractResourceDescription[] members;
@@ -54,7 +54,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 * can be used to create the container. The returned ContainerDescription
 	 * should represent any non-existing parents in addition to the specified
 	 * container.
-	 * 
+	 *
 	 * @param container
 	 *            the handle of the container to be described
 	 * @return a container description describing the container and any
@@ -64,13 +64,13 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	public static ContainerDescription fromContainer(IContainer container) {
 		return fromContainer(container, false);
 	}
-	
+
 	/**
 	 * Create a group container description from the specified container handle that
 	 * can be used to create the container. The returned ContainerDescription
 	 * should represent any non-existing parents in addition to the specified
 	 * container.
-	 * 
+	 *
 	 * @param container
 	 *            the handle of the container to be described
 	 * @return a container description describing the container and any
@@ -80,7 +80,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	public static ContainerDescription fromVirtualFolderContainer(IContainer container) {
 		return fromContainer(container, true);
 	}
-	
+
 	protected static ContainerDescription fromContainer(IContainer container, boolean usingVirtualFolder) {
 		IPath fullPath = container.getFullPath();
 		ContainerDescription firstCreatedParent = null;
@@ -141,7 +141,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 * Typically used when the container handle represents a resource that
 	 * actually exists, although it will not fail if the resource is
 	 * non-existent.
-	 * 
+	 *
 	 * @param container
 	 *            the container to be described
 	 */
@@ -171,7 +171,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/**
 	 * Create any child resources known by this container description.
-	 * 
+	 *
 	 * @param parentHandle
 	 *            the handle of the created parent
 	 * @param monitor
@@ -195,7 +195,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordStateFromHistory(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -220,7 +220,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 							.getFolder(path);
 					members[i].recordStateFromHistory(folderHandle,
 							new SubProgressMonitor(monitor, 100 / members.length));
-				} 
+				}
 			}
 		}
 		monitor.done();
@@ -228,7 +228,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/**
 	 * Return the name of the container described by this ContainerDescription.
-	 * 
+	 *
 	 * @return the name of the container.
 	 */
 	@Override
@@ -238,7 +238,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/**
 	 * Return the first folder found that has no child folders.
-	 * 
+	 *
 	 * @return the container description for the first child in the receiver
 	 *         that is a leaf, or this container if there are no children.
 	 */
@@ -260,7 +260,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	/**
 	 * Add the specified resource description as a member of this resource
 	 * description
-	 * 
+	 *
 	 * @param member
 	 *            the resource description considered a member of this
 	 *            container.
@@ -278,7 +278,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource)
 	 */
 	@Override
@@ -294,7 +294,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/**
 	 * Set the location to which this container is linked.
-	 * 
+	 *
 	 * @param location
 	 *            the location URI, or <code>null</code> if there is no link
 	 */
@@ -304,7 +304,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/**
 	 * Set the filters to which should be created on this container.
-	 * 
+	 *
 	 * @param filters
 	 *            the filters
 	 */
@@ -314,7 +314,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#verifyExistence(boolean)
 	 */
 	@Override

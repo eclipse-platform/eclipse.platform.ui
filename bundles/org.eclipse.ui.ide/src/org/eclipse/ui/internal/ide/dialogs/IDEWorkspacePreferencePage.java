@@ -88,7 +88,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	private ResourceEncodingFieldEditor encodingEditor;
 
 	private LineDelimiterEditor lineSeparatorEditor;
-	
+
     //A boolean to indicate if the user settings were cleared.
 	private boolean clearUserSettings = false;
 
@@ -130,17 +130,17 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		createSpace(composite);
 		createSystemExplorerGroup(composite);
 		createSpace(composite);
-		
+
 		Composite lower = new Composite(composite,SWT.NONE);
 		GridLayout lowerLayout = new GridLayout();
 		lowerLayout.marginWidth = 0;
 		lowerLayout.numColumns = 2;
 		lowerLayout.makeColumnsEqualWidth = true;
 		lower.setLayout(lowerLayout);
-		
+
 		lower.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		
+
 		createEncodingEditorControls(lower);
 		createLineSeparatorEditorControls(lower);
 		applyDialogFont(composite);
@@ -235,7 +235,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
     /**
      * Create a composite that contains entry fields specifying save interval
      * preference.
-     * 
+     *
      * @param composite the Composite the group is created in.
      */
     private void createSaveIntervalGroup(Composite composite) {
@@ -284,7 +284,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
     /**
      * Create a composite that contains entry fields specifying the workspace name
      * preference.
-     * 
+     *
      * @param composite the Composite the group is created in.
      */
     private void createWindowTitleGroup(Composite composite) {
@@ -335,12 +335,12 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	 *
 	 * @param parent
 	 */
-    private void createEncodingEditorControls(Composite parent){    			
+    private void createEncodingEditorControls(Composite parent){
 		Composite encodingComposite = new Composite(parent,SWT.NONE);
 		encodingComposite.setLayout(new GridLayout());
 		encodingComposite.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		
+
 		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages.WorkbenchPreference_encoding, encodingComposite, ResourcesPlugin
 				.getWorkspace().getRoot());
 
@@ -356,10 +356,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 			}
 		});
     }
-    
+
     /**
      * Create a composite that contains the line delimiter controls
-     * 
+     *
      * @param parent
      */
     private void createLineSeparatorEditorControls(Composite parent){
@@ -371,14 +371,14 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 		lineComposite.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		
+
 		lineSeparatorEditor = new LineDelimiterEditor(lineComposite);
 		lineSeparatorEditor.doLoad();
     }
 
 	/**
 	 * Create the widget for the system explorer command.
-	 * 
+	 *
 	 * @param composite
 	 */
 	protected void createSystemExplorerGroup(Composite composite) {
@@ -420,10 +420,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
     protected IPreferenceStore getIDEPreferenceStore() {
         return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
     }
-	
+
 	/**
      * Creates a tab of one horizontal spans.
-     * 
+     *
      * @param parent
      *            the parent in which the tab should be created
      */
@@ -441,7 +441,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	/**
      * Creates the composite which will contain all the preference controls for
      * this page.
-     * 
+     *
      * @param parent
      *            the parent composite
      * @return the composite for this page
@@ -461,7 +461,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	public void init(org.eclipse.ui.IWorkbench workbench) {
 		e4Context = workbench.getService(IEclipseContext.class);
     }
-    
+
     /**
      * The default button has been pressed.
      */
@@ -480,7 +480,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
         saveInterval.loadDefault();
 		showLocationInWindowTitle.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SHOW_LOCATION));
         workspaceName.loadDefault();
-        
+
         boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
         closeUnrelatedProjectButton.setSelection(closeUnrelatedProj);
 
@@ -553,7 +553,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
                                 .getStatus());
             }
         }
-        
+
 		store.setValue(IDEInternalPreferences.SHOW_LOCATION, showLocationInWindowTitle.getSelection());
 
         workspaceName.store();
@@ -570,8 +570,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
         boolean closeUnrelatedProj = closeUnrelatedProjectButton.getSelection();
         getIDEPreferenceStore().setValue(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, closeUnrelatedProj);
-        
-        
+
+
         if (clearUserSettings) {
 			IDEEncoding.clearUserEncodings();
 		}

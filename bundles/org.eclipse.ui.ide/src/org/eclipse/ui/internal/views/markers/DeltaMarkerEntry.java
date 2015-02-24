@@ -21,9 +21,9 @@ import com.ibm.icu.text.CollationKey;
 /**
  * The DeltaMarkerEntry is the class that wraps an {@link IMarkerDelta} for testing.
 
- * 
+ *
  * @since 3.6
- * 
+ *
  */
 class DeltaMarkerEntry extends MarkerEntry {
 
@@ -31,8 +31,8 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param markerDelta 
-	 * 
+	 * @param markerDelta
+	 *
 	 */
 	public DeltaMarkerEntry(IMarkerDelta markerDelta) {
 		super(markerDelta.getMarker());
@@ -55,7 +55,7 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
 	 */
 	@Override
@@ -66,7 +66,7 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getID()
 	 */
 	@Override
@@ -76,7 +76,7 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
 	 */
 	@Override
@@ -87,7 +87,7 @@ class DeltaMarkerEntry extends MarkerEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getPath()
 	 */
 	@Override

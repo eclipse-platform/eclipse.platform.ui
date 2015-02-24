@@ -25,7 +25,7 @@ public class TarException extends Exception {
     public TarException() {
     	super();
     }
-	
+
 	/**
      * Constructs a TarException with the specified detail string.
      *
@@ -34,7 +34,7 @@ public class TarException extends Exception {
     public TarException(String s) {
     	super(s);
     }
-	
+
     /**
      * Constructs a TarException with the specified detail string.
      *

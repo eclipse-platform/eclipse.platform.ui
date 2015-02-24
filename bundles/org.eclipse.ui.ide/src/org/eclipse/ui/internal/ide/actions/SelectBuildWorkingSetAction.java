@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * This action asks the user to select a working set, and then creates
  * and runs a corresponding BuildSetAction.
- * 
+ *
  * @since 3.0
  */
 public class SelectBuildWorkingSetAction extends Action implements

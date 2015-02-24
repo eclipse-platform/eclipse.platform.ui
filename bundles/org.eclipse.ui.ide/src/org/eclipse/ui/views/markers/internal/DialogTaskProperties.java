@@ -35,13 +35,13 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class DialogTaskProperties extends DialogMarkerProperties {
 
-    private static final String PRIORITY_HIGH = 
+    private static final String PRIORITY_HIGH =
     	MarkerMessages.propertiesDialog_priorityHigh;
 
-    private static final String PRIORITY_NORMAL = 
+    private static final String PRIORITY_NORMAL =
     	MarkerMessages.propertiesDialog_priorityNormal;
 
-    private static final String PRIORITY_LOW = 
+    private static final String PRIORITY_LOW =
     	MarkerMessages.propertiesDialog_priorityLow;
 
     protected Combo priorityCombo;
@@ -75,14 +75,14 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 
         Label label = new Label(parent, SWT.NONE);
         label.setText(MarkerMessages.propertiesDialog_priority);
-        
+
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         composite.setLayout(layout);
-        
+
         priorityCombo = new Combo(composite, SWT.READ_ONLY);
         priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
                 PRIORITY_LOW });
@@ -234,26 +234,26 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         }
         return attrs;
     }
-    
+
 	/* (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getModifyOperationTitle()
-     * 
+     *
      * @since 3.3
      */
 	@Override
 	protected String getModifyOperationTitle() {
 		return MarkerMessages.modifyTask_title;
 	}
-	
+
 	/* (non-Javadoc)
      * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getCreateOperationTitle()
-     * 
+     *
      * @since 3.3
      */
 	@Override
 	protected String getCreateOperationTitle() {
 		return MarkerMessages.DialogTaskProperties_CreateTask;
-		
+
 	}
 
 }

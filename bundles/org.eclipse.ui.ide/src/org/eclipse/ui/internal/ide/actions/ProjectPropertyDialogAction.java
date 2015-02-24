@@ -43,7 +43,7 @@ public class ProjectPropertyDialogAction extends PartEventAction implements
 
     /**
      * Create a new dialog.
-     * 
+     *
      * @param window the window
      */
     public ProjectPropertyDialogAction(IWorkbenchWindow window) {

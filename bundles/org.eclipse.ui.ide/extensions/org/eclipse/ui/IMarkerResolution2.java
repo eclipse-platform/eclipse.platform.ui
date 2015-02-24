@@ -12,11 +12,11 @@ package org.eclipse.ui;
 
 import org.eclipse.swt.graphics.Image;
 
-/** 
- * Extends <code>IMarkerResolution</code>.  This interface should be used 
- * in place of <code>IMarkerResolution</code> if a description and/or image 
+/**
+ * Extends <code>IMarkerResolution</code>.  This interface should be used
+ * in place of <code>IMarkerResolution</code> if a description and/or image
  * are desired.
- * 
+ *
  * @since 3.0
  */
 public interface IMarkerResolution2 extends IMarkerResolution {

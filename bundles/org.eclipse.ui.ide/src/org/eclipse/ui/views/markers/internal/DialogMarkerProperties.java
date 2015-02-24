@@ -46,7 +46,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Shows the properties of a new or existing marker
- * 
+ *
  * In 3.3, this class was refactored to allow pre-existing public dialog classes
  * to share the implementation.  Note that certain methods are exposed as API
  * in public subclasses, so changes to the methods in this class should be
@@ -56,7 +56,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class DialogMarkerProperties extends TrayDialog {
 
 	private static final String DIALOG_SETTINGS_SECTION = "DialogMarkerPropertiesDialogSettings"; //$NON-NLS-1$
-	
+
 	/**
 	 * The marker being shown, or <code>null</code> for a new marker
 	 */
@@ -108,7 +108,7 @@ public class DialogMarkerProperties extends TrayDialog {
 	private boolean dirty;
 
 	private String title;
-	
+
 	/**
 	 * The name used to describe the specific kind of marker.  Used when
 	 * creating an undo command for the dialog, so that a specific name such
@@ -121,7 +121,7 @@ public class DialogMarkerProperties extends TrayDialog {
 	 * the resource and initial attributes for the new marker, use
 	 * <code>setResource</code> and <code>setInitialAttributes</code>. To
 	 * show or modify an existing marker, use <code>setMarker</code>.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
@@ -134,7 +134,7 @@ public class DialogMarkerProperties extends TrayDialog {
 	 * the resource and initial attributes for the new marker, use
 	 * <code>setResource</code> and <code>setInitialAttributes</code>. To
 	 * show or modify an existing marker, use <code>setMarker</code>.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 * @param title
@@ -144,20 +144,20 @@ public class DialogMarkerProperties extends TrayDialog {
 		super(parentShell);
 		this.title = title;
 	}
-	
+
 	/**
 	 * Creates the dialog. By default this dialog creates a new marker. To set
 	 * the resource and initial attributes for the new marker, use
 	 * <code>setResource</code> and <code>setInitialAttributes</code>. To
 	 * show or modify an existing marker, use <code>setMarker</code>.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 * @param title
 	 *            the title of the dialog
 	 * @param markerName
 	 *            the name used to describe the specific kind of marker shown
-	 *            
+	 *
 	 * @since 3.3
 	 */
 	public DialogMarkerProperties(Shell parentShell, String title, String markerName) {
@@ -168,12 +168,12 @@ public class DialogMarkerProperties extends TrayDialog {
 
 	/**
      * Sets the marker to show or modify.
-     * <p>IMPORTANT:  Although this class is internal, there are public 
-     * subclasses that expose this method as API.  Changes in 
+     * <p>IMPORTANT:  Although this class is internal, there are public
+     * subclasses that expose this method as API.  Changes in
      * this implementation should be treated as API changes.
-     * 
+     *
      * @param marker the marker, or <code>null</code> to create a new marker
-     * 
+     *
      * @since 3.3
 	 */
 	public void setMarker(IMarker marker) {
@@ -190,12 +190,12 @@ public class DialogMarkerProperties extends TrayDialog {
      * Returns the marker being created or modified.
      * For a new marker, this returns <code>null</code> until
      * the dialog returns, but is non-null after.
-     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * <p>IMPORTANT:  Although this method is protected and the class is
      * internal, there are public subclasses that expose this method as API.
      * Changes in this implementation should be treated as API changes.
-     * 
+     *
      * @return the marker
-     * 
+     *
      * @since 3.3
 	 */
 	protected IMarker getMarker() {
@@ -205,10 +205,10 @@ public class DialogMarkerProperties extends TrayDialog {
 	/**
      * Sets the resource to use when creating a new task.
      * If not set, the new task is created on the workspace root.
-     * <p>IMPORTANT:  Although this class is internal, there are public 
-     * subclasses that expose this method as API.  Changes in 
+     * <p>IMPORTANT:  Although this class is internal, there are public
+     * subclasses that expose this method as API.  Changes in
      * this implementation should be treated as API changes.
-     * 
+     *
      * @param resource the resource
 	 */
 	public void setResource(IResource resource) {
@@ -219,12 +219,12 @@ public class DialogMarkerProperties extends TrayDialog {
      * Returns the resource to use when creating a new task,
      * or <code>null</code> if none has been set.
      * If not set, the new task is created on the workspace root.
-     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * <p>IMPORTANT:  Although this method is protected and the class is
      * internal, there are public subclasses that expose this method as API.
      * Changes in this implementation should be treated as API changes.
-     * 
+     *
      * @return the resource
-     * 
+     *
      * @since 3.3
 	 */
 	protected IResource getResource() {
@@ -234,12 +234,12 @@ public class DialogMarkerProperties extends TrayDialog {
 	/**
      * Sets initial attributes to use when creating a new task.
      * If not set, the new task is created with default attributes.
-     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * <p>IMPORTANT:  Although this method is protected and the class is
      * internal, there are public subclasses that expose this method as API.
      * Changes in this implementation should be treated as API changes.
-     * 
+     *
      * @param initialAttributes the initial attributes
-     * 
+     *
      * @since 3.3
 	 */
 	protected void setInitialAttributes(Map initialAttributes) {
@@ -250,12 +250,12 @@ public class DialogMarkerProperties extends TrayDialog {
      * Returns the initial attributes to use when creating a new task,
      * or <code>null</code> if not set.
      * If not set, the new task is created with default attributes.
-     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * <p>IMPORTANT:  Although this method is protected and the class is
      * internal, there are public subclasses that expose this method as API.
      * Changes in this implementation should be treated as API changes.
-     * 
+     *
      * @return the initial attributes
-     * 
+     *
      * @since 3.3
 	 */
 	protected Map getInitialAttributes() {
@@ -302,7 +302,7 @@ public class DialogMarkerProperties extends TrayDialog {
 		composite.setLayout(layout);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         composite.setLayoutData(gridData);
-    
+
 		initializeDialogUnits(composite);
 		createDescriptionArea(composite);
 		if (marker != null) {
@@ -316,9 +316,9 @@ public class DialogMarkerProperties extends TrayDialog {
 		}
 		updateDialogFromMarker();
 		updateEnablement();
-        
+
         Dialog.applyDialogFont(composite);
-        
+
 		return composite;
 	}
 
@@ -331,7 +331,7 @@ public class DialogMarkerProperties extends TrayDialog {
 		gridData.horizontalSpan = 2;
 		seperator.setLayoutData(gridData);
 	}
-    
+
     /**
 	 * Method createCreationTimeArea.
 	 * @param parent
@@ -377,7 +377,7 @@ public class DialogMarkerProperties extends TrayDialog {
 	/**
 	 * This method is intended to be overridden by subclasses. The attributes
 	 * area is created between the creation time area and the resource area.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -439,7 +439,7 @@ public class DialogMarkerProperties extends TrayDialog {
 
         descriptionText.selectAll();
     }
-    
+
     /**
      * Updates the dialog from the predefined attributes.
      */
@@ -483,7 +483,7 @@ public class DialogMarkerProperties extends TrayDialog {
 			}
         }
     }
-    
+
 	/**
 	 * Method declared on Dialog
 	 */
@@ -524,7 +524,7 @@ public class DialogMarkerProperties extends TrayDialog {
 			if (resource == null)
 				return;
 			op = new CreateMarkersOperation(type, attrs,
-					resource, getCreateOperationTitle()); 
+					resource, getCreateOperationTitle());
 		} else {
 			if (isDirty()) {
 				op = new UpdateMarkersOperation(marker, attrs,
@@ -557,7 +557,7 @@ public class DialogMarkerProperties extends TrayDialog {
 		attrs.put(IMarker.MESSAGE, descriptionText.getText());
 		return attrs;
 	}
-	
+
 	/**
 	 * Updates widget enablement for the dialog. Should be overridden by
 	 * subclasses.
@@ -583,19 +583,19 @@ public class DialogMarkerProperties extends TrayDialog {
 
 	/**
 	 * Sets the marker type when creating a new marker.
-	 * 
+	 *
 	 * @param type
 	 *            the marker type
-	 *            
+	 *
 	 * @since 3.3 this method is protected.
 	 */
 	protected void setType(String type) {
 		this.type = type;
 	}
-    
+
 	/* (non-Javadoc)
      * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-     * 
+     *
      * @since 3.2
      */
 	@Override
@@ -607,26 +607,26 @@ public class DialogMarkerProperties extends TrayDialog {
         }
         return section;
 	}
-	
+
 	/**
 	 * Return the string that describes a modify marker operation.
 	 * Subclasses may override to more specifically describe the marker.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected String getModifyOperationTitle() {
 		if (markerName == null) {
 			// we don't know what kind of marker is being modified
 			return MarkerMessages.DialogMarkerProperties_ModifyMarker;
-		} 
-		return NLS.bind(MarkerMessages.qualifiedMarkerCommand_title, 
+		}
+		return NLS.bind(MarkerMessages.qualifiedMarkerCommand_title,
 				MarkerMessages.DialogMarkerProperties_Modify, markerName);
 	}
-	
+
 	/**
 	 * Return the string that describes a create marker operation.
 	 * Subclasses may override to more specifically describe the marker.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected String getCreateOperationTitle() {
@@ -634,11 +634,11 @@ public class DialogMarkerProperties extends TrayDialog {
 			// we don't know what kind of marker is being created
 			return MarkerMessages.DialogMarkerProperties_CreateMarker;
 		}
-		return NLS.bind(MarkerMessages.qualifiedMarkerCommand_title, 
+		return NLS.bind(MarkerMessages.qualifiedMarkerCommand_title,
 				MarkerMessages.DialogMarkerProperties_Create, markerName);
-		
+
 	}
-	
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()

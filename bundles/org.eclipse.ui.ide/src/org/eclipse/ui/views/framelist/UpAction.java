@@ -22,7 +22,7 @@ public class UpAction extends FrameAction {
 
     /**
      * Constructs a new action for the specified frame list.
-     * 
+     *
      * @param frameList the frame list
      */
     public UpAction(FrameList frameList) {

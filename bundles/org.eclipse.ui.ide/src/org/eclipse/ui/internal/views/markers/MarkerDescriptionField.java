@@ -26,9 +26,9 @@ import com.ibm.icu.text.CollationKey;
 
 /**
  * MarkerDescriptionField is the field for showing the description of a marker.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerDescriptionField extends MarkerField {
 
@@ -38,7 +38,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
+		 *
 		 * @param viewer
 		 */
 		public DescriptionEditingSupport(ColumnViewer viewer) {
@@ -48,7 +48,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
 		 */
 		@Override
@@ -72,7 +72,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
 		 */
 		@Override
@@ -82,7 +82,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
 		 */
 		@Override
@@ -93,7 +93,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
 		 *      java.lang.Object)
 		 */
@@ -119,7 +119,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
 	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
@@ -130,7 +130,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	@Override
@@ -140,7 +140,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 	/**
 	 * Return the collation key for the description.
-	 * 
+	 *
 	 * @param element
 	 * @return CollationKey
 	 */
@@ -153,7 +153,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override
@@ -164,7 +164,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getEditingSupport()
 	 */
 	@Override

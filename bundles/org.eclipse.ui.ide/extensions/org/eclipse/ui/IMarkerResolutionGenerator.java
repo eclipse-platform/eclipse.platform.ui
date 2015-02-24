@@ -12,11 +12,11 @@ package org.eclipse.ui;
 
 import org.eclipse.core.resources.IMarker;
 
-/** 
- * Creates resolutions for a given marker. 
- * When run, a resolution would typically eliminate 
+/**
+ * Creates resolutions for a given marker.
+ * When run, a resolution would typically eliminate
  * the need for the marker.
- * 
+ *
  * @since 2.0
  */
 public interface IMarkerResolutionGenerator {

@@ -30,7 +30,7 @@ public class MarkerViewUtil {
 	 * The PATH_ATTRIBUTE is the tag for the attribute on a marker that can be
 	 * used to supply the String for the path rather than using the path of the
 	 * underlying resource.
-	 * 
+	 *
 	 * @see IMarker#getAttribute(java.lang.String)
 	 * @since 3.2
 	 */
@@ -40,7 +40,7 @@ public class MarkerViewUtil {
 	 * The NAME_ATTRIBUTE is the tag for the attribute on a marker that can be
 	 * used to supply the String for the name rather than using the name of the
 	 * underlying resource.
-	 * 
+	 *
 	 * @see IMarker#getAttribute(java.lang.String)
 	 * @since 3.2
 	 */
@@ -49,7 +49,7 @@ public class MarkerViewUtil {
 	/**
 	 * Returns the id of the view used to show markers of the same type as the
 	 * given marker.
-	 * 
+	 *
 	 * @param marker
 	 *            the marker
 	 * @return the view id or <code>null</code> if no appropriate view could
@@ -72,7 +72,7 @@ public class MarkerViewUtil {
 	/**
 	 * Shows the given marker in the appropriate view in the given page. This
 	 * must be called from the UI thread.
-	 * 
+	 *
 	 * @param page
 	 *            the workbench page in which to show the marker
 	 * @param marker
@@ -126,7 +126,7 @@ public class MarkerViewUtil {
 	/**
 	 * Returns the id of the view used to show markers of the same type as the
 	 * given marker using.legacy support
-	 * 
+	 *
 	 * @param marker
 	 *            the marker
 	 * @return the view id or <code>null</code> if no appropriate view could

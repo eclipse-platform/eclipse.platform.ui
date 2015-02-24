@@ -26,19 +26,19 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * A CreateMarkersOperation represents an undoable operation for creating one or
  * more markers on one or more resources in the workspace. Clients may call the
  * public API from a background thread.
- * 
+ *
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class CreateMarkersOperation extends AbstractMarkersOperation {
 
 	/**
 	 * Create an undoable operation that can create a marker of a specific type
 	 * on a resource.
-	 * 
+	 *
 	 * @param type
 	 *            the type of marker to be created
 	 * @param attributes
@@ -48,7 +48,7 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	 * @param name
 	 *            the name used to describe the operation that creates the
 	 *            marker
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IMarker
 	 */
 	public CreateMarkersOperation(String type, Map attributes,
@@ -60,7 +60,7 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	/**
 	 * Create an undoable operation that can create multiple markers of various
 	 * types on multiple resources.
-	 * 
+	 *
 	 * @param types
 	 *            an array describing the types of markers to be created
 	 * @param attributes
@@ -87,7 +87,7 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	/**
 	 * Create an undoable operation that can create multiple markers of a single
 	 * type on multiple resources.
-	 * 
+	 *
 	 * @param type
 	 *            the type of markers to be created
 	 * @param attributes

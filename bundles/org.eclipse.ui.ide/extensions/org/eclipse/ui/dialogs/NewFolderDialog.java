@@ -78,7 +78,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	private boolean firstLinkCheck = true;
 
 	/**
-	 * Parent composite of the advanced widget group for creating 
+	 * Parent composite of the advanced widget group for creating
 	 * linked resources.
 	 */
 	private Composite linkedResourceParent;
@@ -89,14 +89,14 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	private Composite linkedResourceComposite;
 
 	/**
-	 * Height of the dialog without the "advanced" linked resource group. 
-	 * Set when the advanced group is first made visible. 
+	 * Height of the dialog without the "advanced" linked resource group.
+	 * Set when the advanced group is first made visible.
 	 */
 	private int basicShellHeight = -1;
 
 	/**
 	 * Creates a NewFolderDialog
-	 * 
+	 *
 	 * @param parentShell parent of the new dialog
 	 * @param container parent of the new folder
 	 */
@@ -110,11 +110,11 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/**
 	 * Creates the folder using the name and link target entered
 	 * by the user.
-	 * Sets the dialog result to the created folder.  
+	 * Sets the dialog result to the created folder.
 	 */
 	@Override
 	protected void computeResult() {
-		//Do nothing here as we 
+		//Do nothing here as we
 		//need to know the result
 	}
 
@@ -138,7 +138,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 
 	/**
 	 * Creates the widget for advanced options.
-	 *  
+	 *
 	 * @param parent the parent composite
 	 */
 	protected void createAdvancedControls(Composite parent) {
@@ -241,8 +241,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
 
 	/**
 	 * Creates a folder resource handle for the folder with the given name.
-	 * The folder handle is created relative to the container specified during 
-	 * object creation. 
+	 * The folder handle is created relative to the container specified during
+	 * object creation.
 	 *
 	 * @param folderName the name of the folder resource to create a handle for
 	 * @return the new folder resource handle
@@ -258,7 +258,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/**
 	 * Creates a new folder with the given name and optionally linking to
 	 * the specified link target.
-	 * 
+	 *
 	 * @param folderName name of the new folder
 	 * @param linkTarget name of the link target folder. may be null.
 	 * @return IFolder the new folder
@@ -322,7 +322,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Shows/hides the advanced option widgets. 
+	 * Shows/hides the advanced option widgets.
 	 */
 	protected void handleAdvancedButtonSelect() {
 		Shell shell = getShell();
@@ -352,11 +352,11 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	/**
 	 * Returns whether the container specified in the constructor is
 	 * a valid parent for creating linked resources.
-	 * 
-	 * @return boolean <code>true</code> if the container specified in 
+	 *
+	 * @return boolean <code>true</code> if the container specified in
 	 * 	the constructor is a valid parent for creating linked resources.
 	 * 	<code>false</code> if no linked resources may be created with the
-	 * 	specified container as a parent. 
+	 * 	specified container as a parent.
 	 */
 	private boolean isValidContainer() {
 		if (container.getType() != IResource.PROJECT

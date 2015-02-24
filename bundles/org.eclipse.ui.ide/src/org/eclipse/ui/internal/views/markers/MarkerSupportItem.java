@@ -23,7 +23,7 @@ abstract class MarkerSupportItem extends MarkerItem {
 
 	/**
 	 * Get the String value of the attribute in the enclosed marker.
-	 * 
+	 *
 	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
@@ -40,7 +40,7 @@ abstract class MarkerSupportItem extends MarkerItem {
 
 	/**
 	 * Get the children of the node.
-	 * 
+	 *
 	 * @return MarkerNode[]
 	 */
 	abstract MarkerSupportItem[] getChildren();
@@ -63,7 +63,7 @@ abstract class MarkerSupportItem extends MarkerItem {
 
 	/**
 	 * Return the description of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	abstract String getDescription();
@@ -74,7 +74,7 @@ abstract class MarkerSupportItem extends MarkerItem {
 	 */
 	long getID() {
 		return -1;
-		
+
 	}
 
 	/**
@@ -88,21 +88,21 @@ abstract class MarkerSupportItem extends MarkerItem {
 	/**
 	 * Return the parent node or <code>null</code> if this is a top level
 	 * element.
-	 * 
+	 *
 	 * @return MarkerSupportItem
 	 */
 	abstract MarkerSupportItem getParent();
-	
+
 	/**
 	 * Return whether or not this is a concrete node
-	 * 
+	 *
 	 * @return boolean
 	 */
 	abstract boolean isConcrete();
-	
+
 	/**
 	 * Clear the cached values for performance reasons.
 	 */
 	abstract void clearCache();
-	
+
 }

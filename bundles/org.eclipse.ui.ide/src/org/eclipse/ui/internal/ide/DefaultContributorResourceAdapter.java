@@ -18,7 +18,7 @@ import org.eclipse.ui.ide.IContributorResourceAdapter2;
 
 /**
  * The DefaultContributorResourceAdapter is the default
- * implementation of the IContributorResourceAdapter used for 
+ * implementation of the IContributorResourceAdapter used for
  * one to one resource adaption.
  */
 public class DefaultContributorResourceAdapter implements

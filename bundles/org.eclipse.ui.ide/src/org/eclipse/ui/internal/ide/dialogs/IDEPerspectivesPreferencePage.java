@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Extends the Perspectives preference page with IDE-specific settings.
- * 
+ *
  * Note: want IDE settings to appear in main Perspectives preference page (via
  * subclassing), however the superclass, PerspectivesPreferencePage, is
  * internal

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * <code>IMarkerResourceAdapter</code> is an adapter interface that
  * supplies the resource to query for markers to display in the marker view
  * or any of its subclasses.
- * 
+ *
  * Implementors of this interface are typically registered with an
  * IAdapterFactory for lookup via the getAdapter() mechanism.
  */
@@ -27,7 +27,7 @@ public interface IMarkerResourceAdapter {
     /**
      * Returns the resource to query for the markers to display
      * for the given adaptable.
-     * 
+     *
      * @param adaptable the adaptable being queried.
      * @return the resource or <code>null</code> if there
      * 	is no adapted resource for this object.

@@ -21,16 +21,16 @@ import com.ibm.icu.text.DateFormat;
 
 /**
  * MarkerCreationTimeField is the field that shows the creation time of a field.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerCreationTimeField extends MarkerField {
 
 	private DateFormat dateFormat=DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class MarkerCreationTimeField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
 	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
@@ -56,7 +56,7 @@ public class MarkerCreationTimeField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	@Override

@@ -35,27 +35,27 @@ import org.xml.sax.helpers.DefaultHandler;
  * A parser for the the welcome page
  */
 public class WelcomeParser extends DefaultHandler {
-    private static final String TAG_WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$	
+    private static final String TAG_WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
 
-    private static final String TAG_INTRO = "intro"; //$NON-NLS-1$	
+    private static final String TAG_INTRO = "intro"; //$NON-NLS-1$
 
-    private static final String TAG_ITEM = "item"; //$NON-NLS-1$	
+    private static final String TAG_ITEM = "item"; //$NON-NLS-1$
 
-    private static final String TAG_BOLD = "b"; //$NON-NLS-1$	
+    private static final String TAG_BOLD = "b"; //$NON-NLS-1$
 
-    private static final String TAG_ACTION = "action"; //$NON-NLS-1$	
+    private static final String TAG_ACTION = "action"; //$NON-NLS-1$
 
-    private static final String TAG_PARAGRAPH = "p"; //$NON-NLS-1$	
+    private static final String TAG_PARAGRAPH = "p"; //$NON-NLS-1$
 
-    private static final String TAG_TOPIC = "topic"; //$NON-NLS-1$	
+    private static final String TAG_TOPIC = "topic"; //$NON-NLS-1$
 
-    private static final String ATT_TITLE = "title"; //$NON-NLS-1$	
+    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
 
-    private static final String ATT_FORMAT = "format"; //$NON-NLS-1$	
+    private static final String ATT_FORMAT = "format"; //$NON-NLS-1$
 
-    private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$	
+    private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
-    private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
+    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
     private static final String ATT_ID = "id"; //$NON-NLS-1$
 

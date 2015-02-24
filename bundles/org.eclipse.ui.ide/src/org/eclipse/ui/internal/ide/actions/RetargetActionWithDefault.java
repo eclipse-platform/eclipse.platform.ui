@@ -18,7 +18,7 @@ import org.eclipse.ui.actions.RetargetAction;
  * handler when the active part does not supply one.  Enablement of this
  * action is based on enablement of the handler, or enablement of the default
  * handler if no explicit handler is available.
- * 
+ *
  * @since 3.1
  */
 public class RetargetActionWithDefault extends RetargetAction {
@@ -27,7 +27,7 @@ public class RetargetActionWithDefault extends RetargetAction {
 
 	/**
 	 * Constructs a RetargetActionWithDefault with the given action id and text.
-	 * 
+	 *
 	 * @param actionID the retargetable action id
 	 * @param text the action's text, or <code>null</code> if there is no text
 	 */
@@ -42,7 +42,7 @@ public class RetargetActionWithDefault extends RetargetAction {
 	protected void setActionHandler(IAction newHandler) {
 		super.setActionHandler(newHandler);
 		// Only set the default handler after clearing the old handler above.
-		// This triggers enablement updating on the default handler which 
+		// This triggers enablement updating on the default handler which
 		// might be needed since the active part has changed.
 		if (newHandler == null) {
 			super.setActionHandler(defaultHandler);

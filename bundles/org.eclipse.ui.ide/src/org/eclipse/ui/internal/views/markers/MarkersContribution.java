@@ -20,9 +20,9 @@ import org.eclipse.ui.actions.CompoundContributionItem;
 /**
  * MarkersContribution is the abstract superclass of the compound contribution
  * items used in the Markers views.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 abstract class MarkersContribution extends CompoundContributionItem {
 
@@ -35,7 +35,7 @@ abstract class MarkersContribution extends CompoundContributionItem {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param id
 	 */
 	public MarkersContribution(String id) {
@@ -44,7 +44,7 @@ abstract class MarkersContribution extends CompoundContributionItem {
 
 	/**
 	 * Get the view this contribution is working on.
-	 * 
+	 *
 	 * @return ExtendedMarkersView or <code>null</code> if the active view isn't a marker view
 	 */
 	ExtendedMarkersView getView() {

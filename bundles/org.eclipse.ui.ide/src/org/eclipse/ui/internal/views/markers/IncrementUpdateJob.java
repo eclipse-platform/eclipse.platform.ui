@@ -25,9 +25,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * schedules an UI update. If it'll be possible and beneficial switch to
  * incremental updatation, this has been left out for further investigation(*).
  * only, and not used currently.
- * 
+ *
  * @since 3.6
- * 
+ *
  */
 class IncrementUpdateJob extends MarkerUpdateJob {
 
@@ -44,7 +44,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
 	 * IProgressMonitor)
 	 */
@@ -102,7 +102,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/**
 	 * Update the list
-	 * 
+	 *
 	 * @param markerEntries
 	 */
 	private boolean updateIncrementalList(Collection markerEntries) {
@@ -120,7 +120,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/**
 	 * Process the incremental updates
-	 * 
+	 *
 	 * @param monitor
 	 */
 	private boolean processUpdates(IProgressMonitor monitor) {
@@ -282,7 +282,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/**
 	 * Add update to the list
-	 * 
+	 *
 	 * @param update
 	 */
 	void addUpdate(MarkerUpdate update) {
@@ -294,7 +294,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 	 */
 	@Override

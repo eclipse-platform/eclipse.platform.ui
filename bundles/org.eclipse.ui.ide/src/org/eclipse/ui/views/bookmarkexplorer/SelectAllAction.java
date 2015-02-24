@@ -24,7 +24,7 @@ class SelectAllAction extends BookmarkAction {
 
     /**
      * Create a new instance of this class.
-     * 
+     *
      * @param view the view
      */
     public SelectAllAction(BookmarkNavigator view) {

@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * This action displays a list of resolutions for the selected marker
- * 
+ *
  * @since 2.0
  */
 class ResolveMarkerAction extends TaskAction {
@@ -39,7 +39,7 @@ class ResolveMarkerAction extends TaskAction {
 
     /**
      * Returns whether this action should be enabled given the selection.
-     * 
+     *
      * @param selection the selection
      * @return enablement
      */
@@ -66,8 +66,8 @@ class ResolveMarkerAction extends TaskAction {
         getTaskList().cancelEditing();
         IMarkerResolution[] resolutions = getResolutions(marker);
         if (resolutions.length == 0) {
-            MessageDialog.openInformation(getShell(), TaskListMessages.Resolve_title, 
-                    TaskListMessages.Resolve_noResolutionsLabel); 
+            MessageDialog.openInformation(getShell(), TaskListMessages.Resolve_title,
+                    TaskListMessages.Resolve_noResolutionsLabel);
             return;
         }
         MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
@@ -85,7 +85,7 @@ class ResolveMarkerAction extends TaskAction {
      * Returns the resolutions for the given marker.
      *
      * @param marker the marker for which to obtain resolutions
-     * @return the resolutions for the selected marker	
+     * @return the resolutions for the selected marker
      */
     private IMarkerResolution[] getResolutions(IMarker marker) {
         return IDE.getMarkerHelpRegistry().getResolutions(marker);
@@ -93,7 +93,7 @@ class ResolveMarkerAction extends TaskAction {
 
     /**
      * Returns the selected marker (may be <code>null</code>).
-     * 
+     *
      * @return the selected marker
      */
     private IMarker getMarker() {

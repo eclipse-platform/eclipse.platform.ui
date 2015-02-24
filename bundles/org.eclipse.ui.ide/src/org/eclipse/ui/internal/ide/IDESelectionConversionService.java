@@ -30,7 +30,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 /**
  * The IDESelectionConversionService is the selection service that uses the
  * resource support available to the IDE.
- * 
+ *
  * @since 3.2
  */
 public class IDESelectionConversionService implements

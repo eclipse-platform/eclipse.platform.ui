@@ -42,7 +42,7 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
 
 	/**
 	 * Creates a new action group for open actions.
-	 * 
+	 *
 	 * @param navigator the resource navigator
 	 */
     public OpenActionGroup(IResourceNavigator navigator) {
@@ -79,7 +79,7 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
 
     /**
      * Adds the OpenWith submenu to the context menu.
-     * 
+     *
      * @param menu the context menu
      * @param selection the current selection
      */
@@ -103,7 +103,7 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
 
     /**
      * Adds the Open in New Window action to the context menu.
-     * 
+     *
      * @param menu the context menu
      * @param selection the current selection
      */

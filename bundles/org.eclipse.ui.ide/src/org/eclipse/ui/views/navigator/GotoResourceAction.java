@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 public class GotoResourceAction extends ResourceNavigatorAction {
     /**
      * Creates a new instance of the class.
-     * 
+     *
      * @param navigator the navigator
      * @param label the label
      * @since 2.0

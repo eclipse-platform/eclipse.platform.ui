@@ -18,7 +18,7 @@ abstract class MarkerSorter implements Comparator {
 
 	/**
 	 * Sort the array of markers in lastMarkers in place.
-	 * 
+	 *
 	 * @param viewer
 	 * @param markers
 	 */

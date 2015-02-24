@@ -63,7 +63,7 @@ public class PathVariableDialog extends TitleAreaDialog {
     private Label variableNameLabel;
 
     private Label variableValueLabel;
-    
+
     private Label variableResolvedValueLabel;
 
     private Text variableNameField;
@@ -140,12 +140,12 @@ public class PathVariableDialog extends TitleAreaDialog {
     private String validationMessage;
 
     /**
-     * Whether a variable name has been entered.  
+     * Whether a variable name has been entered.
      */
     private boolean nameEntered = false;
 
     /**
-     * Whether a variable location has been entered.  
+     * Whether a variable location has been entered.
      */
     private boolean locationEntered = false;
 
@@ -177,14 +177,14 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Constructs a dialog for editing a new/existing path variable.
-     * 
+     *
      * @param parentShell the parent shell
      * @param type the dialog type: <code>NEW_VARIABLE</code> or
      * 	<code>EXISTING_VARIABLE</code>
-     * @param variableType the type of variable that can be edited in 
+     * @param variableType the type of variable that can be edited in
      * 	this dialog. <code>IResource.FILE</code> or <code>IResource.FOLDER</code>
      * @param pathVariableManager a reference to the path variable manager
-     * @param namesInUse a set of variable names currently in use 
+     * @param namesInUse a set of variable names currently in use
      */
     public PathVariableDialog(Shell parentShell, int type, int variableType,
             IPathVariableManager pathVariableManager, Set namesInUse) {
@@ -207,7 +207,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Configures this dialog's shell, setting the shell's text.
-     * 
+     *
      * @see org.eclipse.jface.window.Window#configureShell(Shell)
      */
     @Override
@@ -223,7 +223,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Creates and returns the contents of this dialog (except for the button bar).
-     * 
+     *
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea
      */
     @Override
@@ -232,11 +232,11 @@ public class PathVariableDialog extends TitleAreaDialog {
         Composite parentComposite = (Composite) super.createDialogArea(parent);
 
         initializeDialogUnits(parentComposite);
-        
+
         // creates dialog area composite
         Composite contents = createComposite(parentComposite);
 
-        // creates and lay outs dialog area widgets 
+        // creates and lay outs dialog area widgets
         createWidgets(contents);
 
         // validate possibly already incorrect variable definitions
@@ -246,13 +246,13 @@ public class PathVariableDialog extends TitleAreaDialog {
         }
 
         Dialog.applyDialogFont(parentComposite);
-        
+
         return contents;
     }
 
     /**
      * Creates and configures this dialog's main composite.
-     * 
+     *
      * @param parentComposite parent's composite
      * @return this dialog's main composite
      */
@@ -275,7 +275,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Creates widgets for this dialog.
-     * 
+     *
      * @param contents the parent composite where to create widgets
      */
     private void createWidgets(Composite contents) {
@@ -301,7 +301,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	            }
 	        });
         }
-        
+
         // variable value label
         variableValueLabel = new Label(contents, SWT.LEAD);
         variableValueLabel.setText(valueLabelText);
@@ -318,7 +318,7 @@ public class PathVariableDialog extends TitleAreaDialog {
                 variableValueModified();
             }
         });
-        
+
         Composite buttonsComposite = new Composite(contents, SWT.NONE);
         buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,
         		false, 1, 1));
@@ -334,7 +334,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	        fileButton.setText(IDEWorkbenchMessages.PathVariableDialog_file);
 	        fileButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 	        		false));
-	
+
 	        fileButton.addSelectionListener(new SelectionAdapter() {
 	            @Override
 				public void widgetSelected(SelectionEvent e) {
@@ -351,7 +351,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	        folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
 	        folderButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 	        		false));
-	
+
 	        folderButton.addSelectionListener(new SelectionAdapter() {
 	            @Override
 				public void widgetSelected(SelectionEvent e) {
@@ -366,10 +366,10 @@ public class PathVariableDialog extends TitleAreaDialog {
         	layout.numColumns++;
 	    	variableButton = new Button(buttonsComposite, SWT.PUSH);
 	    	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
-	
+
 	 	    variableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 	    		false));
-	
+
 	        variableButton.addSelectionListener(new SelectionAdapter() {
 	            @Override
 				public void widgetSelected(SelectionEvent e) {
@@ -395,7 +395,7 @@ public class PathVariableDialog extends TitleAreaDialog {
     		return currentResource.getPathVariableManager();
     	return ResourcesPlugin.getWorkspace().getPathVariableManager();
     }
-    
+
     private String getVariableResolvedValue() {
         if (currentResource != null) {
         	IPathVariableManager pathVariableManager2 = currentResource.getPathVariableManager();
@@ -405,7 +405,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         	URI resolvedURI = pathVariableManager2.resolveURI(uri);
         	String resolveValue = URIUtil.toPath(resolvedURI).toOSString();
         	// Delete intermediate variables that might have been created as
-        	// as a side effect of converting arbitrary relative paths to an internal string. 
+        	// as a side effect of converting arbitrary relative paths to an internal string.
         	String[] newVariables = pathVariableManager2.getPathVariableNames();
         	for (int i = 0; i < newVariables.length; i++) {
         		boolean found = false;
@@ -427,7 +427,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         }
         return variableValue;
     }
-    
+
     /**
      * Fires validations (variable name first) and updates enabled state for the
      * "Ok" button accordingly.
@@ -451,7 +451,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         okButton.setEnabled(validateVariableValue() && validateVariableName());
         locationEntered = true;
         if (variableResolvedValueField != null)
-        	variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));        
+        	variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));
     }
 
     /**
@@ -512,7 +512,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
 	/**
      * Adds buttons to this dialog's button bar.
-     * 
+     *
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar
      */
     @Override
@@ -527,7 +527,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Validates the current variable name, and updates this dialog's message.
-     * 
+     *
      * @return true if the name is valid, false otherwise
      */
     private boolean validateVariableName() {
@@ -575,7 +575,7 @@ public class PathVariableDialog extends TitleAreaDialog {
             validationStatus = newValidationStatus;
             validationMessage = message;
         }
-        // only set the message here if it is not going to be set in 
+        // only set the message here if it is not going to be set in
         // validateVariableValue to avoid flashing.
         if (allowFinish == false) {
 			setMessage(validationMessage, validationStatus);
@@ -585,7 +585,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Validates the current variable value, and updates this dialog's message.
-     * 
+     *
      * @return true if the value is valid, false otherwise
      */
     private boolean validateVariableValue() {
@@ -661,7 +661,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Returns the variable name.
-     * 
+     *
      * @return the variable name
      */
     public String getVariableName() {
@@ -670,7 +670,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Returns the variable value.
-     * 
+     *
      * @return the variable value
      */
     public String getVariableValue() {
@@ -683,7 +683,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Sets the variable name.
-     * 
+     *
      * @param variableName the new variable name
      */
     public void setVariableName(String variableName) {
@@ -693,7 +693,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 
     /**
      * Sets the variable value.
-     * 
+     *
      * @param variable the new variable value
      */
     public void setVariableValue(String variable) {

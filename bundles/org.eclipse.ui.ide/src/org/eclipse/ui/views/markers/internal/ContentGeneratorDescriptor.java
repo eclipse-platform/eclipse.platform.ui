@@ -26,9 +26,9 @@ import org.eclipse.ui.views.markers.MarkerField;
 /**
  * ContentGeneratorDescriptor is the direct representation of the markerContentGenerator
  * extension point.
- * 
+ *
  * @since 3.6
- * 
+ *
  */
 public class ContentGeneratorDescriptor {
 
@@ -47,7 +47,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Create a new ContentGeneratorDescriptor
-	 * 
+	 *
 	 * @param element
 	 */
 	public ContentGeneratorDescriptor(IConfigurationElement element) {
@@ -56,7 +56,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add the groups defined in the receiver to the collection of groups.
-	 * 
+	 *
 	 * @param groups
 	 */
 	private void addDefinedGroups(Collection groups) {
@@ -71,7 +71,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add the extensions to the receiver.
-	 * 
+	 *
 	 * @param extensions
 	 *            Collection of {@link IConfigurationElement}
 	 */
@@ -82,7 +82,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add all of the markerGroups defined in element.
-	 * 
+	 *
 	 * @param groups
 	 */
 	private void addGroupsFrom(IConfigurationElement element, Collection groups) {
@@ -98,7 +98,7 @@ public class ContentGeneratorDescriptor {
 	/**
 	 * Return whether or not all of {@link MarkerTypesModel} arein the
 	 * selectedTypes.
-	 * 
+	 *
 	 * @param selectedTypes
 	 * @return boolean
 	 */
@@ -108,7 +108,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Get the all of the fields that this content generator is using.
-	 * 
+	 *
 	 * @return {@link MarkerField}[]
 	 */
 	public MarkerField[] getAllFields() {
@@ -117,7 +117,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Get the category name from the receiver.
-	 * 
+	 *
 	 * @return categoryName
 	 */
 	public String getCategoryName() {
@@ -128,7 +128,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Return the configuration elements for the receiver.
-	 * 
+	 *
 	 * @return IConfigurationElement[]
 	 */
 	public IConfigurationElement[] getFilterReferences() {
@@ -165,7 +165,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Return the id of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getId() {
@@ -175,7 +175,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Get the list of initially visible fields
-	 * 
+	 *
 	 * @return {@link MarkerField}[]
 	 */
 	public MarkerField[] getInitialVisible() {
@@ -184,7 +184,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Get the markerGroups associated with the receiver.
-	 * 
+	 *
 	 * @return Collection of {@link MarkerGroup}
 	 */
 	public Collection getMarkerGroups() {
@@ -207,7 +207,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Return the markerTypes for the receiver.
-	 * 
+	 *
 	 * @return Collection of {@link MarkerType}
 	 */
 	public Collection getMarkerTypes() {
@@ -240,7 +240,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Return the name for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getName() {
@@ -250,7 +250,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Return the type for typeId.
-	 * 
+	 *
 	 * @param typeId
 	 * @return {@link MarkerType} or <code>null</code> if it is not found.
 	 */
@@ -263,7 +263,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Get the table that maps type ids to markerTypes.
-	 * 
+	 *
 	 * @return Map of {@link String} to {@link MarkerType}
 	 */
 	public Map getTypesTable() {
@@ -282,7 +282,7 @@ public class ContentGeneratorDescriptor {
 	/**
 	 * Initialise the receiver from the configuration element. This is done as a
 	 * post processing step.
-	 * 
+	 *
 	 * @param registry
 	 *            the MarkerSupportRegistry being used to initialise the
 	 *            receiver.
@@ -315,7 +315,7 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Remove the element from the generator extensions
-	 * 
+	 *
 	 * @param element
 	 */
 	public void removeExtension(IConfigurationElement element) {

@@ -39,8 +39,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
     /**
      * Create a FiltersContentProvider using the selections from the supplied
      * resource filter.
-     * 
-     * @param filter the resource pattern filter 
+     *
+     * @param filter the resource pattern filter
      */
     public FiltersContentProvider(ResourcePatternFilter filter) {
         this.resourceFilter = filter;
@@ -87,8 +87,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
     /**
      * Return the initially selected elements.
-     * 
-     * @return an array with the initial selections 
+     *
+     * @return an array with the initial selections
      */
     public String[] getInitialSelections() {
         return this.resourceFilter.getPatterns();
@@ -102,13 +102,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
     }
 
     /**
-     * Reads the filters currently defined for the workbench. 
+     * Reads the filters currently defined for the workbench.
      */
     private static void readFilters() {
 		definedFilters = new ArrayList();
 		defaultFilters = new ArrayList();
 		IExtensionPoint extension = Platform.getExtensionRegistry()
-				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH + '.' 
+				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH + '.'
 						+ ResourcePatternFilter.FILTERS_TAG);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();

@@ -31,7 +31,7 @@ public class MarkerGoToHandler extends MarkerViewHandler {
 		view.openSelectedMarkers();
 		return this;
 	}
-	
+
 
 
 }

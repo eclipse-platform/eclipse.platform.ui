@@ -106,15 +106,15 @@ public class BookmarkView extends MarkerView {
 						if (e.getCause() instanceof CoreException) {
 							ErrorDialog.openError(
 									getSite().getShell(),
-									MarkerMessages.errorModifyingBookmark, null, ((CoreException)e.getCause()).getStatus()); 
+									MarkerMessages.errorModifyingBookmark, null, ((CoreException)e.getCause()).getStatus());
 						} else {
 							// something rather unexpected occurred.
-							IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e); 
+							IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e);
 						}
 					} catch (CoreException e) {
 						ErrorDialog.openError(
 								getSite().getShell(),
-								MarkerMessages.errorModifyingBookmark, null, e.getStatus()); 
+								MarkerMessages.errorModifyingBookmark, null, e.getStatus());
 					}
 				}
 			}
@@ -179,13 +179,13 @@ public class BookmarkView extends MarkerView {
 	@Override
 	protected IField[] getSortingFields() {
 		IField[] all = new IField[VISIBLE_FIELDS.length + HIDDEN_FIELDS.length];
-		
+
 		System.arraycopy(VISIBLE_FIELDS, 0, all, 0, VISIBLE_FIELDS.length);
 		System.arraycopy(HIDDEN_FIELDS, 0, all, VISIBLE_FIELDS.length, HIDDEN_FIELDS.length);
-		
+
 		return all;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getAllFields()
 	 */
@@ -210,7 +210,7 @@ public class BookmarkView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
 	 */
 	@Override
@@ -250,16 +250,16 @@ public class BookmarkView extends MarkerView {
 	protected String getSectionTag() {
 		return TAG_DIALOG_SECTION;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#fillContextMenuAdditions(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
 	void fillContextMenuAdditions(IMenuManager manager) {
 		//Do nothing in this view
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerEnablementPreferenceName()
 	 */
@@ -267,7 +267,7 @@ public class BookmarkView extends MarkerView {
 	String getMarkerEnablementPreferenceName() {
 		return IDEInternalPreferences.LIMIT_BOOKMARKS;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerLimitPreferenceName()
 	 */
@@ -275,7 +275,7 @@ public class BookmarkView extends MarkerView {
 	String getMarkerLimitPreferenceName() {
 		return IDEInternalPreferences.BOOKMARKS_LIMIT;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFiltersPreferenceName()
 	 */
@@ -283,17 +283,17 @@ public class BookmarkView extends MarkerView {
 	String getFiltersPreferenceName() {
 		return IDEInternalPreferences.BOOKMARKS_FILTERS;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerName()
 	 */
 	@Override
 	protected String getMarkerName() {
 		return MarkerMessages.bookmark_title;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
@@ -302,5 +302,5 @@ public class BookmarkView extends MarkerView {
 	protected IUndoContext getUndoContext() {
 		return WorkspaceUndoUtil.getBookmarksUndoContext();
 	}
-	
+
 }

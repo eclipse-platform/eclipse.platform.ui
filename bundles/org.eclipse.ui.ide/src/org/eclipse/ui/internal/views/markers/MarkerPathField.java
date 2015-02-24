@@ -18,15 +18,15 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * MarkerPathField is the field for the paths column.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerPathField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
 	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
@@ -40,7 +40,7 @@ public class MarkerPathField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	@Override
@@ -50,7 +50,7 @@ public class MarkerPathField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override

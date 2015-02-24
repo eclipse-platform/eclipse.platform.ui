@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkingSetUpdater;
 
 /**
  * A working set updater that updates resource working sets on resource deltas
- * 
+ *
  * @since 3.2
  */
 public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
@@ -45,7 +45,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 
 		/**
 		 * Create a new instance of this class.
-		 * 
+		 *
 		 * @param workingSet
 		 *            the working set to track.
 		 */
@@ -56,7 +56,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 
 		/**
 		 * Returns the index of this element in the list of known elements.
-		 * 
+		 *
 		 * @param element
 		 *            the element to search for
 		 * @return the index, or -1 if unknown.
@@ -67,7 +67,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 
 		/**
 		 * Add a new element to the list of known elements.
-		 * 
+		 *
 		 * @param index
 		 *            the index at which to place the element
 		 * @param element
@@ -80,7 +80,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 
 		/**
 		 * Remove an element from the list of known elements.
-		 * 
+		 *
 		 * @param index
 		 *            the index of the element to remove
 		 */

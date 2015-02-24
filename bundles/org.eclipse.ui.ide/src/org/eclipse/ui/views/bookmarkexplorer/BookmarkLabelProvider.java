@@ -88,7 +88,7 @@ class BookmarkLabelProvider extends LabelProvider implements
             return NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
         }
         }
-        return ""; //$NON-NLS-1$ 
+        return ""; //$NON-NLS-1$
     }
 
     @Override

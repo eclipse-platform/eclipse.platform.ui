@@ -32,13 +32,13 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class MarkerGroup {
 
 	/**
 	 * Create a new MarkerGroup from element.
-	 * 
+	 *
 	 * @param element
 	 * @return MarkerGroup
 	 */
@@ -61,7 +61,7 @@ public class MarkerGroup {
 		/**
 		 * Create a mapping for an attribute with name attributeName and value
 		 * value to the supplied entry.
-		 * 
+		 *
 		 * @param entry
 		 * @param attributeName
 		 * @param value
@@ -76,7 +76,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.FieldMarkerGroup.EntryMapping#hasAttributes()
 		 */
 		@Override
@@ -86,7 +86,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.FieldMarkerGroup.EntryMapping#testAttribute(org.eclipse.ui.views.markers.internal.ConcreteMarker)
 		 */
 		@Override
@@ -116,7 +116,7 @@ public class MarkerGroup {
 
 		/**
 		 * Create an entry mapping for the receiver.
-		 * 
+		 *
 		 * @param entry
 		 */
 		EntryMapping(MarkerGroupingEntry entry) {
@@ -125,7 +125,7 @@ public class MarkerGroup {
 
 		/**
 		 * Return whether or not the receiver tests attributes.
-		 * 
+		 *
 		 * @return boolean
 		 */
 		public boolean hasAttributes() {
@@ -134,7 +134,7 @@ public class MarkerGroup {
 
 		/**
 		 * Test the attribute of the marker to find a grouping.
-		 * 
+		 *
 		 * @param marker
 		 * @return MarkerGroupingEntry or <code>null</code> if there is not
 		 *         entry.
@@ -156,7 +156,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
 		 *      java.lang.Object)
 		 */
@@ -173,7 +173,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 		 */
 		@Override
@@ -183,7 +183,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 		 */
 		@Override
@@ -193,7 +193,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 		 */
 		@Override
@@ -203,7 +203,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 		 */
 		@Override
@@ -213,7 +213,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
 		 */
 		@Override
@@ -223,7 +223,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 		 */
 		@Override
@@ -233,7 +233,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 		 */
 		@Override
@@ -243,7 +243,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 		 */
 		@Override
@@ -260,7 +260,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#isShowing()
 		 */
 		@Override
@@ -270,7 +270,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.views.markers.internal.IField#setShowing(boolean)
 		 */
 		@Override
@@ -283,9 +283,9 @@ public class MarkerGroup {
 
 	/**
 	 * GroupMarkerField is the MarkerField used for MarkerGroupungs
-	 * 
+	 *
 	 * @since 3.4
-	 * 
+	 *
 	 */
 	class GroupMarkerField extends MarkerField {
 
@@ -294,7 +294,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 		 */
 		@Override
@@ -306,7 +306,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
 		 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 		 */
@@ -338,7 +338,7 @@ public class MarkerGroup {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getName()
 		 */
 		@Override
@@ -363,7 +363,7 @@ public class MarkerGroup {
 
 	/**
 	 * Create a new instance of the receiver called name with id identifier.
-	 * 
+	 *
 	 * @param element
 	 */
 	protected MarkerGroup(IConfigurationElement element) {
@@ -378,10 +378,10 @@ public class MarkerGroup {
 	 * Process the markerContentEntries for the reciever.
 	 */
 	private void processEntries() {
-		
+
 		if(configurationElement == null)
 			return;
-		
+
 		IConfigurationElement[] markerEntryElements = configurationElement
 				.getChildren(MarkerSupportRegistry.MARKER_GROUPING_ENTRY);
 
@@ -448,7 +448,7 @@ public class MarkerGroup {
 
 	/**
 	 * Add the entry for the markerType.
-	 * 
+	 *
 	 * @param markerType
 	 * @param entry
 	 */
@@ -474,7 +474,7 @@ public class MarkerGroup {
 	/**
 	 * Find the group value. If it cannot be found in an attribute mapping then
 	 * return null;
-	 * 
+	 *
 	 * @param concreteMarker
 	 * @return String or <code>null</code>
 	 */
@@ -489,7 +489,7 @@ public class MarkerGroup {
 
 	/**
 	 * Find the group for the marker of the specified marker type.
-	 * 
+	 *
 	 * @param type
 	 * @param marker
 	 * @return MarkerGroupingEntry
@@ -522,7 +522,7 @@ public class MarkerGroup {
 
 	/**
 	 * Return the field for the receiver.
-	 * 
+	 *
 	 * @return {@link IField}
 	 */
 	public IField getField() {
@@ -531,7 +531,7 @@ public class MarkerGroup {
 
 	/**
 	 * Return the id of the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getId() {
@@ -540,7 +540,7 @@ public class MarkerGroup {
 
 	/**
 	 * Get the attribute mapping for the marker
-	 * 
+	 *
 	 * @param marker
 	 * @return MarkerGroupingEntry
 	 */
@@ -554,7 +554,7 @@ public class MarkerGroup {
 
 	/**
 	 * Return the markerField for the receiver.
-	 * 
+	 *
 	 * @return MarkerField
 	 */
 	public MarkerField getMarkerField() {
@@ -563,7 +563,7 @@ public class MarkerGroup {
 
 	/**
 	 * Return the marker types that match and are subtypes of markerType.
-	 * 
+	 *
 	 * @param markerType
 	 * @return MarkerType[]
 	 */
@@ -591,7 +591,7 @@ public class MarkerGroup {
 
 	/**
 	 * Return the title for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getTitle() {
@@ -600,7 +600,7 @@ public class MarkerGroup {
 
 	/**
 	 * Add an attributeMapping for the markerType.
-	 * 
+	 *
 	 * @param attributeGrouping
 	 * @param entry
 	 * @param attributeValue
@@ -616,7 +616,7 @@ public class MarkerGroup {
 
 	/**
 	 * Remove the entry from all of the entries in the receiver.
-	 * 
+	 *
 	 * @param entry
 	 */
 	public void remove(MarkerGroupingEntry entry) {
@@ -640,7 +640,7 @@ public class MarkerGroup {
 
 	/**
 	 * Set entry and the default entry for the supplied markerType.
-	 * 
+	 *
 	 * @param markerType
 	 * @param entry
 	 */
@@ -652,7 +652,7 @@ public class MarkerGroup {
 
 	/**
 	 * Unmap the attributeMarkerGrouping from the receiver.
-	 * 
+	 *
 	 * @param attributeMarkerGrouping
 	 */
 	public void unmap(AttributeMarkerGrouping attributeMarkerGrouping) {
@@ -673,7 +673,7 @@ public class MarkerGroup {
 
 	}
 	/**
-	 * Returns the comparator that can be used for 
+	 * Returns the comparator that can be used for
 	 * sorting the MarkerGroupingEntry(s) in the group.
 	 * @return Comparator
 	 */

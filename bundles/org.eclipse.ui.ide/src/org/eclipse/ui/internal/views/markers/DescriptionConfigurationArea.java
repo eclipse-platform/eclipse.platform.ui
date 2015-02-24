@@ -31,7 +31,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 /**
  * DescriptionConfigurationArea is the configuration area for description
  * configuration fields.
- * 
+ *
  */
 public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
@@ -47,7 +47,7 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -74,7 +74,7 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	@Override
@@ -92,7 +92,7 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
 	/**
 	 * Create the group for the description filter.
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createDescriptionGroup(Composite parent) {
@@ -134,7 +134,7 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 		descriptionText.setLayoutData(data);
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.FilterConfigurationArea#getTitle()
 	 */

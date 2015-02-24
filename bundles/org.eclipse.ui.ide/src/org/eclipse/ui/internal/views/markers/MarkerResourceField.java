@@ -18,15 +18,15 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
  * MarkerResourceField is the field that specifies the resource column.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerResourceField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.provisional.views.markers.MarkerItem)
 	 */
 	@Override

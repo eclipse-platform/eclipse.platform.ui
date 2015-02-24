@@ -23,10 +23,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * Implements an IEditorInput instance appropriate for 
+ * Implements an IEditorInput instance appropriate for
  * <code>IFileStore</code> elements that represent files
  * that are not part of the current workspace.
- * 
+ *
  * @since 3.3
  *
  */
@@ -134,7 +134,7 @@ public class FileStoreEditorInput implements IURIEditorInput, IPersistableElemen
 	@Override
 	public void saveState(IMemento memento) {
 		FileStoreEditorInputFactory.saveState(memento, this);
-		
+
 	}
 
 }

@@ -27,19 +27,19 @@ import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 /**
  * FileSystemSelectionArea is the area used to select the file system.
  * @since 3.2
- * 
+ *
  */
 
 public class FileSystemSelectionArea {
 
 	private Label fileSystemTitle;
 	private ComboViewer fileSystems;
-	
+
 	/**
 	 * Create a new instance of the receiver.
 	 */
 	public FileSystemSelectionArea(){
-		
+
 	}
 
 	/**
@@ -96,14 +96,14 @@ public class FileSystemSelectionArea {
 	 */
 	public FileSystemConfiguration getSelectedConfiguration() {
 		ISelection selection = fileSystems.getSelection();
-		
+
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
 			if (structured.size() == 1) {
 				return (FileSystemConfiguration) structured.getFirstElement();
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -114,6 +114,6 @@ public class FileSystemSelectionArea {
 	public void setEnabled(boolean enabled) {
 		fileSystemTitle.setEnabled(enabled);
 		fileSystems.getControl().setEnabled(enabled);
-		
+
 	}
 }

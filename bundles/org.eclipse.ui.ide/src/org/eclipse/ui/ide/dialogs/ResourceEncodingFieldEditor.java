@@ -52,7 +52,7 @@ import org.osgi.service.prefs.Preferences;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
@@ -73,14 +73,14 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 	/**
 	 * Creates a new encoding field editor for setting the encoding on the given
 	 * resource.
-	 * 
+	 *
 	 * @param labelText
 	 *            the label text of the field editor
 	 * @param parent
 	 *            the parent of the field editor's control
 	 * @param charsetResource
 	 *            must be an <code>IContainer</code> or an <code>IFile</code>.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IContainer#getDefaultCharset()
 	 * @see org.eclipse.core.resources.IFile#getCharset()
 	 */
@@ -90,11 +90,11 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 		setLabelAndResource(labelText, charsetResource);
 		createControl(parent);
 	}
-	
+
 	/**
 	 * Creates a new encoding field editor for setting the encoding on the given
 	 * resource.
-	 * 
+	 *
 	 * @param labelText
 	 *            the label text of the field editor
 	 * @param parent
@@ -105,7 +105,7 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 	 *  		  the title for the field editor's control. If groupTitle is
 	 *            <code>null</code> the control will be unlabelled
 	 *            (by default a {@link Composite} instead of a {@link Group}.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IContainer#getDefaultCharset()
 	 * @see org.eclipse.core.resources.IFile#getCharset()
 	 * @see AbstractEncodingFieldEditor#setGroupTitle(String)
@@ -330,7 +330,7 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 
 	/**
 	 * Returns the charset from the content description if there is one.
-	 * 
+	 *
 	 * @return the charset from the content description, or <code>null</code>
 	 */
 	private String getCharsetFromDescription() {
@@ -420,7 +420,7 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 	/**
 	 * Returns the content description of the resource if it is a file and it
 	 * has a content description.
-	 * 
+	 *
 	 * @return the content description or <code>null</code> if resource is not
 	 *         an <code>IFile</code> or it does not have a description
 	 */

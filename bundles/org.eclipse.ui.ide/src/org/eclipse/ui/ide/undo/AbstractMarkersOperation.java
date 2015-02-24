@@ -33,11 +33,11 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  * markers on a resource. It provides implementations for marker creation,
  * deletion, and updating. Clients may call the public API from a background
  * thread.
- * 
+ *
  * This class is not intended to be subclassed by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
@@ -50,7 +50,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	/**
 	 * Create an AbstractMarkersOperation by specifying a combination of markers
 	 * and attributes or marker descriptions.
-	 * 
+	 *
 	 * @param markers
 	 *            the markers used in the operation or <code>null</code> if no
 	 *            markers yet exist
@@ -92,14 +92,14 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	/**
 	 * Delete any currently known markers and save their information in marker
 	 * descriptions so that they can be restored.
-	 * 
+	 *
 	 * @param work
 	 *            the number of work ticks to be used by the delete
 	 * @param monitor
 	 *            the progress monitor to use for the delete
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 * 
+	 *
 	 */
 	protected void deleteMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -119,7 +119,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Create markers from any currently known marker descriptions.
-	 * 
+	 *
 	 * @param work
 	 *            the number of work ticks to be used by the create
 	 * @param monitor
@@ -146,7 +146,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	/**
 	 * Update the currently known markers with the corresponding array of marker
 	 * descriptions.
-	 * 
+	 *
 	 * @param work
 	 *            the number of work ticks to be used by the update
 	 * @param monitor
@@ -156,7 +156,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            considered to be a replacement of the previous attributes.
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 * 
+	 *
 	 */
 	protected void updateMarkers(int work, IProgressMonitor monitor,
 			boolean mergeAttributes) throws CoreException {
@@ -192,7 +192,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Set the marker descriptions that describe markers that can be created.
-	 * 
+	 *
 	 * @param descriptions
 	 *            the descriptions of markers that can be created.
 	 */
@@ -228,7 +228,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	/*
 	 * Add undo contexts according to marker types. Any unknown marker types
 	 * will cause the workspace undo context to be added.
-	 * 
+	 *
 	 * This is an optimization that allows us to add specific undo contexts for
 	 * tasks and bookmarks, without also adding the workspace undo context. Note
 	 * that clients with different marker types may still assign their own
@@ -287,7 +287,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Return the array of markers that has been updated or created.
-	 * 
+	 *
 	 * @return the array of markers that have been updated or created, or
 	 *         <code>null</code> if no markers have been created or updated.
 	 */
@@ -297,7 +297,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 	/**
 	 * Return whether the markers known by this operation currently exist.
-	 * 
+	 *
 	 * @return <code>true</code> if there are existing markers and
 	 *         <code>false</code> if there are no known markers or any one of
 	 *         them does not exist
@@ -319,7 +319,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * Return a status indicating the projected outcome of undoing the marker
 	 * operation. The receiver is not responsible for remembering the result of
 	 * this computation.
-	 * 
+	 *
 	 * @return the status indicating whether the operation can be undone
 	 */
 	protected abstract IStatus getBasicUndoStatus();
@@ -328,7 +328,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * Return a status indicating the projected outcome of redoing the marker
 	 * operation. The receiver is not responsible for remembering the result of
 	 * this computation.
-	 * 
+	 *
 	 * @return the status indicating whether the operation can be undone
 	 */
 	protected abstract IStatus getBasicRedoStatus();
@@ -375,10 +375,10 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * status severity of <code>ERROR</code> indicates that the operation is
 	 * no longer valid. Other status severities are open to interpretation by
 	 * the caller.
-	 * 
+	 *
 	 * @return the status indicating the projected outcome of deleting the
 	 *         markers.
-	 * 
+	 *
 	 */
 	protected IStatus getMarkerDeletionStatus() {
 		if (markersExist()) {
@@ -393,10 +393,10 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * status severity of <code>ERROR</code> indicates that the operation is
 	 * no longer valid. Other status severities are open to interpretation by
 	 * the caller.
-	 * 
+	 *
 	 * @return the status indicating the projected outcome of creating the
 	 *         markers.
-	 * 
+	 *
 	 */
 	protected IStatus getMarkerCreationStatus() {
 		if (!resourcesExist()) {
@@ -413,10 +413,10 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * status severity of <code>ERROR</code> indicates that the operation is
 	 * no longer valid. Other status severities are open to interpretation by
 	 * the caller.
-	 * 
+	 *
 	 * @return the status indicating the projected outcome of updating the
 	 *         markers.
-	 * 
+	 *
 	 */
 	protected IStatus getMarkerUpdateStatus() {
 		if (!markersExist()) {

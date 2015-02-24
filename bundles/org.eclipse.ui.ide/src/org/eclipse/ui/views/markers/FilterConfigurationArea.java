@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * FilterConfigurationArea is the area that the user can configure a filter in.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public abstract class FilterConfigurationArea {
 
@@ -37,14 +37,14 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Apply the current settings to the filter.
-	 * 
+	 *
 	 * @param filter
 	 */
 	public abstract void apply(MarkerFieldFilter filter);
 
 	/**
 	 * Create the contents of the configuration area in the parent.
-	 * 
+	 *
 	 * @param parent
 	 */
 	public abstract void createContents(Composite parent);
@@ -61,7 +61,7 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Get the title for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getTitle() {
@@ -70,7 +70,7 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Initialise {@link FontMetrics} for the receiver.
-	 * 
+	 *
 	 * @param control
 	 */
 	protected void initializeFontMetrics(Control control) {
@@ -83,16 +83,16 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Initialise the receiver using the filter.
-	 * 
+	 *
 	 * @param filter
 	 */
 	public abstract void initialize(MarkerFieldFilter filter);
-	
+
 	/**
 	 * Set the markerField for the receiver. This method intended to
 	 * be called by the marker support framework directly after
 	 * instantiation of the receiver.
-	 * 
+	 *
 	 * @param markerField
 	 */
 	public final void setField(MarkerField markerField) {
@@ -109,7 +109,7 @@ public abstract class FilterConfigurationArea {
 		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		data.widthHint = Math.max(widthHint, minSize.x);
 		button.setLayoutData(data);
-		
+
 	}
 
 	/**
@@ -122,9 +122,9 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Returns whether the configuration area should grab remaining vertical space.
-	 * 
+	 *
 	 * The default implementation returns <code>false</code>. Subclasses can override.
-	 * 
+	 *
 	 * @return <code>true</code> iff the configuration area should grab remaining vertical space
 	 * @since 3.5
 	 */

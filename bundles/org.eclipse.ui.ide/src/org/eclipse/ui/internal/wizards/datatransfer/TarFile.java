@@ -23,7 +23,7 @@ import java.util.zip.GZIPInputStream;
  * Reads a .tar or .tar.gz archive file, providing an index enumeration
  * and allows for accessing an InputStream for arbitrary files in the
  * archive.
- * 
+ *
  * @since 3.1
  */
 public class TarFile {
@@ -33,10 +33,10 @@ public class TarFile {
 	private TarInputStream entryStream;
 
 	private InputStream internalEntryStream;
-	
+
 	/**
 	 * Create a new TarFile for the given file.
-	 * 
+	 *
 	 * @param file
 	 * @throws TarException
 	 * @throws IOException
@@ -62,10 +62,10 @@ public class TarFile {
 		}
 		curEntry = entryEnumerationStream.getNextEntry();
 	}
-	
+
 	/**
 	 * Close the tar file input stream.
-	 * 
+	 *
 	 * @throws IOException if the file cannot be successfully closed
 	 */
 	public void close() throws IOException {
@@ -77,7 +77,7 @@ public class TarFile {
 
 	/**
 	 * Create a new TarFile for the given path name.
-	 * 
+	 *
 	 * @param filename
 	 * @throws TarException
 	 * @throws IOException
@@ -88,7 +88,7 @@ public class TarFile {
 
 	/**
 	 * Returns an enumeration cataloguing the tar archive.
-	 * 
+	 *
 	 * @return enumeration of all files in the archive
 	 */
 	public Enumeration entries() {
@@ -97,7 +97,7 @@ public class TarFile {
 			public boolean hasMoreElements() {
 				return (curEntry != null);
 			}
-			
+
 			@Override
 			public Object nextElement() {
 				TarEntry oldEntry = curEntry;
@@ -115,7 +115,7 @@ public class TarFile {
 
 	/**
 	 * Returns a new InputStream for the given file in the tar archive.
-	 * 
+	 *
 	 * @param entry
 	 * @return an input stream for the given file
 	 * @throws TarException
@@ -148,7 +148,7 @@ public class TarFile {
 
 	/**
 	 * Returns the path name of the file this archive represents.
-	 * 
+	 *
 	 * @return path
 	 */
 	public String getName() {
@@ -157,7 +157,7 @@ public class TarFile {
 
 	/* (non-Javadoc)
 	 * @see java.util.zip.ZipFile#finalize()
-	 * 
+	 *
 	 */
 	@Override
 	protected void finalize() throws Throwable {

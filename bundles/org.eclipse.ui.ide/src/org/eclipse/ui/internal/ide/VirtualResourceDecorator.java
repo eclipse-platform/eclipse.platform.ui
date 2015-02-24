@@ -71,7 +71,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 
 	/**
 	 * Replaces the resource image, if the given element is a virtual resource.
-	 * 
+	 *
 	 * @param element
 	 *            element to decorate
 	 * @param decoration

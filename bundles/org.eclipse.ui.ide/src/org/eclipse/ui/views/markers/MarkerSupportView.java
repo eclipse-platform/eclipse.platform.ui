@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
  */
 public abstract class MarkerSupportView extends ExtendedMarkersView {
 
-	
+
 	/**
 	 * Create a new instance of the receiver on contentGeneratorId.
 	 * @param contentGeneratorId the id of a markerContentGenerator

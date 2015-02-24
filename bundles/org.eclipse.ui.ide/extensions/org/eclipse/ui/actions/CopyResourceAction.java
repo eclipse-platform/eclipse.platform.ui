@@ -82,17 +82,17 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
-     * 
+     *
      * @deprecated {@link #CopyResourceAction(IShellProvider)}
      */
     @Deprecated
 	public CopyResourceAction(Shell shell) {
         this(shell, IDEWorkbenchMessages.CopyResourceAction_title);
     }
-    
+
     /**
      * Creates a new action
-     * 
+     *
      * @param provider the shell for any dialogs
      * @since 3.4
      */
@@ -104,9 +104,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * Creates a new action with the given text.
      *
      * @param shell the shell for any dialogs
-     * @param name the string used as the name for the action, 
+     * @param name the string used as the name for the action,
      *   or <code>null</code> if there is no name
-     *   
+     *
      * @deprecated {@link #CopyResourceAction(IShellProvider, String)}
      */
     @Deprecated
@@ -121,12 +121,12 @@ public class CopyResourceAction extends SelectionListenerAction implements
         };
         initAction();
     }
-    
+
     /**
      * Creates a new action with the given text
-     * 
+     *
      * @param provider the shell for any dialogs
-     * @param name the string used as the name for the action, 
+     * @param name the string used as the name for the action,
      *   or <code>null</code> if there is no name
      */
     CopyResourceAction(IShellProvider provider, String name){
@@ -138,13 +138,13 @@ public class CopyResourceAction extends SelectionListenerAction implements
 
     /**
      * Returns the operation to perform when this action runs.
-     * 
+     *
      * @return the operation to perform when this action runs.
      */
     protected CopyFilesAndFoldersOperation createOperation() {
         return new CopyFilesAndFoldersOperation(getShell());
     }
-    
+
     private void initAction(){
     	setToolTipText(IDEWorkbenchMessages.CopyResourceAction_toolTip);
         setId(CopyResourceAction.ID);
@@ -167,9 +167,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
     }
 
     /**
-     * Returns an array of resources to use for the operation from 
+     * Returns an array of resources to use for the operation from
      * the provided list.
-     * 
+     *
      * @param resourceList The list of resources to converted into an array.
      * @return an array of resources to use for the operation
      */
@@ -187,7 +187,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
     }
 
     /**
-     * The <code>CopyResourceAction</code> implementation of this 
+     * The <code>CopyResourceAction</code> implementation of this
      * <code>ISelectionValidator</code> method checks whether the given path
      * is a good place to copy the selected resources.
      */
@@ -198,7 +198,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
                 .findMember((IPath) destination);
 
         if (container != null) {
-            // create a new operation here. 
+            // create a new operation here.
             // isValid is API and may be called in any context.
             CopyFilesAndFoldersOperation newOperation = createOperation();
             List sources = getSelectedResources();
@@ -212,7 +212,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
     /**
      * Asks the user for the destination of this action.
      *
-     * @return the path on an existing or new resource container, or 
+     * @return the path on an existing or new resource container, or
      *  <code>null</code> if the operation should be abandoned
      */
     IPath queryDestinationResource() {
@@ -240,7 +240,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
             operation.setModelProviderIds(getModelProviderIds());
 
             // WARNING: do not query the selected resources more than once
-            // since the selection may change during the run, 
+            // since the selection may change during the run,
             // e.g. due to window activation when the prompt dialog is dismissed.
             // For more details, see Bug 60606 [Navigator] (data loss) Navigator deletes/moves the wrong file
             List sources = getSelectedResources();
@@ -265,7 +265,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
 
     /**
      * Runs the operation created in <code>createOperation</code>
-     * 
+     *
      * @param resources source resources to pass to the operation
      * @param destination destination container to pass to the operation
      */
@@ -275,8 +275,8 @@ public class CopyResourceAction extends SelectionListenerAction implements
 
     /**
      * The <code>CopyResourceAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables this action only if 
-     * all of the one or more selections are sibling resources which are 
+     * <code>SelectionListenerAction</code> method enables this action only if
+     * all of the one or more selections are sibling resources which are
      * local (depth infinity).
      */
     @Override
@@ -314,11 +314,11 @@ public class CopyResourceAction extends SelectionListenerAction implements
         }
         return true;
     }
-    
+
     /**
      * Returns the model provider ids that are known to the client
      * that instantiated this operation.
-     * 
+     *
      * @return the model provider ids that are known to the client
      * that instantiated this operation.
      * @since 3.2
@@ -331,7 +331,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * Sets the model provider ids that are known to the client
      * that instantiated this operation. Any potential side effects
      * reported by these models during validation will be ignored.
-     * 
+     *
 	 * @param modelProviderIds the model providers known to the client
 	 * who is using this operation.
 	 * @since 3.2

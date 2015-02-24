@@ -33,7 +33,7 @@ class CopyBookmarkAction extends BookmarkAction {
 
     /**
      * Creates the action.
-     * 
+     *
      * @param bookmarkNavigator the view
      */
     public CopyBookmarkAction(BookmarkNavigator bookmarkNavigator) {
@@ -63,7 +63,7 @@ class CopyBookmarkAction extends BookmarkAction {
         setClipboard(markers, createBookmarkReport(markers));
     }
 
-    /** 
+    /**
      * Updates enablement based on the current selection
      */
     @Override

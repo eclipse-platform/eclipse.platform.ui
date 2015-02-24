@@ -32,7 +32,7 @@ public class FilterSelectionAction extends ResourceNavigatorAction {
 
     /**
      * Creates the action.
-     * 
+     *
      * @param navigator the resource navigator
      * @param label the label for the action
      */

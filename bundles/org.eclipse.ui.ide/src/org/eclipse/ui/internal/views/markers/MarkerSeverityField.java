@@ -18,15 +18,15 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerSeverityField is the field for showing severity categories.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerSeverityField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	@Override
@@ -46,7 +46,7 @@ public class MarkerSeverityField extends MarkerField {
 
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.MarkerField#compare(org.eclipse.ui.views.markers.MarkerItem, org.eclipse.ui.views.markers.MarkerItem)
 	 */

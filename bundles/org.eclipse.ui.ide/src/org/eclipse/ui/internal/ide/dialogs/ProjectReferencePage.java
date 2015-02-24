@@ -63,16 +63,16 @@ public class ProjectReferencePage extends PropertyPage {
 	protected Control createContents(Composite parent) {
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IIDEHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
-    	
+
         Composite composite = new Composite(parent, SWT.NONE);
-        
+
         initialize();
 
         createDescriptionLabel(composite);
 
         listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
                 | SWT.BORDER);
-        
+
         if(!project.isOpen())
         	listViewer.getControl().setEnabled(false);
 
@@ -97,9 +97,9 @@ public class ProjectReferencePage extends PropertyPage {
         });
 
         applyDialogFont(composite);
-        
+
         GridLayoutFactory.fillDefaults().generateLayout(composite);
-        
+
         return composite;
     }
 

@@ -59,7 +59,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
     private OpenResourceAction openProjectAction;
 
     private CloseResourceAction closeProjectAction;
-    
+
     private CloseUnrelatedProjectsAction closeUnrelatedProjectsAction;
 
     private RefreshAction refreshAction;
@@ -86,8 +86,8 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
      * Adds the build, open project, close project and refresh resource
      * actions to the context menu.
      * <p>
-     * The following conditions apply: 
-     * 	build-only projects selected, auto build disabled, at least one 
+     * The following conditions apply:
+     * 	build-only projects selected, auto build disabled, at least one
      * 		builder present
      * 	open project-only projects selected, at least one closed project
      * 	close project-only projects selected, at least one open project
@@ -100,7 +100,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
      * <p>
      * No disabled action should be on the context menu.
      * </p>
-     * 
+     *
      * @param menu context menu to add actions to
      */
     @Override
@@ -110,7 +110,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         boolean isProjectSelection = true;
         boolean hasOpenProjects = false;
         boolean hasClosedProjects = false;
-        boolean hasBuilder = true; // false if any project is closed or does not have builder 
+        boolean hasBuilder = true; // false if any project is closed or does not have builder
         Iterator resources = selection.iterator();
 
         while (resources.hasNext()
@@ -192,7 +192,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 				return true;
 			}
         } catch (CoreException e) {
-            // Cannot determine if project has builders. Project is closed 
+            // Cannot determine if project has builders. Project is closed
             // or does not exist. Fall through to return false.
         }
         return false;
@@ -244,7 +244,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         				}
         				return errorStatus[0];
         			}
-        			
+
         		};
         		ISchedulingRule rule = op.getRule();
         		if (rule != null) {

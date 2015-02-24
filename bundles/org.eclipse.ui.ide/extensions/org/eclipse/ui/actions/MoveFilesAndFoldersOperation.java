@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -39,7 +39,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/**
 	 * Creates a new operation initialized with a shell.
-	 * 
+	 *
 	 * @param shell
 	 *            parent shell for error dialogs
 	 */
@@ -50,7 +50,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	/**
 	 * Returns whether this operation is able to perform on-the-fly
 	 * auto-renaming of resources with name collisions.
-	 * 
+	 *
 	 * @return <code>true</code> if auto-rename is supported, and
 	 *         <code>false</code> otherwise
 	 */
@@ -62,14 +62,14 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	/**
 	 * Moves the resources to the given destination. This method is called
 	 * recursively to merge folders during folder move.
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to move
 	 * @param destination
 	 *            destination to which resources will be moved
 	 * @param subMonitor
 	 *            a progress monitor for showing progress and for cancelation
-	 * 
+	 *
 	 * @deprecated As of 3.3, the work is performed in the undoable operation
 	 *             created in
 	 *             {@link #getUndoableCopyOrMoveOperation(IResource[], IPath)}
@@ -128,7 +128,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/**
 	 * Returns the message for querying deep copy/move of a linked resource.
-	 * 
+	 *
 	 * @param source
 	 *            resource the query is made for
 	 * @return the deep query message
@@ -143,7 +143,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/**
 	 * Returns the task title for this operation's progress dialog.
-	 * 
+	 *
 	 * @return the task title
 	 */
 	@Override
@@ -153,7 +153,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/**
 	 * Returns the message for this operation's problems dialog.
-	 * 
+	 *
 	 * @return the problems message
 	 */
 	@Override
@@ -163,7 +163,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/**
 	 * Returns the title for this operation's problems dialog.
-	 * 
+	 *
 	 * @return the problems dialog title
 	 */
 	@Override
@@ -174,7 +174,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	/**
 	 * Returns whether the source file in a destination collision will be
 	 * validateEdited together with the collision itself. Returns true.
-	 * 
+	 *
 	 * @return boolean <code>true</code>, the source file in a destination
 	 *         collision should be validateEdited.
 	 */
@@ -186,7 +186,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	/**
 	 * Sets the content of the existing file to the source file content. Deletes
 	 * the source file.
-	 * 
+	 *
 	 * @param source
 	 *            source file to move
 	 * @param existing
@@ -216,9 +216,9 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/*
 	 * (non-Javadoc) Overrides method in CopyFilesAndFoldersOperation
-	 * 
+	 *
 	 * Note this method is for internal use only. It is not API.
-	 * 
+	 *
 	 */
 	@Override
 	public String validateDestination(IContainer destination,
@@ -254,7 +254,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.CopyFilesAndFoldersOperation#isMove()
 	 */
 	@Override
@@ -266,7 +266,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * Returns an AbstractWorkspaceOperation suitable for performing the move or
 	 * copy operation that will move or copy the given resources to the given
 	 * destination path.
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to be moved or copied
 	 * @param destinationPath

@@ -19,17 +19,17 @@ import org.eclipse.ui.actions.SimpleWildcardTester;
 
 /**
  * The property tester used to test the attributes of the Marker
- * 
+ *
  * @since 3.5
  * @author Prakash G.R.
- * 
+ *
  */
 public class MarkerPropertyTester extends PropertyTester {
 
 	/**
 	 * An attribute indicating the marker priority (value
 	 * <code>"priority"</code>). The attribute value in xml must be one of
-	 * <code>IMarker.PRIORITY_LOW, 
+	 * <code>IMarker.PRIORITY_LOW,
 	 * IMarker.PRIORITY_NORMAL, or IMarker.PRIORITY_HIGH</code>
 	 */
 	public static final String PRIORITY = IMarker.PRIORITY;
@@ -37,7 +37,7 @@ public class MarkerPropertyTester extends PropertyTester {
 	/**
 	 * An attribute indicating the marker severity (value
 	 * <code>"severity"</code>). The attribute value in xml in xml must be one
-	 * of <code>IMarker.SEVERITY_ERROR, 
+	 * of <code>IMarker.SEVERITY_ERROR,
 	 * IMarker.SEVERITY_WARNING, or IMarker.SEVERITY_INFO</code>
 	 */
 	public static final String SEVERITY = IMarker.SEVERITY;
@@ -118,7 +118,7 @@ public class MarkerPropertyTester extends PropertyTester {
 
 	/**
 	 * Tests the attribute's value for the given marker
-	 * 
+	 *
 	 * @param marker
 	 *            - The marker
 	 * @param attributeName

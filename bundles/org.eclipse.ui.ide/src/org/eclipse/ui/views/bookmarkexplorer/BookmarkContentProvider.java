@@ -159,7 +159,7 @@ class BookmarkContentProvider implements IStructuredContentProvider,
 	public void resourceChanged(final IResourceChangeEvent event) {
 
         // gather all marker changes from the delta.
-        // be sure to do this in the calling thread, 
+        // be sure to do this in the calling thread,
         // as the delta is destroyed when this method returns
         final List additions = new ArrayList();
         final List removals = new ArrayList();

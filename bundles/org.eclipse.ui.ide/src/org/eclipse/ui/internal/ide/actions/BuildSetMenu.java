@@ -7,8 +7,8 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
- * hzhou@actuate.com - Fix for  Bug 71695 - 
- * [WorkingSets]Removed Working Set is still shown under the menu item 
+ * hzhou@actuate.com - Fix for  Bug 71695 -
+ * [WorkingSets]Removed Working Set is still shown under the menu item
  * when it is the recently used working set
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
@@ -28,7 +28,7 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 
 /**
  * Sub-menu off project menu for showing MRU list of working set builds.
- * 
+ *
  * @since 3.0
  */
 public class BuildSetMenu extends ContributionItem {

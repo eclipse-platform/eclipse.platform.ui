@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93373 - [Intro] 
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93373 - [Intro]
  *     		TipsAndTricksAction should not use magic numbers
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
@@ -41,7 +41,7 @@ public class TipsAndTricksAction extends PartEventAction implements
 
     /**
      * Create an instance of this class.
-     * 
+     *
      * @param window the window
      */
     public TipsAndTricksAction(IWorkbenchWindow window) {
@@ -94,7 +94,7 @@ public class TipsAndTricksAction extends PartEventAction implements
                 IIDEHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
         d.create();
         d.getOkButton().setEnabled(false);
-        
+
         if (d.open() != Window.OK || d.getResult().length != 1) {
 			return;
 		}
@@ -128,7 +128,7 @@ public class TipsAndTricksAction extends PartEventAction implements
             IStatus status = new Status(IStatus.ERROR,
                     IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.INFO, IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
             ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
-                    IDEWorkbenchMessages.TipsAndTricksErrorDialog_noFeatures, 
+                    IDEWorkbenchMessages.TipsAndTricksErrorDialog_noFeatures,
                     status);
         }
     }

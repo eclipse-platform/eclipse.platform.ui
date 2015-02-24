@@ -48,7 +48,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
 	 * @since 3.4
 	 */
 	public static final String WIZARD_ID = "org.eclipse.ui.wizards.new.folder"; //$NON-NLS-1$
-	
+
     private WizardNewFolderMainPage mainPage;
 
     /**
@@ -64,7 +64,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
     @Override
 	public void addPages() {
         super.addPages();
-        mainPage = new WizardNewFolderMainPage(ResourceMessages.NewFolder_text, getSelection()); 
+        mainPage = new WizardNewFolderMainPage(ResourceMessages.NewFolder_text, getSelection());
         addPage(mainPage);
     }
 
@@ -85,7 +85,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
 	protected void initializeDefaultPageImageDescriptor() {
       ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfolder_wiz.png");//$NON-NLS-1$
       setDefaultPageImageDescriptor(desc);
-       
+
     }
 
     /* (non-Javadoc)

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 
 	/**
 	 * Creates a resource filter edit dialog.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
@@ -45,7 +45,7 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 
 	/**
 	 * Set the container resource to be edited.
-	 * 
+	 *
 	 * @param container
 	 */
 	public void setContainer(IContainer container) {

@@ -26,7 +26,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * Utility class for manipulating resources and determining correspondences 
+ * Utility class for manipulating resources and determining correspondences
  * between resources and workbench objects.
  * <p>
  * This class provides all its functionality via static methods.
@@ -43,9 +43,9 @@ public final class ResourceUtil {
 
     /**
      * Returns the file corresponding to the given editor input, or <code>null</code>
-     * if there is no applicable file.  
+     * if there is no applicable file.
      * Returns <code>null</code> if the given editor input is <code>null</code>.
-     * 
+     *
      * @param editorInput the editor input, or <code>null</code>
      * @return the file corresponding to the editor input, or <code>null</code>
      */
@@ -66,7 +66,7 @@ public final class ResourceUtil {
      * Returns the resource corresponding to the given editor input, or <code>null</code>
      * if there is no applicable resource.
      * Returns <code>null</code> if the given editor input is <code>null</code>.
-     * 
+     *
      * @param editorInput the editor input
      * @return the file corresponding to the editor input, or <code>null</code>
      */
@@ -87,7 +87,7 @@ public final class ResourceUtil {
     /**
      * Returns the editor in the given page whose input represents the given file,
      * or <code>null</code> if there is no such editor.
-     * 
+     *
      * @param page the workbench page
      * @param file the file
      * @return the matching editor, or <code>null</code>
@@ -113,11 +113,11 @@ public final class ResourceUtil {
         }
         return null;
     }
-    
+
     /**
      * Returns the resource corresponding to the given model element, or <code>null</code>
      * if there is no applicable resource.
-     * 
+     *
      * @param element the model element, or <code>null</code>
      * @return the resource corresponding to the model element, or <code>null</code>
      * @since 3.2
@@ -135,7 +135,7 @@ public final class ResourceUtil {
     /**
      * Returns the file corresponding to the given model element, or <code>null</code>
      * if there is no applicable file.
-     * 
+     *
      * @param element the model element, or <code>null</code>
      * @return the resource corresponding to the model element, or <code>null</code>
      * @since 3.2
@@ -144,24 +144,24 @@ public final class ResourceUtil {
 		if (element == null) {
 			return null;
 		}
-		
+
 		// try direct instanceof check
 		if (element instanceof IFile) {
 			return (IFile) element;
 		}
-		
+
 		// try for ResourceMapping
 		ResourceMapping mapping = getResourceMapping(element);
 		if (mapping != null) {
 			return getFileFromResourceMapping(mapping);
 		}
-		
+
 		// try for IFile adapter (before IResource adapter, since it's more specific)
 		Object adapter = getAdapter(element, IFile.class, true);
 		if (adapter instanceof IFile) {
 			return (IFile) adapter;
 		}
-		
+
 		// try for IResource adapter
 		adapter = getAdapter(element, IResource.class, true);
 		if (adapter instanceof IFile) {
@@ -173,7 +173,7 @@ public final class ResourceUtil {
 	/**
      * Returns the resource mapping corresponding to the given model element, or <code>null</code>
      * if there is no applicable resource mapping.
-     * 
+     *
      * @param element the model element, or <code>null</code>
      * @return the resource mapping corresponding to the model element, or <code>null</code>
      * @since 3.2
@@ -182,12 +182,12 @@ public final class ResourceUtil {
 		if (element == null) {
 			return null;
 		}
-		
+
 		// try direct instanceof check
 		if (element instanceof ResourceMapping) {
 			return (ResourceMapping) element;
 		}
-		
+
 		// try for ResourceMapping adapter
 		Object adapter = getAdapter(element, ResourceMapping.class, true);
 		if (adapter instanceof ResourceMapping) {
@@ -195,12 +195,12 @@ public final class ResourceUtil {
 		}
 		return null;
 	}
-    
+
     /**
      * Tries to extra a single file from the given resource mapping.
      * Returns the file if the mapping maps to a single file, or <code>null</code>
      * if it maps to zero or multiple files.
-     * 
+     *
      * @param mapping the resource mapping
      * @return the file, or <code>null</code>
      */
@@ -211,12 +211,12 @@ public final class ResourceUtil {
     	}
     	return null;
     }
-    
+
     /**
      * Tries to extra a single resource from the given resource mapping.
      * Returns the resource if the mapping maps to a single resource, or <code>null</code>
      * if it maps to zero or multiple resources.
-     * 
+     *
      * @param mapping the resource mapping
      * @return the resource, or <code>null</code>
      */
@@ -243,10 +243,10 @@ public final class ResourceUtil {
 	/**
      * Returns the specified adapter for the given element, or <code>null</code>
      * if no such adapter was found.
-     * 
+     *
      * @param element the model element
 	 * @param adapterType the type of adapter to look up
-	 * @param forceLoad <code>true</code> to force loading of the plug-in providing the adapter, 
+	 * @param forceLoad <code>true</code> to force loading of the plug-in providing the adapter,
 	 *   <code>false</code> otherwise
      * @return the adapter
      * @since 3.2

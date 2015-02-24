@@ -156,7 +156,7 @@ public class BookmarkNavigator extends ViewPart {
     private static final String TAG_VERTICAL_POSITION = "verticalPosition";//$NON-NLS-1$
 
     private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";//$NON-NLS-1$
-	
+
     class SortByAction extends Action {
 
         private int column;

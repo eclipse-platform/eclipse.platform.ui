@@ -47,7 +47,7 @@ public class FieldPriority extends AbstractField {
 	public String getDescription() {
         return description;
     }
-    
+
     /**
 	 * Get the image at path.
 	 * @param path
@@ -57,7 +57,7 @@ public class FieldPriority extends AbstractField {
 		return JFaceResources.getResources().createImageWithDefault(
 				IDEWorkbenchPlugin
 						.getIDEImageDescriptor(path));
-		
+
 	}
 
     /*
@@ -133,7 +133,7 @@ public class FieldPriority extends AbstractField {
         int priority2 = ((TaskMarker) obj2).getPriority();
         return priority1 - priority2;
     }
-    
+
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
@@ -141,7 +141,7 @@ public class FieldPriority extends AbstractField {
 	public int getDefaultDirection() {
 		return TableComparator.DESCENDING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */

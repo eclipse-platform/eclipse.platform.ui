@@ -40,15 +40,15 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 public class RelativePathVariableGroup {
 
 	private Button variableCheckbox = null;
-	
+
 	private Combo variableCombo = null;
-	
+
 	private Shell shell;
-	
+
 	private IModel content;
-	
+
 	private String label;
-	
+
 	public interface IModel {
 		/**
 		 * @return
@@ -66,7 +66,7 @@ public class RelativePathVariableGroup {
 		String getVariable();
 	}
 	/**
-	 * 
+	 *
 	 */
 	public RelativePathVariableGroup(IModel content) {
 		this.content = content;
@@ -78,7 +78,7 @@ public class RelativePathVariableGroup {
 	}
 
 	/**
-	 * @param variableGroup 
+	 * @param variableGroup
 	 * @return the control
 	 */
 	public Control createContents(Composite variableGroup) {
@@ -112,7 +112,7 @@ public class RelativePathVariableGroup {
 				setupVariableCheckboxToolTip();
 			}
 		});
-		
+
 		variableCombo = new Combo(variableGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING); // GridData.FILL_HORIZONTAL);
 		variableCombo.setLayoutData(gridData);
@@ -139,7 +139,7 @@ public class RelativePathVariableGroup {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setupVariableContent() {
 		IPathVariableManager pathVariableManager;
@@ -148,7 +148,7 @@ public class RelativePathVariableGroup {
 		else
 			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		String[] variables = pathVariableManager.getPathVariableNames();
-		
+
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < variables.length; i++) {
 			if (variables[i].equals("PARENT")) //$NON-NLS-1$
@@ -232,13 +232,13 @@ public class RelativePathVariableGroup {
 	 * A priority is given as to variables enclosing the root, as others
 	 * only being enclosed by the root.
 	 *
-	 * So if there's two variables, being 
+	 * So if there's two variables, being
 	 * 		FOO - c:\foo\
 	 * 		DIR1 - c:\foo\path\bar\dir1
 	 * And the common root is:
 	 * 		c:\foo\path\bar
-	 * FOO will be selected over DIR1, even through the distance between 
-	 * the common root and DIR1 is (1), and the distance between the 
+	 * FOO will be selected over DIR1, even through the distance between
+	 * the common root and DIR1 is (1), and the distance between the
 	 * common root and FOO is (2).  This is because selecting DIR1 would
 	 * cause the location to be relative to its parent.
 
@@ -264,14 +264,14 @@ public class RelativePathVariableGroup {
 				}
 			}
 		}
-		
+
 		String mostAppropriate = null;
 		String mostAppropriateToParent = null;
 		int mostAppropriateCount = Integer.MAX_VALUE;
 		int mostAppropriateCountToParent = Integer.MAX_VALUE;
 		IPathVariableManager pathVariableManager = target.getPathVariableManager();
 		String [] variables = pathVariableManager.getPathVariableNames();
-		
+
 		for (int i = 0; i < variables.length; i++) {
 			if (isPreferred(variables[i])) {
 				URI rawValue = pathVariableManager.getURIValue(variables[i]);
@@ -300,7 +300,7 @@ public class RelativePathVariableGroup {
 				}
 			}
 		}
-		
+
 		if (mostAppropriate == null) {
 			if (mostAppropriateToParent == null)
 				return "PROJECT_LOC"; //$NON-NLS-1$
@@ -308,7 +308,7 @@ public class RelativePathVariableGroup {
 		}
 		return mostAppropriate;
 	}
-	
+
 	private static boolean isPreferred(String variableName) {
 		return !(variableName.equals("WORKSPACE_LOC") || //$NON-NLS-1$
 				variableName.equals("PARENT_LOC") || //$NON-NLS-1$

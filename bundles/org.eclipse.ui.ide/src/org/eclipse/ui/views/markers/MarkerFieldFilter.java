@@ -21,7 +21,7 @@ import org.eclipse.ui.IMemento;
  *
  */
 public abstract class MarkerFieldFilter {
-	
+
 	private MarkerField field;
 
 	/**
@@ -30,7 +30,7 @@ public abstract class MarkerFieldFilter {
 	 * @return boolean <code>true</code> if the marker should be shown.
 	 */
 	public abstract boolean select(MarkerItem item);
-	
+
 	/**
 	 * Initialise the receiver with the values in the values Map.
 	 * @param values
@@ -39,7 +39,7 @@ public abstract class MarkerFieldFilter {
 	public void initialize(Map values){
 		//Do nothing by default
 	}
-	
+
 	/**
 	 * Populate the working copy with the copy of whatever fields are required.
 	 * @param copy
@@ -54,7 +54,7 @@ public abstract class MarkerFieldFilter {
 	 */
 	public final void setField(MarkerField markerField) {
 		field = markerField;
-		
+
 	}
 
 	/**

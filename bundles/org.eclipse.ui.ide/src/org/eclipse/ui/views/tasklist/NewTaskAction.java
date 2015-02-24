@@ -38,7 +38,7 @@ class NewTaskAction extends TaskAction {
 
     /**
      * Creates the action.
-     * 
+     *
      * @param tasklist the task list
      * @param id the id
      */
@@ -81,8 +81,8 @@ class NewTaskAction extends TaskAction {
                 }
             });
         } else {
-            MessageDialog.openInformation(getShell(), TaskListMessages.NewTask_notShownTitle, 
-                    TaskListMessages.NewTask_notShownMsg); 
+            MessageDialog.openInformation(getShell(), TaskListMessages.NewTask_notShownTitle,
+                    TaskListMessages.NewTask_notShownMsg);
         }
     }
 }

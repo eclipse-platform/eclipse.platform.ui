@@ -52,24 +52,24 @@ public class MarkerHelpAdapterFactory implements IAdapterFactory {
 				}
 
 				//TODO this needs to be migrated to the ide plug-in
-				if (contextId == null) 
+				if (contextId == null)
 					contextId = PlatformUI.PLUGIN_ID + ".problem_view_context";//$NON-NLS-1$
-				
+
 				return HelpSystem.getContext(contextId);
 			}
 
-			
+
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
 			 */
 			@Override
 			public String getSearchExpression(Object target) {
 				return null;
 			}
-		
+
 		};
 	}
 

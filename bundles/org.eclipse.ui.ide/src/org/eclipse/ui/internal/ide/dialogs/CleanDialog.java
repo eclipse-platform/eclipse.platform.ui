@@ -59,7 +59,7 @@ import org.eclipse.ui.progress.IProgressConstants2;
  * Dialog that asks the user to confirm a clean operation, and to configure
  * settings in relation to the clean. Clicking ok in the dialog will perform the
  * clean operation.
- * 
+ *
  * @since 3.0
  */
 public class CleanDialog extends MessageDialog {
@@ -84,7 +84,7 @@ public class CleanDialog extends MessageDialog {
     private static final String TOGGLE_SELECTED = "TOGGLE_SELECTED"; //$NON-NLS-1$
     private static final String BUILD_NOW = "BUILD_NOW"; //$NON-NLS-1$
     private static final String BUILD_ALL = "BUILD_ALL"; //$NON-NLS-1$
-    
+
     private Button allButton, selectedButton, buildNowButton, globalBuildButton, projectBuildButton;
 
     private CheckboxTableViewer projectNames;
@@ -108,7 +108,7 @@ public class CleanDialog extends MessageDialog {
 
     /**
      * Creates a new clean dialog.
-     * 
+     *
      * @param window the window to create it in
      * @param selection the currently selected projects (may be empty)
      */
@@ -211,7 +211,7 @@ public class CleanDialog extends MessageDialog {
 
         //second row
         createProjectSelectionTable(area);
-        
+
         //third row
         //only prompt for immediate build if autobuild is off
         if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
@@ -353,30 +353,30 @@ public class CleanDialog extends MessageDialog {
     protected void updateBuildRadioEnablement() {
         projectBuildButton.setSelection(!globalBuildButton.getSelection());
     }
-    
+
     @Override
 	public boolean close() {
         persistDialogSettings(getShell(), DIALOG_SETTINGS_SECTION);
         return super.close();
     }
-    
+
     @Override
 	protected Point getInitialLocation(Point initialSize) {
         Point p = getInitialLocation(DIALOG_SETTINGS_SECTION);
         return p != null ? p : super.getInitialLocation(initialSize);
     }
-    
+
     @Override
 	protected Point getInitialSize() {
         Point p = super.getInitialSize();
         return getInitialSize(DIALOG_SETTINGS_SECTION, p);
     }
-    
+
     /**
      * Returns the initial location which is persisted in the IDE Plugin dialog settings
      * under the provided dialog setttings section name.
      * If location is not persisted in the settings, the <code>null</code> is returned.
-     * 
+     *
      * @param dialogSettingsSectionName The name of the dialog settings section
      * @return The initial location or <code>null</code>
      */
@@ -390,7 +390,7 @@ public class CleanDialog extends MessageDialog {
         }
         return null;
     }
-    
+
     private IDialogSettings getDialogSettings(String dialogSettingsSectionName) {
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(dialogSettingsSectionName);
@@ -403,7 +403,7 @@ public class CleanDialog extends MessageDialog {
     /**
      * Persists the location and dimensions of the shell and other user settings in the
      * plugin's dialog settings under the provided dialog settings section name
-     * 
+     *
      * @param shell The shell whose geometry is to be stored
      * @param dialogSettingsSectionName The name of the dialog settings section
      */
@@ -429,7 +429,7 @@ public class CleanDialog extends MessageDialog {
      * Returns the initial size which is the larger of the <code>initialSize</code> or
      * the size persisted in the IDE UI Plugin dialog settings under the provided dialog setttings section name.
      * If no size is persisted in the settings, the <code>initialSize</code> is returned.
-     * 
+     *
      * @param initialSize The initialSize to compare against
      * @param dialogSettingsSectionName The name of the dialog settings section
      * @return the initial size
@@ -445,7 +445,7 @@ public class CleanDialog extends MessageDialog {
         }
         return initialSize;
     }
-    
+
     @Override
 	protected boolean isResizable() {
         return true;

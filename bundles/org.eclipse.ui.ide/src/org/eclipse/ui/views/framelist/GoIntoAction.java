@@ -14,13 +14,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.views.framelist.FrameListMessages;
 
 /**
- * Generic "Go Into" action which goes to the frame for the current selection. 
+ * Generic "Go Into" action which goes to the frame for the current selection.
  */
 public class GoIntoAction extends FrameAction {
 
     /**
      * Constructs a new action for the specified frame list.
-     * 
+     *
      * @param frameList the frame list
      */
     public GoIntoAction(FrameList frameList) {

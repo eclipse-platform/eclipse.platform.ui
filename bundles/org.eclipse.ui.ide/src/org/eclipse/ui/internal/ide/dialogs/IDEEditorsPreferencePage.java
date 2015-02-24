@@ -23,7 +23,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Extends the Editors preference page with IDE-specific settings.
- * 
+ *
  * Note: want IDE settings to appear in main Editors preference page (via
  * subclassing), however the superclass, EditorsPreferencePage, is internal
  */
@@ -32,7 +32,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
-        
+
 		PreferenceLinkArea fileEditorsArea = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink,//$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
@@ -43,17 +43,17 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
         PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(composite, SWT.NONE,
                 "org.eclipse.ui.preferencePages.ContentTypes", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink,//$NON-NLS-1$
                 (IWorkbenchPreferenceContainer) getContainer(),null);
-        
+
         data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         contentTypeArea.getControl().setLayoutData(data);
-        
+
 		PreferenceLinkArea appearanceArea = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.ui.preferencePages.Views", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink,//$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 
 		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		appearanceArea.getControl().setLayoutData(data);
-			
+
 		createEditorHistoryGroup(composite);
 
 		createSpace(composite);
@@ -65,10 +65,10 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
 		applyDialogFont(composite);
-		
+
         super.setHelpContext(parent);
-        
+
 		return composite;
 	}
-	
+
 }

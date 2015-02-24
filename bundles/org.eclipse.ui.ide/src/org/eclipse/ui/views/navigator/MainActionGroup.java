@@ -63,7 +63,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     protected PropertyDialogAction propertyDialogAction;
 
     protected ImportResourcesAction importAction;
-    
+
     protected ExportResourcesAction exportAction;
 
     protected CollapseAllAction collapseAllAction;
@@ -79,7 +79,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     protected WorkingSetFilterActionGroup workingSetGroup;
 
     protected SortAndFilterActionGroup sortAndFilterGroup;
-    
+
     protected UndoRedoActionGroup undoRedoGroup;
 
     protected WorkspaceActionGroup workspaceGroup;
@@ -90,7 +90,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 
     /**
      * Constructs the main action group.
-     * 
+     *
      * @param navigator the navigator view
      */
     public MainActionGroup(IResourceNavigator navigator) {
@@ -167,14 +167,14 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         importAction
                 .setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.png")); //$NON-NLS-1$
         importAction
-                .setImageDescriptor(getImageDescriptor("etool16/import_wiz.png")); //$NON-NLS-1$		
+                .setImageDescriptor(getImageDescriptor("etool16/import_wiz.png")); //$NON-NLS-1$
 
         exportAction = new ExportResourcesAction(navigator.getSite()
                 .getWorkbenchWindow());
         exportAction
                 .setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.png")); //$NON-NLS-1$
         exportAction
-                .setImageDescriptor(getImageDescriptor("etool16/export_wiz.png")); //$NON-NLS-1$		
+                .setImageDescriptor(getImageDescriptor("etool16/export_wiz.png")); //$NON-NLS-1$
 
         collapseAllAction = new CollapseAllAction(navigator,
                 ResourceNavigatorMessages.CollapseAllAction_title);
@@ -225,7 +225,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		undoRedoGroup= new UndoRedoActionGroup(getNavigator().getSite(), workspaceContext, true);
 
     }
-    
+
     /**
      * Extends the superclass implementation to set the context in the subgroups.
      */
@@ -243,7 +243,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     /**
      * Fills the context menu with the actions contained in this group
      * and its subgroups.
-     * 
+     *
      * @param menu the context menu
      */
     @Override
@@ -351,7 +351,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     }
 
     /**
-     * Extends the superclass implementation to dispose the 
+     * Extends the superclass implementation to dispose the
      * actions in this group and its subgroups.
      */
     @Override

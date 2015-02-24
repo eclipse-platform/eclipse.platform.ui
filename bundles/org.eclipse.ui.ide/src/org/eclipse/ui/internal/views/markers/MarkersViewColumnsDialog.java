@@ -26,11 +26,11 @@ import org.eclipse.ui.views.markers.MarkerField;
 
 /**
  * MarkersViewSettingDialog is the dialog for showing marker preferences.
- * 
- * 
+ *
+ *
  * @since 3.7
  * @author Hitesh Soliwal
- * 
+ *
  */
 public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
@@ -38,7 +38,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param view
 	 *            - the view this is being launched from
 	 */
@@ -50,7 +50,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
 	 * .Shell)
@@ -64,7 +64,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#getShellStyle()
 	 */
 	@Override
@@ -74,7 +74,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
 	 * .Composite)
@@ -87,7 +87,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
@@ -122,7 +122,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.preferences.ViewSettingsDialog#performDefaults()
 	 */
 	@Override
@@ -182,7 +182,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.views.markers.ViewerColumnsDialog#getLabelProvider
 	 * ()
@@ -199,7 +199,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.ViewerColumnsDialog#
 	 * getColumnInfoProvider()
 	 */
@@ -241,7 +241,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.views.markers.ViewerColumnsDialog#getColumnUpdater
 	 * ()

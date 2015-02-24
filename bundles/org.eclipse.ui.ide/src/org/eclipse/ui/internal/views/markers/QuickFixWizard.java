@@ -30,9 +30,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * QuickFixWizard is the wizard for quick fixes.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 class QuickFixWizard extends Wizard {
 
@@ -43,7 +43,7 @@ class QuickFixWizard extends Wizard {
 
 	/**
 	 * Create the wizard with the map of resolutions.
-	 * 
+	 *
 	 * @param description the description of the problem
 	 * @param selectedMarkers the markers that were selected
 	 * @param resolutions Map key {@link IMarkerResolution} value {@link IMarker} []
@@ -62,7 +62,7 @@ class QuickFixWizard extends Wizard {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	@Override
@@ -73,7 +73,7 @@ class QuickFixWizard extends Wizard {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	@Override
@@ -81,7 +81,7 @@ class QuickFixWizard extends Wizard {
 		IRunnableWithProgress finishRunnable = new IRunnableWithProgress() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			@Override

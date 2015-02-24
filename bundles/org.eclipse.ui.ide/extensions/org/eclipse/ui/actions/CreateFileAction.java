@@ -29,7 +29,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -45,12 +45,12 @@ public class CreateFileAction extends SelectionListenerAction {
      * The shell in which to show any dialogs.
      */
     protected IShellProvider shellProvider;
-   
+
     /**
      * Creates a new action for creating a file resource.
      *
      * @param shell the shell for any dialogs
-     * 
+     *
      * @deprecated {@link #CreateFileAction(IShellProvider)}
      */
     @Deprecated
@@ -68,9 +68,9 @@ public class CreateFileAction extends SelectionListenerAction {
 
     /**
      * Creates a new action for creating a file resource.
-     * 
+     *
      * @param provider the shell for any dialogs
-     * 
+     *
      * @deprecated see deprecated tag on class
      * @since 3.4
      */

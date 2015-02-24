@@ -31,7 +31,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -48,12 +48,12 @@ public class CreateFolderAction extends SelectionListenerAction {
      * The shell in which to show any dialogs.
      */
     protected IShellProvider shellProvider;
-    
+
     /**
      * Creates a new action for creating a folder resource.
      *
      * @param shell the shell for any dialogs
-     * 
+     *
      * @deprecated {@link #CreateFolderAction(IShellProvider)}
      */
     @Deprecated
@@ -71,9 +71,9 @@ public class CreateFolderAction extends SelectionListenerAction {
 
     /**
      * Creates a new action for creating a folder resource.
-     * 
+     *
      * @param provider the shell for any dialogs
-     * 
+     *
      * @deprecated see deprecated tag on class
      * @since 3.4
      */
@@ -84,7 +84,7 @@ public class CreateFolderAction extends SelectionListenerAction {
     	shellProvider = provider;
     	initAction();
     }
-    
+
     /**
      * Initializes for the constructor.
      */
@@ -96,7 +96,7 @@ public class CreateFolderAction extends SelectionListenerAction {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.CREATE_FOLDER_ACTION);
     }
-    
+
     /**
      * The <code>CreateFolderAction</code> implementation of this
      * <code>IAction</code> method opens a <code>BasicNewFolderResourceWizard</code>

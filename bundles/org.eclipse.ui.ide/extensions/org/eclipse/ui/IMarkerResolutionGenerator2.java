@@ -13,11 +13,11 @@ package org.eclipse.ui;
 
 import org.eclipse.core.resources.IMarker;
 
-/** 
- * A marker resolution generator should implement this interface rather than   
- * <code>IMarkerResolutionGenerator</code> if it can determine whether a particular marker 
+/**
+ * A marker resolution generator should implement this interface rather than
+ * <code>IMarkerResolutionGenerator</code> if it can determine whether a particular marker
  * has any resolutions more efficiently than computing all the resolutions.
- * 
+ *
  * @since 2.1
  */
 public interface IMarkerResolutionGenerator2 extends IMarkerResolutionGenerator {

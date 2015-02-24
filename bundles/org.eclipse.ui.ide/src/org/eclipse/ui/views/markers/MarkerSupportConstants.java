@@ -13,23 +13,23 @@ package org.eclipse.ui.views.markers;
 
 /**
  * MarkerSupportConstants is a static class that supplies commonly used constants.
- * 
+ *
  * @since 3.4
  *
  */
 public class MarkerSupportConstants {
-	
+
 	/**
-	 * The constant used to specify the contains value on 
+	 * The constant used to specify the contains value on
 	 * a {@link FiltersContributionParameters}
 	 */
 	public static final String CONTAINS_KEY = "CONTAINS"; //$NON-NLS-1$
-	
+
 	/**
-	 * The constant used to specify the does not contain value on 
+	 * The constant used to specify the does not contain value on
 	 * a {@link FiltersContributionParameters}
 	 */
 	public static String DOES_NOT_CONTAIN_KEY = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
-	
+
 
 }

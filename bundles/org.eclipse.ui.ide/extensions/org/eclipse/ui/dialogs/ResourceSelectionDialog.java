@@ -166,7 +166,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
     }
 
     /**
-     * Returns a content provider for <code>IResource</code>s that returns 
+     * Returns a content provider for <code>IResource</code>s that returns
      * only children of the given resource type.
      */
     private ITreeContentProvider getResourceProvider(final int resourceType) {
@@ -195,7 +195,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
                 //input element case
                 if (o instanceof ArrayList) {
                     return ((ArrayList) o).toArray();
-                } 
+                }
                 return new Object[0];
             }
         };
@@ -221,8 +221,8 @@ public class ResourceSelectionDialog extends SelectionDialog {
     }
 
     /**
-     * The <code>ResourceSelectionDialog</code> implementation of this 
-     * <code>Dialog</code> method builds a list of the selected resources for later 
+     * The <code>ResourceSelectionDialog</code> implementation of this
+     * <code>Dialog</code> method builds a list of the selected resources for later
      * retrieval by the client and closes this dialog.
      */
     @Override

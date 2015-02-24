@@ -27,9 +27,9 @@ import org.eclipse.ui.preferences.ViewSettingsDialog;
 /**
  * The MarkerViewPreferenceDialog is the dialog that is used for preference
  * settings in a markers view.
- * 
+ *
  * @since 3.1
- * 
+ *
  */
 public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
@@ -47,7 +47,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param parentShell
 	 * @param enablementPreference
 	 *            The key for the enablement preference.
@@ -67,7 +67,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -137,7 +137,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
 	/**
 	 * Enable the limitEditor based on checked.
-	 * 
+	 *
 	 * @param control
 	 *            The parent of the editor
 	 * @param checked
@@ -148,7 +148,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
@@ -162,7 +162,7 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.preferences.ViewSettingsDialog#performDefaults()
 	 */
 	@Override

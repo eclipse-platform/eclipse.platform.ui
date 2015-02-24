@@ -17,9 +17,9 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * The MarkerTreeContentProvider is the content provider for the marker trees.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class MarkerTreeContentProvider implements ITreeContentProvider {
 
@@ -37,7 +37,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	@Override
@@ -50,7 +50,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	@Override
@@ -63,7 +63,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	@Override
@@ -76,7 +76,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	@Override
@@ -86,7 +86,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	@Override
@@ -96,7 +96,7 @@ public class MarkerTreeContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */

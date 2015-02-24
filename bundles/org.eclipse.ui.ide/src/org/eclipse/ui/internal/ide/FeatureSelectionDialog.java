@@ -70,7 +70,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
      * <p>
      * There must be at least one feature.
      * </p>
-     * 
+     *
      * @param shell  the parent shell
      * @param features  the features to display
      * @param primaryFeatureId  the id of the primary feature or null if none
@@ -121,7 +121,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
             }
         }
 
-        // set a safe default		
+        // set a safe default
         setInitialSelections(new Object[0]);
     }
 
@@ -138,7 +138,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
 
         // Create label
         createMessageArea(composite);
-        // Create list viewer	
+        // Create list viewer
         listViewer = new ListViewer(composite, SWT.SINGLE | SWT.H_SCROLL
                 | SWT.V_SCROLL | SWT.BORDER);
         GridData data = new GridData(GridData.FILL_BOTH);
@@ -146,7 +146,7 @@ public class FeatureSelectionDialog extends SelectionDialog {
         data.widthHint = convertWidthInCharsToPixels(LIST_WIDTH);
         listViewer.getList().setLayoutData(data);
         listViewer.getList().setFont(parent.getFont());
-        // Set the label provider		
+        // Set the label provider
         listViewer.setLabelProvider(new LabelProvider() {
             @Override
 			public String getText(Object element) {

@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
- * Standard action for opening an editor on the currently selected file 
+ * Standard action for opening an editor on the currently selected file
  * resource(s).
  * <p>
  * Note that there is a different action for opening closed projects:
@@ -47,7 +47,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
     private IEditorDescriptor editorDescriptor;
 
     /**
-     * Creates a new action that will open editors on the then-selected file 
+     * Creates a new action that will open editors on the then-selected file
      * resources. Equivalent to <code>OpenFileAction(page,null)</code>.
      *
      * @param page the workbench page in which to open the editor
@@ -57,7 +57,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
     }
 
     /**
-     * Creates a new action that will open instances of the specified editor on 
+     * Creates a new action that will open instances of the specified editor on
      * the then-selected file resources.
      *
      * @param page the workbench page in which to open the editor

@@ -86,7 +86,7 @@ public class FieldLineNumber extends AbstractField {
 	    		if(concreteNode.getLocationString().length() == 0){
 	    			if (concreteNode.getLine() < 0) {
 						return MarkerMessages.Unknown;
-					}	    	   
+					}
 	    	        return NLS.bind(
 	    	        		MarkerMessages.label_lineNumber,
 	    	        		Integer.toString(concreteNode.getLine()));
@@ -95,17 +95,17 @@ public class FieldLineNumber extends AbstractField {
 	    	}
 	    	return Util.EMPTY_STRING;
 		}
-		
+
 		if(obj instanceof IWorkbenchAdapter) {
 			return Util.EMPTY_STRING;//Don't show pending
 		}
-		
+
 		if(obj instanceof IMarker) {
 			return Util.getProperty(IMarker.LINE_NUMBER, (IMarker) obj);
-		} 
-		
+		}
+
 		return NLS.bind(MarkerMessages.FieldMessage_WrongType,obj.toString());
-        
+
     }
 
     /*
@@ -130,14 +130,14 @@ public class FieldLineNumber extends AbstractField {
 
         ConcreteMarker marker1 = (ConcreteMarker) obj1;
         ConcreteMarker marker2 = (ConcreteMarker) obj2;
-        
+
         String location1 = marker1.getLocationString();
         String location2 = marker2.getLocationString();
-        
+
         if(location1.length() == 0 || location2.length() == 0) {
 			return marker1.getLine() - marker2.getLine();
 		}
-        
+
         return location1.compareTo(location2);
     }
 
@@ -148,7 +148,7 @@ public class FieldLineNumber extends AbstractField {
 	public int getDefaultDirection() {
 		return TableComparator.ASCENDING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
 	 */

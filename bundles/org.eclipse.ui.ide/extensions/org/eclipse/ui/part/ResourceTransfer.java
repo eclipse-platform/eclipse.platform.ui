@@ -27,25 +27,25 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * The <code>ResourceTransfer</code> class is used to transfer an
- * array of <code>IResource</code>s from one part to another in a 
+ * array of <code>IResource</code>s from one part to another in a
  * drag and drop operation or a cut, copy, paste action.
  * <p>
- * In every drag and drop operation there is a <code>DragSource</code> and 
- * a <code>DropTarget</code>.  When a drag occurs a <code>Transfer</code> is 
- * used to marshal the drag data from the source into a byte array.  If a drop 
+ * In every drag and drop operation there is a <code>DragSource</code> and
+ * a <code>DropTarget</code>.  When a drag occurs a <code>Transfer</code> is
+ * used to marshal the drag data from the source into a byte array.  If a drop
  * occurs another <code>Transfer</code> is used to marshal the byte array into
- * drop data for the target.  
+ * drop data for the target.
  * </p>
  * <p>
- * When a <code>CutAction</code> or a <code>CopyAction</code> is performed, 
- * this transfer is used to place references to the selected resources 
- * on the <code>Clipboard</code>.  When a <code>PasteAction</code> is performed, the 
+ * When a <code>CutAction</code> or a <code>CopyAction</code> is performed,
+ * this transfer is used to place references to the selected resources
+ * on the <code>Clipboard</code>.  When a <code>PasteAction</code> is performed, the
  * references on the clipboard are used to move or copy the resources
  * to the selected destination.
  * </p>
  * <p>
  * This class can be used for a <code>Viewer<code> or an SWT component directly.
- * A singleton is provided which may be serially reused (see <code>getInstance</code>).  
+ * A singleton is provided which may be serially reused (see <code>getInstance</code>).
  * It is not intended to be subclassed.
  * </p>
  * <p>

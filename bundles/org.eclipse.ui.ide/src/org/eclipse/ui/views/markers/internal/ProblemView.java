@@ -52,7 +52,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * The ProblemView is the view that displays problem markers.
- * 
+ *
  */
 public class ProblemView extends MarkerView {
 
@@ -92,7 +92,7 @@ public class ProblemView extends MarkerView {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
+		 *
 		 * @param label
 		 * @param field
 		 * @param view
@@ -113,7 +113,7 @@ public class ProblemView extends MarkerView {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		@Override
@@ -124,7 +124,7 @@ public class ProblemView extends MarkerView {
 						MarkerMessages.ProblemView_UpdateCategoryJob) {
 					/*
 					 * (non-Javadoc)
-					 * 
+					 *
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					@Override
@@ -167,7 +167,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#dispose()
 	 */
 	@Override
@@ -186,7 +186,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	@Override
@@ -200,7 +200,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getDialogSettings()
 	 */
 	@Override
@@ -219,7 +219,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#createActions()
 	 */
 	@Override
@@ -231,7 +231,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#registerGlobalActions(org.eclipse.ui.IActionBars)
 	 */
 	@Override
@@ -251,7 +251,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#fillContextMenuAdditions(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
@@ -267,7 +267,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getAllFields()
 	 */
 	@Override
@@ -314,7 +314,7 @@ public class ProblemView extends MarkerView {
 	 * severity type) for the markers contained in the selection passed in. This
 	 * information is then massaged into a string which may be displayed by the
 	 * caller.
-	 * 
+	 *
 	 * @param selection
 	 *            a valid selection or <code>null</code>
 	 * @return a message ready for display
@@ -337,7 +337,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
 	 */
 	@Override
@@ -352,7 +352,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFiltersDialog()
 	 */
 	@Override
@@ -366,7 +366,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createFilter(java.lang.String)
 	 */
 	@Override
@@ -376,7 +376,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getSectionTag()
 	 */
 	@Override
@@ -386,7 +386,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerEnablementPreferenceName()
 	 */
 	@Override
@@ -396,7 +396,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerLimitPreferenceName()
 	 */
 	@Override
@@ -406,7 +406,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFiltersPreferenceName()
 	 */
 	@Override
@@ -416,7 +416,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getAllFilters()
 	 */
 	@Override
@@ -441,7 +441,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#addDropDownContributions(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
@@ -484,7 +484,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#setSorter(org.eclipse.ui.views.markers.internal.TableSorter)
 	 */
 	@Override
@@ -497,7 +497,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getTableSorter()
 	 */
 	@Override
@@ -507,7 +507,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -525,7 +525,7 @@ public class ProblemView extends MarkerView {
 		activityManagerListener = new IActivityManagerListener() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
 			 */
 			@Override
@@ -540,7 +540,7 @@ public class ProblemView extends MarkerView {
 
 	/**
 	 * Return the field whose description matches description.
-	 * 
+	 *
 	 * @param description
 	 * @return IField
 	 */
@@ -556,7 +556,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.TableView#buildComparator()
 	 */
 	@Override
@@ -570,7 +570,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#canBeEditable()
 	 */
 	@Override
@@ -580,7 +580,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#initToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	@Override
@@ -591,7 +591,7 @@ public class ProblemView extends MarkerView {
 
 	/**
 	 * Select the category for the receiver.
-	 * 
+	 *
 	 * @param description
 	 * @param sorter -
 	 *            the sorter to select for
@@ -616,7 +616,7 @@ public class ProblemView extends MarkerView {
 
 	/**
 	 * Select the field groupingField.
-	 * 
+	 *
 	 * @param groupingField
 	 * @param sorter
 	 */
@@ -632,7 +632,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#writeFiltersSettings(org.eclipse.ui.XMLMemento)
 	 */
 	@Override
@@ -655,7 +655,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#restoreFilters(org.eclipse.ui.IMemento)
 	 */
 	@Override
@@ -689,7 +689,7 @@ public class ProblemView extends MarkerView {
 
 	/**
 	 * Set the enablement state of the filter called filterName to enabled.
-	 * 
+	 *
 	 * @param filterName
 	 * @param enabled
 	 * @param filters
@@ -707,7 +707,7 @@ public class ProblemView extends MarkerView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerName()
 	 */
 	@Override

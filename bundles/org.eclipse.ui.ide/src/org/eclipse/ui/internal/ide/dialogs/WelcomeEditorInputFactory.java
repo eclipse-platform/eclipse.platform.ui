@@ -27,8 +27,8 @@ public class WelcomeEditorInputFactory implements IElementFactory {
     }
 
     /**
-     * Re-creates and returns an object from the state captured within the given 
-     * memento. 
+     * Re-creates and returns an object from the state captured within the given
+     * memento.
      * <p>
      * Under normal circumstances, the resulting object can be expected to be
      * persistable; that is,

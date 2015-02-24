@@ -19,14 +19,14 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The abstract base class for all UI file system contributors. This class
  * provides the infrastructure for defining a contributor and fulfills the contract
- * specified by the <code>org.eclipse.ui.ide.filesystemSupport</code> 
+ * specified by the <code>org.eclipse.ui.ide.filesystemSupport</code>
  * extension point.
- * 
+ *
  * @since 3.2
  * @see org.eclipse.core.filesystem.IFileSystem
  */
 public abstract class FileSystemContributor {
-	
+
 	/**
 	 * Browse the file system for a URI to display to the user.
 	 * @param initialPath The path to initialize the selection with.
@@ -35,11 +35,11 @@ public abstract class FileSystemContributor {
 	 * <code>null</code> if a URI could not be determined.
 	 */
 	public abstract URI browseFileSystem(String initialPath, Shell shell);
-	
+
 	/**
 	 * Return a URI for the supplied String from the user.
 	 * @param string
-	 * @return URI or <code>null</code> if the string is 
+	 * @return URI or <code>null</code> if the string is
 	 * invalid.
 	 */
 	public URI getURI(String string){

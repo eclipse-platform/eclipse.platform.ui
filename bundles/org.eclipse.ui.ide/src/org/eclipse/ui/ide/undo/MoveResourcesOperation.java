@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * <p>
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- * 
+ *
  */
 public class MoveResourcesOperation extends
 		AbstractCopyOrMoveResourcesOperation {
@@ -56,7 +56,7 @@ public class MoveResourcesOperation extends
 	/**
 	 * Create a MoveResourcesOperation that moves all of the specified resources
 	 * to the same target location, using their existing names.
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to be moved
 	 * @param destinationPath
@@ -77,7 +77,7 @@ public class MoveResourcesOperation extends
 	 * Create a MoveResourcesOperation that moves a single resource to a new
 	 * location. The new location includes the name of the resource, so this may
 	 * be used for a move/rename operation or a simple move.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to be moved
 	 * @param newPath
@@ -105,7 +105,7 @@ public class MoveResourcesOperation extends
 	/**
 	 * Move any known resources according to the destination parameters known by
 	 * this operation. Store enough information to undo and redo the operation.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use for the operation
 	 * @param uiInfo

@@ -19,14 +19,14 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
 /**
  * ProblemsSeverityAndDescriptionFieldFilter is the filter used by the problems
  * view.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class ProblemsSeverityAndDescriptionFieldFilter extends
 		SeverityAndDescriptionFieldFilter {
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#select(org.eclipse.ui.views.markers.MarkerItem)
 	 */
@@ -60,11 +60,11 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 			selectedSeverities = severitySetting.intValue();
 		}
 
-	
+
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
 	 */
 	@Override

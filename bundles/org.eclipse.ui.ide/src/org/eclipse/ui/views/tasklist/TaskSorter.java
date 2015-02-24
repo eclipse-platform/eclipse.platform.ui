@@ -250,7 +250,7 @@ class TaskSorter extends ViewerComparator {
 
     /**
      * Compares the line number and location of the two markers.
-     * If line number is specified for both, this sorts first by line number (numerically), 
+     * If line number is specified for both, this sorts first by line number (numerically),
      * then by start offset (numerically), then by location (textually).
      * If line number is not specified for either, this sorts by location.
      * Otherwise, if only one has a line number, this sorts by the combined text for line number and location.

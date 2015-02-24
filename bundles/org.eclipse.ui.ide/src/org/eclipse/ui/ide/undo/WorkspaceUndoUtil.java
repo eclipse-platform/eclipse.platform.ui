@@ -53,7 +53,7 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
 /**
  * WorkspaceUndoUtil defines common utility methods and constants used by
  * clients who create undoable workspace operations.
- * 
+ *
  * @since 3.3
  */
 public class WorkspaceUndoUtil {
@@ -65,7 +65,7 @@ public class WorkspaceUndoUtil {
 
 	/**
 	 * Return the undo context that should be used for workspace-wide operations
-	 * 
+	 *
 	 * @return the undo context suitable for workspace-level operations.
 	 */
 	public static IUndoContext getWorkspaceUndoContext() {
@@ -76,7 +76,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Return the undo context that should be used for operations involving
 	 * tasks.
-	 * 
+	 *
 	 * @return the tasks undo context
 	 */
 	public static IUndoContext getTasksUndoContext() {
@@ -91,7 +91,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Return the undo context that should be used for operations involving
 	 * bookmarks.
-	 * 
+	 *
 	 * @return the bookmarks undo context
 	 */
 	public static IUndoContext getBookmarksUndoContext() {
@@ -106,7 +106,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Return the undo context that should be used for operations involving
 	 * problems.
-	 * 
+	 *
 	 * @return the problems undo context
 	 * @since 3.7
 	 */
@@ -126,12 +126,12 @@ public class WorkspaceUndoUtil {
 	 * {@link org.eclipse.core.commands.operations.IOperationHistory} method
 	 * that requires an {@link org.eclipse.core.runtime.IAdaptable}
 	 * <code>uiInfo</code> parameter.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell that should be returned by the IAdaptable when asked
 	 *            to adapt a shell. If this parameter is <code>null</code>,
 	 *            the returned shell will also be <code>null</code>.
-	 * 
+	 *
 	 * @return an IAdaptable that will return the specified shell.
 	 */
 	public static IAdaptable getUIInfoAdapter(final Shell shell) {
@@ -153,7 +153,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Delete all of the specified resources, returning resource descriptions
 	 * that can be used to restore them.
-	 * 
+	 *
 	 * @param resourcesToDelete
 	 *            an array of resources to be deleted
 	 * @param monitor
@@ -164,7 +164,7 @@ public class WorkspaceUndoUtil {
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it contains an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class
-	 * 
+	 *
 	 * @param deleteContent
 	 *            a boolean indicating whether project content should be deleted
 	 *            when a project resource is to be deleted
@@ -237,7 +237,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Copies the resources to the given destination. This method can be called
 	 * recursively to merge folders during folder copy.
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to be copied
 	 * @param destination
@@ -533,7 +533,7 @@ public class WorkspaceUndoUtil {
 	 * is "VAR" and points to "C:\foo\bar\").
 	 *
 	 * @param locationURI
-	 * @param resource 
+	 * @param resource
 	 * @return an URI that was made relative to a variable
 	 */
 	static private URI createRelativePath(URI locationURI, String relativeVariable, IResource resource) {
@@ -552,7 +552,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Moves the resources to the given destination. This method can be called
 	 * recursively to merge folders during folder move.
-	 * 
+	 *
 	 * @param resources
 	 *            the resources to be moved
 	 * @param destination
@@ -717,7 +717,7 @@ public class WorkspaceUndoUtil {
 
 	/**
 	 * Recreate the resources from the specified resource descriptions.
-	 * 
+	 *
 	 * @param resourcesToRecreate
 	 *            the ResourceDescriptions describing resources to be recreated
 	 * @param monitor
@@ -764,7 +764,7 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Delete the specified resources, returning a resource description that can
 	 * be used to restore it.
-	 * 
+	 *
 	 * @param resourceToDelete
 	 *            the resource to be deleted
 	 * @param monitor
@@ -901,7 +901,7 @@ public class WorkspaceUndoUtil {
 	/*
 	 * Ask the user whether the given resource should be deleted despite being
 	 * out of sync with the file system.
-	 * 
+	 *
 	 * Return one of the IDialogConstants constants indicating which of the Yes,
 	 * Yes to All, No, Cancel options has been selected by the user.
 	 */
@@ -1017,14 +1017,14 @@ public class WorkspaceUndoUtil {
 	/**
 	 * Return the shell described by the specified adaptable, or the active
 	 * shell if no shell has been specified in the adaptable.
-	 * 
+	 *
 	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it contains an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class
-	 * 
+	 *
 	 * @return the Shell that can be used to show information
 	 */
 	public static Shell getShell(IAdaptable uiInfo) {

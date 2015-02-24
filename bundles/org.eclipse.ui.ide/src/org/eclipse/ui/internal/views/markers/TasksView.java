@@ -31,9 +31,9 @@ public class TasksView extends MarkerSupportView {
 	 */
 	public TasksView() {
 		super(MarkerSupportRegistry.TASKS_GENERATOR);
-		
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()

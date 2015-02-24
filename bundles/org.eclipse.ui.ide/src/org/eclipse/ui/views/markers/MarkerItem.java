@@ -16,17 +16,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
- * The MarkerItem class is the class that represents the objects displayed a 
+ * The MarkerItem class is the class that represents the objects displayed a
  * {@link MarkerSupportView}. This class is not intended to be sub-classed by clients,
  * @since 3.4
- * 
+ *
  */
 public abstract class MarkerItem {
 
 	/**
 	 * Return the boolean associated with attributeName or defaultValue if it is
 	 * not found.
-	 * 
+	 *
 	 * @param attribute
 	 * @param defaultValue
 	 * @return <code>boolean</code>
@@ -39,7 +39,7 @@ public abstract class MarkerItem {
 
 	/**
 	 * Get the value of the attribute in the enclosed marker.
-	 * 
+	 *
 	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
@@ -53,7 +53,7 @@ public abstract class MarkerItem {
 
 	/**
 	 * Get the String value of the attribute in the enclosed marker.
-	 * 
+	 *
 	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
@@ -69,7 +69,7 @@ public abstract class MarkerItem {
 	 * convenience purposes as the location can be inferred from a line number
 	 * or location attribute if the {@link MarkerItem} has an associated
 	 * {@link IMarker}.
-	 * 
+	 *
 	 * @return String
 	 * @see IMarker#LOCATION
 	 * @see IMarker#LINE_NUMBER
@@ -83,7 +83,7 @@ public abstract class MarkerItem {
 	 * convenience as a path can be inferred from the location of an
 	 * {@link IResource} or the path attribute if the {@link MarkerItem} has an
 	 * associated {@link IMarker}.
-	 * 
+	 *
 	 * @return String
 	 * @see MarkerViewUtil#PATH_ATTRIBUTE
 	 * @see IResource#getLocation()
@@ -95,7 +95,7 @@ public abstract class MarkerItem {
 
 	/**
 	 * Return the marker for the receiver.
-	 * 
+	 *
 	 * @return IMarker
 	 */
 	public IMarker getMarker() {

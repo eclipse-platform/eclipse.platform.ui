@@ -22,7 +22,7 @@ public class ForwardAction extends FrameAction {
 
     /**
      * Constructs a new action for the specified frame list.
-     * 
+     *
      * @param frameList the frame list
      */
     public ForwardAction(FrameList frameList) {

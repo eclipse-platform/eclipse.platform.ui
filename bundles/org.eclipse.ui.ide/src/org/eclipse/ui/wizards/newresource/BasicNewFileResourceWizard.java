@@ -53,7 +53,7 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
 	 * @since 3.4
 	 */
 	public static final String WIZARD_ID = "org.eclipse.ui.wizards.new.file"; //$NON-NLS-1$
-	
+
     private WizardNewFileCreationPage mainPage;
 
     /**
@@ -71,7 +71,7 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
         super.addPages();
         mainPage = new WizardNewFileCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
         mainPage.setTitle(ResourceMessages.FileResource_pageTitle);
-        mainPage.setDescription(ResourceMessages.FileResource_description); 
+        mainPage.setDescription(ResourceMessages.FileResource_description);
         addPage(mainPage);
     }
 
@@ -116,7 +116,7 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
                 }
             }
         } catch (PartInitException e) {
-            DialogUtil.openError(dw.getShell(), ResourceMessages.FileResource_errorMessage, 
+            DialogUtil.openError(dw.getShell(), ResourceMessages.FileResource_errorMessage,
                     e.getMessage(), e);
         }
 

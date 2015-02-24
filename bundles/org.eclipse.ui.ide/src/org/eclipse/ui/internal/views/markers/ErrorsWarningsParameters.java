@@ -19,9 +19,9 @@ import org.eclipse.ui.views.markers.FiltersContributionParameters;
 
 /**
  * ErrorsWarningsParameters is the parameters for errors and warnings.
- * 
+ *
  * @since 3.5
- * 
+ *
  */
 public class ErrorsWarningsParameters extends FiltersContributionParameters {
 
@@ -41,7 +41,7 @@ public class ErrorsWarningsParameters extends FiltersContributionParameters {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.provisional.views.markers.FiltersContributionParameters#getParameterValues()
 	 */
 	@Override

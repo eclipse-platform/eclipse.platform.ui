@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * Subclasses may extend, but must call <code>createEncodingGroup</code>
  * during <code>doFillIntoGrid</code>.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.ide.IDEEncoding
  * @since 3.1
  */
@@ -74,7 +74,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	/**
 	 * Creates a new encoding field editor with the given preference name, label
 	 * and parent.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the preference this field editor works on
 	 * @param labelText
@@ -90,7 +90,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	/**
 	 * Creates a new encoding field editor with the given preference name, label
 	 * and parent.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the preference this field editor works on
 	 * @param labelText
@@ -133,7 +133,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns the value that is currently stored for the encoding.
-	 * 
+	 *
 	 * @return the currently stored encoding
 	 */
 	protected abstract String getStoredValue();
@@ -178,7 +178,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 * @param numColumns
@@ -256,12 +256,12 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			otherEncodingButton.setEnabled(enabled);
 		if (encodingCombo != null)
 			encodingCombo.setEnabled(enabled && otherEncodingButton.getSelection());
-		
+
 	}
 
 	/**
 	 * Returns the default encoding for the object being shown.
-	 * 
+	 *
 	 * @return the default encoding for the object being shown
 	 */
 	protected String findDefaultEncoding() {
@@ -270,7 +270,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns the text for the default encoding button.
-	 * 
+	 *
 	 * @return the text for the default encoding button
 	 */
 	protected String defaultButtonText() {
@@ -283,7 +283,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * Populates the encodings combo. Sets the text based on the selected
 	 * encoding. If there is no selected encoding, the text is set to the
 	 * default encoding.
-	 * 
+	 *
 	 * @param encodings
 	 *            the list of encodings (list of String)
 	 * @param selectedEncoding
@@ -332,7 +332,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns the currently selected encoding.
-	 * 
+	 *
 	 * @return the currently selected encoding
 	 */
 	protected String getSelectedEncoding() {
@@ -349,7 +349,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns whether or not the given encoding is valid.
-	 * 
+	 *
 	 * @param enc
 	 *            the encoding to validate
 	 * @return <code>true</code> if the encoding is valid, <code>false</code>
@@ -367,7 +367,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns the default encoding.
-	 * 
+	 *
 	 * @return the default encoding
 	 */
 	protected String getDefaultEnc() {
@@ -376,7 +376,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns whether or not the encoding setting changed.
-	 * 
+	 *
 	 * @param encodingSetting
 	 *            the setting from the page.
 	 * @return boolean <code>true</code> if the resource encoding is the same
@@ -395,7 +395,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	/**
 	 * Return whether or not the default has been selected.
-	 * 
+	 *
 	 * @return <code>true</code> if the default button has been selected.
 	 */
 	boolean isDefaultSelected() {
@@ -406,10 +406,10 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * Set the title of the group to groupTitle. If this is not called a default
 	 * title is used. If groupTitle is <code>null</code> the control will be
 	 * unlabelled (by default a {@link Composite} instead of a {@link Group}.
-	 * 
+	 *
 	 * <strong>NOTE</strong> this value must be set before
 	 * {@link #createControl(Composite)} is called or it will be ignored.
-	 * 
+	 *
 	 * @param groupTitle
 	 *            The groupTitle to set.
      * @since 3.3

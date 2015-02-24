@@ -44,7 +44,7 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
 
     /**
      * Create a new instance of this class.
-     * 
+     *
      * @param page the page
      * @param viewer the viewer
      */

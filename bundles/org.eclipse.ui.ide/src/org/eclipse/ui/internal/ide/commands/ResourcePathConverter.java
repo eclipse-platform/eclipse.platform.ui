@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * A command parameter value converter to convert between IResources and strings
  * encoding the path of a resource.
- * 
+ *
  * @since 3.2
  */
 public final class ResourcePathConverter extends

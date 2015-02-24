@@ -112,17 +112,17 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 	/**
 	 * Process the resource delta.
-	 * 
+	 *
 	 * @param delta
 	 */
-	protected void processDelta(IResourceDelta delta) {		
+	protected void processDelta(IResourceDelta delta) {
 
 		Control ctrl = viewer.getControl();
 		if (ctrl == null || ctrl.isDisposed()) {
 			return;
 		}
-		
-		
+
+
 		final Collection runnables = new ArrayList();
 		processDelta(delta, runnables);
 
@@ -145,7 +145,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 					if (ctrl == null || ctrl.isDisposed()) {
 						return;
 					}
-					
+
 					runUpdates(runnables);
 				}
 			});
@@ -162,7 +162,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		while(runnableIterator.hasNext()){
 			((Runnable)runnableIterator.next()).run();
 		}
-		
+
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 		// Get the affected resource
 		final IResource resource = delta.getResource();
-	
+
 		// If any children have changed type, just do a full refresh of this
 		// parent,
 		// since a simple update on such children won't work,
@@ -281,7 +281,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		}
 		// heuristic test for items moving within same folder (i.e. renames)
 		final boolean hasRename = numMovedFrom > 0 && numMovedTo > 0;
-		
+
 		Runnable addAndRemove = new Runnable(){
 			@Override
 			public void run() {

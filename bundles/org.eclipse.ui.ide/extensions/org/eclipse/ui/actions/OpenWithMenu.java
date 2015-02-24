@@ -76,7 +76,7 @@ public class OpenWithMenu extends ContributionItem {
      * Match both the input and id, so that different types of editor can be opened on the same input.
      */
     private static final int MATCH_BOTH = IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID;
-    
+
     /*
      * Compares the labels from two IEditorDescriptor objects
      */
@@ -290,11 +290,11 @@ public class OpenWithMenu extends ContributionItem {
             createMenuItem(menu, descriptor, preferredEditor);
         }
 		createDefaultMenuItem(menu, file, preferredEditor == null);
-        
+
         // add Other... menu item
         createOtherMenuItem(menu);
     }
-	
+
 
     /**
      * Converts the IAdaptable file to IFile or null.
@@ -308,7 +308,7 @@ public class OpenWithMenu extends ContributionItem {
         if (resource instanceof IFile) {
             return (IFile) resource;
         }
-       
+
         return null;
     }
 
@@ -340,7 +340,7 @@ public class OpenWithMenu extends ContributionItem {
         	} else {
 	            String editorId = editorDescriptor == null ? IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID
 	                    : editorDescriptor.getId();
-	            
+
 	            page.openEditor(new FileEditorInput(file), editorId, true, MATCH_BOTH);
 	            // only remember the default editor if the open succeeds
 	            IDE.setDefaultEditor(file, editorId);
@@ -354,7 +354,7 @@ public class OpenWithMenu extends ContributionItem {
 
     /**
 	 * Creates the menu item for clearing the current selection.
-	 * 
+	 *
 	 * @param menu the menu to add the item to
 	 * @param file the file being edited
 	 * @param markAsSelected <code>true</code> if the item should marked as selected

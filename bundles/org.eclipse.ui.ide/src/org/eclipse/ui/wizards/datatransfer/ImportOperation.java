@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Red Hat, Inc - changed TarFileStructureProvider to TarLeveledStructureProvider 
+ *     Red Hat, Inc - changed TarFileStructureProvider to TarLeveledStructureProvider
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
@@ -88,7 +88,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
     private boolean createVirtualFolder = false;
 
     private boolean createLinks = false;
-    
+
     private boolean createLinkFilesOnly = false;
 
     private String relativeVariable = null;
@@ -110,7 +110,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Creates a new operation that recursively imports the entire contents of the
      * specified root file system object.
      * <p>
-     * The <code>source</code> parameter represents the root file system object to 
+     * The <code>source</code> parameter represents the root file system object to
      * import. All contents of this object are imported. Valid types for this parameter
      * are determined by the supplied <code>IImportStructureProvider</code>.
      * </p>
@@ -121,11 +121,11 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * </p>
      *  <p>
      * The default import behavior is to recreate the complete container structure
-     * for the contents of the root file system object in their destination. 
-     * If <code>setCreateContainerStructure</code> is set to false then the container 
+     * for the contents of the root file system object in their destination.
+     * If <code>setCreateContainerStructure</code> is set to false then the container
      * structure created is relative to the root file system object.
      * </p>
-     * 
+     *
      * @param containerPath the full path of the destination container within the
      *   workspace
      * @param source the root file system object to import
@@ -148,8 +148,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * operation solely to determine the destination container structure of the file system
      * objects being imported.
      * <p>
-     * The <code>source</code> parameter represents the root file system object to 
-     * import. Valid types for this parameter are determined by the supplied 
+     * The <code>source</code> parameter represents the root file system object to
+     * import. Valid types for this parameter are determined by the supplied
      * <code>IImportStructureProvider</code>. The contents of the source which
      * are to be imported are specified in the <code>filesToImport</code>
      * parameter.
@@ -166,7 +166,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * <p>
      * The default import behavior is to recreate the complete container structure
      * for the file system objects in their destination. If <code>setCreateContainerStructure</code>
-     * is set to <code>false</code>, then the container structure created for each of 
+     * is set to <code>false</code>, then the container structure created for each of
      * the file system objects is relative to the supplied root file system object.
      * </p>
      *
@@ -193,13 +193,13 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * and the provider in turn calls specific methods on the source object.
      * </p>
      * <p>
-     * The <code>filesToImport</code> parameter specifies what file system objects 
+     * The <code>filesToImport</code> parameter specifies what file system objects
      * are to be imported.
      * </p>
      * <p>
      * The default import behavior is to recreate the complete container structure
      * for the file system objects in their destination. If <code>setCreateContainerStructure</code>
-     * is set to <code>false</code>, then no container structure is created for each of 
+     * is set to <code>false</code>, then no container structure is created for each of
      * the file system objects.
      * </p>
      *
@@ -221,7 +221,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Prompts if existing resources should be overwritten. Recursively collects
      * existing read-only files to overwrite and resources that should not be
      * overwritten.
-     * 
+     *
      * @param sourceStart destination path to check for existing files
      * @param sources file system objects that may exist in the destination
      * @param noOverwrite files that were selected to be skipped (don't overwrite).
@@ -343,7 +343,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         int segmentCount = path.segmentCount();
 
-        //Assume the project exists 
+        //Assume the project exists
         IContainer currentFolder = ((IWorkspaceRoot) destinationContainer)
                 .getProject(path.segment(0));
 
@@ -439,15 +439,15 @@ public class ImportOperation extends WorkspaceModifyOperation {
         IPath relativePath = destContainerPath.removeFirstSegments(
                 sourcePath.segmentCount()).setDevice(null);
         return createContainersFor(relativePath);
-        
+
     }
 
     /**
-     * Returns the resource either casted to or adapted to an IFile. 
-     * 
+     * Returns the resource either casted to or adapted to an IFile.
+     *
      * @param resource resource to cast/adapt
      * @return the resource either casted to or adapted to an IFile.
-     * 	<code>null</code> if the resource does not adapt to IFile 
+     * 	<code>null</code> if the resource does not adapt to IFile
      */
     IFile getFile(IResource resource) {
         if (resource instanceof IFile) {
@@ -458,15 +458,15 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			return null;
 		}
         return (IFile) adapted;
-      
+
     }
 
     /**
-     * Returns the resource either casted to or adapted to an IFolder. 
-     * 
+     * Returns the resource either casted to or adapted to an IFolder.
+     *
      * @param resource resource to cast/adapt
      * @return the resource either casted to or adapted to an IFolder.
-     * 	<code>null</code> if the resource does not adapt to IFolder 
+     * 	<code>null</code> if the resource does not adapt to IFolder
      */
     IFolder getFolder(IResource resource) {
         if (resource instanceof IFolder) {
@@ -481,7 +481,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     /**
      * Returns the rejected files based on the given multi status.
-     *  
+     *
      * @param multiStatus multi status to use to determine file rejection
      * @param files source files
      * @return list of rejected files as absolute paths. Object type IPath.
@@ -620,7 +620,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param fileObject
      */
     private void setResourceAttributes(IFile targetResource, Object fileObject) {
-    	
+
     	long timeStamp = 0;
     	if(fileObject instanceof File) {
 			try {
@@ -641,7 +641,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			if(zipTimeStamp != -1)
 				timeStamp = zipTimeStamp;
         }
-		
+
     	if(timeStamp!= 0) {
     		try {
 				targetResource.setLocalTimeStamp(timeStamp);
@@ -658,7 +658,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      *
      * @param filesToImport the list of file system objects to import
      *   (element type: <code>Object</code>)
-	 * @throws CoreException 
+	 * @throws CoreException
      * @exception OperationCanceledException if canceled
      */
     void importFileSystemObjects(List filesToImport) throws CoreException {
@@ -692,7 +692,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param folderObject the file system container object to be imported
      * @param policy determines how the folder object and children are imported
      * @return the policy to use to import the folder's children
-     * @throws CoreException 
+     * @throws CoreException
      */
     int importFolder(Object folderObject, int policy) throws CoreException {
         IContainer containerResource;
@@ -754,9 +754,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Transform an absolute path URI to a relative path one (i.e. from
      * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
      * is "VAR" and points to "C:\foo\bar\").
-     * 
+     *
      * @param location
-     * @param resource 
+     * @param resource
      * @return an URI that was made relative to a variable
      */
     private IPath createRelativePath(IPath location, IResource resource) {
@@ -779,7 +779,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      *
      * @param fileSystemObject the file system object to be imported
      * @param policy determines how the file system object and children are imported
-	 * @throws CoreException 
+	 * @throws CoreException
      * @exception OperationCanceledException if canceled
      */
     void importRecursivelyFrom(Object fileSystemObject, int policy) throws CoreException {
@@ -805,7 +805,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
     /**
      * Queries the user whether the resource with the specified path should be
      * overwritten by a file system object that is being imported.
-     * 
+     *
      * @param resourcePath the workspace path of the resource that needs to be overwritten
      * @return <code>true</code> to overwrite, <code>false</code> to not overwrite
      * @exception OperationCanceledException if canceled
@@ -838,8 +838,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
     /**
      * Returns whether the given file should be overwritten.
      *
-     * @param targetFile the file to ask to overwrite 
-     * @param policy determines if the user is queried for overwrite 
+     * @param targetFile the file to ask to overwrite
+     * @param policy determines if the user is queried for overwrite
      * @return <code>true</code> if the file should be overwritten, and
      * 	<code>false</code> if not.
      */
@@ -860,7 +860,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
     /**
      * Sets the context for use by the VCM provider to prompt the user
      * for check-out of files.
-     * 
+     *
      * @param shell context for use by the VCM provider to prompt user
      * 	for check-out. The user will not be prompted if set to <code>null</code>.
      * @see IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
@@ -895,7 +895,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Sets whether imported file system objects should automatically overwrite
      * existing workbench resources when a conflict occurs.
      *
-     * @param value <code>true</code> to automatically overwrite, and 
+     * @param value <code>true</code> to automatically overwrite, and
      *   <code>false</code> otherwise
      */
     public void setOverwriteResources(boolean value) {
@@ -905,14 +905,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
     }
 
     /**
-     * Validates that the given source resources can be copied to the 
+     * Validates that the given source resources can be copied to the
      * destination as decided by the VCM provider.
-     * 
+     *
      * @param existingFiles existing files to validate
      * @return list of rejected files as absolute paths. Object type IPath.
      */
     ArrayList validateEdit(List existingFiles) {
-       
+
         if (existingFiles.size() > 0) {
             IFile[] files = (IFile[]) existingFiles
                     .toArray(new IFile[existingFiles.size()]);
@@ -923,7 +923,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             if (status.isMultiStatus()) {
 				return getRejectedFiles(status, files);
 			}
-            
+
            if(!status.isOK()){
            		//If just a single status reject them all
            		errorTable.add(status);
@@ -934,7 +934,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
            		}
            		return filteredFiles;
            }
-            
+
         }
         return new ArrayList();
     }
@@ -943,7 +943,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Validates the given file system objects.
      * The user is prompted to overwrite existing files.
      * Existing read-only files are validated with the VCM provider.
-     * 
+     *
      * @param sourceFiles files to validate
      */
     void validateFiles(List sourceFiles) {
@@ -958,7 +958,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     /**
      * Set Whether groups and links will be created instead of files and folders
-     * 
+     *
      * @param virtualFolders
      * @since 3.6
      */
@@ -968,7 +968,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     /**
      * Set Whether links will be created instead of files and folders
-     * 
+     *
      * @param links
      * @since 3.6
      */
@@ -978,7 +978,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     /**
      * Set a variable relative to which the links are created
-     * 
+     *
      * @param variable
      * @since 3.6
      */

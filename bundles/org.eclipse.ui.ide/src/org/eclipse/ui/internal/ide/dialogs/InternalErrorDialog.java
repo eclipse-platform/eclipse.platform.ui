@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93353 - 
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93353 -
  *     [Dialogs] InternalErrorDialog#buttonPressed should explicitly call super
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
@@ -39,7 +39,7 @@ public class InternalErrorDialog extends MessageDialog {
 
     private Text text;
 
-    //Workaround. SWT does not seem to set the default button if 
+    //Workaround. SWT does not seem to set the default button if
     //there is not control with focus. Bug: 14668
     private int defaultButtonIndex = 0;
 
@@ -50,7 +50,7 @@ public class InternalErrorDialog extends MessageDialog {
 
     /**
      * Create a new dialog.
-     * 
+     *
      * @param parentShell the parent shell
      * @param dialogTitle the  title
      * @param dialogTitleImage the title image
@@ -70,7 +70,7 @@ public class InternalErrorDialog extends MessageDialog {
         setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);
     }
 
-    //Workaround. SWT does not seem to set rigth the default button if 
+    //Workaround. SWT does not seem to set rigth the default button if
     //there is not control with focus. Bug: 14668
     @Override
 	public int open() {
@@ -153,13 +153,13 @@ public class InternalErrorDialog extends MessageDialog {
         text.setLayoutData(data);
     }
 
-    /** 
+    /**
      * Convenience method to open a simple Yes/No question dialog.
      *
      * @param parent the parent shell of the dialog, or <code>null</code> if none
      * @param title the dialog's title, or <code>null</code> if none
      * @param message the message
-     * @param detail the error 
+     * @param detail the error
      * @param defaultIndex the default index of the button to select
      * @return <code>true</code> if the user presses the OK button,
      *    <code>false</code> otherwise

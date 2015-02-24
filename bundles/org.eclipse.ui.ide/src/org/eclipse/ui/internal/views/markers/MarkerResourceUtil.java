@@ -36,10 +36,10 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
  * A Resource helper class for the markers view code.
- * 
+ *
  * @author hitesh soliwal
  * @since 3.6
- * 
+ *
  */
 class MarkerResourceUtil {
 
@@ -49,7 +49,7 @@ class MarkerResourceUtil {
 	 * Optimally gets the resources applicable to the current state of filters,
 	 * the smaller the resources and more specific they are the less the
 	 * filtering we have to do during processing.
-	 * 
+	 *
 	 * @return collection of resource we want to collect markers for, taking
 	 *         various enabled filters into account.
 	 */
@@ -65,7 +65,7 @@ class MarkerResourceUtil {
 		Set resourceSet = andFilters ? getResourcesFiltersAnded(enabledFilters,
 				selectedResources, root) : getResourcesFiltersOred(
 				enabledFilters, selectedResources, root);
-		
+
 		//remove duplicates
 		return trim2ParentResources(root, resourceSet);
 	}
@@ -74,7 +74,7 @@ class MarkerResourceUtil {
 	 * (optimization as side-effect): Compute common parents, if any. Remove further
 	 * duplicates. We collect markers with a flag of DEPTH_INFINITE; so,
 	 * effectively the children of a resource are also its duplicates.
-	 * 
+	 *
 	 * @param root
 	 * @param resourceSet
 	 * @return set
@@ -116,7 +116,7 @@ class MarkerResourceUtil {
 	 * computing markers on filters individually and then ORing the markers; we
 	 * would save a good amount of system-resources if we ORed them before
 	 * gathering phase,removing duplicates.
-	 * 
+	 *
 	 * @param enabledFilters
 	 * @param root
 	 * @return set
@@ -148,7 +148,7 @@ class MarkerResourceUtil {
 	 * The method may look long and a little time-consuming, but it actually
 	 * performs a short-circuit AND operation on the resources, and therefore
 	 * quick.
-	 * 
+	 *
 	 * Note: This is an optimization; we could have ORed the resources instead.
 	 * Let us say, for example, we had a filter of workspace-scope(ANY), and
 	 * others of scope on Selected element and maybe others.Now, if we computed
@@ -158,7 +158,7 @@ class MarkerResourceUtil {
 	 * we spend more system-resources in both gathering and filtering.If we
 	 * ANDed the scopes(resources) we'd, save a good amount of system-resources
 	 * in both phases.
-	 * 
+	 *
 	 * @param enabledFilters
 	 * @param selectedResources
 	 * @param root
@@ -172,7 +172,7 @@ class MarkerResourceUtil {
 			return set;
 		}
 		Set resourceSet = new HashSet();
-		
+
 		Iterator filtersIterator = enabledFilters.iterator();
 		Set removeMain = new HashSet();
 		while (filtersIterator.hasNext()) {
@@ -239,7 +239,7 @@ class MarkerResourceUtil {
 
 	/**
 	 * Get the resources indicated by the filter's scope.
-	 *  
+	 *
 	 * @param group
 	 * @param selectedResources
 	 * @param root
@@ -280,7 +280,7 @@ class MarkerResourceUtil {
 
 	/**
 	 * Returns the set of projects that contain the given set of resources.
-	 * 
+	 *
 	 * @param resources
 	 * @return IProject[]
 	 */
@@ -295,7 +295,7 @@ class MarkerResourceUtil {
 
 	/**
 	 * Return the projects for the elements.
-	 * 
+	 *
 	 * @param elements
 	 *            collection of IResource or IResourceMapping
 	 * @return Collection of IProject
@@ -321,7 +321,7 @@ class MarkerResourceUtil {
 
 	/**
 	 * Add the resources in resourceMapping to the resourceCollection
-	 * 
+	 *
 	 * @param resourceCollection
 	 * @param resourceMapping
 	 */
@@ -343,7 +343,7 @@ class MarkerResourceUtil {
 			Policy.handle(e);
 		}
 	}
-	
+
 	/**
 	 * Adapts an object to a resource or resource mapping;
 	 * If the object cannot be adapted,it return null.
@@ -354,7 +354,7 @@ class MarkerResourceUtil {
 	 * 		Try to adapt to an IResource
 	 * 		Try to adapt to an IFile
 	 * 		Finally try adapting to a ResourceMapping
-	 * 
+	 *
 	 * @param object
 	 */
 	static Object adapt2ResourceElement(Object object) {
@@ -386,7 +386,7 @@ class MarkerResourceUtil {
 
 	/**
 	 * Gets all sub-type id(s) including self, for the list of marker typeIds
-	 * 
+	 *
 	 * @param typeIds
 	 */
 	static String[] getAllSubTypesIds(String[] typeIds) {
@@ -397,7 +397,7 @@ class MarkerResourceUtil {
 	/**
 	 * Gets all sub-types {@link MarkerType} including self for the list of
 	 * marker typeIds
-	 * 
+	 *
 	 * @param typeIds
 	 */
 	static HashSet getAllSubTypes(String[] typeIds) {
@@ -417,7 +417,7 @@ class MarkerResourceUtil {
 	/**
 	 * Gets mutually exclusive super-types ids for the list of
 	 * marker typeIds
-	 * 
+	 *
 	 * @param typeIds
 	 */
 	static String[] getMutuallyExclusiveSupersIds(String[] typeIds) {
@@ -428,7 +428,7 @@ class MarkerResourceUtil {
 	/**
 	 * Gets mutually exclusive super-types {@link MarkerType} for the list of
 	 * marker typeIds
-	 * 
+	 *
 	 * @param typeIds
 	 */
 	static HashSet getMutuallyExclusiveSupers(String[] typeIds) {
@@ -451,7 +451,7 @@ class MarkerResourceUtil {
 	/**
 	 * Converts a collection of {@link MarkerType} into an array of marker
 	 * typeIds
-	 * 
+	 *
 	 * @param collection
 	 */
 	private static String[] toTypeStrings(Collection collection) {

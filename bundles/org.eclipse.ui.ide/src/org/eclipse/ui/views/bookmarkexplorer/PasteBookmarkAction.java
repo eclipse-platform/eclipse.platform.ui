@@ -37,7 +37,7 @@ class PasteBookmarkAction extends BookmarkAction {
 
     /**
      * The constructor.
-     * 
+     *
      * @param view the view
      */
     public PasteBookmarkAction(BookmarkNavigator view) {
@@ -63,7 +63,7 @@ class PasteBookmarkAction extends BookmarkAction {
 		}
         final ArrayList newMarkerAttributes = new ArrayList();
         final ArrayList newMarkerResources = new ArrayList();
-        try {   
+        try {
             ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
                 @Override
 				public void run(IProgressMonitor monitor) throws CoreException {

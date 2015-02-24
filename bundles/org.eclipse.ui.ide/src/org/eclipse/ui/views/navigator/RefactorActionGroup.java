@@ -29,7 +29,7 @@ import org.eclipse.ui.actions.TextActionHandler;
 /**
  * This is the action group for refactor actions,
  * including global action handlers for copy, paste and delete.
- * 
+ *
  * @since 2.0
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */

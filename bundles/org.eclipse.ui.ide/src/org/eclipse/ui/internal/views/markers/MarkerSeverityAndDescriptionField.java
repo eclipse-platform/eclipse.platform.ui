@@ -18,9 +18,9 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * MarkerSeverityAndDescriptionField can handle severities for all markers.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
@@ -33,7 +33,7 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.provisional.views.markers.MarkerItem,
 	 *      org.eclipse.ui.provisional.views.markers.MarkerItem)
 	 */
@@ -49,7 +49,7 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
 	/**
 	 * Return the image for item.
-	 * 
+	 *
 	 * @param item
 	 * @return Image or <code>null</code>
 	 */
@@ -59,7 +59,7 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 		if (item.getMarker() == null)
 			severity = ((MarkerCategory) item).getHighestSeverity();
 		else
-			severity = MarkerSupportInternalUtilities.getSeverity(item);			
+			severity = MarkerSupportInternalUtilities.getSeverity(item);
 
 		if (severity >= IMarker.SEVERITY_WARNING)
 			return MarkerSupportInternalUtilities.getSeverityImage(severity);
@@ -69,7 +69,7 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	@Override

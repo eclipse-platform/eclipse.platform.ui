@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
+ *   IBM Corporation - initial API and implementation
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 	 	font should be activated and used by other components.
  *******************************************************************************/
@@ -47,7 +47,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
- * Standard resource link page for a wizard that creates a file or 
+ * Standard resource link page for a wizard that creates a file or
  * folder resource.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -72,10 +72,10 @@ public class WizardNewLinkPage extends WizardPage {
     private Button variablesButton;
 
     /**
-     * Creates a new resource link wizard page. 
+     * Creates a new resource link wizard page.
      *
      * @param pageName the name of the page
-     * @param type specifies the type of resource to link to. 
+     * @param type specifies the type of resource to link to.
      * 	<code>IResource.FILE</code> or <code>IResource.FOLDER</code>
      */
     public WizardNewLinkPage(String pageName, int type) {
@@ -195,7 +195,7 @@ public class WizardNewLinkPage extends WizardPage {
     }
 
     /**
-     * Returns the link target location entered by the user. 
+     * Returns the link target location entered by the user.
      *
      * @return the link target location entered by the user. null if the user
      * 	choose not to create a link.
@@ -273,7 +273,7 @@ public class WizardNewLinkPage extends WizardPage {
 
     /**
      * Sets the container to use for link validation.
-     * This should be the parent of the new resource that is being 
+     * This should be the parent of the new resource that is being
      * linked.
      *
      * @param container the container to use for link validation.
@@ -284,7 +284,7 @@ public class WizardNewLinkPage extends WizardPage {
 
     /**
      * Sets the value of the link target field
-     * 
+     *
      * @param target the value of the link target field
      */
     public void setLinkTarget(String target) {
@@ -297,7 +297,7 @@ public class WizardNewLinkPage extends WizardPage {
     /**
      * Validates the type of the given file against the link type specified
      * during page creation.
-     * 
+     *
      * @param linkTargetStore file to validate
      * @return boolean <code>true</code> if the link target type is valid
      * 	and <code>false</code> otherwise.
@@ -340,7 +340,7 @@ public class WizardNewLinkPage extends WizardPage {
     }
 
     /**
-     * Returns whether this page's controls currently all contain valid 
+     * Returns whether this page's controls currently all contain valid
      * values.
      *
      * @return <code>true</code> if all controls are valid, and

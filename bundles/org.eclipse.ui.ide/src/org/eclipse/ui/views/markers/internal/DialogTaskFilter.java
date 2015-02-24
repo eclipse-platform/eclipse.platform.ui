@@ -50,7 +50,7 @@ public class DialogTaskFilter extends
 
 		/**
 		 * Create a new DescriptionGroup.
-		 * 
+		 *
 		 * @param parent
 		 */
 		public DescriptionGroup(Composite parent) {
@@ -111,7 +111,7 @@ public class DialogTaskFilter extends
 
 		public void setDescription(String text) {
 			if (text == null) {
-				description.setText(""); //$NON-NLS-1$ 
+				description.setText(""); //$NON-NLS-1$
 			} else {
 				description.setText(text);
 			}
@@ -143,14 +143,14 @@ public class DialogTaskFilter extends
 
 		/**
 		 * Create a new priority group.
-		 * 
+		 *
 		 * @param parent
 		 */
 		public PriorityGroup(Composite parent) {
 			SelectionListener listener = new SelectionAdapter() {
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				@Override
@@ -267,7 +267,7 @@ public class DialogTaskFilter extends
 
 		/**
 		 * Create a new StatusGroup.
-		 * 
+		 *
 		 * @param parent
 		 */
 		public StatusGroup(Composite parent) {
@@ -351,7 +351,7 @@ public class DialogTaskFilter extends
 
 	/**
 	 * Create a new instance of the receiver
-	 * 
+	 *
 	 * @param parentShell
 	 * @param filters
 	 */
@@ -361,7 +361,7 @@ public class DialogTaskFilter extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#createAttributesArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -377,7 +377,7 @@ public class DialogTaskFilter extends
 		priorityGroup = new PriorityGroup(composite);
 		statusGroup = new StatusGroup(composite);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateFilterFromUI(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
@@ -404,9 +404,9 @@ public class DialogTaskFilter extends
 
 		taskFilter.setSelectByDone(statusGroup.isStatusEnabled());
 		taskFilter.setDone(statusGroup.getDone());
-	
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#updateUIWithFilter(org.eclipse.ui.views.markers.internal.MarkerFilter)
 	 */
@@ -426,10 +426,10 @@ public class DialogTaskFilter extends
 
 		statusGroup.setEnabled(taskFilter.getSelectByDone());
 		statusGroup.setDone(taskFilter.getDone());
-		
+
 		super.updateUIWithFilter(filter);
 
-	
+
 	}
 
 	/* (non-Javadoc)
@@ -442,11 +442,11 @@ public class DialogTaskFilter extends
 		priorityGroup.updateEnablement(enabled);
 		statusGroup.updateEnablement(enabled);
 	}
-	
+
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markerview.FiltersDialog#resetPressed()
 	 */
 	@Override
@@ -470,7 +470,7 @@ public class DialogTaskFilter extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#newFilter(java.lang.String)
 	 */
 	@Override

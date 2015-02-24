@@ -23,18 +23,18 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * A CreateResourcesOperation represents an undoable operation for creating
  * resources in the workspace. Clients may call the public API from a background
  * thread.
- * 
+ *
  * This class is not intended to be subclassed by clients.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 abstract class AbstractCreateResourcesOperation extends
 		AbstractResourcesOperation {
 
 	/**
 	 * Create an AbstractCreateResourcesOperation.
-	 * 
+	 *
 	 * @param resourceDescriptions
 	 *            the resourceDescriptions describing resources to be created
 	 * @param label

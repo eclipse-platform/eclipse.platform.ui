@@ -31,7 +31,7 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
  * The Util class is the class of general utilities used by the marker support.
- * 
+ *
  */
 public final class Util {
 
@@ -44,13 +44,13 @@ public final class Util {
 	private static DateFormat format;
 
 	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
-	
+
 	static final String TYPE_MARKER_GROUPING_ID = "org.eclipse.ui.ide.type"; //$NON-NLS-1$
 
 	/**
 	 * Get the propery called property from the marker. If it is not found
 	 * return the empty string.
-	 * 
+	 *
 	 * @param property
 	 * @param marker
 	 * @return String
@@ -73,7 +73,7 @@ public final class Util {
 
 	/**
 	 * Get the human readable creation time from the timestamp
-	 * 
+	 *
 	 * @param timestamp
 	 * @return String
 	 */
@@ -87,7 +87,7 @@ public final class Util {
 
 	/**
 	 * Get the human readable creation time from the marker.
-	 * 
+	 *
 	 * @param marker
 	 * @return String
 	 */
@@ -104,7 +104,7 @@ public final class Util {
 	 * Get the name of the container. If the marker has the
 	 * MarkerViewUtil#PATH_ATTRIBUTE set use that. Otherwise use the path of the
 	 * parent resource.
-	 * 
+	 *
 	 * @param marker
 	 * @return String
 	 */
@@ -153,7 +153,7 @@ public final class Util {
 	 * Get the name of the element. If the marker has the
 	 * MarkerViewUtil#NAME_ATTRIBUTE set use that. Otherwise use the name of the
 	 * resource.
-	 * 
+	 *
 	 * @param marker
 	 * @return String
 	 */
@@ -178,7 +178,7 @@ public final class Util {
 
 	/**
 	 * Return whether or not the marker is editable.
-	 * 
+	 *
 	 * @param marker
 	 * @return boolean <code>true</code> if it is editable
 	 */
@@ -197,7 +197,7 @@ public final class Util {
 
 	/**
 	 * Return an error status for the given exception.
-	 * 
+	 *
 	 * @param exception
 	 * @return IStatus
 	 */
@@ -222,7 +222,7 @@ public final class Util {
 
 	/**
 	 * Get the image for the severity if it can be identified.
-	 * 
+	 *
 	 * @param severity
 	 * @return Image or <code>null</code>
 	 */
@@ -243,7 +243,7 @@ public final class Util {
 
 	/**
 	 * Get the IDE image at path.
-	 * 
+	 *
 	 * @param path
 	 * @return Image
 	 */
@@ -256,7 +256,7 @@ public final class Util {
 
 	/**
 	 * Get the short name for the container
-	 * 
+	 *
 	 * @param marker
 	 * @return String
 	 */
@@ -299,7 +299,7 @@ public final class Util {
 
 	/**
 	 * Return whether or not the selection has one element that is concrete.
-	 * 
+	 *
 	 * @param selection
 	 * @return <true>code</true> if the selection has one element that is
 	 *         concrete.
@@ -316,7 +316,7 @@ public final class Util {
 
 	/**
 	 * Return whether or not all of the elements in the selection are concrete.
-	 * 
+	 *
 	 * @param selection
 	 * @return <true>code</true> if all of the elements are concrete.
 	 */

@@ -26,7 +26,7 @@ public interface IIDEHelpContextIds {
             + "add_bookmark_action_context"; //$NON-NLS-1$
 
     public static final String ADD_TASK_ACTION = PREFIX
-            + "add_task_action_context"; //$NON-NLS-1$	
+            + "add_task_action_context"; //$NON-NLS-1$
 
     public static final String INCREMENTAL_BUILD_ACTION = PREFIX
             + "incremental_build_action_context"; //$NON-NLS-1$
@@ -45,7 +45,7 @@ public interface IIDEHelpContextIds {
 
     public static final String OPEN_FILE_ACTION = PREFIX
             + "open_file_action_context"; //$NON-NLS-1$
-    
+
     public static final String OPEN_LOCAL_FILE_ACTION = PREFIX
     + "open_local_file_action_context"; //$NON-NLS-1$
 
@@ -187,7 +187,7 @@ public interface IIDEHelpContextIds {
 
     public static final String NEW_FILE_WIZARD_PAGE = PREFIX
     		+ "new_file_wizard_page_context"; //$NON-NLS-1$
-    
+
     // Wizard pages
     public static final String NEW_PROJECT_WIZARD_PAGE = PREFIX
             + "new_project_wizard_page_context"; //$NON-NLS-1$
@@ -197,10 +197,10 @@ public interface IIDEHelpContextIds {
 
     public static final String NEW_FOLDER_WIZARD_PAGE = PREFIX
             + "new_folder_wizard_page_context"; //$NON-NLS-1$
-    
+
     public static final String LINKED_RESOURCE_PAGE = PREFIX
     		+ "linked_resource_page_context"; //$NON-NLS-1$
-   
+
     public static final String NEW_GROUP_WIZARD_PAGE = PREFIX
     		+ "new_group_wizard_page_context"; //$NON-NLS-1$
 
@@ -208,13 +208,13 @@ public interface IIDEHelpContextIds {
             + "new_link_wizard_page_context"; //$NON-NLS-1$
 
    public static final String WORKING_SET_RESOURCE_PAGE = PREFIX
-   			+ "working_set_resource_page"; //$NON-NLS-1$	
+   			+ "working_set_resource_page"; //$NON-NLS-1$
 
    public static final String WORKSPACE_PREFERENCE_PAGE = PREFIX
    			+ "workspace_preference_page_context"; //$NON-NLS-1$
 
     // Wizards
-   
+
    public static final String NEW_FILE_WIZARD = PREFIX
    + "new_file_wizard_context"; //$NON-NLS-1$
 
@@ -223,7 +223,7 @@ public interface IIDEHelpContextIds {
 
    public static final String NEW_PROJECT_WIZARD = PREFIX
    	+ "new_project_wizard_context"; //$NON-NLS-1$
-   
+
    public static final String SWITCH_WORKSPACE_ACTION = PREFIX
 	+ "switch_workspace_dialog_context"; //$NON-NLS-1$
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Corporation - initial API and implementation 
+ *    IBM Corporation - initial API and implementation
  *    Bob Foster <bob@objfac.com>
  *     - Fix for bug 23025 - SaveAsDialog should not assume what is being saved is an IFile
  *    Benjamin Muskalla <b.muskalla@gmx.net>
@@ -56,9 +56,9 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class SaveAsDialog extends TitleAreaDialog {
-	
+
 	private static final String DIALOG_SETTINGS_SECTION = "SaveAsDialogSettings"; //$NON-NLS-1$
-	
+
 	private IFile originalFile = null;
 
     private String originalName = null;
@@ -113,7 +113,7 @@ public class SaveAsDialog extends TitleAreaDialog {
         return contents;
     }
 
-    /** 
+    /**
      * The <code>SaveAsDialog</code> implementation of this <code>Window</code>
      * method disposes of the banner image when the dialog is closed.
      */
@@ -169,7 +169,7 @@ public class SaveAsDialog extends TitleAreaDialog {
      * Returns the full path entered by the user.
      * <p>
      * Note that the file and container might not exist and would need to be created.
-     * See the <code>IFile.create</code> method and the 
+     * See the <code>IFile.create</code> method and the
      * <code>ContainerGenerator</code> class.
      * </p>
      *
@@ -199,8 +199,8 @@ public class SaveAsDialog extends TitleAreaDialog {
         IPath path = resourceGroup.getContainerFullPath().append(
                 resourceGroup.getResource());
 
-        //If the user does not supply a file extension and if the save 
-        //as dialog was provided a default file name append the extension 
+        //If the user does not supply a file extension and if the save
+        //as dialog was provided a default file name append the extension
         //of the default filename to the new name
         if (path.getFileExtension() == null) {
             if (originalFile != null && originalFile.getFileExtension() != null) {
@@ -292,10 +292,10 @@ public class SaveAsDialog extends TitleAreaDialog {
             }
             return false;
         }
-        
+
         String resourceName = resourceGroup.getResource();
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        
+
         // Do not allow a closed project to be selected
         IPath fullPath = resourceGroup.getContainerFullPath();
         if (fullPath != null) {
@@ -309,27 +309,27 @@ public class SaveAsDialog extends TitleAreaDialog {
 	        	}
 	        }
         }
-        
+
         IStatus result = workspace.validateName(resourceName, IResource.FILE);
         if (!result.isOK()){
         	setErrorMessage(result.getMessage());
         	return false;
         }
-        
+
         setErrorMessage(null);
         return true;
     }
-    
+
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
         if (section == null) {
             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        } 
+        }
         return section;
 	}
-	
+
     @Override
 	protected boolean isResizable() {
     	return true;

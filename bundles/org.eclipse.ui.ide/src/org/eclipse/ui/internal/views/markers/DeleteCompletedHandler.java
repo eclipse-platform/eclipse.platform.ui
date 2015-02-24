@@ -34,7 +34,7 @@ public class DeleteCompletedHandler extends MarkerViewHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
@@ -73,14 +73,14 @@ public class DeleteCompletedHandler extends MarkerViewHandler {
 				MarkerMessages.deleteCompletedAction_title);
 		execute(op, MarkerMessages.deleteCompletedTasks_errorMessage, null,
 				WorkspaceUndoUtil.getUIInfoAdapter(view.getSite().getShell()));
-		
+
 		return this;
 
 	}
 
 	/**
 	 * Get the list of completed tasks from the view.
-	 * 
+	 *
 	 * @param view
 	 * @return List of {@link IMarker}
 	 */

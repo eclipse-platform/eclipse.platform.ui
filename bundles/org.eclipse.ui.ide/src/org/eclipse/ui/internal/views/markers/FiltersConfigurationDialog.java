@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Remy Chi Jian Suen <remy.suen@gmail.com> 
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
  * 			- Fix for Bug 214443 Problem view filter created even if I hit Cancel
  ******************************************************************************/
 
@@ -67,9 +67,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * FiltersConfigurationDialog is the dialog for configuring the filters for the
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
@@ -88,7 +88,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private Button removeButton;
 	private Button renameButton;
-	
+
 	private Button allButton;
 	private Button andButton;
 	private Button orButton;
@@ -101,12 +101,12 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private Collection configAreas;
 	private Label limitsLabel;
-	
+
 	private Object[] previouslyChecked = new Object[0];
 
 	/**
 	 * Create a new instance of the receiver on builder.
-	 * 
+	 *
 	 * @param parentShell
 	 * @param generator
 	 */
@@ -120,7 +120,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Return whether or not to AND the filters
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean andFilters() {
@@ -129,7 +129,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.ViewerSettingsAndStatusDialog#
 	 * configureShell(org.eclipse.swt.widgets.Shell)
 	 */
@@ -141,7 +141,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 */
 	@Override
@@ -151,7 +151,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.views.markers.ViewerSettingsAndStatusDialog#
 	 * createDialogContentArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -162,7 +162,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setFont(parent.getFont());
-		
+
 		Composite composite = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -275,7 +275,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 				limitText.setEnabled(limitButton.getSelection());
 			}
 		});
-		
+
 		GridData limitData = new GridData();
 		limitData.verticalIndent = 5;
 		limitButton.setLayoutData(limitData);
@@ -449,7 +449,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Create a field area in the form for the FilterConfigurationArea
-	 * 
+	 *
 	 * @param toolkit
 	 * @param form
 	 * @param area
@@ -520,7 +520,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		});
 		removeButton.setEnabled(false);
 		setButtonLayoutData(removeButton);
-		
+
 		renameButton = new Button(buttons, SWT.PUSH);
 		renameButton.setText(MarkerMessages.MarkerFilter_renameName);
 		renameButton.addSelectionListener(new SelectionAdapter() {
@@ -535,26 +535,26 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	}
 
 	private void renameFilter() {
-		
+
 		MarkerFieldFilterGroup filterGroup = getSelectionFromTable();
 
 		IInputValidator nameValidator = getNameValidator(filterGroup.getName(), getCurrentConfigurationNames());
-		
+
 		InputDialog inputDialog = new InputDialog(getShell(),
 				MarkerMessages.MarkerFilterDialog_title,
 				MarkerMessages.MarkerFilterDialog_message,
 				filterGroup.getName(), nameValidator);
-		
+
 		if(inputDialog.open() == Window.OK) {
 			filterGroup.setName(inputDialog.getValue());
 			configsTable.refresh(filterGroup);
 		}
-				
+
 	}
 
 	private IInputValidator getNameValidator(final String currentName, final Collection existingNames) {
 		return new IInputValidator() {
-			
+
 			@Override
 			public String isValid(String newText) {
 				newText = newText.trim();
@@ -607,7 +607,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Get a collection of names of the filters currently in the list
-	 * 
+	 *
 	 * @return Collection
 	 */
 	private Collection getCurrentConfigurationNames() {
@@ -652,7 +652,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Return the dialog settings for the receiver.
-	 * 
+	 *
 	 * @return IDialogSettings
 	 */
 	private IDialogSettings getDialogSettings() {
@@ -669,7 +669,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Return the filter groups modified by the receiver.
-	 * 
+	 *
 	 * @return Collection of {@link MarkerFieldFilterGroup}
 	 */
 	Collection getFilters() {
@@ -725,7 +725,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Make a working copy of the groups.
-	 * 
+	 *
 	 * @param groups
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
@@ -744,7 +744,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
@@ -798,7 +798,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Remove the filters in selection.
-	 * 
+	 *
 	 * @param selection
 	 */
 	private void removeFilters(ISelection selection) {
@@ -812,7 +812,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * Save the dialog settings for the receiver.
 	 */
 	private void saveDialogSettings() {
-		
+
 		IDialogSettings settings = getDialogSettings();
 
 		if (selectedFilterGroup != null)
@@ -823,7 +823,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			selectedNames[i] = ((MarkerFieldFilterGroup)previouslyChecked[i]).getName();
 		}
 		settings.put(PREV_SELECTED_ELEMENTS, selectedNames);
-		
+
 	}
 
 	private void updateButtonEnablement(MarkerFieldFilterGroup group) {
@@ -840,7 +840,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	/**
 	 * Set the control and all of it's visibility state to visible.
-	 * 
+	 *
 	 * @param enabled
 	 * @param control
 	 */
