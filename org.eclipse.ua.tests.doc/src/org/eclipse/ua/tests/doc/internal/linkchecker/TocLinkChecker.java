@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov - Bug 460858
  *******************************************************************************/
 package org.eclipse.ua.tests.doc.internal.linkchecker;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
