@@ -425,7 +425,7 @@ public class IResourceTest extends ResourceTest {
 
 	/**
 	 * Sets up the workspace and file system for this test. */
-	protected void setupBeforeState(IResource receiver, IResource target, int state, int depth, boolean addVerifier) throws CoreException {
+	protected void setupBeforeState(IResource receiver, IResource target, int state, int depth, boolean addVerifier) {
 		// Wait for any outstanding refresh to finish
 		try {
 			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
@@ -1865,7 +1865,7 @@ public class IResourceTest extends ResourceTest {
 				cleanUpAfterRefreshTest(args);
 			}
 
-			public Object invokeMethod(Object[] args, int count) throws CoreException {
+			public Object invokeMethod(Object[] args, int count) {
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
 				int state = ((Integer) args[2]).intValue();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -586,7 +586,7 @@ public class HiddenResourceTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 				}
 			};
@@ -609,7 +609,7 @@ public class HiddenResourceTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setHidden("2.0", folder, true, IResource.DEPTH_ZERO);
 				}
@@ -633,7 +633,7 @@ public class HiddenResourceTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setHidden("3.0", project, true, IResource.DEPTH_INFINITE);
 				}
@@ -786,10 +786,10 @@ public class HiddenResourceTest extends ResourceTest {
 
 		assertHidden("6.0", project2, true, IResource.DEPTH_ZERO);
 	}
-	
+
 	protected void assertHidden(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				boolean expected = false;
 				if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
 					expected = value;
@@ -806,7 +806,7 @@ public class HiddenResourceTest extends ResourceTest {
 
 	protected void setHidden(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					resource.setHidden(value);
 				} catch (CoreException e) {

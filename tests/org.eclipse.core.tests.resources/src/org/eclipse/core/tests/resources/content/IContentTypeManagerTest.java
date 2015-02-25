@@ -124,7 +124,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		return new ByteArrayInputStream(full);
 	}
 
-	public InputStream getInputStream(String contents) throws UnsupportedEncodingException {
+	public InputStream getInputStream(String contents) {
 		return new ByteArrayInputStream(contents.getBytes());
 	}
 
@@ -908,7 +908,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		try {
 			selected = manager.findContentTypesFor(new InputStream() {
 
-				public int available() throws IOException {
+				public int available() {
 					// trick the client into reading the file 
 					return Integer.MAX_VALUE;
 				}
@@ -1019,7 +1019,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			assertEquals("2." + i, MyContentDescriber.MY_OPTION_VALUES[i], description.getProperty(MyContentDescriber.MY_OPTIONS[i]));
 	}
 
-	public void testNoExtensionAssociation() throws CoreException {
+	public void testNoExtensionAssociation() {
 		//TODO use a IContentTypeMatcher instead		
 		final IContentTypeManager manager = Platform.getContentTypeManager();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class Bug_265810 extends ResourceTest {
 	}
 
 	public void testBug() {
-		
+
 		// create a project
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		try {
@@ -181,7 +181,7 @@ public class Bug_265810 extends ResourceTest {
 		public void resourceChanged(IResourceChangeEvent event) {
 			try {
 				event.getDelta().accept(new IResourceDeltaVisitor() {
-					public boolean visit(IResourceDelta delta) throws CoreException {
+					public boolean visit(IResourceDelta delta) {
 						IResource resource = delta.getResource();
 						if (resource instanceof IFile && !resource.getName().equals(".project"))
 							resourceDeltas.add(delta);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -626,7 +626,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 				}
 			};
@@ -649,7 +649,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setTeamPrivateMember("2.0", folder, true, IResource.DEPTH_ZERO);
 				}
@@ -673,7 +673,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setTeamPrivateMember("3.0", project, true, IResource.DEPTH_INFINITE);
 				}
@@ -793,7 +793,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 
 	protected void assertTeamPrivateMember(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				boolean expected = false;
 				if (resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
 					expected = value;
@@ -810,7 +810,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 
 	protected void setTeamPrivateMember(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					resource.setTeamPrivateMember(value);
 				} catch (CoreException e) {

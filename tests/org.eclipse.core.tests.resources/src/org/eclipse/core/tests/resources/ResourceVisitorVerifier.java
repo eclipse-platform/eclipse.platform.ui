@@ -15,7 +15,6 @@ import java.util.*;
 import junit.framework.Assert;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
 
 public class ResourceVisitorVerifier extends Assert implements IResourceVisitor {
 	Set<IResource> expected;
@@ -37,7 +36,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 			expected.add(resources[i]);
 	}
 
-	public boolean visit(IResource resource) throws CoreException {
+	public boolean visit(IResource resource) {
 		boolean included = expected.remove(resource);
 		if (!included) {
 			success = false;

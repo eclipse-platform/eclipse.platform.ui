@@ -174,7 +174,7 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		// nothing to do
 	}
 
-	public void prepareToSave(ISaveContext context) throws CoreException {
+	public void prepareToSave(ISaveContext context) {
 		context.needDelta();
 		context.needSaveNumber();
 	}
@@ -183,7 +183,7 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		// nothing to do
 	}
 
-	public void saving(ISaveContext context) throws CoreException {
+	public void saving(ISaveContext context) {
 		// nothing to do
 	}
 }
