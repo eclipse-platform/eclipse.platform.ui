@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.core.tools.resources.metadata;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.tools.metadata.AbstractDumper;
 import org.eclipse.core.tools.metadata.DumpException;
@@ -42,7 +40,6 @@ public class HistoryIndexDumper extends AbstractDumper {
 		contents.append("entries: ");
 		contents.append(entryCount);
 		contents.append('\n');
-		List qualifierIndex = new ArrayList();
 		// data holds a UUID (16 bytes) + timestamp (long - 8 bytes)
 		byte[] data = new byte[24];
 		for (int i = 0; i < entryCount; i++) {

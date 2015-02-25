@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2009 Geoff Longman and others.
+ * Copyright (c) 2003, 2015 Geoff Longman and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 				return;
 
 			IRunnableWithProgress op = new WorkspaceModifyOperation() {
-				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void execute(IProgressMonitor monitor) {
 					int count = selection.size();
 					int deleted = 1;
 					monitor.beginTask("deleting #" + deleted + " of " + count + " markers.", count);

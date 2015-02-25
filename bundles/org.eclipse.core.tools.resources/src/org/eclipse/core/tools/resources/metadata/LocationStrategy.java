@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import org.eclipse.core.tools.metadata.DumpException;
 import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
 
 /**
@@ -23,7 +22,7 @@ class LocationStrategy implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
-	public String dumpStringContents(DataInputStream dataInput) throws DumpException, IOException {
+	public String dumpStringContents(DataInputStream dataInput) throws IOException {
 		StringBuffer contents = new StringBuffer(100);
 		String location = dataInput.readUTF();
 		contents.append("Location: '"); //$NON-NLS-1$
