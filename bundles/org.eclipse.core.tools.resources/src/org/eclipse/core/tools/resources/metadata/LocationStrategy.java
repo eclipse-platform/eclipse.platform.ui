@@ -20,7 +20,7 @@ import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
 class LocationStrategy implements IStringDumpingStrategy {
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
 	public String dumpStringContents(DataInputStream dataInput) throws IOException {
 		StringBuffer contents = new StringBuffer(100);
@@ -45,7 +45,7 @@ class LocationStrategy implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
 		return "Project location file"; //$NON-NLS-1$

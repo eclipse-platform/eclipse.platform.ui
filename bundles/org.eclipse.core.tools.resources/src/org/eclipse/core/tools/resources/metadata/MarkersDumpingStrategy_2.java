@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ import org.eclipse.core.tools.metadata.*;
 public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
 	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
@@ -124,7 +124,7 @@ public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
 		return "Markers snapshot file version 2"; //$NON-NLS-1$

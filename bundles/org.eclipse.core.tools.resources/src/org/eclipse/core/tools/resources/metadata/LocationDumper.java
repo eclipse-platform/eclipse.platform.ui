@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,20 +18,20 @@ import org.eclipse.core.tools.metadata.MultiStrategyDumper;
 /**
  * A dumper for .location files.
  *  
- * @see org.eclipse.core.tools.resources.metadata.AbstractDumper
+ * @see org.eclipse.core.tools.metadata.AbstractDumper
  * @see org.eclipse.core.tools.resources.metadata.LocationStrategy  
  */
 public class LocationDumper extends MultiStrategyDumper {
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
+	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream input) throws Exception {
 		return new LocationStrategy();
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#openInputStream(java.io.File)
+	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(java.io.File)
 	 */
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);

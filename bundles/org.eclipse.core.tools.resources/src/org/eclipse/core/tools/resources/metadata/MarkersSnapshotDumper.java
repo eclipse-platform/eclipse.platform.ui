@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.tools.metadata.*;
 /**
  * A dumper for .markers.snap files.
  * 
- * @see org.eclipse.core.tools.resources.metadata.AbstractDumper
+ * @see org.eclipse.core.tools.metadata.AbstractDumper
  * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_1
  * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_2 
  */
@@ -34,7 +34,7 @@ public class MarkersSnapshotDumper extends MultiStrategyDumper {
 	static final byte ATTRIBUTE_STRING = 3;
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
+	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId;
@@ -54,7 +54,7 @@ public class MarkersSnapshotDumper extends MultiStrategyDumper {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#openInputStream(java.io.File)
+	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(java.io.File)
 	 */
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);

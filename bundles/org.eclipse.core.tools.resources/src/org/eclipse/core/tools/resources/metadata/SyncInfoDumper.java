@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.core.tools.metadata.*;
 /**
  * A dumper for .syncinfo files.
  *
- * @see org.eclipse.core.tools.resources.metadata.AbstractDumper 
+ * @see org.eclipse.core.tools.metadata.AbstractDumper 
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_2
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_3
  */
@@ -27,7 +27,7 @@ public class SyncInfoDumper extends MultiStrategyDumper {
 	static final byte QNAME = 2;
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
+	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();

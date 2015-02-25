@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public class SyncInfoSnapshotDumper extends MultiStrategyDumper {
 	static final byte QNAME = 2;
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(DataInputStream)
+	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();
@@ -35,7 +35,7 @@ public class SyncInfoSnapshotDumper extends MultiStrategyDumper {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#openInputStream(File)
+	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(File)
 	 */
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);
