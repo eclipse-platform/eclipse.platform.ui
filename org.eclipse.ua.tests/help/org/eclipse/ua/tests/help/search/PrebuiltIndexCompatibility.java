@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov - Bug 460787
  *******************************************************************************/
 
 package org.eclipse.ua.tests.help.search;
@@ -23,6 +24,7 @@ import junit.framework.TestSuite;
 import org.osgi.framework.Bundle;
 
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
@@ -155,7 +157,7 @@ public class PrebuiltIndexCompatibility extends TestCase {
 			IndexSearcher searcher = null;
 			try {
 				luceneDirectory = new NIOFSDirectory(new File(filePath));
-				searcher = new IndexSearcher(luceneDirectory, true);
+				searcher = new IndexSearcher(IndexReader.open(luceneDirectory, true));
 				TopDocs hits = searcher.search(luceneQuery, 500);
 				assertEquals(hits.totalHits, 1);
 			} finally {

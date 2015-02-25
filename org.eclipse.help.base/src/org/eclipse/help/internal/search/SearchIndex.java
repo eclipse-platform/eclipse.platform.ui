@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Holger Voormann - fix for bug 426785 (http://eclip.se/426785)
+ *     Alexander Kurtakov - Bug 460787
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -32,13 +33,17 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.LogByteSizeMergePolicy;
+import org.apache.lucene.index.LogMergePolicy;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -277,9 +282,13 @@ public class SearchIndex implements IHelpSearchIndex {
 			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			MaxFieldLength max = new MaxFieldLength(1000000);
-			iw = new IndexWriter(luceneDirectory, analyzerDescriptor.getAnalyzer(), create, max);
-			iw.setMergeFactor(20);
+			LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(analyzerDescriptor.getAnalyzer(), 1000000);
+			IndexWriterConfig writerConfig = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_31, analyzer);
+			writerConfig.setOpenMode(create ? OpenMode.CREATE : OpenMode.APPEND);
+			LogMergePolicy mergePolicy = new LogByteSizeMergePolicy();
+			mergePolicy.setMergeFactor(20);
+			writerConfig.setMergePolicy(mergePolicy);
+			iw = new IndexWriter(luceneDirectory, writerConfig);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
@@ -351,7 +360,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			if (iw == null)
 				return false;
 			if (optimize)
-				iw.optimize();
+				iw.forceMerge(1, true);
 			iw.close();
 			iw = null;
 			// save the update info:
@@ -506,8 +515,8 @@ public class SearchIndex implements IHelpSearchIndex {
 		}
 		Directory[] luceneDirs = dirList.toArray(new Directory[dirList.size()]);
 		try {
-			iw.addIndexesNoOptimize(luceneDirs);
-			iw.optimize();
+			iw.addIndexes(luceneDirs);
+			iw.forceMerge(1, true);
 		} catch (IOException ioe) {
 			HelpBasePlugin.logError("Merging search indexes failed.", ioe); //$NON-NLS-1$
 			return new HashMap<String, String[]>();
@@ -793,7 +802,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	public void openSearcher() throws IOException {
 		synchronized (searcherCreateLock) {
 			if (searcher == null) {
-				searcher = new IndexSearcher(luceneDirectory, false);
+				searcher = new IndexSearcher(IndexReader.open(luceneDirectory, false));
 			}
 		}
 	}
@@ -892,9 +901,10 @@ public class SearchIndex implements IHelpSearchIndex {
 	 */
 	private void cleanOldIndex() {
 		IndexWriter cleaner = null;
-		MaxFieldLength max = new MaxFieldLength(10000);
+		LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(analyzerDescriptor.getAnalyzer(), 10000);
 		try {
-			cleaner = new IndexWriter(luceneDirectory, analyzerDescriptor.getAnalyzer(), true, max);
+			cleaner = new IndexWriter(luceneDirectory, new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_31, analyzer).setOpenMode(
+			        OpenMode.CREATE));
 		} catch (IOException ioe) {
 		} finally {
 			try {
