@@ -26,7 +26,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * A test specific call-back which can be ticked on #getRule(...) & #build(...)
 	 */
 	public static class BuilderRuleCallback {
-		private IncrementalProjectBuilder builder;
+		IncrementalProjectBuilder builder;
 
 		public BuilderRuleCallback() {
 		}

@@ -25,7 +25,7 @@ public class Bug_265810 extends ResourceTest {
 
 	protected final static String VARIABLE_NAME = "ROOT";
 	private final ArrayList<IPath> toDelete = new ArrayList<IPath>();
-	private List<IResourceDelta> resourceDeltas = new ArrayList<IResourceDelta>();
+	List<IResourceDelta> resourceDeltas = new ArrayList<IResourceDelta>();
 
 	/**
 	 * Constructor for Bug_265810.

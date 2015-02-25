@@ -206,7 +206,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		tb2.waitForStatus(TestBarrier.STATUS_DONE);
 	}
 
-	private HashSet<ISchedulingRule> getRulesAsSet(ISchedulingRule rule) {
+	HashSet<ISchedulingRule> getRulesAsSet(ISchedulingRule rule) {
 		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
 		if (rule == null)
 			return rules;

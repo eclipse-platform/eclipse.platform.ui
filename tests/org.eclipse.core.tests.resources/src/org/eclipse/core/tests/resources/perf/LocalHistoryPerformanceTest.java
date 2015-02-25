@@ -42,14 +42,14 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		super(name);
 	}
 
-	private void cleanHistory() {
+	void cleanHistory() {
 		((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore().clean(getMonitor());
 	}
 
 	/**
 	 * Creates a tree of resources containing history. 
 	 */
-	private void createTree(IFolder base, final int filesPerFolder, final int statesPerFile) {
+	void createTree(IFolder base, final int filesPerFolder, final int statesPerFile) {
 		final IFolder[] folders = new IFolder[5];
 		folders[0] = base.getFolder("folder1");
 		folders[1] = base.getFolder("folder2");
@@ -79,7 +79,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		}
 	}
 
-	private IWorkspaceDescription setMaxFileStates(String failureMessage, int maxFileStates) {
+	IWorkspaceDescription setMaxFileStates(String failureMessage, int maxFileStates) {
 		IWorkspaceDescription currentDescription = getWorkspace().getDescription();
 		IWorkspaceDescription testDescription = getWorkspace().getDescription();
 		testDescription.setMaxFileStates(maxFileStates);

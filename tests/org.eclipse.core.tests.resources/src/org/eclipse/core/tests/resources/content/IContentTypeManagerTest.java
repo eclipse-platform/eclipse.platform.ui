@@ -33,6 +33,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	private static class ContentTypeChangeTracer implements IContentTypeManager.IContentTypeChangeListener {
 		private final Set<IContentType> changed = new HashSet<IContentType>();
 
+		public ContentTypeChangeTracer() {
+		}
+
 		public void contentTypeChanged(ContentTypeChangeEvent event) {
 			changed.add(event.getContentType());
 		}
@@ -99,7 +102,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		return result.toString();
 	}
 
-	private boolean contains(Object[] array, Object element) {
+	boolean contains(Object[] array, Object element) {
 		for (int i = 0; i < array.length; i++)
 			if (array[i].equals(element))
 				return true;

@@ -139,7 +139,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 	 * Method deleteChild.
 	 * @param path
 	 */
-	private void recursiveDelete(ElementTree tree, IPath path) {
+	void recursiveDelete(ElementTree tree, IPath path) {
 		IPath[] children = tree.getChildren(path);
 		for (int i = 0; i < children.length; i++) {
 			recursiveDelete(tree, children[i]);
