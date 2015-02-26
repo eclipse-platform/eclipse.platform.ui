@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 public class SelectTocDialog extends Dialog {
-	
+
 	private int[] selectedTocs = {};
 	private List tocList;
 	private Toc[] tocs;
@@ -45,13 +45,13 @@ public class SelectTocDialog extends Dialog {
 		tocs = HelpPlugin.getTocManager().getTocs(locale);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
-	
+
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Check Table of Contents");
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite inner = new Composite(parent, SWT.NULL);
@@ -77,7 +77,7 @@ public class SelectTocDialog extends Dialog {
 		existButton.setSelection(true);
 		return inner;
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		selectedTocs = tocList.getSelectionIndices();
@@ -92,16 +92,16 @@ public class SelectTocDialog extends Dialog {
 		}
 		super.okPressed();
 	}
-	
+
 	public Toc[] getTocsToCheck() {
 		ArrayList<Toc> selected = new ArrayList<Toc>();
 		for (int selectedToc : selectedTocs) {
 		    selected.add(tocs[selectedToc]);
 		}
 		Toc[] tocsToCheck = selected.toArray(new Toc[0]) ;
-		return tocsToCheck;	
+		return tocsToCheck;
 	}
-	
+
 	public int getTestKind() {
 		return buttonState;
 	}

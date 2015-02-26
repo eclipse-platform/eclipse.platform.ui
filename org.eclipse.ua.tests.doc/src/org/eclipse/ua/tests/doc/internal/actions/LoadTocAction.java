@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  * Our sample action implements workbench action delegate.
  * The action proxy will be created by the workbench and
  * shown in the UI. When the user tries to use the action,
- * this delegate will be created and execution will be 
+ * this delegate will be created and execution will be
  * delegated to it.
  * @see IWorkbenchWindowActionDelegate
  */
@@ -44,7 +44,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
     public static List<String> errors = new ArrayList<String>();
     public static String lastPage;
     public static String currentPage;
-    
+
     private class MonitorThread extends Thread {
 		String lastHref;
 		int timesSame = 0;
@@ -73,7 +73,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			}
 		}
 	}
-    
+
     public static void showErrors() {
 		if (errors == null) return;
 		if (errors.size() == 0) {
@@ -85,7 +85,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			String errorMessage = iter.next();
 			reportStatus(errorMessage);
 		}
-		errors = null;	
+		errors = null;
 		topicList = null;
 	}
 
@@ -93,24 +93,24 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		//HelpPlugin.logWarning(errorMessage);
 		System.out.println(errorMessage);
 	}
-	
+
 	private class NotFoundCallout implements EclipseConnector.INotFoundCallout {
 		@Override
 		public void notFound(String url) {
 			if (errors != null) {
-			    errors.add("Error opening " + lastPage + "\n   cannot load " + url);	
+			    errors.add("Error opening " + lastPage + "\n   cannot load " + url);
 			}
-		}	
+		}
 	}
-	
+
 	private class LinkProvider implements Iterator<String> {
 		private List<String> links;
 		int lastLink = -1;
-		
+
 		public LinkProvider(List<String> links) {
 			this.links = links;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			if (topicList != null && lastLink < links.size() && links.size() > 0) {
@@ -120,7 +120,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			showErrors();
 			return false;
 		}
-		
+
 		@Override
 		public String next() {
 			if (lastLink >= 0 && lastLink < links.size()) {
@@ -131,21 +131,21 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			if (lastLink < links.size()) {
 				currentPage = links.get(lastLink);
 				//System.out.println("Current page is " + currentPage);
-				return currentPage;	
+				return currentPage;
 			} else if (lastLink == links.size()) {
 				currentPage =  links.get(lastLink - 1);
 				//System.out.println("Current page is " + currentPage);
-				return currentPage;	
+				return currentPage;
 			}
 			return null;
 		}
-		
+
 		@Override
 		public void remove() {
-		}	
-		
+		}
+
 	}
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -176,7 +176,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			new CheckTocAction().checkTocFilesExist(tocsToCheck);
 			return;
 		}
-	
+
 		firstHref = null;
 		topicList = new ArrayList<String>();
 		for (Toc toc : tocsToCheck) {
@@ -209,12 +209,12 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		if (href != null && !isFiltered(href)) {
 		    if (firstHref == null) {
 		    	firstHref = href;
-		    } 
+		    }
 		    topicList.add(href);
 		}
 		addTopics(nextTopic.getSubtopics());
 	}
-	
+
 	private boolean isFiltered(String href) {
 		if (!href.startsWith("/")) return true;
 		//if (href.startsWith("/org.eclipse.pde.doc.user/reference")) return true;
@@ -225,9 +225,9 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	/**
-	 * Selection in the workbench has been changed. We 
+	 * Selection in the workbench has been changed. We
 	 * can change the state of the 'real' action here
-	 * if we want, but this can only happen after 
+	 * if we want, but this can only happen after
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */

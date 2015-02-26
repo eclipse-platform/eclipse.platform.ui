@@ -34,33 +34,33 @@ import org.osgi.framework.Bundle;
  *******************************************************************************/
 
 public class PrebuiltIndexChecker extends TestCase {
-	
+
 	private static final String PLATFORM_USER = "org.eclipse.platform.doc.user";
 	private static final String PLATFORM_ISV = "org.eclipse.platform.doc.isv";
 	private static final String PDE_USER = "org.eclipse.pde.doc.user";
 	private static final String JDT_USER = "org.eclipse.jdt.doc.user";
 	private static final String JDT_ISV = "org.eclipse.jdt.doc.isv";
-	
+
 	public static Test suite() {
 		return new TestSuite(PrebuiltIndexChecker.class);
 	}
-	
+
 	public void testPlatformUserIndex() throws Exception {
 		validateIndex(PLATFORM_USER, "index");
 	}
-	
+
 	public void testPlatformIsvIndex() throws Exception {
 		validateIndex(PLATFORM_ISV, "index");
 	}
-	
+
 	public void testPdeUserIndex() throws Exception {
 		validateIndex(PDE_USER, "index");
 	}
-	
+
 	public void testJdtUserIndex() throws Exception {
 		validateIndex(JDT_USER, "index");
 	}
-	
+
 	public void testJdtIsvIndex() throws Exception {
 		validateIndex(JDT_ISV, "index");
 	}
@@ -68,7 +68,7 @@ public class PrebuiltIndexChecker extends TestCase {
 	private void validateIndex(String plugin, String filepath) {
 		Bundle bundle = Platform.getBundle(plugin);
 		assertNotNull(bundle);
-		
+
 		String[] suffixes = { "", "/indexed_contributions", "/indexed_docs", "/indexed_dependencies" };
 		for (String suffixe : suffixes) {
 			String fullPath = filepath + suffixe;

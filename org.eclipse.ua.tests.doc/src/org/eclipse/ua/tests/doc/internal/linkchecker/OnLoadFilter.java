@@ -22,17 +22,17 @@ import org.eclipse.help.webapp.IFilter;
 import org.eclipse.ua.tests.doc.internal.dialogs.SelectTocDialog;
 
 public class OnLoadFilter implements IFilter {
-	
+
 	private static long uniqueId = 0;
-	
+
     private class OutFilter extends OutputStream {
-		
+
 		private OutputStream out;
-		
+
 		private int state = 0;
 
 		private String pathPrefix;
-		
+
 		public void updateState(int b) throws IOException {
 			if (state == 0 && b == '<') {
 				state = 1;
@@ -46,7 +46,7 @@ public class OnLoadFilter implements IFilter {
 			   state = 20;
 			   out.write(b);
 			   if (linkProvider.hasNext()) {
-			       String location = linkProvider.next(); 
+			       String location = linkProvider.next();
 			       String onload = getOnloadText(pathPrefix + location, testKind);
 				   out.write(onload.getBytes());
 				   //System.out.println("Onload = " + onload);
@@ -96,7 +96,7 @@ public class OnLoadFilter implements IFilter {
 			onload += '"';
 			return onload;
 		}
-		
+
 		private String getCompletionText(int testKind) {
 			if (testKind == SelectTocDialog.FOLLOW_LINKS) {
                 return " onload = \"ua_test_doc_check_links();\" ";
@@ -114,28 +114,28 @@ public class OnLoadFilter implements IFilter {
 		public void write(int b) throws IOException {
 			updateState(b);
 			if (state != 20) {
-			    out.write(b);	
+			    out.write(b);
 			}
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			out.close();
 			super.close();
-		}	
+		}
 	}
 
 	private int testKind;
-    
+
     public OnLoadFilter(int testKind) {
     	this.testKind = testKind;
     }
-    
+
     private static Iterator<String> linkProvider;
-	
+
 	protected String getCommentText() {
 		return "comment";
-	}	
+	}
 
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
@@ -151,6 +151,6 @@ public class OnLoadFilter implements IFilter {
 
 	public static void setLinkProvider(Iterator<String> provider) {
 		linkProvider = provider;
-	}	
+	}
 
 }

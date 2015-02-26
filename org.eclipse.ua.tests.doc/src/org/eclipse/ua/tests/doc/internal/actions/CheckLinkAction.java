@@ -23,7 +23,7 @@ import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 public class CheckLinkAction implements ILiveHelpAction {
-	
+
 	private static final String HELP_TOPIC = "/help/topic";
 	private static Map<String, String> links = new HashMap<String, String>();
 	private String link;
@@ -80,7 +80,7 @@ public class CheckLinkAction implements ILiveHelpAction {
 			}
 			if (!opened) {
 				String containingPage = links.get(next);
-				System.out.println("Cannot open link from " + trimPath(containingPage)                       
+				System.out.println("Cannot open link from " + trimPath(containingPage)
 				       + " to " + trimPath(next));
 			}
 		}
@@ -89,7 +89,7 @@ public class CheckLinkAction implements ILiveHelpAction {
 		links = new HashMap<String, String>();
 		System.out.println("End check links");
 	}
-	
+
 	private String trimPath(String next) {
         String result = next;
 		int htIndex = result.indexOf(HELP_TOPIC);

@@ -31,7 +31,7 @@ public class AddScriptFilter implements IFilter {
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
-		StringBuffer script = new StringBuffer();	
+		StringBuffer script = new StringBuffer();
 		script.append("\n<script type=\"text/javascript\" src=\"");
 		script.append(relativePath);
 		script.append("content/org.eclipse.ua.tests.doc/checkdoc.js\"> </script>"); //$NON-NLS-1$

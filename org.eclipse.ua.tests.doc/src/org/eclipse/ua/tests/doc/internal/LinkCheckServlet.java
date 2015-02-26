@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class LinkCheckServlet extends HttpServlet {
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -33,5 +33,5 @@ public class LinkCheckServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 6412817998904081026L;
 
-	
+
 }

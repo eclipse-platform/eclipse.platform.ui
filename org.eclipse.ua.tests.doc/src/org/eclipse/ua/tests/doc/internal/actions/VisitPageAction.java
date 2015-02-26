@@ -14,9 +14,9 @@ package org.eclipse.ua.tests.doc.internal.actions;
 import org.eclipse.help.ILiveHelpAction;
 
 public class VisitPageAction implements ILiveHelpAction {
-	
+
 	public static String lastPageVisited = "NO_PAGES_VISITED";
-	
+
 	@Override
 	public void setInitializationString(String data) {
 		lastPageVisited = data;

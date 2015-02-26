@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
     public static List<BrokenLink> errors = new ArrayList<BrokenLink>();
-    
+
     public static void showErrors() {
     	if (errors.size() == 0) {
     		reportStatus("No errors detected in load");
@@ -41,8 +41,8 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	private static void reportStatus(String errorMessage) {
 		HelpPlugin.logWarning(errorMessage);
 	}
-	
-	
+
+
 	/**
 	 * The constructor.
 	 */
@@ -76,7 +76,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 				errors = TocValidator.validate(href);
 			} catch (Exception e) {
 				e.printStackTrace();
-			}	
+			}
 			showErrors();
 		}
 	}
@@ -84,9 +84,9 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 
 
 	/**
-	 * Selection in the workbench has been changed. We 
+	 * Selection in the workbench has been changed. We
 	 * can change the state of the 'real' action here
-	 * if we want, but this can only happen after 
+	 * if we want, but this can only happen after
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
