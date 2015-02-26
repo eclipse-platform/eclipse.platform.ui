@@ -13,13 +13,11 @@ package org.eclipse.ui.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
-import org.eclipse.ui.views.markers.internal.MarkerView;
 
 /**
  * Utility class for showing markers in the marker views.
@@ -108,14 +106,6 @@ public class MarkerViewUtil {
 				else
 					view = showView ? page.showView(viewId) : page
 							.findView(viewId);
-			}
-
-			if (view != null && view instanceof MarkerView) {
-				StructuredSelection selection = new StructuredSelection(marker);
-				MarkerView markerView = (MarkerView) view;
-				markerView.setSelection(selection, true);
-				returnValue = true;
-
 			}
 		} catch (CoreException e) {
 			Policy.handle(e);
