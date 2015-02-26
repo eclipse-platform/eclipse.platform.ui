@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 	}
 
 	public void deregisterAsSaveParticipant() {
-		getWorkspace().removeSaveParticipant(this);
+		getWorkspace().removeSaveParticipant(getPluginId());
 	}
 
 	public void doneSaving(ISaveContext context) {
@@ -110,7 +110,7 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 	 * @return a status indicating if the ISavedState is the expected one or not.
 	 */
 	public IStatus registerAsSaveParticipant() throws CoreException {
-		ISavedState state = getWorkspace().addSaveParticipant(this, this);
+		ISavedState state = getWorkspace().addSaveParticipant(getPluginId(), this);
 		readExpectedSavedNumber();
 		return validate(state);
 	}
