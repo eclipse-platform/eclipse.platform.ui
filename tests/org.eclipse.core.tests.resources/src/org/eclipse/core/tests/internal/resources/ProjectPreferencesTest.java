@@ -97,7 +97,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		String instanceValue = "instance" + getUniqueString();
 		String projectValue = "project" + getUniqueString();
 		IScopeContext projectContext = new ProjectScope(project);
-		IScopeContext instanceContext = new InstanceScope();
+		IScopeContext instanceContext = InstanceScope.INSTANCE;
 		ensureExistsInWorkspace(project, true);
 
 		ArrayList<IScopeContext[]> list = new ArrayList<IScopeContext[]>();
