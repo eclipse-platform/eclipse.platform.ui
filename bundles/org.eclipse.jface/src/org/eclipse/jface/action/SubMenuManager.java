@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 /**
  * A <code>SubMenuManager</code> is used to define a set of contribution
- * items within a parent manager.  Once defined, the visibility of the entire set can 
+ * items within a parent manager.  Once defined, the visibility of the entire set can
  * be changed as a unit.
  * <p>
  * A client may ask for and make additions to a submenu.  The visibility of these items
@@ -54,7 +54,7 @@ public class SubMenuManager extends SubContributionManager implements
     /**
      * Constructs a new manager.
      *
-     * @param mgr the parent manager.  All contributions made to the 
+     * @param mgr the parent manager.  All contributions made to the
      *      <code>SubMenuManager</code> are forwarded and appear in the
      *      parent manager.
      */
@@ -216,7 +216,7 @@ public class SubMenuManager extends SubContributionManager implements
     }
 
     /**
-     * @return the parent menu manager that this sub-manager contributes to. 
+     * @return the parent menu manager that this sub-manager contributes to.
      */
     protected final IMenuManager getParentMenuManager() {
         // Cast is ok because that's the only
@@ -301,7 +301,7 @@ public class SubMenuManager extends SubContributionManager implements
 
     @Override
 	public void setParent(IContributionManager parent) {
-        // do nothing, our "parent manager's" parent 
+        // do nothing, our "parent manager's" parent
         // is set when it is added to a manager
     }
 

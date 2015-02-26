@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.TreeColumn;
 /**
  * ViewerColumn implementation for TreeViewer to enable column-specific label
  * providers and editing support.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public final class TreeViewerColumn extends ViewerColumn {
 	private TreeColumn column;
@@ -28,7 +28,7 @@ public final class TreeViewerColumn extends ViewerColumn {
 	 * Creates a new viewer column for the given {@link TreeViewer} on a new
 	 * {@link TreeColumn} with the given style bits. The column is inserted at
 	 * the given index into the list of columns.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to which this column belongs
 	 * @param style
@@ -44,7 +44,7 @@ public final class TreeViewerColumn extends ViewerColumn {
 	 * Creates a new viewer column for the given {@link TreeViewer} on a new
 	 * {@link TreeColumn} with the given style bits. The column is added at the
 	 * end of the list of columns.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to which this column belongs
 	 * @param style
@@ -61,7 +61,7 @@ public final class TreeViewerColumn extends ViewerColumn {
 	/**
 	 * Creates a new viewer column for the given {@link TreeViewer} on the given
 	 * {@link TreeColumn}.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to which this column belongs
 	 * @param column
@@ -71,7 +71,7 @@ public final class TreeViewerColumn extends ViewerColumn {
 		super(viewer, column);
 		this.column = column;
 	}
-	
+
 	private static TreeColumn createColumn(Tree table, int style, int index) {
 		if (index >= 0) {
 			return new TreeColumn(table, style, index);

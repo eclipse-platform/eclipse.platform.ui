@@ -28,18 +28,18 @@ import org.eclipse.jface.util.Util;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public class StatusLineContributionItem extends ContributionItem {
 
 	private final static int DEFAULT_CHAR_WIDTH = 40;
-	
+
 	/**
 	 * A constant indicating that the contribution should compute its actual
 	 * size depending on the text. It will grab all space necessary to display
 	 * the whole text.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public final static int CALC_TRUE_WIDTH = -1;
@@ -63,7 +63,7 @@ public class StatusLineContributionItem extends ContributionItem {
 
 	/**
 	 * Creates a status line contribution item with the given id.
-	 * 
+	 *
 	 * @param id
 	 *            the contribution item's id, or <code>null</code> if it is to
 	 *            have no id
@@ -75,7 +75,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	/**
 	 * Creates a status line contribution item with the given id that displays
 	 * the given number of characters.
-	 * 
+	 *
 	 * @param id
 	 *            the contribution item's id, or <code>null</code> if it is to
 	 *            have no id
@@ -97,8 +97,8 @@ public class StatusLineContributionItem extends ContributionItem {
 
 		Label sep = new Label(parent, SWT.SEPARATOR);
 		label = new CLabel(statusLine, SWT.SHADOW_NONE);
-		label.setText(text);		
-		
+		label.setText(text);
+
 		if (charWidth == CALC_TRUE_WIDTH) {
 			// compute the size of the label to get the width hint for the contribution
 			Point preferredSize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -126,7 +126,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	/**
 	 * An accessor for the current location of this status line contribution
 	 * item -- relative to the display.
-	 * 
+	 *
 	 * @return The current location of this status line; <code>null</code> if
 	 *         not yet initialized.
 	 */
@@ -140,7 +140,7 @@ public class StatusLineContributionItem extends ContributionItem {
 
 	/**
 	 * Retrieves the text that is being displayed in the status line.
-	 * 
+	 *
 	 * @return the text that is currently being displayed
 	 */
 	public String getText() {
@@ -149,7 +149,7 @@ public class StatusLineContributionItem extends ContributionItem {
 
 	/**
 	 * Sets the text to be displayed in the status line.
-	 * 
+	 *
 	 * @param text
 	 *            the text to be displayed, must not be <code>null</code>
 	 */

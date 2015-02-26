@@ -44,14 +44,14 @@ import org.eclipse.swt.widgets.Display;
  * the caller. Alternatively, createResource() returns a shared
  * Image. When the caller is done with an image obtained from createResource,
  * they must call destroyResource() rather than disposing the Image directly.
- * The result of createResource() can be safely cast to an Image. 
+ * The result of createResource() can be safely cast to an Image.
  * </p>
  *
  * @see org.eclipse.swt.graphics.Image
  */
 public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 
-    /** 
+    /**
      * A small red square used to warn that an image cannot be created.
      * <p>
      */
@@ -77,12 +77,12 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     public static ImageDescriptor createFromFile(Class<?> location, String filename) {
         return new FileImageDescriptor(location, filename);
     }
-    
+
     /**
      * Creates and returns a new image descriptor given ImageData
      * describing the image.
-     * 
-     * @since 3.1 
+     *
+     * @since 3.1
      *
      * @param data contents of the image
      * @return newly created image descriptor
@@ -90,12 +90,12 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     public static ImageDescriptor createFromImageData(ImageData data) {
         return new ImageDataImageDescriptor(data);
     }
-    
+
     /**
-     * Creates and returns a new image descriptor for the given image. Note 
+     * Creates and returns a new image descriptor for the given image. Note
      * that disposing the original Image will cause the descriptor to become invalid.
-     * 
-     * @since 3.1 
+     *
+     * @since 3.1
      *
      * @param img image to create
      * @return a newly created image descriptor
@@ -103,24 +103,24 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     public static ImageDescriptor createFromImage(Image img) {
         return new ImageDataImageDescriptor(img);
     }
-    
+
     /**
      * Creates an ImageDescriptor based on the given original descriptor, but with additional
      * SWT flags.
-     *  
+     *
      * <p>
      * Note that this sort of ImageDescriptor is slower and consumes more resources than
      * a regular image descriptor. It will also never generate results that look as nice as
      * a hand-drawn image. Clients are encouraged to supply their own disabled/grayed/etc. images
      * rather than using a default image and transforming it.
      * </p>
-     * 
+     *
      * @param originalImage image to transform
      * @param swtFlags any flag that can be passed to the flags argument of Image#Image(Device, Image, int)
      * @return an ImageDescriptor that creates new images by transforming the given image descriptor
-     * 
-     * @see Image#Image(Device, Image, int) 
-     * @since 3.1 
+     *
+     * @see Image#Image(Device, Image, int)
+     * @since 3.1
      *
      */
     public static ImageDescriptor createWithFlags(ImageDescriptor originalImage, int swtFlags) {
@@ -131,11 +131,11 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
      * Creates and returns a new image descriptor for the given image. This
      * method takes the Device that created the Image as an argument, allowing
      * the original Image to be reused if the descriptor is asked for another
-     * Image on the same device. Note that disposing the original Image will 
+     * Image on the same device. Note that disposing the original Image will
      * cause the descriptor to become invalid.
-     * 
+     *
      * @deprecated use {@link ImageDescriptor#createFromImage(Image)}
-     * @since 3.1 
+     * @since 3.1
      *
      * @param img image to create
      * @param theDevice the device that was used to create the Image
@@ -145,7 +145,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	public static ImageDescriptor createFromImage(Image img, Device theDevice) {
         return new ImageDataImageDescriptor(img);
     }
-    
+
     /**
      * Creates and returns a new image descriptor from a URL.
      *
@@ -167,34 +167,34 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
         }
         return result;
     }
-    
+
     @Override
 	public void destroyResource(Object previouslyCreatedObject) {
         ((Image)previouslyCreatedObject).dispose();
     }
-    
+
     /**
 	 * Creates and returns a new SWT image for this image descriptor. Note that
 	 * each call returns a new SWT image object. The returned image must be
 	 * explicitly disposed using the image's dispose call. The image will not be
 	 * automatically garbage collected. A default image is returned in the event
 	 * of an error.
-     * 
+     *
      * <p>
      * Note: this method differs from createResource(Device) in that the returned image
      * must be disposed directly, whereas an image obtained from createResource(...)
-     * must be disposed by calling destroyResource(...). It is not possible to 
+     * must be disposed by calling destroyResource(...). It is not possible to
      * mix-and-match. If you obtained the Image from this method, you must not dispose
-     * it by calling destroyResource. Clients are encouraged to use 
-     * create/destroyResource and downcast the result to Image rather than using 
+     * it by calling destroyResource. Clients are encouraged to use
+     * create/destroyResource and downcast the result to Image rather than using
      * createImage.
      * </p>
-     * 
+     *
 	 * <p>
 	 * Note: it is still possible for this method to return <code>null</code>
 	 * in extreme cases, for example if SWT runs out of image handles.
 	 * </p>
-	 * 
+	 *
 	 * @return a new image or <code>null</code> if the image could not be
 	 *         created
 	 */
@@ -214,7 +214,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 * still possible for this method to return <code>null</code> in extreme
 	 * cases, for example if SWT runs out of image handles.
 	 * </p>
-	 * 
+	 *
 	 * @param returnMissingImageOnError
 	 *            flag that determines if a default image is returned on error
 	 * @return a new image or <code>null</code> if the image could not be
@@ -233,7 +233,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 * Note: it is still possible for this method to return <code>null</code>
 	 * in extreme cases, for example if SWT runs out of image handles.
 	 * </p>
-	 * 
+	 *
 	 * @param device
 	 *            the device on which to create the image
 	 * @return a new image or <code>null</code> if the image could not be
@@ -256,7 +256,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 * still possible for this method to return <code>null</code> in extreme
 	 * cases, for example if SWT runs out of image handles.
 	 * </p>
-	 * 
+	 *
 	 * @param returnMissingImageOnError
 	 *            flag that determines if a default image is returned on error
 	 * @param device

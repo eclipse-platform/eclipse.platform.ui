@@ -43,7 +43,7 @@ import org.eclipse.jface.util.Util;
  * <code>KeyStroke</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class KeyStroke extends Trigger {
@@ -68,7 +68,7 @@ public final class KeyStroke extends Trigger {
 
 	/**
 	 * Creates an instance of <code>KeyStroke</code> given a natural key.
-	 * 
+	 *
 	 * @param naturalKey
 	 *            the natural key. The format of this integer is defined by
 	 *            whichever widget toolkit you are using; <code>NO_KEY</code>
@@ -84,7 +84,7 @@ public final class KeyStroke extends Trigger {
 	/**
 	 * Creates an instance of <code>KeyStroke</code> given a set of modifier keys
 	 * and a natural key.
-	 * 
+	 *
 	 * @param modifierKeys
 	 *            the modifier keys. The format of this integer is defined by
 	 *            whichever widget toolkit you are using; <code>NO_KEY</code>
@@ -104,7 +104,7 @@ public final class KeyStroke extends Trigger {
 	/**
 	 * Creates an instance of <code>KeyStroke</code> by parsing a given a formal
 	 * string representation.
-	 * 
+	 *
 	 * @param string
 	 *            the formal string representation to parse.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
@@ -170,7 +170,7 @@ public final class KeyStroke extends Trigger {
 	/**
 	 * Constructs an instance of <code>KeyStroke</code> given a set of
 	 * modifier keys and a natural key.
-	 * 
+	 *
 	 * @param modifierKeys
 	 *            the modifier keys. The format of this integer is defined by
 	 *            whichever widget toolkit you are using; <code>NO_KEY</code>
@@ -214,7 +214,7 @@ public final class KeyStroke extends Trigger {
 
 	/**
 	 * Formats this key stroke into the current default look.
-	 * 
+	 *
 	 * @return A string representation for this key stroke using the default
 	 *         look; never <code>null</code>.
 	 */
@@ -224,7 +224,7 @@ public final class KeyStroke extends Trigger {
 
 	/**
 	 * Returns the modifier keys for this key stroke.
-	 * 
+	 *
 	 * @return the bit mask of modifier keys; <code>NO_KEY</code> means that
 	 *         there is no modifier key.
 	 */
@@ -234,7 +234,7 @@ public final class KeyStroke extends Trigger {
 
 	/**
 	 * Returns the natural key for this key stroke.
-	 * 
+	 *
 	 * @return The natural key for this key stroke. This value is
 	 *         <code>NO_KEY</code> if the key stroke is incomplete (i.e., has
 	 *         no natural key).
@@ -251,7 +251,7 @@ public final class KeyStroke extends Trigger {
 	/**
 	 * Returns whether or not this key stroke is complete. Key strokes are
 	 * complete iff they have a natural key which is not <code>NO_KEY</code>.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the key stroke is complete.
 	 */
 	public final boolean isComplete() {
@@ -260,7 +260,7 @@ public final class KeyStroke extends Trigger {
 
 	/**
 	 * Returns the formal string representation for this key stroke.
-	 * 
+	 *
 	 * @return The formal string representation for this key stroke. Guaranteed
 	 *         not to be <code>null</code>.
 	 * @see java.lang.Object#toString()

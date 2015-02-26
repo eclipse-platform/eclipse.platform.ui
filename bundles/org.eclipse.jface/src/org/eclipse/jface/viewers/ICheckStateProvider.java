@@ -40,23 +40,23 @@ package org.eclipse.jface.viewers;
  * @since 3.5
  */
 public interface ICheckStateProvider {
-	
+
 	/**
-	 * Indicates if an element's representation should appear as checked or 
+	 * Indicates if an element's representation should appear as checked or
 	 * gray instead of unchecked. If this method returns <code>true</code>
 	 * the {@link ICheckStateProvider#isGrayed(Object)} method will determine
-	 * whether the check box displays a check mark ("checked") or a box 
+	 * whether the check box displays a check mark ("checked") or a box
 	 * ("grayed").
-	 * @param element 
-	 * @return true if the element should be checked or grayed, false if it 
+	 * @param element
+	 * @return true if the element should be checked or grayed, false if it
 	 * 		should be unchecked
 	 */
 	public boolean isChecked(Object element);
-	
+
 	/**
 	 * Indicates whether the check box associated with an element, when checked
 	 * as indicated by the {@link ICheckStateProvider#isChecked(Object)} method,
-	 * should display the gray (boxed) state instead of the check mark.  
+	 * should display the gray (boxed) state instead of the check mark.
 	 * @param element
 	 * @return true if the element should be gray
 	 */

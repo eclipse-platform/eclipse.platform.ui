@@ -18,15 +18,15 @@ package org.eclipse.jface.fieldassist;
  * further elaborates the meaning of the proposal. It also includes a a
  * zero-based index position within the contents where the cursor should be
  * placed after a proposal is accepted.
- * 
+ *
  * @since 3.2
- * 
+ *
  * @see ContentProposal
  */
 public interface IContentProposal {
 	/**
 	 * Return the content represented by this proposal.
-	 * 
+	 *
 	 * @return the String content represented by this proposal.
 	 */
 	public String getContent();
@@ -34,7 +34,7 @@ public interface IContentProposal {
 	/**
 	 * Return the integer position within the contents that the cursor should be
 	 * placed after the proposal is accepted.
-	 * 
+	 *
 	 * @return the zero-based index position within the contents where the
 	 *         cursor should be placed after the proposal is accepted. The range
 	 *         of the cursor position is from 0..N where N is the number of
@@ -44,7 +44,7 @@ public interface IContentProposal {
 
 	/**
 	 * Return the label used to describe this proposal.
-	 * 
+	 *
 	 * @return the String label used to display the proposal. If
 	 *         <code>null</code>, then the content will be displayed as the
 	 *         label.
@@ -53,7 +53,7 @@ public interface IContentProposal {
 
 	/**
 	 * Return a description that describes this proposal.
-	 * 
+	 *
 	 * @return the String label used to further the proposal. If
 	 *         <code>null</code>, then no description will be displayed.
 	 */

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace] 
+ *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace]
  *                  DialogSettings.save() silently ignores IOException
  *     Ruediger Herrmann <ruediger.herrmann@gmx.de> - bug 92518
  *******************************************************************************/
@@ -127,7 +127,7 @@ public class DialogSettings implements IDialogSettings {
     /**
 	 * Remove a section in the receiver. If the given section does not exist,
 	 * nothing is done.
-	 * 
+	 *
 	 * @param section
 	 *            the section to be removed. Must not be <code>null</code>.
 	 * @since 3.9
@@ -141,7 +141,7 @@ public class DialogSettings implements IDialogSettings {
     /**
 	 * Remove a section by name in the receiver. If the given section does not
 	 * exist, nothing is done.
-	 * 
+	 *
 	 * @param sectionName
 	 *            the name of the section to be removed.  Must not be <code>null</code>.
      * @return The dialog section removed, or <code>null</code> if it wasn't there.
@@ -218,17 +218,17 @@ public class DialogSettings implements IDialogSettings {
 	public String getName() {
         return name;
     }
-    
+
 	/**
 	 * Returns a section with the given name in the given dialog settings. If
 	 * the section doesn't exist yet, then it is first created.
-	 * 
+	 *
 	 * @param settings
 	 *            the parent settings
 	 * @param sectionName
 	 *            the name of the section
 	 * @return the section
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static IDialogSettings getOrCreateSection(IDialogSettings settings,
@@ -414,13 +414,13 @@ public class DialogSettings implements IDialogSettings {
         }
         out.endTag(TAG_SECTION);
     }
-    
+
     /**
      * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
      * compilation against JCL Foundation (bug 80059).
      */
     private static class XMLWriter extends BufferedWriter {
-    	
+
     	/** current number of tabs to use for indent */
     	protected int tab;
 
@@ -430,7 +430,7 @@ public class DialogSettings implements IDialogSettings {
     	/**
     	 * Create a new XMLWriter
     	 * @param output the stream to write the output to
-    	 * @throws IOException 
+    	 * @throws IOException
     	 */
     	public XMLWriter(OutputStream output) throws IOException {
     		this(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
@@ -439,7 +439,7 @@ public class DialogSettings implements IDialogSettings {
     	/**
     	 * Create a new XMLWriter
     	 * @param output the write to used when writing to
-    	 * @throws IOException 
+    	 * @throws IOException
     	 */
     	public XMLWriter(Writer output) throws IOException {
     		super(output);
@@ -455,7 +455,7 @@ public class DialogSettings implements IDialogSettings {
     	/**
     	 * write the intended end tag
     	 * @param name the name of the tag to end
-    	 * @throws IOException 
+    	 * @throws IOException
     	 */
     	public void endTag(String name) throws IOException {
     		tab--;
@@ -473,7 +473,7 @@ public class DialogSettings implements IDialogSettings {
     	 * @param name the name of the tag
     	 * @param parameters map of parameters
     	 * @param close should the tag be ended automatically (=> empty tag)
-    	 * @throws IOException 
+    	 * @throws IOException
     	 */
     	public void printTag(String name, HashMap<String, String> parameters, boolean close) throws IOException {
     		printTag(name, parameters, true, true, close);
@@ -511,7 +511,7 @@ public class DialogSettings implements IDialogSettings {
     	 * start the tag
     	 * @param name the name of the tag
     	 * @param parameters map of parameters
-    	 * @throws IOException 
+    	 * @throws IOException
     	 */
     	public void startTag(String name, HashMap<String, String> parameters) throws IOException {
     		startTag(name, parameters, true);

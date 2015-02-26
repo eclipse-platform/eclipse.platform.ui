@@ -30,9 +30,9 @@ public interface IStatusLineManager extends IContributionManager {
 	 * Returns a progress monitor which reports progress in the status line.
 	 * Note that the returned progress monitor may only be accessed from the UI
 	 * thread.
-	 * 
+	 *
 	 * @return the progress monitor
-	 * 
+	 *
 	 *         Note: There is a delay after a beginTask message before the
 	 *         monitor is shown. This may not be appropriate for all apps.
 	 */
@@ -58,7 +58,7 @@ public interface IStatusLineManager extends IContributionManager {
      * Sets the error message text to be displayed on the status line.
      * The image on the status line is cleared.
      * <p>
-     * An error message overrides the current message until the error 
+     * An error message overrides the current message until the error
      * message is cleared (set to <code>null</code>).
      * </p>
      *
@@ -70,7 +70,7 @@ public interface IStatusLineManager extends IContributionManager {
     /**
      * Sets the image and error message to be displayed on the status line.
      * <p>
-     * An error message overrides the current message until the error 
+     * An error message overrides the current message until the error
      * message is cleared (set to <code>null</code>).
      * </p>
      *
@@ -84,7 +84,7 @@ public interface IStatusLineManager extends IContributionManager {
      * Sets the message text to be displayed on the status line.
      * The image on the status line is cleared.
      * <p>
-     * This method replaces the current message but does not affect the 
+     * This method replaces the current message but does not affect the
      * error message. That is, the error message, if set, will continue
      * to be displayed until it is cleared (set to <code>null</code>).
      * </p>
@@ -96,7 +96,7 @@ public interface IStatusLineManager extends IContributionManager {
     /**
      * Sets the image and message to be displayed on the status line.
      * <p>
-     * This method replaces the current message but does not affect the 
+     * This method replaces the current message but does not affect the
      * error message. That is, the error message, if set, will continue
      * to be displayed until it is cleared (set to <code>null</code>).
      * </p>

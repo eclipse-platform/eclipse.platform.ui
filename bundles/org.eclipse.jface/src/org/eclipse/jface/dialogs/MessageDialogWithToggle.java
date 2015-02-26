@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
  * to change this preference at some later point in time (e.g., through a
  * preference page).
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class MessageDialogWithToggle extends MessageDialog {
@@ -70,7 +70,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      * Convenience method to open a simple dialog as specified by the <code>kind</code> flag,
      * with a "don't show again' toggle.
      *
-     * @param kind 
+     * @param kind
 	 *            the kind of dialog to open, one of {@link #ERROR},
 	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
 	 *            {@link #CONFIRM}, or {#QUESTION_WITH_CANCEL}.
@@ -117,7 +117,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Convenience method to open a standard error dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -148,7 +148,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Convenience method to open a standard information dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -167,7 +167,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      * @param key
      *            the key to use when persisting the user's preference;
      *            <code>null</code> if you don't want it persisted.
-     * 
+     *
      * @return the dialog, after being closed by the user, which the client can
      *         only call <code>getReturnCode()</code> or
      *         <code>getToggleState()</code>
@@ -180,7 +180,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Convenience method to open a simple confirm (OK/Cancel) dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -211,7 +211,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Convenience method to open a standard warning dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -242,7 +242,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Convenience method to open a simple question Yes/No/Cancel dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -273,7 +273,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Convenience method to open a simple Yes/No question dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -292,7 +292,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      * @param key
      *            the key to use when persisting the user's preference;
      *            <code>null</code> if you don't want it persisted.
-     * 
+     *
      * @return the dialog, after being closed by the user, which the client can
      *         only call <code>getReturnCode()</code> or
      *         <code>getToggleState()</code>
@@ -342,7 +342,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     /**
      * Creates a message dialog with a toggle. See the superclass constructor
      * for info on the other parameters.
-     * 
+     *
      * @param parentShell
      *            the parent shell
      * @param dialogTitle
@@ -374,7 +374,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      *            the default message
      * @param toggleState
      *            the initial state for the toggle
-     *  
+     *
      */
     public MessageDialogWithToggle(Shell parentShell, String dialogTitle,
             Image image, String message, int dialogImageType,
@@ -426,16 +426,16 @@ public class MessageDialogWithToggle extends MessageDialog {
             // get the JFace button ID that matches the label, or use the specified
             // id if there is no match.
             int id = mapButtonLabelToButtonID(label, suggestedId);
-            
+
             // if the suggested id was used, increment the default for next use
             if (id == suggestedId) {
 				suggestedId++;
 			}
- 
+
             Button button = createButton(parent, id, label,
                     defaultButtonIndex == i);
             buttons[i] = button;
- 
+
         }
         setButtons(buttons);
     }
@@ -453,8 +453,8 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Creates a toggle button without any text or state.  The text and state
-     * will be created by <code>createDialogArea</code>. 
-     * 
+     * will be created by <code>createDialogArea</code>.
+     *
      * @param parent
      *            The composite in which the toggle button should be placed;
      *            must not be <code>null</code>.
@@ -482,7 +482,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * Returns the toggle button.
-     * 
+     *
      * @return the toggle button
      */
     protected Button getToggleButton() {
@@ -491,7 +491,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * An accessor for the current preference store for this dialog.
-     * 
+     *
      * @return The preference store; this value may be <code>null</code> if no
      *         preference is being used.
      */
@@ -501,7 +501,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * An accessor for the current key of the toggle preference.
-     * 
+     *
      * @return The preference key; this value may be <code>null</code> if no
      *         preference is being used.
      */
@@ -512,7 +512,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     /**
      * Returns the toggle state. This can be called even after the dialog is
      * closed.
-     * 
+     *
      * @return <code>true</code> if the toggle button is checked,
      *         <code>false</code> if not
      */
@@ -523,7 +523,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     /**
      * A mutator for the key of the preference to be modified by the toggle
      * button.
-     * 
+     *
      * @param prefKey
      *            The prefKey to set. If this value is <code>null</code>,
      *            then no preference will be modified.
@@ -534,7 +534,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
      * A mutator for the preference store to be modified by the toggle button.
-     * 
+     *
      * @param prefStore
      *            The prefStore to set. If this value is <code>null</code>,
      *            then no preference will be modified.
@@ -547,7 +547,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      * A mutator for the button providing the toggle option. If the button
      * exists, then it will automatically get the text set to the current toggle
      * message, and its selection state set to the current selection state.
-     * 
+     *
      * @param button
      *            The button to use; must not be <code>null</code>.
      */
@@ -574,7 +574,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     /**
      * A mutator for the text on the toggle button. The button will
      * automatically get updated with the new text, if it exists.
-     * 
+     *
      * @param message
      *            The new text of the toggle button; if it is <code>null</code>,
      *            then used the default toggle message.
@@ -597,7 +597,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     /**
      * A mutator for the state of the toggle button. This method will update the
      * button, if it exists.
-     * 
+     *
      * @param toggleState
      *            The desired state of the toggle button (<code>true</code>
      *            means the toggle should be selected).
@@ -610,11 +610,11 @@ public class MessageDialogWithToggle extends MessageDialog {
             toggleButton.setSelection(toggleState);
         }
     }
-    
+
     /**
      * Attempt to find a standard JFace button id that matches the specified button
      * label.  If no match can be found, use the default id provided.
-     * 
+     *
      * @param buttonLabel the button label whose id is sought
      * @param defaultId the id to use for the button if there is no standard id
      * @return the id for the specified button label
@@ -624,83 +624,83 @@ public class MessageDialogWithToggle extends MessageDialog {
     	if (IDialogConstants.OK_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.OK_ID;
 		}
-    	
+
 	    if (IDialogConstants.YES_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.YES_ID;
 		}
-	    
+
 	    if (IDialogConstants.NO_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.NO_ID;
 		}
-	    
+
 	    if (IDialogConstants.CANCEL_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.CANCEL_ID;
 		}
-	    
+
 	    if (IDialogConstants.YES_TO_ALL_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.YES_TO_ALL_ID;
 		}
-	    
+
 	    if (IDialogConstants.SKIP_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.SKIP_ID;
 		}
-	    
+
 	    if (IDialogConstants.STOP_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.STOP_ID;
 		}
-	    
+
 	    if (IDialogConstants.ABORT_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.ABORT_ID;
 		}
-	    
+
 	    if (IDialogConstants.RETRY_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.RETRY_ID;
 		}
-	    
+
 	    if (IDialogConstants.IGNORE_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.IGNORE_ID;
 		}
-	    
+
 	    if (IDialogConstants.PROCEED_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.PROCEED_ID;
 		}
-	    
+
 	    if (IDialogConstants.OPEN_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.OPEN_ID;
 		}
-	    
+
 	    if (IDialogConstants.CLOSE_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.CLOSE_ID;
 		}
-	    
+
 	    if (IDialogConstants.BACK_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.BACK_ID;
 		}
-	    
+
 	    if (IDialogConstants.NEXT_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.NEXT_ID;
 		}
-	    
+
 	    if (IDialogConstants.FINISH_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.FINISH_ID;
 		}
-	    
+
 	    if (IDialogConstants.HELP_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.HELP_ID;
 		}
-	    
+
 	    if (IDialogConstants.NO_TO_ALL_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.NO_TO_ALL_ID;
 		}
-	    
+
 	    if (IDialogConstants.SHOW_DETAILS_LABEL.equals(buttonLabel)) {
 	    	return IDialogConstants.DETAILS_ID;
 	    }
-	    
+
 	    if (IDialogConstants.HIDE_DETAILS_LABEL.equals(buttonLabel)) {
 	    	return IDialogConstants.DETAILS_ID;
 	    }
-        
+
         //          No XXX_LABEL in IDialogConstants for these. Unlikely
         //            they would be used in a message dialog though.
         //        	public int SELECT_ALL_ID = 18;

@@ -25,12 +25,12 @@ import org.eclipse.swt.widgets.Control;
  * control. This class is intended as an alternative to the JFace <code>ListViewer</code>, which displays
  * its content in a combo box rather than a list. Wherever possible, this class attempts to behave
  * like ListViewer. <p>
- * 
- * This class is designed to be instantiated with a pre-existing SWT combo control 
+ *
+ * This class is designed to be instantiated with a pre-existing SWT combo control
  * and configured with a domain-specific content provider, label provider, element
  * filter (optional), and element sorter (optional).
  * </p>
- * 
+ *
  * @see org.eclipse.jface.viewers.ListViewer
  * @since 3.0 (made non-final in 3.4)
  */
@@ -39,15 +39,15 @@ public class ComboViewer extends AbstractListViewer {
     /**
      * This viewer's list control if this viewer is instantiated with a combo control; otherwise
      * <code>null</code>.
-     * 
+     *
      * @see #ComboViewer(Combo)
      */
     private Combo combo;
-    
+
     /**
      * This viewer's list control if this viewer is instantiated with a CCombo control; otherwise
      * <code>null</code>.
-     * 
+     *
      * @see #ComboViewer(CCombo)
      * @since 3.3
      */
@@ -55,7 +55,7 @@ public class ComboViewer extends AbstractListViewer {
 
     /**
      * Creates a combo viewer on a newly-created combo control under the given parent.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param parent the parent control
@@ -67,7 +67,7 @@ public class ComboViewer extends AbstractListViewer {
     /**
      * Creates a combo viewer on a newly-created combo control under the given parent.
      * The combo control is created using the given SWT style bits.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param parent the parent control
@@ -79,7 +79,7 @@ public class ComboViewer extends AbstractListViewer {
 
     /**
      * Creates a combo viewer on the given combo control.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param list the combo control
@@ -88,10 +88,10 @@ public class ComboViewer extends AbstractListViewer {
         this.combo = list;
         hookControl(list);
     }
-    
+
     /**
      * Creates a combo viewer on the given CCombo control.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param list the CCombo control
@@ -174,7 +174,7 @@ public class ComboViewer extends AbstractListViewer {
     /**
 	 * Returns this list viewer's list control. If the viewer was not created on
 	 * a CCombo control, some kind of unchecked exception is thrown.
-	 * 
+	 *
 	 * @return the list control
      * @since 3.3
 	 */
@@ -193,7 +193,7 @@ public class ComboViewer extends AbstractListViewer {
     	Assert.isNotNull(combo);
         return combo;
     }
-    
+
     /*
      * Do nothing -- combos only display the selected element, so there is no way
      * we can ensure that the given element is visible without changing the selection.
@@ -202,7 +202,7 @@ public class ComboViewer extends AbstractListViewer {
     @Override
 	public void reveal(Object element) {
     }
-    
+
 
     @Override
 	protected void listSetSelection(int[] ixs) {

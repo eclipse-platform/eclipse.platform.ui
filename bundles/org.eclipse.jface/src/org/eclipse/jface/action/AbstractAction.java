@@ -24,7 +24,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <p>
  * Clients may neither instantiate nor extend this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractAction extends EventManager implements IAction {
@@ -37,10 +37,10 @@ public abstract class AbstractAction extends EventManager implements IAction {
 	/**
 	 * Notifies any property change listeners that a property has changed. Only
 	 * listeners registered at the time this method is called are notified.
-	 * 
+	 *
 	 * @param event
 	 *            the property change event
-	 * 
+	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	protected final void firePropertyChange(final PropertyChangeEvent event) {
@@ -56,14 +56,14 @@ public abstract class AbstractAction extends EventManager implements IAction {
 	 * method avoids creating an event object if there are no listeners
 	 * registered, but calls
 	 * <code>firePropertyChange(PropertyChangeEvent)</code> if there are.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the name of the property that has changed
 	 * @param oldValue
 	 *            the old value of the property, or <code>null</code> if none
 	 * @param newValue
 	 *            the new value of the property, or <code>null</code> if none
-	 * 
+	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	protected final void firePropertyChange(final String propertyName,

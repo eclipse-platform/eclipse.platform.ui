@@ -67,11 +67,11 @@ public abstract class EditingSupport {
 	 * methods are called, either directly or through some kind of listener
 	 * mechanism on the implementer's model, to cause the new value to appear in
 	 * the viewer.
-	 * 
+	 *
 	 * <p>
 	 * <b>Subclasses should overwrite.</b>
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @param value

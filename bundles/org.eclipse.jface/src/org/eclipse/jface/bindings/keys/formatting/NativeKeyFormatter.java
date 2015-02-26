@@ -26,7 +26,7 @@ import org.eclipse.jface.util.Util;
  * format. This is typically what you would see on the menus for the given
  * platform and locale.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class NativeKeyFormatter extends AbstractKeyFormatter {
@@ -85,7 +85,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	 * Formats an individual key into a human readable format. This uses an
 	 * internationalization resource bundle to look up the key. This does the
 	 * platform-specific formatting for Carbon.
-	 * 
+	 *
 	 * @param key
 	 *            The key to format.
 	 * @return The key formatted as a string; should not be <code>null</code>.
@@ -96,7 +96,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 		final String name = lookup.formalNameLookup(key);
 
 		// TODO consider platform-specific resource bundles
-		if (Util.isMac()) {    	
+		if (Util.isMac()) {
 			String formattedName = (String) CARBON_KEY_LOOK_UP.get(name);
 			if (formattedName != null) {
 				return formattedName;

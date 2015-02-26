@@ -18,14 +18,14 @@ import org.eclipse.swt.widgets.Control;
 /**
  * This class provides a convenient shorthand for creating and initialising
  * RowData. This offers several benefits over creating RowData the normal way:
- * 
+ *
  * <ul>
  * <li>The same factory can be used many times to create several RowData
  * instances</li>
  * <li>The setters on RowDataFactory all return "this", allowing them to be
  * chained</li>
  * </ul>
- * 
+ *
  * @since 3.5
  */
 public final class RowDataFactory {
@@ -33,7 +33,7 @@ public final class RowDataFactory {
 
 	/**
 	 * Creates a RowDataFactory that creates copies of the given RowData.
-	 * 
+	 *
 	 * @param data
 	 *            object to be copied
 	 */
@@ -43,16 +43,16 @@ public final class RowDataFactory {
 
 	/**
 	 * Creates a new RowDataFactory initialized with the SWT defaults.
-	 * 
+	 *
 	 * <p>
 	 * Initial values are:
 	 * </p>
-	 * 
+	 *
 	 * <ul>
 	 * <li>exclude(false)</li>
 	 * <li>hint(SWT.DEFAULT, SWT.DEFAULT)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return a new GridDataFactory instance
 	 */
 	public static RowDataFactory swtDefaults() {
@@ -62,7 +62,7 @@ public final class RowDataFactory {
 	/**
 	 * Creates a new RowDataFactory that creates copies of the given RowData by
 	 * default.
-	 * 
+	 *
 	 * @param data
 	 *            RowData to copy
 	 * @return a new RowDataFactory that creates copies of the argument by
@@ -74,7 +74,7 @@ public final class RowDataFactory {
 
 	/**
 	 * Returns a copy of the given RowData
-	 * 
+	 *
 	 * @param data
 	 *            RowData to copy
 	 * @return a copy of the argument
@@ -88,7 +88,7 @@ public final class RowDataFactory {
 
 	/**
 	 * Instructs the GridLayout to ignore this control when performing layouts.
-	 * 
+	 *
 	 * @param shouldExclude
 	 *            true iff the control should be excluded from layouts
 	 * @return this
@@ -101,7 +101,7 @@ public final class RowDataFactory {
 	/**
 	 * Creates a new GridData instance. All attributes of the GridData instance
 	 * will be initialised by the factory.
-	 * 
+	 *
 	 * @return a new GridData instance
 	 */
 	public RowData create() {
@@ -110,7 +110,7 @@ public final class RowDataFactory {
 
 	/**
 	 * Creates a copy of the receiver.
-	 * 
+	 *
 	 * @return a copy of the receiver
 	 */
 	public RowDataFactory copy() {
@@ -120,7 +120,7 @@ public final class RowDataFactory {
 	/**
 	 * Sets the layout data on the given control. Creates a new RowData instance
 	 * and assigns it to the control by calling control.setLayoutData.
-	 * 
+	 *
 	 * @param control
 	 *            control whose layout data will be initialised
 	 */
@@ -132,7 +132,7 @@ public final class RowDataFactory {
 	 * Sets the width and height hints. The width and height hints override the
 	 * control's preferred size. If either hint is set to SWT.DEFAULT, the
 	 * control's preferred size is used.
-	 * 
+	 *
 	 * @param xHint
 	 *            horizontal hint (pixels), or SWT.DEFAULT to use the control's
 	 *            preferred size
@@ -151,7 +151,7 @@ public final class RowDataFactory {
 	 * Sets the width and height hints. The width and height hints override the
 	 * control's preferred size. If either hint is set to SWT.DEFAULT, the
 	 * control's preferred size is used.
-	 * 
+	 *
 	 * @param hint
 	 *            size (pixels) to be used instead of the control's preferred
 	 *            size. If the x or y values are set to SWT.DEFAULT, the

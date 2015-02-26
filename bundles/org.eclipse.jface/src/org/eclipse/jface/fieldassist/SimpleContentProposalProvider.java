@@ -16,10 +16,10 @@ import java.util.ArrayList;
 /**
  * SimpleContentProposalProvider is a class designed to map a static list of
  * Strings to content proposals.
- * 
+ *
  * @see IContentProposalProvider
  * @since 3.2
- * 
+ *
  */
 public class SimpleContentProposalProvider implements IContentProposalProvider {
 
@@ -42,7 +42,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	/**
 	 * Construct a SimpleContentProposalProvider whose content proposals are
 	 * always the specified array of Objects.
-	 * 
+	 *
 	 * @param proposals
 	 *            the array of Strings to be returned whenever proposals are
 	 *            requested.
@@ -54,8 +54,8 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 
 	/**
 	 * Return an array of Objects representing the valid content proposals for a
-	 * field. 
-	 * 
+	 * field.
+	 *
 	 * @param contents
 	 *            the current contents of the field (only consulted if filtering
 	 *            is set to <code>true</code>)
@@ -89,7 +89,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 
 	/**
 	 * Set the Strings to be used as content proposals.
-	 * 
+	 *
 	 * @param items
 	 *            the array of Strings to be used as proposals.
 	 */
@@ -101,7 +101,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	/**
 	 * Set the boolean that controls whether proposals are filtered according to
 	 * the current field content.
-	 * 
+	 *
 	 * @param filterProposals
 	 *            <code>true</code> if the proposals should be filtered to
 	 *            show only those that match the current contents of the field,

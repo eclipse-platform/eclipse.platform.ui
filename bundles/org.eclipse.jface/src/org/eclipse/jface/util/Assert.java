@@ -25,7 +25,7 @@ package org.eclipse.jface.util;
  * <p>
  * Note that an <code>assert</code> statement is slated to be added to the
  * Java language in JDK 1.4, rending this class obsolete.
- * 
+ *
  * @deprecated As of 3.3, replaced by {@link org.eclipse.core.runtime.Assert}
  * </p>
  */
@@ -111,7 +111,7 @@ public final class Assert {
      * <code>Assert.isNotNull</code> to ensure that <code>null</code>
      * parameters are detected as early as possible.
      * </p>
-     * 
+     *
      * @param object the value to test
      * @exception AssertionFailedException an unspecified unchecked exception if the object
      *   is <code>null</code>
@@ -137,7 +137,7 @@ public final class Assert {
      * <code>Assert.isNotNull</code> to ensure that <code>null</code>
      * parameters are detected as early as possible.
      * </p>
-     * 
+     *
      * @param object the value to test
      * @param message the message to include in the exception
      * @exception AssertionFailedException an unspecified unchecked exception if the object

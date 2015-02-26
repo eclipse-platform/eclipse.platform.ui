@@ -43,7 +43,7 @@ public class StringFieldEditor extends FieldEditor {
 
     /**
      * Validation strategy constant (value <code>1</code>) indicating that
-     * the editor should perform validation only when the text widget 
+     * the editor should perform validation only when the text widget
      * loses focus.
      *
      * @see #setValidateStrategy
@@ -94,13 +94,13 @@ public class StringFieldEditor extends FieldEditor {
     private boolean emptyStringAllowed = true;
 
     /**
-     * The validation strategy; 
+     * The validation strategy;
      * <code>VALIDATE_ON_KEY_STROKE</code> by default.
      */
     private int validateStrategy = VALIDATE_ON_KEY_STROKE;
 
     /**
-     * Creates a new string field editor 
+     * Creates a new string field editor
      */
     protected StringFieldEditor() {
     }
@@ -108,7 +108,7 @@ public class StringFieldEditor extends FieldEditor {
     /**
      * Creates a string field editor.
      * Use the method <code>setTextLimit</code> to limit the text.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param width the width of the text input field in characters,
@@ -133,7 +133,7 @@ public class StringFieldEditor extends FieldEditor {
     /**
      * Creates a string field editor.
      * Use the method <code>setTextLimit</code> to limit the text.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param width the width of the text input field in characters,
@@ -148,7 +148,7 @@ public class StringFieldEditor extends FieldEditor {
     /**
      * Creates a string field editor of unlimited width.
      * Use the method <code>setTextLimit</code> to limit the text.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -203,7 +203,7 @@ public class StringFieldEditor extends FieldEditor {
      * Hook for subclasses to do specific state checks.
      * <p>
      * The default implementation of this framework method does
-     * nothing and returns <code>true</code>.  Subclasses should 
+     * nothing and returns <code>true</code>.  Subclasses should
      * override this method to specific state checks.
      * </p>
      *
@@ -269,7 +269,7 @@ public class StringFieldEditor extends FieldEditor {
     }
 
     /**
-     * Returns the error message that will be displayed when and if 
+     * Returns the error message that will be displayed when and if
      * an error occurs.
      *
      * @return the error message, or <code>null</code> if none
@@ -292,7 +292,7 @@ public class StringFieldEditor extends FieldEditor {
         if (textField != null) {
 			return textField.getText();
 		}
-        
+
         return getPreferenceStore().getString(getPreferenceName());
     }
 
@@ -337,7 +337,7 @@ public class StringFieldEditor extends FieldEditor {
                         valueChanged();
                     }
                 });
- 
+
 
                 break;
             case VALIDATE_ON_FOCUS_LOST:
@@ -410,7 +410,7 @@ public class StringFieldEditor extends FieldEditor {
     }
 
     /**
-     * Sets the error message that will be displayed when and if 
+     * Sets the error message that will be displayed when and if
      * an error occurs.
      *
      * @param message the error message
@@ -463,7 +463,7 @@ public class StringFieldEditor extends FieldEditor {
      * <p>
      * Calling this method has no effect after <code>createPartControl</code>
      * is called. Thus this method is really only useful for subclasses to call
-     * in their constructor. However, it has public visibility for backward 
+     * in their constructor. However, it has public visibility for backward
      * compatibility.
      * </p>
      *
@@ -489,7 +489,7 @@ public class StringFieldEditor extends FieldEditor {
      * to the value (<code>VALUE</code> property) provided that the old and
      * new values are different.
      * <p>
-     * This hook is <em>not</em> called when the text is initialized 
+     * This hook is <em>not</em> called when the text is initialized
      * (or reset to the default value) from the preference store.
      * </p>
      */

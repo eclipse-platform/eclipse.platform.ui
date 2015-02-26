@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Provides a tree model for <code>PreferenceManager</code> content.
- * 
+ *
  * @since 3.0
  */
 public class PreferenceContentProvider implements ITreeContentProvider {
@@ -30,7 +30,7 @@ public class PreferenceContentProvider implements ITreeContentProvider {
     /**
      * Find the parent of the provided node.  Will search recursivly through the
      * preference tree.
-     * 
+     *
      * @param parent the possible parent node.
      * @param target the target child node.
      * @return the parent node of the child node.
@@ -87,7 +87,7 @@ public class PreferenceContentProvider implements ITreeContentProvider {
 	/**
 	 * Set the manager for the preferences.
 	 * @param manager The manager to set.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected void setManager(PreferenceManager manager) {

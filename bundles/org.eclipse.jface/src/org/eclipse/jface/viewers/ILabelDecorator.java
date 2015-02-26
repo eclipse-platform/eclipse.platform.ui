@@ -24,7 +24,7 @@ public interface ILabelDecorator extends IBaseLabelProvider {
      * Returns an image that is based on the given image,
      * but decorated with additional information relating to the state
      * of the provided element.
-     * 
+     *
      * Text and image decoration updates can occur as a result of other updates
      * within the workbench including deferred decoration by background processes.
      * Clients should handle labelProviderChangedEvents for the given element to get
@@ -44,7 +44,7 @@ public interface ILabelDecorator extends IBaseLabelProvider {
      * Returns a text label that is based on the given text label,
      * but decorated with additional information relating to the state
      * of the provided element.
-     * 
+     *
      * Text and image decoration updates can occur as a result of other updates
      * within the workbench including deferred decoration by background processes.
      * Clients should handle labelProviderChangedEvents for the given element to get

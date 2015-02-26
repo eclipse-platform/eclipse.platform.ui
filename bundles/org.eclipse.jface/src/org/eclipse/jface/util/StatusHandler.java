@@ -19,17 +19,17 @@ import org.eclipse.core.runtime.IStatus;
  * Clients may provide their own implementation to change how statuses are
  * handled from within JFace.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.util.Policy#getStatusHandler()
  * @see org.eclipse.jface.util.Policy#setStatusHandler(StatusHandler)
- * 
+ *
  * @since 3.4
  */
 abstract public class StatusHandler {
-    
+
 	/**
 	 * Show the given status.
-	 * 
+	 *
 	 * @param status
 	 *            status to handle
 	 * @param title

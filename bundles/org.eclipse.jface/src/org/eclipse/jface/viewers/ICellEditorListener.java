@@ -29,7 +29,7 @@ public interface ICellEditorListener {
      * All cell editors send this notification.
      * <p>
      * The normal reaction is to update the model with the current cell editor value.
-     * However, if the value is not valid, it should not be applied. 
+     * However, if the value is not valid, it should not be applied.
      * A typical text-based cell editor would send this message
      * when the end user hits Return, whereas other editors would
      * send it whenever their value changes.
@@ -58,7 +58,7 @@ public interface ICellEditorListener {
      * the new value may be retrieved by calling <code>ICellEditor.getValue</code>
      * on the appropriate cell editor.
      * </p>
-     * 
+     *
      * @param oldValidState the valid state before the end user changed the value
      * @param newValidState the current valid state
      */

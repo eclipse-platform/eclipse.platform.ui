@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Baltasar Belyavsky - fix for 300539 - Add ability to specify filter-path     
+ *     Baltasar Belyavsky - fix for 300539 - Add ability to specify filter-path
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -29,14 +29,14 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
     private File filterPath = null;
 
     /**
-     * Creates a new directory field editor 
+     * Creates a new directory field editor
      */
     protected DirectoryFieldEditor() {
     }
 
     /**
      * Creates a directory field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -79,7 +79,7 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
      * Helper that opens the directory chooser dialog.
      * @param startingDirectory The directory the dialog will open in.
      * @return File File or <code>null</code>.
-     * 
+     *
      */
     private File getDirectory(File startingDirectory) {
 
@@ -109,5 +109,5 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
     public void setFilterPath(File path) {
     	filterPath = path;
     }
-    
+
 }

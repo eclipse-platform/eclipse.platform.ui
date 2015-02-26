@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IToolBarManager2 extends IToolBarManager {
@@ -40,7 +40,7 @@ public interface IToolBarManager2 extends IToolBarManager {
 	/**
 	 * Creates and returns this manager's toolbar control. Does not create a new
 	 * control if one already exists.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @return the toolbar control
@@ -50,7 +50,7 @@ public interface IToolBarManager2 extends IToolBarManager {
 	/**
 	 * Creates and returns this manager's control. Does not create a new control
 	 * if one already exists.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @return the control
@@ -59,14 +59,14 @@ public interface IToolBarManager2 extends IToolBarManager {
 
 	/**
 	 * Returns the toolbar control for this manager.
-	 * 
+	 *
 	 * @return the toolbar control, or <code>null</code> if none
 	 */
 	public ToolBar getControl();
 
 	/**
 	 * Returns the control for this manager.
-	 * 
+	 *
 	 * @return the control, or <code>null</code> if none
 	 */
 	public Control getControl2();
@@ -78,28 +78,28 @@ public interface IToolBarManager2 extends IToolBarManager {
 
 	/**
 	 * Returns the item count of the control used by this manager.
-	 * 
+	 *
 	 * @return the number of items in the control
 	 */
 	public int getItemCount();
 
 	/**
 	 * Registers a property change listner with this manager.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 
 	/**
 	 * Removes a property change listner from this manager.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);
 
 	/**
 	 * Sets the overrides for this contribution manager
-	 * 
+	 *
 	 * @param newOverrides
 	 *            the overrides for the items of this manager
 	 */

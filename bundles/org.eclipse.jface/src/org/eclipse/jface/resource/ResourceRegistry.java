@@ -19,14 +19,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Abstract base class for various JFace registries.
- * 
+ *
  * @since 3.0
  */
 public abstract class ResourceRegistry extends EventManager {
 
     /**
      * Adds a property change listener to this registry.
-     * 
+     *
      * @param listener a property change listener
      */
     public void addListener(IPropertyChangeListener listener) {
@@ -46,7 +46,7 @@ public abstract class ResourceRegistry extends EventManager {
 
     /**
      * Return whether or not the receiver has a value for the supplied key.
-     * 
+     *
      * @param key the key
      * @return <code>true</code> if there is a value for this key
      */
@@ -54,7 +54,7 @@ public abstract class ResourceRegistry extends EventManager {
 
     /**
      * Fires a <code>PropertyChangeEvent</code>.
-     * 
+     *
      * @param name the name of the symbolic value that is changing.
      * @param oldValue the old value.
      * @param newValue the new value.
@@ -79,7 +79,7 @@ public abstract class ResourceRegistry extends EventManager {
     /**
      * Removes the given listener from this registry. Has no effect if the
      * listener is not registered.
-     * 
+     *
      * @param listener a property change listener
      */
     public void removeListener(IPropertyChangeListener listener) {

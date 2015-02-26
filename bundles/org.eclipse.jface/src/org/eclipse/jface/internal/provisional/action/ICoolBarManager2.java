@@ -19,14 +19,14 @@ import org.eclipse.swt.widgets.Control;
 /**
  * Extends <code>ICoolBarManager</code> to allow clients to be decoupled
  * from the actual kind of control used.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface ICoolBarManager2 extends ICoolBarManager {
@@ -34,8 +34,8 @@ public interface ICoolBarManager2 extends ICoolBarManager {
     /**
      * Creates and returns this manager's control. Does not create a
      * new control if one already exists.
-     * 
-     * 
+     *
+     *
      * @param parent
      *            the parent control
      * @return the control
@@ -45,14 +45,14 @@ public interface ICoolBarManager2 extends ICoolBarManager {
 
     /**
      * Returns the bar control for this manager.
-     * 
+     *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     *  
+     *
      * @return the bar control, or <code>null</code> if none
 	 * @since 3.2
      */
@@ -69,66 +69,66 @@ public interface ICoolBarManager2 extends ICoolBarManager {
      * internal structures, and <code>refresh</code> changes the internal
      * structures to match the visual order.
      * </p>
-     * 
+     *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     * 
+     *
 	 * @since 3.2
      */
     public void refresh();
-    
+
     /**
 	 * Disposes the resources for this manager.
-     * 
+     *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     * 
-     * @since 3.2 
+     *
+     * @since 3.2
      */
     public void dispose();
 
     /**
      * Restores the canonical order of this cool bar manager. The canonical
      * order is the order in which the contribution items where added.
-     * 
+     *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     * 
-	 * @since 3.2     
+     *
+	 * @since 3.2
 	 */
     public void resetItemOrder();
 
     /**
      * Replaces the current items with the given items.
      * Forces an update.
-     * 
+     *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API will
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     * 
+     *
      * @param newItems the items with which to replace the current items
      * @since 3.2
 	 */
     public void setItems(IContributionItem[] newItems);
-    
+
 	/**
 	 * Sets the overrides for this contribution manager
-	 * 
+	 *
 	 * @param newOverrides
 	 *            the overrides for the items of this manager
 	 * @since 3.5

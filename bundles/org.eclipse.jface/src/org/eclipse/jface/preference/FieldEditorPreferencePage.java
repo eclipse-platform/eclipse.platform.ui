@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * 	   Chris Tilt (chris@tilts.net) - Bug 38547 - [Preferences] Changing preferences 
+ * 	   Chris Tilt (chris@tilts.net) - Bug 38547 - [Preferences] Changing preferences
  * 			ignored after "Restore defaults" pressed.
  *******************************************************************************/
 package org.eclipse.jface.preference;
@@ -48,20 +48,20 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      */
     public static final int GRID = 1;
 
-    /** 
-     * The vertical spacing used by layout styles <code>FLAT</code> 
+    /**
+     * The vertical spacing used by layout styles <code>FLAT</code>
      * and <code>GRID</code>.
      */
     protected static final int VERTICAL_SPACING = 10;
 
-    /** 
-     * The margin width used by layout styles <code>FLAT</code> 
+    /**
+     * The margin width used by layout styles <code>FLAT</code>
      * and <code>GRID</code>.
      */
     protected static final int MARGIN_WIDTH = 0;
 
-    /** 
-     * The margin height used by layout styles <code>FLAT</code> 
+    /**
+     * The margin height used by layout styles <code>FLAT</code>
      * and <code>GRID</code>.
      */
     protected static final int MARGIN_HEIGHT = 0;
@@ -76,7 +76,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      */
     private int style;
 
-    /** 
+    /**
      * The first invalid field editor, or <code>null</code>
      * if all field editors are valid.
      */
@@ -106,7 +106,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     }
 
     /**
-     * Creates a new field editor preference page with the given title 
+     * Creates a new field editor preference page with the given title
      * and style, but no image.
      *
      * @param title the title of this preference page
@@ -122,7 +122,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      * image, and style.
      *
      * @param title the title of this preference page
-     * @param image the image for this preference page, or 
+     * @param image the image for this preference page, or
      *   <code>null</code> if none
      * @param style either <code>GRID</code> or <code>FLAT</code>
      */
@@ -250,7 +250,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      */
     protected abstract void createFieldEditors();
 
-    /**	
+    /**
      * The field editor preference page implementation of an <code>IDialogPage</code>
      * method disposes of this page's controls and images.
      * Subclasses may override to release their own allocated SWT
@@ -308,7 +308,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
         }
     }
 
-    /**	
+    /**
      * The field editor preference page implementation of a <code>PreferencePage</code>
      * method loads all the field editors with their default values.
      */
@@ -326,8 +326,8 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
         super.performDefaults();
     }
 
-    /** 
-     * The field editor preference page implementation of this 
+    /**
+     * The field editor preference page implementation of this
      * <code>PreferencePage</code> method saves all field editors by
      * calling <code>FieldEditor.store</code>. Note that this method
      * does not save the preference store itself; it just stores the
@@ -350,7 +350,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
 
     /**
      * The field editor preference page implementation of this <code>IPreferencePage</code>
-     * (and <code>IPropertyChangeListener</code>) method intercepts <code>IS_VALID</code> 
+     * (and <code>IPropertyChangeListener</code>) method intercepts <code>IS_VALID</code>
      * events but passes other events on to its superclass.
      */
     @Override

@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.IDialogPage;
  * Interface for a wizard page.
  * <p>
  * The class <code>WizardPage</code> provides an abstract implementation
- * of this interface. However, clients are also free to implement this 
+ * of this interface. However, clients are also free to implement this
  * interface if <code>WizardPage</code> does not suit their needs.
  * </p>
  */
@@ -74,7 +74,7 @@ public interface IWizardPage extends IDialogPage {
     public boolean isPageComplete();
 
     /**
-     * Sets the wizard page that would typically be shown 
+     * Sets the wizard page that would typically be shown
      * if the user was to press the Back button.
      * <p>
      * This method is called by the container.

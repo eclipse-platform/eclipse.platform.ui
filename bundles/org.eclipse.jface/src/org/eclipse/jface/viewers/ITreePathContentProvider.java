@@ -14,7 +14,7 @@ package org.eclipse.jface.viewers;
 /**
  * An interface to content providers for tree-structure-oriented viewers that
  * provides content based on the path of elements in the tree viewer.
- * 
+ *
  * @see AbstractTreeViewer
  * @since 3.2
  */
@@ -42,7 +42,7 @@ public interface ITreePathContentProvider extends IStructuredContentProvider {
 	 * {@link IStructuredContentProvider#getElements(Object)}.
 	 * </p>
 	 * The result is not modified by the viewer.
-	 * 
+	 *
 	 * @param parentPath
 	 *            the path of the parent element
 	 * @return an array of child elements
@@ -56,7 +56,7 @@ public interface ITreePathContentProvider extends IStructuredContentProvider {
 	 * children. Clients may be able to implement this more efficiently than
 	 * <code>getChildren</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return <code>true</code> if the lat element of the path has children,
@@ -66,10 +66,10 @@ public interface ITreePathContentProvider extends IStructuredContentProvider {
 
 	/**
 	 * Return the possible parent paths for the given element. An empty array
-	 * can be returned if the paths cannot be computed. If the element is 
+	 * can be returned if the paths cannot be computed. If the element is
 	 * a potential child of the input of the viewer, an empty tree path
 	 * should be an entry in the returned array.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return the possible parent paths for the given element

@@ -21,7 +21,7 @@ package org.eclipse.jface.viewers;
  * <p>
  * This class and all of its methods may be overridden or extended.
  * </p>
- * 
+ *
  * @since 3.2
  * @see org.eclipse.jface.viewers.TreeNode
  */

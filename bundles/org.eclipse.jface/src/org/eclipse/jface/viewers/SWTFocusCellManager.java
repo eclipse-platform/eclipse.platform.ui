@@ -65,7 +65,7 @@ abstract class SWTFocusCellManager {
 		if( this.cellHighlighter != null ) {
 			this.cellHighlighter.setMgr(this);
 		}
-		
+
 		this.navigationStrategy = navigationDelegate;
 		hookListener(viewer);
 	}
@@ -126,7 +126,7 @@ abstract class SWTFocusCellManager {
 
 	/**
 	 * Handles the {@link SWT#FocusIn} event.
-	 * 
+	 *
 	 * @param event the event
 	 */
 	private void handleFocusIn(Event event) {
@@ -180,20 +180,20 @@ abstract class SWTFocusCellManager {
 						ViewerCell cell = getFocusCell();
 						if (cell == null)
 							return;
-						
+
 						ViewerRow row = cell.getViewerRow();
 						if (row == null)
 							return;
-						
+
 						ViewerColumn viewPart = viewer.getViewerColumn(cell
 								.getColumnIndex());
-						
+
 						if (viewPart == null)
 							return;
-						
+
 						CellLabelProvider labelProvider = viewPart
 								.getLabelProvider();
-						
+
 						if (labelProvider == null)
 							return;
 						labelProvider.update(cell);
@@ -210,7 +210,7 @@ abstract class SWTFocusCellManager {
 	public ViewerCell getFocusCell() {
 		return focusCell;
 	}
-	
+
 	final ViewerCell _getFocusCell() {
 		return focusCell;
 	}
@@ -231,9 +231,9 @@ abstract class SWTFocusCellManager {
 		if( focusCell != null ) {
 			focusCell.scrollIntoView();
 		}
-		
+
 		this.cellHighlighter.focusCellChanged(focusCell,oldCell);
-		
+
 		getViewer().getControl().getAccessible().setFocus(ACC.CHILDID_SELF);
 	}
 

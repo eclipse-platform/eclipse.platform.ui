@@ -27,7 +27,7 @@ public class DoubleClickEvent extends EventObject {
      * @since 3.1
      */
     private static final long serialVersionUID = 3258408443605038133L;
-    
+
     /**
      * The selection.
      */

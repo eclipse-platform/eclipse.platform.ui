@@ -15,7 +15,7 @@ package org.eclipse.jface.viewers;
  * The ILazyTreeContentProvider is the content provider for tree viewers created
  * using the SWT.VIRTUAL flag that only wish to return their contents as they
  * are queried.
- * 
+ *
  * @since 3.2
  */
 public interface ILazyTreeContentProvider extends IContentProvider {
@@ -31,14 +31,14 @@ public interface ILazyTreeContentProvider extends IContentProvider {
 	 * provider doesn't know the child count at this point, and can more
 	 * efficiently determine if the element has <i>any</i> children, then it can
 	 * instead call {@link TreeViewer#setHasChildren(Object, boolean)}.
-	 * 
+	 *
 	 * <p>
 	 * <strong>NOTE</strong> #updateElement(int index) can be used to determine
 	 * selection values. If TableViewer#replace(Object, int) is not called
 	 * before returning from this method, selections may have missing or stale
 	 * elements. In this situation it is suggested that the selection is asked
 	 * for again after replace() has been called.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent of the element, or the viewer's input if the
 	 *            element to update is a root element
@@ -55,18 +55,18 @@ public interface ILazyTreeContentProvider extends IContentProvider {
 	 * {@link TreeViewer#setChildCount(Object, int)}. If the given current
 	 * child count is already correct, no action has to be taken by this content
 	 * provider.
-	 * 
+	 *
 	 * @param element
 	 *            The element for which an up-to-date child count is needed, or
-	 *            the viewer's input if the number of root elements is requested 
-	 * @param currentChildCount 
+	 *            the viewer's input if the number of root elements is requested
+	 * @param currentChildCount
 	 * 			  The current child count for the element that needs updating
 	 */
 	public void updateChildCount(Object element, int currentChildCount);
-	
+
     /**
-     * Returns the parent for the given element, or <code>null</code> 
-     * indicating that the parent can't be computed. 
+     * Returns the parent for the given element, or <code>null</code>
+     * indicating that the parent can't be computed.
      * In this case the tree-structured viewer can't expand
      * a given node correctly if requested.
      *

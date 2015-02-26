@@ -16,10 +16,10 @@ import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * BaseLabelProvider is a default concrete implementation of
- * {@link IBaseLabelProvider} 
- * 
+ * {@link IBaseLabelProvider}
+ *
  * @since 3.3
- * 
+ *
  */
 public class BaseLabelProvider extends EventManager implements IBaseLabelProvider {
 
@@ -29,7 +29,7 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
     }
 
     /**
-     * The <code>BaseLabelProvider</code> implementation of this 
+     * The <code>BaseLabelProvider</code> implementation of this
      * <code>IBaseLabelProvider</code> method clears its internal listener list.
      * Subclasses may extend but should call the super implementation.
      */
@@ -39,8 +39,8 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
     }
 
     /**
-     * The <code>BaseLabelProvider</code> implementation of this 
-     * <code>IBaseLabelProvider</code> method returns <code>true</code>. Subclasses may 
+     * The <code>BaseLabelProvider</code> implementation of this
+     * <code>IBaseLabelProvider</code> method returns <code>true</code>. Subclasses may
      * override.
      */
     @Override
@@ -56,10 +56,10 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
     /**
 	 * Fires a label provider changed event to all registered listeners Only
 	 * listeners registered at the time this method is called are notified.
-	 * 
+	 *
 	 * @param event
 	 *            a label provider changed event
-	 * 
+	 *
 	 * @see ILabelProviderListener#labelProviderChanged
 	 */
 	protected void fireLabelProviderChanged(final LabelProviderChangedEvent event) {

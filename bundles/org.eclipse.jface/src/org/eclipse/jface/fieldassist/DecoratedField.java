@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Shell;
  * their decorations.
  * <p>
  * This class is not intended to be subclassed.
- * 
+ *
  * @since 3.2
  * @deprecated As of 3.3, clients should use {@link ControlDecoration} instead.
  */
@@ -106,7 +106,7 @@ public class DecoratedField {
 		/**
 		 * Create a decoration data representing the specified decoration, using
 		 * the specified label and form data for its representation.
-		 * 
+		 *
 		 * @param decoration
 		 *            the decoration whose data is kept.
 		 * @param label
@@ -344,7 +344,7 @@ public class DecoratedField {
 	 * Construct a decorated field which is parented by the specified composite
 	 * and has the given style bits. Use the controlCreator to create the
 	 * specific kind of control that is decorated inside the field.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the decorated field.
 	 * @param style
@@ -352,7 +352,7 @@ public class DecoratedField {
 	 * @param controlCreator
 	 *            the IControlCreator used to specify the specific kind of
 	 *            control that is to be decorated.
-	 * 
+	 *
 	 * @see IControlCreator
 	 */
 	public DecoratedField(Composite parent, int style,
@@ -375,11 +375,11 @@ public class DecoratedField {
 
 	/**
 	 * Adds an image decoration to the field.
-	 * 
+	 *
 	 * @param decoration
 	 *            A FieldDecoration describing the image and description for the
 	 *            decoration
-	 * 
+	 *
 	 * @param position
 	 *            The SWT constant indicating the position of the decoration
 	 *            relative to the field's control. The position should include
@@ -399,7 +399,7 @@ public class DecoratedField {
 	 *            <code>true</code> if the decoration should only be shown
 	 *            when the associated control has focus, <code>false</code> if
 	 *            it should always be shown.
-	 * 
+	 *
 	 */
 	public void addFieldDecoration(FieldDecoration decoration, int position,
 			boolean showOnFocus) {
@@ -537,7 +537,7 @@ public class DecoratedField {
 
 	/**
 	 * Get the control that is decorated by the receiver.
-	 * 
+	 *
 	 * @return the Control decorated by the receiver, or <code>null</code> if
 	 *         none has been created yet.
 	 */
@@ -548,7 +548,7 @@ public class DecoratedField {
 	/**
 	 * Get the control that represents the decorated field. This composite
 	 * should be used to lay out the field within its parent.
-	 * 
+	 *
 	 * @return the Control that should be layed out in the field's parent's
 	 *         layout. This is typically not the control itself, since
 	 *         additional controls are used to represent the decorations.
@@ -598,7 +598,7 @@ public class DecoratedField {
 	/*
 	 * Return the index in the array of decoration datas that represents the
 	 * specified SWT position.
-	 * 
+	 *
 	 * @param position The SWT constant indicating the position of the
 	 * decoration relative to the field's control. The position should include
 	 * style bits describing both the vertical and horizontal orientation.
@@ -609,11 +609,11 @@ public class DecoratedField {
 	 * Decorations always appear on either horizontal side of the field, never
 	 * above or below it. For example, a decoration appearing on the left side
 	 * of the field, at the top, is specified as SWT.LEFT | SWT.TOP.
-	 * 
+	 *
 	 * @return index the index in the array of decorations that represents the
 	 * specified SWT position. If the position is not an expected position, the
 	 * index representing the top left position will be returned.
-	 * 
+	 *
 	 */
 	private int indexForPosition(int position) {
 		switch (position) {
@@ -631,12 +631,12 @@ public class DecoratedField {
 	/*
 	 * Create a form data that will place the decoration at the specified
 	 * position.
-	 * 
+	 *
 	 * @param index the index in the decDatas describing the position of the
 	 * decoration.
-	 * 
+	 *
 	 * @param image the image shown in the decoration.
-	 * 
+	 *
 	 */
 	private FormData createFormDataForIndex(int index, Image image) {
 		Assert.isTrue(index >= 0 && index < DECORATION_SLOTS,
@@ -674,11 +674,11 @@ public class DecoratedField {
 	 * over the decoration. This method can be used to show a decoration's
 	 * description text at other times (such as when the control receives
 	 * focus), or to show other text associated with the field.
-	 * 
+	 *
 	 * <p>
 	 * If there is currently a hover visible, the hover's text will be replaced
 	 * with the specified text.
-	 * 
+	 *
 	 * @param text
 	 *            the text to be shown in the info hover, or <code>null</code>
 	 *            if no text should be shown.
@@ -694,10 +694,10 @@ public class DecoratedField {
 	 * and will be hidden when the mouse exits the control. This method can be
 	 * used to hide a hover that was shown using <code>showHoverText</code>,
 	 * or to programatically hide the current decoration hover.
-	 * 
+	 *
 	 * <p>
 	 * This message has no effect if there is no current hover.
-	 * 
+	 *
 	 */
 	public void hideHover() {
 		if (hover != null) {
@@ -733,7 +733,7 @@ public class DecoratedField {
 	 * Show the specified decoration. This message has no effect if the
 	 * decoration is already showing, or was not already added to the field
 	 * using <code>addFieldDecoration</code>.
-	 * 
+	 *
 	 * @param decoration
 	 *            the decoration to be shown.
 	 */
@@ -755,7 +755,7 @@ public class DecoratedField {
 	 * Hide the specified decoration. This message has no effect if the
 	 * decoration is already hidden, or was not already added to the field using
 	 * <code>addFieldDecoration</code>.
-	 * 
+	 *
 	 * @param decoration
 	 *            the decoration to be hidden.
 	 */
@@ -776,7 +776,7 @@ public class DecoratedField {
 	 * or description in the decoration have changed. This message has no
 	 * immediate effect if the decoration is not visible, and no effect at all
 	 * if the decoration was not previously added to the field.
-	 * 
+	 *
 	 * @param decoration
 	 *            the decoration to be hidden.
 	 */
@@ -858,12 +858,12 @@ public class DecoratedField {
 	 * be set before the decorations are added in order to ensure proper
 	 * alignment.
 	 * </p>
-	 * 
+	 *
 	 * @param useMaximumWidth
 	 *            <code>true</code> if the maximum decoration width should be
 	 *            used as the size for all decorations, <code>false</code> if
 	 *            only the decoration size should be used.
-	 * 
+	 *
 	 * @see FieldDecorationRegistry#getMaximumDecorationWidth()
 	 */
 	public void setUseMaximumDecorationWidth(boolean useMaximumWidth) {

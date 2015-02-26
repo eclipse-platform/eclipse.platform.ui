@@ -33,15 +33,15 @@ public interface IDialogBlockedHandler {
     public void clearBlocked();
 
     /**
-     * A blockage has occured. Show the blockage and 
-     * forward any actions to blockingMonitor. 
+     * A blockage has occured. Show the blockage and
+     * forward any actions to blockingMonitor.
      * <b>NOTE:</b> This will open any blocked notification immediately
      * even if there is a modal shell open.
-     * 
+     *
      * @param parentShell The shell this is being sent from. If the parent
      * shell is <code>null</code> the behavior will be the same as
      * IDialogBlockedHandler#showBlocked(IProgressMonitor, IStatus, String)
-     * 
+     *
      * @param blocking The monitor to forward to. This is most
      * important for calls to <code>cancel()</code>.
      * @param blockingStatus The status that describes the blockage
@@ -52,14 +52,14 @@ public interface IDialogBlockedHandler {
             IStatus blockingStatus, String blockedName);
 
     /**
-     * A blockage has occured. Show the blockage when there is 
-     * no longer any modal shells in the UI and forward any actions 
-     * to blockingMonitor. 
-     * 
+     * A blockage has occured. Show the blockage when there is
+     * no longer any modal shells in the UI and forward any actions
+     * to blockingMonitor.
+     *
      * <b>NOTE:</b> As no shell has been specified this method will
      * not open any blocked notification until all other modal shells
      * have been closed.
-     * 
+     *
      * @param blocking The monitor to forward to. This is most
      * important for calls to <code>cancel()</code>.
      * @param blockingStatus The status that describes the blockage

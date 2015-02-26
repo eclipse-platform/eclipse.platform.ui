@@ -19,7 +19,7 @@ package org.eclipse.jface.bindings.keys.formatting;
  * <code>IKeyFormatter</code> available for use. It also allows the default
  * formatter to be changed.
  * </p>
- * 
+ *
  * @since 3.1
  * @see org.eclipse.jface.bindings.keys.formatting.IKeyFormatter
  */
@@ -43,7 +43,7 @@ public final class KeyFormatterFactory {
 
     /**
      * An accessor for the current default key formatter.
-     * 
+     *
      * @return The default formatter; never <code>null</code>.
      */
     public static final IKeyFormatter getDefault() {
@@ -52,7 +52,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Provides an instance of <code>EmacsKeyFormatter</code>.
-     * 
+     *
      * @return The Xemacs formatter; never <code>null</code>.
      */
     public static final IKeyFormatter getEmacsKeyFormatter() {
@@ -61,7 +61,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Provides an instance of <code>FormalKeyFormatter</code>.
-     * 
+     *
      * @return The formal formatter; never <code>null</code>.
      */
     public static final IKeyFormatter getFormalKeyFormatter() {
@@ -70,7 +70,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Sets the default key formatter.
-     * 
+     *
      * @param defaultKeyFormatter
      *            the default key formatter. Must not be <code>null</code>.
      */

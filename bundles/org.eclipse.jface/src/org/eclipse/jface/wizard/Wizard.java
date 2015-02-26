@@ -129,7 +129,7 @@ public abstract class Wizard implements IWizard {
     /**
      * Adds a new page to this wizard. The page is inserted at the end of the
      * page list.
-     * 
+     *
      * @param page
      *            the new page
      */
@@ -263,14 +263,14 @@ public abstract class Wizard implements IWizard {
         if (index == 0 || index == -1) {
 			// first page or page not found
             return null;
-		} 
+		}
 		return pages.get(index - 1);
     }
 
     /**
      * Returns the wizard's shell if the wizard is visible. Otherwise
      * <code>null</code> is returned.
-     * 
+     *
      * @return Shell
      */
     public Shell getShell() {
@@ -342,7 +342,7 @@ public abstract class Wizard implements IWizard {
      * This image descriptor will be used to generate an image for a page with
      * no image of its own; the image will be computed once and cached.
      * </p>
-     * 
+     *
      * @param imageDescriptor
      *            the default page image descriptor
      */
@@ -356,11 +356,11 @@ public abstract class Wizard implements IWizard {
      * The dialog settings is used to record state between wizard invocations
      * (for example, radio button selection, last import directory, etc.)
      * </p>
-     * 
+     *
      * @param settings
      *            the dialog settings, or <code>null</code> if none
      * @see #getDialogSettings
-     *  
+     *
      */
     public void setDialogSettings(IDialogSettings settings) {
         dialogSettings = settings;
@@ -373,7 +373,7 @@ public abstract class Wizard implements IWizard {
      * This flag should be set on wizards where the first wizard page adds
      * follow-on wizard pages based on user input.
      * </p>
-     * 
+     *
      * @param b
      *            <code>true</code> to always show Next and Previous buttons,
      *            and <code>false</code> to suppress Next and Previous buttons
@@ -397,7 +397,7 @@ public abstract class Wizard implements IWizard {
 	 * <strong>Note 2:</strong> In the default {@link WizardDialog} implementation, the "Help"
 	 * button only works when {@link org.eclipse.jface.dialogs.IDialogPage#performHelp()} is implemented.
 	 * </p>
-	 * 
+	 *
 	 * @param b <code>true</code> if help is available, <code>false</code> otherwise
 	 * @see #isHelpAvailable()
 	 * @see TrayDialog#isHelpAvailable()
@@ -409,7 +409,7 @@ public abstract class Wizard implements IWizard {
 
     /**
      * Sets whether this wizard needs a progress monitor.
-     * 
+     *
      * @param b
      *            <code>true</code> if a progress monitor is required, and
      *            <code>false</code> if none is needed
@@ -421,7 +421,7 @@ public abstract class Wizard implements IWizard {
 
     /**
      * Sets the title bar color for this wizard.
-     * 
+     *
      * @param color
      *            the title bar color
      */
@@ -432,7 +432,7 @@ public abstract class Wizard implements IWizard {
     /**
      * Sets the window title for the container that hosts this page to the given
      * string.
-     * 
+     *
      * @param newTitle
      *            the window title for the container
      */

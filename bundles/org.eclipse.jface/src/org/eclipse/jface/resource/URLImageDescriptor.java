@@ -35,13 +35,13 @@ import org.eclipse.swt.graphics.ImageData;
 class URLImageDescriptor extends ImageDescriptor {
 	/**
 	 * Constant for the file protocol for optimized loading
-	 */ 
+	 */
 	private static final String FILE_PROTOCOL = "file";  //$NON-NLS-1$
 	private URL url;
 
 	/**
 	 * Creates a new URLImageDescriptor.
-	 * 
+	 *
 	 * @param url
 	 *            The URL to load the image from. Must be non-null.
 	 */
@@ -85,7 +85,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	/**
 	 * Returns a stream on the image contents. Returns null if a stream could
 	 * not be opened.
-	 * 
+	 *
 	 * @return the stream for loading the data
 	 */
 	protected InputStream getStream() {
@@ -113,7 +113,7 @@ class URLImageDescriptor extends ImageDescriptor {
 
 	/**
 	 * Returns the filename for the ImageData.
-	 * 
+	 *
 	 * @return {@link String} or <code>null</code> if the file cannot be found
 	 */
 	private String getFilePath() {

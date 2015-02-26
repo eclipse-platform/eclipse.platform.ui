@@ -21,14 +21,14 @@ import org.eclipse.swt.widgets.ToolBar;
 
 /**
  * Extends <code>ToolBarManager</code> to implement <code>IToolBarManager2</code>.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 {
@@ -38,7 +38,7 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 * collection is <code>null</code> if there are no listeners.
 	 */
 	private transient ListenerList listenerList = null;
-	
+
 	/**
 	 * Creates a new tool bar manager with the default SWT button style. Use the
 	 * <code>createControl</code> method to create the tool bar control.
@@ -50,7 +50,7 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	/**
 	 * Creates a tool bar manager with the given SWT button style. Use the
 	 * <code>createControl</code> method to create the tool bar control.
-	 * 
+	 *
 	 * @param style
 	 *            the tool bar item style
 	 * @see org.eclipse.swt.widgets.ToolBar for valid style bits
@@ -63,14 +63,14 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 * Creates a tool bar manager for an existing tool bar control. This manager
 	 * becomes responsible for the control, and will dispose of it when the
 	 * manager is disposed.
-	 * 
+	 *
 	 * @param toolbar
 	 *            the tool bar control
 	 */
 	public ToolBarManager2(ToolBar toolbar) {
 		super(toolbar);
 	}
-	
+
 	@Override
 	public Control createControl2(Composite parent) {
 		return createControl(parent);
@@ -109,12 +109,12 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 			}
 		}
 	}
-	
+
 	/**
 	 * @return the listeners attached to this event manager.
 	 * The listeners currently attached; may be empty, but never
 	 * null.
-	 * 
+	 *
 	 */
 	protected final Object[] getListeners() {
 		final ListenerList list = listenerList;

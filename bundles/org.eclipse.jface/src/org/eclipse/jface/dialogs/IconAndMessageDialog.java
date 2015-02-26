@@ -55,7 +55,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Constructor for IconAndMessageDialog.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell, or <code>null</code> to create a top-level
 	 *            shell
@@ -75,7 +75,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * <strong>Note:</strong> Clients are expected to call this method, otherwise
 	 * neither the icon nor the message will appear.
 	 * </p>
-	 * 
+	 *
 	 * @param composite
 	 *            The composite to parent from.
 	 * @return Control
@@ -130,7 +130,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	/**
 	 * Add an accessible listener to the label if it can be inferred from the
 	 * image.
-	 * 
+	 *
 	 * @param label
 	 * @param image
 	 */
@@ -149,9 +149,9 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Returns the style for the message label.
-	 * 
+	 *
 	 * @return the style for the message label
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected int getMessageLabelStyle() {
@@ -181,7 +181,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * <p>
 	 * Subclasses may override.
 	 * </p>
-	 * 
+	 *
 	 * @return the image to display beside the message
 	 * @since 2.0
 	 */
@@ -206,7 +206,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Get the number of columns in the layout of the Shell of the dialog.
-	 * 
+	 *
 	 * @return int
 	 * @since 3.3
 	 */
@@ -216,7 +216,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Create the dialog area and the button bar for the receiver.
-	 * 
+	 *
 	 * @param parent
 	 */
 	protected void createDialogAndButtonArea(Composite parent) {
@@ -229,7 +229,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Return the <code>Image</code> to be used when displaying an error.
-	 * 
+	 *
 	 * @return image the error image
 	 */
 	public Image getErrorImage() {
@@ -238,7 +238,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Return the <code>Image</code> to be used when displaying a warning.
-	 * 
+	 *
 	 * @return image the warning image
 	 */
 	public Image getWarningImage() {
@@ -247,7 +247,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Return the <code>Image</code> to be used when displaying information.
-	 * 
+	 *
 	 * @return image the information image
 	 */
 	public Image getInfoImage() {
@@ -256,7 +256,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Return the <code>Image</code> to be used when displaying a question.
-	 * 
+	 *
 	 * @return image the question image
 	 */
 	public Image getQuestionImage() {
@@ -265,7 +265,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Get an <code>Image</code> from the provide SWT image constant.
-	 * 
+	 *
 	 * @param imageID
 	 *            the SWT image constant
 	 * @return image the image

@@ -68,13 +68,13 @@ public class RadioGroupFieldEditor extends FieldEditor {
     private boolean useGroup;
 
     /**
-     * Creates a new radio group field editor 
+     * Creates a new radio group field editor
      */
     protected RadioGroupFieldEditor() {
     }
 
     /**
-     * Creates a radio group field editor.  
+     * Creates a radio group field editor.
      * This constructor does not use a <code>Group</code> to contain the radio buttons.
      * It is equivalent to using the following constructor with <code>false</code>
      * for the <code>useGroup</code> argument.
@@ -87,10 +87,10 @@ public class RadioGroupFieldEditor extends FieldEditor {
      *				{"Open Browser", "open"},
      *				{"Expand Tree", "expand"}
      *			},
-     *          parent);	
+     *          parent);
      * </pre>
      * </p>
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param numColumns the number of columns for the radio button presentation
@@ -115,10 +115,10 @@ public class RadioGroupFieldEditor extends FieldEditor {
      *				{"Expand Tree", "expand"}
      *			},
      *          parent,
-     *          true);	
+     *          true);
      * </pre>
      * </p>
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param numColumns the number of columns for the radio button presentation
@@ -147,7 +147,7 @@ public class RadioGroupFieldEditor extends FieldEditor {
     }
 
     /**
-     * Checks whether given <code>String[][]</code> is of "type" 
+     * Checks whether given <code>String[][]</code> is of "type"
      * <code>String[][2]</code>.
      * @param table
      *

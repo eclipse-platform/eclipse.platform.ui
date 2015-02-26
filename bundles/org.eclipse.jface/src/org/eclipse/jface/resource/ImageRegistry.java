@@ -26,13 +26,13 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * An image registry maintains a mapping between symbolic image names 
+ * An image registry maintains a mapping between symbolic image names
  * and SWT image objects or special image descriptor objects which
  * defer the creation of SWT image objects until they are needed.
  * <p>
  * An image registry owns all of the image objects registered
  * with it, and automatically disposes of them when the SWT Display
- * that creates the images is disposed. Because of this, clients do not 
+ * that creates the images is disposed. Because of this, clients do not
  * need to (indeed, must not attempt to) dispose of these images themselves.
  * </p>
  * <p>
@@ -53,16 +53,16 @@ public class ImageRegistry {
     private ResourceManager manager;
 
     private Map<String, Entry> table;
-    
+
     private Runnable disposeRunnable = new Runnable() {
         @Override
 		public void run() {
             dispose();
         }
     };
-    
+
     /**
-     * Contains the data for an entry in the registry. 
+     * Contains the data for an entry in the registry.
      */
     private static class Entry {
     	/** the image */
@@ -71,12 +71,12 @@ public class ImageRegistry {
         /** the descriptor */
         protected ImageDescriptor descriptor;
     }
-    
+
     private static class OriginalImageDescriptor extends ImageDescriptor {
         private Image original;
         private int refCount = 0;
         private Device originalDisplay;
-        
+
         /**
          * @param original the original image
          * @param originalDisplay the device the image is part of
@@ -85,7 +85,7 @@ public class ImageRegistry {
             this.original = original;
             this.originalDisplay = originalDisplay;
         }
-        
+
         @Override
 		public Object createResource(Device device) throws DeviceResourceException {
             if (device == originalDisplay) {
@@ -94,7 +94,7 @@ public class ImageRegistry {
             }
             return super.createResource(device);
         }
-        
+
         @Override
 		public void destroyResource(Object toDispose) {
             if (original == toDispose) {
@@ -113,11 +113,11 @@ public class ImageRegistry {
             return original.getImageData();
         }
     }
-        
+
     /**
      * Creates an empty image registry.
      * <p>
-     * There must be an SWT Display created in the current 
+     * There must be an SWT Display created in the current
      * thread before calling this method.
      * </p>
      */
@@ -127,9 +127,9 @@ public class ImageRegistry {
 
     /**
      * Creates an empty image registry using the given resource manager to allocate images.
-     * 
+     *
      * @param manager the resource manager used to allocate images
-     * 
+     *
      * @since 3.1
      */
     public ImageRegistry(ResourceManager manager) {
@@ -141,22 +141,22 @@ public class ImageRegistry {
         this.manager = manager;
         manager.disposeExec(disposeRunnable);
     }
-    
+
     /**
      * Creates an empty image registry.
-     * 
-     * @param display this <code>Display</code> must not be 
+     *
+     * @param display this <code>Display</code> must not be
      *        <code>null</code> and must not be disposed in order
      *        to use this registry
      */
     public ImageRegistry(Display display) {
         this(JFaceResources.getResources(display));
     }
-    
+
     /**
-     * Returns the image associated with the given key in this registry, 
+     * Returns the image associated with the given key in this registry,
      * or <code>null</code> if none.
-     * 
+     *
      * @param key the key
      * @return the image, or <code>null</code> if none
      */
@@ -166,15 +166,15 @@ public class ImageRegistry {
         if (key == null) {
             return null;
         }
-        
+
         if (display != null) {
             /**
              * NOTE, for backwards compatibility the following images are supported
-             * here, they should never be disposed, hence we explicitly return them 
-             * rather then registering images that SWT will dispose.  
-             * 
+             * here, they should never be disposed, hence we explicitly return them
+             * rather then registering images that SWT will dispose.
+             *
              * Applications should go direclty to SWT for these icons.
-             * 
+             *
              * @see Display.getSystemIcon(int ID)
              */
             int swtKey = -1;
@@ -209,16 +209,16 @@ public class ImageRegistry {
         if (entry == null) {
             return null;
         }
-        
+
         if (entry.image == null) {
             entry.image = manager.createImageWithDefault(entry.descriptor);
         }
-        
+
         return entry.image;
     }
 
     /**
-     * Returns the descriptor associated with the given key in this registry, 
+     * Returns the descriptor associated with the given key in this registry,
      * or <code>null</code> if none.
      *
      * @param key the key
@@ -230,15 +230,15 @@ public class ImageRegistry {
         if (entry == null) {
             return null;
         }
-        
+
         return entry.descriptor;
     }
 
     /**
      * Adds (or replaces) an image descriptor to this registry. The first time
-     * this new entry is retrieved, the image descriptor's image will be computed 
-     * (via </code>ImageDescriptor.createImage</code>) and remembered. 
-     * This method replaces an existing image descriptor associated with the 
+     * this new entry is retrieved, the image descriptor's image will be computed
+     * (via </code>ImageDescriptor.createImage</code>) and remembered.
+     * This method replaces an existing image descriptor associated with the
      * given key, but fails if there is a real image associated with it.
      *
      * @param key the key
@@ -251,12 +251,12 @@ public class ImageRegistry {
             entry = new Entry();
             getTable().put(key, entry);
         }
-        
+
         if (entry.image != null) {
             throw new IllegalArgumentException(
-                    "ImageRegistry key already in use: " + key); //$NON-NLS-1$            
+                    "ImageRegistry key already in use: " + key); //$NON-NLS-1$
         }
-        
+
         entry.descriptor = descriptor;
     }
 
@@ -265,7 +265,7 @@ public class ImageRegistry {
      * is already an image or descriptor for the given key.
      * <p>
      * Note that an image registry owns all of the image objects registered
-     * with it, and automatically disposes of them when the SWT Display is disposed. 
+     * with it, and automatically disposes of them when the SWT Display is disposed.
      * Because of this, clients must not register an image object
      * that is managed by another object.
      * </p>
@@ -276,32 +276,32 @@ public class ImageRegistry {
      */
     public void put(String key, Image image) {
         Entry entry = getEntry(key);
-        
+
         if (entry == null) {
             entry = new Entry();
             putEntry(key, entry);
         }
-        
+
         if (entry.image != null || entry.descriptor != null) {
             throw new IllegalArgumentException(
-                    "ImageRegistry key already in use: " + key); //$NON-NLS-1$            
+                    "ImageRegistry key already in use: " + key); //$NON-NLS-1$
         }
-        
+
         // Check for a null image here, otherwise the problem won't appear
         // until dispose.
         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=130315
         Assert.isNotNull(image, "Cannot register a null image."); //$NON-NLS-1$
         entry.image = image;
         entry.descriptor = new OriginalImageDescriptor(image, manager.getDevice());
-        
+
         try {
             manager.create(entry.descriptor);
-        } catch (DeviceResourceException e) {            
+        } catch (DeviceResourceException e) {
         }
     }
 
     /**
-     * Removes an image from this registry.  
+     * Removes an image from this registry.
      * If an SWT image was allocated, it is disposed.
      * This method has no effect if there is no image or descriptor for the given key.
      * @param key the key
@@ -328,16 +328,16 @@ public class ImageRegistry {
         }
         return table;
     }
-    
+
     /**
      * Disposes this image registry, disposing any images
      * that were allocated for it, and clearing its entries.
-     * 
+     *
      * @since 3.1
      */
     public void dispose() {
         manager.cancelDisposeExec(disposeRunnable);
-        
+
         if (table != null) {
             for (Iterator<Entry> i = table.values().iterator(); i.hasNext();) {
                 Entry entry = i.next();

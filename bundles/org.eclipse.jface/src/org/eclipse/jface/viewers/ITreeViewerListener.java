@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-/** 
+/**
  * A listener which is notified when a tree viewer expands or collapses
  * a node.
  */

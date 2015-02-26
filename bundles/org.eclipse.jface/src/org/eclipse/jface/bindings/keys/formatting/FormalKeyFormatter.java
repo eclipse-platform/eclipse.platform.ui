@@ -21,7 +21,7 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
  * Formats the keys in the internal key sequence grammar. This is used for
  * persistence, and is not really intended for display to the user.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class FormalKeyFormatter extends AbstractKeyFormatter {

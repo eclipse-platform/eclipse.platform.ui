@@ -32,13 +32,13 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * A font registry maintains a mapping between symbolic font names 
+ * A font registry maintains a mapping between symbolic font names
  * and SWT fonts.
  * <p>
  * A font registry owns all of the font objects registered
  * with it, and automatically disposes of them when the SWT Display
- * that creates the fonts is disposed. Because of this, clients do 
- * not need to (indeed, must not attempt to) dispose of font 
+ * that creates the fonts is disposed. Because of this, clients do
+ * not need to (indeed, must not attempt to) dispose of font
  * objects themselves.
  * </p>
  * <p>
@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Display;
  * <p>
  * Clients may instantiate this class (it was not designed to be subclassed).
  * </p>
- * 
+ *
  * Since 3.0 this class extends ResourceRegistry.
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -60,7 +60,7 @@ public class FontRegistry extends ResourceRegistry {
 
     /**
      * FontRecord is a private helper class that holds onto a font
-     * and can be used to generate its bold and italic version. 
+     * and can be used to generate its bold and italic version.
      */
     private class FontRecord {
 
@@ -73,7 +73,7 @@ public class FontRegistry extends ResourceRegistry {
         FontData[] baseData;
 
         /**
-         * Create a new instance of the receiver based on the 
+         * Create a new instance of the receiver based on the
          * plain font and the data for it.
          * @param plainFont The base looked up font.
          * @param data The data used to look it up.
@@ -120,7 +120,7 @@ public class FontRegistry extends ResourceRegistry {
         }
 
         /**
-         * Get a version of the base font data with the specified 
+         * Get a version of the base font data with the specified
          * style.
          * @param style the new style
          * @return the font data with the style {@link FontData#FontData(String, int, int)}
@@ -178,14 +178,14 @@ public class FontRegistry extends ResourceRegistry {
 
     /**
      * Table of known fonts, keyed by symbolic font name
-     * (key type: <code>String</code>, 
+     * (key type: <code>String</code>,
      *  value type: <code>FontRecord</code>.
      */
     private Map<String, FontRecord> stringToFontRecord = new HashMap<String, FontRecord>(7);
 
     /**
      * Table of known font data, keyed by symbolic font name
-     * (key type: <code>String</code>, 
+     * (key type: <code>String</code>,
      *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
      */
     private Map<String, FontData[]> stringToFontData = new HashMap<String, FontData[]>(7);
@@ -214,7 +214,7 @@ public class FontRegistry extends ResourceRegistry {
     /**
      * Creates an empty font registry.
      * <p>
-     * There must be an SWT Display created in the current 
+     * There must be an SWT Display created in the current
      * thread before calling this method.
      * </p>
      */
@@ -226,13 +226,13 @@ public class FontRegistry extends ResourceRegistry {
      * Creates a font registry and initializes its content from
      * a property file.
      * <p>
-     * There must be an SWT Display created in the current 
+     * There must be an SWT Display created in the current
      * thread before calling this method.
      * </p>
      * <p>
      * The OS name (retrieved using <code>System.getProperty("os.name")</code>)
-     * is converted to lowercase, purged of whitespace, and appended 
-     * as suffix (separated by an underscore <code>'_'</code>) to the given 
+     * is converted to lowercase, purged of whitespace, and appended
+     * as suffix (separated by an underscore <code>'_'</code>) to the given
      * location string to yield the base name of a resource bundle
      * acceptable to <code>ResourceBundle.getBundle</code>.
      * The standard Java resource bundle mechanism is then used to locate
@@ -241,7 +241,7 @@ public class FontRegistry extends ResourceRegistry {
      * </p>
      * <p>
      * For example, on the Windows 2000 operating system the location string
-     * <code>"com.example.myapp.Fonts"</code> yields the base name 
+     * <code>"com.example.myapp.Fonts"</code> yields the base name
      * <code>"com.example.myapp.Fonts_windows2000"</code>. For the US English locale,
      * this further elaborates to the resource bundle name
      * <code>"com.example.myapp.Fonts_windows2000_en_us"</code>.
@@ -255,13 +255,13 @@ public class FontRegistry extends ResourceRegistry {
      * <pre>
      *	textfont.0=MS Sans Serif-regular-10
      *	textfont.1=Times New Roman-regular-10
-     *	
+     *
      *	titlefont.0=MS Sans Serif-regular-12
      *	titlefont.1=Times New Roman-regular-12
      * </pre>
      * Each entry maps a symbolic font names (the font registry keys) with
      * a "<code>.<it>n</it></code> suffix to standard font names
-     * on the right. The suffix indicated order of preference: 
+     * on the right. The suffix indicated order of preference:
      * "<code>.0</code>" indicates the first choice,
      * "<code>.1</code>" indicates the second choice, and so on.
      * </p>
@@ -356,10 +356,10 @@ public class FontRegistry extends ResourceRegistry {
     public FontRegistry(Display display) {
         this(display, true);
     }
-    
+
     /**
 	 * Creates an empty font registry.
-	 * 
+	 *
 	 * @param display
 	 *            the <code>Display</code>
 	 * @param cleanOnDisplayDisposal
@@ -379,11 +379,11 @@ public class FontRegistry extends ResourceRegistry {
 	 * Find the first valid fontData in the provided list. If none are valid
 	 * return the first one regardless. If the list is empty return null. Return
 	 * <code>null</code> if one cannot be found.
-	 * 
+	 *
      * @param fonts the font list
-     * @param display the display used 
+     * @param display the display used
      * @return the font data of the like describe above
-	 * 
+	 *
 	 * @deprecated use bestDataArray in order to support Motif multiple entry
 	 *             fonts.
 	 */
@@ -412,20 +412,20 @@ public class FontRegistry extends ResourceRegistry {
         if (fonts.length > 0) {
 			return fonts[0];
 		}
-        
-        //Nothing specified 
+
+        //Nothing specified
         return null;
     }
 
     /**
-     * Find the first valid fontData in the provided list. 
+     * Find the first valid fontData in the provided list.
      * If none are valid return the first one regardless.
      * If the list is empty return <code>null</code>.
-     * 
+     *
      * @param fonts list of fonts
      * @param display the display
      * @return font data like described above
-     * @deprecated use filterData in order to preserve 
+     * @deprecated use filterData in order to preserve
      * multiple entry fonts on Motif
      */
     @Deprecated
@@ -435,17 +435,17 @@ public class FontRegistry extends ResourceRegistry {
         if (bestData == null) {
 			return null;
 		}
-        
+
         FontData[] datas = new FontData[1];
         datas[0] = bestData;
         return datas;
     }
-    
+
     /**
-     * Removes from the list all fonts that do not exist in this system.  
-     * If none are valid, return the first irregardless.  If the list is 
+     * Removes from the list all fonts that do not exist in this system.
+     * If none are valid, return the first irregardless.  If the list is
      * empty return <code>null</code>.
-     * 
+     *
      * @param fonts the fonts to check
      * @param display the display to check against
      * @return the list of fonts that have been found on this system
@@ -471,7 +471,7 @@ public class FontRegistry extends ResourceRegistry {
             }
         }
 
-    	
+
         //None of the provided datas are valid. Return the
         //first one as it is at least the first choice.
         if (good.isEmpty() && fonts.length > 0) {
@@ -480,10 +480,10 @@ public class FontRegistry extends ResourceRegistry {
         else if (fonts.length == 0) {
         	return null;
         }
-        
-        return good.toArray(new FontData[good.size()]);    	
+
+        return good.toArray(new FontData[good.size()]);
     }
-    
+
 
     /**
      * Creates a new font with the given font datas or <code>null</code>
@@ -501,9 +501,9 @@ public class FontRegistry extends ResourceRegistry {
 
         FontData[] validData = filterData(fonts, display);
         if (validData.length == 0) {
-            //Nothing specified 
+            //Nothing specified
             return null;
-        } 
+        }
 
         //Do not fire the update from creation as it is not a property change
         put(symbolicName, validData, false);
@@ -541,19 +541,19 @@ public class FontRegistry extends ResourceRegistry {
      * Returns the font descriptor for the font with the given symbolic
      * font name. Returns the default font if there is no special value
      * associated with that name
-     * 
+     *
      * @param symbolicName symbolic font name
      * @return the font descriptor (never null)
-     * 
+     *
      * @since 3.3
      */
     public FontDescriptor getDescriptor(String symbolicName) {
         Assert.isNotNull(symbolicName);
         return FontDescriptor.createFrom(getFontData(symbolicName));
     }
-    
-    
-    
+
+
+
     /**
      * Returns the default font record.
      */
@@ -714,7 +714,7 @@ public class FontRegistry extends ResourceRegistry {
         disposeFonts(staleFonts.iterator());
         stringToFontRecord.clear();
         staleFonts.clear();
-        
+
         displayDisposeHooked = false;
     }
 
@@ -861,7 +861,7 @@ public class FontRegistry extends ResourceRegistry {
 
 	/**
 	 * Returns the font descriptor for the JFace default font.
-	 * 
+	 *
 	 * @return the font descriptor for the JFace default font
      * @since 3.3
 	 */

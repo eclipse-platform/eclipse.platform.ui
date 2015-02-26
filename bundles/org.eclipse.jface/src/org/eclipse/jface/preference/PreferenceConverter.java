@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Display;
  * </pre>
  * </p>
  * <p>
- * This class contains static methods and fields only and cannot 
+ * This class contains static methods and fields only and cannot
  * be instantiated.
  * </p>
  * Note: touching this class has the side effect of creating a display (static initializer).
@@ -59,7 +59,7 @@ public class PreferenceConverter {
             0, 0, 0);
 
     /**
-     * The default-default value for color preferences 
+     * The default-default value for color preferences
      * (black, <code>RGB(0,0,0)</code>).
      */
     public static final RGB COLOR_DEFAULT_DEFAULT = new RGB(0, 0, 0);
@@ -80,7 +80,7 @@ public class PreferenceConverter {
 		if (display == null) {
 			display = Display.getDefault ();
 		}
-		
+
         FONTDATA_ARRAY_DEFAULT_DEFAULT = display.getSystemFont().getFontData();
         /**
          * The default-default value for <code>FontData</code> preferences.
@@ -122,7 +122,7 @@ public class PreferenceConverter {
      * multiple FontDatas can be defined.
      * @param value the identifier for the font
      * @return FontData[]
-     * 
+     *
      * @since 3.0
      */
     public static FontData[] basicGetFontData(String value) {
@@ -151,8 +151,8 @@ public class PreferenceConverter {
      * Reads the supplied string and returns its corresponding
      * FontData. If it cannot be read then the default FontData
      * will be returned.
-     * 
-     * @param fontDataValue the string value for the font data  
+     *
+     * @param fontDataValue the string value for the font data
      * @return the font data
      */
     public static FontData[] readFontData(String fontDataValue) {
@@ -193,8 +193,8 @@ public class PreferenceConverter {
     /**
      * Returns the current value of the color-valued preference with the
      * given name in the given preference store.
-     * Returns the default-default value (<code>COLOR_DEFAULT_DEFAULT</code>) 
-     * if there is no preference with the given name, or if the current value 
+     * Returns the default-default value (<code>COLOR_DEFAULT_DEFAULT</code>)
+     * if there is no preference with the given name, or if the current value
      * cannot be treated as a color.
      *
      * @param store the preference store
@@ -208,8 +208,8 @@ public class PreferenceConverter {
     /**
      * Returns the default value for the color-valued preference
      * with the given name in the given preference store.
-     * Returns the default-default value (<code>COLOR_DEFAULT_DEFAULT</code>) 
-     * is no default preference with the given name, or if the default 
+     * Returns the default-default value (<code>COLOR_DEFAULT_DEFAULT</code>)
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a color.
      *
      * @param store the preference store
@@ -223,8 +223,8 @@ public class PreferenceConverter {
     /**
      * Returns the default value array for the font-valued preference
      * with the given name in the given preference store.
-     * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>) 
-     * is no default preference with the given name, or if the default 
+     * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>)
+     * is no default preference with the given name, or if the default
      * value cannot be treated as font data.
      *
      * @param store the preference store
@@ -239,8 +239,8 @@ public class PreferenceConverter {
     /**
      * Returns a single default value for the font-valued preference
      * with the given name in the given preference store.
-     * Returns the default-default value (<code>FONTDATA_DEFAULT_DEFAULT</code>) 
-     * is no default preference with the given name, or if the default 
+     * Returns the default-default value (<code>FONTDATA_DEFAULT_DEFAULT</code>)
+     * is no default preference with the given name, or if the default
      * value cannot be treated as font data.
      * This method is provided for backwards compatibility. It is
      * recommended that <code>getDefaultFontDataArray</code> is
@@ -258,8 +258,8 @@ public class PreferenceConverter {
     /**
      * Returns the default value for the point-valued preference
      * with the given name in the given preference store.
-     * Returns the default-default value (<code>POINT_DEFAULT_DEFAULT</code>) 
-     * is no default preference with the given name, or if the default 
+     * Returns the default-default value (<code>POINT_DEFAULT_DEFAULT</code>)
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a point.
      *
      * @param store the preference store
@@ -273,8 +273,8 @@ public class PreferenceConverter {
     /**
      * Returns the default value for the rectangle-valued preference
      * with the given name in the given preference store.
-     * Returns the default-default value (<code>RECTANGLE_DEFAULT_DEFAULT</code>) 
-     * is no default preference with the given name, or if the default 
+     * Returns the default-default value (<code>RECTANGLE_DEFAULT_DEFAULT</code>)
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a rectangle.
      *
      * @param store the preference store
@@ -289,8 +289,8 @@ public class PreferenceConverter {
     /**
      * Returns the current value of the font-valued preference with the
      * given name in the given preference store.
-     * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>) 
-     * if there is no preference with the given name, or if the current value 
+     * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>)
+     * if there is no preference with the given name, or if the current value
      * cannot be treated as font data.
      *
      * @param store the preference store
@@ -306,8 +306,8 @@ public class PreferenceConverter {
      * Returns the current value of the first entry of the
      * font-valued preference with the
      * given name in the given preference store.
-     * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>) 
-     * if there is no preference with the given name, or if the current value 
+     * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>)
+     * if there is no preference with the given name, or if the current value
      * cannot be treated as font data.
      * This API is provided for backwards compatibility. It is
      * recommended that <code>getFontDataArray</code> is used instead.
@@ -323,8 +323,8 @@ public class PreferenceConverter {
     /**
      * Returns the current value of the point-valued preference with the
      * given name in the given preference store.
-     * Returns the default-default value (<code>POINT_DEFAULT_DEFAULT</code>) 
-     * if there is no preference with the given name, or if the current value 
+     * Returns the default-default value (<code>POINT_DEFAULT_DEFAULT</code>)
+     * if there is no preference with the given name, or if the current value
      * cannot be treated as a point.
      *
      * @param store the preference store
@@ -338,8 +338,8 @@ public class PreferenceConverter {
     /**
      * Returns the current value of the rectangle-valued preference with the
      * given name in the given preference store.
-     * Returns the default-default value (<code>RECTANGLE_DEFAULT_DEFAULT</code>) 
-     * if there is no preference with the given name, or if the current value 
+     * Returns the default-default value (<code>RECTANGLE_DEFAULT_DEFAULT</code>)
+     * if there is no preference with the given name, or if the current value
      * cannot be treated as a rectangle.
      *
      * @param store the preference store
@@ -352,7 +352,7 @@ public class PreferenceConverter {
 
     /**
      * Sets the default value of the preference with the given name
-     * in the given preference store. As FontDatas are stored as 
+     * in the given preference store. As FontDatas are stored as
      * arrays this method is only provided for backwards compatibility.
      * Use <code>setDefault(IPreferenceStore, String, FontData[])</code>
      * instead.
@@ -421,12 +421,12 @@ public class PreferenceConverter {
 
     /**
      * Sets the current value of the preference with the given name
-     * in the given preference store. 
+     * in the given preference store.
      * <p>
      * Included for backwards compatibility.  This method is equivalent to
      * </code>setValue(store, name, new FontData[]{value})</code>.
      * </p>
-     * 
+     *
      * @param store the preference store
      * @param name the name of the preference
      * @param value the new current value of the preference
@@ -439,18 +439,18 @@ public class PreferenceConverter {
     /**
      * Sets the current value of the preference with the given name
      * in the given preference store. This method also sets the corresponding
-     * key in the JFace font registry to the value and fires a 
+     * key in the JFace font registry to the value and fires a
      * property change event to listeners on the preference store.
-     * 
+     *
      * <p>
      * Note that this API does not update any other settings that may
-     * be dependant upon it. Only the value in the preference store 
+     * be dependant upon it. Only the value in the preference store
      * and in the font registry is updated.
-     * </p> 
+     * </p>
      * @param store the preference store
      * @param name the name of the preference
      * @param value the new current value of the preference
-     * 
+     *
      * @see #putValue(IPreferenceStore, String, FontData[])
      */
     public static void setValue(IPreferenceStore store, String name,
@@ -468,11 +468,11 @@ public class PreferenceConverter {
      * Sets the current value of the preference with the given name
      * in the given preference store. This method does not update
      * the font registry or fire a property change event.
-     * 
+     *
      * @param store the preference store
      * @param name the name of the preference
      * @param value the new current value of the preference
-     * 
+     *
      * @see PreferenceConverter#setValue(IPreferenceStore, String, FontData[])
      */
     public static void putValue(IPreferenceStore store, String name,
@@ -488,7 +488,7 @@ public class PreferenceConverter {
      * Returns the stored representation of the given array of FontData objects.
      * The stored representation has the form FontData;FontData;
      * Only includes the non-null entries.
-     * 
+     *
      * @param fontData the array of FontData objects
      * @return the stored representation of the FontData objects
      * @since 3.0

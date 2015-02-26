@@ -21,19 +21,19 @@ import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * Contains various layout constants to be used in dialogs.
- * 
+ *
  * @since 3.2
  */
 public final class LayoutConstants {
 	private static Point dialogMargins = null;
 	private static Point dialogSpacing = null;
 	private static Point minButtonSize = null;
-	
+
 	private static void initializeConstants() {
 		if (dialogMargins != null) {
 			return;
 		}
-		
+
 		GC gc = new GC(Display.getCurrent());
 		gc.setFont(JFaceResources.getDialogFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
@@ -45,13 +45,13 @@ public final class LayoutConstants {
 				Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.VERTICAL_SPACING));
 
 		minButtonSize  = new Point(Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH), 0);
-		
+
 		gc.dispose();
 	}
-	
+
 	/**
 	 * Returns the default dialog margins, in pixels
-	 * 
+	 *
 	 * @return the default dialog margins, in pixels
 	 */
 	public static final Point getMargins() {
@@ -61,7 +61,7 @@ public final class LayoutConstants {
 
 	/**
 	 * Returns the default dialog spacing, in pixels
-	 * 
+	 *
 	 * @return the default dialog spacing, in pixels
 	 */
 	public static final Point getSpacing() {
@@ -71,7 +71,7 @@ public final class LayoutConstants {
 
 	/**
 	 * Returns the default minimum button size, in pixels
-	 * 
+	 *
 	 * @return the default minimum button size, in pixels
 	 */
 	public static final Point getMinButtonSize() {
@@ -81,7 +81,7 @@ public final class LayoutConstants {
 
 	/**
 	 * Returns the indent of dependent controls, in pixels.
-	 * 
+	 *
 	 * @return the indent of dependent controls, in pixels.
 	 * @since 3.9
 	 */

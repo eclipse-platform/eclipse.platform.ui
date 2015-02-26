@@ -27,7 +27,7 @@ import org.eclipse.swt.dnd.TransferData;
  * drop can be aborted if appropriate.
  *
  * This class is not intended to be subclassed.
- * 
+ *
  * @since 3.2
  */
 public class LocalSelectionTransfer extends ByteArrayTransfer {
@@ -46,7 +46,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
     private long selectionSetTime;
 
     /**
-     * Only the singleton instance of this class may be used. 
+     * Only the singleton instance of this class may be used.
      */
     protected LocalSelectionTransfer() {
     	// do nothing
@@ -54,7 +54,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 
     /**
      * Returns the singleton.
-     * 
+     *
      * @return the singleton
      */
     public static LocalSelectionTransfer getTransfer() {
@@ -63,7 +63,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 
     /**
      * Returns the local transfer data.
-     * 
+     *
      * @return the local transfer data
      */
     public ISelection getSelection() {
@@ -72,7 +72,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 
     /**
      * Tests whether native drop data matches this transfer type.
-     * 
+     *
      * @param result result of converting the native drop data to Java
      * @return true if the native drop data does not match this transfer type.
      * 	false otherwise.
@@ -84,7 +84,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 
     /**
      * Returns the type id used to identify this transfer.
-     * 
+     *
      * @return the type id used to identify this transfer.
      */
     @Override
@@ -94,7 +94,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 
     /**
      * Returns the type name used to identify this transfer.
-     * 
+     *
      * @return the type name used to identify this transfer.
      */
     @Override
@@ -107,7 +107,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
      * TransferData).
      * Only encode the transfer type name since the selection is read and
      * written in the same process.
-     * 
+     *
      * @see org.eclipse.swt.dnd.ByteArrayTransfer#javaToNative(java.lang.Object, org.eclipse.swt.dnd.TransferData)
      */
     @Override
@@ -119,7 +119,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
     /**
      * Overrides org.eclipse.swt.dnd.ByteArrayTransfer#nativeToJava(TransferData).
      * Test if the native drop data matches this transfer type.
-     * 
+     *
      * @see org.eclipse.swt.dnd.ByteArrayTransfer#nativeToJava(TransferData)
      */
     @Override
@@ -137,7 +137,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 
     /**
      * Sets the transfer data for local use.
-     * 
+     *
      * @param s the transfer data
      */
     public void setSelection(ISelection s) {
@@ -147,9 +147,9 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
     /**
      * Returns the time when the selection operation
      * this transfer is associated with was started.
-     * 
+     *
      * @return the time when the selection operation has started
-     * 
+     *
      * @see org.eclipse.swt.events.TypedEvent#time
      */
     public long getSelectionSetTime() {
@@ -161,9 +161,9 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
      * transfer is associated with was started.
      * If assigning this from an SWT event, be sure to use
      * <code>setSelectionTime(event.time & 0xFFFF)</code>
-     * 
+     *
      * @param time the time when the selection operation was started
-     * 
+     *
      * @see org.eclipse.swt.events.TypedEvent#time
      */
     public void setSelectionSetTime(long time) {

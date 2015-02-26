@@ -26,7 +26,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * <p>
  * Clients may instantiate this class, but must not extend.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class ToggleState extends PersistentState {

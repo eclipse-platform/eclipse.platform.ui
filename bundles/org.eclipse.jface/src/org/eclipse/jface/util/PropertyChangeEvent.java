@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Assert;
  * also be subclassed if required.
  * </p>
  * <p>
- * The JFace frameworks contain classes that report property 
+ * The JFace frameworks contain classes that report property
  * change events for internal state changes that may be of interest
  * to external parties. A special listener interface
  * (<code>IPropertyChangeListener</code>) is defined for this purpose,

@@ -20,33 +20,33 @@ import org.eclipse.swt.graphics.ImageData;
 class ImageDataImageDescriptor extends ImageDescriptor {
 
     private ImageData data;
-    
+
     /**
      * Original image being described, or null if this image is described
      * completely using its ImageData
      */
     private Image originalImage = null;
-    
+
     /**
      * Creates an image descriptor, given an image and the device it was created on.
-     * 
+     *
      * @param originalImage
      */
     ImageDataImageDescriptor(Image originalImage) {
         this(originalImage.getImageData());
         this.originalImage = originalImage;
     }
-    
+
     /**
      * Creates an image descriptor, given some image data.
-     * 
+     *
      * @param data describing the image
      */
 
     ImageDataImageDescriptor(ImageData data) {
         this.data = data;
     }
-    
+
     @Override
 	public Object createResource(Device device) throws DeviceResourceException {
 
@@ -58,24 +58,24 @@ class ImageDataImageDescriptor extends ImageDescriptor {
                 return originalImage;
             }
         }
-        
+
         return super.createResource(device);
     }
-	
+
     @Override
 	public void destroyResource(Object previouslyCreatedObject) {
         if (previouslyCreatedObject == originalImage) {
             return;
         }
-        
+
         super.destroyResource(previouslyCreatedObject);
     }
-    
+
     @Override
 	public ImageData getImageData() {
         return data;
     }
-    
+
     @Override
 	public int hashCode() {
     	 if (originalImage != null) {
@@ -88,18 +88,18 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 	public boolean equals(Object obj) {
         if (!(obj instanceof ImageDataImageDescriptor)) {
 			return false;
-		} 
-        
+		}
+
         ImageDataImageDescriptor imgWrap = (ImageDataImageDescriptor) obj;
-        
+
         //Intentionally using == instead of equals() as Image.hashCode() changes
         //when the image is disposed and so leaks may occur with equals()
-       
+
         if (originalImage != null) {
             return imgWrap.originalImage == originalImage;
         }
-        
+
         return (imgWrap.originalImage == null && data.equals(imgWrap.data));
     }
-    
+
 }

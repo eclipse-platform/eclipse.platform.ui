@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Control;
  * This class is the abstract superclass of all dialog trays. A tray can be opened
  * in any <code>TrayDialog</code>.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.dialogs.TrayDialog
  * @since 3.2
  */
@@ -32,7 +32,7 @@ public abstract class DialogTray {
 	 * according to the natural size of the tray, and will fill the tray area with the
 	 * tray's contents.
 	 * </p>
-	 * 
+	 *
 	 * @param parent the composite that will contain the tray
 	 * @return the contents of the tray, as a <code>Control</code>
 	 */

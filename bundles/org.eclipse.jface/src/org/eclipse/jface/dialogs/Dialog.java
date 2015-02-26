@@ -63,7 +63,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for error image (value
 	 * <code>"dialog_error_image"</code>).
-	 * 
+	 *
 	 * @deprecated use
 	 *             org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_ERROR)
 	 */
@@ -72,7 +72,7 @@ public abstract class Dialog extends Window {
 
 	/**
 	 * Image registry key for info image (value <code>"dialog_info_image"</code>).
-	 * 
+	 *
 	 * @deprecated use
 	 *             org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_INFORMATION)
 	 */
@@ -82,7 +82,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for question image (value
 	 * <code>"dialog_question_image"</code>).
-	 * 
+	 *
 	 * @deprecated org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_QUESTION)
 	 */
 	@Deprecated
@@ -91,7 +91,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for warning image (value
 	 * <code>"dialog_warning_image"</code>).
-	 * 
+	 *
 	 * @deprecated use
 	 *             org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_WARNING)
 	 */
@@ -101,7 +101,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for info message image (value
 	 * <code>"dialog_messasge_info_image"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String DLG_IMG_MESSAGE_INFO = "dialog_messasge_info_image"; //$NON-NLS-1$
@@ -109,7 +109,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for info message image (value
 	 * <code>"dialog_messasge_warning_image"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String DLG_IMG_MESSAGE_WARNING = "dialog_messasge_warning_image"; //$NON-NLS-1$
@@ -117,7 +117,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for info message image (value
 	 * <code>"dialog_message_error_image"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String DLG_IMG_MESSAGE_ERROR = "dialog_message_error_image"; //$NON-NLS-1$
@@ -125,46 +125,46 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for help image (value
 	 * <code>"dialog_help_image"</code>).
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String DLG_IMG_HELP = "dialog_help_image"; //$NON-NLS-1$
 
 	/**
 	 * The ellipsis is the string that is used to represent shortened text.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
 	/**
 	 * The dialog settings key name for stored dialog x location.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
 
 	/**
 	 * The dialog settings key name for stored dialog y location.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
 
 	/**
 	 * The dialog settings key name for stored dialog width.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 
 	/**
 	 * The dialog settings key name for stored dialog height.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
-	
+
 	/**
 	 * The dialog settings key name for the font used when the dialog
 	 * height and width was stored.
@@ -172,11 +172,11 @@ public abstract class Dialog extends Window {
 	 *@since 3.2
 	 */
 	private static final String DIALOG_FONT_DATA = "DIALOG_FONT_NAME"; //$NON-NLS-1$
-	
+
 	/**
 	 * A value that can be used for stored dialog width or height that
 	 * indicates that the default bounds should be used.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int DIALOG_DEFAULT_BOUNDS = -1;
@@ -188,7 +188,7 @@ public abstract class Dialog extends Window {
 	 *
 	 *@since 3.2
 	 */
-	
+
 	/**
 	 * Persist the last location of the dialog.
 	 * @since 3.2
@@ -199,7 +199,7 @@ public abstract class Dialog extends Window {
 	 * @since 3.2
 	 */
 	public static final int DIALOG_PERSISTSIZE = 0x0002;
-	
+
 	/**
 	 * The dialog area; <code>null</code> until dialog is layed out.
 	 */
@@ -209,7 +209,7 @@ public abstract class Dialog extends Window {
 	 * The button bar; <code>null</code> until dialog is layed out.
 	 */
 	public Control buttonBar;
-	
+
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
 	 */
@@ -219,7 +219,7 @@ public abstract class Dialog extends Window {
 	 * Font metrics to use for determining pixel sizes.
 	 */
 	private FontMetrics fontMetrics;
-	
+
 	/**
 	 * Number of horizontal dialog units per character, value <code>4</code>.
 	 */
@@ -242,7 +242,7 @@ public abstract class Dialog extends Window {
 	 *	gc.dispose();
 	 * </code>
 	 * </p>
-	 * 
+	 *
 	 * @param fontMetrics
 	 *            used in performing the conversion
 	 * @param chars
@@ -267,7 +267,7 @@ public abstract class Dialog extends Window {
 	 *	gc.dispose();
 	 * </code>
 	 * </p>
-	 * 
+	 *
 	 * @param fontMetrics
 	 *            used in performing the conversion
 	 * @param dlus
@@ -294,7 +294,7 @@ public abstract class Dialog extends Window {
 	 *	gc.dispose();
 	 * </code>
 	 * </p>
-	 * 
+	 *
 	 * @param fontMetrics
 	 *            used in performing the conversion
 	 * @param dlus
@@ -321,7 +321,7 @@ public abstract class Dialog extends Window {
 	 *	gc.dispose();
 	 * </code>
 	 * </p>
-	 * 
+	 *
 	 * @param fontMetrics
 	 *            used in performing the conversion
 	 * @param chars
@@ -340,14 +340,14 @@ public abstract class Dialog extends Window {
 	 * characters in the center of the original string with an ellipsis ("...")
 	 * if necessary. If a <code>null</code> value is given, <code>null</code>
 	 * is returned.
-	 * 
+	 *
 	 * @param textValue
 	 *            the original string or <code>null</code>
 	 * @param control
 	 *            the control the string will be displayed on
 	 * @return the string to display, or <code>null</code> if null was passed
 	 *         in
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static String shortenText(String textValue, Control control) {
@@ -410,7 +410,7 @@ public abstract class Dialog extends Window {
 	 * Creates a dialog instance. Note that the window will have no visual
 	 * representation (no widgets) until it is told to open. By default,
 	 * <code>open</code> blocks for dialogs.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell, or <code>null</code> to create a top-level
 	 *            shell
@@ -428,10 +428,10 @@ public abstract class Dialog extends Window {
 
 	/**
 	 * Creates a dialog with the given parent.
-	 * 
+	 *
 	 * @param parentShell
 	 *            object that returns the current parent shell
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected Dialog(IShellProvider parentShell) {
@@ -456,7 +456,7 @@ public abstract class Dialog extends Window {
 	 * buttons, but should call <code>super.buttonPressed</code> if the
 	 * default handling of the ok and cancel buttons is desired.
 	 * </p>
-	 * 
+	 *
 	 * @param buttonId
 	 *            the id of the button that was pressed (see
 	 *            <code>IDialogConstants.*_ID</code> constants)
@@ -492,7 +492,7 @@ public abstract class Dialog extends Window {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels
@@ -515,7 +515,7 @@ public abstract class Dialog extends Window {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param dlus
 	 *            the number of horizontal dialog units
 	 * @return the number of pixels
@@ -538,7 +538,7 @@ public abstract class Dialog extends Window {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param dlus
 	 *            the number of vertical dialog units
 	 * @return the number of pixels
@@ -561,7 +561,7 @@ public abstract class Dialog extends Window {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels
@@ -588,7 +588,7 @@ public abstract class Dialog extends Window {
 	 * assumed to be a <code>GridLayout</code> and the number of columns in
 	 * this layout is incremented. Subclasses may override.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param id
@@ -599,9 +599,9 @@ public abstract class Dialog extends Window {
 	 * @param defaultButton
 	 *            <code>true</code> if the button is to be the default button,
 	 *            and <code>false</code> otherwise
-	 * 
+	 *
 	 * @return the new button
-	 * 
+	 *
 	 * @see #getCancelButton
 	 * @see #getOKButton()
 	 */
@@ -641,7 +641,7 @@ public abstract class Dialog extends Window {
 	 * The returned control's layout data must be an instance of
 	 * <code>GridData</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite to contain the button bar
 	 * @return the button bar control
@@ -662,7 +662,7 @@ public abstract class Dialog extends Window {
 				| GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
-		
+
 		// Add the buttons to the button bar.
 		createButtonsForButtonBar(composite);
 		return composite;
@@ -681,7 +681,7 @@ public abstract class Dialog extends Window {
 	 * Note: The common button order is: <b>{other buttons}</b>, <b>OK</b>, <b>Cancel</b>.
 	 * On some platforms, {@link #initializeBounds()} will move the default button to the right.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the button bar composite
 	 */
@@ -717,14 +717,14 @@ public abstract class Dialog extends Window {
 				}
 			}
 		}
-		
+
 		super.initializeBounds();
 	}
 
 	/**
 	 * Returns true if the given Control is a direct or indirect child of
 	 * container.
-	 * 
+	 *
 	 * @param container
 	 *            the potential parent
 	 * @param control
@@ -767,7 +767,7 @@ public abstract class Dialog extends Window {
 		// create the dialog area and button bar
 		dialogArea = createDialogArea(composite);
 		buttonBar = createButtonBar(composite);
-				
+
 		return composite;
 	}
 
@@ -788,13 +788,13 @@ public abstract class Dialog extends Window {
 	 * Subclasses must override this method but may call <code>super</code> as
 	 * in the following example:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * Composite composite = (Composite) super.createDialogArea(parent);
 	 * //add controls to composite as necessary
 	 * return composite;
 	 * </pre>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite to contain the dialog area
 	 * @return the dialog area control
@@ -819,12 +819,12 @@ public abstract class Dialog extends Window {
 	 * <code>createButton</code> was never called with this ID, or if
 	 * <code>createButton</code> is overridden, this method will return
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param id
 	 *            the id of the button to look for
-	 * 
+	 *
 	 * @return the button for the ID or <code>null</code>
-	 * 
+	 *
 	 * @see #createButton(Composite, int, String, boolean)
 	 * @since 2.0
 	 */
@@ -837,7 +837,7 @@ public abstract class Dialog extends Window {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @return the button bar, or <code>null</code> if the button bar has not
 	 *         been created yet
 	 */
@@ -851,9 +851,9 @@ public abstract class Dialog extends Window {
 	 * <code>createButton</code> was never called with this parameter, or if
 	 * <code>createButton</code> is overridden, <code>getCancelButton</code>
 	 * will return <code>null</code>.
-	 * 
+	 *
 	 * @return the cancel button or <code>null</code>
-	 * 
+	 *
 	 * @see #createButton(Composite, int, String, boolean)
 	 * @since 2.0
 	 * @deprecated Use <code>getButton(IDialogConstants.CANCEL_ID)</code>
@@ -869,7 +869,7 @@ public abstract class Dialog extends Window {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @return the dialog area, or <code>null</code> if the dialog area has
 	 *         not been created yet
 	 */
@@ -881,18 +881,18 @@ public abstract class Dialog extends Window {
 	 * Returns the standard dialog image with the given key. Note that these
 	 * images are managed by the dialog framework, and must not be disposed by
 	 * another party.
-	 * 
+	 *
 	 * @param key
 	 *            one of the <code>Dialog.DLG_IMG_* </code> constants
 	 * @return the standard dialog image
-	 * 
+	 *
 	 * NOTE: Dialog does not use the following images in the registry
 	 * DLG_IMG_ERROR DLG_IMG_INFO DLG_IMG_QUESTION DLG_IMG_WARNING
-	 * 
+	 *
 	 * They are now coming directly from SWT, see ImageRegistry. For backwards
 	 * compatibility they are still supported, however new code should use SWT
 	 * for these.
-	 * 
+	 *
 	 * @see Display#getSystemImage(int)
 	 */
 	public static Image getImage(String key) {
@@ -905,9 +905,9 @@ public abstract class Dialog extends Window {
 	 * <code>createButton</code> was never called with this parameter, or if
 	 * <code>createButton</code> is overridden, <code>getOKButton</code>
 	 * will return <code>null</code>.
-	 * 
+	 *
 	 * @return the OK button or <code>null</code>
-	 * 
+	 *
 	 * @see #createButton(Composite, int, String, boolean)
 	 * @since 2.0
 	 * @deprecated Use <code>getButton(IDialogConstants.OK_ID)</code> instead.
@@ -925,7 +925,7 @@ public abstract class Dialog extends Window {
 	 * This method must be called before any of the dialog unit based conversion
 	 * methods are called.
 	 * </p>
-	 * 
+	 *
 	 * @param control
 	 *            a control from which to obtain the current font
 	 */
@@ -953,7 +953,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Set the layout data of the button to a GridData with appropriate heights
 	 * and widths.
-	 * 
+	 *
 	 * @param button
 	 */
 	protected void setButtonLayoutData(Button button) {
@@ -967,7 +967,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Set the layout data of the button to a FormData with appropriate heights
 	 * and widths.
-	 * 
+	 *
 	 * @param button
 	 */
 	protected void setButtonLayoutFormData(Button button) {
@@ -999,7 +999,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Applies the dialog font to all controls that currently have the default
 	 * font.
-	 * 
+	 *
 	 * @param control
 	 *            the control to apply the font to. Font will also be applied to
 	 *            its children. If the control is <code>null</code> nothing
@@ -1016,7 +1016,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Sets the dialog font on the control and any of its children if their font
 	 * is not otherwise set.
-	 * 
+	 *
 	 * @param control
 	 *            the control to apply the font to. Font will also be applied to
 	 *            its children.
@@ -1037,7 +1037,7 @@ public abstract class Dialog extends Window {
 
 	/**
 	 * Return whether or not this control has the same font as it's default.
-	 * 
+	 *
 	 * @param control
 	 *            Control
 	 * @return boolean
@@ -1059,7 +1059,7 @@ public abstract class Dialog extends Window {
 
 	/**
 	 * Get the default font for this type of control.
-	 * 
+	 *
 	 * @param control
 	 * @return the default font
 	 */
@@ -1080,7 +1080,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Return whether or not the dialog font is currently the same as the
 	 * default font.
-	 * 
+	 *
 	 * @return boolean if the two are the same
 	 */
 	protected static boolean dialogFontIsDefault() {
@@ -1100,7 +1100,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Get the IDialogBlockedHandler to be used by WizardDialogs and
 	 * ModalContexts.
-	 * 
+	 *
 	 * @return Returns the blockedHandler.
 	 */
 	public static IDialogBlockedHandler getBlockedHandler() {
@@ -1110,7 +1110,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Set the IDialogBlockedHandler to be used by WizardDialogs and
 	 * ModalContexts.
-	 * 
+	 *
 	 * @param blockedHandler
 	 *            The blockedHandler for the dialogs.
 	 */
@@ -1121,11 +1121,11 @@ public abstract class Dialog extends Window {
 	/**
 	 * Gets the dialog settings that should be used for remembering the bounds of
 	 * of the dialog, according to the dialog bounds strategy.
-	 * 
+	 *
 	 * @return settings the dialog settings used to store the dialog's location
 	 *         and/or size, or <code>null</code> if the dialog's bounds should
 	 *         never be stored.
-	 * 
+	 *
 	 * @since 3.2
 	 * @see Dialog#getDialogBoundsStrategy()
 	 */
@@ -1138,10 +1138,10 @@ public abstract class Dialog extends Window {
 	 * dialog bounds. This strategy is ignored if the implementer does not also
 	 * specify the dialog settings for storing the bounds in
 	 * Dialog.getDialogBoundsSettings().
-	 * 
+	 *
 	 * @return the constant describing the strategy for persisting the dialog
 	 *         bounds.
-	 * 
+	 *
 	 * @since 3.2
 	 * @see Dialog#DIALOG_PERSISTLOCATION
 	 * @see Dialog#DIALOG_PERSISTSIZE
@@ -1155,13 +1155,13 @@ public abstract class Dialog extends Window {
 	 * Saves the bounds of the shell in the appropriate dialog settings. The
 	 * bounds are recorded relative to the parent shell, if there is one, or
 	 * display coordinates if there is no parent shell.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell whose bounds are to be stored
-	 * 
+	 *
 	 * @since 3.2
 	 */
-	private void saveDialogBounds(Shell shell) {		
+	private void saveDialogBounds(Shell shell) {
 		IDialogSettings settings = getDialogBoundsSettings();
 		if (settings != null) {
 			Point shellLocation = shell.getLocation();
@@ -1192,9 +1192,9 @@ public abstract class Dialog extends Window {
 	 * Returns the initial size to use for the shell. Overridden
 	 * to check whether a size has been stored in dialog settings.
 	 * If a size has been stored, it is returned.
-	 * 
+	 *
 	 * @return the initial size of the shell
-	 * 
+	 *
 	 * @since 3.2
 	 * @see #getDialogBoundsSettings()
 	 * @see #getDialogBoundsStrategy()
@@ -1202,20 +1202,20 @@ public abstract class Dialog extends Window {
 	@Override
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
-		
+
 		// Check the dialog settings for a stored size.
 		if ((getDialogBoundsStrategy() & DIALOG_PERSISTSIZE)!= 0) {
 			IDialogSettings settings = getDialogBoundsSettings();
 			if (settings != null) {
 				// Check that the dialog font matches the font used
 				// when the bounds was stored.  If the font has changed,
-				// we do not honor the stored settings.  
+				// we do not honor the stored settings.
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132821
 				boolean useStoredBounds = true;
 				String previousDialogFontData = settings.get(DIALOG_FONT_DATA);
 				// There is a previously stored font, so we will check it.
 				// Note that if we haven't stored the font before, then we will
-				// use the stored bounds.  This allows restoring of dialog bounds 
+				// use the stored bounds.  This allows restoring of dialog bounds
 				// that were stored before we started storing the fontdata.
 				if (previousDialogFontData != null && previousDialogFontData.length() > 0) {
 					FontData [] fontDatas = JFaceResources.getDialogFont().getFontData();
@@ -1235,7 +1235,7 @@ public abstract class Dialog extends Window {
 						if (height != DIALOG_DEFAULT_BOUNDS) {
 							result.y = height;
 						}
-		
+
 					} catch (NumberFormatException e) {
 					}
 				}
@@ -1250,12 +1250,12 @@ public abstract class Dialog extends Window {
 	 * Returns the initial location to use for the shell. Overridden
 	 * to check whether the bounds of the dialog have been stored in
 	 * dialog settings.  If a location has been stored, it is returned.
-	 * 
+	 *
 	 * @param initialSize
 	 *            the initial size of the shell, as returned by
 	 *            <code>getInitialSize</code>.
 	 * @return the initial location of the shell
-	 * 
+	 *
 	 * @since 3.2
 	 * @see #getDialogBoundsSettings()
 	 * @see #getDialogBoundsStrategy()
@@ -1286,28 +1286,28 @@ public abstract class Dialog extends Window {
 		// constraining behavior in Window will be used.
 		return result;
 	}
-	
+
 	/**
 	 * Returns a boolean indicating whether the dialog should be
 	 * considered resizable when the shell style is initially
-	 * set.  
-	 * 
-	 * This method is used to ensure that all style 
-	 * bits appropriate for resizable dialogs are added to the 
-	 * shell style.  Individual dialogs may always set the shell 
+	 * set.
+	 *
+	 * This method is used to ensure that all style
+	 * bits appropriate for resizable dialogs are added to the
+	 * shell style.  Individual dialogs may always set the shell
 	 * style to ensure that a dialog is resizable, but using this
 	 * method ensures that resizable dialogs will be created with
 	 * the same set of style bits.
-	 * 
-	 * Style bits will never be removed based on the return value 
-	 * of this method.  For example, if a dialog returns 
-	 * <code>false</code>, but also sets a style bit for a 
+	 *
+	 * Style bits will never be removed based on the return value
+	 * of this method.  For example, if a dialog returns
+	 * <code>false</code>, but also sets a style bit for a
 	 * SWT.RESIZE border, the style bit will be honored.
-	 * 
-	 * @return a boolean indicating whether the dialog is 
+	 *
+	 * @return a boolean indicating whether the dialog is
 	 * resizable and should have the default style bits for
 	 * resizable dialogs
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected boolean isResizable() {

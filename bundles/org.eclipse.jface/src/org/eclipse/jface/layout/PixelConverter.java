@@ -23,10 +23,10 @@ import org.eclipse.jface.dialogs.Dialog;
  * a font. In the case of a control, the font used by the control at the time
  * the PixelConverter is created is used for the pixel calculations. In the case
  * of a specific font, the supplied font is used for the calculations.
- * 
+ *
  * The control and/or font must not be disposed at the time the PixelConverter
  * is created.
- * 
+ *
  * @since 3.5
  */
 public class PixelConverter {
@@ -36,7 +36,7 @@ public class PixelConverter {
 	/**
 	 * Create a PixelConverter which will convert device-independent units to
 	 * pixels using the font of the specified control.
-	 * 
+	 *
 	 * @param control
 	 *            the control whose font should be used for pixel conversions.
 	 *            Note that the font used by the control at the time this
@@ -52,7 +52,7 @@ public class PixelConverter {
 	/**
 	 * Create a PixelConverter which will convert device-independent units to
 	 * pixels using the specified font.
-	 * 
+	 *
 	 * @param font
 	 *            the font that should be used for pixel conversions.
 	 */
@@ -66,7 +66,7 @@ public class PixelConverter {
 	/**
 	 * Returns the number of pixels corresponding to the height of the given
 	 * number of characters.
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels
@@ -78,7 +78,7 @@ public class PixelConverter {
 	/**
 	 * Returns the number of pixels corresponding to the given number of
 	 * horizontal dialog units.
-	 * 
+	 *
 	 * @param dlus
 	 *            the number of horizontal dialog units
 	 * @return the number of pixels
@@ -90,7 +90,7 @@ public class PixelConverter {
 	/**
 	 * Returns the number of pixels corresponding to the given number of
 	 * vertical dialog units.
-	 * 
+	 *
 	 * @param dlus
 	 *            the number of vertical dialog units
 	 * @return the number of pixels
@@ -102,7 +102,7 @@ public class PixelConverter {
 	/**
 	 * Returns the number of pixels corresponding to the width of the given
 	 * number of characters.
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels

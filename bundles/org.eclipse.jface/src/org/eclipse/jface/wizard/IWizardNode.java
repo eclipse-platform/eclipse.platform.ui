@@ -13,7 +13,7 @@ package org.eclipse.jface.wizard;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * A wizard node acts a placeholder for a real wizard in a wizard 
+ * A wizard node acts a placeholder for a real wizard in a wizard
  * selection page. It is done in such a way that the actual creation
  * of a wizard can be deferred until the wizard is really needed.
  * <p>
@@ -47,7 +47,7 @@ public interface IWizardNode {
      * <p>
      * If the content has not yet been created, calling this method
      * does not trigger the creation of the wizard. This allows
-     * this node to suggest an extent in advance of actually creating 
+     * this node to suggest an extent in advance of actually creating
      * the wizard.
      * </p>
      *

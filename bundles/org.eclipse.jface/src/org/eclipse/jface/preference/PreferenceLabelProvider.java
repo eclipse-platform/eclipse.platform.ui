@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Provides labels for <code>IPreferenceNode</code> objects.
- * 
+ *
  * @since 3.0
  */
 public class PreferenceLabelProvider extends LabelProvider {

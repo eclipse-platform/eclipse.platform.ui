@@ -22,12 +22,12 @@ import org.eclipse.swt.graphics.Image;
  * {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider} to compute
  * styled text label and image and takes a {@link ILabelDecorator} to decorate
  * the label.
- * 
+ *
  * <p>
  * Use this label provider as a replacement for the
  * {@link DecoratingLabelProvider} when decorating styled text labels.
  * </p>
- * 
+ *
  * <p>
  * The {@link DecoratingStyledCellLabelProvider} will try to evaluate the text
  * decoration added by the {@link ILabelDecorator} and will apply the style
@@ -38,7 +38,7 @@ import org.eclipse.swt.graphics.Image;
  * and {@link IFontDecorator} to provide foreground and background color and
  * font decoration.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public class DecoratingStyledCellLabelProvider extends
@@ -52,7 +52,7 @@ public class DecoratingStyledCellLabelProvider extends
 	 * Creates a {@link DecoratingStyledCellLabelProvider} that delegates the
 	 * requests for styled labels and for images to a
 	 * {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider}.
-	 * 
+	 *
 	 * @param labelProvider
 	 *            the styled label provider
 	 * @param decorator
@@ -71,7 +71,7 @@ public class DecoratingStyledCellLabelProvider extends
 		this.decorator = decorator;
 		this.decorationContext = decorationContext != null ? decorationContext
 				: DecorationContext.DEFAULT_CONTEXT;
-		
+
 		this.labelProviderListener = new ILabelProviderListener() {
 			@Override
 			public void labelProviderChanged(LabelProviderChangedEvent event) {
@@ -87,7 +87,7 @@ public class DecoratingStyledCellLabelProvider extends
 	 * Returns the decoration context associated with this label provider. It
 	 * will be passed to the decorator if the decorator is an instance of
 	 * {@link LabelDecorator}.
-	 * 
+	 *
 	 * @return the decoration context associated with this label provider
 	 */
 	public IDecorationContext getDecorationContext() {
@@ -97,7 +97,7 @@ public class DecoratingStyledCellLabelProvider extends
 	/**
 	 * Set the decoration context that will be based to the decorator for this
 	 * label provider if that decorator implements {@link LabelDecorator}.
-	 * 
+	 *
 	 * @param decorationContext
 	 *            the decoration context.
 	 */
@@ -189,7 +189,7 @@ public class DecoratingStyledCellLabelProvider extends
 
 	/**
 	 * Returns the styled text for the label of the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element for which to provide the styled label text
 	 * @return the styled text string used to label the element
@@ -221,13 +221,13 @@ public class DecoratingStyledCellLabelProvider extends
 	 * decorations. By default the
 	 * {@link StyledString#DECORATIONS_STYLER decoration style}. Clients
 	 * can override.
-	 * 
+	 *
 	 * Note that it is the client's responsibility to react on color changes of
 	 * the decoration color by refreshing the view
-	 * 
+	 *
 	 * @param element
 	 *            the element that has been decorated
-	 * 
+	 *
 	 * @return return the decoration style
 	 */
 	protected Styler getDecorationStyle(Object element) {
@@ -236,7 +236,7 @@ public class DecoratingStyledCellLabelProvider extends
 
 	/**
 	 * Returns the decorator or <code>null</code> if no decorator is installed
-	 * 
+	 *
 	 * @return the decorator or <code>null</code> if no decorator is installed
 	 */
 	public ILabelDecorator getLabelDecorator() {
@@ -249,7 +249,7 @@ public class DecoratingStyledCellLabelProvider extends
 	 * decorator is not disposed. Fires a label provider changed event
 	 * indicating that all labels should be updated. Has no effect if the given
 	 * decorator is identical to the current one.
-	 * 
+	 *
 	 * @param newDecorator
 	 *            the label decorator, or <code>null</code> if no decorations
 	 *            are to be applied

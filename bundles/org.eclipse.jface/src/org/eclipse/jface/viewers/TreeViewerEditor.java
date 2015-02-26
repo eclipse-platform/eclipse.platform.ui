@@ -149,7 +149,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 						new TreeSelection(focusCell.getViewerRow()
 								.getTreePath()),true);
 			}
-			
+
 			// Set the focus cell after the selection is updated because else
 			// the cell is not scrolled into view
 			if (focusCellManager != null) {

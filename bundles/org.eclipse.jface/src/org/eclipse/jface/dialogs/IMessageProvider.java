@@ -13,7 +13,7 @@ package org.eclipse.jface.dialogs;
 /**
  * Minimal interface to a message provider. Used for dialog pages which can
  * provide a message with an icon.
- * 
+ *
  * @since 2.0
  */
 public interface IMessageProvider {
@@ -46,7 +46,7 @@ public interface IMessageProvider {
      * <p>
      * A message provides instruction or information to the user.
      * </p>
-     * 
+     *
      * @return the message, or <code>null</code> if none
      */
     public String getMessage();
@@ -58,7 +58,7 @@ public interface IMessageProvider {
      * Returns one of <code>NONE</code>,<code>INFORMATION</code>,
      * <code>WARNING</code>, or <code>ERROR</code>.
      * </p>
-     * 
+     *
      * @return the message type
      */
     public int getMessageType();

@@ -36,16 +36,16 @@ import org.eclipse.swt.widgets.TreeColumn;
 /**
  * Utilities for configuring columns of trees and tables in a
  * keyboard-accessible way.
- * 
+ *
  * @since 3.5
- * 
+ *
  */
 public class ConfigureColumns {
 
 	/**
 	 * Configure the columns of the given tree in a keyboard-accessible way,
 	 * using the given shell provider to parent dialogs.
-	 * 
+	 *
 	 * @param tree the tree
 	 * @param shellProvider a shell provider
 	 * @return <code>false</code> if the user canceled, <code>true</code>
@@ -58,7 +58,7 @@ public class ConfigureColumns {
 	/**
 	 * Configure the columns of the given tree in a keyboard-accessible way,
 	 * using the given shell provider to parent dialogs.
-	 * 
+	 *
 	 * @param table the table
 	 * @param shellProvider a shell provider
 	 * @return <code>false</code> if the user canceled, <code>true</code>
@@ -70,7 +70,7 @@ public class ConfigureColumns {
 
 	/**
 	 * NON-API - This class is internal.
-	 * 
+	 *
 	 */
 	static class ConfigureColumnsDialog extends Dialog {
 
@@ -110,7 +110,7 @@ public class ConfigureColumns {
 		 * in 3.5. Creates a new dialog for configuring columns of the given
 		 * column viewer. The column viewer must have an underlying {@link Tree}
 		 * or {@link Table}, other controls are not supported.
-		 * 
+		 *
 		 * @param shellProvider
 		 * @param table
 		 */
@@ -123,7 +123,7 @@ public class ConfigureColumns {
 		 * in 3.5. Creates a new dialog for configuring columns of the given
 		 * column viewer. The column viewer must have an underlying {@link Tree}
 		 * or {@link Table}, other controls are not supported.
-		 * 
+		 *
 		 * @param shellProvider
 		 * @param tree
 		 */

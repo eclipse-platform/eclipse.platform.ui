@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 /**
  * A layout for a table. Call <code>addColumnData</code> to add columns.
  * The TableLayout {@link ColumnLayoutData} is only valid until the table
- * is resized. To keep the proportions constant when the table is resized 
+ * is resized. To keep the proportions constant when the table is resized
  * see {@link TableColumnLayout}
  */
 public class TableLayout extends Layout {
@@ -39,7 +39,7 @@ public class TableLayout extends Layout {
 	 * The number of extra pixels taken as horizontal trim by the table column.
 	 * To ensure there are N pixels available for the content of the column,
 	 * assign N+COLUMN_TRIM for the column width.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static int COLUMN_TRIM;
@@ -64,7 +64,7 @@ public class TableLayout extends Layout {
 	 * Indicates whether <code>layout</code> has yet to be called.
 	 */
 	private boolean firstTime = true;
-	
+
 	private boolean adjustForScrollBar;
 
 	/**
@@ -75,7 +75,7 @@ public class TableLayout extends Layout {
 
 	/**
 	 * Creates a new table layout.
-	 * 
+	 *
 	 * @param adjustForScrollBar <code>true</code> if the layout should reserve space for the
 	 *            vertical scroll bar
 	 * @since 3.9
@@ -86,7 +86,7 @@ public class TableLayout extends Layout {
 
 	/**
 	 * Adds a new column of data to this table layout.
-	 * 
+	 *
 	 * @param data
 	 *            the column layout data
 	 */
@@ -234,7 +234,7 @@ public class TableLayout extends Layout {
 
 	/**
 	 * Set the width of the item.
-	 * 
+	 *
 	 * @param item
 	 * @param width
 	 */
@@ -249,7 +249,7 @@ public class TableLayout extends Layout {
 
 	/**
 	 * Return the columns for the receiver.
-	 * 
+	 *
 	 * @param composite
 	 * @return Item[]
 	 */

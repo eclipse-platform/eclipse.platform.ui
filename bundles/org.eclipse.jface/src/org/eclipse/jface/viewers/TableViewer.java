@@ -57,7 +57,7 @@ import org.eclipse.swt.widgets.Widget;
  * Users setting up an editable table with more than 1 column <b>have</b> to pass the
  * SWT.FULL_SELECTION style bit
  * </p>
- * 
+ *
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
@@ -80,7 +80,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters. The table has no columns.
-	 * 
+	 *
 	 * @param parent
 	 * 		the parent control
 	 */
@@ -93,7 +93,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * parent. The table control is created using the given style bits. The
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters. The table has no columns.
-	 * 
+	 *
 	 * @param parent
 	 * 		the parent control
 	 * @param style
@@ -107,7 +107,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * Creates a table viewer on the given table control. The viewer has no
 	 * input, no content provider, a default label provider, no sorter, and no
 	 * filters.
-	 * 
+	 *
 	 * @param table
 	 * 		the table control
 	 */
@@ -123,7 +123,7 @@ public class TableViewer extends AbstractTableViewer {
 
 	/**
 	 * Returns this table viewer's table control.
-	 * 
+	 *
 	 * @return the table control
 	 */
 	public Table getTable() {
@@ -148,7 +148,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * Use Table#setSelection(int[] indices) and Table#showSelection() if you
 	 * wish to set selection more efficiently when using a ILazyContentProvider.
 	 * </p>
-	 * 
+	 *
 	 * @param selection
 	 * 		the new selection
 	 * @param reveal
@@ -175,7 +175,7 @@ public class TableViewer extends AbstractTableViewer {
 
 	/**
 	 * Create a new row with style at index
-	 * 
+	 *
 	 * @param style
 	 * @param rowIndex
 	 * @return ViewerRow
@@ -340,12 +340,12 @@ public class TableViewer extends AbstractTableViewer {
 	 * given element needs updating, it is more efficient to use the
 	 * <code>update</code> methods.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Subclasses who can provide this feature can open this method for the
 	 * public
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 * 		the element
 	 * @param updateLabels
@@ -354,7 +354,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * 		for existing elements are unchanged.
 	 * @param reveal
 	 * 		<code>true</code> to make the preserved selection visible afterwards
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void refresh(final Object element, final boolean updateLabels,
@@ -387,14 +387,14 @@ public class TableViewer extends AbstractTableViewer {
 	 * Note that the implementation may still obtain labels for existing
 	 * elements even if <code>updateLabels</code> is false. The intent is simply
 	 * to allow optimization where possible.
-	 * 
+	 *
 	 * @param updateLabels
 	 * 		<code>true</code> to update labels for existing elements,
 	 * 		<code>false</code> to only update labels as needed, assuming that labels
 	 * 		for existing elements are unchanged.
 	 * @param reveal
 	 * 		<code>true</code> to make the preserved selection visible afterwards
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void refresh(boolean updateLabels, boolean reveal) {
@@ -443,7 +443,7 @@ public class TableViewer extends AbstractTableViewer {
 			firePostSelectionChanged(new SelectionChangedEvent(this, sel));
 		}
 	}
-	
+
 	@Override
 	protected Widget doFindItem(Object element) {
 		IContentProvider contentProvider = getContentProvider();

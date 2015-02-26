@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-/** 
+/**
  * A listener which is notified when a viewer's selection changes.
  *
  * @see ISelection

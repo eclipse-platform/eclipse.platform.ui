@@ -52,9 +52,9 @@ public interface IRunnableContext {
      *  <code>false</code> to make the operation uncancellable
      * @param runnable the runnable to run
      *
-     * @exception InvocationTargetException wraps any exception or error which occurs 
+     * @exception InvocationTargetException wraps any exception or error which occurs
      *  while running the runnable
-     * @exception InterruptedException propagated by the context if the runnable 
+     * @exception InterruptedException propagated by the context if the runnable
      *  acknowledges cancelation by throwing this exception.  This should not be thrown
      *  if cancelable is <code>false</code>.
      */

@@ -135,7 +135,7 @@ import java.util.NoSuchElementException;
      * element comparer.
      *
      * @param comparer the element comparer to use to compare keys and obtain
-     *   hash codes for keys, or <code>null</code>  to use the normal 
+     *   hash codes for keys, or <code>null</code>  to use the normal
      *   <code>equals</code> and <code>hashCode</code> methods
      */
     public CustomHashtable(IElementComparer comparer) {
@@ -145,11 +145,11 @@ import java.util.NoSuchElementException;
     /**
      * Constructs a new hash table with the given capacity and the given
      * element comparer.
-     * 
+     *
      * @param capacity the maximum number of elements that can be added without
      *   rehashing
      * @param comparer the element comparer to use to compare keys and obtain
-     *   hash codes for keys, or <code>null</code>  to use the normal 
+     *   hash codes for keys, or <code>null</code>  to use the normal
      *   <code>equals</code> and <code>hashCode</code> methods
      */
     public CustomHashtable(int capacity, IElementComparer comparer) {
@@ -170,9 +170,9 @@ import java.util.NoSuchElementException;
      * given hash table, then adds all key/value pairs in the given hash table
      * to the new one, using the given element comparer.
      * @param table the original hash table to copy from
-     * 
+     *
      * @param comparer the element comparer to use to compare keys and obtain
-     *   hash codes for keys, or <code>null</code>  to use the normal 
+     *   hash codes for keys, or <code>null</code>  to use the normal
      *   <code>equals</code> and <code>hashCode</code> methods
      */
     public CustomHashtable(CustomHashtable table, IElementComparer comparer) {
@@ -185,14 +185,14 @@ import java.util.NoSuchElementException;
             }
         }
     }
-    
+
     /**
      * Returns the element comparer used  to compare keys and to obtain
      * hash codes for keys, or <code>null</code> if no comparer has been
      * provided.
-     * 
+     *
      * @return the element comparer or <code>null</code>
-     * 
+     *
      * @since 3.2
      */
     public IElementComparer getComparer() {

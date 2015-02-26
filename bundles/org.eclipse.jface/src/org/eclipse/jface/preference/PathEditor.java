@@ -29,20 +29,20 @@ public class PathEditor extends ListEditor {
     private String lastPath;
 
     /**
-     * The special label text for directory chooser, 
+     * The special label text for directory chooser,
      * or <code>null</code> if none.
      */
     private String dirChooserLabelText;
 
     /**
-     * Creates a new path field editor 
+     * Creates a new path field editor
      */
     protected PathEditor() {
     }
 
     /**
      * Creates a path field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param dirChooserLabelText the label text displayed for the directory chooser

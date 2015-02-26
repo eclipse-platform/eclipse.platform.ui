@@ -25,20 +25,20 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * The TableColumnLayout is the {@link Layout} used to maintain
  * {@link TableColumn} sizes in a {@link Table}.
- * 
+ *
  * <p>
  * <b>You can only add the {@link Layout} to a container whose <i>only</i> child
  * is the {@link Table} control you want the {@link Layout} applied to. Don't
  * assign the layout directly the {@link Table}</b>
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class TableColumnLayout extends AbstractColumnLayout {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	@Override
@@ -48,7 +48,7 @@ public class TableColumnLayout extends AbstractColumnLayout {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	@Override
@@ -61,7 +61,7 @@ public class TableColumnLayout extends AbstractColumnLayout {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	@Override

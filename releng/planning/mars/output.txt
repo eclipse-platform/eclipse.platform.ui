@@ -1,0 +1,1250 @@
+Overview page of the work done for the Eclipse 4.4 service and 4.5 release
+
+'''This list is genereated automatically, please do not update manually'''
+
+Our planning bugs for the Eclipse 4.5 release can be found on [[Platform UI/Plan/4.5/Planning Bugs]]. It is the backlog of Mars that we review selecting the bugs for the particular milestone of the release. The list will be refreshed in order to better adjust the priorities of the bugs during the release.
+= Work targeting Eclipse 4.4.1 and 4.4.2 =
+== 4.4.1 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|442119}}</strike> || 4.4.1 || blocker || pwebster || FIXED || <strike>Do not sign empty inner jars...</strike>
+|-
+| 2 || <strike>{{bug|437353}}</strike> || 4.4.1 || normal || wojciech.sudol || WORKSFORME || <strike>[Trim] combo box not shown in the view's toolbar...</strike>
+|-
+| 3 || <strike>{{bug|348429}}</strike> || 4.4.1 || major || daniel.rolka || FIXED || <strike>[Perspectives] [Compare] NPE in ContentMergeViewerLayout.layout...</strike>
+|-
+| 4 || <strike>{{bug|437747}}</strike> || 4.4.1 || critical || steven || FIXED || <strike>"A part's view menu does not work after opening the menu, closing the part, and then reopening the p...</strike>
+|-
+| 5 || <strike>{{bug|440435}}</strike> || 4.4.1 || normal || lars.vogel || FIXED || <strike>Localization of MPart > MToolItems fails...</strike>
+|-
+| 6 || <strike>{{bug|436164}}</strike> || 4.4.1 || normal || daniel_megert || FIXED || <strike>[Help] Wrong e4 model extension point identifieres in the documentation...</strike>
+|-
+| 7 || <strike>{{bug|440237}}</strike> || 4.4.1 || minor || daniel.rolka || FIXED || <strike>[Preferences] Startup and shutdown preference page: Restore defaults does not work as expected...</strike>
+|-
+| 8 || <strike>{{bug|406733}}</strike> || 4.4.1 || normal || platform-ui-triaged || FIXED || <strike>[Trim] [Min/Max] NPE while minimizing and restoring stacks...</strike>
+|-
+| 9 || <strike>{{bug|438736}}</strike> || 4.4.1 || critical || bsd || FIXED || <strike>[Model] [model assembler] Fragments are processed in the wrong order....</strike>
+|-
+| 10 || <strike>{{bug|441126}}</strike> || 4.4.1 || normal || markus_keller || FIXED || <strike>PreTVT44:[BiDi] (bidi)The warning fly-over of appearance theme is not positioned correctly on bidi l...</strike>
+|-
+| 11 || <strike>{{bug|436584}}</strike> || 4.4.1 || normal || lars.vogel || FIXED || <strike>[JFace] images missing in jfaces jar...</strike>
+|-
+| 12 || <strike>{{bug|440304}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[Progress] Every user-job causes a busy cursor to be shown for a minimum of 250ms...</strike>
+|-
+| 13 || <strike>{{bug|430403}}</strike> || 4.4.1 || critical || wojciech.sudol || FIXED || <strike>[Perspectives] Views without sash to resize and complete loss of views...</strike>
+|-
+| 14 || <strike>{{bug|441844}}</strike> || 4.4.1 || major || daniel_megert || FIXED || <strike>IWorkbenchPartOrientation.getOrientation() is no longer called...</strike>
+|-
+| 15 || <strike>{{bug|436763}}</strike> || 4.4.1 || normal || fabiofz || FIXED || <strike>[DetachedView] Layout of console view becomes wrong after changing perspective and only becomes corr...</strike>
+|-
+| 16 || <strike>{{bug|440095}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[Contributions] Tooltips for command...</strike>
+|-
+| 17 || <strike>{{bug|442616}}</strike> || 4.4.1 || normal || markus_keller || FIXED || <strike>TVT Heb: Command field must be LTR...</strike>
+|-
+| 18 || <strike>{{bug|117746}}</strike> || 4.4.1 || normal || pwebster || FIXED || <strike>[EditorMgmt] Editors should be able to treat large files specially (e.g. deny opening huge files)...</strike>
+|-
+| 19 || <strike>{{bug|437597}}</strike> || 4.4.1 || trivial || daniel_megert || FIXED || <strike>[Navigator] Problem with CommonSorterDescriptorManager_A_navigatorContent_extesnion_in_0_...</strike>
+|-
+| 20 || <strike>{{bug|440426}}</strike> || 4.4.1 || normal || lars.vogel || FIXED || <strike>Local Change Service cannot process MWindows which do not include a main menu...</strike>
+|-
+| 21 || <strike>{{bug|435521}}</strike> || 4.4.1 || normal || markus_keller || FIXED || <strike>Javadoc warning due to illegal use of internal API (illegal reference to TrimStack from bug 408359)...</strike>
+|-
+| 22 || <strike>{{bug|440228}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[Contributions] DynamicToolBarContributionItem needs to proxy more methods...</strike>
+|-
+| 23 || <strike>{{bug|443103}}</strike> || 4.4.1 || normal || platform-ui-triaged || FIXED || <strike>[Perspectives] Perspective does not open after closing all perspectives and opening Welcome page...</strike>
+|-
+| 24 || <strike>{{bug|356360}}</strike> || 4.4.1 || normal || markus_keller || FIXED || <strike>Broken Javadoc link: org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/databinding/UpdateS...</strike>
+|-
+| 25 || <strike>{{bug|437902}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[CSS] PreTVT44: Non-externalized strings on Colors and Fonts Preference panel...</strike>
+|-
+| 26 || <strike>{{bug|441118}}</strike> || 4.4.1 || normal || lars.vogel || FIXED || <strike>Mark org.eclipse.e4.ui.workbench.addons.splitteraddon as x-internal...</strike>
+|-
+| 27 || <strike>{{bug|436247}}</strike> || 4.4.1 || normal || cizbasa || FIXED || <strike>"[Themes] ""Colors and Fonts"" pref page fails with NPE when running with '-cssTheme none'"...</strike>
+|-
+| 28 || <strike>{{bug|440240}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[WorkingSets] updating of working sets during workbench restore can cause loss of working sets...</strike>
+|-
+| 29 || <strike>{{bug|427777}}</strike> || 4.4.1 || major || platform-ui-triaged || FIXED || <strike>[Perspectives] Can't restore minimized view after reset customized perspective...</strike>
+|-
+| 30 || <strike>{{bug|438919}}</strike> || 4.4.1 || major || pwebster || FIXED || <strike>[Workbench] ClassCastException: org.eclipse.ui.testing.ContributionInfo cannot be cast to org.eclips...</strike>
+|-
+| 31 || <strike>{{bug|441367}}</strike> || 4.4.1 || enhancement || lars.vogel || FIXED || <strike>Backport fix for Translation service and @Message...</strike>
+|-
+| 32 || <strike>{{bug|436755}}</strike> || 4.4.1 || normal || pwebster || FIXED || <strike>[Commands] Handler enableWhen expression not being re-evaluated when requested...</strike>
+|-
+| 33 || <strike>{{bug|440319}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[QuickAccess] Ctrl+3 dialog too small in High Contrast...</strike>
+|-
+| 34 || <strike>{{bug|432820}}</strike> || 4.4.1 || normal || pwebster || FIXED || <strike>[KeyBindings] DBCS4.4: Split Editor (Horizontal) key binding does not correct in JP keymap...</strike>
+|-
+| 35 || <strike>{{bug|440093}}</strike> || 4.4.1 || normal || daniel.rolka || FIXED || <strike>[Import/Export] Button label truncation on Import/Export Preferences dialogs...</strike>
+|-
+| 36 || <strike>{{bug|435435}}</strike> || 4.4.1 || normal || pwebster || FIXED || <strike>[QuickAccess] Hiding quick access hides it in all workbench windows on restart...</strike>
+|-
+| 37 || <strike>{{bug|440199}}</strike> || 4.4.1 || trivial || daniel.rolka || FIXED || <strike>[Preferences] FileEditorsPreferencePage reuses a GridData instance for two different controls...</strike>
+|-
+| 38 || <strike>{{bug|442635}}</strike> || 4.4.1 || normal || daniel_megert || FIXED || <strike>TVT Heb: Bidi problem in sample text...</strike>
+|-
+| 39 || <strike>{{bug|443313}}</strike> || 4.4.1 || normal || daniel.rolka || INVALID || <strike>[RCP] [CSS] FileNotFoundException after removing the applicationCSS property and proper CSS file...</strike>
+|-
+| 40 || <strike>{{bug|439695}}</strike> || 4.4.1 || normal || lars.vogel || DUPLICATE || <strike>"[JFace] org.eclipse.jface does not contain ""fallback"" versions of new png icons"...</strike>
+|-
+| 41 || <strike>{{bug|440321}}</strike> || 4.4.1 || minor || daniel.rolka || INVALID || <strike>[About] About dialog scrollbar does not operate correctly...</strike>
+|-
+| 42 || <strike>{{bug|433933}}</strike> || 4.4.1 || normal || emoffatt || DUPLICATE || <strike>[DND] DnD Polish...</strike>
+|-
+| 43 || <strike>{{bug|440328}}</strike> || 4.4.1 || normal || daniel.rolka || INVALID || <strike>[About] About dialog text - needs to not cache system property values...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:24 CET 2015'''
+
+== 4.4.2 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|435274}}</strike> || 4.4.2 || major || patrick.naish || FIXED || <strike>[Contributions] Leak of ActionContributionItem every time New/Import context menu item is made visib...</strike>
+|-
+| 2 || <strike>{{bug|448561}}</strike> || 4.4.2 || normal || dirk.fauth || FIXED || <strike>LocaleChangeServiceImpl does not process MWindow#sharedElements...</strike>
+|-
+| 3 || <strike>{{bug|435421}}</strike> || 4.4.2 || major || wojciech.sudol || FIXED || <strike>Active Part is incorrect and does not have focus on a restart...</strike>
+|-
+| 4 || <strike>{{bug|453857}}</strike> || 4.4.2 || normal || tom.schindl || FIXED || <strike>[RenderingEngine] CTabFolder layouts content too often / too many of them...</strike>
+|-
+| 5 || <strike>{{bug|443514}}</strike> || 4.4.2 || normal || lars.vogel || FIXED || <strike>Tooltips of parts are not translated in PartStack...</strike>
+|-
+| 6 || <strike>{{bug|432686}}</strike> || 4.4.2 || normal || wojciech.sudol || FIXED || <strike>[Trim] show toolbar does not take effect if workspace is started with hidden toolbar...</strike>
+|-
+| 7 || <strike>{{bug|457396}}</strike> || 4.4.2 || blocker || david_williams || FIXED || <strike>"Build of ""webapp"" fails due to changes in org.apache.jasper.glassfish"...</strike>
+|-
+| 8 || <strike>{{bug|413410}}</strike> || 4.4.2 || normal || wojciech.sudol || FIXED || <strike>[KeyBindings] Lots of Keybinding conflicts occurred on official CDT Eclipse Kepler 4.3...</strike>
+|-
+| 9 || <strike>{{bug|443350}}</strike> || 4.4.2 || normal || lars.vogel || FIXED || <strike>"[CSS] No theme applied by default on Windows 8.x, Vista, XP"...</strike>
+|-
+| 10 || <strike>{{bug|409081}}</strike> || 4.4.2 || normal || alia || FIXED || <strike>BIDI 4.2.2 : Welcome Page isn't correctly mirrored...</strike>
+|-
+| 11 || <strike>{{bug|439988}}</strike> || 4.4.2 || major || daniel.rolka || FIXED || <strike>[ActivityMgmt] Activities should allow default enablement to be controlled by product definition...</strike>
+|-
+| 12 || <strike>{{bug|458141}}</strike> || 4.4.2 || major || daniel_megert || FIXED || <strike>ProgressManagerUtil.getDefaultParent() does not honor splash shell -> new shell hidden behind splash...</strike>
+|-
+| 13 || <strike>{{bug|429308}}</strike> || 4.4.2 || major || timo.kinnunen || FIXED || <strike>Make workspace selection dialog visible in the task manager of the OS...</strike>
+|-
+| 14 || <strike>{{bug|446965}}</strike> || 4.4.2 || normal || lars.vogel || FIXED || <strike>EditorInputPropertyTester called for IEditorPart with IEditorInput set...</strike>
+|-
+| 15 || <strike>{{bug|449188}}</strike> || 4.4.2 || normal || wojciech.sudol || FIXED || <strike>[Perspectives] Empty perspective after restarting Eclipse with open Welcome page...</strike>
+|-
+| 16 || <strike>{{bug|392794}}</strike> || 4.4.2 || critical || szymon.ptaszkiewicz || FIXED || <strike>Hang saving workspace on exit while saving workbench state...</strike>
+|-
+| 17 || <strike>{{bug|432498}}</strike> || 4.4.2 || major || daniel.rolka || FIXED || <strike>[Trim] Fast views get created on start-up...</strike>
+|-
+| 18 || <strike>{{bug|443845}}</strike> || 4.4.2 || major || daniel.rolka || FIXED || <strike>[CSS] Console tab flickers when not active...</strike>
+|-
+| 19 || <strike>{{bug|435300}}</strike> || 4.4.2 || normal || wojciech.sudol || DUPLICATE || <strike>"[Outline] Narrowing an empty Outline view lowers the ""An outline is not available"" label"...</strike>
+|-
+| 20 || <strike>{{bug|435847}}</strike> || 4.4.2 || normal || wojciech.sudol || DUPLICATE || <strike>[Perspectives] Reset Java Perspective is not getting the Package Explorer back...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:25 CET 2015'''
+
+== 4.4 - unscheduled ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|412372}}</strike> || 4.4 || enhancement || platform-ui-triaged || WONTFIX || <strike>Release org.eclipse.e4.workbench.model extension as API...</strike>
+|-
+| 2 || <strike>{{bug|421657}}</strike> || 4.4 || normal || lars.vogel || FIXED || <strike>[CSS] Improvements of the default representation of the Eclipse IDE...</strike>
+|-
+| 3 || <strike>{{bug|318460}}</strike> || 4.4 || major || daniel.rolka || WORKSFORME || <strike>[Contributions] [Compatibility] Failed to open error log in I20100629-2126...</strike>
+|-
+| 4 || <strike>{{bug|438271}}</strike> || 4.4 || enhancement || platform-ui-triaged || FIXED || <strike>[About] Make it easier to find the eclipse version number...</strike>
+|-
+| 5 || <strike>{{bug|412322}}</strike> || 4.4 || enhancement || pelder.eclipse || WONTFIX || <strike>[DI] Release ExtendedObjectSupplier as API for Eclipse 4.4...</strike>
+|-
+| 6 || <strike>{{bug|416214}}</strike> || 4.4 || enhancement || platform-ui-triaged || WONTFIX || <strike>Release @PostContextCreate as API...</strike>
+|-
+| 7 || <strike>{{bug|134659}}</strike> || 4.4 || normal || daniel.rolka || FIXED || <strike>[ActionSets] Menubar entry appears twice in the [Customize Perspective] dialog....</strike>
+|-
+| 8 || <strike>{{bug|422467}}</strike> || 4.4 || normal || Platform-UI-Inbox || MOVED || <strike>Performance and stability of Platform user interface...</strike>
+|-
+| 9 || <strike>{{bug|331131}}</strike> || 4.4 || minor || pwebster || WORKSFORME || <strike>[Workbench] [Compatibility] Closing a project generates errors...</strike>
+|-
+| 10 || <strike>{{bug|411724}}</strike> || 4.4 || normal || lars.vogel || FIXED || <strike>[Trim] Hidden toolbar doesn't stay hidden...</strike>
+|-
+| 11 || <strike>{{bug|410973}}</strike> || 4.4 || normal || emoffatt || FIXED || <strike>[DND] IEditorPart loses custom icon on detach/move...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:26 CET 2015'''
+
+= Work targeting Eclipse 4.5 =
+
+== 4.5 M1 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|279902}}</strike> || 4.5 M1 || enhancement || marc-andre.laperle || FIXED || <strike>[Import/Export] WizardResourceImportPage.createDestinationGroup is final...</strike>
+|-
+| 2 || <strike>{{bug|436115}}</strike> || 4.5 M1 || minor || bsd || FIXED || <strike>CCE: java.lang.ClassCastException: org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl ...</strike>
+|-
+| 3 || <strike>{{bug|408346}}</strike> || 4.5 M1 || normal || Michael_Rennie || FIXED || <strike>Don't use strings from internal NLS files...</strike>
+|-
+| 4 || <strike>{{bug|437207}}</strike> || 4.5 M1 || normal || pwebster || FIXED || <strike>Forward DIEditorPart @Persist and @PersistState to wrapped component...</strike>
+|-
+| 5 || <strike>{{bug|440720}}</strike> || 4.5 M1 || normal || lars.vogel || WONTFIX || <strike>Group Window entries under one sub-menu...</strike>
+|-
+| 6 || <strike>{{bug|438609}}</strike> || 4.5 M1 || normal || lars.vogel || WONTFIX || <strike>Deprecated org.eclipse.ui.activities extension point...</strike>
+|-
+| 7 || <strike>{{bug|275923}}</strike> || 4.5 M1 || normal || bsd || FIXED || <strike>[Wizards] NPE in WizardDialog's updateButtons()...</strike>
+|-
+| 8 || <strike>{{bug|439666}}</strike> || 4.5 M1 || normal || lars.vogel || WORKSFORME || <strike>Compile error in com.google.code.atinject.tck due to outdated org.junit dependency...</strike>
+|-
+| 9 || <strike>{{bug|420843}}</strike> || 4.5 M1 || normal || cizbasa || FIXED || <strike>Unwanted items in the Customize functionality on the Intro page of Eclipse RCP...</strike>
+|-
+| 10 || <strike>{{bug|436635}}</strike> || 4.5 M1 || normal || daniel_megert || FIXED || <strike>"""context menu > Show In"" broken on GTK+ 3"...</strike>
+|-
+| 11 || <strike>{{bug|431178}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Remove ICompatibleWorkbenchPage and org.eclipse.ui.workbench.compatibility...</strike>
+|-
+| 12 || <strike>{{bug|440149}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>[About] Cleanup in AboutDialog...</strike>
+|-
+| 13 || <strike>{{bug|438439}}</strike> || 4.5 M1 || normal || pwebster || FIXED || <strike>Mars bug prioritization...</strike>
+|-
+| 14 || <strike>{{bug|440735}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Remove unnecessary dependency of org.objenesis from org.eclipse.ui.tests...</strike>
+|-
+| 15 || <strike>{{bug|434153}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Cleanup JFace code in preparation for GSoc...</strike>
+|-
+| 16 || <strike>{{bug|440395}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Delete org.eclipse.ui.internalPerspectiveSwitcher...</strike>
+|-
+| 17 || <strike>{{bug|438659}}</strike> || 4.5 M1 || normal || platform-ui-triaged || FIXED || <strike>[Metadata] comparator errors in weekly I-build: I20140701-0800...</strike>
+|-
+| 18 || <strike>{{bug|440847}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Fix warning: An entry for OSGI-INF/ is required in bin.includes for org.eclipse.ui.workbench...</strike>
+|-
+| 19 || <strike>{{bug|440402}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>"Remove SaveAllAction, SaveAsAction, SaveAction"...</strike>
+|-
+| 20 || <strike>{{bug|439596}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>"Remove ""git_report"" directory from eclipse.platform.ui Git repository"...</strike>
+|-
+| 21 || <strike>{{bug|440968}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Usage of menu.label in plugin.properties of org.eclipse.ui.ide.application is ambivalent...</strike>
+|-
+| 22 || <strike>{{bug|436572}}</strike> || 4.5 M1 || normal || pwebster || FIXED || <strike>"[CSS] Stylesheet contribution with ""$ws$"" in the URI are resolved incorrectly"...</strike>
+|-
+| 23 || <strike>{{bug|440444}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Add Javadoc for @Message and the usage of ReferenceType...</strike>
+|-
+| 24 || <strike>{{bug|440080}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Delete used private method in JFaceResources...</strike>
+|-
+| 25 || <strike>{{bug|441041}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Delete empty OpenCloseTest from org.eclipse.ui.tests...</strike>
+|-
+| 26 || <strike>{{bug|425962}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>[New Contributors] Remove (non-Javadoc) @see statements if @Override is used...</strike>
+|-
+| 27 || <strike>{{bug|433341}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Syntax error in TestUtil in org.eclipse.e4.ui.menu.tests...</strike>
+|-
+| 28 || <strike>{{bug|440252}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Minor cleanup in MenuManager...</strike>
+|-
+| 29 || <strike>{{bug|440739}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Add missing @Override annotations to the JFace viewer tests...</strike>
+|-
+| 30 || <strike>{{bug|434208}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Eclipse4 - unnecessary assertion which cannot fail...</strike>
+|-
+| 31 || <strike>{{bug|440397}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Delete org.eclipse.ui.internal.PerspectiveBarManager...</strike>
+|-
+| 32 || <strike>{{bug|439244}}</strike> || 4.5 M1 || major || szymon.ptaszkiewicz || FIXED || <strike>org.eclipse.equinox.launcher.source bundle missing in SDK since 4.3...</strike>
+|-
+| 33 || <strike>{{bug|440893}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Remove unneccesary casts in platform.ui tests...</strike>
+|-
+| 34 || <strike>{{bug|327086}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>[DataBinding] Deprecate binding methods of SWTObservables...</strike>
+|-
+| 35 || <strike>{{bug|436503}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>[CSS] Delete deprecated CSS extension points...</strike>
+|-
+| 36 || <strike>{{bug|440405}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Delete org.eclipse.ui.internal.BaseSaveAction...</strike>
+|-
+| 37 || <strike>{{bug|440980}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>Delete ShowViewAction...</strike>
+|-
+| 38 || <strike>{{bug|440445}}</strike> || 4.5 M1 || normal || lars.vogel || FIXED || <strike>@Message should use contributionURI instead of contributorURI...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:27 CET 2015'''
+
+== 4.5 M2 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|442531}}</strike> || 4.5 M2 || normal || daniel_megert || FIXED || <strike>We should not have empty performance targets...</strike>
+|-
+| 2 || <strike>{{bug|438887}}</strike> || 4.5 M2 || normal || lars.vogel || WONTFIX || <strike>"Remove context menu entry ""Restore from local History"""...</strike>
+|-
+| 3 || <strike>{{bug|441407}}</strike> || 4.5 M2 || normal || nikolaiko.yaroslav || FIXED || <strike>[webapp][base] Bugs related to Search Scope for filtering content in The Eclipse platform's help inf...</strike>
+|-
+| 4 || <strike>{{bug|442440}}</strike> || 4.5 M2 || normal || cizbasa || FIXED || <strike>[Markers] Parameter shadowing field in ExtendedMarkersView compared with itself....</strike>
+|-
+| 5 || <strike>{{bug|442532}}</strike> || 4.5 M2 || normal || daniel_megert || FIXED || <strike>We should not have empty performance targets...</strike>
+|-
+| 6 || <strike>{{bug|440978}}</strike> || 4.5 M2 || normal || lars.vogel || WONTFIX || <strike>Remove inconsistencies in platform menu contributions...</strike>
+|-
+| 7 || <strike>{{bug|444369}}</strike> || 4.5 M2 || normal || daniel.rolka || FIXED || <strike>[CSS] Custom description for new ThemeElement definition added by CSS gets ignored...</strike>
+|-
+| 8 || <strike>{{bug|383546}}</strike> || 4.5 M2 || normal || szymon.ptaszkiewicz || FIXED || <strike>[jobs] Debug string incompatible with root exception...</strike>
+|-
+| 9 || <strike>{{bug|441431}}</strike> || 4.5 M2 || normal || lars.vogel || WONTFIX || <strike>ExpressionContext implements IEvaluationContext...</strike>
+|-
+| 10 || <strike>{{bug|441849}}</strike> || 4.5 M2 || normal || lars.vogel || WORKSFORME || <strike>Maven run for org.eclipse.ui.tests fails...</strike>
+|-
+| 11 || <strike>{{bug|441251}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[RenderingEngine] Request API to Render Child-Windows as Top-Level-Windows (not on top of main windo...</strike>
+|-
+| 12 || <strike>{{bug|442350}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Project settings for org.eclipse.ui.monitoring and org.eclipse.ui.monitoring.tests...</strike>
+|-
+| 13 || <strike>{{bug|443635}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[Contributions] NPE in ShowInMenu...</strike>
+|-
+| 14 || <strike>{{bug|440810}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Fix warnings in platform.ui due to the introduction of generics in IServiceLocator...</strike>
+|-
+| 15 || <strike>{{bug|441874}}</strike> || 4.5 M2 || minor || lars.vogel || FIXED || <strike>[model] mark Eventbroker.logger as @Optional...</strike>
+|-
+| 16 || <strike>{{bug|443207}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Gerrit build job for platform.ui - replace R4_3_maintenance with R4_4_maintenance...</strike>
+|-
+| 17 || <strike>{{bug|443905}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[Tests] Delete performance tests for deprecated (and unsupported) PresentationAPI...</strike>
+|-
+| 18 || <strike>{{bug|430981}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Add type information to IServiceLocator.getService...</strike>
+|-
+| 19 || <strike>{{bug|441281}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[Workbench] Use Logger in ViewRegistry instead of WorkbenchPlugin.log...</strike>
+|-
+| 20 || <strike>{{bug|443668}}</strike> || 4.5 M2 || normal || mistria || FIXED || <strike>Tycho surfire tests fails with unexpected error on org.eclipse.e4.ui.tests.css.core...</strike>
+|-
+| 21 || <strike>{{bug|440975}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Remove unused coolbarPopupMenuManager from WorkbenchActionBuilder...</strike>
+|-
+| 22 || <strike>{{bug|441937}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Retire PartsReferencesTestSuite and related tests...</strike>
+|-
+| 23 || <strike>{{bug|443390}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Add missing annotations to org.eclipse.ui.ide...</strike>
+|-
+| 24 || <strike>{{bug|444200}}</strike> || 4.5 M2 || normal || eclipse.sprigogin || FIXED || <strike>UI Responsiveness Monitoring logs bogus warning when Open File dialog is open on Mac Cocoa...</strike>
+|-
+| 25 || <strike>{{bug|269121}}</strike> || 4.5 M2 || critical || szymon.ptaszkiewicz || FIXED || <strike>[Progress] WorkspaceModifyOperation run in the UI thread deadlocks with UIJob...</strike>
+|-
+| 26 || <strike>{{bug|442777}}</strike> || 4.5 M2 || enhancement || lars.vogel || FIXED || <strike>Add @Override and @Deprecated annotations to org.eclipse.ui.navigator...</strike>
+|-
+| 27 || <strike>{{bug|443743}}</strike> || 4.5 M2 || major || eclipse.sprigogin || FIXED || <strike>[Performance][Win32] org.eclipse.ui.monitoring logs while main menu is open / shell is resized / ......</strike>
+|-
+| 28 || <strike>{{bug|441015}}</strike> || 4.5 M2 || enhancement || lars.vogel || FIXED || <strike>Provide out-of-the-box monitoring of UI delays...</strike>
+|-
+| 29 || <strike>{{bug|442043}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Failing IEditorRegistryTest (via Tycho) gives no indication where it fails...</strike>
+|-
+| 30 || <strike>{{bug|443506}}</strike> || 4.5 M2 || blocker || markus_keller || FIXED || <strike>remove macosx 32bit fragment from rcp feature...</strike>
+|-
+| 31 || <strike>{{bug|402439}}</strike> || 4.5 M2 || enhancement || lars.vogel || FIXED || <strike>[Viewers] Simplify access to concrete selection in viewer classes...</strike>
+|-
+| 32 || <strike>{{bug|440120}}</strike> || 4.5 M2 || enhancement || szymon.ptaszkiewicz || FIXED || <strike>Add org.eclipse.core.jobs plugin to General > Tracing preference page...</strike>
+|-
+| 33 || <strike>{{bug|441742}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>InjectorFactory Tag '@noextend' is unsupported on a final class...</strike>
+|-
+| 34 || <strike>{{bug|443082}}</strike> || 4.5 M2 || normal || eclipse.sprigogin || FIXED || <strike>Constant logging of UI delays even when user does not do anything...</strike>
+|-
+| 35 || <strike>{{bug|443771}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Remove org.eclipse.ui.presentationFactories from org.eclipse.platform.doc.isv...</strike>
+|-
+| 36 || <strike>{{bug|441120}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Update EventBroker usage in SashRenderer...</strike>
+|-
+| 37 || <strike>{{bug|442215}}</strike> || 4.5 M2 || normal || pwebster || FIXED || <strike>Possible NPE in NewKeysPreferencePage...</strike>
+|-
+| 38 || <strike>{{bug|443632}}</strike> || 4.5 M2 || normal || eclipse.sprigogin || FIXED || <strike>[Performance] Event Loop Monitor prefs page: UI bugs...</strike>
+|-
+| 39 || <strike>{{bug|421934}}</strike> || 4.5 M2 || enhancement || lars.vogel || FIXED || <strike>Enable save actions for org.eclipse.jface and jface databinding examples...</strike>
+|-
+| 40 || <strike>{{bug|440711}}</strike> || 4.5 M2 || major || wojciech.sudol || FIXED || <strike>[EditorMgmt] Eclipse does not prompt to save dirty editors open outside active perspective...</strike>
+|-
+| 41 || <strike>{{bug|441855}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Add README.md to org.eclipse.ui.tests...</strike>
+|-
+| 42 || <strike>{{bug|443139}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Remove maven.test.skip=true skipTests=true from Gerrit build job for platform.ui...</strike>
+|-
+| 43 || <strike>{{bug|443904}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[Tests] Update org.eclipse.ui.tests.performance to Java 1.6...</strike>
+|-
+| 44 || <strike>{{bug|430468}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[CSS] Move org.eclipse.e4.ui.tests.css.core tests to JUnit 4...</strike>
+|-
+| 45 || <strike>{{bug|441267}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Avoid calling empty dispose() method in ViewRegistry and remove method...</strike>
+|-
+| 46 || <strike>{{bug|443663}}</strike> || 4.5 M2 || normal || eclipse.sprigogin || FIXED || <strike>[Performance] Improve meta-data...</strike>
+|-
+| 47 || <strike>{{bug|440896}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Update org.eclipse.ui.ide.application to Java 1.6 and fix raw warnings...</strike>
+|-
+| 48 || <strike>{{bug|441877}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Include all test suites in org.eclipse.ui.tests in the Tycho test scope...</strike>
+|-
+| 49 || <strike>{{bug|443266}}</strike> || 4.5 M2 || normal || eclipse.sprigogin || FIXED || <strike>OK button is improperly disabled in Event Loop Monitor preference page...</strike>
+|-
+| 50 || <strike>{{bug|444192}}</strike> || 4.5 M2 || normal || eclipse.sprigogin || FIXED || <strike>Enable warnings for non-externalized strings in org.eclipse.ui.monitoring...</strike>
+|-
+| 51 || <strike>{{bug|242231}}</strike> || 4.5 M2 || enhancement || lars.vogel || FIXED || <strike>[Viewers] TableViewer#applyEditorValue() should be public...</strike>
+|-
+| 52 || <strike>{{bug|438324}}</strike> || 4.5 M2 || major || pwebster || FIXED || <strike>[IDE] Resource refresh at startup blocks initial rendering of the Eclipse UI...</strike>
+|-
+| 53 || <strike>{{bug|441329}}</strike> || 4.5 M2 || enhancement || christian.georgi || FIXED || <strike>Option to disable workspace version check if workspace is too new...</strike>
+|-
+| 54 || <strike>{{bug|443678}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[Metadata] Activate org.eclipse.ui.monitoring.tests tests during Tycho build...</strike>
+|-
+| 55 || <strike>{{bug|442027}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Delete unused files from org.eclipse.ui.tests...</strike>
+|-
+| 56 || <strike>{{bug|443395}}</strike> || 4.5 M2 || trivial || lars.vogel || FIXED || <strike>Missing missing annotations to org.eclipse.ui.tests...</strike>
+|-
+| 57 || <strike>{{bug|439258}}</strike> || 4.5 M2 || normal || pwebster || FIXED || <strike>Inactive committer clean up for Platform UI...</strike>
+|-
+| 58 || <strike>{{bug|443061}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Remove unused dependency to org.objenesis from org.eclipse.e4.ui.tests.css.swt...</strike>
+|-
+| 59 || <strike>{{bug|443765}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Delete unused org.eclipse.e4.ui.compatibility.tests plug-in...</strike>
+|-
+| 60 || <strike>{{bug|441114}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Update org.eclipse.ui.navigator to Java 1.6...</strike>
+|-
+| 61 || <strike>{{bug|442214}}</strike> || 4.5 M2 || normal || pwebster || FIXED || <strike>"Incorrect method argument: ""eRef"" instead of ""vRef"" in WorkbenchPage."...</strike>
+|-
+| 62 || <strike>{{bug|443603}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Add missing annotations to org.eclipse.ui.ide.application...</strike>
+|-
+| 63 || <strike>{{bug|416650}}</strike> || 4.5 M2 || normal || tom.schindl || FIXED || <strike>CTabFolder layouts content too often / too many of them...</strike>
+|-
+| 64 || <strike>{{bug|440381}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Remove useNewLook option from org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree...</strike>
+|-
+| 65 || <strike>{{bug|443099}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>Enable org.eclipse.e4.ui.tests.css.core tests for platform.ui build...</strike>
+|-
+| 66 || <strike>{{bug|443804}}</strike> || 4.5 M2 || normal || lars.vogel || FIXED || <strike>[Tests] Update org.eclipse.ui.tests.harness to Java 1.6...</strike>
+|-
+| 67 || <strike>{{bug|427642}}</strike> || 4.5 M2 || minor || lars.vogel || FIXED || <strike>Coolbar context menu not working in the Eclipse IDE...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:29 CET 2015'''
+
+== 4.5 M3 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|118919}}</strike> || 4.5 M3 || normal || jeandersonbc || FIXED || <strike>[Viewers] Failure in SimpleVirtualLazyTreeViewerTest.testCreation...</strike>
+|-
+| 2 || <strike>{{bug|445447}}</strike> || 4.5 M3 || normal || dirk.fauth || FIXED || <strike>Migration guide for Locale context value update...</strike>
+|-
+| 3 || <strike>{{bug|448831}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>HandleObjectManager should thrown IAE instead of NPE...</strike>
+|-
+| 4 || <strike>{{bug|442960}}</strike> || 4.5 M3 || normal || lars.vogel || INVALID || <strike>Delete OpenCloseTest...</strike>
+|-
+| 5 || <strike>{{bug|444924}}</strike> || 4.5 M3 || normal || dirk.fauth || FIXED || <strike>[Tests] Activate formatter and save actions for org.eclipse.e4.core.tests and cleanup...</strike>
+|-
+| 6 || <strike>{{bug|446233}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>"Remove org.eclipse.e4.ui.internal.workbench.ExitHandler, class also available in handlers package"...</strike>
+|-
+| 7 || <strike>{{bug|444407}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>[Workbench] [Metadata] Uninformative messages related to early startup in the error log...</strike>
+|-
+| 8 || <strike>{{bug|433895}}</strike> || 4.5 M3 || normal || dirk.fauth || FIXED || <strike>Locale parsed too many times...</strike>
+|-
+| 9 || <strike>{{bug|445313}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[Tests] Activate tests of org.eclipse.ui.tests.harness for Tycho...</strike>
+|-
+| 10 || <strike>{{bug|447871}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>Make the UI reponsiveness monitoring preference page easier to understand for an average user...</strike>
+|-
+| 11 || <strike>{{bug|396853}}</strike> || 4.5 M3 || major || daniel_megert || FIXED || <strike>"[ViewMgmt] No longer possible to make a part visible without activating/forcing focus on it (was: W...</strike>
+|-
+| 12 || <strike>{{bug|444542}}</strike> || 4.5 M3 || enhancement || eclipse.sprigogin || FIXED || <strike>Eliminate reliance on stack trace filters in UI Responsiveness Monitoring...</strike>
+|-
+| 13 || <strike>{{bug|443572}}</strike> || 4.5 M3 || enhancement || eclipse.sprigogin || FIXED || <strike>[Performance] Option to report UI delay as error...</strike>
+|-
+| 14 || <strike>{{bug|445353}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Cleanup WizardProjectsImportPage...</strike>
+|-
+| 15 || <strike>{{bug|448141}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>[UI Monitoring] Maximum expected event loop depth of 32 is exceeded on Windows...</strike>
+|-
+| 16 || <strike>{{bug|430413}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>org.w3c.dom.smil should be updated from org.eclipse.e4.rcp...</strike>
+|-
+| 17 || <strike>{{bug|442354}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>Provide N&N entry for the new monitoring plug-in...</strike>
+|-
+| 18 || <strike>{{bug|444826}}</strike> || 4.5 M3 || enhancement || markus_keller || FIXED || <strike>[JFace] ListEditor should select next item after Remove...</strike>
+|-
+| 19 || <strike>{{bug|445759}}</strike> || 4.5 M3 || normal || lars.vogel || INVALID || <strike>Clean up of SplitHandler...</strike>
+|-
+| 20 || <strike>{{bug|443806}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[Tests] Update org.eclipse.ui.tests.harness to Junit 4...</strike>
+|-
+| 21 || <strike>{{bug|448674}}</strike> || 4.5 M3 || minor || lars.vogel || FIXED || <strike>[Help] Improve parameter naming in IWorkbenchHelpSystem...</strike>
+|-
+| 22 || <strike>{{bug|431862}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Group perspectives entries under one sub-menu...</strike>
+|-
+| 23 || <strike>{{bug|442804}}</strike> || 4.5 M3 || normal || lars.vogel || WORKSFORME || <strike>Migrate org.eclipse.ui.tests/docs to README.md...</strike>
+|-
+| 24 || <strike>{{bug|444829}}</strike> || 4.5 M3 || normal || simon.scholz || FIXED || <strike>Update org.eclipse.jface.tests.databinding.conformance to Java 1.6...</strike>
+|-
+| 25 || <strike>{{bug|440367}}</strike> || 4.5 M3 || enhancement || lars.vogel || FIXED || <strike>Create org.eclipse.e4.ui.dialogs plug-in as home for porting useful bits of org.eclipse.ui.dialog...</strike>
+|-
+| 26 || <strike>{{bug|433450}}</strike> || 4.5 M3 || normal || simon.scholz || FIXED || <strike>Use EModelService in ModeledPageLayout instead of the EMF factory...</strike>
+|-
+| 27 || <strike>{{bug|443391}}</strike> || 4.5 M3 || normal || simon.scholz || FIXED || <strike>[Tests] Migrate org.eclipse.ui.monitoring.tests to JUnit 4...</strike>
+|-
+| 28 || <strike>{{bug|378566}}</strike> || 4.5 M3 || trivial || lars.vogel || FIXED || <strike>"TestExpression.toString() displays an extraneous quote ("")"...</strike>
+|-
+| 29 || <strike>{{bug|440955}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Fix warning for the missing bin folder in build.properties in org.eclipse.ui.workbench...</strike>
+|-
+| 30 || <strike>{{bug|444504}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Update org.eclipse.ui.views to Java 1.6...</strike>
+|-
+| 31 || <strike>{{bug|445609}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>"Add view description from ""org.eclipse.ui.views extension"" point as tooltip to the ""part descrip...</strike>
+|-
+| 32 || <strike>{{bug|434189}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[CSS] org.eclipse.ui.internal.MessageLine cannot be styled...</strike>
+|-
+| 33 || <strike>{{bug|443463}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>[UI Responsiveness Monitoring] Sends warnings even when idle on mac...</strike>
+|-
+| 34 || <strike>{{bug|445317}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[Tests] Activate formatter and save actions for org.eclipse.ui.tests.harness and cleanup...</strike>
+|-
+| 35 || <strike>{{bug|448060}}</strike> || 4.5 M3 || minor || simon.scholz || FIXED || <strike>Remove internal SimpleListContentProvider...</strike>
+|-
+| 36 || <strike>{{bug|441263}}</strike> || 4.5 M3 || enhancement || lars.vogel || FIXED || <strike>Update databinding plug-ins to Java 1.6...</strike>
+|-
+| 37 || <strike>{{bug|444737}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>"ui.monitoring causing 'releng' unit test failure (missing 'about' file, and schema directory)"...</strike>
+|-
+| 38 || <strike>{{bug|434846}}</strike> || 4.5 M3 || normal || dirk.fauth || FIXED || <strike>Improve invalid Locale handling...</strike>
+|-
+| 39 || <strike>{{bug|443650}}</strike> || 4.5 M3 || normal || markus_keller || FIXED || <strike>Comparator error in I20140909-1315: SWTCocoaEnhancerDelegate...</strike>
+|-
+| 40 || <strike>{{bug|448563}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Remove .project file from org.eclipse.ui.tests/data...</strike>
+|-
+| 41 || <strike>{{bug|442644}}</strike> || 4.5 M3 || normal || david_williams || INVALID || <strike>"""core"" unit tests need to prevent ""workspace incompatible"" message?"...</strike>
+|-
+| 42 || <strike>{{bug|445989}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Add missing @Override and @Deprecate annotations to org.eclipse.jface.tests.databinding...</strike>
+|-
+| 43 || <strike>{{bug|440136}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Delete org.eclipse.ui.presentations from the org.eclipse.ui.workbench plug-in...</strike>
+|-
+| 44 || <strike>{{bug|443898}}</strike> || 4.5 M3 || enhancement || eclipse.sprigogin || FIXED || <strike>[Performance] Issue warning if earlyStartup plug-in runs longer than X...</strike>
+|-
+| 45 || <strike>{{bug|432785}}</strike> || 4.5 M3 || normal || daniel.rolka || FIXED || <strike>[ViewMgmt] FileNotFoundException after renaming the icon file or folder...</strike>
+|-
+| 46 || <strike>{{bug|366708}}</strike> || 4.5 M3 || major || lars.vogel || FIXED || <strike>[Workbench] Workbench.openWorkbenchWindow() calls createWorkbenchWindow multiple times...</strike>
+|-
+| 47 || <strike>{{bug|445484}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Remove support for org.eclipse.core.runtime.compatibility in EarlyStartupRunnable...</strike>
+|-
+| 48 || <strike>{{bug|443399}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[DataBinding] Deprecate outdated BeansObservables and PojoObservables...</strike>
+|-
+| 49 || <strike>{{bug|441184}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Delete org.eclipse.ui.presentationFactories extension point...</strike>
+|-
+| 50 || <strike>{{bug|445664}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[CSS] Theme switching should not happen during the selection of the drop-down box...</strike>
+|-
+| 51 || <strike>{{bug|434813}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Deprecated org.eclipse.ui.internal.PerspectiveSwitcher...</strike>
+|-
+| 52 || <strike>{{bug|51150}}</strike> || 4.5 M3 || normal || szymon.ptaszkiewicz || FIXED || <strike>"Avoid ""t.printStackTrace();"" in Worker.java when logging unhandled errors"...</strike>
+|-
+| 53 || <strike>{{bug|435512}}</strike> || 4.5 M3 || normal || daniel.rolka || FIXED || <strike>[CSS] Override the preferences customized by the user with the proper CSS values...</strike>
+|-
+| 54 || <strike>{{bug|445446}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Fix warnings in Eclipse build...</strike>
+|-
+| 55 || <strike>{{bug|446088}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Move parsing of application model URI in E4Application into a method...</strike>
+|-
+| 56 || <strike>{{bug|169947}}</strike> || 4.5 M3 || normal || wojciech.sudol || FIXED || <strike>[EditorMgmt] Should not show dialog when closing workbench window with dirty editor opened in anothe...</strike>
+|-
+| 57 || <strike>{{bug|444233}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Remove org.eclipse.newDynamicMenuContribution outside of org.eclipse.ui.tests...</strike>
+|-
+| 58 || <strike>{{bug|445449}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[Tests] Enable formatter and save actions for all Eclipse platform.ui test plug-ins...</strike>
+|-
+| 59 || <strike>{{bug|445174}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[Tests] Activate formatter and save actions for org.eclipse.ui.tests.harness and clean code...</strike>
+|-
+| 60 || <strike>{{bug|446698}}</strike> || 4.5 M3 || normal || eclipse.sprigogin || FIXED || <strike>CoreTest.canCreateSymLinks method should unconditionally return true on platforms other than Windows...</strike>
+|-
+| 61 || <strike>{{bug|429505}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>[Progress] Refine Eclipse4 based progress view...</strike>
+|-
+| 62 || <strike>{{bug|445723}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Rename IHelpService to EHelpService...</strike>
+|-
+| 63 || <strike>{{bug|445444}}</strike> || 4.5 M3 || normal || lars.vogel || FIXED || <strike>Remove default constructor from TranslationService...</strike>
+|-
+| 64 || <strike>{{bug|444827}}</strike> || 4.5 M3 || normal || daniel_megert || FIXED || <strike>getViewStack does not return ViewParts in last visited order...</strike>
+|-
+| 65 || <strike>{{bug|440380}}</strike> || 4.5 M3 || normal || lars.vogel || WONTFIX || <strike>Remove dead code from org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree...</strike>
+|-
+| 66 || <strike>{{bug|430602}}</strike> || 4.5 M3 || normal || lars.vogel || DUPLICATE || <strike>Migrate ShowViewDialog to work on the application model...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:30 CET 2015'''
+
+== 4.5 M4 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|327208}}</strike> || 4.5 M4 || normal || markus_keller || FIXED || <strike>[Import/Export] Windows Explorer can't read zip when 'create only selected directories' selected...</strike>
+|-
+| 2 || <strike>{{bug|444505}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>Update org.eclipse.e4.emf.xpath to Java 1.6...</strike>
+|-
+| 3 || <strike>{{bug|453695}}</strike> || 4.5 M4 || normal || thirumala || FIXED || <strike>Provide N&N entry for new Jobs API...</strike>
+|-
+| 4 || <strike>{{bug|449025}}</strike> || 4.5 M4 || major || tom.schindl || FIXED || <strike>[Mac] [Viewers] Changing label provider of tree viewer giving exceptions in mac...</strike>
+|-
+| 5 || <strike>{{bug|450909}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>[Tests] Enable org.eclipse.e4.core.commands.tests during Tycho build...</strike>
+|-
+| 6 || <strike>{{bug|376486}}</strike> || 4.5 M4 || major || lars.vogel || FIXED || <strike>[Model] Eclipse 4 IDE not extendable via fragments or processors...</strike>
+|-
+| 7 || <strike>{{bug|445663}}</strike> || 4.5 M4 || major || lars.vogel || FIXED || <strike>[Model] React to changed application model data for part data...</strike>
+|-
+| 8 || <strike>{{bug|450187}}</strike> || 4.5 M4 || normal || simon.scholz || WONTFIX || <strike>IPresentationEngine should contain constants for View and Editor tags...</strike>
+|-
+| 9 || <strike>{{bug|453833}}</strike> || 4.5 M4 || normal || eclipse.sprigogin || FIXED || <strike>[responsiveness] User documentation for UI responsiveness monitoring is slighly out of date...</strike>
+|-
+| 10 || <strike>{{bug|441280}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>"Move ""e4view"" from ViewRegistry to IWorkbenchRegistryConstants and document it"...</strike>
+|-
+| 11 || <strike>{{bug|451102}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Update org.eclipse.ui.startup schema description...</strike>
+|-
+| 12 || <strike>{{bug|446011}}</strike> || 4.5 M4 || normal || lars.vogel || INVALID || <strike>Spaces in IPresentationEngine.SPLIT_HORIZONTAL and IPresentationEngine.SPLIT_HORIZONTAL...</strike>
+|-
+| 13 || <strike>{{bug|450209}}</strike> || 4.5 M4 || normal || thibaultleouay || FIXED || <strike>[Tests] [Workbench] Migrate org.eclipse.e4.core.commands.tests to JUnit 4...</strike>
+|-
+| 14 || <strike>{{bug|443664}}</strike> || 4.5 M4 || normal || eclipse.sprigogin || FIXED || <strike>[Performance] Provide user documentation for interactive UI monitoring plug-in...</strike>
+|-
+| 15 || <strike>{{bug|449546}}</strike> || 4.5 M4 || normal || eclipse.sprigogin || FIXED || <strike>[responsiveness] No error logged when UI froze during opening type hierarchy on java.lang.Object on ...</strike>
+|-
+| 16 || <strike>{{bug|451262}}</strike> || 4.5 M4 || normal || eclipse.sprigogin || FIXED || <strike>[responsiveness] Bad format of UI freeze duration...</strike>
+|-
+| 17 || <strike>{{bug|440294}}</strike> || 4.5 M4 || normal || daniel.rolka || FIXED || <strike>[Progress] ProgressAnimationItem toolbar button selection opens ProgressView...</strike>
+|-
+| 18 || <strike>{{bug|446562}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>[RCP] Execution Environment of org.eclipse.tests.rcp should be updated to Java1.6...</strike>
+|-
+| 19 || <strike>{{bug|450219}}</strike> || 4.5 M4 || enhancement || eclipse.sprigogin || FIXED || <strike>[Monitoring] Don't log stack traces of non-interesting threads...</strike>
+|-
+| 20 || <strike>{{bug|264072}}</strike> || 4.5 M4 || normal || noopur_gupta || FIXED || <strike>[WorkbenchLauncher] Restart asks for the workspace to run...</strike>
+|-
+| 21 || <strike>{{bug|444098}}</strike> || 4.5 M4 || normal || dirk.fauth || FIXED || <strike>Update migration guide that the Eclipse context now contains the Locale directly instead of a String...</strike>
+|-
+| 22 || <strike>{{bug|449859}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Add method to org.eclipse.e4.ui.internal.workbench.URIHelper to check for valid bundleclass:// notat...</strike>
+|-
+| 23 || <strike>{{bug|452350}}</strike> || 4.5 M4 || normal || simon.scholz || WONTFIX || <strike>Itemsfilter should generally perform implicit prefix matching...</strike>
+|-
+| 24 || <strike>{{bug|440366}}</strike> || 4.5 M4 || enhancement || simon.scholz || FIXED || <strike>Make FilteredTree available for Eclipse 4 RCP application...</strike>
+|-
+| 25 || <strike>{{bug|449022}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>The getRealm() method of the SWTObservables class should be moved to a different class...</strike>
+|-
+| 26 || <strike>{{bug|450817}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>[ViewMgmt] Show View should use the part category instead of the tag...</strike>
+|-
+| 27 || <strike>{{bug|445455}}</strike> || 4.5 M4 || normal || lars.vogel || WONTFIX || <strike>Remove redundancy in labels of the perspective menu entries...</strike>
+|-
+| 28 || <strike>{{bug|450097}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>focusCellChanged method in CursorCellHighlighter causes a NPE...</strike>
+|-
+| 29 || <strike>{{bug|453832}}</strike> || 4.5 M4 || normal || eclipse.sprigogin || FIXED || <strike>N&N entry for UI responsiveness monitoring contains an out of date screenshot...</strike>
+|-
+| 30 || <strike>{{bug|440984}}</strike> || 4.5 M4 || normal || lars.vogel || WONTFIX || <strike>Replace Perspective actions with commands in Eclipse menu...</strike>
+|-
+| 31 || <strike>{{bug|449311}}</strike> || 4.5 M4 || minor || lars.vogel || FIXED || <strike>[Help][Webapp] Invalid CSS comments in /advanced/views.jsp...</strike>
+|-
+| 32 || <strike>{{bug|445726}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Replace usage of deprecated Platform.run with SafeRunner.run...</strike>
+|-
+| 33 || <strike>{{bug|450207}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>Use constants for commonly used tags...</strike>
+|-
+| 34 || <strike>{{bug|443186}}</strike> || 4.5 M4 || normal || lars.vogel || WONTFIX || <strike>Remove main method from platform.ui test methods...</strike>
+|-
+| 35 || <strike>{{bug|449462}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>The getRealm() method of the DisplayRealm class should be used...</strike>
+|-
+| 36 || <strike>{{bug|451214}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>Unhelpful NPE in ShowInMenu...</strike>
+|-
+| 37 || <strike>{{bug|432049}}</strike> || 4.5 M4 || enhancement || thirumala || FIXED || <strike>Support for Job Groups with throttling...</strike>
+|-
+| 38 || <strike>{{bug|446093}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>ViewRegistery fills MPartDescriptor category incorrectly...</strike>
+|-
+| 39 || <strike>{{bug|450212}}</strike> || 4.5 M4 || normal || platform-ui-triaged || FIXED || <strike>[Tests] [Workbench] Migrate org.eclipse.e4.emf.xpath.test to JUnit 4...</strike>
+|-
+| 40 || <strike>{{bug|444070}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Reduce warning messages in the Platform.ui repository...</strike>
+|-
+| 41 || <strike>{{bug|449833}}</strike> || 4.5 M4 || minor || eclipse.sprigogin || FIXED || <strike>"[Monitoring] A space is missing in the logged messages before ""Lock owner"""...</strike>
+|-
+| 42 || <strike>{{bug|451266}}</strike> || 4.5 M4 || normal || eclipse.sprigogin || FIXED || <strike>"[responsiveness] Make ""non-interesting thread"" filter user configurable"...</strike>
+|-
+| 43 || <strike>{{bug|440354}}</strike> || 4.5 M4 || enhancement || john_arthorne || FIXED || <strike>[jobs] Job#belongsTo should document that family can be null...</strike>
+|-
+| 44 || <strike>{{bug|448892}}</strike> || 4.5 M4 || normal || t.leouay || FIXED || <strike>[Tests] Migrate org.eclipse.ui.tests.rcp to JUnit 4...</strike>
+|-
+| 45 || <strike>{{bug|450727}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>NPE due to ThemeDefinitionElement violates supertype's API contract...</strike>
+|-
+| 46 || <strike>{{bug|449872}}</strike> || 4.5 M4 || normal || simon.scholz || FIXED || <strike>New org.eclipse.e4.ui.dialogs causes compile warnings in official build...</strike>
+|-
+| 47 || <strike>{{bug|449452}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Integrate org.eclipse.e4.ui.dialogs into the org.eclipse.e4.rcp feature...</strike>
+|-
+| 48 || <strike>{{bug|430988}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Show View should work on application model instead of ViewRegistry...</strike>
+|-
+| 49 || <strike>{{bug|350251}}</strike> || 4.5 M4 || normal || lars.vogel || FIXED || <strike>Strategy for porting useful org.eclipse.ui.* bits for Eclipse4 RCP apps...</strike>
+|-
+| 50 || <strike>{{bug|419377}}</strike> || 4.5 M4 || normal || stefan || FIXED || <strike>[CSS] Setting a property to 'inherit' fires a IllegalStateException...</strike>
+|-
+| 51 || <strike>{{bug|440849}}</strike> || 4.5 M4 || normal || lars.vogel || WONTFIX || <strike>Integrate tests from org.eclipse.e4.ui.menu.tests into MenuTestSuite in org.eclipse.ui.tests...</strike>
+|-
+| 52 || <strike>{{bug|450968}}</strike> || 4.5 M4 || normal || lars.vogel || DUPLICATE || <strike>[Tests] org.eclipse.e4.ui.tests.css.swt during Tycho build...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:31 CET 2015'''
+
+== 4.5 M5 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || <strike>{{bug|454916}}</strike> || 4.5 M5 || normal || eclipse.sprigogin || FIXED || <strike>[UI Monitoring] wrongly logs UI freeze when view menu is open on Windows...</strike>
+|-
+| 2 || <strike>{{bug|443092}}</strike> || 4.5 M5 || normal || platform-ui-triaged || FIXED || <strike>[Contributions] NPE in DirectContributionItem.getExecutionContext(IEclipseContext context)...</strike>
+|-
+| 3 || <strike>{{bug|458203}}</strike> || 4.5 M5 || normal || Platform-UI-Inbox || WONTFIX || <strike>Update EventBroker usage in LazyStackRenderer...</strike>
+|-
+| 4 || <strike>{{bug|388359}}</strike> || 4.5 M5 || major || lars.vogel || FIXED || <strike>multiple versions of org.eclipse.jface cause trouble (key bindings and context menus no longer work)...</strike>
+|-
+| 5 || <strike>{{bug|458311}}</strike> || 4.5 M5 || normal || eclipse.sprigogin || FIXED || <strike>[UI monitoring] Reporting of potential deadlocks is confusing...</strike>
+|-
+| 6 || <strike>{{bug|280033}}</strike> || 4.5 M5 || normal || platform-ui-triaged || FIXED || <strike>"[Contributions] Improve Customize Perspective dialog on the ""Command Groups Availability"" tab"...</strike>
+|-
+| 7 || <strike>{{bug|457798}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>"[IDE] ""Show In -> System Explorer"" should not run in UI thread"...</strike>
+|-
+| 8 || <strike>{{bug|458490}}</strike> || 4.5 M5 || normal || akurtako || FIXED || <strike>Cleanup o.e.core.tests.runtime...</strike>
+|-
+| 9 || <strike>{{bug|457025}}</strike> || 4.5 M5 || normal || markus_keller || FIXED || <strike>[BiDi] Extend applyBidiProcessing API to support visual input field...</strike>
+|-
+| 10 || <strike>{{bug|387821}}</strike> || 4.5 M5 || normal || noopur_gupta || FIXED || <strike>[Contributions] [CPD] CustomizePerspectiveDialog requires 2 checks to hide Navigate>Show In...</strike>
+|-
+| 11 || <strike>{{bug|457175}}</strike> || 4.5 M5 || major || markus_keller || FIXED || <strike>Java compiler generates errors for JavaDoc references to deprecated classes (incomplete project sett...</strike>
+|-
+| 12 || <strike>{{bug|81202}}</strike> || 4.5 M5 || enhancement || sarika.sinha || FIXED || <strike>[Preferences] Preference/property page: Want only 'Apply' but no default...</strike>
+|-
+| 13 || <strike>{{bug|426020}}</strike> || 4.5 M5 || minor || platform-ui-triaged || FIXED || <strike>[Perspectives] Customize Perspective toolbar settings not remembered...</strike>
+|-
+| 14 || <strike>{{bug|445724}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Context access should use use short .class form...</strike>
+|-
+| 15 || <strike>{{bug|456726}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Add toString() to various platform UI elements for debugging...</strike>
+|-
+| 16 || <strike>{{bug|457719}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[UI Monitoring] Specify the test suite directly...</strike>
+|-
+| 17 || <strike>{{bug|393391}}</strike> || 4.5 M5 || normal || loskutov || FIXED || <strike>"[Contributions] can't re-enable toolbars in ""customize perspective"""...</strike>
+|-
+| 18 || <strike>{{bug|432480}}</strike> || 4.5 M5 || enhancement || christian.georgi || FIXED || <strike>[Workbench] [Preferences] Preferences -> General -> Workspace should show workspace location and hav...</strike>
+|-
+| 19 || <strike>{{bug|454357}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>Field for workspace setting in preferences to small for WS > 10...</strike>
+|-
+| 20 || <strike>{{bug|457211}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[JFace] Cleanup ToolBarManager...</strike>
+|-
+| 21 || <strike>{{bug|458342}}</strike> || 4.5 M5 || normal || stefan || FIXED || <strike>[CSS] Multiple Stylesheets are not cascaded...</strike>
+|-
+| 22 || <strike>{{bug|296775}}</strike> || 4.5 M5 || minor || loskutov || FIXED || <strike>[Contributions] Breakup the CPD class...</strike>
+|-
+| 23 || <strike>{{bug|428621}}</strike> || 4.5 M5 || enhancement || dirk.fauth || FIXED || <strike>Add a service to support locale changes at runtime in the UI implementation...</strike>
+|-
+| 24 || <strike>{{bug|450411}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>"[Model] EPartService should contain a method, which checks if an MPart is shown in a certain Perpec...</strike>
+|-
+| 25 || <strike>{{bug|456729}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>"Move CustomizePerspectiveDialog and TreeManager to ""cpd"" package"...</strike>
+|-
+| 26 || <strike>{{bug|457867}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Tests] Update org.eclipse.ui.tests.navigator to Java 1.6...</strike>
+|-
+| 27 || <strike>{{bug|442278}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Use getStructuredSelection() from StructuredViewer in platform.ui code...</strike>
+|-
+| 28 || <strike>{{bug|458418}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Typo in extension point description of Navigator extension point...</strike>
+|-
+| 29 || <strike>{{bug|330595}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Help] IWorkbenchHelpSystem for native e4 parts?...</strike>
+|-
+| 30 || <strike>{{bug|430205}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>[CSS] Gradient background for Section is hard-coded...</strike>
+|-
+| 31 || <strike>{{bug|452764}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Tests] Migrate org.eclipse.e4.ui.menu.tests to JUnit 4...</strike>
+|-
+| 32 || <strike>{{bug|456893}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Minor cleanup in the preference export wizard...</strike>
+|-
+| 33 || <strike>{{bug|458062}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Incorrect Provider name and plug-in name in org.eclipse.e4.ui.dialogs...</strike>
+|-
+| 34 || <strike>{{bug|405788}}</strike> || 4.5 M5 || minor || platform-ui-triaged || FIXED || <strike>[Perspectives] Perspective element is still checked after removing...</strike>
+|-
+| 35 || <strike>{{bug|455527}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>Use isPartOrPlaceholderInPerspective in Show View...</strike>
+|-
+| 36 || <strike>{{bug|457384}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>"[Perspectives] Rename ""Command Groups Availability"" tab to ""Action Set Availability"" in CPD"...</strike>
+|-
+| 37 || <strike>{{bug|458595}}</strike> || 4.5 M5 || normal || pwebster || FIXED || <strike>Add version 54.1.1 ICU4J for Mars release - need to touch org.eclipse.e4.rcp...</strike>
+|-
+| 38 || <strike>{{bug|430848}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Themes] Background changes to dark during the startup splash screen...</strike>
+|-
+| 39 || <strike>{{bug|453557}}</strike> || 4.5 M5 || normal || thibaultleouay || FIXED || <strike>Update org.eclipse.e4.emf.xpath and org.eclipse.e4.emf.xpath.test to Java 7...</strike>
+|-
+| 40 || <strike>{{bug|457132}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Missing log enty for incorrectly org.eclipse.ui.startup contribution...</strike>
+|-
+| 41 || <strike>{{bug|60964}}</strike> || 4.5 M5 || normal || jan.koehnlein || FIXED || <strike>Job#isBlocking doesn't work for all cases...</strike>
+|-
+| 42 || <strike>{{bug|421388}}</strike> || 4.5 M5 || normal || loskutov || FIXED || <strike>[Contributions] Customize perspective doesn't work...</strike>
+|-
+| 43 || <strike>{{bug|445600}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Help] Add setHelp method to EHelpService...</strike>
+|-
+| 44 || <strike>{{bug|456697}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Update org.eclipse.ui.workbench to use line lenght of 120...</strike>
+|-
+| 45 || <strike>{{bug|457469}}</strike> || 4.5 M5 || critical || daniel_megert || FIXED || <strike>Failures in UITestSuite...</strike>
+|-
+| 46 || <strike>{{bug|432079}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Clean up org.eclipse.core.jobs...</strike>
+|-
+| 47 || <strike>{{bug|454143}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>[ViewMgmt] View Management issues introduced during 4.5 M4 development...</strike>
+|-
+| 48 || <strike>{{bug|457198}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Trim] Cleanup CoolBarToTrimManager and ToolBarManagerRenderer...</strike>
+|-
+| 49 || <strike>{{bug|427768}}</strike> || 4.5 M5 || enhancement || mistria || FIXED || <strike>[CommonNavigator] Add content extension that shows nested projects...</strike>
+|-
+| 50 || <strike>{{bug|447684}}</strike> || 4.5 M5 || normal || platform-ui-triaged || FIXED || <strike>[Perspectives][CPD] The Make Item Visible Box does not redirect to the Command Group Availability ta...</strike>
+|-
+| 51 || <strike>{{bug|456727}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Code cleanup: make Perspective code warnings free...</strike>
+|-
+| 52 || <strike>{{bug|394900}}</strike> || 4.5 M5 || normal || wojciech.sudol || FIXED || <strike>[Import/Export] Import existing projects broken by mal-formed .project file...</strike>
+|-
+| 53 || <strike>{{bug|437326}}</strike> || 4.5 M5 || normal || platform-ui-triaged || FIXED || <strike>"[Perspectives] Customize Perspective: Missing/Hidden ""Show selected element only"""...</strike>
+|-
+| 54 || <strike>{{bug|454712}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[ViewMgmt] [Min/Max] CCE PartImpl cannot be cast to MElementContainer...</strike>
+|-
+| 55 || <strike>{{bug|457237}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Contributions] Use EModelService instead of MenuFactoryImpl in CoolBarToTrimManager...</strike>
+|-
+| 56 || <strike>{{bug|458397}}</strike> || 4.5 M5 || normal || mistria || FIXED || <strike>[Navigator] Nested projects don't react to project creation...</strike>
+|-
+| 57 || <strike>{{bug|330453}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[FastView] Should remove preferences related to fast views from preference pages...</strike>
+|-
+| 58 || <strike>{{bug|428729}}</strike> || 4.5 M5 || major || loskutov || FIXED || <strike>"[Perspectives][CPD] Cannot re-add the ""File"" Toolbar after disabling it accidentally"...</strike>
+|-
+| 59 || <strike>{{bug|450701}}</strike> || 4.5 M5 || normal || pwebster || FIXED || <strike>[Workbench] [platform] NPE in BundleUtility.isActivated...</strike>
+|-
+| 60 || <strike>{{bug|456882}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Viewers] PreferencesContentProvider can return illegally null in getElements...</strike>
+|-
+| 61 || <strike>{{bug|457954}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>comparator error in I20150120-0800...</strike>
+|-
+| 62 || <strike>{{bug|404348}}</strike> || 4.5 M5 || normal || loskutov || FIXED || <strike>Global toolbar does not change...</strike>
+|-
+| 63 || <strike>{{bug|442343}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>Additional cleanup work in the JFace snippets...</strike>
+|-
+| 64 || <strike>{{bug|455165}}</strike> || 4.5 M5 || major || lars.vogel || FIXED || <strike>[Workbench] org.eclipse.ui.startup should mark the class attribute as mandatory...</strike>
+|-
+| 65 || <strike>{{bug|457354}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Misleading Javadoc in CustomizeActionBars...</strike>
+|-
+| 66 || <strike>{{bug|430370}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>[CSS] Provide CSS handler for Forms Section element...</strike>
+|-
+| 67 || <strike>{{bug|458114}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>Add top level .settings folder to .gitignore...</strike>
+|-
+| 68 || <strike>{{bug|411704}}</strike> || 4.5 M5 || normal || wojciech.sudol || FIXED || <strike>[PropertiesView] Properties view not initialized with current selection when switching views...</strike>
+|-
+| 69 || <strike>{{bug|443094}}</strike> || 4.5 M5 || normal || thibaultleouay || FIXED || <strike>[Tests] Move org.eclipse.e4.ui.tests.css.swt tests to JUnit 4...</strike>
+|-
+| 70 || <strike>{{bug|455532}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[JFace][snippets] Update jface.snippets to Java 8...</strike>
+|-
+| 71 || <strike>{{bug|457434}}</strike> || 4.5 M5 || normal || lars.vogel || FIXED || <strike>[Help] Use EHelpService in ShowViewDialog...</strike>
+|-
+| 72 || <strike>{{bug|431635}}</strike> || 4.5 M5 || normal || simon.scholz || FIXED || <strike>[CSS] [dark theme] Remove gradient from Section headers in Form editors...</strike>
+|-
+| 73 || <strike>{{bug|453559}}</strike> || 4.5 M5 || normal || thirumala || FIXED || <strike>JobGroup API cleanup...</strike>
+|-
+| 74 || <strike>{{bug|458261}}</strike> || 4.5 M5 || normal || loskutov || FIXED || <strike>Error messages from early startup should be more descriptive...</strike>
+|-
+| 75 || <strike>{{bug|397960}}</strike> || 4.5 M5 || normal || platform-ui-triaged || FIXED || <strike>"[Contributions] [CPD] Run/Debug buttons gone, can't customize perspective"...</strike>
+|-
+| 76 || <strike>{{bug|457288}}</strike> || 4.5 M5 || normal || Platform-UI-Inbox || DUPLICATE || <strike>Upgrade Jetty to the latest version (because the current Jetty version used by Eclipse can consume 1...</strike>
+|-
+| 77 || <strike>{{bug|378849}}</strike> || 4.5 M5 || normal || loskutov || FIXED || <strike>[CPD] CustomizePerspectiveDialog no longer shows actionSet details...</strike>
+|-
+| 78 || <strike>{{bug|371934}}</strike> || 4.5 M5 || normal || loskutov || FIXED || <strike>[Contributions] [Perspectives] [Compatibility] Extra/incorrect categories in the CPD...</strike>
+|-
+| 79 || <strike>{{bug|453165}}</strike> || 4.5 M5 || normal || markus_keller || DUPLICATE || <strike>testBadFirstFontDefinition tests fail...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:33 CET 2015'''
+
+== 4.5 M6 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || {{bug|378811}} || 4.5 M6 || normal || wojciech.sudol || NEW || [Perspectives] Support separation of the Workspace and the saved UI Model (was: can't save and impor...
+|-
+| 2 || {{bug|442152}} || 4.5 M6 || normal || wojciech.sudol || NEW || WorkbenchSiteProgressServiceTest.testWaitCursor fails in official build...
+|-
+| 3 || {{bug|457390}} || 4.5 M6 || normal || d.zygann || NEW || [FastView] Deprecated Fast View API...
+|-
+| 4 || {{bug|448933}} || 4.5 M6 || normal || platform-ui-triaged || NEW || [browser] Opening new browser shows outdated content...
+|-
+| 5 || {{bug|430764}} || 4.5 M6 || normal || lars.vogel || NEW || exception thrown when part is closed...
+|-
+| 6 || {{bug|437958}} || 4.5 M6 || normal || Platform-UI-Inbox || NEW || allow fragment to be contributed to multiple ids...
+|-
+| 7 || {{bug|460405}} || 4.5 M6 || normal || Platform-UI-Inbox || NEW || Fix compiler problems from generified IAdaptable#getAdapter(..)...
+|-
+| 8 || {{bug|378644}} || 4.5 M6 || normal || wojciech.sudol || NEW || [Workbench] All but 1 window and 1 perspective lost when starting 3.x workspace with 4.2...
+|-
+| 9 || {{bug|450541}} || 4.5 M6 || major || tom.schindl || NEW || [Workbench] [Compatibility] WorkbenchWindowAdvisor#postWindowRestore() never fired...
+|-
+| 10 || {{bug|458055}} || 4.5 M6 || normal || simon.scholz || NEW || [CSS] [Dark] Forms header with buttons looks broken...
+|-
+| 11 || {{bug|436225}} || 4.5 M6 || normal || platform-ui-triaged || NEW || [ViewMgmt] Possible memory leak on closing views...
+|-
+| 12 || {{bug|457214}} || 4.5 M6 || normal || lars.vogel || NEW || [Contributions] Redrawn in ToolBarManager should always turned of independent of the number of items...
+|-
+| 13 || {{bug|166149}} || 4.5 M6 || enhancement || lars.vogel || NEW || [Import/Export] Import project dialog should show paths on the file system...
+|-
+| 14 || {{bug|422139}} || 4.5 M6 || normal || tmccrary || NEW || "[Graphics] Move ""org.eclipse.ui.images"" to eclipse.images git repo and rename to ""org.eclipse.im...
+|-
+| 15 || {{bug|442285}} || 4.5 M6 || normal || thibaultleouay || NEW || Update EventBroker usage in StackRenderer...
+|-
+| 16 || {{bug|460555}} || 4.5 M6 || enhancement || loskutov || NEW || [EditorMgmt] Open with > Other... / Editor Selection dialog should provide search filter...
+|-
+| 17 || {{bug|405296}} || 4.5 M6 || major || platform-ui-triaged || NEW || [Workbench] Extension point contributions stay active when contributing plug-in is not available...
+|-
+| 18 || {{bug|436863}} || 4.5 M6 || normal || wojciech.sudol || NEW || Splitting and cloning a compare editor fills the log...
+|-
+| 19 || {{bug|427999}} || 4.5 M6 || normal || lars.vogel || NEW || Introduce a 'full screen' mode...
+|-
+| 20 || {{bug|442570}} || 4.5 M6 || normal || simon.scholz || NEW || [Contributions] Dynamic menu contributions are persisted to workbench.xmi...
+|-
+| 21 || {{bug|459578}} || 4.5 M6 || normal || simon.scholz || NEW || "[CSS] Add styling for ""Presentation"" mode"...
+|-
+| 22 || {{bug|373294}} || 4.5 M6 || major || lars.vogel || NEW || Improve startup time...
+|-
+| 23 || {{bug|449898}} || 4.5 M6 || normal || simon.scholz || NEW || A FilteredCheckboxTreeViewer should also be availble in org.eclipse.e4.ui.dialogs...
+|-
+| 24 || {{bug|304695}} || 4.5 M6 || normal || Platform-UI-Inbox || NEW || [Commands] View toolbar actions displayed in wrong place...
+|-
+| 25 || {{bug|431845}} || 4.5 M6 || normal || stefan || NEW || [Themes] [CSS] Simplify dark theme...
+|-
+| 26 || {{bug|444412}} || 4.5 M6 || normal || philip.wenig || NEW || Update EventBroker usage in PartRenderingEngine...
+|-
+| 27 || {{bug|440852}} || 4.5 M6 || normal || lars.vogel || NEW || [Workbench] Fix Non-externalized string literal warning in org.eclipse.e4.ui.workbench.addons.swt...
+|-
+| 28 || {{bug|450414}} || 4.5 M6 || normal || simon.scholz || NEW || [Contributions] Toogle Split Editor Commands/Menu/Handler should be defined in an e4 fragment...
+|-
+| 29 || {{bug|458033}} || 4.5 M6 || normal || tom.schindl || NEW || Make it easier to locate the Root-IEclipseContext for an application...
+|-
+| 30 || {{bug|458832}} || 4.5 M6 || normal || Platform-UI-Inbox || NEW || [Workbench] Replace deprecated Preference access in IDEWorkspacePreferencePage...
+|-
+| 31 || {{bug|445538}} || 4.5 M6 || major || loskutov || NEW || [Perspectives] Pin Editor command broken and can no longer be added to perspective's toolbar...
+|-
+| 32 || {{bug|459961}} || 4.5 M6 || enhancement || stefan || NEW || [CSS] Add CSS support for 'transparent'...
+|-
+| 33 || {{bug|372799}} || 4.5 M6 || normal || loskutov || ASSIGNED || [Workbench] [GlobalActions] ViewPart cannot adapt ISaveablePart any longer but must implement it....
+|-
+| 34 || {{bug|437484}} || 4.5 M6 || normal || markus_keller || ASSIGNED || [BiDi] Enforce text direction for each segment of a File Path structured text...
+|-
+| 35 || {{bug|457877}} || 4.5 M6 || normal || markus_keller || ASSIGNED || ControlObservableValueTest.testObserveFocus fails on Hudson / Mac...
+|-
+| 36 || {{bug|334391}} || 4.5 M6 || normal || loskutov || ASSIGNED || [Contributions] java.lang.IllegalArgumentException in CustomizePerspectiveDialog...
+|-
+| 37 || {{bug|458507}} || 4.5 M6 || normal || wojciech.sudol || ASSIGNED || E4 UI unit test failures on Mac...
+|-
+| 38 || {{bug|460984}} || 4.5 M6 || normal || loskutov || ASSIGNED || [cleanup] remove obsolete internal ProblemView...
+|-
+| 39 || {{bug|392876}} || 4.5 M6 || normal || daniel.rolka || ASSIGNED || [Contributions] Editor context menu is broken when trying to add a dynamic submenu...
+|-
+| 40 || {{bug|378485}} || 4.5 M6 || enhancement || loskutov || ASSIGNED || """Open With > Other..."" should allow to store as default"...
+|-
+| 41 || {{bug|460988}} || 4.5 M6 || normal || loskutov || ASSIGNED || [cleanup] most of org.eclipse.ui.views.markers.internal is obsolete and should be removed...
+|-
+| 42 || {{bug|436322}} || 4.5 M6 || normal || wojciech.sudol || REOPENED || [Model] IAE when back button is clicked after closing all perspectives...
+|-
+| 43 || {{bug|391430}} || 4.5 M6 || normal || lars.vogel || REOPENED || [Contributions] Dynamically creating menu items in Menu doesn't update the menu...
+|-
+| 44 || {{bug|450130}} || 4.5 M6 || normal || wojciech.sudol || REOPENED || [Perspectives] Sticky views no longer open in sticky folder after closing all perspectives...
+|-
+| 45 || {{bug|394386}} || 4.5 M6 || normal || wojciech.sudol || REOPENED || [Contributions] Open Type | Search buttons interchanged...
+|-
+| 46 || {{bug|388476}} || 4.5 M6 || major || loskutov || REOPENED || "[EditorMgmt] Editor tab management lost ""working set"" (MRU) functionality"...
+|-
+| 47 || {{bug|458266}} || 4.5 M6 || normal || loskutov || REOPENED || Closing a project does not close a dirty editor...
+|-
+| 48 || {{bug|394739}} || 4.5 M6 || enhancement || mat.booth || REOPENED || Remove org.eclipse.core.runtime.compatibility* bundles...
+|-
+| 49 || <strike>{{bug|105821}}</strike> || 4.5 M6 || enhancement || thirumala || FIXED || <strike>Job#join should allow passing a progress monitor...</strike>
+|-
+| 50 || <strike>{{bug|419807}}</strike> || 4.5 M6 || normal || noopur_gupta || FIXED || <strike>[Dialogs] AIOOB exception in AbstractElementListSelectionDialog...</strike>
+|-
+| 51 || <strike>{{bug|451084}}</strike> || 4.5 M6 || normal || lars.vogel || INVALID || <strike>[JFace] TableViewer doesnt update existing content if filter is active...</strike>
+|-
+| 52 || <strike>{{bug|458219}}</strike> || 4.5 M6 || normal || eclipse || FIXED || <strike>[Help][FastView] - Remove Fast View Help content...</strike>
+|-
+| 53 || <strike>{{bug|459285}}</strike> || 4.5 M6 || normal || dirk.fauth || FIXED || <strike>CCE in MinMaxAddon when trying to remove a perspective from a non MTrimmedWindow...</strike>
+|-
+| 54 || <strike>{{bug|460528}}</strike> || 4.5 M6 || minor || loskutov || FIXED || <strike>"View tabs have never ""Close Tabs To The Left"" menu"...</strike>
+|-
+| 55 || <strike>{{bug|348331}}</strike> || 4.5 M6 || normal || noopur_gupta || FIXED || <strike>[Contributions] [Dialogs] Customize Perspective dialog - disabled/unavailable tree item labels not v...</strike>
+|-
+| 56 || <strike>{{bug|446616}}</strike> || 4.5 M6 || enhancement || simon.scholz || FIXED || <strike>[JFace] Abstract SelectionDialog should be available in JFace...</strike>
+|-
+| 57 || <strike>{{bug|459983}}</strike> || 4.5 M6 || critical || stefanfranz.weiser || FIXED || <strike>ResourceLeak in CSSResourcesHelpers (getCSSFontPropertiesKey)...</strike>
+|-
+| 58 || <strike>{{bug|460916}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Clean whitespace issues in org.eclipse.help.base...</strike>
+|-
+| 59 || <strike>{{bug|180308}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[UX] Remove Print toolbar tool by default...</strike>
+|-
+| 60 || <strike>{{bug|383569}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>"[Contributions] [Perspectives] ""Reset Perspective"" does not reset toolbar and menu contributions"...</strike>
+|-
+| 61 || <strike>{{bug|424638}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[Perspectives] AssertionFailedException in CustomizePerspectiveDialog...</strike>
+|-
+| 62 || <strike>{{bug|442459}}</strike> || 4.5 M6 || enhancement || mistria || FIXED || <strike>[WorkingSets] Import as Project should use the same Working Set...</strike>
+|-
+| 63 || <strike>{{bug|454633}}</strike> || 4.5 M6 || major || tparker || FIXED || <strike>Report the cumulative error status of job groups in the ProgressManager...</strike>
+|-
+| 64 || <strike>{{bug|458226}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Use StatusReporter in org.eclipse.ui.ide...</strike>
+|-
+| 65 || <strike>{{bug|460556}}</strike> || 4.5 M6 || normal || dirk.fauth || FIXED || <strike>Menu items in main menu are not updated on setting visible flag...</strike>
+|-
+| 66 || <strike>{{bug|405542}}</strike> || 4.5 M6 || normal || snjeza.peco || FIXED || <strike>[Workbench] More than one workbench save job can run...</strike>
+|-
+| 67 || <strike>{{bug|458728}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[ActivityMgmt] Enabling capability doesn't show toolbar buttons until restart...</strike>
+|-
+| 68 || <strike>{{bug|460308}}</strike> || 4.5 M6 || normal || dirk.fauth || FIXED || <strike>IllegalArgumentException with MessageFactoryServiceImpl when having non String members in Messages c...</strike>
+|-
+| 69 || <strike>{{bug|460950}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Fix trailing whitespace issues in org.eclipse.help.webapp...</strike>
+|-
+| 70 || <strike>{{bug|205678}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[Clipboard] Using x11vnc with clipboard transfer causes eclipse to OOM...</strike>
+|-
+| 71 || <strike>{{bug|444410}}</strike> || 4.5 M6 || normal || simon.scholz || FIXED || <strike>Update EventBroker usage in WBWRenderer...</strike>
+|-
+| 72 || <strike>{{bug|456510}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[Tests] Can't disable tests in CBI build...</strike>
+|-
+| 73 || <strike>{{bug|458334}}</strike> || 4.5 M6 || normal || Alain.LeGuennec || FIXED || <strike>[CSS] Bug in CSSOneOfAttributeConditionImpl prevents correct matching of some elements...</strike>
+|-
+| 74 || <strike>{{bug|459641}}</strike> || 4.5 M6 || normal || noopur_gupta || FIXED || <strike>[CPD] disabled/enabled state not reflected correctly on Action Set Availability page...</strike>
+|-
+| 75 || <strike>{{bug|460652}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Fix trailing whitespaces in org.eclipse.ui.ide...</strike>
+|-
+| 76 || <strike>{{bug|376046}}</strike> || 4.5 M6 || normal || platform-ui-triaged || FIXED || <strike>[Contributions] Customize Perspective doesn't show new toolbar button unless group enabled first...</strike>
+|-
+| 77 || <strike>{{bug|413329}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>NPE in CustomizePerspectiveDialog in createMenuEntries...</strike>
+|-
+| 78 || <strike>{{bug|458829}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Move EHelpService to org.eclipse.e4.ui.services.help...</strike>
+|-
+| 79 || <strike>{{bug|460987}}</strike> || 4.5 M6 || trivial || lars.vogel || FIXED || <strike>Remove testSuite parameter as Tycho 0.23 plans to remove its support (and new variable names in the ...</strike>
+|-
+| 80 || <strike>{{bug|431990}}</strike> || 4.5 M6 || normal || dirk.fauth || FIXED || <strike>[Renderer] Settting the visible property to false of the MToolbar is ignore by the renderer...</strike>
+|-
+| 81 || <strike>{{bug|444840}}</strike> || 4.5 M6 || enhancement || tomasz.zarna || FIXED || <strike>[IDE] IDE.getEditorId(IFileStore) is private...</strike>
+|-
+| 82 || <strike>{{bug|456898}}</strike> || 4.5 M6 || normal || lars.vogel || WONTFIX || <strike>[Workbench] Improve EarlyStartup extensions handling...</strike>
+|-
+| 83 || <strike>{{bug|458421}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>"Remove workaround ""newtablook"" tag for Bug 303982"...</strike>
+|-
+| 84 || <strike>{{bug|460787}}</strike> || 4.5 M6 || normal || akurtako || FIXED || <strike>Do not use deprecated Lucene 3.5 methods/classes...</strike>
+|-
+| 85 || <strike>{{bug|41431}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[EditorMgmt] Affected editors should be closed before executing project close or delete...</strike>
+|-
+| 86 || <strike>{{bug|441150}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Cleanup work in the renderer classes...</strike>
+|-
+| 87 || <strike>{{bug|459249}}</strike> || 4.5 M6 || normal || akurtako || FIXED || <strike>Modernize o.e.ui.examples.multipageeditor...</strike>
+|-
+| 88 || <strike>{{bug|460503}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>"[Perspectives] Sometimes a button (""Save"") is not hideable from the toolbar"...</strike>
+|-
+| 89 || <strike>{{bug|339663}}</strike> || 4.5 M6 || major || bsd || FIXED || <strike>[JFace] Image of ControlDecoration is visible outside composite when the scrolling a composite...</strike>
+|-
+| 90 || <strike>{{bug|446095}}</strike> || 4.5 M6 || normal || dirk.fauth || FIXED || <strike>CCE in TrimStack if PerspectiveStack and Perspective uses the same ID...</strike>
+|-
+| 91 || <strike>{{bug|459964}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[performance] WorkbenchPage.findEditor is slow on not initialized editors...</strike>
+|-
+| 92 || <strike>{{bug|460858}}</strike> || 4.5 M6 || normal || akurtakov || FIXED || <strike>Cleanup UA bundles...</strike>
+|-
+| 93 || <strike>{{bug|380233}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[Trim] Right-clicking on the tool bar to customize it no longer works...</strike>
+|-
+| 94 || <strike>{{bug|458220}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>[Help] Update help context for perspective handling...</strike>
+|-
+| 95 || <strike>{{bug|459308}}</strike> || 4.5 M6 || normal || akurtako || FIXED || <strike>Modernize o.e.ui.examples.propertysheet and readmetool...</strike>
+|-
+| 96 || <strike>{{bug|364324}}</strike> || 4.5 M6 || enhancement || eclipse || FIXED || <strike>[Help][Search] Model result categories ordering after TOC ordering...</strike>
+|-
+| 97 || <strike>{{bug|460165}}</strike> || 4.5 M6 || normal || simon.scholz || FIXED || <strike>Update org.eclipse.e4.ui.dialogs to Java 1.7...</strike>
+|-
+| 98 || <strike>{{bug|460924}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Remove Whitespace issues in org.eclipse.ua.tests.doc...</strike>
+|-
+| 99 || <strike>{{bug|200444}}</strike> || 4.5 M6 || trivial || markus_keller || FIXED || <strike>"[IDE] Remove ""Copy of"" when copying a file"...</strike>
+|-
+| 100 || <strike>{{bug|455711}}</strike> || 4.5 M6 || normal || thirumala || FIXED || <strike>JobGroupTest.testJoinWithRepeatingJobs and JobGroupTest.testSeedJobsWhenAllJobsAreKnown fail intermi...</strike>
+|-
+| 101 || <strike>{{bug|460600}}</strike> || 4.5 M6 || major || tom.schindl || FIXED || <strike>PostSelection distribution does not work until view is activated at least once...</strike>
+|-
+| 102 || <strike>{{bug|411639}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>Nullpointer in CustomizePerspectiveDialog when using a perspective that no longer exists...</strike>
+|-
+| 103 || <strike>{{bug|437485}}</strike> || 4.5 M6 || normal || markus_keller || FIXED || <strike>[BiDi] Text alignment should follow the text direction for Text widget...</strike>
+|-
+| 104 || <strike>{{bug|458811}}</strike> || 4.5 M6 || normal || christian.georgi || FIXED || <strike>New workspace location preference needs polish...</strike>
+|-
+| 105 || <strike>{{bug|460380}}</strike> || 4.5 M6 || normal || simon.scholz || FIXED || <strike>Change CheckboxTreeViewe#setCheckedChildren from private to protected...</strike>
+|-
+| 106 || <strike>{{bug|456897}}</strike> || 4.5 M6 || minor || lars.vogel || FIXED || <strike>[Workbench] Improve IExtensionRegistry handling...</strike>
+|-
+| 107 || <strike>{{bug|459670}}</strike> || 4.5 M6 || normal || mistria || FIXED || <strike>OpenFolderAsProjectAction should not use ProjectDescriptionReader...</strike>
+|-
+| 108 || <strike>{{bug|460715}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>"Comparator error in I20150224-0800 implies org.eclipse.ui.tests.navigator needs to be ""touched"""...</strike>
+|-
+| 109 || <strike>{{bug|460414}}</strike> || 4.5 M6 || major || tom.schindl || FIXED || <strike>"Activities are not applied when using perspectiveExtension with view relationship=""stack"""...</strike>
+|-
+| 110 || <strike>{{bug|337588}}</strike> || 4.5 M6 || enhancement || loskutov || FIXED || <strike>"[EditorMgmt] Editor should have ""Close Tabs To The Right"""...</strike>
+|-
+| 111 || <strike>{{bug|433767}}</strike> || 4.5 M6 || normal || lars.vogel || WORKSFORME || <strike>[Graphics] New PNG icons are not aligned...</strike>
+|-
+| 112 || <strike>{{bug|458436}}</strike> || 4.5 M6 || normal || lars.vogel || WORKSFORME || <strike>[Renderer] Avoid NPE in SWTPartRenderer if Icon URI is not valid...</strike>
+|-
+| 113 || <strike>{{bug|460857}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Delete unused MenuRenderer...</strike>
+|-
+| 114 || <strike>{{bug|458524}}</strike> || 4.5 M6 || enhancement || lars.vogel || FIXED || <strike>[Dialogs] Increase the value of COMBO_HISTORY_LENGTH in WizardDataTransferPage...</strike>
+|-
+| 115 || <strike>{{bug|459761}}</strike> || 4.5 M6 || normal || akurtako || FIXED || <strike>Remove redundant superinterface in JFace...</strike>
+|-
+| 116 || <strike>{{bug|419524}}</strike> || 4.5 M6 || enhancement || mat.booth || FIXED || <strike>Get rid of nested JARs for tests...</strike>
+|-
+| 117 || <strike>{{bug|395601}}</strike> || 4.5 M6 || normal || loskutov || FIXED || <strike>[Contributions] Customizing perspective - change buttons in the Java perspective reflect the change ...</strike>
+|-
+| 118 || <strike>{{bug|451690}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>Remove (Non-Javadoc) annotations from org.eclipse.core.jobs...</strike>
+|-
+| 119 || <strike>{{bug|457870}}</strike> || 4.5 M6 || normal || thibaultleouay || FIXED || <strike>[Tests] Update org.eclipse.ui.tests.navigator to JUnit 4...</strike>
+|-
+| 120 || <strike>{{bug|458391}}</strike> || 4.5 M6 || normal || lars.vogel || FIXED || <strike>[Examples][CSS] Move EclipseCon Europe CSS migration example to Github...</strike>
+|-
+| 121 || <strike>{{bug|457209}}</strike> || 4.5 M6 || major || lars.vogel || FIXED || <strike>Error while instantiating @Creatable object is being silently discarded...</strike>
+|-
+| 122 || <strike>{{bug|404009}}</strike> || 4.5 M6 || major || loskutov || FIXED || <strike>Customizing toolbars in a Custom Perspective Dialog and save the perspective. Switching perspectives...</strike>
+|-
+| 123 || <strike>{{bug|459478}}</strike> || 4.5 M6 || normal || platform-ui-triaged || DUPLICATE || <strike>[JFace] [GTK/Linux] ControlDecoration test failures...</strike>
+|-
+| 124 || <strike>{{bug|457504}}</strike> || 4.5 M6 || normal || tparker || FIXED || <strike>Publish a job group's final status to IJobChangeListeners...</strike>
+|-
+| 125 || <strike>{{bug|448738}}</strike> || 4.5 M6 || normal || lars.vogel || DUPLICATE || <strike>Fix warnings in org.eclipse.core.expressions...</strike>
+|-
+| 126 || <strike>{{bug|457419}}</strike> || 4.5 M6 || normal || lars.vogel || DUPLICATE || <strike>[Help] Workbench User Guide > Tasks > Working with perspectives incorrect...</strike>
+|-
+| 127 || <strike>{{bug|458649}}</strike> || 4.5 M6 || normal || simon.scholz || DUPLICATE || <strike>[From] Solid background for Section looks broken...</strike>
+|-
+| 128 || <strike>{{bug|419188}}</strike> || 4.5 M6 || normal || loskutov || DUPLICATE || <strike>[Contributions] [Perspectives] Configuration of toolbar+menu in perspective is broken...</strike>
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:35 CET 2015'''
+
+== 4.5 M7 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || {{bug|393171}} || 4.5 M7 || normal || Platform-UI-Inbox || NEW || Remove delta migration code...
+|-
+| 2 || {{bug|449736}} || 4.5 M7 || normal || lars.vogel || NEW || [Tests] Solve whitespace issues in org.eclipse.ui.tests plug-ins...
+|-
+| 3 || {{bug|445802}} || 4.5 M7 || normal || platform-ui-triaged || NEW || [Progress] [Performance] Heavy progress reporting degrades performance...
+|-
+| 4 || {{bug|460048}} || 4.5 M7 || normal || loskutov || NEW || Move platform runtime plugins to Java 1.7 BREE...
+|-
+| 5 || {{bug|417258}} || 4.5 M7 || enhancement || lars.vogel || NEW || [Tests] Run org.eclipse.ui.tests during Tycho build...
+|-
+| 6 || {{bug|451117}} || 4.5 M7 || normal || simon.scholz || NEW || Missing preference listener for Heap monitor...
+|-
+| 7 || {{bug|448656}} || 4.5 M7 || normal || simon.scholz || NEW || Update help Workbench User Guide > Reference > Preferences with Export CVS... info...
+|-
+| 8 || {{bug|433603}} || 4.5 M7 || normal || lars.vogel || NEW || [Tests] Get rid of warning messages in org.eclipse.ui.tests...
+|-
+| 9 || {{bug|453521}} || 4.5 M7 || normal || lars.vogel || NEW || [Tests] Remove Display setting in our default test launcher runconfigurations...
+|-
+| 10 || {{bug|448887}} || 4.5 M7 || normal || lars.vogel || NEW || [Tests] Launch configurations should not include a Display setting...
+|-
+| 11 || {{bug|440270}} || 4.5 M7 || normal || lars.vogel || NEW || [Graphics] Replace missing gifs in org.eclipse.jface with png files...
+|-
+| 12 || {{bug|458199}} || 4.5 M7 || normal || lars.vogel || NEW || [Tests] Activate org.eclipse.e4.core.tests during Tycho build...
+|-
+| 13 || {{bug|361731}} || 4.5 M7 || normal || lars.vogel || NEW || Set size constraints on children of PartSashContainer...
+|-
+| 14 || {{bug|449662}} || 4.5 M7 || normal || simon.scholz || NEW || [FilteredTree] Use FilteredTree from org.eclipse.e4.ui.dialogs in platform.ui...
+|-
+| 15 || {{bug|442961}} || 4.5 M7 || normal || lars.vogel || NEW || Mark IContextComputer for deletion...
+|-
+| 16 || {{bug|460005}} || 4.5 M7 || normal || lars.vogel || NEW || Use blocks for single statements in org.eclipse.e4.ui.workbench.addons.swt...
+|-
+| 17 || {{bug|450914}} || 4.5 M7 || normal || lars.vogel || NEW || Remove org.eclipse.e4.ui.workbench.swt.internal.copy package...
+|-
+| 18 || {{bug|448275}} || 4.5 M7 || normal || lars.vogel || NEW || Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion...
+|-
+| 19 || {{bug|460886}} || 4.5 M7 || normal || dirk.fauth || NEW || Update EventBroker usage in MenuManagerRenderer...
+|-
+| 20 || {{bug|431376}} || 4.5 M7 || normal || simon.scholz || NEW || Move 'PERSPECTIVE_STACK_ID' from IWorkbenchConstants to IPageLayout to expose it as API...
+|-
+| 21 || {{bug|452765}} || 4.5 M7 || normal || platform-ui-triaged || NEW || [Tests] org.eclipse.e4.ui.menu.tests are failing...
+|-
+| 22 || {{bug|448832}} || 4.5 M7 || normal || lars.vogel || NEW || [Tests] [Workbench] Migrate org.eclipse.e4.ui.tests to JUnit 4...
+|-
+| 23 || {{bug|440247}} || 4.5 M7 || normal || simon.scholz || NEW || [Themes] Dark - Setting SWT colors for the Javadoc popup...
+|-
+| 24 || {{bug|453573}} || 4.5 M7 || enhancement || lars.vogel || NEW || [QuickAccess] Allow product builders to have the Quick Access Bar not shown by default...
+|-
+| 25 || {{bug|448889}} || 4.5 M7 || normal || platform-ui-triaged || NEW || [RCP] [Tests] org.eclipse.ui.tests.rcp are failling...
+|-
+| 26 || {{bug|441135}} || 4.5 M7 || major || platform-ui-triaged || NEW || [CSS] Syntax coloring preferences and annotation preferences not persisted on Dark theme...
+|-
+| 27 || {{bug|459479}} || 4.5 M7 || normal || Platform-UI-Inbox || NEW || "[PropertiesView] IWorkbenchPage#findView(""org.eclipse.ui.views.PropertySheet"") doesn't work anymo...
+|-
+| 28 || {{bug|401043}} || 4.5 M7 || normal || lars.vogel || REOPENED || [Model] Replace container data with persistentData...
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:36 CET 2015'''
+
+== 4.5 RC1 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || {{bug|439743}} || 4.5 RC1 || normal || lars.vogel || NEW || Add removal of ICompatibleWorkbenchPage and org.eclipse.ui.workbench.compatibility to Migration guid...
+|-
+| 2 || {{bug|457134}} || 4.5 RC1 || normal || lars.vogel || NEW || Mark IPlatformRunnable for deletion...
+|-
+| 3 || {{bug|442959}} || 4.5 RC1 || normal || lars.vogel || NEW || "[Workbench] Mark WorkbenchHelp, IHelp and related API for deletion"...
+|-
+| 4 || {{bug|453520}} || 4.5 RC1 || normal || lars.vogel || NEW || [Tests] [CSS] Activate org.eclipse.e4.ui.tests.css.swt tests during Tycho build...
+|-
+| 5 || {{bug|457868}} || 4.5 RC1 || enhancement || lars.vogel || NEW || [Tests] Activate org.eclipse.ui.tests.navigator tests during Tycho build...
+|-
+| 6 || {{bug|446433}} || 4.5 RC1 || normal || lars.vogel || REOPENED || [Help] Update /org.eclipse.platform.doc.isv/porting/removals.html...
+|-
+| 7 || {{bug|407432}} || 4.5 RC1 || normal || lars.vogel || REOPENED || [Metadata] Remove Broken Externalized Strings from UI bundles...
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:36 CET 2015'''
+
+== 4.5 RC2 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || {{bug|460982}} || 4.5 RC2 || normal || Platform-UI-Inbox || NEW || [Tests] Activate org.eclipse.ua.tests during Tycho build...
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:37 CET 2015'''
+
+== 4.5 RC3 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:38 CET 2015'''
+
+== 4.5 RC4 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:38 CET 2015'''
+
+== 4.6 ==
+
+{| class="wikitable sortable" border="1"
+|-
+! !! Bug !! TM !! Sev !! Assign !! Status !! Title
+|-
+| 1 || {{bug|436505}} || 4.6 || normal || lars.vogel || NEW || [Eclipse 4.6] Delete TableTreeViewer and related classes / methods in Eclipse 4.6...
+|-
+| 2 || {{bug|445757}} || 4.6 || normal || lars.vogel || NEW || Formatter and save actions for platform.ui plug-ins...
+|-
+| 3 || {{bug|457002}} || 4.6 || normal || lars.vogel || NEW || [About] Make AboutDialog available for Eclipse 4 RCP application...
+|-
+| 4 || {{bug|441244}} || 4.6 || normal || lars.vogel || NEW || Remove unnecessary (non-Javadoc) statements...
+|-
+| 5 || {{bug|448143}} || 4.6 || normal || simon.scholz || NEW || CellModifier API should be removed from Platform code...
+|-
+| 6 || {{bug|234331}} || 4.6 || enhancement || lars.vogel || ASSIGNED || [Viewers] IStructuredSelection should be Iterable...
+|-
+|}
+
+Last Generated on '''Fr 27. Feb 00:14:39 CET 2015'''
+

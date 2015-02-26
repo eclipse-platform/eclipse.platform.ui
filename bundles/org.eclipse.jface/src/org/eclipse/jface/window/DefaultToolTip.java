@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Event;
 /**
  * Default implementation of ToolTip that provides an iconofied label with font
  * and color controls by subclass.
- * 
+ *
  * @since 3.3
  */
 public class DefaultToolTip extends ToolTip {
@@ -44,7 +44,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * Create new instance which add TooltipSupport to the widget
-	 * 
+	 *
 	 * @param control the control on whose action the tooltip is shown
 	 */
 	public DefaultToolTip(Control control) {
@@ -53,7 +53,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * Create new instance which add TooltipSupport to the widget
-	 * 
+	 *
 	 * @param control the control to which the tooltip is bound
 	 * @param style style passed to control tooltip behaviour
 	 * @param manualActivation <code>true</code> if the activation is done manually using
@@ -64,7 +64,7 @@ public class DefaultToolTip extends ToolTip {
 	public DefaultToolTip(Control control, int style, boolean manualActivation) {
 		super(control, style, manualActivation);
 	}
-	
+
 	/**
 	 * Creates the content are of the the tooltip. By default this creates a
 	 * CLabel to display text. To customize the text Subclasses may override the
@@ -78,7 +78,7 @@ public class DefaultToolTip extends ToolTip {
 	 * <li>{@link #getText(Event)}</li>
 	 * <li>{@link #getBackgroundImage(Event)}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param event
 	 *            the event that triggered the activation of the tooltip
 	 * @param parent
@@ -124,7 +124,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * The style used to create the {@link CLabel} in the default implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the style
@@ -136,7 +136,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The {@link Image} displayed in the {@link CLabel} in the default
 	 * implementation implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the {@link Image} or <code>null</code> if no image should be
@@ -149,7 +149,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The foreground {@link Color} used by {@link CLabel} in the default
 	 * implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the {@link Color} or <code>null</code> if default foreground
@@ -163,7 +163,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The background {@link Color} used by {@link CLabel} in the default
 	 * implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the {@link Color} or <code>null</code> if default background
@@ -177,7 +177,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The background {@link Image} used by {@link CLabel} in the default
 	 * implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the {@link Image} or <code>null</code> if no image should be
@@ -189,7 +189,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * The {@link Font} used by {@link CLabel} in the default implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the {@link Font} or <code>null</code> if the default font
@@ -201,7 +201,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * The text displayed in the {@link CLabel} in the default implementation
-	 * 
+	 *
 	 * @param event
 	 *            the event triggered the popup of the tooltip
 	 * @return the text or <code>null</code> if no text has to be displayed
@@ -213,7 +213,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The background {@link Image} used by {@link CLabel} in the default
 	 * implementation
-	 * 
+	 *
 	 * @param backgroundColor
 	 *            the {@link Color} or <code>null</code> if default background
 	 *            color ({@link SWT#COLOR_INFO_BACKGROUND}) should be used
@@ -225,7 +225,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The background {@link Image} used by {@link CLabel} in the default
 	 * implementation
-	 * 
+	 *
 	 * @param backgroundImage
 	 *            the {@link Image} or <code>null</code> if no image should be
 	 *            displayed in the background
@@ -236,7 +236,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * The {@link Font} used by {@link CLabel} in the default implementation
-	 * 
+	 *
 	 * @param font
 	 *            the {@link Font} or <code>null</code> if the default font
 	 *            should be used
@@ -248,7 +248,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The foreground {@link Color} used by {@link CLabel} in the default
 	 * implementation
-	 * 
+	 *
 	 * @param foregroundColor
 	 *            the {@link Color} or <code>null</code> if default foreground
 	 *            color should be used
@@ -260,7 +260,7 @@ public class DefaultToolTip extends ToolTip {
 	/**
 	 * The {@link Image} displayed in the {@link CLabel} in the default
 	 * implementation implementation
-	 * 
+	 *
 	 * @param image
 	 *            the {@link Image} or <code>null</code> if no image should be
 	 *            displayed
@@ -271,7 +271,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * The style used to create the {@link CLabel} in the default implementation
-	 * 
+	 *
 	 * @param style
 	 *            the event triggered the popup of the tooltip
 	 */
@@ -281,7 +281,7 @@ public class DefaultToolTip extends ToolTip {
 
 	/**
 	 * The text displayed in the {@link CLabel} in the default implementation
-	 * 
+	 *
 	 * @param text
 	 *            the text or <code>null</code> if no text has to be displayed
 	 */

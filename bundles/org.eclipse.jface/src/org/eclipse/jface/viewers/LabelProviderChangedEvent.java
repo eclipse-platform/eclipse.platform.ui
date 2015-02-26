@@ -24,7 +24,7 @@ public class LabelProviderChangedEvent extends EventObject {
      * @since 3.1
      */
     private static final long serialVersionUID = 3258410612479309878L;
-    
+
     /**
      * The elements whose labels need to be updated or <code>null</code>.
      */

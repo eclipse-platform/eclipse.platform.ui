@@ -94,7 +94,7 @@ public abstract class CellEditor {
 	/**
 	 * Struct-like layout data for cell editors, with reasonable defaults for
 	 * all fields.
-	 * 
+	 *
 	 * @noextend This class is not intended to be subclassed by clients.
 	 */
 	public static class LayoutData {

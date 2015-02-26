@@ -839,9 +839,9 @@ public class TreeViewer extends AbstractTreeViewer {
 							continue;
 						if (index < parentItem.getItemCount()) {
 							TreeItem item = parentItem.getItem(index);
-							
+
 							if (item.getData() == null) {
-								// If getData()==null and index == 0, and the 
+								// If getData()==null and index == 0, and the
 								// parent item is collapsed, then we are
 								// being asked to remove the dummy node. We'll
 								// just ignore the request to remove the dummy
@@ -886,7 +886,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		if( isCellEditorActive() ) {
 			applyEditorValue();
 		}
-		
+
 		if (contentProviderIsLazy) {
 			if (event.item.getData() != null) {
 				Item[] children = getChildren(event.item);
@@ -902,7 +902,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		super.handleTreeExpand(event);
 	}
-	
+
 	@Override
 	protected void handleTreeCollapse(TreeEvent event) {
 		// Fix for Bug 271744 because windows is firing collapse before
@@ -910,7 +910,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		if( isCellEditorActive() ) {
 			applyEditorValue();
 		}
-		
+
 		super.handleTreeCollapse(event);
 	}
 

@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * This is an editor-implementation for {@link Table}
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public final class TableViewerEditor extends ColumnViewerEditor {
 	/**
@@ -57,7 +57,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor with focusable cells
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param focusCellManager
@@ -89,7 +89,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor whose activation process is customized
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param editorActivationStrategy

@@ -23,11 +23,11 @@ import org.eclipse.swt.widgets.Text;
 /**
  * The DialogMessageArea is a resusable component for adding an accessible
  * message area to a dialog.
- * 
+ *
  * When the message is normal a CLabel is used but an errors replaces the
  * message area with a non editable text that can take focus for use by screen
  * readers.
- * 
+ *
  * @since 3.0
  */
 public class DialogMessageArea extends Object {
@@ -52,12 +52,12 @@ public class DialogMessageArea extends Object {
 
     /**
      * Create the contents for the receiver.
-     * 
+     *
      * @param parent
      *            the Composite that the children will be created in
      */
     public void createContents(Composite parent) {
-       
+
         // Message label
         titleLabel = new CLabel(parent, SWT.NONE);
         titleLabel.setFont(JFaceResources.getBannerFont());
@@ -73,20 +73,20 @@ public class DialogMessageArea extends Object {
                 .getImage(Dialog.DLG_IMG_MESSAGE_INFO));
         messageImageLabel.setLayoutData(new GridData(
                 GridData.VERTICAL_ALIGN_CENTER));
-  
+
         messageText = new Text(messageComposite, SWT.NONE);
         messageText.setEditable(false);
-  
+
         GridData textData = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
         messageText.setLayoutData(textData);
-  
+
     }
 
     /**
      * Set the layoutData for the title area. In most cases this will be a copy
      * of the layoutData used in setMessageLayoutData.
-     * 
+     *
      * @param layoutData
      *            the layoutData for the title
      * @see #setMessageLayoutData(Object)
@@ -98,7 +98,7 @@ public class DialogMessageArea extends Object {
     /**
      * Set the layoutData for the messageArea. In most cases this will be a copy
      * of the layoutData used in setTitleLayoutData.
-     * 
+     *
      * @param layoutData
      *            the layoutData for the message area composite.
      * @see #setTitleLayoutData(Object)
@@ -109,7 +109,7 @@ public class DialogMessageArea extends Object {
 
     /**
      * Show the title.
-     * 
+     *
      * @param titleMessage
      *            String for the titke
      * @param titleImage
@@ -135,7 +135,7 @@ public class DialogMessageArea extends Object {
     /**
      * Show the new message in the message text and update the image. Base the
      * background color on whether or not there are errors.
-     * 
+     *
      * @param newMessage
      *            The new value for the message
      * @param newType
@@ -180,14 +180,14 @@ public class DialogMessageArea extends Object {
         messageText.setText(Dialog.shortenText(newMessage,messageText));
         messageText.setToolTipText(newMessage);
         lastMessageText = newMessage;
- 
+
     }
 
 
     /**
      * Clear the error message. Restore the previously displayed message if
      * there is one, if not restore the title label.
-     *  
+     *
      */
     public void clearErrorMessage() {
         if (lastMessageText == null) {

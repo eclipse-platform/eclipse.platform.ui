@@ -89,10 +89,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
-	
+
 	/**
 	 * Indicates if filters should be checked to determine expandability of
-	 * a tree node. 
+	 * a tree node.
 	 */
 	private boolean isExpandableCheckFilters = false;
 
@@ -365,10 +365,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// start position. This is the insertion position relative to the
 		// original item array.
 		int indexInItems = 0;
-		
+
 		// Count of elements we have added. See bug 205700 for why this is needed.
 		int newItems = 0;
-		
+
 		elementloop: for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			// update the index relative to the original item array
@@ -761,7 +761,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void createChildren(final Widget widget) {
 		createChildren(widget, true);
 	}
-	
+
 	/**
 	 * Creates all children for the given widget.
 	 * <p>
@@ -773,7 +773,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @param widget
 	 *            the widget
-	 * @param materialize 
+	 * @param materialize
 	 * 			  true if children are expected to be fully materialized
 	 */
 	void createChildren(final Widget widget, boolean materialize) {
@@ -1385,12 +1385,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Asserts that the given array of elements is itself non- <code>null</code>
 	 * and contains no <code>null</code> elements.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent element
 	 * @param elements
 	 *            the array to check
-	 * 
+	 *
 	 * @see #assertElementsNotNull(Object[])
 	 */
 	private void assertElementsNotNull(Object parent, Object[] elements) {
@@ -1398,7 +1398,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		for (int i = 0, n = elements.length; i < n; ++i) {
 			Assert.isNotNull(elements[i]);
 		}
-		
+
 		if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS
 				&& elements.length > 1) {
 			CustomHashtable elementSet = newHashtable(elements.length * 2);
@@ -1416,7 +1416,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns all selected items for the given SWT control.
 	 *
@@ -2358,7 +2358,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Note that in previous releases, the Javadoc for this method had an off-by
 	 * one error. See bug 177669 for details.
 	 * </p>
-	 * 
+	 *
 	 * @param level
 	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
 	 *            levels of the tree
@@ -2657,7 +2657,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		Item[] items = getChildren(widget);
-		
+
 		// save the expanded elements
 		CustomHashtable expanded = newHashtable(CustomHashtable.DEFAULT_CAPACITY); // assume
 																					// num
@@ -2832,12 +2832,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Not to be called by clients. Return the items to be refreshed as part of
 	 * an update. elementChildren are the new elements.
-	 * 
+	 *
 	 * @param widget
 	 * @param elementChildren
 	 * @since 3.4
 	 * @return Item[]
-	 * 
+	 *
 	 * @deprecated This method was inadvertently released as API but is not
 	 *             intended to be called by clients.
 	 */
@@ -3211,10 +3211,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Setting this value to <code>true</code> will affect performance of the tree
 	 * viewer.
 	 * </p><p>
-	 * To improve performance, by default the tree viewer does not consult filters when 
+	 * To improve performance, by default the tree viewer does not consult filters when
 	 * determining if a tree node could be expanded.
 	 * </p>
-	 * @param checkFilters <code>true</code> to instruct tree viewer to consult filters 
+	 * @param checkFilters <code>true</code> to instruct tree viewer to consult filters
 	 * @see #isExpandable(Object)
 	 * @since 3.8
 	 */

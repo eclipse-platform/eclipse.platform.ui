@@ -17,7 +17,7 @@ package org.eclipse.jface.action;
  * A contribution manager keeps track of a list of contribution
  * items. Each contribution item may has an optional identifier, which can be used
  * to retrieve items from a manager, and for positioning items relative to
- * each other. The list of contribution items can be subdivided into named groups 
+ * each other. The list of contribution items can be subdivided into named groups
  * using special contribution items that serve as group markers.
  * </p>
  * <p>
@@ -92,14 +92,14 @@ public interface IContributionManager {
 
     /**
      * Returns the overrides for the items of this manager.
-     * 
+     *
      * @return the overrides for the items of this manager
-     * @since 2.0 
+     * @since 2.0
      */
     public IContributionManagerOverrides getOverrides();
 
     /**
-     * Inserts a contribution item for the given action after the item 
+     * Inserts a contribution item for the given action after the item
      * with the given id.
      * Equivalent to
      * <code>insertAfter(id,new ActionContributionItem(action))</code>.
@@ -122,7 +122,7 @@ public interface IContributionManager {
     public void insertAfter(String id, IContributionItem item);
 
     /**
-     * Inserts a contribution item for the given action before the item 
+     * Inserts a contribution item for the given action before the item
      * with the given id.
      * Equivalent to
      * <code>insertBefore(id,new ActionContributionItem(action))</code>.
@@ -167,7 +167,7 @@ public interface IContributionManager {
     public void markDirty();
 
     /**
-     * Adds a contribution item for the given action at the beginning of the 
+     * Adds a contribution item for the given action at the beginning of the
      * group with the given name.
      * Equivalent to
      * <code>prependToGroup(groupName,new ActionContributionItem(action))</code>.
@@ -180,7 +180,7 @@ public interface IContributionManager {
     public void prependToGroup(String groupName, IAction action);
 
     /**
-     * Adds a contribution item to this manager at the beginning of the 
+     * Adds a contribution item to this manager at the beginning of the
      * group with the given name.
      *
      * @param groupName the name of the group
@@ -191,7 +191,7 @@ public interface IContributionManager {
     public void prependToGroup(String groupName, IContributionItem item);
 
     /**
-     * Removes and returns the contribution item with the given id from this manager.  
+     * Removes and returns the contribution item with the given id from this manager.
      * Returns <code>null</code> if this manager has no contribution items
      * with the given id.
      *

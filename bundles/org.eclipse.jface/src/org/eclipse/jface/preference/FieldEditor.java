@@ -31,14 +31,14 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Abstract base class for all field editors.
  * <p>
- * A field editor presents the value of a preference to the end 
+ * A field editor presents the value of a preference to the end
  * user. The value is loaded from a preference store; if
  * modified by the end user, the value is validated and eventually
  * stored back to the preference store. A field editor reports
  * an event when the value, or the validity of the value, changes.
  * </p>
  * <p>
- * Field editors should be used in conjunction with a field 
+ * Field editors should be used in conjunction with a field
  * editor preference page (<code>FieldEditorPreferencePage</code>)
  * which coordinates everything and provides the message line
  * which display messages emanating from the editor.
@@ -73,7 +73,7 @@ public abstract class FieldEditor {
      */
     public static final String VALUE = "field_editor_value";//$NON-NLS-1$
 
-    /** 
+    /**
      * Gap between label and control.
      */
     protected static final int HORIZONTAL_GAP = 8;
@@ -109,7 +109,7 @@ public abstract class FieldEditor {
      */
     private IPropertyChangeListener propertyChangeListener;
 
-    /** 
+    /**
      * The page containing this field editor
      */
     private DialogPage page;
@@ -122,7 +122,7 @@ public abstract class FieldEditor {
 
     /**
      * Creates a new field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -135,11 +135,11 @@ public abstract class FieldEditor {
     /**
      * Adjusts the horizontal span of this field editor's basic controls.
      * <p>
-     * Subclasses must implement this method to adjust the horizontal span 
+     * Subclasses must implement this method to adjust the horizontal span
      * of controls so they appear correct in the given number of columns.
      * </p>
      * <p>
-     * The number of columns will always be equal to or greater than the 
+     * The number of columns will always be equal to or greater than the
      * value returned by this editor's <code>getNumberOfControls</code> method.
      *
      * @param numColumns the number of columns
@@ -276,7 +276,7 @@ public abstract class FieldEditor {
      * Initializes this field editor with the preference value from
      * the preference store.
      * <p>
-     * Subclasses must implement this method to properly initialize 
+     * Subclasses must implement this method to properly initialize
      * the field editor.
      * </p>
      */
@@ -286,7 +286,7 @@ public abstract class FieldEditor {
      * Initializes this field editor with the default preference value from
      * the preference store.
      * <p>
-     * Subclasses must implement this method to properly initialize 
+     * Subclasses must implement this method to properly initialize
      * the field editor.
      * </p>
      */
@@ -303,7 +303,7 @@ public abstract class FieldEditor {
     protected abstract void doStore();
 
     /**
-     * Fills this field editor's basic controls into the given parent. 
+     * Fills this field editor's basic controls into the given parent.
      *
      * @param parent the composite used as a parent for the basic controls;
      *	the parent's layout must be a <code>GridLayout</code>
@@ -320,7 +320,7 @@ public abstract class FieldEditor {
      * one of this field editor's boolean-valued properties. Does nothing
      * if the old and new values are the same.
      *
-     * @param property the field editor property name, 
+     * @param property the field editor property name,
      *   such as <code>VALUE</code> or <code>IS_VALID</code>
      * @param oldValue the old value
      * @param newValue the new value
@@ -337,7 +337,7 @@ public abstract class FieldEditor {
      * Informs this field editor's listener, if it has one, about a change to
      * one of this field editor's properties.
      *
-     * @param property the field editor property name, 
+     * @param property the field editor property name,
      *   such as <code>VALUE</code> or <code>IS_VALID</code>
      * @param oldValue the old value object, or <code>null</code>
      * @param newValue the new value, or <code>null</code>
@@ -361,7 +361,7 @@ public abstract class FieldEditor {
     }
 
     /**
-     * Returns the label control. 
+     * Returns the label control.
      *
      * @return the label control, or <code>null</code>
      *  if no label control has been created
@@ -438,14 +438,14 @@ public abstract class FieldEditor {
 		}
     	return null;
     }
-    
+
     /**
      * Return the DialogPage that the receiver is sending
      * updates to.
-     * 
-     * @return DialogPage or <code>null</code> if it 
+     *
+     * @return DialogPage or <code>null</code> if it
      * has not been set.
-     * 
+     *
      * @since 3.1
      */
     protected DialogPage getPage(){
@@ -464,7 +464,7 @@ public abstract class FieldEditor {
 
     /**
      * Initialize the field editor with the given preference name and label.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param text the label text of the field editor
      */
@@ -483,7 +483,7 @@ public abstract class FieldEditor {
      * validation should override both this method and
      * <code>refreshValidState</code>.
      * </p>
-     * 
+     *
      * @return <code>true</code> if the field value is valid,
      *   and <code>false</code> if invalid
      * @see #refreshValidState()
@@ -519,7 +519,7 @@ public abstract class FieldEditor {
     /**
      * Returns whether this field editor currently presents the
      * default value for its preference.
-     * 
+     *
      * @return <code>true</code> if the default value is presented,
      *   and <code>false</code> otherwise
      */
@@ -599,17 +599,17 @@ public abstract class FieldEditor {
 	public void setPreferencePage(PreferencePage preferencePage) {
         setPage(preferencePage);
     }
-    
+
 
     /**
      * Set the page to be the receiver.
 	 * @param dialogPage
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setPage(DialogPage dialogPage) {
 		page = dialogPage;
-		
+
 	}
 
 	/**

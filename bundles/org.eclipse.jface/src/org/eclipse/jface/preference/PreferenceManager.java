@@ -32,7 +32,7 @@ public class PreferenceManager {
      * Post-order means visit the children, and then the root.
      */
     public static final int POST_ORDER = 1;
-    
+
     /**
      * The id of the root node.
      */
@@ -57,14 +57,14 @@ public class PreferenceManager {
     public PreferenceManager() {
         this('.', new PreferenceNode(ROOT_NODE_ID));
     }
-    
+
     /**
      * Creates a new preference manager with the given
      * path separator.
-     * 
+     *
      * @param separatorChar
      */
-    public PreferenceManager(final char separatorChar) { 
+    public PreferenceManager(final char separatorChar) {
     	this(separatorChar, new PreferenceNode(ROOT_NODE_ID));
     }
 
@@ -73,7 +73,7 @@ public class PreferenceManager {
      * path separator and root node.
      *
      * @param separatorChar the separator character
-     * @param rootNode the root node. 
+     * @param rootNode the root node.
      *
      * @since 3.4
      */
@@ -105,7 +105,7 @@ public class PreferenceManager {
      * Adds the given preference node as a subnode of the
      * root.
      *
-     * @param node the node to add, which must implement 
+     * @param node the node to add, which must implement
      *   <code>IPreferenceNode</code>
      */
     public void addToRoot(IPreferenceNode node) {
@@ -116,12 +116,12 @@ public class PreferenceManager {
     /**
      * Recursively enumerates all nodes at or below the given node
      * and adds them to the given list in the given order.
-     * 
+     *
      * @param node the starting node
      * @param sequence a read-write list of preference nodes
      *  (element type: <code>IPreferenceNode</code>)
      *  in the given order
-     * @param order the traversal order, one of 
+     * @param order the traversal order, one of
      *	<code>PRE_ORDER</code> and <code>POST_ORDER</code>
      */
     protected void buildSequence(IPreferenceNode node, List<IPreferenceNode> sequence, int order) {
@@ -146,7 +146,7 @@ public class PreferenceManager {
     public IPreferenceNode find(String path) {
        return find(path,root);
     }
-    
+
     /**
      * Finds and returns the preference node directly
      * below the top at the given path.
@@ -154,7 +154,7 @@ public class PreferenceManager {
      * @param path the path
      * @param top top at the given path
      * @return the node, or <code>null</code> if none
-     * 
+     *
      * @since 3.1
      */
     protected IPreferenceNode find(String path,IPreferenceNode top){
@@ -178,7 +178,7 @@ public class PreferenceManager {
      * Returns all preference nodes managed by this
      * manager.
      *
-     * @param order the traversal order, one of 
+     * @param order the traversal order, one of
      *	<code>PRE_ORDER</code> and <code>POST_ORDER</code>
      * @return a list of preference nodes
      *  (element type: <code>IPreferenceNode</code>)
@@ -209,7 +209,7 @@ public class PreferenceManager {
 
 	/**
 	 * Returns the root level nodes of this preference manager.
-	 * 
+	 *
 	 * @return an array containing the root nodes
 	 * @since 3.2
 	 */
@@ -219,7 +219,7 @@ public class PreferenceManager {
 
     /**
 	 * Removes the preference node at the given path.
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return the node that was removed, or <code>null</code> if there was no

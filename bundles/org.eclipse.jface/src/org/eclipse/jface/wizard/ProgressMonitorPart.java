@@ -82,20 +82,20 @@ public class ProgressMonitorPart extends Composite implements
 			}
         }
     };
-    
+
     /** toolbar for managing stop button **/
     private ToolBar fToolBar;
 
     /** default tool item for canceling tasks **/
 	private ToolItem fStopButton;
-	
+
 	/** <code>true</code> if this monitor part should show stop button **/
 	private boolean fHasStopButton = false;
 
 
 	/**
 	 * Creates a <code>ProgressMonitorPart</code> that does not provide a stop button.
-	 * 
+	 *
 	 * @param parent The SWT parent of the part.
 	 * @param layout The SWT grid layout used by the part. A client can supply the layout to control
 	 *            how the progress monitor part is laid out. If <code>null</code> is passed the part
@@ -107,7 +107,7 @@ public class ProgressMonitorPart extends Composite implements
 
 	/**
 	 * Creates a <code>ProgressMonitorPart</code> that does not provide a stop button.
-	 * 
+	 *
 	 * @param parent The SWT parent of the part.
 	 * @param layout The SWT grid layout used by the part. A client can supply the layout to control
 	 *            how the progress monitor part is laid out. If <code>null</code> is passed the part
@@ -123,7 +123,7 @@ public class ProgressMonitorPart extends Composite implements
 
 	/**
 	 * Creates a <code>ProgressMonitorPart</code>.
-	 * 
+	 *
 	 * @param parent the SWT parent of the part
 	 * @param layout the SWT grid layout used by the part. A client can supply the layout to control
 	 *            how the progress monitor part is laid out. If <code>null</code> is passed the part
@@ -131,7 +131,7 @@ public class ProgressMonitorPart extends Composite implements
 	 * @param createStopButton <code>true</code> if the progress indicator should include a stop
 	 *            button that can be used to cancel any currently running task, and
 	 *            <code>false</code> if no such stop button should be created.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public ProgressMonitorPart(Composite parent, Layout layout, boolean createStopButton) {
@@ -142,7 +142,7 @@ public class ProgressMonitorPart extends Composite implements
 
 	/**
 	 * Attaches the progress monitor part to the given cancel component.
-	 * 
+	 *
 	 * @param cancelComponent the control whose selection will trigger a cancel. This parameter will
 	 *            be ignored and hence can be <code>null</code> if a stop button was requested upon
 	 *            construction and instead the stop button will enabled and serve as the cancel
@@ -226,13 +226,13 @@ public class ProgressMonitorPart extends Composite implements
         if (fHasStopButton)
         	numColumns++;
         setLayout(layout);
-        
+
         if (layout instanceof GridLayout)
         	((GridLayout)layout).numColumns = numColumns;
 
         fLabel = new Label(this, SWT.LEFT);
         fLabel.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, numColumns, 1));
-		
+
         if (progressIndicatorHeight == SWT.DEFAULT) {
             GC gc = new GC(fLabel);
             FontMetrics fm = gc.getFontMetrics();
@@ -298,7 +298,7 @@ public class ProgressMonitorPart extends Composite implements
 
 	/**
 	 * Detach the progress monitor part from the given cancel component.
-	 * 
+	 *
 	 * @param cancelComponent the control that was previously used as a cancel component. This
 	 *            parameter will be ignored and hence can be <code>null</code> if a stop button was
 	 *            requested upon construction and instead the stop button will be disabled.
@@ -360,16 +360,16 @@ public class ProgressMonitorPart extends Composite implements
     private String taskLabel() {
     	boolean hasTask= fTaskName != null && fTaskName.length() > 0;
     	boolean hasSubtask= fSubTaskName != null && fSubTaskName.length() > 0;
-    	
+
 		if (hasTask) {
 			if (hasSubtask)
 				return escapeMetaCharacters(JFaceResources.format(
     					"Set_SubTask", new Object[] { fTaskName, fSubTaskName }));//$NON-NLS-1$
    			return escapeMetaCharacters(fTaskName);
-   			
+
     	} else if (hasSubtask) {
     		return escapeMetaCharacters(fSubTaskName);
-    	
+
     	} else {
     		return ""; //$NON-NLS-1$
     	}
@@ -393,7 +393,7 @@ public class ProgressMonitorPart extends Composite implements
         updateLabel();
 
     }
-    
+
    private void setCancelEnabled(boolean enabled) {
     	if (fStopButton != null && !fStopButton.isDisposed()) {
     		fStopButton.setEnabled(enabled);

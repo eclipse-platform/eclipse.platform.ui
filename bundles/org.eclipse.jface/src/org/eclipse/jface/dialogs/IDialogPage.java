@@ -51,7 +51,7 @@ public interface IDialogPage {
     /**
      * Returns this dialog page's description text.
      *
-     * @return the description text for this dialog page, 
+     * @return the description text for this dialog page,
      *  or <code>null</code> if none
      */
     public String getDescription();
@@ -64,7 +64,7 @@ public interface IDialogPage {
      * as opposed to a message which may simply provide instruction
      * or information to the user.
      * </p>
-     * 
+     *
      * @return the error message, or <code>null</code> if none
      */
     public String getErrorMessage();
@@ -80,11 +80,11 @@ public interface IDialogPage {
     /**
      * Returns the current message for this wizard page.
      * <p>
-     * A message provides instruction or information to the 
-     * user, as opposed to an error message which should 
+     * A message provides instruction or information to the
+     * user, as opposed to an error message which should
      * describe some error state.
      * </p>
-     * 
+     *
      * @return the message, or <code>null</code> if none
      */
     public String getMessage();
@@ -92,7 +92,7 @@ public interface IDialogPage {
     /**
      * Returns this dialog page's title.
      *
-     * @return the title of this dialog page, 
+     * @return the title of this dialog page,
      *  or <code>null</code> if none
      */
     public String getTitle();
@@ -104,7 +104,7 @@ public interface IDialogPage {
 
     /**
      * Sets this dialog page's description text.
-     * 
+     *
      * @param description the description text for this dialog
      *  page, or <code>null</code> if none
      */
@@ -113,7 +113,7 @@ public interface IDialogPage {
     /**
      * Sets this dialog page's image.
      *
-     * @param image the image for this dialog page, 
+     * @param image the image for this dialog page,
      *  or <code>null</code> if none
      */
     public void setImageDescriptor(ImageDescriptor image);
@@ -121,7 +121,7 @@ public interface IDialogPage {
     /**
      * Set this dialog page's title.
      *
-     * @param title the title of this dialog page, 
+     * @param title the title of this dialog page,
      *  or <code>null</code> if none
      */
     public void setTitle(String title);

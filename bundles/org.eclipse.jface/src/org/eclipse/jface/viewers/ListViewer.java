@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
  * Note that the SWT <code>List</code> control only supports the display of strings, not icons.
  * If you need to show icons for items, use <code>TableViewer</code> instead.
  * </p>
- * 
+ *
  * @see TableViewer
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -46,7 +46,7 @@ public class ListViewer extends AbstractListViewer {
     /**
      * Creates a list viewer on a newly-created list control under the given parent.
      * The list control is created using the SWT style bits <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param parent the parent control
@@ -58,7 +58,7 @@ public class ListViewer extends AbstractListViewer {
     /**
      * Creates a list viewer on a newly-created list control under the given parent.
      * The list control is created using the given SWT style bits.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param parent the parent control
@@ -70,7 +70,7 @@ public class ListViewer extends AbstractListViewer {
 
     /**
      * Creates a list viewer on the given list control.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param list the list control

@@ -11,8 +11,8 @@
 package org.eclipse.jface.viewers;
 
 /**
- * An abstract column layout data describing the information needed 
- * (by <code>TableLayout</code>) to properly lay out a table. 
+ * An abstract column layout data describing the information needed
+ * (by <code>TableLayout</code>) to properly lay out a table.
  * <p>
  * This class is not intended to be subclassed outside the framework.
  * </p>

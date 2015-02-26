@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Text;
  * An {@link IControlContentAdapter} for SWT Text controls. This is a
  * convenience class for easily creating a {@link ContentProposalAdapter} for
  * text fields.
- * 
+ *
  * @since 3.2
  */
 public class TextContentAdapter implements IControlContentAdapter,
@@ -72,7 +72,7 @@ public class TextContentAdapter implements IControlContentAdapter,
 
 	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#getSelection(org.eclipse.swt.widgets.Control)
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	@Override
@@ -83,7 +83,7 @@ public class TextContentAdapter implements IControlContentAdapter,
 	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#setSelection(org.eclipse.swt.widgets.Control,
 	 *      org.eclipse.swt.graphics.Point)
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	@Override

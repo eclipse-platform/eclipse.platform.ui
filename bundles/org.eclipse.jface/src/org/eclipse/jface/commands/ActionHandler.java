@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Event;
  * <p>
  * This class adapts instances of <code>IAction</code> to <code>IHandler</code>.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ActionHandler extends AbstractHandler {
@@ -44,7 +44,7 @@ public final class ActionHandler extends AbstractHandler {
 	/**
 	 * Creates a new instance of this class given an instance of
 	 * <code>IAction</code>.
-	 * 
+	 *
 	 * @param action
 	 *            the action. Must not be <code>null</code>.
 	 */
@@ -68,7 +68,7 @@ public final class ActionHandler extends AbstractHandler {
 	/**
 	 * When a listener is attached to this handler, then this registers a
 	 * listener with the underlying action.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private final void attachListener() {
@@ -99,7 +99,7 @@ public final class ActionHandler extends AbstractHandler {
 
 	/**
 	 * Removes the property change listener from the action.
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
 	@Override
@@ -132,7 +132,7 @@ public final class ActionHandler extends AbstractHandler {
 
 	/**
 	 * Returns the action associated with this handler
-	 * 
+	 *
 	 * @return the action associated with this handler (not null)
 	 * @since 3.1
 	 */

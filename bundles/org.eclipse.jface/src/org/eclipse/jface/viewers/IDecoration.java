@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Font;
 
 /**
  * Defines the result of decorating an element.
- * 
+ *
  * This interface is not meant to be implemented and will be provided to
  * instances of <code>ILightweightLabelDecorator</code>.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -55,24 +55,24 @@ public interface IDecoration{
 	 * model). If replacement behavior is enabled, the resulting decorated image
 	 * will be constructed by first painting the underlay, then the replacement
 	 * image, and then the regular quadrant images.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final int REPLACE = 5;
-	
+
 	/**
 	 * Constant that is used as the property key on an
 	 * {@link IDecorationContext}. To enable image replacement, set to
 	 * {@link Boolean#TRUE}.
-	 * 
+	 *
 	 * @since 3.4
 	 * @see IDecorationContext
 	 */
 	public static final String ENABLE_REPLACE = "org.eclipse.jface.viewers.IDecoration.disableReplace"; //$NON-NLS-1$
-	
+
 	/**
 	 * Adds a prefix to the element's label.
-	 * 
+	 *
 	 * @param prefix
 	 *            the prefix
 	 */
@@ -80,7 +80,7 @@ public interface IDecoration{
 
 	/**
 	 * Adds a suffix to the element's label.
-	 * 
+	 *
 	 * @param suffix
 	 *            the suffix
 	 */
@@ -88,7 +88,7 @@ public interface IDecoration{
 
 	/**
 	 * Adds an overlay to the element's image.
-	 * 
+	 *
 	 * @param overlay
 	 *            the overlay image descriptor
 	 */
@@ -96,34 +96,34 @@ public interface IDecoration{
 
 	/**
 	 * Adds an overlay to the element's image.
-	 * 
+	 *
 	 * @param overlay
 	 *            the overlay image descriptor
 	 * @param quadrant
 	 *            The constant for the quadrant to draw the image on.
 	 */
 	public void addOverlay(ImageDescriptor overlay, int quadrant);
-	
+
 	/**
 	 * Set the foreground color for this decoration.
 	 * @param color the color to be set for the foreground
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setForegroundColor(Color color);
-	
+
 	/**
 	 * Set the background color for this decoration.
 	 * @param color the color to be set for the background
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setBackgroundColor(Color color);
-	
+
 	/**
 	 * Set the font for this decoration.
 	 * @param font the font to use in this decoration
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setFont(Font font);
@@ -132,7 +132,7 @@ public interface IDecoration{
 	 * Return the decoration context in which this decoration
 	 * will be applied.
 	 * @return the decoration context
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public IDecorationContext getDecorationContext();

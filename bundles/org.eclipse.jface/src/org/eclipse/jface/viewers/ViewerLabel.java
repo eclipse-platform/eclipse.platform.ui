@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Point;
 /**
  * The ViewerLabel is the class that is passed to a viewer to handle updates of
  * labels. It keeps track of both original and updates text.
- * 
+ *
  * @see IViewerLabelProvider
  * @since 3.0
  */
@@ -58,7 +58,7 @@ public class ViewerLabel {
 	/**
 	 * Create a new instance of the receiver with the supplied initial text and
 	 * image.
-	 * 
+	 *
 	 * @param initialText
 	 * @param initialImage
 	 */
@@ -70,7 +70,7 @@ public class ViewerLabel {
 	/**
 	 * Get the image for the receiver. If the new image has been set return it,
 	 * otherwise return the starting image.
-	 * 
+	 *
 	 * @return Returns the image.
 	 */
 	public final Image getImage() {
@@ -82,7 +82,7 @@ public class ViewerLabel {
 
 	/**
 	 * Set the image for the receiver.
-	 * 
+	 *
 	 * @param image
 	 *            The image to set.
 	 */
@@ -94,7 +94,7 @@ public class ViewerLabel {
 	/**
 	 * Get the text for the receiver. If the new text has been set return it,
 	 * otherwise return the starting text.
-	 * 
+	 *
 	 * @return String or <code>null</code> if there was no initial text and
 	 *         nothing was updated.
 	 */
@@ -107,7 +107,7 @@ public class ViewerLabel {
 
 	/**
 	 * Set the text for the receiver.
-	 * 
+	 *
 	 * @param text
 	 *            String The label to set. This value should not be
 	 *            <code>null</code>.
@@ -120,10 +120,10 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the image has been set.
-	 * 
+	 *
 	 * @return boolean. <code>true</code> if the image has been set to
 	 *         something new.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public boolean hasNewImage() {
@@ -141,7 +141,7 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the text has been set.
-	 * 
+	 *
 	 * @return boolean. <code>true</code> if the text has been set to
 	 *         something new.
 	 */
@@ -161,7 +161,7 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the background color has been set.
-	 * 
+	 *
 	 * @return boolean. <code>true</code> if the value has been set.
 	 */
 	public boolean hasNewBackground() {
@@ -170,9 +170,9 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the foreground color has been set.
-	 * 
+	 *
 	 * @return boolean. <code>true</code> if the value has been set.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public boolean hasNewForeground() {
@@ -181,9 +181,9 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the font has been set.
-	 * 
+	 *
 	 * @return boolean. <code>true</code> if the value has been set.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public boolean hasNewFont() {
@@ -192,9 +192,9 @@ public class ViewerLabel {
 
 	/**
 	 * Get the background Color.
-	 * 
+	 *
 	 * @return Color or <code>null</code> if no new value was set.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Color getBackground() {
@@ -203,10 +203,10 @@ public class ViewerLabel {
 
 	/**
 	 * Set the background Color.
-	 * 
+	 *
 	 * @param background
 	 *            Color. This value should not be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setBackground(Color background) {
@@ -215,9 +215,9 @@ public class ViewerLabel {
 
 	/**
 	 * Get the font.
-	 * 
+	 *
 	 * @return Font or <code>null</code> if no new value was set.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Font getFont() {
@@ -226,10 +226,10 @@ public class ViewerLabel {
 
 	/**
 	 * Set the font.
-	 * 
+	 *
 	 * @param font
 	 *            Font This value should not be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setFont(Font font) {
@@ -238,9 +238,9 @@ public class ViewerLabel {
 
 	/**
 	 * Get the foreground Color.
-	 * 
+	 *
 	 * @return Color or <code>null</code> if no new value was set.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Color getForeground() {
@@ -249,10 +249,10 @@ public class ViewerLabel {
 
 	/**
 	 * Set the foreground Color.
-	 * 
+	 *
 	 * @param foreground
 	 *            Color This value should not be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setForeground(Color foreground) {
@@ -261,7 +261,7 @@ public class ViewerLabel {
 
 	/**
 	 * Set whether or not there are any decorations pending.
-	 * 
+	 *
 	 * @param hasPendingDecorations
 	 */
 	void setHasPendingDecorations(boolean hasPendingDecorations) {
@@ -278,10 +278,10 @@ public class ViewerLabel {
 
 	/**
 	 * Returns the tooltipText.
-	 * 
+	 *
 	 * @return {@link String} or <code>null</code> if the tool tip text was
 	 *         never set.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public String getTooltipText() {
@@ -290,11 +290,11 @@ public class ViewerLabel {
 
 	/**
 	 * Set the tool tip text.
-	 * 
+	 *
 	 * @param tooltipText
 	 *            The tooltipText {@link String} to set. This value should not
 	 *            be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void setTooltipText(String tooltipText) {
@@ -303,10 +303,10 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the tool tip text has been set.
-	 * 
+	 *
 	 * @return <code>boolean</code>. <code>true</code> if the tool tip text
 	 *         has been set.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public boolean hasNewTooltipText() {
@@ -315,10 +315,10 @@ public class ViewerLabel {
 
 	/**
 	 * Return the tool tip background color.
-	 * 
+	 *
 	 * @return {@link Color} or <code>null</code> if the tool tip background
 	 *         color has not been set.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public Color getTooltipBackgroundColor() {
@@ -327,11 +327,11 @@ public class ViewerLabel {
 
 	/**
 	 * Set the background {@link Color} for tool tip.
-	 * 
+	 *
 	 * @param tooltipBackgroundColor
 	 *            The {@link Color} to set. This value should not be
 	 *            <code>null</code>.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void setTooltipBackgroundColor(Color tooltipBackgroundColor) {
@@ -340,10 +340,10 @@ public class ViewerLabel {
 
 	/**
 	 * Return whether or not the tool tip background color has been set.
-	 * 
+	 *
 	 * @return <code>boolean</code>. <code>true</code> if the tool tip text
 	 *         has been set.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public boolean hasNewTooltipBackgroundColor() {
@@ -352,10 +352,10 @@ public class ViewerLabel {
 
 	/**
 	 * Return the foreground {@link Color}.
-	 * 
+	 *
 	 * @return Returns {@link Color} or <code>null</code> if the tool tip
 	 *         foreground color has not been set.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public Color getTooltipForegroundColor() {
@@ -364,10 +364,10 @@ public class ViewerLabel {
 
 	/**
 	 * Set the foreground {@link Color} for tool tip.
-	 * 
+	 *
 	 * @param tooltipForegroundColor
 	 *            The tooltipForegroundColor to set.
-	 *            
+	 *
 	 * @since 3.3
 	 */
 	public void setTooltipForegroundColor(Color tooltipForegroundColor) {
@@ -375,12 +375,12 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * 
+	 *
 	 * Return whether or not the tool tip foreground color has been set.
-	 * 
+	 *
 	 * @return <code>boolean</code>. <code>true</code> if the tool tip foreground
 	 *         has been set.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public boolean hasNewTooltipForegroundColor() {

@@ -19,7 +19,7 @@ import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see ISchemeListener#schemeChanged(SchemeEvent)
  */
@@ -37,7 +37,7 @@ public final class SchemeEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param scheme
 	 *            the instance of the interface that changed; must not be
 	 *            <code>null</code>.
@@ -68,7 +68,7 @@ public final class SchemeEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns the instance of the scheme that changed.
-	 * 
+	 *
 	 * @return the instance of the scheme that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -78,7 +78,7 @@ public final class SchemeEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the parentId property changed.
-	 * 
+	 *
 	 * @return true, iff the parentId property changed.
 	 */
 	public final boolean isParentIdChanged() {

@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Event;
  * <p>
  * A utility class for converting SWT events into key strokes.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class SWTKeySupport {
@@ -34,7 +34,7 @@ public final class SWTKeySupport {
 
 	/**
 	 * Given an SWT accelerator value, provide the corresponding key stroke.
-	 * 
+	 *
 	 * @param accelerator
 	 *            The accelerator to convert; should be a valid SWT accelerator
 	 *            value.
@@ -48,7 +48,7 @@ public final class SWTKeySupport {
 		} else {
 			naturalKey = accelerator - modifierKeys;
 		}
-		
+
 		return KeyStroke.getInstance(modifierKeys, naturalKey);
 	}
 
@@ -62,7 +62,7 @@ public final class SWTKeySupport {
 	 * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
 	 * "Ctrl+Shift+%".
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
@@ -85,7 +85,7 @@ public final class SWTKeySupport {
 	 * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
 	 * "Ctrl+Shift+5".
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
@@ -106,7 +106,7 @@ public final class SWTKeySupport {
 	 * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
 	 * "Ctrl+Shift+5".
 	 * </p>
-	 * 
+	 *
 	 * @param stateMask
 	 *            The integer mask of modifiers keys depressed when this was
 	 *            pressed.
@@ -132,7 +132,7 @@ public final class SWTKeySupport {
 	 * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
 	 * "Ctrl+%".
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask and the unmodified character.
@@ -149,7 +149,7 @@ public final class SWTKeySupport {
 	 * accelerator value that should be checked when processing incoming key
 	 * events. Key strokes with alphabetic natural keys are run through
 	 * <code>convertEventToUnmodifiedAccelerator</code>.
-	 * 
+	 *
 	 * @param event
 	 *            The event to be converted; must not be <code>null</code>.
 	 * @return The combination of the state mask without shift, and the modified
@@ -171,7 +171,7 @@ public final class SWTKeySupport {
 	 * Given a key stroke, this method provides the equivalent SWT accelerator
 	 * value. The functional inverse of
 	 * <code>convertAcceleratorToKeyStroke</code>.
-	 * 
+	 *
 	 * @param keyStroke
 	 *            The key stroke to convert; must not be <code>null</code>.
 	 * @return The SWT accelerator value
@@ -184,7 +184,7 @@ public final class SWTKeySupport {
 	/**
 	 * Provides an instance of <code>IKeyFormatter</code> appropriate for the
 	 * current instance.
-	 * 
+	 *
 	 * @return an instance of <code>IKeyFormatter</code> appropriate for the
 	 *         current instance; never <code>null</code>.
 	 */
@@ -197,7 +197,7 @@ public final class SWTKeySupport {
 	 * form. This means that "Ctrl+" key strokes must reverse the modification
 	 * caused by control-escaping. Also, all lower case letters are converted to
 	 * uppercase.
-	 * 
+	 *
 	 * @param event
 	 *            The event from which the fully-modified character should be
 	 *            pulled.
@@ -208,7 +208,7 @@ public final class SWTKeySupport {
 		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
 
 		if (ctrlDown && event.character != event.keyCode
-				&& event.character < 0x20 
+				&& event.character < 0x20
 				&& (event.keyCode & SWT.KEYCODE_BIT) == 0) {
 			character += 0x40;
 		}
@@ -218,7 +218,7 @@ public final class SWTKeySupport {
 
 	/**
 	 * Makes the given character uppercase if it is a letter.
-	 * 
+	 *
 	 * @param keyCode
 	 *            The character to convert.
 	 * @return The uppercase equivalent, if any; otherwise, the character

@@ -34,11 +34,11 @@ public class ColumnPixelData extends ColumnLayoutData {
 	 * the recommended practice is to specify <code>true</code>, and
 	 * specify the desired width for the content of the column, rather
 	 * than adding a fudge factor to the specified width.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public boolean addTrim = false;
-	
+
     /**
      * Creates a resizable column width of the given number of pixels.
      *
@@ -61,7 +61,7 @@ public class ColumnPixelData extends ColumnLayoutData {
 
     /**
 	 * Creates a column width of the given number of pixels.
-	 * 
+	 *
 	 * @param widthInPixels
 	 *            the width of column in pixels
 	 * @param resizable

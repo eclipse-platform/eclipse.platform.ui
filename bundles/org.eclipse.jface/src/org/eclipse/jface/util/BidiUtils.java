@@ -28,18 +28,18 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This class provides API to handle Base Text Direction (BTD) and
- * Structured Text support for SWT Text widgets. 
- * 
+ * Structured Text support for SWT Text widgets.
+ *
  * @since 3.9
  */
 public final class BidiUtils {
-	
+
 	/**
 	 * Left-To-Right Base Text Direction.
 	 * @see #getTextDirection()
 	 */
 	public static final String LEFT_TO_RIGHT = "ltr"; //$NON-NLS-1$
-	
+
 	/**
 	 * Right-To-Left Base Text Direction.
 	 * @see #getTextDirection()
@@ -51,25 +51,25 @@ public final class BidiUtils {
 	 * @see #getTextDirection()
 	 */
 	public static final String AUTO = "auto";//$NON-NLS-1$
-	
+
 	/**
 	 * Base Text Direction defined in {@link BidiUtils#getTextDirection()}
 	 * @see #getSegmentListener(String)
 	 * @see #applyBidiProcessing(Text, String)
 	 */
 	public static final String BTD_DEFAULT = "default";//$NON-NLS-1$
-	
+
 	/**
 	 * Visual Left-To-Right Text Direction.
 	 * <p>
 	 * <b>Note:</b> This handling type is deprecated and should only be used
 	 * when interfacing with legacy systems that store data in visual order.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://www.w3.org/International/questions/qa-visual-vs-logical">http://www.w3.org/International/questions/qa-visual-vs-logical</a>
 	 * @see #getSegmentListener(String)
 	 * @see #applyBidiProcessing(Text, String)
-	 * 
+	 *
 	 * @since 3.11
 	 */
 	public static final String VISUAL_LEFT_TO_RIGHT = "visualltr"; //$NON-NLS-1$
@@ -79,12 +79,12 @@ public final class BidiUtils {
 	 * <p>
 	 * <b>Note:</b> This handling type is deprecated and should only be used
 	 * when interfacing with legacy systems that store data in visual order.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://www.w3.org/International/questions/qa-visual-vs-logical">http://www.w3.org/International/questions/qa-visual-vs-logical</a>
 	 * @see #getSegmentListener(String)
 	 * @see #applyBidiProcessing(Text, String)
-	 * 
+	 *
 	 * @since 3.11
 	 */
 	public static final String VISUAL_RIGHT_TO_LEFT = "visualrtl";//$NON-NLS-1$
@@ -93,18 +93,18 @@ public final class BidiUtils {
 	 * Segment listener for LTR Base Text Direction
 	 */
 	private static final SegmentListener BASE_TEXT_DIRECTION_LTR = new BaseTextDirectionSegmentListener(LEFT_TO_RIGHT);
-	
+
 	/**
 	 * Segment listener for RTL Base Text Direction
 	 */
 	private static final SegmentListener BASE_TEXT_DIRECTION_RTL = new BaseTextDirectionSegmentListener(RIGHT_TO_LEFT);
-	
-	
+
+
 	/**
 	 * Segment listener for Auto (Contextual) Base Text Direction
 	 */
 	private static final SegmentListener BASE_TEXT_DIRECTION_AUTO = new BaseTextDirectionSegmentListener(AUTO);
-	
+
 	/**
 	 * Segment listener for LTR Visual Text Direction
 	 */
@@ -122,27 +122,27 @@ public final class BidiUtils {
 	 * structured text segment listener ({@link SegmentListener}).
 	 */
 	private static final Map<String, SegmentListener> structuredTextSegmentListeners = new HashMap<String, SegmentListener>();
-	
+
 	/**
 	 * The LRE char
 	 */
 	static final char LRE = 0x202A;
-	
+
 	/**
 	 * The LRM char
 	 */
 	static final char LRM = 0x200E;
-	
+
 	/**
 	 * The PDF char
 	 */
 	static final char PDF = 0x202C;
-	
+
 	/**
 	 * The RLE char
 	 */
 	static final char RLE = 0x202B;
-	
+
 	/**
 	 * The LRO char
 	 */
@@ -155,11 +155,11 @@ public final class BidiUtils {
 
 	private static boolean bidiSupport = false;
 	private static String textDirection = "";//$NON-NLS-1$
-	
+
 	private BidiUtils() {
 		// no instances
 	}
-	
+
 	/**
 	 * Returns the Base Text Direction. Possible values are:
 	 * <ul>
@@ -168,7 +168,7 @@ public final class BidiUtils {
 	 * <li>{@link BidiUtils#AUTO}</li>
 	 * <li><code>null</code> (no direction set)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return the base text direction
 	 */
 	public static String getTextDirection() {
@@ -183,7 +183,7 @@ public final class BidiUtils {
 	 * <li>{@link BidiUtils#AUTO}</li>
 	 * <li><code>null</code> (no default direction)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param direction the text direction to set
 	 * @throws IllegalArgumentException if <code>direction</code> is not legal
 	 */
@@ -197,7 +197,7 @@ public final class BidiUtils {
 
 	/**
 	 * Returns whether bidi support is enabled.
-	 * 
+	 *
 	 * @return <code>true</code> iff bidi support is enabled
 	 */
 	public static boolean getBidiSupport() {
@@ -206,16 +206,16 @@ public final class BidiUtils {
 
 	/**
 	 * Enables or disables bidi support.
-	 * 
+	 *
 	 * @param bidi <code>true</code> to enable bidi support, <code>false</code> to disable
-	 */	
+	 */
 	public static void setBidiSupport(boolean bidi) {
-		bidiSupport = bidi;				
+		bidiSupport = bidi;
 	}
-	
+
 	/**
 	 * Applies bidi processing to the given text field.
-	 * 
+	 *
 	 * <p>
 	 * Possible values for <code>handlingType</code> are:
 	 * <ul>
@@ -248,13 +248,13 @@ public final class BidiUtils {
 	 * <strong>Note:</strong> The Structured Text handling only works if the
 	 * <code>org.eclipse.equinox.bidi</code> bundle is on the classpath!
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <strong>Note:</strong>
 	 * {@link org.eclipse.swt.widgets.Text#addSegmentListener(SegmentListener)}
 	 * is currently only implemented on Windows and GTK, so this method won't
 	 * have an effect on Cocoa.
-	 * 
+	 *
 	 * @param field
 	 *            the text field
 	 * @param handlingType
@@ -289,10 +289,10 @@ public final class BidiUtils {
 			}
 		}
 	}
-	
+
 	/**
 	 * Applies bidi processing to the given styled text field.
-	 * 
+	 *
 	 * <p>
 	 * Possible values for <code>handlingType</code> are:
 	 * <ul>
@@ -325,7 +325,7 @@ public final class BidiUtils {
 	 * <strong>Note:</strong> The Structured Text handling only works if the
 	 * <code>org.eclipse.equinox.bidi</code> bundle is on the classpath!
 	 * </p>
-	 * 
+	 *
 	 * @param field
 	 *            the styled text field
 	 * @param handlingType
@@ -344,10 +344,10 @@ public final class BidiUtils {
 			});
 		}
 	}
-	
+
 	/**
 	 * Applies bidi processing to the given combo.
-	 * 
+	 *
 	 * <p>
 	 * Possible values for <code>handlingType</code> are:
 	 * <ul>
@@ -380,13 +380,13 @@ public final class BidiUtils {
 	 * <strong>Note:</strong> The Structured Text handling only works if the
 	 * <code>org.eclipse.equinox.bidi</code> bundle is on the classpath!
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <strong>Note:</strong>
 	 * {@link org.eclipse.swt.widgets.Combo#addSegmentListener(SegmentListener)}
 	 * is currently only implemented on Windows so this method won't have an
 	 * effect on Cocoa and GTK.
-	 * 
+	 *
 	 * @param combo
 	 *            the combo field
 	 * @param handlingType
@@ -423,12 +423,12 @@ public final class BidiUtils {
 	/**
 	 * Returns a segment listener for the given <code>handlingType</code> that
 	 * can e.g. be passed to {@link Text#addSegmentListener(SegmentListener)}.
-	 * 
+	 *
 	 * <p>
 	 * <strong>Note:</strong> The Structured Text handling only works if the
 	 * <code>org.eclipse.equinox.bidi</code> bundle is on the classpath!
 	 * </p>
-	 * 
+	 *
 	 * @param handlingType
 	 *            the handling type as specified in
 	 *            {@link #applyBidiProcessing(Text, String)}
@@ -441,12 +441,12 @@ public final class BidiUtils {
 	public static SegmentListener getSegmentListener(String handlingType) {
 		SegmentListener listener = null;
 		if (LEFT_TO_RIGHT.equals(handlingType)) {
-			listener = BASE_TEXT_DIRECTION_LTR;			
+			listener = BASE_TEXT_DIRECTION_LTR;
 		} else if (RIGHT_TO_LEFT.equals(handlingType)) {
 			listener = BASE_TEXT_DIRECTION_RTL;
 		} else if (AUTO.equals(handlingType)) {
 			listener = BASE_TEXT_DIRECTION_AUTO;
-			
+
 		} else if (getBidiSupport()) {
 			if (BTD_DEFAULT.equals(handlingType)) {
 				if (LEFT_TO_RIGHT.equals(getTextDirection())) {
@@ -472,10 +472,10 @@ public final class BidiUtils {
 		}
 		return listener;
 	}
-	
+
 	/**
 	 * Applies a Base Text Direction to the given control (and its descendants, if it's a {@link Composite}).
-	 * 
+	 *
 	 * <p>
 	 * Possible values for <code>textDirection</code> are:
 	 * <ul>
@@ -491,7 +491,7 @@ public final class BidiUtils {
 	 * {@link BidiUtils#AUTO} currently only works for {@link Text}, {@link StyledText}, and {@link Combo} controls.
 	 * <p>
 	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if bidi support is enabled.
-	 * 
+	 *
 	 * <p>
 	 * <strong>Note:</strong>
 	 * If this method is called on a control, then no <code>applyBidiProcessing</code> method must be called on the same control.
@@ -503,30 +503,30 @@ public final class BidiUtils {
 	 * <strong>Note:</strong>
 	 * {@link BidiUtils#BTD_DEFAULT} is currently not inherited by descendants of the control if
 	 * {@link BidiUtils#getTextDirection()} is {@link BidiUtils#AUTO}.
-	 * 
+	 *
 	 * @param control the control
 	 * @param textDirection the text direction
 	 */
 	public static void applyTextDirection(Control control, String textDirection) {
 		int textDir = 0;
 		boolean auto = false;
-		
+
 		if (LEFT_TO_RIGHT.equals(textDirection)) {
-			textDir = SWT.LEFT_TO_RIGHT;			
+			textDir = SWT.LEFT_TO_RIGHT;
 		} else if (RIGHT_TO_LEFT.equals(textDirection)) {
 			textDir = SWT.RIGHT_TO_LEFT;
 		} else if (AUTO.equals(textDirection)) {
 			auto = true;
 		} else if (getBidiSupport() && BTD_DEFAULT.equals(textDirection)) {
 			if (LEFT_TO_RIGHT.equals(getTextDirection())) {
-				textDir = SWT.LEFT_TO_RIGHT;	
+				textDir = SWT.LEFT_TO_RIGHT;
 			} else if (RIGHT_TO_LEFT.equals(getTextDirection())) {
 				textDir = SWT.RIGHT_TO_LEFT;
 			} else if (AUTO.equals(getTextDirection())) {
 				auto = true;
 			}
 		}
-		
+
 		if (control instanceof Text && (auto || textDir != 0)) {
 			applyBidiProcessing((Text) control, textDirection);
 		} else if (control instanceof StyledText && (auto || textDir != 0)) {

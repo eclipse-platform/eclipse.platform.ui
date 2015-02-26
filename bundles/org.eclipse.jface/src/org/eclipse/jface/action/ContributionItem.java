@@ -26,7 +26,7 @@ public abstract class ContributionItem implements IContributionItem {
     private String id = null;
 
     /**
-     * Indicates this item is visible in its manager; <code>true</code> 
+     * Indicates this item is visible in its manager; <code>true</code>
      * by default.
      */
     private boolean visible = true;
@@ -90,7 +90,7 @@ public abstract class ContributionItem implements IContributionItem {
     /**
      * The default implementation of this <code>IContributionItem</code>
      * method does nothing. Subclasses may override.
-     * 
+     *
      * @since 3.0
      */
     @Override
@@ -100,7 +100,7 @@ public abstract class ContributionItem implements IContributionItem {
     /**
      * The default implementation of this <code>IContributionItem</code>
      * method does nothing. Subclasses may override.
-     * 
+     *
      * @since 3.0
      */
     @Override
@@ -113,9 +113,9 @@ public abstract class ContributionItem implements IContributionItem {
     }
 
     /**
-     * Returns the parent contribution manager, or <code>null</code> if this 
+     * Returns the parent contribution manager, or <code>null</code> if this
      * contribution item is not currently added to a contribution manager.
-     * 
+     *
      * @return the parent contribution manager, or <code>null</code>
      * @since 2.0
      */
@@ -191,7 +191,7 @@ public abstract class ContributionItem implements IContributionItem {
     }
 
     /**
-     * Returns a string representation of this contribution item 
+     * Returns a string representation of this contribution item
      * suitable only for debugging.
      */
     @Override
@@ -214,18 +214,18 @@ public abstract class ContributionItem implements IContributionItem {
     }
 
     /**
-     * The <code>ContributionItem</code> implementation of this 
+     * The <code>ContributionItem</code> implementation of this
      * method declared on <code>IContributionItem</code> does nothing.
      * Subclasses should override to update their state.
      */
     @Override
 	public void update(String id) {
     }
-    
+
     /**
 	 * The ID for this contribution item. It should be set once either in the
 	 * constructor or using this method.
-	 * 
+	 *
 	 * @param itemId
 	 * @since 3.4
 	 * @see #getId()

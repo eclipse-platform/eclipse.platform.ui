@@ -16,12 +16,12 @@ package org.eclipse.jface.viewers;
 /**
  * TableColumnViewerLabelProvider is the mapping from the table based providers
  * to the ViewerLabelProvider.
- * 
+ *
  * @since 3.3
  * @see ITableLabelProvider
  * @see ITableColorProvider
  * @see ITableFontProvider
- * 
+ *
  */
 class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 
@@ -33,7 +33,7 @@ class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param labelProvider
 	 *            instance of a table based label provider
 	 * @see ITableLabelProvider

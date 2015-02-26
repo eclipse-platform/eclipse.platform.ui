@@ -41,26 +41,26 @@ public class ProgressIndicator extends Composite {
 
     /**
      * Create a ProgressIndicator as a child under the given parent.
-     * 
+     *
      * @param parent
      *            The widgets parent
      */
     public ProgressIndicator(Composite parent) {
-        this(parent, SWT.NONE);      
+        this(parent, SWT.NONE);
     }
-    
+
     /**
      * Create a ProgressIndicator as a child under the given parent.
-     * 
+     *
      * @param parent
      *            The widgets parent
-     * @param style the SWT style constants for progress monitors created 
+     * @param style the SWT style constants for progress monitors created
      * 	by the receiver.
      * @since 3.4
      */
     public ProgressIndicator(Composite parent, int style) {
     	super(parent, SWT.NULL);
-    	
+
     	 // Enforce horizontal only if vertical isn't set
         if ((style & SWT.VERTICAL) == 0)
             style |= SWT.HORIZONTAL;
@@ -84,7 +84,7 @@ public class ProgressIndicator extends Composite {
 
     /**
      * Initialize the progress bar.
-     * 
+     *
      * @param max
      *            The maximum value.
      */
@@ -149,7 +149,7 @@ public class ProgressIndicator extends Composite {
 		determinateProgressBar.setState(SWT.ERROR);
 		indeterminateProgressBar.setState(SWT.ERROR);
 	}
-	
+
 	/**
 	 * Show the receiver as being paused.
 	 * @since 3.4
@@ -166,6 +166,6 @@ public class ProgressIndicator extends Composite {
 	public void showNormal() {
 		determinateProgressBar.setState(SWT.NORMAL);
 		indeterminateProgressBar.setState(SWT.NORMAL);
-		
+
 	}
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-/** 
+/**
  * A listener which is notified when a label provider's state changes.
  *
  * @see IBaseLabelProvider#addListener
@@ -18,10 +18,10 @@ package org.eclipse.jface.viewers;
  */
 public interface ILabelProviderListener {
     /**
-     * Notifies this listener that the state of the label provider 
+     * Notifies this listener that the state of the label provider
      * has changed in a way that affects the labels it computes.
      * <p>
-     * A typical response would be to refresh all labels by 
+     * A typical response would be to refresh all labels by
      * re-requesting them from the label provider.
      * </p>
      *

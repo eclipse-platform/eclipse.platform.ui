@@ -17,7 +17,7 @@ package org.eclipse.jface.resource;
  * @see StringConverter
  */
 public class DataFormatException extends IllegalArgumentException {
-    
+
     /**
      * Generated serial version UID for this class.
      * @since 3.1

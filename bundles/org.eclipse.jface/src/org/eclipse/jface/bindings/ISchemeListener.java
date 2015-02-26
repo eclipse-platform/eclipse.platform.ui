@@ -20,7 +20,7 @@ package org.eclipse.jface.bindings;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see Scheme#addSchemeListener(ISchemeListener)
  * @see Scheme#removeSchemeListener(ISchemeListener)
@@ -32,7 +32,7 @@ public interface ISchemeListener {
      * Notifies that one or more attributes of an instance of
      * <code>IScheme</code> have changed. Specific details are described in
      * the <code>SchemeEvent</code>.
-     * 
+     *
      * @param schemeEvent
      *            the scheme event. Guaranteed not to be <code>null</code>.
      */

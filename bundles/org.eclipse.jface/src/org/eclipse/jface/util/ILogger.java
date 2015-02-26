@@ -20,16 +20,16 @@ import org.eclipse.core.runtime.IStatus;
  * Clients may provide their own implementation to change
  * how errors are logged from within JFace.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.util.Policy#getLog()
  * @see org.eclipse.jface.util.Policy#setLog(ILogger)
  * @since 3.1
  */
 public interface ILogger {
-	
+
 	/**
 	 * Logs the given status.
-	 * 
+	 *
 	 * @param status the status to log
 	 */
 	public void log(IStatus status);

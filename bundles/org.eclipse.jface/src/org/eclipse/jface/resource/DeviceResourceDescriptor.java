@@ -21,30 +21,30 @@ import org.eclipse.swt.graphics.Device;
  * <code>#hashCode</code>, so that clients, like decoration managers, can recognize when they have
  * two equal descriptors at hand, e.g. decorating an identical object.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.resource.ResourceManager
- * 
+ *
  * @since 3.1
  */
 public abstract class DeviceResourceDescriptor {
     /**
      * Creates the resource described by this descriptor
-     * 
-     * @since 3.1 
+     *
+     * @since 3.1
      *
      * @param device the Device on which to allocate the resource
      * @return the newly allocated resource (not null)
      * @throws DeviceResourceException if unable to allocate the resource
      */
     public abstract Object createResource(Device device);
-    
+
     /**
      * Undoes everything that was done by a previous call to create(...), given
      * the object that was returned by create(...).
-     * 
-     * @since 3.1 
      *
-     * @param previouslyCreatedObject an object that was returned by an equal 
+     * @since 3.1
+     *
+     * @param previouslyCreatedObject an object that was returned by an equal
      * descriptor in a previous call to createResource(...).
      */
     public abstract void destroyResource(Object previouslyCreatedObject);

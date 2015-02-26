@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Create a new collector.
-		 * 
+		 *
 		 * @param taskName
 		 * @param subTask
 		 * @param work
@@ -80,7 +80,7 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Set the task name
-		 * 
+		 *
 		 * @param name
 		 */
 		public void setTaskName(String name) {
@@ -124,9 +124,9 @@ import org.eclipse.swt.widgets.Display;
     /**
      * Creates an accumulating progress monitor wrapping the given one
      * that uses the given display.
-     * 
+     *
      * @param monitor the actual progress monitor to be wrapped
-     * @param display the SWT display used to forward the calls 
+     * @param display the SWT display used to forward the calls
      *  to the wrapped progress monitor
      */
     public AccumulatingProgressMonitor(IProgressMonitor monitor, Display display) {
@@ -152,7 +152,7 @@ import org.eclipse.swt.widgets.Display;
 	/**
 	 * Clears the collector object used to accumulate work and subtask calls if
 	 * it matches the given one.
-	 * 
+	 *
 	 * @param collectorToClear
 	 */
 	private synchronized void clearCollector(Collector collectorToClear) {
@@ -165,7 +165,7 @@ import org.eclipse.swt.widgets.Display;
 
 	/**
 	 * Creates a collector object to accumulate work and subtask calls.
-	 * 
+	 *
 	 * @param subTask
 	 * @param work
 	 */

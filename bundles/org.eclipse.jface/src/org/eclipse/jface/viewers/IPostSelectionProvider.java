@@ -18,7 +18,7 @@ package org.eclipse.jface.viewers;
  * if the selection change is triggered by keyboard navigation.
  *
  * @see ISelectionProvider
- * 
+ *
  * @since 3.0
  */
 public interface IPostSelectionProvider extends ISelectionProvider {

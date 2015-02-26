@@ -142,7 +142,7 @@ public abstract class DialogCellEditor extends CellEditor {
 
     /**
      * Creates a new dialog cell editor parented under the given control.
-     * The cell editor value is <code>null</code> initially, and has no 
+     * The cell editor value is <code>null</code> initially, and has no
      * validator.
      *
      * @param parent the parent control
@@ -153,7 +153,7 @@ public abstract class DialogCellEditor extends CellEditor {
 
     /**
      * Creates a new dialog cell editor parented under the given control.
-     * The cell editor value is <code>null</code> initially, and has no 
+     * The cell editor value is <code>null</code> initially, and has no
      * validator.
      *
      * @param parent the parent control
@@ -167,7 +167,7 @@ public abstract class DialogCellEditor extends CellEditor {
     /**
      * Creates the button for this cell editor under the given parent control.
      * <p>
-     * The default implementation of this framework method creates the button 
+     * The default implementation of this framework method creates the button
      * display on the right hand side of the dialog cell editor. Subclasses
      * may extend or reimplement.
      * </p>
@@ -192,7 +192,7 @@ public abstract class DialogCellEditor extends CellEditor {
      * should also reimplement <code>updateContents</code>.
      * </p>
      *
-     * @param cell the control for this cell editor 
+     * @param cell the control for this cell editor
      * @return the underlying control
      */
     protected Control createContents(Composite cell) {
@@ -228,9 +228,9 @@ public abstract class DialogCellEditor extends CellEditor {
                 }
             }
         });
-        
+
         button.addFocusListener(getButtonFocusListener());
-        
+
         button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -238,9 +238,9 @@ public abstract class DialogCellEditor extends CellEditor {
             	// Remove the button's focus listener since it's guaranteed
             	// to lose focus when the dialog opens
             	button.removeFocusListener(getButtonFocusListener());
-                
+
             	Object newValue = openDialogBox(editor);
-            	
+
             	// Re-add the listener once the dialog closes
             	button.addFocusListener(getButtonFocusListener());
 
@@ -269,7 +269,7 @@ public abstract class DialogCellEditor extends CellEditor {
     	if (button != null && !button.isDisposed()) {
     		button.removeFocusListener(getButtonFocusListener());
     	}
-    	
+
 		super.deactivate();
 	}
 
@@ -281,7 +281,7 @@ public abstract class DialogCellEditor extends CellEditor {
     @Override
 	protected void doSetFocus() {
         button.setFocus();
-        
+
         // add a FocusListener to the button
         button.addFocusListener(getButtonFocusListener());
     }
@@ -305,7 +305,7 @@ public abstract class DialogCellEditor extends CellEditor {
 				}
     		};
     	}
-    	
+
     	return buttonFocusListener;
 	}
 
@@ -336,7 +336,7 @@ public abstract class DialogCellEditor extends CellEditor {
      *
      * @param cellEditorWindow the parent control cell editor's window
      *   so that a subclass can adjust the dialog box accordingly
-     * @return the selected value, or <code>null</code> if the dialog was 
+     * @return the selected value, or <code>null</code> if the dialog was
      *   canceled or no selection was made in the dialog
      */
     protected abstract Object openDialogBox(Control cellEditorWindow);

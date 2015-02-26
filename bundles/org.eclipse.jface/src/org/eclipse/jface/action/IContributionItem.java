@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.ToolBar;
  * menu or tool bar. More generally, contribution items are managed by a contribution
  * manager.
  * For instance, in a tool bar a contribution item is a tool bar button or a separator.
- * In a menu bar a contribution item is a menu, and in a menu a contribution item 
+ * In a menu bar a contribution item is a menu, and in a menu a contribution item
  * is a menu item or separator.
  * <p>
- * A contribution item can realize itself in different SWT widgets, using the different 
- * <code>fill</code> methods.  The same type of contribution item can be used with a 
- * <code>MenuBarManager</code>, <code>ToolBarManager</code>, <code>CoolBarManager</code>, 
+ * A contribution item can realize itself in different SWT widgets, using the different
+ * <code>fill</code> methods.  The same type of contribution item can be used with a
+ * <code>MenuBarManager</code>, <code>ToolBarManager</code>, <code>CoolBarManager</code>,
  * </code>or a <code>StatusLineManager</code>.
  * </p>
  * <p>
@@ -46,13 +46,13 @@ public interface IContributionItem {
      * have removed this contribution item from the containing
      * IContributionManager before the contribution lifecycle
      * has ended.
-     * 
+     *
      * @since 2.1
      */
     public void dispose();
 
     /**
-     * Fills the given composite control with controls representing this 
+     * Fills the given composite control with controls representing this
      * contribution item.  Used by <code>StatusLineManager</code>.
      *
      * @param parent the parent control
@@ -101,7 +101,7 @@ public interface IContributionItem {
 
     /**
      * Returns whether this contribution item is enabled.
-     * 
+     *
      * @return <code>true</code> if this item is enabled
      */
     public boolean isEnabled();
@@ -109,7 +109,7 @@ public interface IContributionItem {
     /**
      * Returns whether this contribution item is dirty. A dirty item will be
      * recreated when the action bar is updated.
-     * 
+     *
      * @return <code>true</code> if this item is dirty
      */
     public boolean isDirty();
@@ -157,14 +157,14 @@ public interface IContributionItem {
     /**
      * Saves any state information of the control(s) owned by this contribution item.
      * The contribution manager calls this method before disposing of the controls.
-     * 
+     *
      * @since 3.0
      */
     public void saveWidgetState();
 
     /**
      * Sets the parent manager of this item
-     * 
+     *
      * @param parent the parent contribution manager
      * @since 2.0
      */
@@ -187,8 +187,8 @@ public interface IContributionItem {
 
     /**
      * Updates any SWT controls cached by this contribution item with changes
-     * for the the given property. 
-     * 
+     * for the the given property.
+     *
      * @param id the id of the changed property
      * @since 2.0
      */

@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Extends <code>IBaseLabelProvider</code> with the methods
- * to provide the text and/or image for the label of a given element. 
+ * to provide the text and/or image for the label of a given element.
  * Used by most structured viewers, except table viewers.
  */
 public interface ILabelProvider extends IBaseLabelProvider {

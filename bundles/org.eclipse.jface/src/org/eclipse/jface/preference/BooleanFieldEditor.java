@@ -61,7 +61,7 @@ public class BooleanFieldEditor extends FieldEditor {
 
 	/**
 	 * Creates a boolean field editor in the given style.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the preference this field editor works on
 	 * @param labelText
@@ -82,7 +82,7 @@ public class BooleanFieldEditor extends FieldEditor {
 
 	/**
 	 * Creates a boolean field editor in the default style.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the preference this field editor works on
 	 * @param label
@@ -129,11 +129,11 @@ public class BooleanFieldEditor extends FieldEditor {
 	 * <code>getLabelControl(parent).setToolTipText(tooltipText)</code> does not
 	 * work for boolean field editors, as it can lead to duplicate text (see bug
 	 * 259952).
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control responsible for displaying the label
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public Control getDescriptionControl(Composite parent) {
@@ -168,7 +168,7 @@ public class BooleanFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns this field editor's current value.
-	 * 
+	 *
 	 * @return the value
 	 */
 	public boolean getBooleanValue() {
@@ -177,10 +177,10 @@ public class BooleanFieldEditor extends FieldEditor {
 
 	/**
 	 * Returns the change button for this field editor.
-	 * 
+	 *
 	 * @param parent
 	 *            The Composite to create the receiver in.
-	 * 
+	 *
 	 * @return the change button
 	 */
 	protected Button getChangeControl(Composite parent) {
@@ -237,7 +237,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	 * Informs this field editor's listener, if it has one, about a change to
 	 * the value (<code>VALUE</code> property) provided that the old and new
 	 * values are different.
-	 * 
+	 *
 	 * @param oldValue
 	 *            the old value
 	 * @param newValue

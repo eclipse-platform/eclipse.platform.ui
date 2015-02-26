@@ -40,10 +40,10 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * <p>
  * Typical usage is:
- * 
+ *
  * <pre>
- *  
- *   
+ *
+ *
  *    try {
  *       IRunnableWithProgress op = ...;
  *       new ProgressMonitorDialog(activeShell).run(true, true, op);
@@ -52,10 +52,10 @@ import org.eclipse.swt.widgets.Shell;
  *    } catch (InterruptedException e) {
  *       // handle cancelation
  *    }
- *    
- *   
+ *
+ *
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * Note that the ProgressMonitorDialog is not intended to be used with multiple
@@ -279,12 +279,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		progressIndicator.showNormal();
 		setMessage(task, true);
 		imageLabel.setImage(getImage());
-		
+
 	}
 
 	/**
 	 * Set blocked state from the receiver.
-	 * 
+	 *
 	 * @param reason
 	 *            IStatus that gives the details
 	 */
@@ -292,13 +292,13 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		progressIndicator.showPaused();
 		setMessage(reason.getMessage(), true);
 		imageLabel.setImage(getImage());
-		
+
 	}
 
 	/**
 	 * Creates a progress monitor dialog under the given shell. The dialog has a
 	 * standard title and no image. <code>open</code> is non-blocking.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent shell, or <code>null</code> to create a top-level
 	 *            shell
@@ -318,7 +318,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Enables the cancel button (asynchronously).
-	 * 
+	 *
 	 * @param b
 	 *            The state to set the button to.
 	 */
@@ -335,7 +335,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * The cancel button has been pressed.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	@Override
@@ -364,7 +364,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Clear the cursors in the dialog.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void clearCursors() {
@@ -418,7 +418,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Creates the cancel button.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @since 3.0
@@ -469,7 +469,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	/**
 	 * Returns the progress monitor to use for operations run in this progress
 	 * dialog.
-	 * 
+	 *
 	 * @return the progress monitor
 	 */
 	public IProgressMonitor getProgressMonitor() {
@@ -507,7 +507,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	/**
 	 * Returns whether the dialog should be opened before the operation is run.
 	 * Defaults to <code>true</code>
-	 * 
+	 *
 	 * @return <code>true</code> to open the dialog before run,
 	 *         <code>false</code> to only create the dialog, but not open it
 	 * @since 3.0
@@ -520,7 +520,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * Sets whether the dialog should be opened before the operation is run.
 	 * NOTE: Setting this to false and not forking a process may starve any
 	 * asyncExec that tries to open the dialog later.
-	 * 
+	 *
 	 * @param openOnRun
 	 *            <code>true</code> to open the dialog before run,
 	 *            <code>false</code> to only create the dialog, but not open
@@ -533,7 +533,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Returns the nesting depth of running operations.
-	 * 
+	 *
 	 * @return the nesting depth of running operations
 	 * @since 3.0
 	 */
@@ -543,7 +543,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Increments the nesting depth of running operations.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void incrementNestingDepth() {
@@ -552,9 +552,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Decrements the nesting depth of running operations.
-	 * 
+	 *
 	 * @since 3.0
-	 * 
+	 *
 	 */
 	protected void decrementNestingDepth() {
 		nestingDepth--;
@@ -564,7 +564,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * Called just before the operation is run. Default behaviour is to open or
 	 * create the dialog, based on the setting of <code>getOpenOnRun</code>,
 	 * and increment the nesting depth.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void aboutToRun() {
@@ -579,7 +579,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	/**
 	 * Called just after the operation is run. Default behaviour is to decrement
 	 * the nesting depth, and close the dialog.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void finishedRun() {
@@ -589,7 +589,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Sets whether the progress dialog is cancelable or not.
-	 * 
+	 *
 	 * @param cancelable
 	 *            <code>true</code> if the end user can cancel this progress
 	 *            dialog, and <code>false</code> if it cannot be canceled
@@ -604,7 +604,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Helper to enable/disable Cancel button for this dialog.
-	 * 
+	 *
 	 * @param b
 	 *            <code>true</code> to enable the cancel button, and
 	 *            <code>false</code> to disable it
@@ -613,7 +613,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	protected void setOperationCancelButtonEnabled(boolean b) {
 		operationCancelableState = b;
 		if (cancel != null && !cancel.isDisposed()) {
-			cancel.setEnabled(b);	
+			cancel.setEnabled(b);
 		}
 	}
 
@@ -624,7 +624,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 	/**
 	 * Set the message in the message label.
-	 * 
+	 *
 	 * @param messageString
 	 *            The string for the new message.
 	 * @param force

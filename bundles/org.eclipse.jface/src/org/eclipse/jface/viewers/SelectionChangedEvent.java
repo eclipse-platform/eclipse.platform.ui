@@ -29,7 +29,7 @@ public class SelectionChangedEvent extends EventObject {
      * @since 3.1
      */
     private static final long serialVersionUID = 3835149545519723574L;
-    
+
     /**
      * The selection.
      */

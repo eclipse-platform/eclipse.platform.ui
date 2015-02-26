@@ -22,7 +22,7 @@ import org.eclipse.jface.util.Util;
  * {@link org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)},
  * {@link org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)} and
  * {@link org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)}
- * 
+ *
  * @since 3.2
  */
 public class TreeNode {
@@ -48,14 +48,14 @@ public class TreeNode {
 
 	/**
 	 * Constructs a new instance of <code>TreeNode</code>.
-	 * 
+	 *
 	 * @param value
 	 *            The value held by this node; may be anything.
 	 */
 	public TreeNode(final Object value) {
 		this.value = value;
 	}
-	
+
 	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof TreeNode) {
@@ -68,7 +68,7 @@ public class TreeNode {
 	/**
 	 * Returns the child nodes. Empty arrays are converted to <code>null</code>
 	 * before being returned.
-	 * 
+	 *
 	 * @return The child nodes; may be <code>null</code>, but never empty.
 	 *         There should be no <code>null</code> children in the array.
 	 */
@@ -81,7 +81,7 @@ public class TreeNode {
 
 	/**
 	 * Returns the parent node.
-	 * 
+	 *
 	 * @return The parent node; may be <code>null</code> if there are no
 	 *         parent nodes.
 	 */
@@ -91,7 +91,7 @@ public class TreeNode {
 
 	/**
 	 * Returns the value held by this node.
-	 * 
+	 *
 	 * @return The value; may be anything.
 	 */
 	public Object getValue() {
@@ -100,7 +100,7 @@ public class TreeNode {
 
 	/**
 	 * Returns whether the tree has any children.
-	 * 
+	 *
 	 * @return <code>true</code> if its array of children is not
 	 *         <code>null</code> and is non-empty; <code>false</code>
 	 *         otherwise.
@@ -108,7 +108,7 @@ public class TreeNode {
 	public boolean hasChildren() {
 		return children != null && children.length > 0;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Util.hashCode(value);
@@ -116,7 +116,7 @@ public class TreeNode {
 
 	/**
 	 * Sets the children for this node.
-	 * 
+	 *
 	 * @param children
 	 *            The child nodes; may be <code>null</code> or empty. There
 	 *            should be no <code>null</code> children in the array.
@@ -127,7 +127,7 @@ public class TreeNode {
 
 	/**
 	 * Sets the parent for this node.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent node; may be <code>null</code>.
 	 */

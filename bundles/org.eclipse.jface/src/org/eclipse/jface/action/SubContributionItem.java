@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
 /**
- * A <code>SubContributionItem</code> is a wrapper for an <code>IContributionItem</code>.  
+ * A <code>SubContributionItem</code> is a wrapper for an <code>IContributionItem</code>.
  * It is used within a <code>SubContributionManager</code> to control the visibility
  * of items.
  * <p>
@@ -31,7 +31,7 @@ public class SubContributionItem implements IContributionItem {
     private boolean visible;
 
     /**
-     * The inner item for this contribution.  
+     * The inner item for this contribution.
      */
     private IContributionItem innerItem;
 

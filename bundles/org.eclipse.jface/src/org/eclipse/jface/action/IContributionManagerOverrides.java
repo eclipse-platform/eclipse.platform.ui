@@ -18,36 +18,36 @@ package org.eclipse.jface.action;
  * This interface is internal to the framework; it should not be implemented outside
  * the framework.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContributionManagerOverrides {
     /**
      * Id for the enabled property. Value is <code>"enabled"</code>.
-     * 
+     *
      * @since 2.0
      */
     public final static String P_ENABLED = "enabled"; //$NON-NLS-1$
 
     /**
      * Find out the enablement of the item
-     * @param item the contribution item for which the enable override value is 
+     * @param item the contribution item for which the enable override value is
      * determined
      * @return <ul>
      * 				<li><code>Boolean.TRUE</code> if the given contribution item should be enabled</li>
      * 				<li><code>Boolean.FALSE</code> if the item should be disabled</li>
      * 				<li><code>null</code> if the item may determine its own enablement</li>
      * 			</ul>
-     * @since 2.0 
+     * @since 2.0
      */
     public Boolean getEnabled(IContributionItem item);
 
     /**
      * This is not intended to be called outside of the workbench. This method
      * is intended to be deprecated in 3.1.
-     * 
-     * TODO deprecate for 3.1 
+     *
+     * TODO deprecate for 3.1
      * @param item the contribution item for which the accelerator value is determined
      * @return the accelerator
      */
@@ -56,7 +56,7 @@ public interface IContributionManagerOverrides {
     /**
      * This is not intended to be called outside of the workbench. This method
      * is intended to be deprecated in 3.1.
-     * 
+     *
      * TODO deprecate for 3.1
      * @param item the contribution item for which the accelerator text is determined
      * @return the text for the accelerator
@@ -66,16 +66,16 @@ public interface IContributionManagerOverrides {
     /**
      * This is not intended to be called outside of the workbench. This method
      * is intended to be deprecated in 3.1.
-     * 
+     *
      * TODO deprecate for 3.1
      * @param item the contribution item for which the text is determined
      * @return the text
      */
     public String getText(IContributionItem item);
-    
+
     /**
      * Visiblity override.
-     * 
+     *
      * @param item the contribution item in question
      * @return  <ul>
      * 				<li><code>Boolean.TRUE</code> if the given contribution item should be visible</li>

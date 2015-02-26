@@ -27,7 +27,7 @@ import org.eclipse.swt.SWT;
  * <p>
  * Clients may neither instantiate this class nor extend.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class LegacyActionTools {
@@ -35,7 +35,7 @@ public final class LegacyActionTools {
 	/**
 	 * Table of key codes (key type: <code>String</code>, value type:
 	 * <code>Integer</code>); <code>null</code> if not yet initialized.
-	 * 
+	 *
 	 * @see #findKeyCode
 	 */
 	private static Map<String, Integer> keyCodes = null;
@@ -44,7 +44,7 @@ public final class LegacyActionTools {
 	 * Table of string representations of keys (key type: <code>Integer</code>,
 	 * value type: <code>String</code>); <code>null</code>> if not yet
 	 * initialized.
-	 * 
+	 *
 	 * @see #findKeyString
 	 */
 	private static Map<Integer, String> keyStrings = null;
@@ -68,7 +68,7 @@ public final class LegacyActionTools {
 	 * Table of key codes (key type: <code>String</code>, value type:
 	 * <code>Integer</code>); <code>null</code> if not yet initialized. The
 	 * key is the localalized name of the key as it appears in menus.
-	 * 
+	 *
 	 * @see #findLocalizedKeyCode
 	 */
 	private static Map<String, Integer> localizedKeyCodes = null;
@@ -85,7 +85,7 @@ public final class LegacyActionTools {
 
 	/**
 	 * Converts an accelerator key code to a string representation.
-	 * 
+	 *
 	 * @param keyCode
 	 *            the key code to be translated
 	 * @return a string representation of the key code
@@ -104,7 +104,7 @@ public final class LegacyActionTools {
 	/**
 	 * Parses the given accelerator text, and converts it to an accelerator key
 	 * code.
-	 * 
+	 *
 	 * @param acceleratorText
 	 *            the accelerator text
 	 * @return the SWT key code, or 0 if there is no accelerator
@@ -141,11 +141,11 @@ public final class LegacyActionTools {
 	/**
 	 * Parses the given accelerator text, and converts it to an accelerator key
 	 * code.
-	 * 
+	 *
 	 * Support for localized modifiers is for backwards compatibility with 1.0.
 	 * Use setAccelerator(int) to set accelerators programatically or the
 	 * <code>accelerator</code> tag in action definitions in plugin.xml.
-	 * 
+	 *
 	 * @param acceleratorText
 	 *            the accelerator text localized to the current locale
 	 * @return the SWT key code, or 0 if there is no accelerator
@@ -184,7 +184,7 @@ public final class LegacyActionTools {
 	 * <code>null</code> if there is no accelerator text, and the empty string
 	 * if there is no text after the accelerator delimiter (last tab or
 	 * last '@' if there's no tab).
-	 * 
+	 *
 	 * @param text
 	 *            the text for the action; may be <code>null</code>.
 	 * @return the accelerator text, or <code>null</code>
@@ -206,7 +206,7 @@ public final class LegacyActionTools {
 
 	/**
 	 * Extracts the mnemonic text from the given string.
-	 * 
+	 *
 	 * @param text
 	 *            The text from which the mnemonic should be extracted; may be
 	 *            <code>null</code>
@@ -265,7 +265,7 @@ public final class LegacyActionTools {
 	 * <li><code>"F1"</code>, <code>"F2"</code> through <code>"F12"</code></li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param token
 	 *            the key name
 	 * @return the SWT key code, <code>-1</code> if no match was found
@@ -292,7 +292,7 @@ public final class LegacyActionTools {
 	 * the key code is not an SWT code (for example if it a key code for the key
 	 * 'S'), a string containing a character representation of the key code is
 	 * returned.
-	 * 
+	 *
 	 * @param keyCode
 	 *            the key code to be translated
 	 * @return the string representation of the key code
@@ -316,11 +316,11 @@ public final class LegacyActionTools {
 	/**
 	 * Find the supplied code for a localized key. As #findKeyCode but localized
 	 * to the current locale.
-	 * 
+	 *
 	 * Support for localized modifiers is for backwards compatibility with 1.0.
 	 * Use setAccelerator(int) to set accelerators programatically or the
 	 * <code>accelerator</code> tag in action definitions in plugin.xml.
-	 * 
+	 *
 	 * @param token
 	 *            the localized key name
 	 * @return the SWT key code, <code>-1</code> if no match was found
@@ -344,11 +344,11 @@ public final class LegacyActionTools {
 	/**
 	 * Maps the localized modifier names to a code in the same manner as
 	 * #findModifier.
-	 * 
+	 *
 	 * Support for localized modifiers is for backwards compatibility with 1.0.
 	 * Use setAccelerator(int) to set accelerators programatically or the
 	 * <code>accelerator</code> tag in action definitions in plugin.xml.
-	 * 
+	 *
 	 * @see #findModifier
 	 */
 	private static final int findLocalizedModifier(String token) {
@@ -378,7 +378,7 @@ public final class LegacyActionTools {
 	 * ignored): <code>"CTRL"</code>, <code>"SHIFT"</code>,
 	 * <code>"ALT"</code>, and <code>"COMMAND"</code>. The given modifier
 	 * key name is converted to upper case before comparison.
-	 * 
+	 *
 	 * @param token
 	 *            the modifier key name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
@@ -405,7 +405,7 @@ public final class LegacyActionTools {
 	 * Returns a string representation of an SWT modifier bit (SWT.CTRL,
 	 * SWT.ALT, SWT.SHIFT, and SWT.COMMAND). Returns <code>null</code> if the
 	 * key code is not an SWT modifier bit.
-	 * 
+	 *
 	 * @param keyCode
 	 *            the SWT modifier bit to be translated
 	 * @return the string representation of the SWT modifier bit, or
@@ -423,7 +423,7 @@ public final class LegacyActionTools {
 			return JFaceResources.getString("Shift"); //$NON-NLS-1$
 		}
 		if (keyCode == SWT.COMMAND) {
-			return JFaceResources.getString("Command"); //$NON-NLS-1$		
+			return JFaceResources.getString("Command"); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -431,7 +431,7 @@ public final class LegacyActionTools {
 	/**
 	 * Returns the string representation of the modifiers (Ctrl, Alt, Shift,
 	 * Command) of the key event.
-	 * 
+	 *
 	 * @param keyCode
 	 *            The key code for which the modifier string is desired.
 	 * @return The string representation of the key code; never
@@ -699,7 +699,7 @@ public final class LegacyActionTools {
 		localizedCtrl = JFaceResources.getString("Ctrl").toUpperCase(); //$NON-NLS-1$
 		localizedShift = JFaceResources.getString("Shift").toUpperCase(); //$NON-NLS-1$
 		localizedAlt = JFaceResources.getString("Alt").toUpperCase(); //$NON-NLS-1$
-		localizedCommand = JFaceResources.getString("Command").toUpperCase(); //$NON-NLS-1$	
+		localizedCommand = JFaceResources.getString("Command").toUpperCase(); //$NON-NLS-1$
 	}
 
 	/**
@@ -707,7 +707,7 @@ public final class LegacyActionTools {
 	 * given string. The accelerator text appears at the end of the text, and is
 	 * separated from the main part by the last tab character <code>'\t'</code>
 	 * (or the last <code>'@'</code> if there is no tab).
-	 * 
+	 *
 	 * @param text
 	 *            the text
 	 * @return the text sans accelerator
@@ -727,7 +727,7 @@ public final class LegacyActionTools {
 	 * Convenience method for removing any mnemonics from the given string. For
 	 * example, <code>removeMnemonics("&Open")</code> will return
 	 * <code>"Open"</code>.
-	 * 
+	 *
 	 * @param text
 	 *            the text
 	 * @return the text sans mnemonics
@@ -770,12 +770,12 @@ public final class LegacyActionTools {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Convenience method for escaping all mnemonics in the given string. For
 	 * example, <code>escapeMnemonics("a & b & c")</code> will return
 	 * <code>"a && b && c"</code>.
-	 * 
+	 *
 	 * @param text
 	 *            the text
 	 * @return the text with mnemonics escaped

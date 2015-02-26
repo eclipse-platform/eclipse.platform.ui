@@ -13,7 +13,7 @@ package org.eclipse.jface.preference;
 import java.io.IOException;
 
 /**
- * IPersistentPreferenceStore is a preference store that can 
+ * IPersistentPreferenceStore is a preference store that can
  * be saved.
  */
 public interface IPersistentPreferenceStore extends IPreferenceStore {

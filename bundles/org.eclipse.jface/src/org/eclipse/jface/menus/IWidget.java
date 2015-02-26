@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * <p>
  * Clients may implement, but must not extend.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IWidget {
@@ -42,7 +42,7 @@ public interface IWidget {
 
 	/**
 	 * Fills the given composite control with controls representing this widget.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */
@@ -50,7 +50,7 @@ public interface IWidget {
 
 	/**
 	 * Fills the given menu with controls representing this widget.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent menu
 	 * @param index
@@ -62,7 +62,7 @@ public interface IWidget {
 	/**
 	 * Fills the given tool bar with controls representing this contribution
 	 * item.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent tool bar
 	 * @param index
@@ -74,7 +74,7 @@ public interface IWidget {
 	/**
 	 * Fills the given cool bar with controls representing this contribution
 	 * item.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent cool bar
 	 * @param index

@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Control;
  * An {@link IControlContentAdapter} for SWT Combo controls. This is a
  * convenience class for easily creating a {@link ContentProposalAdapter} for
  * combo fields.
- * 
+ *
  * @since 3.2
  */
 public class ComboContentAdapter implements IControlContentAdapter,
 		IControlContentAdapter2 {
-	
+
 	/*
 	 * Set to <code>true</code> if we should compute the text
 	 * vertical bounds rather than just use the field size.
@@ -75,7 +75,7 @@ public class ComboContentAdapter implements IControlContentAdapter,
 
 	@Override
 	public Rectangle getInsertionBounds(Control control) {
-		// This doesn't take horizontal scrolling into affect. 
+		// This doesn't take horizontal scrolling into affect.
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=204599
 		Combo combo = (Combo) control;
 		int position = combo.getSelection().y;
@@ -99,7 +99,7 @@ public class ComboContentAdapter implements IControlContentAdapter,
 
 	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#getSelection(org.eclipse.swt.widgets.Control)
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	@Override
@@ -110,7 +110,7 @@ public class ComboContentAdapter implements IControlContentAdapter,
 	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#setSelection(org.eclipse.swt.widgets.Control,
 	 *      org.eclipse.swt.graphics.Point)
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	@Override

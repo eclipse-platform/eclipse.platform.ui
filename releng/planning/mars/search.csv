@@ -1,0 +1,6 @@
+436505,4.6,"lars.vogel","NEW","---","[Eclipse 4.6] Delete TableTreeViewer and related classes / methods in Eclipse 4.6","normal",
+445757,4.6,"lars.vogel","NEW","---","Formatter and save actions for platform.ui plug-ins","normal",
+457002,4.6,"lars.vogel","NEW","---","[About] Make AboutDialog available for Eclipse 4 RCP application","normal",
+441244,4.6,"lars.vogel","NEW","---","Remove unnecessary (non-Javadoc) statements","normal",
+448143,4.6,"simon.scholz","NEW","---","CellModifier API should be removed from Platform code","normal",
+234331,4.6,"lars.vogel","ASSIGNED","---","[Viewers] IStructuredSelection should be Iterable","enhancement",

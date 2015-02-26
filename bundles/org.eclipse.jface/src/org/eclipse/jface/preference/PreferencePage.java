@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Label;
  * method to compute the size of the page's control.
  * </p>
  * <p>
- * Subclasses may override the <code>performOk</code>, <code>performApply</code>, 
+ * Subclasses may override the <code>performOk</code>, <code>performApply</code>,
  * <code>performDefaults</code>, <code>performCancel</code>, and <code>performHelp</code>
  * framework methods to react to the standard button events.
  * </p>
@@ -108,7 +108,7 @@ public abstract class PreferencePage extends DialogPage implements
 
     /**
      * Description label.
-     * 
+     *
      * @see #createDescriptionLabel(Composite)
      */
     private Label descriptionLabel;
@@ -118,7 +118,7 @@ public abstract class PreferencePage extends DialogPage implements
      */
     private Point size = null;
 
-   
+
     /**
      * Creates a new preference page with an empty title and no image.
      */
@@ -156,7 +156,7 @@ public abstract class PreferencePage extends DialogPage implements
      * </p>
      *
      * @return the size of the preference page encoded as
-     *   <code>new Point(width,height)</code>, or 
+     *   <code>new Point(width,height)</code>, or
      *   <code>(0,0)</code> if the page doesn't currently have any UI component
      */
     @Override
@@ -176,7 +176,7 @@ public abstract class PreferencePage extends DialogPage implements
      * Contributes additional buttons to the given composite.
      * <p>
      * The default implementation of this framework hook method does
-     * nothing. Subclasses should override this method to contribute buttons 
+     * nothing. Subclasses should override this method to contribute buttons
      * to this page's button bar. For each button a subclass contributes,
      * it must also increase the parent's grid layout number of columns
      * by one; that is,
@@ -191,13 +191,13 @@ public abstract class PreferencePage extends DialogPage implements
     }
 
     /**
-     * Creates and returns the SWT control for the customized body 
+     * Creates and returns the SWT control for the customized body
      * of this preference page under the given parent composite.
      * <p>
      * This framework method must be implemented by concrete subclasses. Any
      * subclass returning a <code>Composite</code> object whose <code>Layout</code>
      * has default margins (for example, a <code>GridLayout</code>) are expected to
-     * set the margins of this <code>Layout</code> to 0 pixels. 
+     * set the margins of this <code>Layout</code> to 0 pixels.
      * </p>
      *
      * @param parent the parent composite
@@ -206,7 +206,7 @@ public abstract class PreferencePage extends DialogPage implements
     protected abstract Control createContents(Composite parent);
 
     /**
-     * The <code>PreferencePage</code> implementation of this 
+     * The <code>PreferencePage</code> implementation of this
      * <code>IDialogPage</code> method creates a description label
      * and button bar for the page. It calls <code>createContents</code>
      * to create the custom contents of the page.
@@ -251,13 +251,13 @@ public abstract class PreferencePage extends DialogPage implements
         layout.marginWidth = 0;
         layout.makeColumnsEqualWidth = false;
         buttonBar.setLayout(layout);
-        
+
         gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-        
+
         buttonBar.setLayoutData(gd);
 
         contributeButtons(buttonBar);
-        
+
 		if (createApplyButton || createDefaultButton) {
 			layout.numColumns = 1 + (createApplyButton && createDefaultButton ? 1 : 0);
 			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -397,7 +397,7 @@ public abstract class PreferencePage extends DialogPage implements
         return null;
     }
 
-    /**	
+    /**
      * The preference page implementation of an <code>IPreferencePage</code>
      * method returns whether this preference page is valid. Preference
      * pages are considered valid by default; call <code>setValid(false)</code>
@@ -429,7 +429,7 @@ public abstract class PreferencePage extends DialogPage implements
 	 * Subclasses wishing a preference page with this button should call this
 	 * framework method before the page's control has been created.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.11
 	 */
 	protected void noDefaultButton() {
@@ -440,7 +440,7 @@ public abstract class PreferencePage extends DialogPage implements
 	 * The <code>PreferencePage</code> implementation of this
 	 * <code>IPreferencePage</code> method returns <code>true</code> if the page
 	 * is valid.
-	 * 
+	 *
 	 * @see IPreferencePage#okToLeave()
 	 */
     @Override
@@ -456,7 +456,7 @@ public abstract class PreferencePage extends DialogPage implements
      * The default implementation of this framework method simply calls
      * <code>performOk</code> to simulate the pressing of the page's OK button.
      * </p>
-     * 
+     *
      * @see #performOk()
      * @see #performCancel()
      */
@@ -464,7 +464,7 @@ public abstract class PreferencePage extends DialogPage implements
         performOk();
     }
 
-    /**	
+    /**
      * The preference page implementation of an <code>IPreferencePage</code>
      * method performs special processing when this page's Cancel button has
      * been pressed.
@@ -502,13 +502,13 @@ public abstract class PreferencePage extends DialogPage implements
         updateApplyButton();
     }
 
-   
+
     @Override
 	public boolean performOk() {
         return true;
     }
 
-    
+
     @Override
 	public void setContainer(IPreferencePageContainer container) {
         this.container = container;
@@ -528,7 +528,7 @@ public abstract class PreferencePage extends DialogPage implements
         preferenceStore = store;
     }
 
-   
+
     @Override
 	public void setSize(Point uiSize) {
         Control control = getControl();
@@ -555,7 +555,7 @@ public abstract class PreferencePage extends DialogPage implements
     /**
      * Sets whether this page is valid.
      * The enable state of the container buttons and the
-     * apply button is updated when a page's valid state 
+     * apply button is updated when a page's valid state
      * changes.
      * <p>
      *
@@ -574,14 +574,14 @@ public abstract class PreferencePage extends DialogPage implements
         }
     }
 
-   
+
     @Override
 	public String toString() {
         return getTitle();
     }
 
     /**
-     * Updates the enabled state of the Apply button to reflect whether 
+     * Updates the enabled state of the Apply button to reflect whether
      * this page is valid.
      */
     protected void updateApplyButton() {
@@ -593,7 +593,7 @@ public abstract class PreferencePage extends DialogPage implements
     /**
      * Creates a composite with a highlighted Note entry and a message text.
      * This is designed to take up the full width of the page.
-     * 
+     *
      * @param font the font to use
      * @param composite the parent composite
      * @param title the title of the note
@@ -627,7 +627,7 @@ public abstract class PreferencePage extends DialogPage implements
 
     /**
      * Returns the Apply button.
-     * 
+     *
      * @return the Apply button
      */
     protected Button getApplyButton() {
@@ -636,7 +636,7 @@ public abstract class PreferencePage extends DialogPage implements
 
     /**
      * Returns the Restore Defaults button.
-     * 
+     *
      * @return the Restore Defaults button
      */
     protected Button getDefaultsButton() {
@@ -660,14 +660,14 @@ public abstract class PreferencePage extends DialogPage implements
 	 * <p>
 	 * The default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param data the data as specified by the subclass
 	 * @since 3.1
 	 */
 	public void applyData(Object data) {
-		
+
 	}
-	
+
 	@Override
 	public void setErrorMessage(String newMessage) {
 		super.setErrorMessage(newMessage);
@@ -675,13 +675,13 @@ public abstract class PreferencePage extends DialogPage implements
 			getContainer().updateMessage();
 		}
 	}
-	
+
 	@Override
 	public void setMessage(String newMessage, int newType) {
 		super.setMessage(newMessage, newType);
 		if (getContainer() != null) {
 			getContainer().updateMessage();
 		}
-	}	
+	}
 
 }

@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
  * identical RowLayout from the same factory. Changing a property of the factory
  * will affect future layouts created by the factory, but has no effect on
  * layouts that have already been created.
- * 
+ *
  * @since 3.5
  */
 public final class RowLayoutFactory {
@@ -36,7 +36,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Creates a new RowLayoutFactory that will create copies of the given
 	 * layout.
-	 * 
+	 *
 	 * @param layout
 	 *            layout to copy
 	 */
@@ -46,7 +46,7 @@ public final class RowLayoutFactory {
 
 	/**
 	 * Creates a factory that creates copies of the given layout.
-	 * 
+	 *
 	 * @param layout
 	 *            layout to copy
 	 * @return a new RowLayoutFactory instance that creates copies of the given
@@ -58,7 +58,7 @@ public final class RowLayoutFactory {
 
 	/**
 	 * Creates a copy of the receiver.
-	 * 
+	 *
 	 * @return a copy of the receiver
 	 */
 	public RowLayoutFactory copy() {
@@ -68,11 +68,11 @@ public final class RowLayoutFactory {
 	/**
 	 * Creates a RowLayoutFactory that creates RowLayouts with the default SWT
 	 * values.
-	 * 
+	 *
 	 * <p>
 	 * Initial values are:
 	 * </p>
-	 * 
+	 *
 	 * <ul>
 	 * <li>margins(0,0)</li>
 	 * <li>extendedMargins(3,3,3,3)</li>
@@ -82,7 +82,7 @@ public final class RowLayoutFactory {
 	 * <li>justify(false)</li>
 	 * <li>spacing(3)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return a RowLayoutFactory that creates RowLayouts as though created with
 	 *         their default constructor
 	 * @see #fillDefaults
@@ -94,11 +94,11 @@ public final class RowLayoutFactory {
 	/**
 	 * Creates a RowLayoutFactory that creates RowLayouts with no margins, fill
 	 * behavior, and default dialog spacing.
-	 * 
+	 *
 	 * <p>
 	 * Initial values are:
 	 * </p>
-	 * 
+	 *
 	 * <ul>
 	 * <li>margins(0,0)</li>
 	 * <li>extendedMargins(0,0,0,0)</li>
@@ -108,7 +108,7 @@ public final class RowLayoutFactory {
 	 * <li>justify(false)</li>
 	 * <li>spacing(LayoutConstants.getSpacing().x</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return a RowLayoutFactory that creates RowLayouts with no margins
 	 * @see #swtDefaults
 	 */
@@ -125,7 +125,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Sets the spacing for layouts created with this factory. The spacing is
 	 * the distance between items within the layout.
-	 * 
+	 *
 	 * @param spacing
 	 *            spacing (pixels)
 	 * @return this
@@ -140,7 +140,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Sets the margins for layouts created with this factory. The margins are
 	 * the distance between the outer cells and the edge of the layout.
-	 * 
+	 *
 	 * @param margins
 	 *            margin size (pixels)
 	 * @return this
@@ -158,7 +158,7 @@ public final class RowLayoutFactory {
 	 * be placed along the left/right and top/bottom edges of the layout. Note
 	 * that these margins will be added to the ones specified by
 	 * {@link #extendedMargins(int, int, int, int)}.
-	 * 
+	 *
 	 * @param width
 	 *            margin width (pixels)
 	 * @param height
@@ -178,7 +178,7 @@ public final class RowLayoutFactory {
 	 * be placed along the left, right, top, and bottom edges of the layout.
 	 * Note that these margins will be added to the ones specified by
 	 * {@link #margins(int, int)}.
-	 * 
+	 *
 	 * @param left
 	 *            left margin size (pixels)
 	 * @param right
@@ -189,7 +189,7 @@ public final class RowLayoutFactory {
 	 *            bottom margin size (pixels)
 	 * @return this
 	 * @see #spacing(int)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public RowLayoutFactory extendedMargins(int left, int right, int top,
@@ -204,7 +204,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Fill specifies whether the controls in a row should be all the same
 	 * height for horizontal layouts, or the same width for vertical layouts.
-	 * 
+	 *
 	 * @param fill
 	 *            the fill status
 	 * @return this
@@ -217,7 +217,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Justify specifies whether the controls in a row should be fully
 	 * justified, with any extra space placed between the controls.
-	 * 
+	 *
 	 * @param justify
 	 *            the justify status
 	 * @return this
@@ -232,7 +232,7 @@ public final class RowLayoutFactory {
 	 * size. If pack is false, all controls will have the same size which is the
 	 * size required to accommodate the largest preferred height and the largest
 	 * preferred width of all the controls in the layout.
-	 * 
+	 *
 	 * @param pack
 	 *            the pack status
 	 * @return this
@@ -245,7 +245,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Wrap specifies whether a control will be wrapped to the next row if there
 	 * is insufficient space on the current row.
-	 * 
+	 *
 	 * @param wrap
 	 *            the wrap status
 	 * @return this
@@ -257,17 +257,17 @@ public final class RowLayoutFactory {
 
 	/**
 	 * type specifies whether the layout places controls in rows or columns.
-	 * 
+	 *
 	 * Possible values are:
 	 * <ul>
 	 * <li>HORIZONTAL: Position the controls horizontally from left to right</li>
 	 * <li>VERTICAL: Position the controls vertically from top to bottom</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param type
 	 *            One of SWT.HORIZONTAL or SWT.VERTICAL
 	 * @return this
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *             if type is not one of HORIZONTAL or VERTICAL
 	 */
@@ -281,7 +281,7 @@ public final class RowLayoutFactory {
 
 	/**
 	 * Creates a new RowLayout, and initializes it with values from the factory.
-	 * 
+	 *
 	 * @return a new initialized RowLayout.
 	 * @see #applyTo
 	 */
@@ -292,7 +292,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Creates a new RowLayout and attaches it to the given composite. Does not
 	 * create the rowData of any of the controls in the composite.
-	 * 
+	 *
 	 * @param c
 	 *            composite whose layout will be set
 	 * @see #create
@@ -304,7 +304,7 @@ public final class RowLayoutFactory {
 
 	/**
 	 * Copies the given RowLayout instance
-	 * 
+	 *
 	 * @param layout
 	 *            layout to copy
 	 * @return a new RowLayout

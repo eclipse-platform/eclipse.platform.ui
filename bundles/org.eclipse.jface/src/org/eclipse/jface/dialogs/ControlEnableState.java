@@ -45,7 +45,7 @@ public class ControlEnableState {
 
         /**
          * Create a new instance of the receiver.
-         * 
+         *
          * @param item
          * @param state
          */
@@ -56,7 +56,7 @@ public class ControlEnableState {
 
         /**
          * Restore the enabled state to the original value.
-         *  
+         *
          */
         public void restore() {
             if (item == null || item.isDisposed()) {
@@ -70,7 +70,7 @@ public class ControlEnableState {
      * Creates a new object and saves in it the current enable/disable state of
      * the given control and its descendents; the controls that are saved are
      * also disabled.
-     * 
+     *
      * @param w
      *            the control
      */
@@ -82,7 +82,7 @@ public class ControlEnableState {
      * Creates a new object and saves in it the current enable/disable state of
      * the given control and its descendents except for the given list of
      * exception cases; the controls that are saved are also disabled.
-     * 
+     *
      * @param w
      *            the control
      * @param exceptions
@@ -99,7 +99,7 @@ public class ControlEnableState {
     /**
      * Saves the current enable/disable state of the given control and its
      * descendents in the returned object; the controls are all disabled.
-     * 
+     *
      * @param w
      *            the control
      * @return an object capturing the enable/disable state
@@ -112,7 +112,7 @@ public class ControlEnableState {
      * Saves the current enable/disable state of the given control and its
      * descendents in the returned object except for the given list of exception
      * cases; the controls that are saved are also disabled.
-     * 
+     *
      * @param w
      *            the control
      * @param exceptions

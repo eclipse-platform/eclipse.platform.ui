@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * This class is not part of the public API of JFace. See bug 267722.
- * 
+ *
  * @since 3.5
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -25,7 +25,7 @@ public class StructuredViewerInternals {
 
 	/**
 	 * Nothing to see here.
-	 * 
+	 *
 	 * @since 3.5
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
@@ -34,7 +34,7 @@ public class StructuredViewerInternals {
 
 		/**
 		 * Call when an element is associated with an Item
-		 * 
+		 *
 		 * @param element
 		 * @param item
 		 */
@@ -42,16 +42,16 @@ public class StructuredViewerInternals {
 
 		/**
 		 * Called when an Item is no longer associated
-		 * 
+		 *
 		 * @param item
 		 */
 		void disassociate(Item item);
-		
+
 		/**
 		 * Called when an element has been filtered out.
-		 * 
+		 *
 		 * @since 3.6
-		 * @param element 
+		 * @param element
 		 */
 		void filteredOut(Object element);
 	}
@@ -59,7 +59,7 @@ public class StructuredViewerInternals {
 	/**
 	 * Nothing to see here. Sets or resets the AssociateListener for the given
 	 * Viewer.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 * @param listener
@@ -73,11 +73,11 @@ public class StructuredViewerInternals {
 
 	/**
 	 * Nothing to see here. Returns the items for the given element.
-	 * 
+	 *
 	 * @param viewer
 	 * @param element
 	 * @return the Widgets corresponding to the element
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected static Widget[] getItems(StructuredViewer viewer, Object element) {

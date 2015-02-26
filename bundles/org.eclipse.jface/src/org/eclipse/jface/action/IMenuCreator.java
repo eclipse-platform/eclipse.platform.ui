@@ -16,13 +16,13 @@ import org.eclipse.swt.widgets.Menu;
 /**
  * Interface for something that creates and disposes of SWT menus.  Note that
  * it is the responsibility of the implementor to dispose of SWT menus it
- * creates. 
+ * creates.
  */
 public interface IMenuCreator {
     /**
      * Disposes the menu returned by <code>getMenu</code>. Does nothing
      * if there is no menu.  This method will be executed only when the
-     * parent of the menu is disposed.  
+     * parent of the menu is disposed.
      */
     public void dispose();
 

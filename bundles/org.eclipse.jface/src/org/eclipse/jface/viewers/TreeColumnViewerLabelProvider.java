@@ -14,9 +14,9 @@ package org.eclipse.jface.viewers;
 
 /**
  * TreeViewerLabelProvider is the ViewerLabelProvider that handles TreePaths.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class TreeColumnViewerLabelProvider extends
 		TableColumnViewerLabelProvider {
@@ -55,7 +55,7 @@ public class TreeColumnViewerLabelProvider extends
 
 	/**
 	 * Create a new instance of the receiver with the supplied labelProvider.
-	 * 
+	 *
 	 * @param labelProvider
 	 */
 	public TreeColumnViewerLabelProvider(IBaseLabelProvider labelProvider) {
@@ -64,7 +64,7 @@ public class TreeColumnViewerLabelProvider extends
 
 	/**
 	 * Update the label for the element with TreePath.
-	 * 
+	 *
 	 * @param label
 	 * @param elementPath
 	 */
@@ -82,7 +82,7 @@ public class TreeColumnViewerLabelProvider extends
 
 	/**
 	 * Return the ITreePathLabelProvider for the receiver.
-	 * 
+	 *
 	 * @return Returns the treePathProvider.
 	 */
 	public ITreePathLabelProvider getTreePathProvider() {

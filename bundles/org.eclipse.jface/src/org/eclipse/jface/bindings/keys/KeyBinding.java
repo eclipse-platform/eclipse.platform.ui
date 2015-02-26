@@ -19,7 +19,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
  * A keyboard shortcut. This is a binding between some keyboard input and the
  * triggering of a command. This object is immutable.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class KeyBinding extends Binding {
@@ -32,7 +32,7 @@ public final class KeyBinding extends Binding {
 
 	/**
 	 * Constructs a new instance of <code>KeyBinding</code>.
-	 * 
+	 *
 	 * @param keySequence
 	 *            The key sequence which should trigger this binding. This value
 	 *            must not be <code>null</code>. It also must be a complete,
@@ -88,7 +88,7 @@ public final class KeyBinding extends Binding {
 	/**
 	 * Returns the key sequence which triggers this binding. The key sequence
 	 * will not be <code>null</code>, empty or incomplete.
-	 * 
+	 *
 	 * @return The key sequence; never <code>null</code>.
 	 */
 	public final KeySequence getKeySequence() {

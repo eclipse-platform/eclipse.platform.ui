@@ -23,13 +23,13 @@ import org.eclipse.swt.graphics.Image;
  * {@link StyledCellLabelProvider} that delegates requests for the styled string
  * and the image to a
  * {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider}.
- * 
+ *
  * <p>
  * Existing label providers can be enhanced by implementing
  * {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider} so they can be
  * used in viewers with styled labels.
  * </p>
- * 
+ *
  * <p>
  * The {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider} can
  * optionally implement {@link IColorProvider} and {@link IFontProvider} to
@@ -41,7 +41,7 @@ import org.eclipse.swt.graphics.Image;
  * can optionally implement {@link IToolTipProvider} to provide tooltip
  * support.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
@@ -59,10 +59,10 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 
 		/**
 		 * Returns the styled text label for the given element
-		 * 
+		 *
 		 * @param element
 		 *            the element to evaluate the styled string for
-		 * 
+		 *
 		 * @return the styled string.
 		 */
 		public StyledString getStyledText(Object element);
@@ -71,7 +71,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 		 * Returns the image for the label of the given element. The image is
 		 * owned by the label provider and must not be disposed directly.
 		 * Instead, dispose the label provider when no longer needed.
-		 * 
+		 *
 		 * @param element
 		 *            the element for which to provide the label image
 		 * @return the image used to label the element, or <code>null</code>
@@ -86,7 +86,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 	 * Creates a {@link DelegatingStyledCellLabelProvider} that delegates the
 	 * requests for the styled labels and the images to a
 	 * {@link IStyledLabelProvider}.
-	 * 
+	 *
 	 * @param labelProvider
 	 *            the label provider that provides the styled labels and the
 	 *            images
@@ -105,10 +105,10 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 
 		StyledString styledString = getStyledText(element);
 		String newText= styledString.toString();
-		
+
 		StyleRange[] oldStyleRanges= cell.getStyleRanges();
 		StyleRange[] newStyleRanges= isOwnerDrawEnabled() ? styledString.getStyleRanges() : null;
-		
+
 		if (!Arrays.equals(oldStyleRanges, newStyleRanges)) {
 			cell.setStyleRanges(newStyleRanges);
 			if (cell.getText().equals(newText)) {
@@ -116,19 +116,19 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 				cell.setText(""); //$NON-NLS-1$
 			}
 		}
-		
+
 		cell.setText(newText);
 		cell.setImage(getImage(element));
 		cell.setFont(getFont(element));
 		cell.setForeground(getForeground(element));
 		cell.setBackground(getBackground(element));
-		
+
 		// no super call required. changes on item will trigger the refresh.
 	}
 
 	/**
 	 * Provides a foreground color for the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return the foreground color for the element, or <code>null</code> to
@@ -144,7 +144,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 
 	/**
 	 * Provides a background color for the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return the background color for the element, or <code>null</code> to
@@ -160,7 +160,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 
 	/**
 	 * Provides a font for the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return the font for the element, or <code>null</code> to use the
@@ -185,7 +185,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 	 * Returns the image for the label of the given element. The image is owned
 	 * by the label provider and must not be disposed directly. Instead, dispose
 	 * the label provider when no longer needed.
-	 * 
+	 *
 	 * @param element
 	 *            the element for which to provide the label image
 	 * @return the image used to label the element, or <code>null</code> if
@@ -197,7 +197,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 
 	/**
 	 * Returns the styled text for the label of the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element for which to provide the styled label text
 	 * @return the styled text string used to label the element
@@ -208,7 +208,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 
 	/**
 	 * Returns the styled string provider.
-	 * 
+	 *
 	 * @return the wrapped label provider
 	 */
 	public IStyledLabelProvider getStyledStringProvider() {

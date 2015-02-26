@@ -49,12 +49,12 @@ import org.eclipse.swt.widgets.Widget;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ActionContributionItem extends ContributionItem {
- 
+
 	/**
 	 * Mode bit: Show text on tool items or buttons, even if an image is
 	 * present. If this mode bit is not set, text is only shown on tool items if
 	 * there is no image present.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static int MODE_FORCE_TEXT = 1;
@@ -71,7 +71,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Returns whether color icons should be used in toolbars.
-	 * 
+	 *
 	 * @return <code>true</code> if color icons should be used in toolbars,
 	 *         <code>false</code> otherwise
 	 */
@@ -81,7 +81,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Sets whether color icons should be used in toolbars.
-	 * 
+	 *
 	 * @param useColorIcons
 	 *            <code>true</code> if color icons should be used in toolbars,
 	 *            <code>false</code> otherwise
@@ -156,7 +156,7 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Creates a new contribution item from the given action. The id of the
 	 * action is used as the id of the item.
-	 * 
+	 *
 	 * @param action
 	 *            the action
 	 */
@@ -286,7 +286,7 @@ public class ActionContributionItem extends ContributionItem {
 			}
 
 			if (flags == SWT.CASCADE) {
-				// just create a proxy for now, if the user shows it then 
+				// just create a proxy for now, if the user shows it then
 				// fill it in
 				Menu subMenu = new Menu(parent);
 				subMenu.addListener(SWT.Show, getMenuCreatorListener());
@@ -365,7 +365,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Returns the action associated with this contribution item.
-	 * 
+	 *
 	 * @return the action
 	 */
 	public IAction getAction() {
@@ -374,7 +374,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Returns the listener for SWT button widget events.
-	 * 
+	 *
 	 * @return a listener for button events
 	 */
 	private Listener getButtonListener() {
@@ -402,7 +402,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Returns the listener for SWT menu item widget events.
-	 * 
+	 *
 	 * @return a listener for menu item events
 	 */
 	private Listener getMenuItemListener() {
@@ -433,9 +433,9 @@ public class ActionContributionItem extends ContributionItem {
 	 * <code>MODE_*</code> constants. The default mode setting is 0, meaning
 	 * that for menu items, both text and image are shown (if present), but for
 	 * tool items, the text is shown only if there is no image.
-	 * 
+	 *
 	 * @return the presentation mode settings
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public int getMode() {
@@ -444,7 +444,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Returns the listener for SWT tool item widget events.
-	 * 
+	 *
 	 * @return a listener for tool item events
 	 */
 	private Listener getToolItemListener() {
@@ -573,8 +573,8 @@ public class ActionContributionItem extends ContributionItem {
 				if (trace) {
 					ms = System.currentTimeMillis();
 					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
-				}				
-				
+				}
+
 				IPropertyChangeListener resultListener = null;
 				if (callback != null) {
 					resultListener = new IPropertyChangeListener() {
@@ -629,7 +629,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Returns whether the given action has any images.
-	 * 
+	 *
 	 * @param actionToCheck
 	 *            the action
 	 * @return <code>true</code> if the action has any images,
@@ -689,7 +689,7 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Returns <code>true</code> if this item is allowed to enable,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return if this item is allowed to be enabled
 	 * @since 2.0
 	 */
@@ -715,10 +715,10 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Sets the presentation mode, which is the bitwise-or of the
 	 * <code>MODE_*</code> constants.
-	 * 
+	 *
 	 * @param mode
 	 *            the presentation mode settings
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setMode(int mode) {
@@ -737,7 +737,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Synchronizes the UI with the given property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the name of the property, or <code>null</code> meaning all
 	 *            applicable properties
@@ -1018,7 +1018,7 @@ public class ActionContributionItem extends ContributionItem {
 
 	/**
 	 * Updates the images for this action.
-	 * 
+	 *
 	 * @param forceImage
 	 *            <code>true</code> if some form of image is compulsory, and
 	 *            <code>false</code> if it is acceptable for this item to have
@@ -1156,13 +1156,13 @@ public class ActionContributionItem extends ContributionItem {
 	 * the width of the given ToolItem.The default implementation replaces
 	 * characters in the center of the original string with an ellipsis ("...").
 	 * Override if you need a different strategy.
-	 * 
+	 *
 	 * @param textValue
 	 *            the text to shorten
 	 * @param item
 	 *            the tool item the text belongs to
 	 * @return the shortened string
-	 * 
+	 *
 	 */
 	protected String shortenText(String textValue, ToolItem item) {
 		if (textValue == null) {
@@ -1200,11 +1200,11 @@ public class ActionContributionItem extends ContributionItem {
 		}
 		holdMenu = null;
 	}
-	
+
 	/**
 	 * Handle show and hide on the proxy menu for IAction.AS_DROP_DOWN_MENU
 	 * actions.
-	 * 
+	 *
 	 * @return the appropriate listener
 	 * @since 3.4
 	 */
@@ -1226,7 +1226,7 @@ public class ActionContributionItem extends ContributionItem {
 		}
 		return menuCreatorListener;
 	}
-	
+
 	/**
 	 * This is the easiest way to hold the menu until we can swap it in to the
 	 * proxy.
@@ -1234,10 +1234,10 @@ public class ActionContributionItem extends ContributionItem {
 	private Menu holdMenu = null;
 
 	private boolean menuCreatorCalled = false;
-	
+
 	/**
 	 * The proxy menu is being shown, we better get the real menu.
-	 * 
+	 *
 	 * @param proxy
 	 *            the proxy menu
 	 * @since 3.4
@@ -1259,7 +1259,7 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Create MenuItems in the proxy menu that can execute the real menu items
 	 * if selected. Create proxy menus for any real item submenus.
-	 * 
+	 *
 	 * @param realMenu
 	 *            the real menu to copy from
 	 * @param proxy
@@ -1270,7 +1270,7 @@ public class ActionContributionItem extends ContributionItem {
 		if (realMenu.isDisposed() || proxy.isDisposed()) {
 			return;
 		}
-		
+
 		// we notify the real menu so it can populate itself if it was
 		// listening for SWT.Show
 		realMenu.notifyListeners(SWT.Show, null);
@@ -1332,10 +1332,10 @@ public class ActionContributionItem extends ContributionItem {
 			}
 		}
 	}
-	
+
 	/**
 	 * The proxy menu is being hidden, so we need to make it go away.
-	 * 
+	 *
 	 * @param proxy
 	 *            the proxy menu
 	 * @since 3.4
@@ -1357,7 +1357,7 @@ public class ActionContributionItem extends ContributionItem {
 			}
 		});
 	}
-	
+
 	/**
 	 * Return the widget associated with this contribution item. It should not
 	 * be cached, as it can be disposed and re-created by its containing
@@ -1367,7 +1367,7 @@ public class ActionContributionItem extends ContributionItem {
 	 * actual type of the widget can be any valid control for this
 	 * ContributionItem's current ContributionManager.
 	 * </p>
-	 * 
+	 *
 	 * @return the widget, or <code>null</code> depending on the lifecycle.
 	 * @since 3.4
 	 */

@@ -21,17 +21,17 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 
 /**
- * A <code>DelegatingDragAdapter</code> is a <code>DragSourceListener</code> that  
- * maintains and delegates to a set of {@link TransferDragSourceListener}s. Each 
- * TransferDragSourceListener can then be implemented as if it were the 
+ * A <code>DelegatingDragAdapter</code> is a <code>DragSourceListener</code> that
+ * maintains and delegates to a set of {@link TransferDragSourceListener}s. Each
+ * TransferDragSourceListener can then be implemented as if it were the
  * <code>DragSource's</code> only DragSourceListener.
  * <p>
  * When a drag is started, a subset of all <code>TransferDragSourceListeners</code>
  * is generated and stored in a list of <i>active</i> listeners. This subset is
- * calculated by forwarding {@link DragSourceListener#dragStart(DragSourceEvent)} to 
- * every listener, and checking if the {@link DragSourceEvent#doit doit} field is left 
+ * calculated by forwarding {@link DragSourceListener#dragStart(DragSourceEvent)} to
+ * every listener, and checking if the {@link DragSourceEvent#doit doit} field is left
  * set to <code>true</code>.
- * </p> 
+ * </p>
  * The <code>DragSource</code>'s set of supported Transfer types ({@link
  * DragSource#setTransfer(Transfer[])}) is updated to reflect the Transfer types
  * corresponding to the active listener subset.
@@ -39,19 +39,19 @@ import org.eclipse.swt.dnd.TransferData;
  * If and when {@link #dragSetData(DragSourceEvent)} is called, a single
  * <code>TransferDragSourceListener</code> is chosen, and only it is allowed to set the
  * drag data. The chosen listener is the first listener in the subset of active listeners
- * whose Transfer supports ({@link Transfer#isSupportedType(TransferData)}) the 
+ * whose Transfer supports ({@link Transfer#isSupportedType(TransferData)}) the
  * <code>dataType</code> in the <code>DragSourceEvent</code>.
  * </p>
  * <p>
  * The following example snippet shows a <code>DelegatingDragAdapter</code> with two
- * <code>TransferDragSourceListeners</code>. One implements drag of text strings, 
+ * <code>TransferDragSourceListeners</code>. One implements drag of text strings,
  * the other supports file transfer and demonstrates how a listener can be disabled using
- * the dragStart method. 
+ * the dragStart method.
  * </p>
  * <code><pre>
  *		final TreeViewer viewer = new TreeViewer(shell, SWT.NONE);
- *		
- *		DelegatingDragAdapter dragAdapter = new DelegatingDragAdapter();		
+ *
+ *		DelegatingDragAdapter dragAdapter = new DelegatingDragAdapter();
  *		dragAdapter.addDragSourceListener(new TransferDragSourceListener() {
  *			public Transfer getTransfer() {
  *				return TextTransfer.getInstance();
@@ -96,7 +96,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 
     /**
      * Adds the given <code>TransferDragSourceListener</code>.
-     * 
+     *
      * @param listener the new listener
      */
     public void addDragSourceListener(TransferDragSourceListener listener) {
@@ -104,11 +104,11 @@ public class DelegatingDragAdapter implements DragSourceListener {
     }
 
     /**
-     * The drop has successfully completed. This event is forwarded to the current 
+     * The drop has successfully completed. This event is forwarded to the current
      * drag listener.
      * Doesn't update the current listener, since the current listener  is already the one
      * that completed the drag operation.
-     * 
+     *
      * @param event the drag source event
      * @see DragSourceListener#dragFinished(DragSourceEvent)
      */
@@ -124,7 +124,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
                     currentListener.dragFinished(event);
                 } else {
                     // The drag was canceled and currentListener was never set, so send the
-                    // dragFinished event to all the active listeners. 
+                    // dragFinished event to all the active listeners.
                     event.doit = false;
                     Iterator<TransferDragSourceListener> iterator = activeListeners.iterator();
                     while (iterator.hasNext()) {
@@ -141,7 +141,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
     /**
      * The drop data is requested.
      * Updates the current listener and then forwards the event to it.
-     * 
+     *
      * @param event the drag source event
      * @see DragSourceListener#dragSetData(DragSourceEvent)
      */
@@ -163,11 +163,11 @@ public class DelegatingDragAdapter implements DragSourceListener {
 
     /**
      * A drag operation has started.
-     * Forwards this event to each listener. A listener must set <code>event.doit</code> 
-     * to <code>false</code> if it cannot handle the drag operation. If a listener can  
-     * handle the drag, it is added to the list of active listeners.  
-     * The drag is aborted if there are no listeners that can handle it.  
-     * 
+     * Forwards this event to each listener. A listener must set <code>event.doit</code>
+     * to <code>false</code> if it cannot handle the drag operation. If a listener can
+     * handle the drag, it is added to the list of active listeners.
+     * The drag is aborted if there are no listeners that can handle it.
+     *
      * @param event the drag source event
      * @see DragSourceListener#dragStart(DragSourceEvent)
      */
@@ -206,7 +206,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 
     /**
      * Returns the <code>Transfer<code>s from every <code>TransferDragSourceListener</code>.
-     * 
+     *
      * @return the combined <code>Transfer</code>s
      */
     public Transfer[] getTransfers() {
@@ -221,7 +221,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 
     /**
      * Returns <code>true</code> if there are no listeners to delegate drag events to.
-     * 
+     *
      * @return <code>true</code> if there are no <code>TransferDragSourceListeners</code>
      * 	<code>false</code> otherwise.
      */
@@ -232,7 +232,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
     /**
      * Removes the given <code>TransferDragSourceListener</code>.
      * Listeners should not be removed while a drag and drop operation is in progress.
-     *  
+     *
      * @param listener the <code>TransferDragSourceListener</code> to remove
      */
     public void removeDragSourceListener(TransferDragSourceListener listener) {
@@ -246,11 +246,11 @@ public class DelegatingDragAdapter implements DragSourceListener {
     }
 
     /**
-     * Updates the current listener to one that can handle the drag. There can 
-     * be many listeners and each listener may be able to handle many <code>TransferData</code> 
-     * types.  The first listener found that supports one of the <code>TransferData</ode> 
+     * Updates the current listener to one that can handle the drag. There can
+     * be many listeners and each listener may be able to handle many <code>TransferData</code>
+     * types.  The first listener found that supports one of the <code>TransferData</ode>
      * types specified in the <code>DragSourceEvent</code> will be selected.
-     * 
+     *
      * @param event the drag source event
      */
     private void updateCurrentListener(DragSourceEvent event) {
@@ -265,7 +265,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 
             if (listener.getTransfer().isSupportedType(event.dataType)) {
                 //				if (Policy.DEBUG_DRAG_DROP)
-                //					System.out.println("Current drag listener: " + listener); //$NON-NLS-1$			
+                //					System.out.println("Current drag listener: " + listener); //$NON-NLS-1$
                 currentListener = listener;
                 return;
             }

@@ -20,9 +20,9 @@ import org.eclipse.swt.graphics.Image;
  * The WrappedViewerLabelProvider is a label provider that allows
  * {@link ILabelProvider}, {@link IColorProvider} and {@link IFontProvider} to
  * be mapped to a ColumnLabelProvider.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
@@ -40,7 +40,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Create a new instance of the receiver based on labelProvider.
-	 * 
+	 *
 	 * @param labelProvider
 	 */
 	public WrappedViewerLabelProvider(IBaseLabelProvider labelProvider) {
@@ -50,7 +50,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Set the any providers for the receiver that can be adapted from provider.
-	 * 
+	 *
 	 * @param provider
 	 *            {@link Object}
 	 */
@@ -112,7 +112,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Get the label provider
-	 * 
+	 *
 	 * @return {@link ILabelProvider}
 	 */
 	ILabelProvider getLabelProvider() {
@@ -121,7 +121,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Get the color provider
-	 * 
+	 *
 	 * @return {@link IColorProvider}
 	 */
 	IColorProvider getColorProvider() {
@@ -130,7 +130,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Get the font provider
-	 * 
+	 *
 	 * @return {@link IFontProvider}.
 	 */
 	IFontProvider getFontProvider() {
@@ -154,9 +154,9 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 			}
 			return;
 		}
-		
+
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
-		
+
 		if (treePathLabelProvider != null) {
 			TreePath treePath = cell.getViewerRow().getTreePath();
 
@@ -164,16 +164,16 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 			treePathLabelProvider.updateLabel(label, treePath);
 		} else if (viewerLabelProvider != null) {
 			viewerLabelProvider.updateLabel(label, element);
-		} 
-		if (!label.hasNewForeground() && colorProvider != null) 
+		}
+		if (!label.hasNewForeground() && colorProvider != null)
 			label.setForeground(getForeground(element));
-		
-		if (!label.hasNewBackground() && colorProvider != null) 
+
+		if (!label.hasNewBackground() && colorProvider != null)
 			label.setBackground(getBackground(element));
-		
-		if (!label.hasNewFont() && fontProvider != null) 
+
+		if (!label.hasNewFont() && fontProvider != null)
 			label.setFont(getFont(element));
-		
+
 		applyViewerLabel(cell, label);
 	}
 

@@ -24,12 +24,12 @@ import org.eclipse.swt.events.SegmentListener;
 /**
  * Segment listener that implements bidi-structured text reordering.
  * The reordering is specified by the structured text type that is passed to the constructor.
- * 
+ *
  * <p>
  * <strong>Note:</strong> This class only works if the <code>org.eclipse.equinox.bidi</code>
  * bundle is on the classpath!
  * </p>
- * 
+ *
  * @since 3.9
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -40,21 +40,21 @@ public class StructuredTextSegmentListener implements SegmentListener {
 
 	/**
 	 * Creates a new structured text segment listener.
-	 * 
+	 *
 	 * @param textType
 	 *            the structured text type. Possible values are the structured
 	 *            text type ids supported by
 	 *            {@link StructuredTextTypeHandlerFactory#getHandler(String)}.
 	 * @throws IllegalArgumentException
 	 *             if <code>textType</code> is not a known type identifier
-	 */ 
+	 */
 	public StructuredTextSegmentListener(String textType) {
 		expert = StructuredTextExpertFactory.getExpert(textType);
 	}
 
 	/**
 	 * Creates a new structured text segment listener.
-	 * 
+	 *
 	 * @param textTypeHandler the structured text type handler
 	 * @throws IllegalArgumentException if the <code>handler</code> is <code>null</code>
 	 */

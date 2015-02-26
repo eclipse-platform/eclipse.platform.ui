@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
  * stacked on top of each other in card layout fashion.
  * <p>
  * The class <code>Wizard</code> provides an abstract implementation
- * of this interface. However, clients are also free to implement this 
+ * of this interface. However, clients are also free to implement this
  * interface if <code>Wizard</code> does not suit their needs.
  * </p>
  * @see Wizard
@@ -30,7 +30,7 @@ public interface IWizard {
     /**
      * Adds any last-minute pages to this wizard.
      * <p>
-     * This method is called just before the wizard becomes visible, to give the 
+     * This method is called just before the wizard becomes visible, to give the
      * wizard the opportunity to add any lazily created pages.
      * </p>
      */
@@ -177,7 +177,7 @@ public interface IWizard {
 	 * <strong>Note 2:</strong> In the default {@link WizardDialog} implementation, the "Help"
 	 * button only works when {@link org.eclipse.jface.dialogs.IDialogPage#performHelp()} is implemented.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if help is available, <code>false</code> otherwise
 	 * @see TrayDialog#isHelpAvailable()
 	 * @see TrayDialog#setHelpAvailable(boolean)
@@ -207,7 +207,7 @@ public interface IWizard {
     public boolean needsProgressMonitor();
 
     /**
-     * Performs any actions appropriate in response to the user 
+     * Performs any actions appropriate in response to the user
      * having pressed the Cancel button, or refuse if canceling
      * now is not permitted.
      *
@@ -218,7 +218,7 @@ public interface IWizard {
     public boolean performCancel();
 
     /**
-     * Performs any actions appropriate in response to the user 
+     * Performs any actions appropriate in response to the user
      * having pressed the Finish button, or refuse if finishing
      * now is not permitted.
      *
@@ -237,7 +237,7 @@ public interface IWizard {
     /**
      * Sets or clears the container of this wizard.
      *
-     * @param wizardContainer the wizard container, or <code>null</code> 
+     * @param wizardContainer the wizard container, or <code>null</code>
      */
     public void setContainer(IWizardContainer wizardContainer);
 }

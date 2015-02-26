@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214392 missing implementation of ComboFieldEditor.setEnabled
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * A field editor for a combo box that allows the drop-down selection of one of
  * a list of items.
- * 
+ *
  * @since 3.3
  */
 public class ComboFieldEditor extends FieldEditor {
@@ -33,12 +33,12 @@ public class ComboFieldEditor extends FieldEditor {
 	 * The <code>Combo</code> widget.
 	 */
 	private Combo fCombo;
-	
+
 	/**
 	 * The value (not the name) of the currently selected item in the Combo widget.
 	 */
 	private String fValue;
-	
+
 	/**
 	 * The names (labels) and underlying values to populate the combo widget.  These should be
 	 * arranged as: { {name1, value1}, {name2, value2}, ...}
@@ -47,7 +47,7 @@ public class ComboFieldEditor extends FieldEditor {
 
 	/**
 	 * Create the combo box field editor.
-	 * 
+	 *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
 	 * @param entryNamesAndValues the names (labels) and underlying values to populate the combo widget.  These should be
@@ -58,11 +58,11 @@ public class ComboFieldEditor extends FieldEditor {
 		init(name, labelText);
 		Assert.isTrue(checkArray(entryNamesAndValues));
 		fEntryNamesAndValues = entryNamesAndValues;
-		createControl(parent);		
+		createControl(parent);
 	}
 
 	/**
-	 * Checks whether given <code>String[][]</code> is of "type" 
+	 * Checks whether given <code>String[][]</code> is of "type"
 	 * <code>String[][2]</code>.
 	 *
 	 * @return <code>true</code> if it is ok, and <code>false</code> otherwise
@@ -95,7 +95,7 @@ public class ComboFieldEditor extends FieldEditor {
 			if (control != null) {
 				((GridData)control.getLayoutData()).horizontalSpan = 1;
 			}
-			((GridData)fCombo.getLayoutData()).horizontalSpan = 1;			
+			((GridData)fCombo.getLayoutData()).horizontalSpan = 1;
 		}
 	}
 
@@ -151,7 +151,7 @@ public class ComboFieldEditor extends FieldEditor {
 			for (int i = 0; i < fEntryNamesAndValues.length; i++) {
 				fCombo.add(fEntryNamesAndValues[i][0], i);
 			}
-			
+
 			fCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
@@ -159,13 +159,13 @@ public class ComboFieldEditor extends FieldEditor {
 					String name = fCombo.getText();
 					fValue = getValueForName(name);
 					setPresentsDefaultValue(false);
-					fireValueChanged(VALUE, oldValue, fValue);					
+					fireValueChanged(VALUE, oldValue, fValue);
 				}
 			});
 		}
 		return fCombo;
 	}
-	
+
 	/*
 	 * Given the name (label) of an entry, return the corresponding value.
 	 */
@@ -178,7 +178,7 @@ public class ComboFieldEditor extends FieldEditor {
 		}
 		return fEntryNamesAndValues[0][0];
 	}
-	
+
 	/*
 	 * Set the name in the combo widget to match the specified value.
 	 */

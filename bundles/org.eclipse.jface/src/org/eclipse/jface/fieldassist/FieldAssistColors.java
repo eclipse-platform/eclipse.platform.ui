@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Display;
  * cases, clients are provided information, such as RGB values, in order to
  * create their own color resources. In these cases, the client should manage
  * the lifecycle of any created resource.
- * 
+ *
  * @since 3.2
  * @deprecated As of 3.3, this class is no longer necessary.
  */
@@ -68,7 +68,7 @@ public class FieldAssistColors {
 	 * This color is computed dynamically each time that it is queried. Clients
 	 * should typically call this method once, create a color from the RGB
 	 * provided, and dispose of the color when finished using it.
-	 * 
+	 *
 	 * @param control
 	 *            the control for which the background color should be computed.
 	 * @return the RGB value indicating a background color appropriate for
@@ -101,7 +101,7 @@ public class FieldAssistColors {
 	 * <p>
 	 * This color is managed by FieldAssistResources and should never be
 	 * disposed by clients.
-	 * 
+	 *
 	 * @param control
 	 *            the control on which the background color will be used.
 	 * @return the color used to indicate that a field is required.

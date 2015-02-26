@@ -26,7 +26,7 @@ import org.eclipse.swt.events.SegmentListener;
 	/**
 	 * Creates a new segment listener that enforces Visual Text Direction
 	 * support.
-	 * 
+	 *
 	 * @param textDir
 	 *            the text direction Possible values are:
 	 *            <ul>

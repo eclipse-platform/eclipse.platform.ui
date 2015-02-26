@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.9
  */
 /*package*/ class BaseTextDirectionSegmentListener implements SegmentListener {
-	
+
 	private String textDirection;
 
 	/**
 	 * Creates a new segment listener that enforces Base Text Direction (BTD) support.
-	 * 
+	 *
 	 * @param textDir the text direction
 	 * Possible values are:
 	 * <ul>
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Control;
 	 * <li> {@link BidiUtils#RIGHT_TO_LEFT}
 	 * <li> {@link BidiUtils#AUTO}
 	 * </ul>
-	 */ 
+	 */
 	public BaseTextDirectionSegmentListener(String textDir) {
 		super();
 		textDirection = textDir;
@@ -62,7 +62,7 @@ import org.eclipse.swt.widgets.Control;
 			}
 		}
 	}
-	
+
 	protected boolean isRTLValue(String stringValue) {
 		if (stringValue == null || stringValue.length() == 0 || BidiUtils.LEFT_TO_RIGHT.equals(textDirection))
 			return false;

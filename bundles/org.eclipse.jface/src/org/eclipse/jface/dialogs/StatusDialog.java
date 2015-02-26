@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
  * The status message is specified in an IStatus which can be of severity ERROR,
  * WARNING, INFO or OK. The OK button is enabled or disabled depending on the
  * status.
- * 
+ *
  * @since 3.1
  */
 public abstract class StatusDialog extends TrayDialog {
@@ -60,7 +60,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 		/**
 		 * Creates a new message line as a child of the given parent.
-		 * 
+		 *
 		 * @param parent
 		 */
 		public MessageLine(Composite parent) {
@@ -70,7 +70,7 @@ public abstract class StatusDialog extends TrayDialog {
 		/**
 		 * Creates a new message line as a child of the parent and with the
 		 * given SWT stylebits.
-		 * 
+		 *
 		 * @param parent
 		 * @param style
 		 */
@@ -81,7 +81,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 		/**
 		 * Find an image assocated with the status.
-		 * 
+		 *
 		 * @param status
 		 * @return Image
 		 */
@@ -100,7 +100,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 		/**
 		 * Sets the message and image to the given status.
-		 * 
+		 *
 		 * @param status
 		 *            IStatus or <code>null</code>. <code>null</code> will
 		 *            set the empty text and no image.
@@ -118,7 +118,7 @@ public abstract class StatusDialog extends TrayDialog {
 					return;
 				}
 			}
-			setText(""); //$NON-NLS-1$	
+			setText(""); //$NON-NLS-1$
 			// unqualified call of setImage is too ambiguous for Foundation 1.0
 			// compiler
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
@@ -129,7 +129,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 	/**
 	 * Creates an instance of a status dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent Shell of the dialog
 	 */
@@ -142,7 +142,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/**
 	 * Specifies whether status line appears to the left of the buttons
 	 * (default) or above them.
-	 * 
+	 *
 	 * @param aboveButtons
 	 *            if <code>true</code> status line is placed above buttons; if
 	 *            <code>false</code> to the right
@@ -154,7 +154,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/**
 	 * Update the dialog's status line to reflect the given status. It is safe
 	 * to call this method before the dialog has been opened.
-	 * 
+	 *
 	 * @param status
 	 *            the status to set
 	 */
@@ -168,7 +168,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 	/**
 	 * Returns the last status.
-	 * 
+	 *
 	 * @return IStatus
 	 */
 	public IStatus getStatus() {
@@ -178,7 +178,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/**
 	 * Updates the status of the ok button to reflect the given status.
 	 * Subclasses may override this method to update additional buttons.
-	 * 
+	 *
 	 * @param status
 	 *            the status.
 	 */
@@ -275,7 +275,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 	/**
 	 * Sets the title for this dialog.
-	 * 
+	 *
 	 * @param title
 	 *            the title.
 	 */
@@ -289,7 +289,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 	/**
 	 * Sets the image for this dialog.
-	 * 
+	 *
 	 * @param image
 	 *            the image.
 	 */

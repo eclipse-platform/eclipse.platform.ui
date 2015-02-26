@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Widget;
  * interface (see <code>TableTreeViewer.setLabelProvider</code> for more
  * details).
  * </p>
- * 
+ *
  * @deprecated As of 3.1 use {@link TreeViewer} instead
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -77,7 +77,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	/**
 	 * Copied from original TableEditorImpl and moved here since refactoring
 	 * completely wiped out the original implementation in 3.3
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	class TableTreeEditorImpl {
@@ -111,7 +111,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Returns this <code>TableViewerImpl</code> viewer
-		 * 
+		 *
 		 * @return the viewer
 		 */
 		public ColumnViewer getViewer() {
@@ -123,12 +123,12 @@ public class TableTreeViewer extends AbstractTreeViewer {
 				if( cellEditors[columnNumber] != null && cellModifier != null ) {
 					Object element = tableItem.getData();
 					String property = columnProperties[columnNumber];
-					
+
 					if( cellModifier.canModify(element, property) ) {
 						cellEditor = cellEditors[columnNumber];
-						
+
 						cellEditor.addListener(cellEditorListener);
-						
+
 						Object value = cellModifier.getValue(element, property);
 						cellEditor.setValue(value);
 						// Tricky flow of control here:
@@ -252,7 +252,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Start editing the given element.
-		 * 
+		 *
 		 * @param element
 		 * @param column
 		 */
@@ -278,7 +278,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Return the array of CellEditors used in the viewer
-		 * 
+		 *
 		 * @return the cell editors
 		 */
 		public CellEditor[] getCellEditors() {
@@ -287,7 +287,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Get the cell modifier
-		 * 
+		 *
 		 * @return the cell modifier
 		 */
 		public ICellModifier getCellModifier() {
@@ -296,7 +296,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Return the properties for the column
-		 * 
+		 *
 		 * @return the array of column properties
 		 */
 		public Object[] getColumnProperties() {
@@ -305,7 +305,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Handles the mouse down event; activates the cell editor.
-		 * 
+		 *
 		 * @param event
 		 *            the mouse event that should be handled
 		 */
@@ -333,7 +333,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 				return;
 			}
 			tableItem = items[0];
-			
+
 			activateCellEditor(event);
 		}
 
@@ -359,7 +359,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Return whether there is an active cell editor.
-		 * 
+		 *
 		 * @return <code>true</code> if there is an active cell editor;
 		 *         otherwise <code>false</code> is returned.
 		 */
@@ -378,7 +378,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 				}
 			}
 			String property = null;
-			
+
 			if( columnProperties != null && columnNumber < columnProperties.length ) {
 				property = columnProperties[columnNumber];
 			}
@@ -387,7 +387,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Set the cell editors
-		 * 
+		 *
 		 * @param editors
 		 */
 		public void setCellEditors(CellEditor[] editors) {
@@ -396,7 +396,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Set the cell modifier
-		 * 
+		 *
 		 * @param modifier
 		 */
 		public void setCellModifier(ICellModifier modifier) {
@@ -405,7 +405,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 		/**
 		 * Set the column properties
-		 * 
+		 *
 		 * @param columnProperties
 		 */
 		public void setColumnProperties(String[] columnProperties) {
@@ -454,7 +454,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	 * Creates a table tree viewer on the given table tree control. The viewer
 	 * has no input, no content provider, a default label provider, no sorter,
 	 * and no filters.
-	 * 
+	 *
 	 * @param tree
 	 *            the table tree control
 	 */
@@ -473,7 +473,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	 * bits <code>MULTI, H_SCROLL, V_SCROLL, and BORDER</code>. The viewer
 	 * has no input, no content provider, a default label provider, no sorter,
 	 * and no filters.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */
@@ -487,7 +487,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	 * the given parent. The table tree control is created using the given SWT
 	 * style bits. The viewer has no input, no content provider, a default label
 	 * provider, no sorter, and no filters.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param style
@@ -623,7 +623,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	 * <p>
 	 * This method is internal to the framework.
 	 * </p>
-	 * 
+	 *
 	 * @param index
 	 *            the zero-based index
 	 * @return the element at the given index, or <code>null</code> if the
@@ -694,7 +694,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 
 	/**
 	 * Returns this table tree viewer's table tree control.
-	 * 
+	 *
 	 * @return the table tree control
 	 */
 	@Deprecated

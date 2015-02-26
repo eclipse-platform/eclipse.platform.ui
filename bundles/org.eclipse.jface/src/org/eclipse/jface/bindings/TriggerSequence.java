@@ -17,11 +17,11 @@ import org.eclipse.jface.util.Util;
  * A sequence of one or more triggers. None of these triggers may be
  * <code>null</code>.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class TriggerSequence {
-	
+
 	/**
 	 * The value to see that hash code to if the hash code is not yet computed.
 	 */
@@ -54,7 +54,7 @@ public abstract class TriggerSequence {
 
 	/**
 	 * Constructs a new instance of <code>TriggerSequence</code>.
-	 * 
+	 *
 	 * @param triggers
 	 *            The triggers contained within this sequence; must not be
 	 *            <code>null</code> or contain <code>null</code> elements.
@@ -80,7 +80,7 @@ public abstract class TriggerSequence {
 	/**
 	 * Returns whether or not this key sequence ends with the given key
 	 * sequence.
-	 * 
+	 *
 	 * @param triggerSequence
 	 *            a trigger sequence. Must not be <code>null</code>.
 	 * @param equals
@@ -117,7 +117,7 @@ public abstract class TriggerSequence {
 
 	/**
 	 * Formats this trigger sequence into the current default look.
-	 * 
+	 *
 	 * @return A string representation for this trigger sequence using the
 	 *         default look; never <code>null</code>.
 	 */
@@ -134,7 +134,7 @@ public abstract class TriggerSequence {
 	 * A, B, C and D. The prefixes would be "", "A", "A B", and "A B C". The
 	 * list of prefixes must always be the same as the size of the trigger list.
 	 * </p>
-	 * 
+	 *
 	 * @return The array of possible prefixes for this sequence. This array must
 	 *         not be <code>null</code>, but may be empty. It must only
 	 *         contains instances of <code>TriggerSequence</code>.
@@ -143,7 +143,7 @@ public abstract class TriggerSequence {
 
 	/**
 	 * Returns the list of triggers.
-	 * 
+	 *
 	 * @return The triggers; never <code>null</code> and guaranteed to only
 	 *         contain instances of <code>Trigger</code>.
 	 */
@@ -169,7 +169,7 @@ public abstract class TriggerSequence {
 
 	/**
 	 * Returns whether or not this trigger sequence is empty.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the trigger sequence is empty.
 	 */
 	public final boolean isEmpty() {
@@ -179,7 +179,7 @@ public abstract class TriggerSequence {
 	/**
 	 * Returns whether or not this trigger sequence starts with the given
 	 * trigger sequence.
-	 * 
+	 *
 	 * @param triggerSequence
 	 *            a trigger sequence. Must not be <code>null</code>.
 	 * @param equals

@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Widget;
  * providers and editing support can be configured for each column separately.
  * Concrete subclasses of {@link ColumnViewer} should implement a matching
  * concrete subclass of {@link ViewerColumn}.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public abstract class ViewerColumn {
 
@@ -45,7 +45,7 @@ public abstract class ViewerColumn {
 
 	/**
 	 * Create a new instance of the receiver at columnIndex.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the column is part of
 	 * @param columnOwner
@@ -73,7 +73,7 @@ public abstract class ViewerColumn {
 
 	/**
 	 * Return the label provider for the receiver.
-	 * 
+	 *
 	 * @return ViewerLabelProvider
 	 */
 	/* package */CellLabelProvider getLabelProvider() {
@@ -83,7 +83,7 @@ public abstract class ViewerColumn {
 	/**
 	 * Set the label provider for the column. Subclasses may extend but must
 	 * call the super implementation.
-	 * 
+	 *
 	 * @param labelProvider
 	 *            the new {@link CellLabelProvider}
 	 */
@@ -116,7 +116,7 @@ public abstract class ViewerColumn {
 
 	/**
 	 * Return the editing support for the receiver.
-	 * 
+	 *
 	 * @return {@link EditingSupport}
 	 */
 	/* package */EditingSupport getEditingSupport() {
@@ -141,7 +141,7 @@ public abstract class ViewerColumn {
 	 * Refresh the cell for the given columnIndex. <strong>NOTE:</strong>the
 	 * {@link ViewerCell} provided to this method is no longer valid after this
 	 * method returns. Do not cache the cell for future use.
-	 * 
+	 *
 	 * @param cell
 	 *            {@link ViewerCell}
 	 */
@@ -179,9 +179,9 @@ public abstract class ViewerColumn {
 
 	/**
 	 * Returns the viewer of this viewer column.
-	 * 
+	 *
 	 * @return Returns the viewer.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public ColumnViewer getViewer() {

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * This class is intended to be the base for any trim contributions.
  * </p>
  * @since 3.2
- * 
+ *
  */
 public abstract class AbstractTrimWidget implements IWidget {
 	/**
@@ -49,10 +49,10 @@ public abstract class AbstractTrimWidget implements IWidget {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * 
+	 *
 	 * @param parent
 	 *            The parent to (re)create the widget under
-	 * 
+	 *
 	 * @param oldSide
 	 *            The previous side ({@link SWT#DEFAULT} on the initial fill)
 	 * @param newSide

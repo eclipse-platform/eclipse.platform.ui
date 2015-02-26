@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Baltasar Belyavsky - fix for 300539 - Add ability to specify filter-path     
+ *     Baltasar Belyavsky - fix for 300539 - Add ability to specify filter-path
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 
 /**
- * A field editor for a file path type preference. A standard file 
+ * A field editor for a file path type preference. A standard file
  * dialog appears when the user presses the change button.
  */
 public class FileFieldEditor extends StringButtonFieldEditor {
@@ -42,14 +42,14 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     private boolean enforceAbsolute = false;
 
     /**
-     * Creates a new file field editor 
+     * Creates a new file field editor
      */
     protected FileFieldEditor() {
     }
 
     /**
      * Creates a file field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -57,10 +57,10 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     public FileFieldEditor(String name, String labelText, Composite parent) {
         this(name, labelText, false, parent);
     }
-    
+
     /**
      * Creates a file field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param enforceAbsolute <code>true</code> if the file path
@@ -72,7 +72,7 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     }
     /**
      * Creates a file field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param enforceAbsolute <code>true</code> if the file path
@@ -185,7 +185,7 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     /**
      * Sets this file field editor's file extension filter.
      *
-     * @param extensions a list of file extension, or <code>null</code> 
+     * @param extensions a list of file extension, or <code>null</code>
      * to set the filter to the system's default value
      */
     public void setFileExtensions(String[] extensions) {

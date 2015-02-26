@@ -23,9 +23,9 @@ import org.eclipse.jface.util.Policy;
  * A viewer comparator is used by a {@link StructuredViewer} to
  * reorder the elements provided by its content provider.
  * <p>
- * The default <code>compare</code> method compares elements using two steps. 
- * The first step uses the values returned from <code>category</code>. 
- * By default, all elements are in the same category. 
+ * The default <code>compare</code> method compares elements using two steps.
+ * The first step uses the values returned from <code>category</code>.
+ * By default, all elements are in the same category.
  * The second level uses strings obtained from the content viewer's label
  * provider via <code>ILabelProvider.getText()</code>.
  * The strings are compared using a comparator from {@link Policy#getComparator()}
@@ -33,13 +33,13 @@ import org.eclipse.jface.util.Policy;
  * </p>
  * <p>
  * Subclasses may implement the <code>isSorterProperty</code> method;
- * they may reimplement the <code>category</code> method to provide 
+ * they may reimplement the <code>category</code> method to provide
  * categorization; and they may override the <code>compare</code> methods
  * to provide a totally different way of sorting elements.
  * </p>
  * @see IStructuredContentProvider
  * @see StructuredViewer
- * 
+ *
  * @since 3.2
  */
 public class ViewerComparator {
@@ -56,11 +56,11 @@ public class ViewerComparator {
 	public ViewerComparator(){
 		this(null);
 	}
-	
+
 	/**
      * Creates a new {@link ViewerComparator}, which uses the given comparator
      * to sort strings.
-     * 
+     *
 	 * @param comparator
 	 */
 	public ViewerComparator(Comparator comparator){
@@ -69,7 +69,7 @@ public class ViewerComparator {
 
 	/**
 	 * Returns the comparator used to sort strings.
-	 * 
+	 *
 	 * @return the comparator used to sort strings
 	 */
 	protected Comparator getComparator() {
@@ -104,16 +104,16 @@ public class ViewerComparator {
      * <p>
      * The default implementation of this method is based on
      * comparing the elements' categories as computed by the <code>category</code>
-     * framework method. Elements within the same category are further 
+     * framework method. Elements within the same category are further
      * subjected to a case insensitive compare of their label strings, either
-     * as computed by the content viewer's label provider, or their 
+     * as computed by the content viewer's label provider, or their
      * <code>toString</code> values in other cases. Subclasses may override.
      * </p>
-     * 
+     *
      * @param viewer the viewer
      * @param e1 the first element
      * @param e2 the second element
-     * @return a negative number if the first element is less  than the 
+     * @return a negative number if the first element is less  than the
      *  second element; the value <code>0</code> if the first element is
      *  equal to the second element; and a positive number if the first
      *  element is greater than the second element
@@ -125,14 +125,14 @@ public class ViewerComparator {
         if (cat1 != cat2) {
 			return cat1 - cat2;
 		}
-    	
+
         String name1 = getLabel(viewer, e1);
         String name2 = getLabel(viewer, e2);
 
         // use the comparator to compare the strings
         return getComparator().compare(name1, name2);
     }
-    
+
 	private String getLabel(Viewer viewer, Object e1) {
 		String name1;
 		if (viewer == null || !(viewer instanceof ContentViewer)) {
@@ -154,7 +154,7 @@ public class ViewerComparator {
 	}
 
     /**
-     * Returns whether this viewer sorter would be affected 
+     * Returns whether this viewer sorter would be affected
      * by a change to the given property of the given element.
      * <p>
      * The default implementation of this method returns <code>false</code>.
@@ -173,8 +173,8 @@ public class ViewerComparator {
     /**
      * Sorts the given elements in-place, modifying the given array.
      * <p>
-     * The default implementation of this method uses the 
-     * java.util.Arrays#sort algorithm on the given array, 
+     * The default implementation of this method uses the
+     * java.util.Arrays#sort algorithm on the given array,
      * calling <code>compare</code> to compare elements.
      * </p>
      * <p>

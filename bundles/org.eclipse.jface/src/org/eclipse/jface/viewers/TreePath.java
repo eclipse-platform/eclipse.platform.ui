@@ -20,23 +20,23 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * Clients may instantiate this class. Not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class TreePath {
-	
+
 	/**
 	 * Constant for representing an empty tree path.
 	 */
 	public static final TreePath EMPTY = new TreePath(new Object[0]);
-	
+
 	private Object[] segments;
 
 	private int hash;
 
 	/**
 	 * Constructs a path identifying a leaf node in a tree.
-	 * 
+	 *
 	 * @param segments
 	 *            path of elements to a leaf node in a tree, starting with the
 	 *            root element
@@ -51,7 +51,7 @@ public final class TreePath {
 
 	/**
 	 * Returns the element at the specified index in this path.
-	 * 
+	 *
 	 * @param index
 	 *            index of element to return
 	 * @return element at the specified index
@@ -62,7 +62,7 @@ public final class TreePath {
 
 	/**
 	 * Returns the number of elements in this path.
-	 * 
+	 *
 	 * @return the number of elements in this path
 	 */
 	public int getSegmentCount() {
@@ -72,7 +72,7 @@ public final class TreePath {
 	/**
 	 * Returns the first element in this path, or <code>null</code> if this
 	 * path has no segments.
-	 * 
+	 *
 	 * @return the first element in this path
 	 */
 	public Object getFirstSegment() {
@@ -85,7 +85,7 @@ public final class TreePath {
 	/**
 	 * Returns the last element in this path, or <code>null</code> if this
 	 * path has no segments.
-	 * 
+	 *
 	 * @return the last element in this path
 	 */
 	public Object getLastSegment() {
@@ -114,7 +114,7 @@ public final class TreePath {
 	/**
 	 * Returns a hash code computed from the hash codes of the segments, using
 	 * the given comparer to compute the hash codes of the segments.
-	 * 
+	 *
 	 * @param comparer
 	 *            comparer to use or <code>null</code> if the segments' hash
 	 *            codes should be computed by calling their hashCode() methods.
@@ -135,7 +135,7 @@ public final class TreePath {
 	/**
 	 * Returns whether this path is equivalent to the given path using the
 	 * specified comparer to compare individual elements.
-	 * 
+	 *
 	 * @param otherPath
 	 *            tree path to compare to
 	 * @param comparer
@@ -167,7 +167,7 @@ public final class TreePath {
 	/**
 	 * Returns whether this path starts with the same segments as the given
 	 * path, using the given comparer to compare segments.
-	 * 
+	 *
 	 * @param treePath
 	 *            path to compare to
 	 * @param comparer
@@ -219,7 +219,7 @@ public final class TreePath {
 
 	/**
 	 * Returns a copy of this tree path with the given segment added at the end.
-	 * @param newSegment 
+	 * @param newSegment
 	 * @return a tree path
 	 */
 	public TreePath createChildPath(Object newSegment) {

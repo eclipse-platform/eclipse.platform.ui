@@ -33,7 +33,7 @@ public class StatusLineManager extends ContributionManager implements
     /**
      * Identifier of group marker used to position contributions at the beginning
      * of the status line.
-     * 
+     *
      * @since 3.0
      */
     public static final String BEGIN_GROUP = "BEGIN_GROUP"; //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class StatusLineManager extends ContributionManager implements
     /**
      * Identifier of group marker used to position contributions in the middle
      * of the status line.
-     * 
+     *
      * @since 3.0
      */
     public static final String MIDDLE_GROUP = "MIDDLE_GROUP"; //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class StatusLineManager extends ContributionManager implements
     /**
      * Identifier of group marker used to position contributions at the end
      * of the status line.
-     * 
+     *
      * @since 3.0
      */
     public static final String END_GROUP = "END_GROUP"; //$NON-NLS-1$
@@ -62,7 +62,7 @@ public class StatusLineManager extends ContributionManager implements
 
     /**
      * Creates a new status line manager.
-     * Use the <code>createControl</code> method to create the 
+     * Use the <code>createControl</code> method to create the
      * status line control.
      */
     public StatusLineManager() {
@@ -72,10 +72,10 @@ public class StatusLineManager extends ContributionManager implements
     }
 
     /**
-     * Creates and returns this manager's status line control. 
+     * Creates and returns this manager's status line control.
      * Does not create a new control if one already exists.
      * <p>
-     * Note: Since 3.0 the return type is <code>Control</code>.  Before 3.0, the return type was 
+     * Note: Since 3.0 the return type is <code>Control</code>.  Before 3.0, the return type was
      *   the package-private class <code>StatusLine</code>.
      * </p>
      *
@@ -87,7 +87,7 @@ public class StatusLineManager extends ContributionManager implements
     }
 
     /**
-     * Creates and returns this manager's status line control. 
+     * Creates and returns this manager's status line control.
      * Does not create a new control if one already exists.
      *
      * @param parent the parent control
@@ -123,7 +123,7 @@ public class StatusLineManager extends ContributionManager implements
 
     /**
      * Returns the control used by this StatusLineManager.
-     * 
+     *
      * @return the control used by this manager
      */
     public Control getControl() {
@@ -133,7 +133,7 @@ public class StatusLineManager extends ContributionManager implements
     /**
      * Returns the progress monitor delegate. Override this method
      * to provide your own object used to handle progress.
-     * 
+     *
      * @return the IProgressMonitor delegate
      * @since 3.0
      */
@@ -250,7 +250,7 @@ public class StatusLineManager extends ContributionManager implements
     /**
      * Returns whether the status line control is created
      * and not disposed.
-     * 
+     *
      * @return <code>true</code> if the control is created
      *	and not disposed, <code>false</code> otherwise
      */

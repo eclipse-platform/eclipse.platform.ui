@@ -33,8 +33,8 @@ public interface ITreeContentProvider extends IStructuredContentProvider {
     /**
      * Returns the child elements of the given parent element.
      * <p>
-     * The difference between this method and <code>IStructuredContentProvider.getElements</code> 
-     * is that <code>getElements</code> is called to obtain the 
+     * The difference between this method and <code>IStructuredContentProvider.getElements</code>
+     * is that <code>getElements</code> is called to obtain the
      * tree viewer's root elements, whereas <code>getChildren</code> is used
      * to obtain the children of a given parent element in the tree (including a root).
      * </p>
@@ -46,8 +46,8 @@ public interface ITreeContentProvider extends IStructuredContentProvider {
     public Object[] getChildren(Object parentElement);
 
     /**
-     * Returns the parent for the given element, or <code>null</code> 
-     * indicating that the parent can't be computed. 
+     * Returns the parent for the given element, or <code>null</code>
+     * indicating that the parent can't be computed.
      * In this case the tree-structured viewer can't expand
      * a given node correctly if requested.
      *

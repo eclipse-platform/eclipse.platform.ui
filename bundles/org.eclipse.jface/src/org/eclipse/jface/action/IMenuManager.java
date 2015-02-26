@@ -36,7 +36,7 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
 
     /**
      * Finds the manager for the menu at the given path. A path
-     * consists of contribution item ids separated by the separator 
+     * consists of contribution item ids separated by the separator
      * character.  The path separator character is <code>'/'</code>.
      * <p>
      * Convenience for <code>findUsingPath(path)</code> which
@@ -52,7 +52,7 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
 
     /**
      * Finds the contribution item at the given path. A path
-     * consists of contribution item ids separated by the separator 
+     * consists of contribution item ids separated by the separator
      * character. The path separator character is <code>'/'</code>.
      *
      * @param path the path string
@@ -65,7 +65,7 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
 	 * Returns whether all items should be removed when the menu is about to
 	 * show, but before notifying menu listeners. The default is
 	 * <code>false</code>.
-	 * 
+	 *
 	 * @return <code>true</code> if all items should be removed when shown,
 	 *         <code>false</code> if not
 	 */
@@ -91,7 +91,7 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
     /**
 	 * Sets whether all items should be removed when the menu is about to show,
 	 * but before notifying menu listeners.
-	 * 
+	 *
 	 * @param removeAll
 	 *            <code>true</code> if all items should be removed when shown,
 	 *            <code>false</code> if not

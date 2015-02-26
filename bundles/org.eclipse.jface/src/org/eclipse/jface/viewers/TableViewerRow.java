@@ -218,9 +218,9 @@ public class TableViewerRow extends ViewerRow {
 	protected boolean scrollCellIntoView(int columnIndex) {
 		item.getParent().showItem(item);
 		if( hasColumns() ) {
-			item.getParent().showColumn(item.getParent().getColumn(columnIndex));	
+			item.getParent().showColumn(item.getParent().getColumn(columnIndex));
 		}
-		
+
 		return true;
 	}
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * A <code>SubContributionManager</code> is used to define a set of contribution
- * items within a parent manager.  Once defined, the visibility of the entire set can 
+ * items within a parent manager.  Once defined, the visibility of the entire set can
  * be changed as a unit.
  */
 public abstract class SubContributionManager implements IContributionManager {
@@ -27,7 +27,7 @@ public abstract class SubContributionManager implements IContributionManager {
     private IContributionManager parentMgr;
 
     /**
-     * Maps each item in the manager to a wrapper.  The wrapper is used to 
+     * Maps each item in the manager to a wrapper.  The wrapper is used to
      * control the visibility of each item.
      */
     private Map<IContributionItem, SubContributionItem> mapItemToWrapper = new HashMap<IContributionItem, SubContributionItem>();
@@ -80,7 +80,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * and cleaning up any other resources allocated by it.
      * This must leave no trace of this sub contribution manager
      * in the parent manager.  Subclasses may extend.
-     * 
+     *
      * @since 3.0
      */
     public void disposeManager() {
@@ -163,7 +163,7 @@ public abstract class SubContributionManager implements IContributionManager {
 
     /**
      * Returns whether the contribution list is visible.
-     * If the visibility is <code>true</code> then each item within the manager 
+     * If the visibility is <code>true</code> then each item within the manager
      * appears within the parent manager.  Otherwise, the items are not visible.
      *
      * @return <code>true</code> if the manager is visible
@@ -306,7 +306,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Unwraps a nested contribution item. If the contribution item is an
      * instance of <code>SubContributionItem</code>, then its inner item is
      * returned. Otherwise, the item itself is returned.
-     * 
+     *
      * @param item
      *            The item to unwrap; may be <code>null</code>.
      * @return The inner item of <code>item</code>, if <code>item</code> is

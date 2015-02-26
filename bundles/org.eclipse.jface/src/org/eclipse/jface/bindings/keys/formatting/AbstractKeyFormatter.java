@@ -29,7 +29,7 @@ import org.eclipse.jface.util.Util;
  * <code>IKeyFormatter</code> subclass from here, rather than implementing
  * <code>IKeyFormatter</code> directly.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class AbstractKeyFormatter implements IKeyFormatter {
@@ -83,7 +83,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		if (resourceBundleKeys.contains(name)) {
 			return Util.translateString(RESOURCE_BUNDLE, name, name);
 		}
-		
+
 		return name;
 	}
 
@@ -135,7 +135,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	/**
 	 * An accessor for the delimiter you wish to use between keys. This is used
 	 * by the default format implementations to determine the key delimiter.
-	 * 
+	 *
 	 * @return The delimiter to use between keys; should not be
 	 *         <code>null</code>.
 	 */
@@ -145,7 +145,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * An accessor for the delimiter you wish to use between key strokes. This
 	 * used by the default format implementations to determine the key stroke
 	 * delimiter.
-	 * 
+	 *
 	 * @return The delimiter to use between key strokes; should not be
 	 *         <code>null</code>.
 	 */
@@ -155,7 +155,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * Separates the modifier keys from each other, and then places them in an
 	 * array in some sorted order. The sort order is dependent on the type of
 	 * formatter.
-	 * 
+	 *
 	 * @param modifierKeys
 	 *            The modifier keys from the key stroke.
 	 * @return An array of modifier key values -- separated and sorted in some

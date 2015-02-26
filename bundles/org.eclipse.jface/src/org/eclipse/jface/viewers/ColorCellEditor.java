@@ -106,7 +106,7 @@ public class ColorCellEditor extends DialogCellEditor {
 
     /**
      * Creates a new color cell editor parented under the given control.
-     * The cell editor value is black (<code>RGB(0,0,0)</code>) initially, and has no 
+     * The cell editor value is black (<code>RGB(0,0,0)</code>) initially, and has no
      * validator.
      *
      * @param parent the parent control
@@ -117,7 +117,7 @@ public class ColorCellEditor extends DialogCellEditor {
 
     /**
      * Creates a new color cell editor parented under the given control.
-     * The cell editor value is black (<code>RGB(0,0,0)</code>) initially, and has no 
+     * The cell editor value is black (<code>RGB(0,0,0)</code>) initially, and has no
      * validator.
      *
      * @param parent the parent control
@@ -131,7 +131,7 @@ public class ColorCellEditor extends DialogCellEditor {
 
     /**
      * Creates and returns the color image data for the given control
-     * and RGB value. The image's size is either the control's item extent 
+     * and RGB value. The image's size is either the control's item extent
      * or the cell editor's default extent, which is 16 pixels square.
      *
      * @param w the control

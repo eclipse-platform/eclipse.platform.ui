@@ -33,53 +33,53 @@ import org.eclipse.swt.widgets.Control;
 public final class LocalResourceManager extends AbstractResourceManager {
 
     private ResourceManager parentRegistry;
-    
+
     /**
      * Creates a local registry that delegates to the given global registry
-     * for all resource allocation and deallocation. 
-     * 
-     * @param parentRegistry global registry 
+     * for all resource allocation and deallocation.
+     *
+     * @param parentRegistry global registry
      */
     public LocalResourceManager(ResourceManager parentRegistry) {
         this.parentRegistry = parentRegistry;
     }
-    
+
     /**
      * Creates a local registry that wraps the given global registry. Anything
      * allocated by this registry will be automatically cleaned up with the given
      * control is disposed. Note that registries created in this way should not
      * be used to allocate any resource that must outlive the given control.
-     * 
+     *
      * @param parentRegistry global registry that handles resource allocation
-     * @param owner control whose disposal will trigger cleanup of everything 
+     * @param owner control whose disposal will trigger cleanup of everything
      * in the registry.
      */
     public LocalResourceManager(ResourceManager parentRegistry, Control owner) {
         this(parentRegistry);
-        
+
         owner.addDisposeListener(new DisposeListener() {
 	        @Override
 			public void widgetDisposed(DisposeEvent e) {
 	            LocalResourceManager.this.dispose();
-	        } 
+	        }
         });
     }
-    
+
     @Override
 	public Device getDevice() {
         return parentRegistry.getDevice();
     }
-    
+
     @Override
 	protected Object allocate(DeviceResourceDescriptor descriptor)
             throws DeviceResourceException {
         return parentRegistry.create(descriptor);
     }
-    
+
     @Override
 	protected void deallocate(Object resource,
             DeviceResourceDescriptor descriptor) {
-        
+
         parentRegistry.destroy(descriptor);
     }
 

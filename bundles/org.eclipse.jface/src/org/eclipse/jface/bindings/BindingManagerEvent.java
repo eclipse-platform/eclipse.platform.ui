@@ -24,12 +24,12 @@ import org.eclipse.jface.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see IBindingManagerListener#bindingManagerChanged(BindingManagerEvent)
  */
 public final class BindingManagerEvent extends AbstractBitSetEvent {
-	
+
 	private final static TriggerSequence[] EMTPY_SEQUENCE = new TriggerSequence[0];
 
 	/**
@@ -79,7 +79,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param manager
 	 *            the instance of the binding manager that changed; must not be
 	 *            <code>null</code>.
@@ -142,7 +142,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns the instance of the manager that changed.
-	 * 
+	 *
 	 * @return the instance of the manager that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -152,7 +152,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns the scheme that changed.
-	 * 
+	 *
 	 * @return The changed scheme
 	 */
 	public final Scheme getScheme() {
@@ -161,7 +161,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether the active bindings have changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the active bindings have changed;
 	 *         <code>false</code> otherwise.
 	 */
@@ -172,7 +172,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 	/**
 	 * Computes whether the active bindings have changed for a given command
 	 * identifier.
-	 * 
+	 *
 	 * @param parameterizedCommand
 	 *            The fully-parameterized command whose bindings might have
 	 *            changed; must not be <code>null</code>.
@@ -203,7 +203,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether or not the active scheme changed.
-	 * 
+	 *
 	 * @return true, iff the active scheme property changed.
 	 */
 	public final boolean isActiveSchemeChanged() {
@@ -212,7 +212,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether the locale has changed
-	 * 
+	 *
 	 * @return <code>true</code> if the locale changed; <code>false</code>
 	 *         otherwise.
 	 */
@@ -222,7 +222,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether the platform has changed
-	 * 
+	 *
 	 * @return <code>true</code> if the platform changed; <code>false</code>
 	 *         otherwise.
 	 */
@@ -232,7 +232,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether the list of defined scheme identifiers has changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the list of scheme identifiers has
 	 *         changed; <code>false</code> otherwise.
 	 */
@@ -242,7 +242,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether or not the scheme became defined
-	 * 
+	 *
 	 * @return <code>true</code> if the scheme became defined.
 	 */
 	public final boolean isSchemeDefined() {

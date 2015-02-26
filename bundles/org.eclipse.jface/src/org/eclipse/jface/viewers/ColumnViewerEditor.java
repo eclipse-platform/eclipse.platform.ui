@@ -57,7 +57,7 @@ public abstract class ColumnViewerEditor {
 	private ColumnViewerEditorActivationStrategy editorActivationStrategy;
 
 	private boolean inEditorDeactivation;
-	
+
 	private DisposeListener disposeListener;
 
 	/**
@@ -135,7 +135,7 @@ public abstract class ColumnViewerEditor {
 					cancelEditing();
 				}
 			}
-			
+
 		};
 		initCellEditorListener();
 	}
@@ -269,7 +269,7 @@ public abstract class ColumnViewerEditor {
 								.afterEditorActivated(activationEvent);
 					}
 				}
-				
+
 				this.cell.getItem().addDisposeListener(disposeListener);
 
 				return true;
@@ -348,7 +348,7 @@ public abstract class ColumnViewerEditor {
 									.afterEditorDeactivated(tmp);
 						}
 					}
-					
+
 					if( ! this.cell.getItem().isDisposed() ) {
 						this.cell.getItem().removeDisposeListener(disposeListener);
 					}
@@ -417,11 +417,11 @@ public abstract class ColumnViewerEditor {
 									.afterEditorDeactivated(tmp);
 						}
 					}
-					
+
 					if( ! this.cell.getItem().isDisposed() ) {
 						this.cell.getItem().addDisposeListener(disposeListener);
 					}
-					
+
 					this.cellEditor = null;
 					this.cell = null;
 

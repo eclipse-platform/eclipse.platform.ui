@@ -17,17 +17,17 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Event object describing a page selection change. The source of these events
  * is a page change provider.
- * 
+ *
  * @see IPageChangeProvider
  * @see IPageChangedListener
- * 
+ *
  * @since 3.1
  */
 public class PageChangedEvent extends EventObject {
 
 	/**
 	 * Generated serial version UID for this class.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static final long serialVersionUID = 3835149545519723574L;
@@ -39,7 +39,7 @@ public class PageChangedEvent extends EventObject {
 
 	/**
 	 * Creates a new event for the given source and selected page.
-	 * 
+	 *
 	 * @param source
 	 *            the page change provider
 	 * @param selectedPage
@@ -55,8 +55,8 @@ public class PageChangedEvent extends EventObject {
 
 	/**
 	 * Returns the selected page.
-	 * 
-	 * @return the selected page. In dialogs implemented by JFace, 
+	 *
+	 * @return the selected page. In dialogs implemented by JFace,
 	 * 		this will be an <code>IDialogPage</code>.
 	 */
 	public Object getSelectedPage() {
@@ -65,7 +65,7 @@ public class PageChangedEvent extends EventObject {
 
 	/**
 	 * Returns the page change provider that is the source of this event.
-	 * 
+	 *
 	 * @return the originating page change provider
 	 */
 	public IPageChangeProvider getPageChangeProvider() {

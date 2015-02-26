@@ -17,16 +17,16 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * A manager for a group of windows. Window managers are an optional JFace 
+ * A manager for a group of windows. Window managers are an optional JFace
  * feature used in applications which create many different windows (dialogs,
  * wizards, etc.) in addition to a main window. A window manager can be used to
- * remember all the windows that an application has created (independent of 
+ * remember all the windows that an application has created (independent of
  * whether they are presently open or closed). There can be several window
- * managers, and they can be arranged into a tree. This kind of organization 
+ * managers, and they can be arranged into a tree. This kind of organization
  * makes it simple to close whole subgroupings of windows.
  * <p>
- * Creating a window manager is as simple as creating an instance of 
- * <code>WindowManager</code>. Associating a window with a window manager is 
+ * Creating a window manager is as simple as creating an instance of
+ * <code>WindowManager</code>. Associating a window with a window manager is
  * done with <code>WindowManager.add(Window)</code>. A window is automatically
  * removed from its window manager as a side effect of closing the window.
  * </p>
@@ -98,11 +98,11 @@ public class WindowManager {
      * Attempts to close all windows managed by this window manager,
      * as well as windows managed by any descendent window managers.
      *
-     * @return <code>true</code> if all windows were sucessfully closed, 
+     * @return <code>true</code> if all windows were sucessfully closed,
      * and <code>false</code> if any window refused to close
      */
     public boolean close() {
-        List<Window> t = new ArrayList<Window>(windows); // make iteration robust 
+        List<Window> t = new ArrayList<Window>(windows); // make iteration robust
         Iterator<Window> e = t.iterator();
         while (e.hasNext()) {
             Window window = e.next();
@@ -126,7 +126,7 @@ public class WindowManager {
 
     /**
      * Returns this window manager's number of windows
-     * 
+     *
      * @return the number of windows
      * @since 3.0
      */

@@ -13,7 +13,7 @@ package org.eclipse.jface.viewers;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Describes the width of a table column in terms of a weight, 
+ * Describes the width of a table column in terms of a weight,
  * a minimum width, and whether the column is resizable.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class ColumnWeightData extends ColumnLayoutData {
 
-    /** 
+    /**
      * Default width of a column (in pixels).
      */
     public static final int MINIMUM_WIDTH = 20;

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.CoolBar;
  * implementation, {@link CoolBarManager}, which
  * clients may instantiate or subclass.
  * </p>
- * 
+ *
  * @see ToolBarContributionItem
  * @since 3.0
  */
@@ -35,7 +35,7 @@ public interface ICoolBarManager extends IContributionManager {
      * The cool bar manager uses this property to tell its cool items to update
      * their size.
      * </p>
-     * 
+     *
      * @see IContributionItem#update(String) @issue consider declaring this
      *      constant elsewhere
      */
@@ -44,7 +44,7 @@ public interface ICoolBarManager extends IContributionManager {
     /**
      * A convenience method to add a tool bar as a contribution item to this
      * cool bar manager. Equivalent to <code>add(new ToolBarContributionManager(toolBarManager))</code>.
-     * 
+     *
      * @param toolBarManager
      *            the tool bar manager to be added
      * @see ToolBarContributionItem
@@ -55,7 +55,7 @@ public interface ICoolBarManager extends IContributionManager {
      * Returns the context menu manager used by this cool bar manager. This
      * context menu manager is used by the cool bar manager except for cool
      * items that provide their own.
-     * 
+     *
      * @return the context menu manager, or <code>null</code> if none
      * @see #setContextMenuManager
      */
@@ -63,7 +63,7 @@ public interface ICoolBarManager extends IContributionManager {
 
     /**
      * Returns whether the layout of the underlying cool bar widget is locked.
-     * 
+     *
      * @return <code>true</code> if cool bar layout is locked, <code>false</code>
      *         otherwise
      */
@@ -71,7 +71,7 @@ public interface ICoolBarManager extends IContributionManager {
 
     /**
      * Returns the style of the underlying cool bar widget.
-     * 
+     *
      * @return the style of the cool bar
      */
     public int getStyle();
@@ -79,7 +79,7 @@ public interface ICoolBarManager extends IContributionManager {
     /**
      * Sets the context menu of this cool bar manager to the given menu
      * manager.
-     * 
+     *
      * @param menuManager
      *            the context menu manager, or <code>null</code> if none
      * @see #getContextMenuManager
@@ -93,7 +93,7 @@ public interface ICoolBarManager extends IContributionManager {
      * Note that items can be added or removed programmatically even while the
      * cool bar is locked.
      * </p>
-     * 
+     *
      * @param value
      *            <code>true</code> to lock the cool bar, <code>false</code>
      *            to unlock

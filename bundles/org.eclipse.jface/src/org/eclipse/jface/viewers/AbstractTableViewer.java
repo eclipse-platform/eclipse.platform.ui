@@ -65,13 +65,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				public void handleEvent(Event event) {
 					Item item = (Item) event.item;
 					final int index = doIndexOf(item);
-					
+
 					if (index == -1) {
 						// Should not happen, but the spec for doIndexOf allows returning -1.
 						// See bug 241117.
 						return;
 					}
-					
+
 					Object element = resolveElement(index);
 					if (element == null) {
 						// Didn't find it so make a request
@@ -216,7 +216,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		super.hookControl(control);
 		initializeVirtualManager(getControl().getStyle());
 	}
-	
+
 	@Override
 	protected void handleDispose(DisposeEvent event) {
 		super.handleDispose(event);
@@ -1005,11 +1005,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Replace the element at the given index with the given element. This
 	 * method will not call the content provider to verify. <strong>Note that
 	 * this method will materialize a TableItem the given index.</strong>.
-	 * 
+	 *
 	 * @param element
 	 * @param index
 	 * @see ILazyContentProvider
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void replace(Object element, int index) {
@@ -1239,11 +1239,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Items that are not in the receiver are ignored. If the receiver is single-select and multiple
 	 * items are specified, then all items are ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param items the array of items
-	 * 
+	 *
 	 * @exception IllegalArgumentException - if the array of items is null
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doSetSelection(Item[] items);
@@ -1265,11 +1265,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Indices that are out of range and duplicate indices are ignored. If the receiver is
 	 * single-select and multiple indices are specified, then all indices are ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param indices the indices of the items to select
-	 * 
+	 *
 	 * @exception IllegalArgumentException - if the array of indices is null
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doSetSelection(int[] indices);

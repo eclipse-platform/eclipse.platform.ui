@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Scrollable;
      * Generates a GridLayout for the given composite by examining its child
      * controls and attaching layout data to any immediate children that do not
      * already have layout data.
-     * 
+     *
      * @param toGenerate
      *            composite to generate a layout for
      */
@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.Scrollable;
     private static void applyLayoutDataTo(Control control) {
     	defaultsFor(control).applyTo(control);
     }
-    
+
     /**
      * Creates default factory for this control types:
      * <ul>

@@ -19,15 +19,15 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * An image descriptor which creates images based on another ImageDescriptor, but with
- * additional SWT flags. Note that this is only intended for compatibility. 
- * 
+ * additional SWT flags. Note that this is only intended for compatibility.
+ *
  * @since 3.1
  */
 final class DerivedImageDescriptor extends ImageDescriptor {
 
     private ImageDescriptor original;
     private int flags;
-    
+
     /**
      * Create a new image descriptor
      * @param original the original one
@@ -40,7 +40,7 @@ final class DerivedImageDescriptor extends ImageDescriptor {
         this.original = original;
         flags = swtFlags;
     }
-    
+
     @Override
 	public Object createResource(Device device) throws DeviceResourceException {
         try {
@@ -49,33 +49,33 @@ final class DerivedImageDescriptor extends ImageDescriptor {
             throw new DeviceResourceException(this, e);
         }
     }
-    
+
     @Override
 	public Image createImage(Device device) {
         return internalCreateImage(device);
     }
-    
+
     @Override
 	public int hashCode() {
         return original.hashCode() + flags;
     }
-    
+
     @Override
 	public boolean equals(Object arg0) {
         if (arg0 instanceof DerivedImageDescriptor) {
             DerivedImageDescriptor desc = (DerivedImageDescriptor)arg0;
-            
+
             return desc.original == original && flags == desc.flags;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Creates a new Image on the given device. Note that we defined a new
      * method rather than overloading createImage since this needs to be
      * called by getImageData(), and we want to be absolutely certain not
-     * to cause infinite recursion if the base class gets refactored. 
+     * to cause infinite recursion if the base class gets refactored.
      *
      * @param device device to create the image on
      * @return a newly allocated Image. Must be disposed by calling image.dispose().
@@ -86,7 +86,7 @@ final class DerivedImageDescriptor extends ImageDescriptor {
         original.destroyResource(originalImage);
         return result;
     }
-    
+
     @Override
 	public ImageData getImageData() {
         Image image = internalCreateImage(Display.getCurrent());

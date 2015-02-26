@@ -24,7 +24,7 @@ import org.eclipse.jface.commands.ToggleState;
  * <p>
  * Clients may implement or extend this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IMenuStateIds extends INamedHandleStateIds {

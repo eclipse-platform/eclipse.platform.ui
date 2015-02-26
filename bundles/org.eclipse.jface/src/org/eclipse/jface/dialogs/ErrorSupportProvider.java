@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Control;
  *
  */
 public abstract class ErrorSupportProvider {
-	
-	
+
+
 		/**
 		 * Create an area for adding support components as a child of parent.
 		 * @param parent The parent {@link Composite}
@@ -30,13 +30,13 @@ public abstract class ErrorSupportProvider {
 		 * @return Control
 		 */
 		public abstract Control createSupportArea(Composite parent, IStatus status);
-		
+
 		/**
 		 * This method is called before
 		 * {@link #createSupportArea(Composite, IStatus)} to check if the
 		 * {@link ErrorSupportProvider} will display any significant
 		 * informations. If not, then it will not be presented at all.
-		 * 
+		 *
 		 * @param status
 		 *            - {@link IStatus} for which status are will be requested.
 		 * @return true if provider is able to process particular {@link IStatus}

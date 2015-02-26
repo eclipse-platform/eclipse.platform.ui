@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * manager. Like all windows, an application window may be reopened.
  * </p>
  * <p>
- * An application window is also a suitable context in which to perform 
+ * An application window is also a suitable context in which to perform
  * long-running operations (that is, it implements <code>IRunnableContext</code>).
  * </p>
  */
@@ -94,7 +94,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 
     /**
      * Cool bar manager, or <code>null</code> if none (default).
-     * 
+     *
      * @see #addCoolBar
      * @since 3.0
      */
@@ -113,7 +113,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     /**
      * Internal application window layout class.
      * This vertical layout supports a tool bar area (fixed size),
-     * a separator line, the content area (variable size), and a 
+     * a separator line, the content area (variable size), and a
      * status line (fixed size).
      */
     /*package*/class ApplicationWindowLayout extends Layout {
@@ -172,7 +172,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             Rectangle clientArea = composite.getClientArea();
 
             Control[] ws = composite.getChildren();
-            
+
             // Lay out the separator, the tool bar control, the cool bar control, the status line, and the page composite.
             // The following code assumes that the page composite is the last child, and that there are no unexpected other controls.
 
@@ -280,7 +280,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Configures this window to have a cool bar.
      * Does nothing if it already has one.
      * This method must be called before this window's shell is created.
-     * 
+     *
      * @param style the cool bar style
      * @since 3.0
      */
@@ -288,7 +288,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
         if ((getShell() == null) && (toolBarManager == null)
                 && (coolBarManager == null)) {
             coolBarManager = createCoolBarManager2(style);
-        }	
+        }
     }
 
     @Override
@@ -333,7 +333,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     }
 
     /**
-     * Extends the super implementation by creating the trim widgets using <code>createTrimWidgets</code>. 
+     * Extends the super implementation by creating the trim widgets using <code>createTrimWidgets</code>.
      */
     @Override
 	protected void configureShell(Shell shell) {
@@ -345,7 +345,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 
     /**
      * Creates the trim widgets around the content area.
-     * 
+     *
      * @param shell the shell
      * @since 3.0
      */
@@ -376,8 +376,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Returns whether to show a top separator line between the menu bar
      * and the rest of the window contents.  On some platforms such as the Mac,
      * the menu is separated from the main window already, so a separator line
-     * is not desired. 
-     * 
+     * is not desired.
+     *
      * @return <code>true</code> to show the top separator, <code>false</code>
      *   to not show it
      * @since 3.0
@@ -424,7 +424,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Subclasses may override this method to customize the tool bar manager.
      * </p>
      * @param style swt style bits used to create the Toolbar
-     * 
+     *
      * @return a tool bar manager
      * @see ToolBarManager#ToolBarManager(int)
      * @see ToolBar for style bits
@@ -432,17 +432,17 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     protected ToolBarManager createToolBarManager(int style) {
         return new ToolBarManager(style);
     }
-    
+
     /**
-     * Returns a new tool bar manager for the window. 
-     * <p> 
+     * Returns a new tool bar manager for the window.
+     * <p>
      * By default this method calls <code>createToolBarManager</code>.  Subclasses
      * may override this method to provide an alternative implementation for the
      * tool bar manager.
      * </p>
-     * 
+     *
 	 * @param style swt style bits used to create the Toolbar
-     *  
+     *
      * @return a tool bar manager
      * @since 3.2
      * @see #createToolBarManager(int)
@@ -456,9 +456,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * <p>
      * Subclasses may override this method to customize the cool bar manager.
      * </p>
-     * 
+     *
      * @param style swt style bits used to create the Coolbar
-     * 
+     *
      * @return a cool bar manager
      * @since 3.0
      * @see CoolBarManager#CoolBarManager(int)
@@ -467,7 +467,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     protected CoolBarManager createCoolBarManager(int style) {
         return new CoolBarManager(style);
     }
-    
+
     /**
      * Returns a new cool bar manager for the window.
      * <p>
@@ -475,9 +475,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * may override this method to provide an alternative implementation for the
      * cool bar manager.
      * </p>
-     * 
+     *
 	 * @param style swt style bits used to create the Coolbar
-     * 
+     *
      * @return a cool bar manager
      * @since 3.2
      * @see #createCoolBarManager(int)
@@ -512,7 +512,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Subclasses may override this method to customize the cool bar manager.
      * </p>
      * @param composite the parent used for the control
-     * 
+     *
      * @return an instance of <code>CoolBar</code>
      * @since 3.0
      */
@@ -575,7 +575,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * compatability.
      * It is recommended to use the default font provided by
      * SWT (that is, do not set the font).
-     * 
+     *
      * @return the symbolic font name
      */
     public String getSymbolicFontName() {
@@ -595,10 +595,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 		}
         return null;
     }
-    
+
     /**
      * Returns the tool bar manager for this window (if it has one).
-     * 
+     *
 	 * @return the tool bar manager, or <code>null</code> if
      *   this window does not have a tool bar
      * @see #addToolBar(int)
@@ -622,10 +622,10 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 		}
         return null;
     }
-    
+
     /**
      * Returns the cool bar manager for this window.
-     * 
+     *
 	 * @return the cool bar manager, or <code>null</code> if
      *   this window does not have a cool bar
      * @see #addCoolBar(int)
@@ -659,7 +659,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * <p>
      * Subclasses may override this method to customize the cool bar manager.
      * </p>
-     * 
+     *
      * @return an instance of <code>CoolBar</code>
      * @since 3.0
      */
@@ -843,7 +843,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     /**
      * Returns whether or not children exist for this application window's
      * cool bar control.
-     * 
+     *
      * @return boolean true if children exist, false otherwise
      * @since 3.0
      */

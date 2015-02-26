@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * A <code>SubStatusLineManager</code> is used to define a set of contribution
- * items within a parent manager.  Once defined, the visibility of the entire set can 
+ * items within a parent manager.  Once defined, the visibility of the entire set can
  * be changed as a unit.
  */
 public class SubStatusLineManager extends SubContributionManager implements
@@ -43,7 +43,7 @@ public class SubStatusLineManager extends SubContributionManager implements
     /**
      * Constructs a new manager.
      *
-     * @param mgr the parent manager.  All contributions made to the 
+     * @param mgr the parent manager.  All contributions made to the
      *      <code>SubStatusLineManager</code> are forwarded and appear in the
      *      parent manager.
      */
@@ -53,7 +53,7 @@ public class SubStatusLineManager extends SubContributionManager implements
 
     /**
      * @return the parent status line manager that this sub-manager contributes
-     * to 
+     * to
      */
     protected final IStatusLineManager getParentStatusLineManager() {
         // Cast is ok because that's the only

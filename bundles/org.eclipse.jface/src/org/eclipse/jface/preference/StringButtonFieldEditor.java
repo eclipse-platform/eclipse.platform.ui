@@ -46,14 +46,14 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     private String changeButtonText;
 
     /**
-     * Creates a new string button field editor 
+     * Creates a new string button field editor
      */
     protected StringButtonFieldEditor() {
     }
 
     /**
      * Creates a string button field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control

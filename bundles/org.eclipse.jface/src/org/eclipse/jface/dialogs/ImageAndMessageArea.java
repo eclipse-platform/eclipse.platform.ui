@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.2
  * @deprecated As of 3.3, this class is no longer necessary.
- * 
+ *
  */
 @Deprecated
 public class ImageAndMessageArea extends Composite {
@@ -59,7 +59,7 @@ public class ImageAndMessageArea extends Composite {
 	 * The style bit <code>SWT.WRAP</code> should be used if a larger message
 	 * area is desired.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param style
@@ -135,10 +135,10 @@ public class ImageAndMessageArea extends Composite {
 	/**
 	 * Sets the text in the decorated field which will be displayed in the
 	 * message area.
-	 * 
+	 *
 	 * @param text
 	 *            the text to be displayed in the message area
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Text#setText(String string)
 	 */
 	public void setText(String text) {
@@ -147,7 +147,7 @@ public class ImageAndMessageArea extends Composite {
 
 	/**
 	 * Adds an image to decorated field to be shown in the message area.
-	 * 
+	 *
 	 * @param image
 	 *            desired image to be shown in the ImageAndMessageArea
 	 */

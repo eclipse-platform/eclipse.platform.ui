@@ -36,14 +36,14 @@ import org.eclipse.swt.widgets.Shell;
 public class MessageDialog extends IconAndMessageDialog {
     /**
      * Constant for no image (value 0).
-     * 
+     *
      * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
      */
     public final static int NONE = 0;
 
     /**
      * Constant for the error image, or a simple dialog with the error image and a single OK button (value 1).
-     * 
+     *
      * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
      * @see #open(int, Shell, String, String, int)
      */
@@ -51,7 +51,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Constant for the info image, or a simple dialog with the info image and a single OK button (value 2).
-     * 
+     *
      * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
      * @see #open(int, Shell, String, String, int)
      */
@@ -59,7 +59,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Constant for the question image, or a simple dialog with the question image and Yes/No buttons (value 3).
-     * 
+     *
      * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
      * @see #open(int, Shell, String, String, int)
      */
@@ -67,28 +67,28 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Constant for the warning image, or a simple dialog with the warning image and a single OK button (value 4).
-     * 
+     *
      * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
      * @see #open(int, Shell, String, String, int)
      */
     public final static int WARNING = 4;
-    
+
     /**
      * Constant for a simple dialog with the question image and OK/Cancel buttons (value 5).
-     * 
+     *
      * @see #open(int, Shell, String, String, int)
      * @since 3.5
      */
     public final static int CONFIRM = 5;
-    
+
     /**
      * Constant for a simple dialog with the question image and Yes/No/Cancel buttons (value 6).
-     * 
+     *
      * @see #open(int, Shell, String, String, int)
      * @since 3.5
      */
     public final static int QUESTION_WITH_CANCEL = 6;
-    
+
     /**
      * Labels for buttons in the button bar (localized strings).
      */
@@ -233,7 +233,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * The default implementation of this framework method returns
      * <code>null</code>. Subclasses may override.
      * </p>
-     * 
+     *
      * @param parent
      *            parent composite to contain the custom area
      * @return the custom area control, or <code>null</code>
@@ -273,7 +273,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Gets a button in this dialog's button bar.
-     * 
+     *
      * @param index
      *            the index of the button in the dialog's button bar
      * @return a button in the dialog's button bar, or <code>null</code> if there's no button with that index
@@ -291,7 +291,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * <p>
      * Subclasses may override.
      * </p>
-     * 
+     *
      * @return the minimum message area width (in pixels)
      */
     protected int getMinimumMessageWidth() {
@@ -301,7 +301,7 @@ public class MessageDialog extends IconAndMessageDialog {
     /**
      * Handle the shell close. Set the return code to <code>SWT.DEFAULT</code>
      * as there has been no explicit close by the user.
-     * 
+     *
      * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
      */
     @Override
@@ -333,7 +333,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	/**
 	 * Convenience method to open a simple dialog as specified by the
 	 * <code>kind</code> flag.
-	 * 
+	 *
 	 * @param kind
 	 *            the kind of dialog to open, one of {@link #ERROR},
 	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
@@ -392,10 +392,10 @@ public class MessageDialog extends IconAndMessageDialog {
 		}
 		return dialogButtonLabels;
 	}
-    
+
     /**
      * Convenience method to open a simple confirm (OK/Cancel) dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -411,7 +411,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Convenience method to open a standard error dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -425,7 +425,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Convenience method to open a standard information dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -440,7 +440,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Convenience method to open a simple Yes/No question dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -457,7 +457,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * Convenience method to open a standard warning dialog.
-     * 
+     *
      * @param parent
      *            the parent shell of the dialog, or <code>null</code> if none
      * @param title
@@ -490,7 +490,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * for the default button or if that should be determined by the dialog. By
      * default only return true if the custom area is a label or CLabel that
      * cannot take focus.
-     * 
+     *
      * @return boolean
      */
     protected boolean customShouldTakeFocus() {
@@ -510,7 +510,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * An accessor for the labels to use on the buttons.
-     * 
+     *
      * @return The button labels to used; never <code>null</code>.
      */
     protected String[] getButtonLabels() {
@@ -519,7 +519,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * An accessor for the index of the default button in the button array.
-     * 
+     *
      * @return The default button index.
      */
     protected int getDefaultButtonIndex() {
@@ -528,7 +528,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * A mutator for the array of buttons in the button bar.
-     * 
+     *
      * @param buttons
      *            The buttons in the button bar; must not be <code>null</code>.
      */
@@ -541,7 +541,7 @@ public class MessageDialog extends IconAndMessageDialog {
 
     /**
      * A mutator for the button labels.
-     * 
+     *
      * @param buttonLabels
      *            The button labels to use; must not be <code>null</code>.
      */

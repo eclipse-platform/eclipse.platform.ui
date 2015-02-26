@@ -17,18 +17,18 @@ import org.eclipse.swt.widgets.Event;
 /**
  * This class implementation the strategy how the table is navigated using the
  * keyboard.
- * 
+ *
  * <p>
  * <b>Subclasses can implement their custom navigation algorithms</b>
  * </p>
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class CellNavigationStrategy {
 	/**
 	 * is the given event an event which moves the selection to another cell
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer we are working for
 	 * @param event
@@ -147,7 +147,7 @@ public class CellNavigationStrategy {
 	/**
 	 * This method is consulted to decide whether an event has to be canceled or
 	 * not. By default events who collapse/expand tree-nodes are canceled
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer working for
 	 * @param event
