@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov - Bug 460858
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -113,13 +114,13 @@ public class WorkingSetData extends RequestData {
 
 	public boolean isTocEnabled(int tocIndex) {
 		AdaptableToc adaptableToc = tocs[tocIndex];
-		IToc toc = (IToc) adaptableToc.getAdapter(IToc.class);
+		IToc toc = adaptableToc.getAdapter(IToc.class);
 		return ScopeUtils.showInTree(toc, filter);
 	}
 
 	public boolean isTopicEnabled(int tocIndex, int topicIndex) {
 		AdaptableToc adaptableToc = tocs[tocIndex];
-		IToc toc = (IToc) adaptableToc.getAdapter(IToc.class);
+		IToc toc = adaptableToc.getAdapter(IToc.class);
 		return ScopeUtils.showInTree(toc.getTopics()[topicIndex], filter);
 	}
 
