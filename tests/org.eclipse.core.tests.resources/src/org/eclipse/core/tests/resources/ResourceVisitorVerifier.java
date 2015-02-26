@@ -12,9 +12,9 @@
 package org.eclipse.core.tests.resources;
 
 import java.util.*;
-import junit.framework.Assert;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.junit.Assert;
 
 public class ResourceVisitorVerifier extends Assert implements IResourceVisitor {
 	Set<IResource> expected;

@@ -13,9 +13,9 @@ package org.eclipse.core.tests.resources;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.junit.Assert;
 
 /**
  * Verifies the state of an <code>IResourceDelta</code> by comparing

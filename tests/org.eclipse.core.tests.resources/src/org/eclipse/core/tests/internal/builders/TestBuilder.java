@@ -12,10 +12,10 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.*;
-import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.junit.Assert;
 
 /**
  * An abstract builder that is designed to be extended for testing purposes.

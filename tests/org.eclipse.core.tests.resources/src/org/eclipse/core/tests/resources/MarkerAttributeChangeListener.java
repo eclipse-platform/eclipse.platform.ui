@@ -13,10 +13,10 @@ package org.eclipse.core.tests.resources;
 
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Assert;
 
 /**
  * This class works by recording the current state of given markers,

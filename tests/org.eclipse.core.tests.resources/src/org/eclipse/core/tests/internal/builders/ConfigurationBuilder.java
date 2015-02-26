@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.*;
-import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.junit.Assert;
 
 /**
  * A builder used that stores statistics, such as which target was built, per project build config.

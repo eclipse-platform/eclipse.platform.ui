@@ -13,10 +13,10 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.util.ArrayList;
 import java.util.Map;
-import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
+import org.junit.Assert;
 
 /**
  * This classes poses as a builder, and makes sure that the delta supplied to
