@@ -30,23 +30,23 @@ import org.osgi.framework.ServiceReference;
 
 
 public class JettyHelpServer extends HelpServer {
-	
-	private abstract class WorkerThread extends Thread {	
+
+	private abstract class WorkerThread extends Thread {
 		private Throwable exception;
 
 		public WorkerThread(String name) {
 			super(name);
 		}
-		
+
 		public synchronized void setException(Throwable status) {
 			this.exception = status;
 		}
-		
+
 		public synchronized Throwable getException() {
 			return exception;
 		}
 	}
-	
+
 	private final class StartServerThread extends WorkerThread {
 
 		private final String webappName;
@@ -64,17 +64,17 @@ public class JettyHelpServer extends HelpServer {
 				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
 
 				// set the base URL
-				d.put("context.path", getContextPath()); //$NON-NLS-1$ 
-				d.put("other.info", getOtherInfo()); //$NON-NLS-1$ 
+				d.put("context.path", getContextPath()); //$NON-NLS-1$
+				d.put("other.info", getOtherInfo()); //$NON-NLS-1$
 				d.put(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, new Integer(SESSION_TIMEOUT_INTERVAL_IN_SECONDS));
 
 				// suppress Jetty INFO/DEBUG messages to stderr
-				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
+				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$
 
-				if (bindServerToHostname()) { 
+				if (bindServerToHostname()) {
 					d.put("http.host", getHost()); //$NON-NLS-1$
-				}		   
-				
+				}
+
 				JettyConfigurator.startServer(webappName, d);
 			} catch (Throwable t) {
 				setException(t);
@@ -96,7 +96,7 @@ public class JettyHelpServer extends HelpServer {
 				JettyConfigurator.stopServer(webappName);
 				port = -1;
 			} catch (Throwable t) {
-				setException(t); 
+				setException(t);
 			}
 		}
 	}
@@ -105,11 +105,11 @@ public class JettyHelpServer extends HelpServer {
 	private String host;
 	protected int port = -1;
 	protected static final int AUTO_SELECT_JETTY_PORT = 0;
-	
-	public void start(final String webappName) throws Exception {		
-		WorkerThread startRunnable = new StartServerThread(webappName); 
-		execute(startRunnable);		
-		checkBundle();	
+
+	public void start(final String webappName) throws Exception {
+		WorkerThread startRunnable = new StartServerThread(webappName);
+		execute(startRunnable);
+		checkBundle();
 	}
 
 	/*
@@ -141,7 +141,7 @@ public class JettyHelpServer extends HelpServer {
 			HelpBasePlugin.logError("An error occured while stopping the help server", e); //$NON-NLS-1$
 		}
 	}
-	
+
 	private void execute(WorkerThread runnable) throws Exception {
 		boolean interrupted = false;
 		Thread thread = runnable;
@@ -157,7 +157,7 @@ public class JettyHelpServer extends HelpServer {
 		}
 		if (interrupted)
 			Thread.currentThread().interrupt();
-		
+
 		Throwable t = runnable.getException();
 
 		if (t != null) {
@@ -186,12 +186,12 @@ public class JettyHelpServer extends HelpServer {
 			}
 		}
 	}
-	
+
 	/*
 	 * Get the port number which will be passed to Jetty
 	 */
 	protected int getPortParameter() {
-		if (port == -1) { 
+		if (port == -1) {
 			return AUTO_SELECT_JETTY_PORT;
 		}
 		return port;
@@ -212,12 +212,12 @@ public class JettyHelpServer extends HelpServer {
 
 	protected String getOtherInfo() {
 		return "org.eclipse.help"; //$NON-NLS-1$
-	}	
-	
+	}
+
 	protected String getContextPath() {
 		return "/help"; //$NON-NLS-1$
 	}
-	
+
 	public boolean bindServerToHostname() {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
 			return true;

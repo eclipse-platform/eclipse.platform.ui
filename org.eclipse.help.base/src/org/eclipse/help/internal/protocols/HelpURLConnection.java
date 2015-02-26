@@ -50,9 +50,9 @@ public class HelpURLConnection extends URLConnection {
 	public final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http://"; //$NON-NLS-1$
-	
+
 	private static Hashtable<String, String[]> templates = new Hashtable<String, String[]>();
-	
+
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {
@@ -81,7 +81,7 @@ public class HelpURLConnection extends URLConnection {
 	public HelpURLConnection(URL url) {
 		this(url, false);
 	}
-	
+
 	public HelpURLConnection(URL url, boolean localOnly) {
 		super(url);
         this.localOnly = localOnly;
@@ -128,19 +128,19 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
-		int helpOption=localOnly ? PreferenceFileHandler.LOCAL_HELP_ONLY 
+		int helpOption=localOnly ? PreferenceFileHandler.LOCAL_HELP_ONLY
 			: PreferenceFileHandler.getEmbeddedHelpOption();
 		InputStream in = null;
 		if (plugin != null && (helpOption==PreferenceFileHandler.LOCAL_HELP_ONLY || helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY)) {
 			in = getLocalHelp(plugin);
-		} 
-        if (in == null && (helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY || helpOption==PreferenceFileHandler.REMOTE_HELP_PRIORITY)) { 
-			
+		}
+        if (in == null && (helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY || helpOption==PreferenceFileHandler.REMOTE_HELP_PRIORITY)) {
+
         	in = openFromRemoteServer(getHref(), getLocale());
         	if( in != null ){
         		in = new RemoteHelpInputStream(in);
         	}
-        	if(in==null && plugin!=null && helpOption==PreferenceFileHandler.REMOTE_HELP_PRIORITY) 
+        	if(in==null && plugin!=null && helpOption==PreferenceFileHandler.REMOTE_HELP_PRIORITY)
         	{
         		in = getLocalHelp(plugin);
         	}
@@ -232,7 +232,7 @@ public class HelpURLConnection extends URLConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public Vector getMultiValue(String name) {
 		if (arguments != null) {
@@ -245,7 +245,7 @@ public class HelpURLConnection extends URLConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public String getValue(String name) {
 		if (arguments == null)
@@ -329,7 +329,7 @@ public class HelpURLConnection extends URLConnection {
 
 	/**
 	 * Obtains ID of plugin that contributes appserver implementation. *
-	 * 
+	 *
 	 * @return plug-in ID or null
 	 */
 	private static String getAppserverImplPluginId() {
@@ -391,7 +391,7 @@ public class HelpURLConnection extends URLConnection {
 			InputStream in;
 			if (remoteURL == null) {
 				in = tryOpeningAllServers(pathSuffix);
-			} else {				
+			} else {
 			    in = openRemoteStream(remoteURL, pathSuffix);
 			}
 
@@ -399,13 +399,13 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return null;
 	}
-	
+
 	private InputStream getUnverifiedStream(String remoteURL,String pathSuffix)
 	{
 		URL url;
 		InputStream in = null;
 		try {
-			
+
 			if(remoteURL.startsWith(PROTOCOL_HTTP))
 			{
 				url = new URL(remoteURL + pathSuffix);
@@ -417,16 +417,16 @@ public class HelpURLConnection extends URLConnection {
 				url = HttpsUtility.getHttpsURL(remoteURL + pathSuffix);
 				in = HttpsUtility.getHttpsStream(url);
 			}
-			
+
 		} catch (Exception e) {
 			// File not found on this server
 		}
 		return in;
 	}
-	
+
 
 	private InputStream openRemoteStream(String remoteURL, String pathSuffix)  {
-		InputStream in = getUnverifiedStream(remoteURL,pathSuffix);	
+		InputStream in = getUnverifiedStream(remoteURL,pathSuffix);
 
 		String errPage[] = templates.get(remoteURL);
 		if (errPage==null)
@@ -444,13 +444,13 @@ public class HelpURLConnection extends URLConnection {
 			}
 		}
 
-		
+
 		// No error page, InfoCenter is at least 3.6, so it is
 		// returning null already.
 		if (errPage.length==0)
 			return in;
-		
-		// Check to see if the URL is the error page for the 
+
+		// Check to see if the URL is the error page for the
 		// remote IC.  If so, return null.
 		if (compare(errPage,getUnverifiedStream(remoteURL,pathSuffix)))
 		{
@@ -461,7 +461,7 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return in;
 	}
-	
+
 	private boolean compare(String lines[],InputStream in)
 	{
 		try{
@@ -470,12 +470,12 @@ public class HelpURLConnection extends URLConnection {
 				BufferedReader br = new BufferedReader(new InputStreamReader(in));
 				String line;
 				int count = 0;
-				
+
 				while ((line = br.readLine())!=null)
 				{
 					if (count>lines.length)
 						return false;
-					
+
 					if (!lines[count].equals(line))
 						return false;
 					count++;
@@ -488,14 +488,14 @@ public class HelpURLConnection extends URLConnection {
 		{}
 		return false;
 	}
-	
+
 	private String getPageText(InputStream in) {
 		try{
 			if (in!=null)
 			{
 				BufferedReader br = new BufferedReader(new InputStreamReader(in));
 				String line,result=""; //$NON-NLS-1$
-				
+
 				while ((line = br.readLine())!=null)
 				{
 					result+=line+'\n';
@@ -505,7 +505,7 @@ public class HelpURLConnection extends URLConnection {
 				return result;
 			}
 		}catch(Exception ex){}
-		
+
 		return null;
 	}
 
@@ -520,7 +520,7 @@ public class HelpURLConnection extends URLConnection {
 		int numICs = host.length;
 
 		for (int i = 0; i < numICs; i++) {
-			if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$		
+			if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$
 				String urlStr = protocol[i]+"://" + host[i] + ':' + port[i] + path[i]; //$NON-NLS-1$
 				InputStream is = openRemoteStream(urlStr, pathSuffix);
 				if (is != null) {

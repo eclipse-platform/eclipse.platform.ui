@@ -36,21 +36,21 @@ import org.eclipse.help.internal.workingset.IHelpWorkingSetManager;
 import org.eclipse.help.internal.workingset.WorkingSet;
 
 public class WorkingSetScope extends AbstractHelpScope {
-	
+
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
-	
+
 	private WorkingSet workingSet;
 	private AdaptableHelpResource[] elements;
 	private CriterionResource[] criteria;
 	private String name;
 
 	public WorkingSetScope(String scope, IHelpWorkingSetManager manager, String name) {
-		workingSet = manager.getWorkingSet(scope); 
+		workingSet = manager.getWorkingSet(scope);
 		elements = workingSet.getElements();
 		criteria = workingSet.getCriteria();
 		this.name = name;
 	}
-	
+
 	public WorkingSetScope(WorkingSet wset, String name) {
 		workingSet = wset;
 		elements = workingSet.getElements();
@@ -65,13 +65,13 @@ public class WorkingSetScope extends AbstractHelpScope {
 			return inContentScope(toc);
 		}
 	}
-	
+
 	private boolean inContentScope(IToc toc) {
-		for (int i = 0; i < elements.length; i++) {	
+		for (int i = 0; i < elements.length; i++) {
 			for (AdaptableHelpResource adaptable = elements[i]; adaptable != null; ) {
-				Object itoc = adaptable.getAdapter(IToc.class); 
+				Object itoc = adaptable.getAdapter(IToc.class);
 				if (toc == itoc) {
-					return true;	
+					return true;
 				}
 				IAdaptable parent= adaptable.getParent();
 				if (parent instanceof AdaptableHelpResource) {
@@ -79,11 +79,11 @@ public class WorkingSetScope extends AbstractHelpScope {
 				} else {
 				    adaptable = null;
 				}
-			}		
+			}
 		}
 		return false;
 	}
-	
+
 	private boolean inCriteriaScope(IToc toc) {
 		if(null == toc){
 			if(null == criteria || 0 == criteria.length){
@@ -94,7 +94,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 		ICriteria[] criteriaOfToc = CriteriaProviderRegistry.getInstance().getAllCriteria(toc);
 		return isCriteriaInScope(criteriaOfToc);
 	}
-	
+
 	private boolean isCriteriaInScope(ICriteria[] criteriaOfTopic) {
 		if(null ==criteria){
 			return true;
@@ -107,24 +107,24 @@ public class WorkingSetScope extends AbstractHelpScope {
 				String value = String.valueOf(valueIterator.next());
 				if (value.equals(UNCATEGORIZED)) {
 					if (!ownCriteria.containsKey(key)) {
-						continue outer;						
+						continue outer;
 					}
 				} else {
 					if (null != ownCriteria.get(key) && ownCriteria.get(key).contains(value))
-						continue outer;					
+						continue outer;
 				}
 			}
 			return false;
 		}
 		return true;
 	}
-	
+
 	private Map<String, Set<String>> getCriteriaInfo(CriterionResource[] criteria) {
 		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
-	
+
 	private Map<String, Set<String>> getCriteriaInfo(ICriteria[] criteria) {
 		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
@@ -138,7 +138,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 			return inContentScope(topic);
 		}
 	}
-	
+
 	private boolean inContentScope(ITopic topic) {
 		Set<IUAElement> topics = new HashSet<IUAElement>();
 		IToc toc = null;
@@ -150,7 +150,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 					uae = null;
 				} else if (uae instanceof IIndexEntry) {
 					return isHrefInScope(topic.getHref());
-				} else {					
+				} else {
 					if (uae instanceof ITopic) {
 					    topics.add(uae);
 					}
@@ -197,7 +197,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 		}
 		return false;
 	}
-	
+
 	private boolean inCriteriaScope(ITopic topic) {
 		if(null == topic){
 			if(null == criteria || 0 == criteria.length){

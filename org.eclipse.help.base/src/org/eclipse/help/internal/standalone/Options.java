@@ -68,24 +68,24 @@ public class Options {
 
 	// User ID of the administrator
 	private static String adminId = null;
-	
+
 	// Password of the administrator
 	private static String adminPassword = null;
-	
+
 	// location of the trustStore to use if SSL
 	// connection must be established
 	private static String trustStoreLocation = null;
-	
+
 	// password of the trustStore to use if SSL
 	// connection must be established
 	private static String trustStorePassword = null;
-	
+
 	// update parameters, ex: "version=1.0.0", "from=file:///c:/site"
 	private static String[] updateParameters;
 
 	/**
 	 * Initializes options.
-	 * 
+	 *
 	 * @param appId
 	 *            eclipse application id
 	 * @param args
@@ -107,7 +107,7 @@ public class Options {
 
 	/**
 	 * Initializes options.
-	 * 
+	 *
 	 * @param appId
 	 *            eclipse application id
 	 * @param options
@@ -197,25 +197,25 @@ public class Options {
 		if (ports != null && ports.size() > 0) {
 			port = ports.get(0);
 		}
-		
+
 		// consume - adminId option
 		List<String> adminIds = extractOption(eclipseArgs, "-adminId"); //$NON-NLS-1$
 		if (adminIds != null && adminIds.size() > 0) {
 			adminId = adminIds.get(0);
 		}
-		
+
 		// consume - admin option
 		List<String> adminPasswords = extractOption(eclipseArgs, "-adminPassword"); //$NON-NLS-1$
 		if (adminPasswords != null && adminPasswords.size() > 0) {
 			adminPassword = adminPasswords.get(0);
 		}
-		
+
 		// consume - trustStoreLocation option
 		List<String> trustStoreLocations = extractOption(eclipseArgs, "-trustStoreLocation"); //$NON-NLS-1$
 		if (trustStoreLocations != null && trustStoreLocations.size() > 0) {
 			trustStoreLocation = trustStoreLocations.get(0);
 		}
-		
+
 		// consume - trustStoreLocation option
 		List<String> trustStorePasswords = extractOption(eclipseArgs, "-trustStorePassword"); //$NON-NLS-1$
 		if (trustStorePasswords != null && trustStorePasswords.size() > 0) {
@@ -284,19 +284,19 @@ public class Options {
 	public static String getAdminId() {
 		return adminId;
 	}
-	
+
 	public static String getAdminPassword() {
 		return adminPassword;
 	}
-	
+
 	public static String getTrustStoreLocation() {
 		return trustStoreLocation;
 	}
-	
+
 	public static String getTrustStorePassword() {
 		return trustStorePassword;
 	}
-	
+
 	public static File getConnectionFile() {
 		return hostPortFile;
 	}
@@ -327,7 +327,7 @@ public class Options {
 
 	/**
 	 * Removes specified option and its list of values from a list of options
-	 * 
+	 *
 	 * @param optionName
 	 *            name of the option e.g. -data
 	 * @return List of String values of the specified option, or null if option
@@ -362,7 +362,7 @@ public class Options {
 
 	/**
 	 * Obtains specified option and its list of values from a list of options
-	 * 
+	 *
 	 * @param optionName
 	 *            name of the option e.g. -data
 	 * @param options
@@ -402,7 +402,7 @@ public class Options {
 
 	/**
 	 * Returns the useExe.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static boolean useExe() {

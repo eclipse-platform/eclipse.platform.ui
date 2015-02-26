@@ -55,7 +55,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 				if (isEnabled[i].equals("true")) { //$NON-NLS-1$
 					InputStream in = null;
 					try {
-						
+
 						HttpURLConnection connection;
 						if(protocols[i].equals(PROTOCOL))
 						{
@@ -63,7 +63,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 							connection = (HttpURLConnection)ProxyUtil.getConnection(url);
 							if (connection.getResponseCode() == 200) {
 								in = connection.getInputStream();
-								
+
 							}
 						}
 						else
@@ -71,12 +71,12 @@ public class RemoteContextProvider extends AbstractContextProvider {
 							url = HttpsUtility.getHttpsURL(protocols[i], host[i], port[i], path[i]+ PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
 							in = HttpsUtility.getHttpsStream(url);
 						}
-						
+
 						if (reader == null) {
 							reader = new DocumentReader();
 						}
 						return (Context) reader.read(in);
-						
+
 					} catch (IOException e) {
 						String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
 						HelpBasePlugin.logError(msg, e);
@@ -102,7 +102,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
 	 */
 	public String[] getPlugins() {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
  * Converts the charset in XHTML meta tag to UTF-8. This is the encoding
  * output by the XMLProcessor, and we need the charset in the meta tags
  * to match, otherwise browsers will be confused.
- * Also ensure that all <script> and <div> elements have a child, 
+ * Also ensure that all <script> and <div> elements have a child,
  */
 public class XHTMLCharsetHandler extends ProcessorHandler {
 
@@ -37,7 +37,7 @@ public class XHTMLCharsetHandler extends ProcessorHandler {
 				return HANDLED_CONTINUE;
 			}
 		}
-		if (endTagRequired(element)) { 
+		if (endTagRequired(element)) {
 			Element domElement = element.getElement();
 			if (domElement.getFirstChild() == null) {
 				Document document = domElement.getOwnerDocument();
@@ -49,7 +49,7 @@ public class XHTMLCharsetHandler extends ProcessorHandler {
 	}
 
 	/*
-	 * Returns true if this element requires the end tag to be separate from the 
+	 * Returns true if this element requires the end tag to be separate from the
 	 * start tag to render correctly in browsers.
 	 * i.e. generate <a></a> rather than <a/>
 	 */

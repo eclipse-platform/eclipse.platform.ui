@@ -142,18 +142,18 @@ public class LocalSearchManager {
 	 * Converts the given TopDocs object into a List of raw SearchHits.
 	 * Hits objects are immutable and can't be instantiated from outside
 	 * Lucene.
-	 * @param searcher 
-	 * 
+	 * @param searcher
+	 *
 	 * @param hits the TopDocs object to convert
 	 * @return a List of raw SearchHits
 	 */
 
 	public static List<SearchHit> asList(TopDocs topDocs, IndexSearcher searcher) {
 		List<SearchHit> list = new ArrayList<SearchHit>(topDocs.scoreDocs.length);
-		
+
 		for (int i=0; i<topDocs.scoreDocs.length; ++i) {
 			try {
-				Document doc = searcher.doc(topDocs.scoreDocs[i].doc); 
+				Document doc = searcher.doc(topDocs.scoreDocs[i].doc);
 				float score = topDocs.scoreDocs[i].score;
 				String href = doc.get("name"); //$NON-NLS-1$
 				String summary = doc.get("summary");			 //$NON-NLS-1$
@@ -170,7 +170,7 @@ public class LocalSearchManager {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Public for use by indexing tool
 	 */
@@ -188,7 +188,7 @@ public class LocalSearchManager {
 
 	/**
 	 * Obtains AnalyzerDescriptor that indexing and search should use for a given locale.
-	 * 
+	 *
 	 * @param locale
 	 *            2 or 5 character locale representation
 	 */
@@ -231,12 +231,12 @@ public class LocalSearchManager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether or not a participant with the given headless attribute should be
 	 * enabled in the current mode. Participants that support headless are always enabled, and
 	 * those that don't are only enabled when in workbench mode.
-	 * 
+	 *
 	 * @param headless whether or not the participant supports headless mode
 	 * @return whether or not the participant should be enabled
 	 */
@@ -295,7 +295,7 @@ public class LocalSearchManager {
 	/**
 	 * Returns the lucene search participant with the given id, or null if it could not
 	 * be found.
-	 * 
+	 *
 	 * @param participantId the participant's unique id
 	 * @return the participant with the given id
 	 */
@@ -306,10 +306,10 @@ public class LocalSearchManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a TOC file participant for the provided plug-in and file name.
-	 * 
+	 *
 	 * @param pluginId
 	 * @param fileName
 	 * @return The matching participant, or <code>null</code>
@@ -331,7 +331,7 @@ public class LocalSearchManager {
 	/**
 	 * Returns whether or not the given search participant is bound to the given
 	 * plugin.
-	 * 
+	 *
 	 * @param pluginId the id of the plugin
 	 * @param participantId the id of the search participant
 	 * @return whether or not the participant is bound to the plugin
@@ -349,10 +349,10 @@ public class LocalSearchManager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns a set of plug-in Ids that have search participants or bindings.
-	 * 
+	 *
 	 * @return a set of plug-in Ids
 	 */
 
@@ -385,7 +385,7 @@ public class LocalSearchManager {
 				set.add(element.getContributor().getName());
 		}
 	}
-	
+
 	/**
 	 * Loops through all the loaded search participants and notifies them that they can drop the
 	 * cached data to reduce runtime memory footprint.
@@ -434,7 +434,7 @@ public class LocalSearchManager {
 					continue;
 				if (list == null)
 					list = new ArrayList<ParticipantDescriptor>();
-				ParticipantDescriptor desc = new ParticipantDescriptor(element); 
+				ParticipantDescriptor desc = new ParticipantDescriptor(element);
 				list.add(desc);
 				searchParticipantsById.put(desc.getId(), desc);
 			}
@@ -446,7 +446,7 @@ public class LocalSearchManager {
 
 	/**
 	 * Locates the
-	 * 
+	 *
 	 * @param list
 	 * @param binding
 	 * @return
@@ -489,7 +489,7 @@ public class LocalSearchManager {
 
 	/**
 	 * Returns an array of search participants with the global scope (no extensions).
-	 * 
+	 *
 	 * @return an array of the global search participants.
 	 */
 
@@ -511,7 +511,7 @@ public class LocalSearchManager {
 		globalSearchParticipants = new ArrayList<ParticipantDescriptor>();
 		addSearchParticipants();
 	}
-	
+
 	private void addSearchParticipants() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				SEARCH_PARTICIPANT_XP_FULLNAME);
@@ -549,10 +549,10 @@ public class LocalSearchManager {
 			index.search(searchQuery, collector);
 		}
 	}
-	
+
 	/**
 	 * Updates index. Checks if all contributions were indexed. If not, it indexes them.
-	 * 
+	 *
 	 * @throws OperationCanceledException
 	 *             if indexing was cancelled
 	 */

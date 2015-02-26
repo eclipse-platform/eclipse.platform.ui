@@ -26,11 +26,11 @@ import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexSee;
 
 /**
- * Utilities to test for enabled topics, index entries etc. 
+ * Utilities to test for enabled topics, index entries etc.
  */
 
 public class ScopeUtils {
-	
+
 
 	/*
 	 * Function to determine whether a topic should be shown in the toc.
@@ -43,7 +43,7 @@ public class ScopeUtils {
 			return false;
 		}
 		return hasInScopeDescendent(toc, scope);
-		
+
 	}
 
 	/*
@@ -58,7 +58,7 @@ public class ScopeUtils {
 		}
 		return !scope.isHierarchicalScope() && hasInScopeDescendent(topic, scope);
 	}
-	
+
 	/*
 	 * Function to determine whether an entry should be shown in the index.
 	 * For hierarchical scopes the element itself must be in scope.
@@ -79,13 +79,13 @@ public class ScopeUtils {
 	public static boolean hasInScopeDescendent(ITopic topic, AbstractHelpScope scope) {
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i = 0; i < subtopics.length; i++) {
-			if (showInTree(subtopics[i], scope)) {  
+			if (showInTree(subtopics[i], scope)) {
 				return true;
 			}
 		}
 		return false;
     }
-	
+
 	/*
 	 * Returns true if one of the children meets the conditions
 	 * necessary to be shown in the Toc tree
@@ -93,13 +93,13 @@ public class ScopeUtils {
 	public static boolean hasInScopeDescendent(IToc toc, AbstractHelpScope scope) {
 		ITopic[] topics = toc.getTopics();
 		for (int i = 0; i < topics.length; i++) {
-			if (showInTree(topics[i], scope)) {  
+			if (showInTree(topics[i], scope)) {
 				return true;
 			}
 		}
 		return false;
     }
-	
+
 	/*
 	 * Returns true if one of the children meets the conditions
 	 * necessary to be shown in the Index
@@ -143,11 +143,11 @@ public class ScopeUtils {
 			if (target == null) {
 				return false;
 			}
-			return showInTree(target, scope);	
+			return showInTree(target, scope);
 		}
 		return false;
 	}
-	
+
 	public static boolean showInTree(IIndexSee see, AbstractHelpScope scope) {
 		if (scope.isHierarchicalScope() && !scope.inScope(see)) {
 			return false;
@@ -165,7 +165,7 @@ public class ScopeUtils {
 			if (target == null) {
 				return false;
 			}
-			return showInTree(target, scope);	
+			return showInTree(target, scope);
 		}
 		return false;
 	}
@@ -173,7 +173,7 @@ public class ScopeUtils {
 	/**
 	 * Filter out any disabled entries from an array
 	 * @param entries an array of entries
-	 * @param scope 
+	 * @param scope
 	 * @return an array containing only those entries which are enabled
 	 */
 	public static IIndexEntry[] inScopeEntries(IIndexEntry[] entries, AbstractHelpScope scope) {
@@ -194,7 +194,7 @@ public class ScopeUtils {
 	/**
 	 * Filter out any disabled topics from an array
 	 * @param topics an array of topics
-	 * @param scope 
+	 * @param scope
 	 * @return an array containing only those topics which are enabled
 	 */
 	public static ITopic[] inScopeTopics(ITopic[] topics, AbstractHelpScope scope) {

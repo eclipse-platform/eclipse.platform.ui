@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
  * Represents a Lucene index for one locale. The interface is used
  * to allow participants to delegate indexing of documents outside
  * of the TOC using the same algorithms as those in TOC.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.5
@@ -32,7 +32,7 @@ public interface IHelpSearchIndex {
 	 * participants, or the default HTML search participant. Use this method when encountering
 	 * documents outside of TOC that are nevertheless of the known format and help system knows how
 	 * to handle.
-	 * 
+	 *
 	 * @param pluginId
 	 *            the id of the contributing plug-in
 	 * @param name
@@ -46,7 +46,7 @@ public interface IHelpSearchIndex {
 	 * @return the status of the operation
 	 */
 	IStatus addSearchableDocument(String pluginId, String name, URL url, String id, ISearchDocument doc);
-	
+
 	/**
 	 * A search index is created for each locale.
 	 * @return the locale associated with this index.

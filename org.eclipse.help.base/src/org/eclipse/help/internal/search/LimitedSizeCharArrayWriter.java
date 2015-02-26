@@ -15,7 +15,7 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 
 public class LimitedSizeCharArrayWriter extends CharArrayWriter {
-	
+
 	private long maxSize;
 	private long size = 0;
 
@@ -23,33 +23,33 @@ public class LimitedSizeCharArrayWriter extends CharArrayWriter {
 		super();
 		this.maxSize = maxSize;
 	}
-	
+
 	public void write(char[] c, int off, int len) {
         size += len;
 		super.write(c, off, len);
 	}
-	
+
 	public void write(char[] cbuf) throws IOException {
 		size += cbuf.length;
 		if (size < maxSize) {
 		    super.write(cbuf);
 		}
 	}
-	
+
 	public void write(String str, int off, int len) {
         size += len;
         if (size < maxSize) {
 		    super.write(str, off, len);
         }
 	}
-	
+
 	public void write(int c) {
 		size += 1;
 		if (size < maxSize) {
 		    super.write(c);
 		}
 	}
-	
+
 	public void write(String str) throws IOException {
 		size += str.length();
 		if (size < maxSize) {

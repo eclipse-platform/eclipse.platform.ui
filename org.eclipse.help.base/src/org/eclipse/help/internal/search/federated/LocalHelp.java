@@ -29,10 +29,10 @@ public class LocalHelp implements ISearchEngine2 {
 	private static final int MAX_HITS = 500;
 
 	private List<String> altList;
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.help.internal.search.federated.ISearchEngine#run(java.lang.String,
 	 *      org.eclipse.help.internal.search.ISearchScope,
 	 *      org.eclipse.help.internal.search.federated.ISearchEngineResultCollector,
@@ -46,7 +46,7 @@ public class LocalHelp implements ISearchEngine2 {
 		altList = new ArrayList<String>();
 		for (int p=0;p<processors.length;p++)
 		{
-			SearchProcessorInfo result = 
+			SearchProcessorInfo result =
 				processors[p].preSearch(query);
 			if (result!=null)
 			{
@@ -62,8 +62,8 @@ public class LocalHelp implements ISearchEngine2 {
 			}
 		}
 		Collections.sort(altList);
-		
-		
+
+
 		SearchQuery searchQuery = new SearchQuery();
 		searchQuery.setSearchWord(query);
 		WorkingSet[] workingSets = null;
@@ -92,7 +92,7 @@ public class LocalHelp implements ISearchEngine2 {
 				results = tmp;
 			}
 		}
-		
+
 		if (reset)
 		{
 			SearchHit hits[] = SearchManager.convertResultsToHits(results);
@@ -105,7 +105,7 @@ public class LocalHelp implements ISearchEngine2 {
 	private void postResults(SearchResults results,
 			ISearchEngineResultCollector collector, boolean activityFiltering) {
 		if (results.getException() != null) {
-			collector.error(new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 
+			collector.error(new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
 					HelpBaseResources.HelpSearch_QueryTooComplex, results.getException()));
 		}
 		SearchHit[] searchHits = results.getSearchHits();
@@ -140,12 +140,12 @@ public class LocalHelp implements ISearchEngine2 {
 	public String toAbsoluteHref(String href, boolean frames) {
 		return null;
 	}
-	
+
 	public List<String> getAlternates()
 	{
 		return altList;
 	}
-	
+
 	public boolean open(String id) {
 		int sep = id.indexOf('/');
 		if (sep== -1)

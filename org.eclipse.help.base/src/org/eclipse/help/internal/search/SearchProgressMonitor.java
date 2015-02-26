@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * Progress monitor for search
- * 
+ *
  * @since 2.0
  */
 public class SearchProgressMonitor implements IProgressMonitor {
@@ -100,7 +100,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Gets the isCancelled.
-	 * 
+	 *
 	 * @return Returns a boolean
 	 */
 	public boolean isCanceled() {
@@ -116,7 +116,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Gets the isStarted.
-	 * 
+	 *
 	 * @return Returns a boolean
 	 */
 	public boolean isStarted() {
@@ -125,7 +125,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Gets the isDone.
-	 * 
+	 *
 	 * @return Returns a boolean
 	 */
 	public boolean isDone() {
@@ -134,7 +134,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Sets the isCanceled.
-	 * 
+	 *
 	 * @param canceled
 	 *            The isCanceled to set
 	 */

@@ -41,11 +41,11 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		if(null == criteriaScope) {
 			this.criteriaScope = new CriterionResource[0];
 		} else {
-			this.criteriaScope = new CriterionResource[criteriaScope.size()];                                        		
+			this.criteriaScope = new CriterionResource[criteriaScope.size()];
 			criteriaScope.toArray(this.criteriaScope);
 		}
 	}
-	
+
 	public boolean inScope(IToc toc) {
 		if(null == toc){
 			if(null == criteriaScope || 0 == criteriaScope.length){
@@ -80,11 +80,11 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 				String value = String.valueOf(valueIterator.next());
 				if (value.equals(UNCATEGORIZED)) {
 					if (!ownCriteria.containsKey(key)) {
-						continue outer;						
+						continue outer;
 					}
 				} else {
 					if (null != ownCriteria.get(key) && ownCriteria.get(key).contains(value))
-						continue outer;					
+						continue outer;
 				}
 			}
 			return false;
@@ -97,7 +97,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
-	
+
 	private Map<String, Set<String>> getCriteriaInfo(ICriteria[] criteria) {
 		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
@@ -111,5 +111,5 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 	public String getName(Locale locale) {
 		return null;
 	}
-	
+
 }

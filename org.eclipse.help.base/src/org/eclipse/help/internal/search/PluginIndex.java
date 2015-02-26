@@ -177,7 +177,7 @@ public class PluginIndex {
 
 	/**
 	 * Creates id of prebuilt index
-	 * 
+	 *
 	 * @param prefix
 	 *            index directory prefix, e.g. "", "ws/gtk"
 	 * @return indexId string, e.g. "/", "/ws/gtk"

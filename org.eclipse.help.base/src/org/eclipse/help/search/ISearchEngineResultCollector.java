@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * This interface is intended to be implemented by clients and passed to the
  * search engine instance.
- * 
+ *
  * @since 3.1
  */
 public interface ISearchEngineResultCollector {
 	/**
 	 * Accepts a new search result object.
-	 * 
+	 *
 	 * @param searchResult
 	 *            the new search result
 	 */
@@ -32,7 +32,7 @@ public interface ISearchEngineResultCollector {
 
 	/**
 	 * Accepts an array of new search results.
-	 * 
+	 *
 	 * @param searchResults
 	 *            an array of search result objects
 	 */
@@ -45,7 +45,7 @@ public interface ISearchEngineResultCollector {
 	 * to handle by throwing a <code>CoreException</code>. Use this method to
 	 * report errors that are expected to occur from time to time (e.g., server
 	 * down, server timeout, incorrect URL etc.).
-	 * 
+	 *
 	 * @param status
 	 *            the reported error status
 	 */

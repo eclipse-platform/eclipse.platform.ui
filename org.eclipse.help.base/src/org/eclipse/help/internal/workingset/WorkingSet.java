@@ -30,28 +30,28 @@ public class WorkingSet {
 	public WorkingSet(String name, List<AdaptableHelpResource> elements) {
 		this(name, elements, null);
 	}
-	
+
 	public WorkingSet(String name, List<AdaptableHelpResource> elements, List<CriterionResource> criteria) {
 		this.name = name;
-		
+
 		if (elements == null)
 			elements = new ArrayList<AdaptableHelpResource>();
 		this.elements = elements;
-		
+
 		if (criteria != null) {
 			this.criteria = criteria;
 		} else {
 			this.criteria = new ArrayList<CriterionResource>();
-		}		
+		}
 	}
 
 	public WorkingSet(String name, AdaptableHelpResource[] elements) {
 		this(name, elements, null);
 	}
-	
+
 	public WorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		this.name = name;
-		
+
 		if (elements == null)
 			elements = new AdaptableHelpResource[0];
 
@@ -59,7 +59,7 @@ public class WorkingSet {
 		for (int i = 0; i < elements.length; i++) {
 			this.elements.add(elements[i]);
 		}
-		
+
 		if (criteria == null)
 			criteria = new CriterionResource[0];
 
@@ -97,15 +97,15 @@ public class WorkingSet {
 		for (int i = 0; i < elements.length; i++)
 			this.elements.add(elements[i]);
 	}
-	
-	
+
+
 	public void setCriteria(CriterionResource[] criteria) {
 		this.criteria = new ArrayList<CriterionResource>(criteria.length);
 		for(int i = 0; i < criteria.length; i++) {
 			this.criteria.add(criteria[i]);
 		}
 	}
-	
+
 	public CriterionResource[] getCriteria(){
 		CriterionResource[] array = new CriterionResource[criteria.size()];
 		criteria.toArray(array);
@@ -117,7 +117,7 @@ public class WorkingSet {
 		Element ws = doc.createElement("workingSet"); //$NON-NLS-1$
 		ws.setAttribute("name", name); //$NON-NLS-1$
 		parent.appendChild(ws);
-		
+
 		Element contents = doc.createElement("contents"); //$NON-NLS-1$
 		ws.appendChild(contents);
 		for (Iterator<AdaptableHelpResource> it = elements.iterator(); it.hasNext();) {
@@ -126,11 +126,11 @@ public class WorkingSet {
 			helpResource.saveState(child);
 			contents.appendChild(child);
 		}
-		
+
 		if (!criteria.isEmpty()){
 			Element criteriaElement = doc.createElement("criteria"); //$NON-NLS-1$
 			ws.appendChild(criteriaElement);
-			
+
 			for(Iterator<CriterionResource> iterator = criteria.iterator(); iterator.hasNext();){
 				Element criterionItem = doc.createElement("criterion"); //$NON-NLS-1$
 				criteriaElement.appendChild(criterionItem);

@@ -19,7 +19,7 @@ import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.UAElement;
 
 public class IndexUtils {
-	
+
 	/**
 	 * Return a path representing all of the elements in the path of the see target
 	 * For example if the see targets Eclipse / PDE the result will be an array
@@ -47,7 +47,7 @@ public class IndexUtils {
 				if (path[depth].equals(entryKeyword)) {
 					if (path.length == depth + 1) {
 					    return new IIndexEntry[] { indexEntry };
-					} 
+					}
 					IIndexEntry[] targets = findSeeTargets(indexEntry, see, depth + 1);
 					IIndexEntry[] result = new IIndexEntry[targets.length + 1];
 					result[0] = indexEntry;
@@ -58,7 +58,7 @@ public class IndexUtils {
 		}
 		return new IIndexEntry[0];
 	}
-	
+
 	public static String[] getPath(IIndexSee see) {
 		IIndexSubpath[] subpaths = see.getSubpathElements();
 		String[] result = new String[1 + subpaths.length];

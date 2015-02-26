@@ -15,10 +15,10 @@ import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.base.IScopeHandle;
 
 public class ScopeHandle implements IScopeHandle{
-	
-	private AbstractHelpScope scope;	
+
+	private AbstractHelpScope scope;
 	private String id;
-	
+
 	public ScopeHandle( String id, AbstractHelpScope scope) {
 		this.id = id;
 		this.scope = scope;

@@ -114,7 +114,7 @@ public class HTMLDocParser {
 			return ""; //$NON-NLS-1$
 		}
 	}
-	
+
 	public Reader getContentReader() throws IOException {
 		if (htmlParser == null) {
 			throw new NullPointerException();
@@ -125,7 +125,7 @@ public class HTMLDocParser {
 	 * Private. Parses HTML to extract document encoding specified in HTTP
 	 * equivalent META tag in the document header. Example of such META tag is
 	 * <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
-	 * 
+	 *
 	 * @return String or null if encoding not found
 	 */
 	public static String getCharsetFromHTML(InputStream is) {
@@ -345,7 +345,7 @@ public class HTMLDocParser {
 	 * Parses HTTP1.1 Content-Type entity-header field for example,
 	 * Content-Type: text/html; charset=ISO-8859-4, and extracts charset
 	 * parameter value of the media sub type.
-	 * 
+	 *
 	 * @return value of charset parameter, for example ISO-8859-4 or null if
 	 *         parameter does not exist
 	 */
@@ -363,7 +363,7 @@ public class HTMLDocParser {
 		}
 		return null;
 	}
-	
+
 	public Exception getException() {
 		if (htmlParser != null) {
 			return htmlParser.getException();

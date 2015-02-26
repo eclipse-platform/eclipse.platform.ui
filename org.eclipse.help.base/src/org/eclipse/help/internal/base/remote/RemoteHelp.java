@@ -39,7 +39,7 @@ public class RemoteHelp {
 		}
 		listeners.add(listener);
 	}
-	
+
 	/*
 	 * Removes a listener.
 	 */
@@ -48,7 +48,7 @@ public class RemoteHelp {
 			listeners.remove(listener);
 		}
 	}
-	
+
 	/*
 	 * Signals all registered listeners that remote help preferences have
 	 * changed.
@@ -62,7 +62,7 @@ public class RemoteHelp {
 			}
 		}
 	}
-	
+
 	public static URL getURL(int ic, String pathSuffix) throws MalformedURLException {
 		PreferenceFileHandler handler = new PreferenceFileHandler();
 		String host = handler.getHostEntries()[ic];
@@ -74,15 +74,15 @@ public class RemoteHelp {
 			port = Integer.parseInt(handler.getPortEntries()[ic]);
 		} catch (NumberFormatException e) {
 			throw new MalformedURLException();
-		} 
+		}
 		if(protocol.equalsIgnoreCase(PROTOCOL_HTTPS))
 			url = HttpsUtility.getHttpsURL(protocol,host,port,path);
 		else
 			url = new URL(PROTOCOL_HTTP, host, port, path);
-		
+
 		return url;
 	}
-	
+
 	/*
 	 * Returns whether or not the help system is currently configured for remote
 	 * help content.
@@ -90,14 +90,14 @@ public class RemoteHelp {
 	public static boolean isEnabled() {
 		return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 	}
-	
+
 	/*
 	 * Clears the error status for remote help.
 	 */
 	public static void clearError() {
 		error = null;
 	}
-	
+
 	/*
 	 * Returns the error produced during a previous remote help
 	 * query, or null if there was none.
@@ -105,7 +105,7 @@ public class RemoteHelp {
 	public static Throwable getError() {
 		return error;
 	}
-	
+
 	/*
 	 * Sets the latest exception to have occured while communicating
 	 * with the remote help server.
@@ -113,5 +113,5 @@ public class RemoteHelp {
 	public static void setError(Throwable t) {
 		error = t;
 	}
-	
+
 }

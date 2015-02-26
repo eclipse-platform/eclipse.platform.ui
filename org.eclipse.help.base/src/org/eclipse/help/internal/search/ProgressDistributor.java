@@ -112,7 +112,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	public synchronized void worked(int work) {
 		internalWorked(work);
 	}
-	
+
 	public synchronized void addMonitor(IProgressMonitor m) {
 		if (totalWork > -1)
 			m.beginTask(taskName, totalWork);

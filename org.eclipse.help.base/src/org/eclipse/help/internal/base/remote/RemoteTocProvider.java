@@ -46,7 +46,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
 	public ITocContribution[] getTocContributions(String locale) {
@@ -83,12 +83,12 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			for (int i = numICs-1; i >= 0; i--) {
 				if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$
 					try {
-						
+
 						if(protocol[i].equalsIgnoreCase(PROTOCOL))
 						{
-							url = new URL(protocol[i], host[i], new Integer(port[i]) .intValue(), 
+							url = new URL(protocol[i], host[i], new Integer(port[i]) .intValue(),
 									path[i] + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
-							
+
 							in = ProxyUtil.getStream(url);
 							urlStr = PROTOCOL + "://"+host[i] + ":" + port[i] + path[i]; //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -145,15 +145,15 @@ public class RemoteTocProvider extends AbstractTocProvider {
 		return new ITocContribution[0];
 	}
 
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getPriority()
 	 */
 	public int getPriority() {
-		
+
 		int helpOption=PreferenceFileHandler.getEmbeddedHelpOption();
-		
+
 		if(helpOption ==PreferenceFileHandler.LOCAL_HELP_ONLY || helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY)
 			return TOC_FILE_PRIORITY+1;
 		else return DEFAULT_PRIORITY-1;

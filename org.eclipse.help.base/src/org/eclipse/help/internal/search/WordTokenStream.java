@@ -27,7 +27,7 @@ public final class WordTokenStream extends Tokenizer {
 	private final Reader reader;
 	private final BreakIterator boundary;
 	private StringBuffer strbuf;
-	
+
 	private int start = 0;
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
@@ -72,14 +72,14 @@ public final class WordTokenStream extends Tokenizer {
 			if (c < 0) {
 				reader.close();
 			}
-			
+
 			boundary.setText(strbuf.toString());
 			start = boundary.first();
 	    }
 	    else {
 	    	start = boundary.next();
 	    }
-	    
+
 		for (end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
 			// determine if it is a word
 			// any letter or digit between boundaries means it is a word
@@ -95,15 +95,15 @@ public final class WordTokenStream extends Tokenizer {
 				}
 			}
 		}
-		
-	    return false;	
+
+	    return false;
 	}
-	
+
 	public void reset() throws IOException {
 		super.reset();
 		clearAttributes();
 	}
-	  
+
 	public void close() throws IOException {
 		/// Unlikely to be called as this is a reused
 	    if (this.reader != null) {

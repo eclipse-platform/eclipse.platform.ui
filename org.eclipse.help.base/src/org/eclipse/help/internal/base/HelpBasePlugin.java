@@ -116,7 +116,7 @@ public class HelpBasePlugin extends Plugin {
 	public static void setActivitySupport(IHelpActivitySupport activitySupport) {
 		getDefault().helpActivitySupport = activitySupport;
 	}
-	
+
 	public static BundleContext getBundleContext() {
 		return getDefault().context;
 	}

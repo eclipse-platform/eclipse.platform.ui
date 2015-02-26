@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 
 public class ProxyUtil {
-	
+
 	public static boolean isAuthConnSupported()
 	{
 		try {
@@ -47,18 +47,18 @@ public class ProxyUtil {
 		}
 		return false;
 	}
-	
+
 	public static IProxyData getProxy(URL url)
 	{
 		if (!isAuthConnSupported())
 			return null;
-		
+
 		IProxyService service = ProxyManager.getProxyManager();
 		IProxyData data[];
-		
+
 		if (!service.isProxiesEnabled())
 			return null;
-		
+
 		try {
 			URI uri = url.toURI();
 			if (shouldBypass(uri))
@@ -68,18 +68,18 @@ public class ProxyUtil {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		if (data.length==0)
 			return null;
 		return data[0];
 	}
-	
+
 	public static boolean shouldBypass(URI uri)
 	{
 		String host = uri.getHost();
 		if (host==null)
 			return true;
-		
+
 		List<String> hosts = getProxyBypassHosts();
 		if (hosts.contains(host))
 			return true;
@@ -87,14 +87,14 @@ public class ProxyUtil {
 			return true;
 		return false;
 	}
-	
+
 
 	public static List<String> getProxyBypassHosts()
 	{
 		List<String> hosts = new ArrayList<String>();
 		if (!isAuthConnSupported())
 			return hosts;
-		
+
 		IProxyService service = ProxyManager.getProxyManager();
 		String manuals[] = service.getNonProxiedHosts();
 		String natives[] = null;
@@ -108,7 +108,7 @@ public class ProxyUtil {
 				hosts.add(natives[n]);
 		return hosts;
 	}
-	
+
 	public static URLConnection getConnection(URL url) throws IOException
 	{
 		IProxyData data = getProxy(url);
@@ -124,24 +124,24 @@ public class ProxyUtil {
 		return url.openConnection(proxy);
 	}
 
-	
+
 	public static InputStream getStream(URL url) throws IOException
 	{
 		return getConnection(url).getInputStream();
 	}
 
-	
-	private static class ProxyAuthenticator extends Authenticator {  
 
-		private String user, password;  
- 
-		public ProxyAuthenticator(String user, String password) {  
-			this.user = user;  
-			this.password = password;  
-		}  
-		
-		protected PasswordAuthentication getPasswordAuthentication() {  
-			return new PasswordAuthentication(user, password.toCharArray());  
-		}  
-	}  
+	private static class ProxyAuthenticator extends Authenticator {
+
+		private String user, password;
+
+		public ProxyAuthenticator(String user, String password) {
+			this.user = user;
+			this.password = password;
+		}
+
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return new PasswordAuthentication(user, password.toCharArray());
+		}
+	}
 }

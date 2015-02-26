@@ -47,7 +47,7 @@ import org.osgi.framework.Bundle;
  * are also responsible for opening these documents when asked because the help system will not be
  * able to open them in any meaningful way. </li>
  * </ol>
- * 
+ *
  * @since 3.5
  */
 public abstract class SearchParticipant {
@@ -59,7 +59,7 @@ public abstract class SearchParticipant {
 	/**
 	 * Initializes the participant with the unique identifier from the registry. The method is
 	 * called by the help system - subclasses are not supposed to call it.
-	 * 
+	 *
 	 * @param id
 	 *            the unique identifier of this participant
 	 */
@@ -70,7 +70,7 @@ public abstract class SearchParticipant {
 
 	/**
 	 * Returns the unique identifier of this participant.
-	 * 
+	 *
 	 * @return the unique id
 	 */
 	public final String getId() {
@@ -79,7 +79,7 @@ public abstract class SearchParticipant {
 
 	/**
 	 * Adds the document to the search index.
-	 * 
+	 *
 	 * @param index
 	 *            the abstract representation of the help index that is currently running. Indexing
 	 *            known file types in participants that manage documents outside the TOC can be
@@ -103,10 +103,10 @@ public abstract class SearchParticipant {
 	/**
 	 * Returns all the documents that this participant knows about. This method is only used for
 	 * participants that handle documents outside of the help system's TOC.
-	 * 
+	 *
 	 * @param locale
 	 *            the index locale
-	 * 
+	 *
 	 * @return a set<String> of hrefs for documents managed by this participant.
 	 */
 	public Set<String> getAllDocuments(String locale) {
@@ -116,7 +116,7 @@ public abstract class SearchParticipant {
 	/**
 	 * Returns a set of identifiers of plug-ins that contribute indexable documents. This method is
 	 * only used for participants that handle documents outside of the help system's TOC.
-	 * 
+	 *
 	 * @return a set<String> of contributing plug-in ids
 	 */
 
@@ -126,7 +126,7 @@ public abstract class SearchParticipant {
 
 	/**
 	 * A utility method that resolves a file name that contains '$'-based substitution variables.
-	 * 
+	 *
 	 * @param pluginId
 	 *            the identifier of the originating plug-in
 	 * @param fileName
@@ -150,7 +150,7 @@ public abstract class SearchParticipant {
 
 	/**
 	 * A utility method that adds a title to the document.
-	 * 
+	 *
 	 * @param title
 	 *            the title string
 	 * @param doc
@@ -168,10 +168,10 @@ public abstract class SearchParticipant {
 	 * the search results. The default implementation returns <code>false</code> indicating that
 	 * the help system should open the document. In most cases this is wrong for most of XML files
 	 * that are in some interesting way.
-	 * 
+	 *
 	 * @param id
 	 *            a participant-specific identifier that completely represents a search result
-	 * 
+	 *
 	 * @return <code>true</code> if the file has been opened correctly or <code>false</code> to
 	 *         allow the help system to try to open the document.
 	 */

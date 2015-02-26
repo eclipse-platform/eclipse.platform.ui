@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 package org.eclipse.help.internal.base.remote;
@@ -46,7 +46,7 @@ public class RemoteSearchManager {
 		String path[] = prefHandler.getPathEntries();
 		String [] protocols = prefHandler.getProtocolEntries();
 		String isEnabled[] = prefHandler.isEnabled();
-		
+
 		try {
 			// InfoCenters ignore remote content
 			if (RemoteHelp.isEnabled()) {
@@ -58,7 +58,7 @@ public class RemoteSearchManager {
 						InputStream in = null;
 						try {
 							URL url;
-							
+
 							if(protocols[i].equals(PROTOCOL_HTTP))
 							{
 								url = new URL("http", host[i], new Integer(port[i]).intValue(), path[i] + PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale()); //$NON-NLS-1$
@@ -66,11 +66,11 @@ public class RemoteSearchManager {
 							}
 							else
 							{
-								url = HttpsUtility.getHttpsURL(protocols[i], host[i], port[i], path[i]+ PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale()); 
+								url = HttpsUtility.getHttpsURL(protocols[i], host[i], port[i], path[i]+ PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale());
 								in = HttpsUtility.getHttpsStream(url);
 							}
-							
-							RemoteSearchParser parser = new RemoteSearchParser();							
+
+							RemoteSearchParser parser = new RemoteSearchParser();
 							// parse the XML-serialized search results
 							List<SearchHit> hits = parser.parse(in, new SubProgressMonitor(pm, 100));
 							collector.addHits(hits, null);

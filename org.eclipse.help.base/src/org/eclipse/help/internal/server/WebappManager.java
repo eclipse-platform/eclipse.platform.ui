@@ -19,7 +19,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.server.HelpServer;
 
 public class WebappManager {
-	
+
 	private static HelpServer server;
 	private static final String SERVER_EXTENSION_ID = "org.eclipse.help.base.server"; //$NON-NLS-1$
 	private static final String SERVER_CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
@@ -33,7 +33,7 @@ public class WebappManager {
     	}
     	return server;
     }
-	
+
 	public static void start(String webappName) throws Exception {
 		getHelpServer().start(webappName);
 	}
@@ -49,7 +49,7 @@ public class WebappManager {
 	public static String getHost() {
         return getHelpServer().getHost();
 	}
-	
+
 	private static void createWebappServer() {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(SERVER_EXTENSION_ID );
@@ -59,7 +59,7 @@ public class WebappManager {
 				// We need to pick up the non-default configuration
 				IConfigurationElement[] elements = extensions[0]
 						.getConfigurationElements();
-				if (elements.length == 0) 
+				if (elements.length == 0)
 					return;
 				IConfigurationElement serverElement  = elements[0];
 				// Instantiate the app server
@@ -72,5 +72,5 @@ public class WebappManager {
 			}
 		}
 	}
-	
+
 }

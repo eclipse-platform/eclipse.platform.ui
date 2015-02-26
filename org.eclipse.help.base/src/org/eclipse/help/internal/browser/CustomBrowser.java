@@ -20,7 +20,7 @@ import org.eclipse.osgi.service.environment.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
- *  
+ *
  */
 public class CustomBrowser implements IBrowser {
 	public static final String CUSTOM_BROWSER_PATH_KEY = "custom_browser_path"; //$NON-NLS-1$
@@ -95,7 +95,7 @@ public class CustomBrowser implements IBrowser {
 
 	/**
 	 * Creates the final command to launch.
-	 * 
+	 *
 	 * @param path
 	 * @param url
 	 * @return String[]
@@ -152,11 +152,11 @@ public class CustomBrowser implements IBrowser {
 		tokenList.toArray(command);
 		return command;
 	}
-	
+
 	/**
 	 * Replaces any occurrences of <code>"%1"</code> or <code>%1</code> with
 	 * the URL.
-	 * 
+	 *
 	 * @param token
 	 *            The token in which the substitutions should be made; must not
 	 *            be <code>null</code>.

@@ -54,7 +54,7 @@ public abstract class AdaptableHelpResource
 
 	/**
 	 * Tests the receiver and the object for equality
-	 * 
+	 *
 	 * @param object
 	 *            object to compare the receiver to
 	 * @return true=the object equals the receiver, the name is the same. false
@@ -73,7 +73,7 @@ public abstract class AdaptableHelpResource
 
 	/**
 	 * Returns the hash code.
-	 * 
+	 *
 	 * @return the hash code.
 	 */
 	public int hashCode() {

@@ -20,7 +20,7 @@ import org.eclipse.help.internal.standalone.*;
  * its help system implementation, and controling it. This class can be
  * instantiated and used in a Java program, or can be launched from command line
  * to execute single help action.
- * 
+ *
  * Usage as a Java component:
  * <ul>
  * <li>create an instantance of this class and then hold onto this instance for
@@ -35,7 +35,7 @@ public class Help {
 
 	/**
 	 * Constructs help system
-	 * 
+	 *
 	 * @param options
 	 *            array of String options and their values
 	 *            <p>
@@ -64,7 +64,7 @@ public class Help {
 	}
 	/**
 	 * This contstructs the stand alone help.
-	 * 
+	 *
 	 * @param pluginsDir
 	 *            directory containing Eclipse plugins
 	 * @deprecated use Help#Help(String[])
@@ -103,7 +103,7 @@ public class Help {
 
 	/**
 	 * Displays specified help resource.
-	 * 
+	 *
 	 * @param href
 	 *            the href of the table of contents
 	 */
@@ -113,7 +113,7 @@ public class Help {
 
 	/**
 	 * Displays context sensitive help.
-	 * 
+	 *
 	 * @param contextId
 	 *            context id
 	 * @param x
@@ -127,7 +127,7 @@ public class Help {
 
 	/**
 	 * Displays context sensitive help in infopop.
-	 * 
+	 *
 	 * @param contextId
 	 *            context id
 	 * @param x
@@ -142,7 +142,7 @@ public class Help {
 
 	/**
 	 * Controls standalone help system from command line.
-	 * 
+	 *
 	 * @param args
 	 *            array of String containing options Options are:
 	 *            <code>-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-dir rtl] [platform options] [-vmargs JavaVMarguments]</code>

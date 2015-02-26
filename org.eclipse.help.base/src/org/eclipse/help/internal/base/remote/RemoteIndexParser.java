@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class RemoteIndexParser extends DefaultHandler {
 
 	private DocumentReader reader;
-	
+
 	/*
 	 * Parses the given serialized indexes and returns generated model objects.
 	 */
@@ -49,7 +49,7 @@ public class RemoteIndexParser extends DefaultHandler {
 			contribution.setLocale(child.getAttribute("locale")); //$NON-NLS-1$
 			contribution.setIndex((Index)child.getChildren()[0]);
 			contributions[i] = contribution;
-		}		
+		}
 		return contributions;
 	}
 }

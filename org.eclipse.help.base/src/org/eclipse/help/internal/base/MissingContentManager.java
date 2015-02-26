@@ -34,14 +34,14 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 
 public class MissingContentManager {
-	
+
 	private static final String HELP_PROTOCOL = "help:"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_ID_TOC = HelpPlugin.PLUGIN_ID + ".toc"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_PLACEHOLDER = "placeholder"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_PLACEHOLDER_PAGE = "placeholderPage"; //$NON-NLS-1$
 	public static final String  IGNORE_MISSING_PLACEHOLDER_PREFERENCE = "ignorePlaceholders"; //$NON-NLS-1$
-	
+
 	// Hrefs which are processed by org.eclipse.help.internal.webapp.StatusProducer
 	public static final String REMOTE_STATUS_HREF = "NetworkHelpStatus.html"; //$NON-NLS-1$
 	public static final String REMOTE_STATUS_HELP_VIEW_HREF = "NetworkHelpStatusHV.html"; //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class MissingContentManager {
 	public static final String MISSING_TOPIC_PATH = "missingTopic/"; //$NON-NLS-1$
 	public static final String MISSING_BOOKS_HREF = "MissingBooks.html"; //$NON-NLS-1$
 	public static final String MISSING_BOOKS_HELP_VIEW_HREF = "MissingBooksHV.html"; //$NON-NLS-1$
-	
+
 	/*
 	 * A place holder defines a page to be shown when a documentation page
 	 * which matches the specified path not installed
@@ -58,7 +58,7 @@ public class MissingContentManager {
 		public String path;
 		public String bundle;
 		public String placeholderPage;
-		
+
 		public Placeholder(String path, String bundle, String placeholderPage) {
 			this.path = path;
 			this.bundle = bundle;
@@ -69,20 +69,20 @@ public class MissingContentManager {
 			return o.path.compareTo(path);
 		}
 	}
-	
+
 	private static MissingContentManager instance;
 	private List<Placeholder> placeholders;
     private Set<String> bundlesToIgnore; // A set of bundles the user does not want to see reference to
-	
+
 	public static MissingContentManager getInstance() {
 		if ( instance == null ) {
 			instance = new MissingContentManager();
 		}
 		return instance;
 	}
-	
+
 	/*
-	 * Read the extension registry 
+	 * Read the extension registry
 	 */
 	private MissingContentManager() {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -119,9 +119,9 @@ public class MissingContentManager {
 			while (tokenizer.hasMoreTokens()) {
 				bundlesToIgnore.add(tokenizer.nextToken());
 			}
-		}	
+		}
 	}
-	
+
 	/**
      * Called when a page cannot be found
 	 * @param path the path of the page that could not be loaded
@@ -136,13 +136,13 @@ public class MissingContentManager {
 				} else {
 				    return "/org.eclipse.help.webapp/" + MISSING_TOPIC_PATH + path.substring(HELP_PROTOCOL.length()); //$NON-NLS-1$
 				}
-			}	
+			}
 		}
 		return Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "page_not_found", null, null); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
-	 * 
+	 *
 	 * @return true if there is an unresolved place holder and this is not an infocenter
 	 */
 	public boolean isUnresolvedPlaceholders() {
@@ -152,23 +152,23 @@ public class MissingContentManager {
 		Placeholder[] unresolvedPlaceHolders = getUnresolvedPlaceholders();
 		return unresolvedPlaceHolders.length > 0;
 	}
-	
+
 	/**
 	 * If any help is missing returns an appropriate page
-	 * @return null if no help is unavailable or an appropriate page if 
-	 *  the plug-in that corresponds to a place holder is not available. 
+	 * @return null if no help is unavailable or an appropriate page if
+	 *  the plug-in that corresponds to a place holder is not available.
 	 *  The returned page will be in the format /plug-in/path.
 	 */
-	public String getHelpMissingPage(boolean isHelpView) {	
+	public String getHelpMissingPage(boolean isHelpView) {
 		Placeholder[] unresolvedPlaceHolders = getUnresolvedPlaceholders();
 		if (unresolvedPlaceHolders.length == 0) {
 		    	return null;
 		} else {
 			    String suffix = isHelpView ? MISSING_BOOKS_HELP_VIEW_HREF : MISSING_BOOKS_HREF;
 		    	return "/org.eclipse.help.webapp" + '/'+ suffix; //$NON-NLS-1$
-		}	
+		}
 	}
-	
+
 	/**
 	 * Get the page to be shown when some remote help is known to be unavailable
 	 */
@@ -176,14 +176,14 @@ public class MissingContentManager {
 		if ( BaseHelpSystem.getMode()!=BaseHelpSystem.MODE_INFOCENTER ) {
 		    String suffix = isHelpView ? REMOTE_STATUS_HELP_VIEW_HREF : REMOTE_STATUS_HREF;
 			return "/org.eclipse.help.webapp/" + suffix; //$NON-NLS-1$
-		} 
+		}
 		return null;
 	}
 
 	public Placeholder[] getUnresolvedPlaceholders() {
 		List<Placeholder> unresolved;
 		unresolved = new ArrayList<Placeholder>();
-		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {			
+		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {
 			Placeholder ph = iter.next();
 			String bundle = ph.bundle;
 			if (bundle != null && !bundlesToIgnore.contains(bundle) ) {
@@ -194,11 +194,11 @@ public class MissingContentManager {
 		}
 		return unresolved.toArray(new Placeholder[unresolved.size()]);
 	}
-	
+
 	// Modifies the preferences to ignore any bundles that are currently unresolved placeholders
 	public void ignoreAllMissingPlaceholders() {
 		Placeholder[] unresolved = getUnresolvedPlaceholders();
-		String ignoredBundles = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, IGNORE_MISSING_PLACEHOLDER_PREFERENCE, "", null); //$NON-NLS-1$	
+		String ignoredBundles = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, IGNORE_MISSING_PLACEHOLDER_PREFERENCE, "", null); //$NON-NLS-1$
 		for ( int i = 0; i < unresolved.length; i++) {
 			String bundle = unresolved[i].bundle;
 			bundlesToIgnore.add(bundle);
@@ -208,7 +208,7 @@ public class MissingContentManager {
 			ignoredBundles = ignoredBundles + bundle;
 
 		}
-		IScopeContext instanceScope = InstanceScope.INSTANCE; 
+		IScopeContext instanceScope = InstanceScope.INSTANCE;
 		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.put(IGNORE_MISSING_PLACEHOLDER_PREFERENCE, ignoredBundles);
 		try {

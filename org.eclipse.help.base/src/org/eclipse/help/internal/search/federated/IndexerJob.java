@@ -19,7 +19,7 @@ import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 public class IndexerJob extends Job {
 	public static final String FAMILY = "org.eclipse.help.base.indexer"; //$NON-NLS-1$
 	public IndexerJob() {
-		super(HelpBaseResources.IndexerJob_name); 
+		super(HelpBaseResources.IndexerJob_name);
 	}
 	protected IStatus run(IProgressMonitor monitor) {
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex(Platform.getNL());
@@ -39,7 +39,7 @@ public class IndexerJob extends Job {
 			return Status.CANCEL_STATUS;
 		}
 		catch (Exception e) {
-			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources.IndexerJob_error, e); 
+			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources.IndexerJob_error, e);
 		}
 	}
 	public boolean belongsTo(Object family) {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,13 @@ import org.eclipse.help.IHelpResource;
  * the actual query. This URL will then be presented in the Web browser.
  * <p>
  * This interface is inteded to be implemented by clients.
- * 
+ *
  * @since 3.1
  */
 public interface ISearchEngineResult {
 	/**
 	 * Returns the label of the search result to use in the UI.
-	 * 
+	 *
 	 * @return the search result label
 	 */
 	String getLabel();
@@ -37,7 +37,7 @@ public interface ISearchEngineResult {
 	 * document fragment in the vicinity of the searched expression, or a
 	 * combination of several document fragments. Other search engines may
 	 * return a couple of sentencies at the beninning of the document.
-	 * 
+	 *
 	 * @return a short description, or <code>null</code> if not available.
 	 */
 	String getDescription();
@@ -47,14 +47,14 @@ public interface ISearchEngineResult {
 	 * object to denote the origin of the hit in the search domain. The usage of
 	 * <code>IHelpResource</code> allows search result UI to create a link to
 	 * the category.
-	 * 
+	 *
 	 * @return a hit category or <code>null</code> if not available.
 	 */
 	IHelpResource getCategory();
 
 	/**
 	 * Returns the URL (as a string) associated with this help resource.
-	 * 
+	 *
 	 * @return the URL (as a string) associated with the resource
 	 *         <p>
 	 *         Valid URL of a help resource is:
@@ -83,7 +83,7 @@ public interface ISearchEngineResult {
 	 * Returns a float number in the range between 0 and 1 that can be used to
 	 * sort the hits by relevance (1 being the perfect result). The number can
 	 * be interpreted as the probability of a match in the given topic.
-	 * 
+	 *
 	 * @return the score of this hit between 0.0 and 1.0
 	 */
 	float getScore();
@@ -101,7 +101,7 @@ public interface ISearchEngineResult {
 	 * opened in the external window. Instead, it indicates that the link should
 	 * be opened using the current user preferences, which may always force
 	 * external window for URL rendering.
-	 * 
+	 *
 	 * @return <code>true</code> if external window must be used,
 	 *         <code>false</code> if the link opening mode can be chosen by
 	 *         the help system.
@@ -111,7 +111,7 @@ public interface ISearchEngineResult {
 	/**
 	 * Converts a relative href into absolute according to the search engine
 	 * base URL.
-	 * 
+	 *
 	 * @param href
 	 *            the relative href to convert into absolute
 	 * @param frames

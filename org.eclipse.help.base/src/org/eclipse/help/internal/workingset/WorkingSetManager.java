@@ -54,7 +54,7 @@ import org.xml.sax.SAXException;
 /**
  * The working set manager stores help working sets. Working sets are persisted
  * whenever one is added or removed.
- * 
+ *
  * @since 2.1
  */
 public class WorkingSetManager implements IHelpWorkingSetManager {
@@ -63,11 +63,11 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
-	
+
 	private SortedSet<WorkingSet> workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
 
 	private AdaptableTocsArray root;
-	
+
 	private Map allCriteriaValues;
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
@@ -107,16 +107,16 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
-	
+
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		return new WorkingSet(name, elements, criteria);
 	}
-	
-	
+
+
 
 	/**
 	 * Tests the receiver and the object for equality
-	 * 
+	 *
 	 * @param object
 	 *            object to compare the receiver to
 	 * @return true=the object equals the receiver, it has the same working
@@ -135,7 +135,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Returns a working set by name
-	 *  
+	 *
 	 */
 	public WorkingSet getWorkingSet(String name) {
 		if (name == null || workingSets == null)
@@ -152,7 +152,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Returns the hash code.
-	 * 
+	 *
 	 * @return the hash code.
 	 */
 	public int hashCode() {
@@ -161,7 +161,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Implements IWorkingSetManager.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
 	public WorkingSet[] getWorkingSets() {
@@ -171,7 +171,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Returns the file used as the persistence store
-	 * 
+	 *
 	 * @return the file used as the persistence store
 	 */
 	private File getWorkingSetStateFile() {
@@ -234,7 +234,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Recreates all working sets from the persistence store and adds them to
 	 * the receiver.
-	 * 
+	 *
 	 * @param parent
 	 *            the xml element containing serialized working sets
 	 */
@@ -254,7 +254,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Recreates a working set from the persistence store.
-	 * 
+	 *
 	 * @return the working set created from the memento or null if creation
 	 *         failed.
 	 */
@@ -300,9 +300,9 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		}
 		AdaptableHelpResource[] elements = new AdaptableHelpResource[helpResources.size()];
 		helpResources.toArray(elements);
-				
+
 		//criteria
-		
+
 		List<CriterionResource> criteriaResource = new ArrayList<CriterionResource>();
 		NodeList criteriaContents = workingSetNode.getElementsByTagName("criterion"); //$NON-NLS-1$
 		for (int i = 0; i < criteriaContents.getLength(); ++i) {
@@ -321,7 +321,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 					CriterionResource criterionResource = new CriterionResource(criterionName, criterionValues);
 					criteriaResource.add(criterionResource);
 				}
-			}	
+			}
 		}
 
 		CriterionResource[] criteria = new CriterionResource[criteriaResource.size()];
@@ -375,7 +375,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Saves all persistable working sets in the persistence store.
-	 * 
+	 *
 	 * @param parent:
 	 *            the xml node to save to
 	 */
@@ -391,7 +391,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
-	 * 
+	 *
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
@@ -455,7 +455,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
 		restoreState();
 	}
-	
+
 	public boolean isCriteriaScopeEnabled(){
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
@@ -481,7 +481,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			}
 			Collections.sort(criterionIds);
 		}
-		String[] ids = new String[criterionIds.size()];                                        		
+		String[] ids = new String[criterionIds.size()];
 		criterionIds.toArray(ids);
 		return ids;
 	}
@@ -499,11 +499,11 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 				valueIds.add(UNCATEGORIZED);
 			}
 		}
-		String[] valueIdsArray = new String[valueIds.size()];                                        		
+		String[] valueIdsArray = new String[valueIds.size()];
 		valueIds.toArray(valueIdsArray);
 		return valueIdsArray;
 	}
-	
+
 	public String getCriterionDisplayName(String criterionId) {
 		return HelpPlugin.getCriteriaManager().getCriterionDisplayName(criterionId, Platform.getNL());
 	}

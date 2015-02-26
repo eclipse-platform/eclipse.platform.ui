@@ -16,7 +16,7 @@ import org.eclipse.help.internal.standalone.*;
  * This is a standalone infocenter. It takes care of launching the Eclipse with
  * its help system implementation. This class can be instantiated and used in a
  * Java program, or can be launched from command line.
- * 
+ *
  * Usage as a Java component:
  * <ul>
  * <li>create an instantance of this class</li>
@@ -28,7 +28,7 @@ public class Infocenter {
 	private StandaloneInfocenter infocenter;
 	/**
 	 * Constructs Infocenter
-	 * 
+	 *
 	 * @param options
 	 *            array of String options and their values
 	 *            <p>
@@ -72,7 +72,7 @@ public class Infocenter {
 	}
 	/**
 	 * Controls start up and shut down of infocenter from command line.
-	 * 
+	 *
 	 * @param args
 	 *            array of String containing options Options are:
 	 *            <code>-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-dir rtl] [-noexec] [platform options] [-vmargs JavaVMarguments]</code>

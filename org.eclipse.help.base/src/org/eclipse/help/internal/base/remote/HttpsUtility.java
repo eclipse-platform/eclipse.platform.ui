@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class HttpsUtility {
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 
 	private final static int SOCKET_TIMEOUT = 5000; //milliseconds
-	
+
 	public static HttpsURLConnection getConnection(URL httpsURL)
 	{
 		try
@@ -41,7 +41,7 @@ public class HttpsUtility {
 			e.printStackTrace();
 			return null;
 		}
-	}	
+	}
 	public static InputStream getHttpsStream(URL httpsURL)
 	{
 		try {
@@ -52,11 +52,11 @@ public class HttpsUtility {
 			return null;
 		}
 	}
-	
+
 	public static InputStream getHttpsInputStream(String thisProtocol,String thisHost, String thisPort, String thisPath, String locale)
 	{
 		try {
-			URL url = new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(), 
+			URL url = new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(),
 					thisPath + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
 	        return getHttpsStream(url);
 		} catch (Exception e) {
@@ -64,18 +64,18 @@ public class HttpsUtility {
 	        return null;
 		}
 	}
-	
+
 	public static URL getHttpsURL(String thisProtocol,String thisHost, int thisPort, String thisPath)
 	{
 		try {
-			return new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(), 
+			return new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(),
 					thisPath + PATH_TOC);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public static URL getHttpsURL(String urlPath)
 	{
 		try {
@@ -85,12 +85,12 @@ public class HttpsUtility {
 			return null;
 		}
 	}
-	
+
 	public static URL getHttpsURL(String thisProtocol,String thisHost, String thisPort, String thisPath)
 	{
 		return getHttpsURL(thisProtocol,thisHost,Integer.parseInt(thisPort),thisPath);
 	}
-	
+
 	public static boolean canConnectToHttpsURL(String urlConnection)
 	{
 		try

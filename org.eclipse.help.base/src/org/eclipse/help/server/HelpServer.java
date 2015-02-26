@@ -16,16 +16,16 @@ import org.eclipse.core.runtime.CoreException;
  * @since 3.4
  * Abstract class representing a web server which can be used to host the Eclipse help
  * system using the extension point org.eclipse.help.base.server. Classes extending this
- * abstract class must be capable of launching a Web Server and  
+ * abstract class must be capable of launching a Web Server and
  */
 
 public abstract class HelpServer {
-	
+
 	/**
-	 * Start a server application to host the Eclipse help system. The server is 
+	 * Start a server application to host the Eclipse help system. The server is
 	 * responsible for initializing the servlets, jsp files and other resources
 	 * for the help system as defined by the extension points <code>org.eclipse.equinox.http.registry.resources</code>
-	 * and <code>org.eclipse.equinox.http.registry.servlets</code> for the httpcontextId 
+	 * and <code>org.eclipse.equinox.http.registry.servlets</code> for the httpcontextId
 	 * <code>org.eclipse.help.webapp.help</code>
 	 * @param webappName The name of this web application
 	 * @throws Exception
@@ -48,7 +48,7 @@ public abstract class HelpServer {
 
 	/**
 	* Returns the host name or ip the app server runs on.
-	* 
+	*
 	* @return String representation of host name of IP, null if server not
 	*         started yet
 	*/

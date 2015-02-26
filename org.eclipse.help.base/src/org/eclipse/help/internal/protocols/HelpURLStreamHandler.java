@@ -31,7 +31,7 @@ public class HelpURLStreamHandler extends URLStreamHandler {
 		}
 		return null;
 	}
-	
+
 	public static URLStreamHandler getDefault() {
 		if (instance == null) {
 			instance = new HelpURLStreamHandler();

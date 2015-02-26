@@ -83,7 +83,7 @@ InterruptedException {
     }
     return summary.toString().trim();
   }
-  
+
   public Reader getReader() throws IOException {
 	  return new CharArrayReader(writer.toCharArray());
   }
@@ -142,9 +142,9 @@ InterruptedException {
       metaTags.setProperty(currentMetaTag, currentMetaContent);
       if (currentMetaTag.equalsIgnoreCase("keywords") ||  //$NON-NLS-1$
     	  currentMetaTag.equalsIgnoreCase("description")) { //$NON-NLS-1$
-    	  writer.write(' '); 
+    	  writer.write(' ');
           writer.write(currentMetaContent);
-    	  writer.write(' '); 
+    	  writer.write(' ');
       }
       currentMetaTag = null;
       currentMetaContent = null;
@@ -573,7 +573,7 @@ null)
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error { 
+  static private final class LookaheadSuccess extends java.lang.Error {
 	  private static final long serialVersionUID = 1L;
   }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();

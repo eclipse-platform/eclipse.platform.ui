@@ -45,14 +45,14 @@ public class HTMLSearchParticipant extends SearchParticipant {
 		// if it's XHTML, forward it on to the proper search participant
 		if (isXHTML(pluginId, url)) {
 			LocalSearchManager manager = BaseHelpSystem.getLocalSearchManager();
-			SearchParticipant participant  = manager.getParticipant(HELP_BASE_XHTML); 
+			SearchParticipant participant  = manager.getParticipant(HELP_BASE_XHTML);
 			if (participant == null) {
 				participant = getXhtmlParticipant();
 			}
 			return participant.addDocument((IHelpSearchIndex) index, pluginId, name, url, id, doc);
 		}
 		// otherwise, treat it as HTML
-		else {		
+		else {
 			try {
 				try {
 					try {
@@ -63,10 +63,10 @@ public class HTMLSearchParticipant extends SearchParticipant {
 										+ name + " cannot be opened.", //$NON-NLS-1$
 								null);
 					}
-					doc.addContents(parser.getContentReader(), parser.getContentReader()); 
+					doc.addContents(parser.getContentReader(), parser.getContentReader());
 					String title = parser.getTitle();
 					doc.setTitle(title);
-					doc.setSummary(parser.getSummary(title)); 
+					doc.setSummary(parser.getSummary(title));
 					if (parser.getException() != null) {
 						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 								"Parse error occurred while adding document " + name //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class HTMLSearchParticipant extends SearchParticipant {
 			return Status.OK_STATUS;
 		}
 	}
-	
+
 	private SearchParticipant getXhtmlParticipant() {
 		if (xhtmlParticipant == null) {
 			xhtmlParticipant = new XHTMLSearchParticipant();
@@ -95,7 +95,7 @@ public class HTMLSearchParticipant extends SearchParticipant {
 
 	/**
 	 * Returns whether or not the given content should be treated as XHTML.
-	 * 
+	 *
 	 * @param pluginId the plugin id containing the content
 	 * @param url the URL to the content
 	 * @return whether the content should be treated as XHTML

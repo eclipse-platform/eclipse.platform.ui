@@ -173,7 +173,7 @@ public class BrowserManager {
 					});
 		}
 		// initialize current browser
-		String curBrowserID =  
+		String curBrowserID =
 			Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, DEFAULT_BROWSER_ID_KEY, null, null);
 		if (curBrowserID != null && (!"".equals(curBrowserID))) { //$NON-NLS-1$
 			setCurrentBrowserID(curBrowserID);
@@ -182,7 +182,7 @@ public class BrowserManager {
 		if (currentBrowserDesc == null) {
 			setCurrentBrowserID(getDefaultBrowserID());
 		}
-		setAlwaysUseExternal( 
+		setAlwaysUseExternal(
 				Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER, false, null));
 	}
 
@@ -248,7 +248,7 @@ public class BrowserManager {
 
 	/**
 	 * Gets the currentBrowserID.
-	 * 
+	 *
 	 * @return Returns a String or null if not set
 	 */
 	public String getCurrentBrowserID() {
@@ -262,7 +262,7 @@ public class BrowserManager {
 
 	/**
 	 * Gets the currentBrowserID.
-	 * 
+	 *
 	 * @return Returns a String or null if not set
 	 */
 	public String getCurrentInternalBrowserID() {
@@ -277,7 +277,7 @@ public class BrowserManager {
 
 	/**
 	 * Gets the currentBrowserID.
-	 * 
+	 *
 	 * @return Returns a String or null if not set
 	 */
 	public String getDefaultBrowserID() {
@@ -292,7 +292,7 @@ public class BrowserManager {
 	/**
 	 * Sets the currentBrowserID. If browser of given ID does not exists, the
 	 * method does nothing
-	 * 
+	 *
 	 * @param currentAdapterID
 	 *            The ID of the adapter to to set as current
 	 */
@@ -311,7 +311,7 @@ public class BrowserManager {
 	/**
 	 * Sets the defaultBrowserID. If browser of given ID does not exists, the
 	 * method does nothing
-	 * 
+	 *
 	 * @param defaultAdapterID
 	 *            The ID of the adapter to to set as default
 	 */

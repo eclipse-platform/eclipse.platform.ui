@@ -34,7 +34,7 @@ public class PreferenceFileHandler {
 	public static final int LOCAL_HELP_ONLY=0;
 	public static final int LOCAL_HELP_PRIORITY=1;
 	public static final int REMOTE_HELP_PRIORITY=2;
-	
+
 	public PreferenceFileHandler() {
 
 		/*
@@ -67,14 +67,14 @@ public class PreferenceFileHandler {
 			this.hostEntries = hostPreference.split(PREFERENCE_ENTRY_DELIMITER);
 			numHostEntries=hostEntries.length;
 		}
-			
+
 		// Get the preference values
 		this.nameEntries = getValues(namePreference, ""); //$NON-NLS-1$
 		this.pathEntries = getValues(pathPreference, "/"); //$NON-NLS-1$
 		this.protocolEntries = getValues(protocolPreference, "http"); //$NON-NLS-1$
 		this.portEntries = getValues(portPreference, "80"); //$NON-NLS-1$
 		this.isICEnabled = getValues(icEnabledPreference, "true"); //$NON-NLS-1$
-		
+
 
 		// The size of any of the array elements should equal the number of remote infocenters
 		if (this.nameEntries == null)
@@ -87,40 +87,40 @@ public class PreferenceFileHandler {
 
 		if (numHostEntries==0) //preference equals ""
 			return  new String[0];//NEW
-		
+
 		// Split the string and return an array of Strings
 		String [] currEntries;
 		String [] updatedArray=null;
-		
+
 		if(!preferenceEntry.equals("")) //$NON-NLS-1$
 			currEntries=preferenceEntry.split(PREFERENCE_ENTRY_DELIMITER);
 		else
 			currEntries = new String[0];
-		
+
 		if(currEntries.length!=numHostEntries) //Current Entry not equals to Hosts
 		{
 			int i;
-			
+
 			updatedArray=new String[numHostEntries];
-						
+
 			if(currEntries.length>numHostEntries) //More in this array then host.  Only take values for # of hosts
 			{
 				for(i=0;i<numHostEntries;i++)
 				{
 					updatedArray[i]=currEntries[i];
 				}
-							
+
 			}
 			else //Less values.  Append values based off or array types
 			{
 				int entryCount=0;
-				
+
 				for(i=0;i<currEntries.length;i++)
 				{
 					updatedArray[i]=currEntries[i];
 					entryCount=entryCount+1;
 				}
-				
+
 				for(i=entryCount;i<numHostEntries;i++)
 				{
 					updatedArray[i]=appendString;
@@ -128,22 +128,22 @@ public class PreferenceFileHandler {
 			}
 			currEntries=updatedArray;
 		}
-			
+
 		return currEntries;
 
 	}
 
 	/**
 	 * This methods writes the remote infocenters in the table model to the preferences.ini.
-	 * 
+	 *
 	 * @param List
 	 *            of RemoteIC Objects
-	 * 
+	 *
 	 */
 	public static void commitRemoteICs(RemoteIC[] remoteICs) {
 
 		RemoteIC remote_ic = null;
-		String name = "", host = "", path = "", protocol="", port = "", enabledString = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+		String name = "", host = "", path = "", protocol="", port = "", enabledString = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		boolean enabled;
 
 		int numICs = remoteICs.length;
@@ -188,9 +188,9 @@ public class PreferenceFileHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * This method returns an ArrayList containing all RemoteIC entries in the preferences
-	 * 
+	 *
 	 */
 	public ArrayList<RemoteIC> getRemoteICList() {
 		ArrayList<RemoteIC> remoteICList = new ArrayList<RemoteIC>();
@@ -228,7 +228,7 @@ public class PreferenceFileHandler {
 	public static int getEmbeddedHelpOption() {
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
 	    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
-		
+
 		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
 	    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
 
@@ -245,7 +245,7 @@ public class PreferenceFileHandler {
 			return REMOTE_HELP_PRIORITY;
 		}
 	}
-	
+
 	public String[] getHostEntries() {
 		return hostEntries;
 	}
@@ -257,7 +257,7 @@ public class PreferenceFileHandler {
 	public String[] getPathEntries() {
 		return pathEntries;
 	}
-	
+
 	public String[] getProtocolEntries() {
 		return protocolEntries;
 	}

@@ -26,7 +26,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * between the web app and the help view. The manager implements Observable so
  * that views can be notified on bookmark changes. The webapp does not use this
  * feature.
- * 
+ *
  * @since 3.1
  */
 public class BookmarkManager extends Observable {
@@ -44,7 +44,7 @@ public class BookmarkManager extends Observable {
 
 	// everything changed (by the webapp)
 	public static final int WORLD_CHANGED = 5;
-	
+
 	private ArrayList<Bookmark> bookmarks;
 
 	public static class Bookmark implements IHelpResource {
@@ -182,7 +182,7 @@ public class BookmarkManager extends Observable {
 
 	/**
 	 * Ensures that string does not contains ',' or '|' characters.
-	 * 
+	 *
 	 * @param s
 	 * @return String
 	 */
@@ -197,11 +197,11 @@ public class BookmarkManager extends Observable {
 		s = TString.change(s, "\\comma", ","); //$NON-NLS-1$ //$NON-NLS-2$
 		return TString.change(s, "\\escape", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private String readBookmarks() {
 		return Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, BaseHelpSystem.BOOKMARKS, "", null); //$NON-NLS-1$
 	}
-	
+
 	private void saveBookmarks(String bookmarks) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.put(BaseHelpSystem.BOOKMARKS, bookmarks);

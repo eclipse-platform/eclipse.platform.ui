@@ -27,7 +27,7 @@ import org.eclipse.osgi.util.NLS;
  * application org.eclipse.help.indexTool
  */
 public class IndexToolApplication implements IApplication {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
@@ -62,7 +62,7 @@ public class IndexToolApplication implements IApplication {
 	 */
 	public synchronized void stop() {
 	}
-	
+
 	private void preindex(String outputDir, Locale locale) throws Exception {
 		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(),
 				"index/" + locale); //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class IndexToolApplication implements IApplication {
 
 	/**
 	 * Recursively deletes directory and files.
-	 * 
+	 *
 	 * @param file
 	 * @throws IOException
 	 */
@@ -113,7 +113,7 @@ public class IndexToolApplication implements IApplication {
 
 	/**
 	 * Adds files in a directory to a zip stream
-	 * 
+	 *
 	 * @param dir
 	 *            directory with files to zip
 	 * @param zout

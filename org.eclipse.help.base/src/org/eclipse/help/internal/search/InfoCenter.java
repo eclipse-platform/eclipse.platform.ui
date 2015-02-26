@@ -33,16 +33,16 @@ import org.xml.sax.*;
  * by running a query on the remote InfoCenter and presenting the results
  * locally. Instances of this engine type are required to supply the URL to the
  * InfoCenter.
- * 
+ *
  * <p>
  * This class is made public in order to be instantiated and parametrized
  * directly in the extentsions. Clients are required to supply the required URL
  * as a parameter <code>url</code>.
- * 
+ *
  * <p>
  * This class is not expected to be subclassed or otherwise accessed
  * programmatically.
- * 
+ *
  * @since 3.1
  */
 
@@ -131,7 +131,7 @@ public final class InfoCenter implements ISearchEngine {
 				return url + "topic" + href; //$NON-NLS-1$
 			}
 			if (url.indexOf('?')> 0)  {
-				return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$				
+				return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return url + "topic" + href + "?noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -146,7 +146,7 @@ public final class InfoCenter implements ISearchEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ISearchEngine#run(String, ISearchScope,
 	 *      ISearchEngineResultCollector, IProgressMonitor)
 	 */

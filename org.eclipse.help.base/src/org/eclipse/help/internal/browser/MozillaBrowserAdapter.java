@@ -49,7 +49,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @executable executable filename to launch
 	 * @executableName name of the program to display when error occurs
 	 */
@@ -195,7 +195,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		/**
 		 * On some OSes 0 is always returned by netscape -remote. It is
 		 * necessary to examine ouput to find out failure
-		 * 
+		 *
 		 * @param outputs
 		 * @param errors
 		 * @return @throws

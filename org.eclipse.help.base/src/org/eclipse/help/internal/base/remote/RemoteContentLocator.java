@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,15 +18,15 @@ public class RemoteContentLocator {
 	private static Map<String, String> InfoCenterMap = null; // hash table
 
 	public RemoteContentLocator() {
-		
+
 	}
 
 	public static void addContentPage(String contributorID, String InfoCenterUrl) {
-		
+
 		if (InfoCenterMap == null){
 			InfoCenterMap = new TreeMap<String, String>(); // sorted map
 		}
-		
+
 		InfoCenterMap.put(contributorID, InfoCenterUrl);
 	}
 

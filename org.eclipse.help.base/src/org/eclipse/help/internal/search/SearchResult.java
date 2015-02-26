@@ -28,19 +28,19 @@ public class SearchResult implements ISearchResult{
 	private float score;
 	private IToc toc;
 	private boolean isPotentialHit;
-	
+
 	public String getHref() {
 		return href;
 	}
-	
+
 	public void setHref(String href) {
 		this.href = href;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -48,7 +48,7 @@ public class SearchResult implements ISearchResult{
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -56,51 +56,51 @@ public class SearchResult implements ISearchResult{
 	public String getSummary() {
 		return summary;
 	}
-	
+
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public URL getIcon() {
 		return icon;
 	}
-	
+
 	public void setIcon(URL icon) {
 		this.icon = icon;
 	}
-	
+
 	public float getScore() {
 		return score;
 	}
-	
+
 	public void setScore(float score) {
 		this.score = score;
 	}
 
-	
+
 	public IToc getToc() {
 		return toc;
 	}
 
-	
+
 	public void setToc(IToc toc) {
 		this.toc = toc;
 	}
 
-	
+
 	public String getParticipantId() {
 		return participantId;
 	}
 
-	
+
 	public void setParticipantId(String participantId) {
 		this.participantId = participantId;
 	}
@@ -112,5 +112,5 @@ public class SearchResult implements ISearchResult{
 	public void setPotentialHit(boolean isPotentialHit) {
 		this.isPotentialHit = isPotentialHit;
 	}
-		
+
 }

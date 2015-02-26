@@ -20,7 +20,7 @@ public interface IHelpActivitySupport {
 	 * Checks if href matches an enabled activity. If it does not match any
 	 * defined activites, it is assumed to be enabled. If Help role filtering is
 	 * disabled, this method always returns <code>true</code>.
-	 * 
+	 *
 	 * @param href
 	 * @return
 	 */
@@ -29,7 +29,7 @@ public interface IHelpActivitySupport {
 	/**
 	 * Checks if href is matches an enabled activity. If it does not match any
 	 * defined activites, it is assumed to be enabled.
-	 * 
+	 *
 	 * @param href
 	 *            the topic href
 	 * @return <code>true</code> if role for this href is enabled,
@@ -41,7 +41,7 @@ public interface IHelpActivitySupport {
 	 * Checks whether topic belongs to a TOC that mathes enabled activity.
 	 * Enabled children TOCs are searched if linked by also enabled TOCs.
 	 * Additionally topic may match description topic of a root TOC.
-	 * 
+	 *
 	 * @return true if topic belongs to an enabled TOC
 	 * @param href
 	 * @param locale
@@ -51,7 +51,7 @@ public interface IHelpActivitySupport {
 
 	/**
 	 * Enables activities with patterns matching the href
-	 * 
+	 *
 	 * @param href
 	 */
 	public void enableActivities(String href);
@@ -65,14 +65,14 @@ public interface IHelpActivitySupport {
 	/**
 	 * Returns the message to show in the warning dialog when filtering is
 	 * toggled off.
-	 * 
+	 *
 	 * @return the message for the filtering warning dialog
 	 */
 	public String getShowAllMessage();
 
 	/**
 	 * Returns document message for disabled activities.
-	 * 
+	 *
 	 * @param embedded
 	 *            if <code>true</code>, the message will be added to a
 	 *            document in the workbench window. Otherwise, it will be shown

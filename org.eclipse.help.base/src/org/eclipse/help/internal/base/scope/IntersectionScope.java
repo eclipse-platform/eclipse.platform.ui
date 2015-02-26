@@ -25,9 +25,9 @@ import org.eclipse.help.base.AbstractHelpScope;
  */
 
 public class IntersectionScope extends AbstractHelpScope {
-	
+
 	AbstractHelpScope[] scopes;
-	
+
 	public IntersectionScope(AbstractHelpScope[] scopes) {
 		this.scopes = scopes;
 	}
@@ -71,7 +71,7 @@ public class IntersectionScope extends AbstractHelpScope {
 	public String getName(Locale locale) {
 		return null;
 	}
-	
+
 	public boolean isHierarchicalScope() {
 		for (int scope = 0; scope < scopes.length; scope ++) {
 			if (!scopes[scope].isHierarchicalScope()) {

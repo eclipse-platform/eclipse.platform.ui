@@ -21,7 +21,7 @@ public class WorkingSetComparator implements Comparator<WorkingSet> {
 
 	/**
 	 * Implements Comparator.
-	 * 
+	 *
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(WorkingSet o1,WorkingSet o2) {

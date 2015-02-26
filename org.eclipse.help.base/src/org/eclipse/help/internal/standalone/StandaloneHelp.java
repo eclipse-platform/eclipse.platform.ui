@@ -19,7 +19,7 @@ import org.eclipse.help.internal.base.*;
  * its help system implementation, and controling it. This class can be used
  * instantiated and used in a Java program, or can be launched from command line
  * to execute single help action.
- * 
+ *
  * Usage as a Java component:
  * <ul>
  * <li>create an instantance of this class and then hold onto this instance for
@@ -36,7 +36,7 @@ public class StandaloneHelp extends EclipseController {
 
 	/**
 	 * Constructs help system
-	 * 
+	 *
 	 * @param args
 	 *            array of String options and their values Option
 	 *            <code>-eclipseHome dir</code> specifies Eclipse installation
@@ -91,7 +91,7 @@ public class StandaloneHelp extends EclipseController {
 	public void displayHelp(String href) throws Exception {
 		sendHelpCommand("displayHelp", new String[]{"href=" + href}); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayHelp()
 	 */

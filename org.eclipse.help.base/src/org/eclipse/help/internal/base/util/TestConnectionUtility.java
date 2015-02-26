@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
  package org.eclipse.help.internal.base.util;
 
 import java.io.BufferedReader;
@@ -27,9 +27,9 @@ public class TestConnectionUtility {
 	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
 	private static final String PROTOCOL = "http"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTPS = "https"; //$NON-NLS-1$
-	
+
 	private final static int SOCKET_TIMEOUT = 5000; //milliseconds
-	
+
 	public static boolean testConnection(String thisHost, String thisPort,
 			String thisPath, String thisProtocol) {
 
@@ -60,7 +60,7 @@ public class TestConnectionUtility {
 		}
 		return validConnection;
 	}
-	
+
 	private static boolean isValidToc(URL url)
 	{
 		InputStream in = null;

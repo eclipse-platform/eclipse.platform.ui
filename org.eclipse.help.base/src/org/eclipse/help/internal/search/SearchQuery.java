@@ -35,7 +35,7 @@ public class SearchQuery implements ISearchQuery {
 	}
 	/**
 	 * Returns the fieldNames.
-	 * 
+	 *
 	 * @return Collection
 	 */
 	public Collection<String> getFieldNames() {
@@ -44,7 +44,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Returns the fieldSearch.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isFieldSearch() {
@@ -53,7 +53,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Returns the locale.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getLocale() {
@@ -62,7 +62,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Returns the searchWord.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getSearchWord() {
@@ -71,7 +71,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Sets the fieldNames.
-	 * 
+	 *
 	 * @param fieldNames
 	 *            The fieldNames to set
 	 */
@@ -81,7 +81,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Sets the fieldSearch.
-	 * 
+	 *
 	 * @param fieldSearch
 	 *            The fieldSearch to set
 	 */
@@ -91,7 +91,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Sets the locale.
-	 * 
+	 *
 	 * @param locale
 	 *            The locale to set
 	 */
@@ -101,7 +101,7 @@ public class SearchQuery implements ISearchQuery {
 
 	/**
 	 * Sets the searchWord.
-	 * 
+	 *
 	 * @param searchWord
 	 *            The searchWord to set
 	 */

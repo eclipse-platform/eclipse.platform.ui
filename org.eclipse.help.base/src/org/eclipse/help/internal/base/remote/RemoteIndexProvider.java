@@ -32,7 +32,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 	private static final String PATH_INDEX = "/index"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	
+
 	/*
 	 * Constructs a new remote index provider, which listens for remote
 	 * help preference changes.
@@ -44,7 +44,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(String)
 	 */
@@ -62,7 +62,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 					InputStream in = null;
 					try {
 						URL url;
-						
+
 						if(protocol[ic].equals(PROTOCOL_HTTP))
 						{
 							url = RemoteHelp.getURL(ic, PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
@@ -73,7 +73,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 							url = HttpsUtility.getHttpsURL(protocol[ic], host[ic], port[ic], path[ic]+PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
 							in = HttpsUtility.getHttpsStream(url);
 						}
-						
+
 						RemoteIndexParser parser = new RemoteIndexParser();
 						IIndexContribution[] result = parser.parse(in);
 						for (int contrib = 0; contrib < result.length; contrib++) {

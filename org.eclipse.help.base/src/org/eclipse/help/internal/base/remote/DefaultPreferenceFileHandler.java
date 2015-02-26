@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 		icEnabledPreference = prefs.get(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, ""); //$NON-NLS-1$
 		isRemoteOn = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false);
 		isRemoteHelpPreferred = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false);
-		
+
 		//Get host array first, and initialize values
 		if(hostPreference.length()==0)
 		{
@@ -45,14 +45,14 @@ public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 			this.hostEntries = hostPreference.split(PREFERENCE_ENTRY_DELIMITER);
 			numHostEntries=hostEntries.length;
 		}
-			
+
 		// Get the preference values
 		this.nameEntries = getValues(namePreference, ""); //$NON-NLS-1$
 		this.pathEntries = getValues(pathPreference, "/"); //$NON-NLS-1$
 		this.protocolEntries = getValues(protocolPreference, "http"); //$NON-NLS-1$
 		this.portEntries = getValues(portPreference, "80"); //$NON-NLS-1$
 		this.isICEnabled = getValues(icEnabledPreference, "true"); //$NON-NLS-1$
-		
+
 
 		// The size of any of the array elements should equal the number of remote infocenters
 		if (this.nameEntries == null)
@@ -61,13 +61,13 @@ public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 			this.numEntries = this.nameEntries.length;
 
 	}
-	
-	public boolean isRemoteHelpOn() { 
-		return isRemoteOn; 
+
+	public boolean isRemoteHelpOn() {
+		return isRemoteOn;
 	}
-	
+
 	public boolean isRemoteHelpPreferred() {
 		return isRemoteHelpPreferred;
 	}
-	
+
 }

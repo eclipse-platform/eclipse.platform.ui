@@ -22,54 +22,54 @@ import java.io.InputStream;
 public class RemoteHelpInputStream extends InputStream{
 
 	private InputStream is;
-	
+
 	public RemoteHelpInputStream(){
 		is=null;
 	}
 	public RemoteHelpInputStream(InputStream is) {
-		this.is=is;	
+		this.is=is;
 	}
-	
+
 	public InputStream getInputStream(){
 		return this.is;
 	}
-	
+
 	public int read() throws IOException {
 		return is.read();
 	}
-	
+
 	public int available() throws IOException {
 		return is.available();
 	}
-	
+
 	public void close() throws IOException {
 		is.close();
 	}
-	
+
 	public synchronized void mark(int arg0) {
 		is.mark(arg0);
 	}
-	
+
 	public boolean markSupported() {
 		return is.markSupported();
 	}
-	
+
 	public int read(byte[] b) throws IOException {
 		return is.read(b);
 	}
-	
+
 	public int read(byte[] b, int off, int len) throws IOException {
 		return is.read(b, off, len);
 	}
-	
+
 	public synchronized void reset() throws IOException {
 		is.reset();
 	}
-	
+
 	public long skip(long n) throws IOException {
 		return is.skip(n);
 	}
-	
-	
+
+
 
 }

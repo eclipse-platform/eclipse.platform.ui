@@ -26,7 +26,7 @@ import org.eclipse.help.search.HelpIndexBuilder;
 /**
  * A custom Ant task to pre-build search help index for a plug-in from within an
  * Ant script.
- * 
+ *
  * @since 3.1
  */
 
@@ -45,7 +45,7 @@ public class BuildHelpIndex extends Task {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
 	public void execute() throws BuildException {
@@ -61,7 +61,7 @@ public class BuildHelpIndex extends Task {
 		IProgressMonitor monitor = (IProgressMonitor) getProject()
 				.getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
         if (monitor == null)
-            monitor = new NullProgressMonitor();		
+            monitor = new NullProgressMonitor();
 		try {
 			builder.execute(monitor);
 		} catch (CoreException e) {
@@ -102,7 +102,7 @@ public class BuildHelpIndex extends Task {
 	 * that contains <code>org.eclipse.help.toc</code> extensions. If help
 	 * docs that need to be indexed are in the fragment, manifest must point at
 	 * the referenced fragment plug-in.
-	 * 
+	 *
 	 * @param manifest
 	 *            the plug-in manifest file
 	 */
@@ -117,7 +117,7 @@ public class BuildHelpIndex extends Task {
 	 * index directory name to the destination. For example, for index directory
 	 * name defined as 'index', and for ja_Jp locale, the index data will be
 	 * created in 'destination/nl/ja/Jp/index'.
-	 * 
+	 *
 	 * @param destination
 	 *            the base directory of the search index destination (typically
 	 *            plug-in or fragment root directory)

@@ -27,7 +27,7 @@ public class StandaloneInfocenter extends EclipseController {
 
 	/**
 	 * Constructs help system
-	 * 
+	 *
 	 * @param args
 	 *            array of String options and their values Option
 	 *            <code>-eclipseHome dir</code> specifies Eclipse installation
@@ -56,7 +56,7 @@ public class StandaloneInfocenter extends EclipseController {
 				}
 			});
 			HttpURLConnection.setFollowRedirects(true);
-			
+
 			if (infocenter.executeCommand(helpCommand)) {
 				return;
 			}

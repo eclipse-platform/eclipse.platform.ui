@@ -31,9 +31,9 @@ public final class Analyzer_en extends Analyzer {
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		return new PorterStemFilter(new StopFilter(false, new LowerCaseAndDigitsTokenizer(reader), getStopWords(), false));
 	}
-	
+
 	private Set<String> stopWords;
-	
+
 	private Set<String> getStopWords() {
 		if ( stopWords == null ) {
 			stopWords = new HashSet<String>();
@@ -43,7 +43,7 @@ public final class Analyzer_en extends Analyzer {
 		}
 		return stopWords;
 	}
-	
+
 	/**
 	 * Array of English stop words. Differs from StandardAnalyzer's default stop
 	 * words by not having "for", "if", and "this" that are java keywords.

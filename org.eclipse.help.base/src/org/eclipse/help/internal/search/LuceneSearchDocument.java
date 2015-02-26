@@ -19,11 +19,11 @@ import org.apache.lucene.document.Field;
 import org.eclipse.help.search.ISearchDocument;
 
 /**
- * Class which adapts a Lucene Document to ISearchDocument. 
+ * Class which adapts a Lucene Document to ISearchDocument.
  */
 
 public class LuceneSearchDocument implements ISearchDocument {
-		
+
 	private Document doc;
 
 	public LuceneSearchDocument(Document document) {
@@ -37,18 +37,18 @@ public class LuceneSearchDocument implements ISearchDocument {
 	}
 
 	public void setSummary(String summary) {
-	  	doc.add(new Field("summary", summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$				        
+	  	doc.add(new Field("summary", summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
 
 	public void addContents(String contents) {
 		doc.add(new Field("contents", new StringReader(contents))); //$NON-NLS-1$
-		doc.add(new Field("exact_contents", new StringReader(contents))); //$NON-NLS-1$		
+		doc.add(new Field("exact_contents", new StringReader(contents))); //$NON-NLS-1$
 	}
 
 	public void setHasFilters(boolean hasFilters) {
-		doc.add(new Field("filters", Boolean.toString(hasFilters), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$ 	
+		doc.add(new Field("filters", Boolean.toString(hasFilters), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
-	
+
 	public Document getDocument() {
 		return doc;
 	}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,11 +31,11 @@ import org.eclipse.help.search.ISearchScope;
  * This class is made public in order to be instantiated and parametrized
  * directly in the extensions. Clients are required to supply the URL template
  * string as a parameter <code>url</code>.
- * 
+ *
  * <p>
  * This class is not expected to be subclassed or otherwise accessed
  * programmatically.
- * 
+ *
  * @since 3.1
  */
 public final class WebSearch implements ISearchEngine {
@@ -92,7 +92,7 @@ public final class WebSearch implements ISearchEngine {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getCategory()
 		 */
 		public IHelpResource getCategory() {
@@ -110,7 +110,7 @@ public final class WebSearch implements ISearchEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.help.internal.search.federated.ISearchEngine#run(java.lang.String,
 	 *      org.eclipse.help.internal.search.ISearchScope,
 	 *      org.eclipse.help.internal.search.federated.ISearchEngineResultCollector,

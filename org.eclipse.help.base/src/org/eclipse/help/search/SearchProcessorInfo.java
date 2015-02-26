@@ -13,7 +13,7 @@ package org.eclipse.help.search;
 
 /**
  * This class is a storage container for search processing
- * 
+ *
  * @since 3.6
  *
  */
@@ -21,20 +21,20 @@ public class SearchProcessorInfo {
 
 	private String alternateTerms[] = null;
 	private String query = null;
-	
+
 	/**
-	 * After {@link AbstractSearchProcessor#preSearch(String)} is called, 
+	 * After {@link AbstractSearchProcessor#preSearch(String)} is called,
 	 * this method can be used to change the search query used.
-	 * 
+	 *
 	 * @return new search query String, or <code>null</code> for no change.
 	 */
 	public String getQuery() {
 		return query;
 	}
-	
+
 	/**
 	 * Sets the query to search with.
-	 * 
+	 *
 	 * @see #getQuery()
 	 * @param query
 	 */
@@ -42,11 +42,11 @@ public class SearchProcessorInfo {
 		this.query = query;
 	}
 
-	/** 
-	 * After {@link AbstractSearchProcessor#preSearch(String)} is called, 
+	/**
+	 * After {@link AbstractSearchProcessor#preSearch(String)} is called,
 	 * this method can be used to return an array of alternative search terms
 	 * a user may wish to consider.
-	 * 
+	 *
 	 * @return String[] of alternate terms, or <code>null</code> for no alternate terms.
 	 * An empty array has the same effect as returning <code>null</code>.
 	 */
@@ -56,12 +56,12 @@ public class SearchProcessorInfo {
 
 	/**
 	 * Sets the alternate terms to be considered.
-	 * 
+	 *
 	 * @see #getAlternateTerms()
 	 * @param alternateTerms
 	 */
 	public void setAlternateTerms(String[] alternateTerms) {
 		this.alternateTerms = alternateTerms;
 	}
-	
+
 }

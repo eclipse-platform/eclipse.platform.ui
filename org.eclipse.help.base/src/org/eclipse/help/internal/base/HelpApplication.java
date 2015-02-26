@@ -59,7 +59,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		if (status == STATE_RESTARTING) {
 			return EXIT_RESTART;
 		}
-		
+
 		writeHostAndPort();
 		obtainLock();
 
@@ -81,17 +81,17 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		}
 		return EXIT_OK;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	public void stop() {
 		stopHelp();
-		
+
 		// wait until start has finished
 		synchronized(this) {};
 	}
-	
+
 	/**
 	 * Causes help service to stop and exit
 	 */
@@ -124,7 +124,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 			BaseHelpSystem.setMode(BaseHelpSystem.MODE_STANDALONE);
 		}
 	}
-	
+
 	private void writeHostAndPort() throws IOException {
 		Properties p = new Properties();
 		p.put("host", WebappManager.getHost()); //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		}
 
 	}
-	
+
 	private void obtainLock() {
 		File lockFile = new File(metadata, APPLICATION_LOCK_FILE);
 		try {
@@ -157,7 +157,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 			lock = null;
 		}
 	}
-	
+
 	private void releaseLock() {
 		if (lock != null) {
 			try {

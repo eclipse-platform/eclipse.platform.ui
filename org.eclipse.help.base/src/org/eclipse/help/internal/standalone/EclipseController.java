@@ -58,7 +58,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 
 	/**
 	 * Constructs help system
-	 * 
+	 *
 	 * @param applicationId
 	 *            ID of Eclipse help application
 	 * @param args
@@ -209,7 +209,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	/**
 	 * Builds a URL that communicates the specified command to help control
 	 * servlet.
-	 * 
+	 *
 	 * @param command
 	 *            standalone help system command e.g. "displayHelp"
 	 * @param parameters

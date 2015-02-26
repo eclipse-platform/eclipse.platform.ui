@@ -39,7 +39,7 @@ public class SearchManager {
 
 	private LocalSearchManager localManager = new LocalSearchManager();
 	private RemoteSearchManager remoteManager = new RemoteSearchManager();
-	
+
 	private class SearchState {
 
 		public IProgressMonitor localMonitor;
@@ -79,9 +79,9 @@ public class SearchManager {
 	 * Constructs a new SearchManager.
 	 */
 	public SearchManager() {
-		
+
 	}
-	
+
 	/*
 	 * Perform the given search both locally and remotely if configured.
 	 */
@@ -110,17 +110,17 @@ public class SearchManager {
 			throws QueryTooComplexException {
 		SearchState state = new SearchState();
 		state.searchQuery = searchQuery;
-		
+
 		pm.beginTask("", 100); //$NON-NLS-1$
-		
+
 		// allocate half of the progress bar for each
 		state.localMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
 		state.remoteMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-		
+
 		// start both searches in parallel
 		state.localSearchJob.schedule();
 		state.remoteSearchJob.schedule();
-		
+
 		// wait until finished
 		try {
 			state.localSearchJob.join();
@@ -135,7 +135,7 @@ public class SearchManager {
 		state.bufferedCollector.flush(collector);
 		pm.done();
 	}
-	
+
 	/**
 	 * Performs the federated search.
 	 */
@@ -145,7 +145,7 @@ public class SearchManager {
 			job.schedule();
 		}
 	}
-	
+
 	/*
 	 * Returns the manager responsible for handling local searching.
 	 */
@@ -166,28 +166,28 @@ public class SearchManager {
 	public void close() {
 		localManager.close();
 	}
-	
+
 	/*
 	 * Gets the list of registered search processors
 	 */
 	public static AbstractSearchProcessor[] getSearchProcessors()
 	{
-		IConfigurationElement[] configs = 
+		IConfigurationElement[] configs =
 			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.searchProcessor"); //$NON-NLS-1$
-		
+
 		ArrayList<Object> processors = new ArrayList<Object>();
-		
+
 		for (int c=0;c<configs.length;c++)
 		{
 			try {
 				processors.add(
 						configs[c].createExecutableExtension("class"));//$NON-NLS-1$
-			} catch (CoreException e) {} 
+			} catch (CoreException e) {}
 		}
-		
+
 		return processors.toArray(new AbstractSearchProcessor[processors.size()]);
 	}
-	
+
 	/*
 	 * Convert Lucene SearchHits to ISearchResults
 	 */
@@ -239,9 +239,9 @@ public class SearchManager {
 					results[r].isPotentialHit());
 		}
 		return hits;
-	}	
-	
-	
+	}
+
+
 	/*
 	 * Buffers hits, and only sends them off to the wrapped collector
 	 * when flush() is called.
@@ -249,7 +249,7 @@ public class SearchManager {
 	private class BufferedSearchHitCollector implements ISearchHitCollector {
 		private Set<SearchHit> allHits = new HashSet<SearchHit>();
 		private String wordsSearched = null;
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(java.util.List, java.lang.String)
 		 */
@@ -259,7 +259,7 @@ public class SearchManager {
 			}
 			allHits.addAll(hits);
 		}
-		
+
 		/*
 		 * Send all the buffered hits to the underlying collector,
 		 * and reset the buffers.

@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
@@ -55,7 +55,7 @@ public class AnalyzerDescriptor {
 
 	/**
 	 * Gets the analyzer.
-	 * 
+	 *
 	 * @return Returns a Analyzer
 	 */
 	public Analyzer getAnalyzer() {
@@ -64,7 +64,7 @@ public class AnalyzerDescriptor {
 
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getId() {
@@ -73,7 +73,7 @@ public class AnalyzerDescriptor {
 
 	/**
 	 * Gets the language for the analyzer
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getLang() {
@@ -88,7 +88,7 @@ public class AnalyzerDescriptor {
 	 * Creates analyzer for a locale, if it is configured in the
 	 * org.eclipse.help.luceneAnalyzer extension point. The identifier of the
 	 * analyzer and locale and lang are also set.
-	 * 
+	 *
 	 * @return Analyzer or null if no analyzer is configured for given locale.
 	 */
 	private Analyzer createAnalyzer(String locale) {
@@ -138,7 +138,7 @@ public class AnalyzerDescriptor {
 	 * Checks whether analyzer is compatible with a given analyzer. The ID has
 	 * the form [plugin_id]#[plugin_version]?locale=[locale], for example:
 	 * org.eclipse.help.base#3.1.0?locale=ru
-	 * 
+	 *
 	 * @param analyzerId
 	 *            id of analyzer used in the past by the index; id has a form:
 	 *            [plugin.id]#[version]?locale=[locale]

@@ -41,7 +41,7 @@ public class SearchScopeScope extends AbstractHelpScope {
 	public boolean inScope(IIndexSee see) {
 		return false;
 	}
-	
+
 	/**
 	 * @return the name for the system locale. This filter only applies to
 	 * the help system running in workbench mode so there is not need to

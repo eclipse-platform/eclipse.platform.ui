@@ -49,7 +49,7 @@ public class PluginVersionInfo extends HelpProperties {
 	/**
 	 * Creates table of current contributing plugins and their fragments with
 	 * versions.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the file to serialize the data to
 	 * @param docBundleIds
@@ -108,7 +108,7 @@ public class PluginVersionInfo extends HelpProperties {
 	/**
 	 * Detects changes in contributions or their version since last time the
 	 * contribution table was saved.
-	 * 
+	 *
 	 * @return true if contributions have changed
 	 */
 	public boolean detectChange() {
@@ -142,7 +142,7 @@ public class PluginVersionInfo extends HelpProperties {
 			if (!this.containsKey(oneContr)) {
 				// plugin has been removed
 				removed.add(oneContr);
-			} 
+			}
 		}
 		hasChanged = added.size() > 0 || removed.size() > 0;
 		doComparison = false;
@@ -172,7 +172,7 @@ public class PluginVersionInfo extends HelpProperties {
 	/**
 	 * Saves contributions to a file. After this method is called, calls to
 	 * detectChange() will return false.
-	 * 
+	 *
 	 * @return true if operation was successful
 	 */
 	public boolean save() {
@@ -191,7 +191,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 * Compares plugins and versions represented as a string for equality String
 	 * have form id1\nverison1\nid2\nversion2 String are equal of they contain
 	 * the same set of IDs and their corresponding version equal
-	 * 
+	 *
 	 * @return true if plugins and versions match
 	 */
 	private boolean compare(String versions, String oldVersions) {

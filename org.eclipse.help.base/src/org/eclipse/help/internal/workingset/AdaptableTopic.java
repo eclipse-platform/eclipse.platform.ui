@@ -62,7 +62,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	 * Returns a topic with the specified href. <br>
 	 * It is possible that multiple tocs have the same href, in which case there
 	 * is no guarantee which one is returned.
-	 * 
+	 *
 	 * @param href
 	 *            The topic's href value.
 	 */

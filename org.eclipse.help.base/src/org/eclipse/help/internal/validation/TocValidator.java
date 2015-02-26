@@ -33,10 +33,10 @@ import org.xml.sax.SAXException;
 public class TocValidator {
 
 	private static final boolean DEBUG = false;
-	
+
 	private HashMap<String, Object> processedTocs;
 	private TocFileParser parser;
-	
+
 	public static class BrokenLink {
 		private String tocID;
 		private String href;
@@ -49,17 +49,17 @@ public class TocValidator {
 		public String getHref() {
 			return href; }
 	}
-	
+
 	public static abstract class Filter {
 	     abstract public boolean isIncluded(String href);
 	}
-	
+
 	public static class PassThroughFilter extends Filter {
 		public boolean isIncluded(String href) {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Checks the validity of all <code>href</code> attributes on <code>topic</code> elements in the toc and the
 	 * <code>topic</code> attribute on the <code>toc</code> element if there is one. Also checks validity of any
@@ -75,7 +75,7 @@ public class TocValidator {
 	public static ArrayList<BrokenLink> validate(String[] hrefs) throws IOException, SAXException, ParserConfigurationException{
 		return filteredValidate(hrefs, new PassThroughFilter());
 	}
-	
+
 	public static ArrayList<BrokenLink> filteredValidate (String[] hrefs, Filter filter) throws IOException, SAXException, ParserConfigurationException{
 		TocValidator v = new TocValidator();
 		ArrayList<BrokenLink> result = new ArrayList<BrokenLink>();
@@ -83,16 +83,16 @@ public class TocValidator {
 			v.processToc(hrefs[i], null, result, filter);
 		return result;
 	}
-	
+
 	private TocValidator() {
 		processedTocs = new HashMap<String, Object>();
 		parser = new TocFileParser();
 	}
-	
+
 	/* Checks validity of all links in a given toc. If all links are valid, an empty ArrayList is returned.
 	 * Otherwise an ArrayList of BrokenLink objects is returned.
 	 */
-	private void processToc(String href, String plugin, ArrayList<BrokenLink> result, Filter filter) 
+	private void processToc(String href, String plugin, ArrayList<BrokenLink> result, Filter filter)
 	               throws IOException, SAXException, ParserConfigurationException {
 		String path;
 		if (href.startsWith("/")) { //$NON-NLS-1$
@@ -119,7 +119,7 @@ public class TocValidator {
 		TocContribution contribution = parser.parse(new TocFile(plugin,path, true, "en", null, null)); //$NON-NLS-1$
 		process(contribution.getToc(), plugin, path, result, filter);
 	}
-	
+
 	/* Checks validity of all links in the given IUAElement and recursively calls itself to check all children.
 	 * If there are any links to other tocs, calls the processToc method to validate them. If any broken links
 	 * are found, an appropriate BrokenLink object will be added to the result ArrayList.

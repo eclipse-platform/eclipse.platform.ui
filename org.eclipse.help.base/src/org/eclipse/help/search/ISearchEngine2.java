@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 package org.eclipse.help.search;
@@ -13,9 +13,9 @@ package org.eclipse.help.search;
  * that return hits that cannot be opened into the web browser should implement this interface and
  * also indicate that the search results should be opened by the engine using
  * {@link ISearchEngineResult2#canOpen()}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 
 public interface ISearchEngine2 extends ISearchEngine {
@@ -26,7 +26,7 @@ public interface ISearchEngine2 extends ISearchEngine {
 	 * fully reference the results and are not transient. These identifiers can be later used to
 	 * open the results by delegating the operation to the engine, or to bookmark the results for
 	 * future opening.
-	 * 
+	 *
 	 * @param id
 	 *            The engine-specific identifier provided by the search result
 	 * @return <code>true</code> if the operation was successful, or <code>false</code> if the

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class FederatedSearchEntry {
 	private ISearchEngineResultCollector collector;
 
 	/**
-	 * 
+	 *
 	 */
 	public FederatedSearchEntry(String engineId, String engineName, ISearchScope scope, ISearchEngine engine, ISearchEngineResultCollector collector) {
 		this.engineId = engineId;
@@ -32,14 +32,14 @@ public class FederatedSearchEntry {
 		this.engine = engine;
 		this.collector = collector;
 	}
-	
+
 	public String getEngineId() {
 		return engineId;
 	}
-	
+
 	public String getEngineName() {
 		return engineName;
-	}	
+	}
 
 	public ISearchEngine getEngine() {
 		return engine;

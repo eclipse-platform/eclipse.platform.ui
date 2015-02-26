@@ -33,19 +33,19 @@ import org.osgi.framework.Bundle;
  * Base Help System.
  */
 public final class BaseHelpSystem {
-	
+
 	private static final BaseHelpSystem instance = new BaseHelpSystem();
-	
+
 	public static final String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
 	public static final String WORKING_SETS = "workingSets"; //$NON-NLS-1$
 	public static final String WORKING_SET = "workingSet"; //$NON-NLS-1$
-	
+
 	public static final int MODE_WORKBENCH = 0;
 	public static final int MODE_INFOCENTER = 1;
 	public static final int MODE_STANDALONE = 2;
 
 	private int mode = MODE_WORKBENCH;
-	
+
 	private SearchManager searchManager;
 	private WorkingSetManager workingSetManager;
 	private BookmarkManager bookmarkManager;
@@ -79,7 +79,7 @@ public final class BaseHelpSystem {
 		}
 		return getInstance().searchManager;
 	}
-	
+
 	/*
 	 * Returns the local search manager which deals only with the local content
 	 * and is called by the global search manager.
@@ -166,7 +166,7 @@ public final class BaseHelpSystem {
 					new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 0,
 							"Error launching help.", e)); //$NON-NLS-1$
 		}
-		
+
 		/*
          * Assigns the provider responsible for providing help
          * document content.
@@ -192,7 +192,7 @@ public final class BaseHelpSystem {
 	public static URL resolve(String href, boolean documentOnly) {
 		String url = null;
 		if (href == null || href.indexOf("://") != -1 //$NON-NLS-1$
-				   || isFileProtocol(href)) 
+				   || isFileProtocol(href))
 			url = href;
 		else {
 			BaseHelpSystem.ensureWebappRunning();
@@ -236,9 +236,9 @@ public final class BaseHelpSystem {
 	private static boolean isFileProtocol(String href) {
 		// Test for file: or /file:
 		int index = href.indexOf("file:"); //$NON-NLS-1$
-		return ( index == 0 ||  (index == 1 && href.charAt(0) == '/' )); 
+		return ( index == 0 ||  (index == 1 && href.charAt(0) == '/' ));
 	}
-	
+
 	public static String unresolve(URL url) {
 		return unresolve(url.toString());
 	}
@@ -299,7 +299,7 @@ public final class BaseHelpSystem {
 
 	/**
 	 * Obtains name of the Eclipse product
-	 * 
+	 *
 	 * @return String
 	 */
 	public static String getProductName() {
@@ -311,12 +311,12 @@ public final class BaseHelpSystem {
 		return name == null ? "" : name; //$NON-NLS-1$
 	}
 
-	public static void runLiveHelp(String pluginID, String className, String arg) {	
+	public static void runLiveHelp(String pluginID, String className, String arg) {
 		Bundle bundle = Platform.getBundle(pluginID);
 		if (bundle == null) {
 			return;
 		}
-	
+
 		try {
 			Class<?> c = bundle.loadClass(className);
 			Object o = c.newInstance();
@@ -334,9 +334,9 @@ public final class BaseHelpSystem {
 		} catch (Exception e) {
 		}
 	}
-	
+
 	/**
-	 * Called when index.jsp is opened, check to see if we index.jsp is running outside out server in which 
+	 * Called when index.jsp is opened, check to see if we index.jsp is running outside out server in which
 	 * case set the mode to infocenter
 	 */
 	public static void checkMode() {
@@ -344,5 +344,5 @@ public final class BaseHelpSystem {
 			setMode(MODE_INFOCENTER);
 		}
 	}
-	
+
 }

@@ -47,17 +47,17 @@ import org.eclipse.help.search.SearchParticipant;
  * returned by its getIndexUpdateOperation() method.
  */
 class IndexingOperation {
-	
+
 	private static final String ELEMENT_NAME_INDEX = "index"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_PATH = "path"; //$NON-NLS-1$
-	
+
 	private int numAdded;
 	private int numRemoved;
 	private SearchIndex index = null;
 
 	/**
 	 * Construct indexing operation.
-	 * 
+	 *
 	 * @param ix
 	 *            ISearchIndex already opened
 	 */
@@ -73,7 +73,7 @@ class IndexingOperation {
 
 	/**
 	 * Executes indexing, given the progress monitor.
-	 * 
+	 *
 	 * @param pm
 	 *            progres monitor to be used during this long operation for
 	 *            reporting progress
@@ -392,7 +392,7 @@ class IndexingOperation {
 				HelpBasePlugin.logError("Failed to retrieve documents from one of the help search participants: " + participants[j].getClass().getName() + "; skipping this one.", t); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
-			
+
 			for (Iterator<String> docs = set.iterator(); docs.hasNext();) {
 				String doc = docs.next();
 				String id = null;
@@ -415,7 +415,7 @@ class IndexingOperation {
 				if (url != null) {
 					addedDocs.add(url);
 				}
-			}			
+			}
 		}
 		return addedDocs;
 	}
@@ -424,7 +424,7 @@ class IndexingOperation {
 		for (Iterator<String> iter = addedContributors.iterator(); iter.hasNext();) {
 			String id = iter.next();
 			System.out.println("Updating search index for contributor :" + id); //$NON-NLS-1$
-		}	
+		}
 	}
 
 	/**
@@ -466,7 +466,7 @@ class IndexingOperation {
 		for (int i = 0; i < subtopics.length; i++)
 			add(subtopics[i], hrefs);
 	}
-	
+
 	private void add(String href, Set<String> hrefs) {
 		if (href != null
 				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -499,17 +499,17 @@ class IndexingOperation {
 
 	/**
 	 * Obtains PluginIndexes pointing to prebuilt indexes
-	 * 
+	 *
 	 * @param pluginIds
 	 * @param locale
 	 * @return
 	 */
 	private PrebuiltIndexes getIndexesToAdd(Collection<String> pluginIds) {
 		PrebuiltIndexes indexes = new PrebuiltIndexes(index);
-		
+
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(TocFileProvider.EXTENSION_POINT_ID_TOC);
-		
+
 		for (int i=0;i<elements.length;++i) {
 			IConfigurationElement elem = elements[i];
 			try {

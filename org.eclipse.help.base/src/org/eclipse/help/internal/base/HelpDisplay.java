@@ -34,11 +34,11 @@ public class HelpDisplay {
 	private static AbstractHelpDisplay helpDisplay;
 	private static final String HELP_DISPLAY_EXTENSION_ID = "org.eclipse.help.base.display"; //$NON-NLS-1$
 	private static final String HELP_DISPLAY_CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
-	
+
 	private static class DefaultDisplay extends AbstractHelpDisplay {
-		
+
 		public String getHelpHome(String hostname, int port, String tab) {
-			String helpURL = getFramesetURL();	
+			String helpURL = getFramesetURL();
 			if (tab != null) {
 				helpURL += "?tab=" + tab; //$NON-NLS-1$
 			}
@@ -46,11 +46,11 @@ public class HelpDisplay {
 		}
 
 		public String getHelpForTopic(String topic, String hostname, int port) {
-			return getFramesetURL() + "?topic=" + topic; //$NON-NLS-1$			
+			return getFramesetURL() + "?topic=" + topic; //$NON-NLS-1$
 		}
-		
+
 	}
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -107,7 +107,7 @@ public class HelpDisplay {
 
 	/**
 	 * Display help for the a given topic and related topics.
-	 * 
+	 *
 	 * @param context
 	 *            context for which related topics will be displayed
 	 * @param topic
@@ -144,7 +144,7 @@ public class HelpDisplay {
 
 	/**
 	 * Display help to search view for given query and selected topic.
-	 * 
+	 *
 	 * @param searchQuery
 	 *            search query in URL format key=value&key=value
 	 * @param topic
@@ -186,12 +186,12 @@ public class HelpDisplay {
 				helpURL = getHelpDisplay().getHelpHome( WebappManager.getHost(),  WebappManager.getPort(), null);
 			} else if (helpURL.startsWith("tab=")) { //$NON-NLS-1$
 				String tab = helpURL.substring("tab=".length()); //$NON-NLS-1$
-				helpURL = getHelpDisplay().getHelpHome( WebappManager.getHost(),  WebappManager.getPort(), tab);	
+				helpURL = getHelpDisplay().getHelpHome( WebappManager.getHost(),  WebappManager.getPort(), tab);
 			} else if (helpURL.startsWith("topic=")) { //$NON-NLS-1$
 				String topic = helpURL.substring("topic=".length()); //$NON-NLS-1$
-				helpURL = getHelpDisplay().getHelpForTopic( topic, WebappManager.getHost(),  WebappManager.getPort());	
-			} 
-			
+				helpURL = getHelpDisplay().getHelpForTopic( topic, WebappManager.getHost(),  WebappManager.getPort());
+			}
+
 			BaseHelpSystem.getHelpBrowser(forceExternal)
 						.displayURL(helpURL);
 		} catch (Exception e) {
@@ -239,7 +239,7 @@ public class HelpDisplay {
 	/**
 	 * If href contains URL parameter noframes=true return href with that
 	 * paramter removed, otherwise returns null
-	 * 
+	 *
 	 * @param href
 	 * @return String or null
 	 */
@@ -271,7 +271,7 @@ public class HelpDisplay {
 	public void setHrefOpenedFromHelpDisplay(String hrefOpenedFromHelpDisplay) {
 		this.hrefOpenedFromHelpDisplay = hrefOpenedFromHelpDisplay;
 	}
-	
+
 	private static void createHelpDisplay() {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(HELP_DISPLAY_EXTENSION_ID );
@@ -281,7 +281,7 @@ public class HelpDisplay {
 				// We need to pick up the non-default configuration
 				IConfigurationElement[] elements = extensions[0]
 						.getConfigurationElements();
-				if (elements.length == 0) 
+				if (elements.length == 0)
 					return;
 				IConfigurationElement displayElement  = elements[0];
 				// Instantiate the help display

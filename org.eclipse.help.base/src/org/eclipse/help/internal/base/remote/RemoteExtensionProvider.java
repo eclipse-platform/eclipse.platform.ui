@@ -29,7 +29,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 
 	private static final String PATH_EXTENSIONS = "/extension"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	
+
 	private DocumentReader reader;
 
 	public RemoteExtensionProvider() {
@@ -39,7 +39,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 			}
 		});
 	}
-	
+
 	public IContentExtension[] getContentExtensions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			List<IContentExtension> contributions = new ArrayList<IContentExtension>();
@@ -50,7 +50,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 					InputStream in = null;
 					try {
 						URL url = RemoteHelp.getURL(ic, PATH_EXTENSIONS);
-						
+
 						if(url.getProtocol().equalsIgnoreCase(PROTOCOL_HTTP))
 						{
 							in = ProxyUtil.getStream(url);
@@ -59,7 +59,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 						{
 							in = HttpsUtility.getHttpsStream(url);
 						}
-						
+
 						if (reader == null) {
 							reader = new DocumentReader();
 						}

@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 package org.eclipse.help.internal.search;
@@ -31,7 +31,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 
 	/**
 	 * Constructs a new SearchHit.
-	 * 
+	 *
 	 * @param href the href to the document
 	 * @param label a label describing the hit
 	 * @param summary a summary paragraph further describing the hit
@@ -52,7 +52,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		this.participantId = participantId;
 		this.isPotentialHit = isPotentialHit;
 	}
-	
+
 	public int compareTo(SearchHit o) {
 		if (o == this) {
 			return 0;
@@ -71,7 +71,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		}
 		return false;
 	}
-	
+
 	public String getHref() {
 		return href;
 	}
@@ -87,11 +87,11 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 	public IToc getToc() {
 		return toc;
 	}
-	
+
 	public int hashCode() {
 		return href.hashCode();
 	}
-	
+
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -99,7 +99,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 	public void setHref(String href) {
 		this.href = href;
 	}
-	
+
 	public void setPotentialHit(boolean isPotentialHit) {
 		this.isPotentialHit = isPotentialHit;
 	}
@@ -141,9 +141,9 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 	public String getId() {
 		return participantId + "/" + id; //$NON-NLS-1$
 	}
-	
+
 	public String getRawId() {
-		return id; 
+		return id;
 	}
 
 	public String getParticipantId() {
@@ -159,7 +159,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 	public boolean canOpen() {
 		return participantId != null;
 	}
-	
+
 	public boolean isPotentialHit() {
 		return isPotentialHit;
 	}

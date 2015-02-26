@@ -62,7 +62,7 @@ public class EclipseConnection {
 						if (Options.isDebug()) {
 							System.out.println("Warning: URL Host: " //$NON-NLS-1$
 									+ urlHostName + " vs. " //$NON-NLS-1$
-									+ session.getPeerHost());							
+									+ session.getPeerHost());
 						}
 			            return true;
 					}

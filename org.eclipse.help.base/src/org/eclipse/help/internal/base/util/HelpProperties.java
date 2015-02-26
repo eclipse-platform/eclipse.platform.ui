@@ -22,14 +22,14 @@ import org.eclipse.help.internal.*;
 public class HelpProperties extends Properties {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private File file = null;
 
 	protected String name = null;
 
 	/**
 	 * Creates empty Properties for the specified plugin
-	 * 
+	 *
 	 * @param name
 	 *            name of the file;
 	 * @param plugin
@@ -41,7 +41,7 @@ public class HelpProperties extends Properties {
 
 	/**
 	 * Creates empty Properties persisted in the specified directory
-	 * 
+	 *
 	 * @param name
 	 *            name of the file;
 	 * @param dir
@@ -55,7 +55,7 @@ public class HelpProperties extends Properties {
 
 	/**
 	 * Restores contents of the Properties from a file.
-	 * 
+	 *
 	 * @return true if persistant data was read in
 	 */
 	public boolean restore() {
@@ -85,7 +85,7 @@ public class HelpProperties extends Properties {
 
 	/**
 	 * Saves contents of the table to a file.
-	 * 
+	 *
 	 * @return true if operation was successful
 	 */
 	public boolean save() {

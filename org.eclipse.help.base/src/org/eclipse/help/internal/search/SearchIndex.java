@@ -80,7 +80,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	private IndexWriter iw;
 
 	private File indexDir;
-	
+
 	private Directory luceneDirectory;
 
 	private String locale;
@@ -132,7 +132,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param locale
 	 *            the locale this index uses
 	 * @param analyzerDesc
@@ -145,7 +145,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Alternative constructor that provides index directory.
-	 * 
+	 *
 	 * @param indexDir
 	 * @param locale
 	 * @param analyzerDesc
@@ -159,7 +159,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		this.analyzerDescriptor = analyzerDesc;
 		this.tocManager = tocManager;
 		this.indexDir = indexDir;
-		
+
 		this.relativePath = relativePath;
 		// System.out.println("Index for a relative path: "+relativePath);
 		inconsistencyFile = new File(indexDir.getParentFile(), locale + ".inconsistent"); //$NON-NLS-1$
@@ -188,7 +188,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Indexes one document from a stream. Index has to be open and close outside of this method
-	 * 
+	 *
 	 * @param name
 	 *            the document identifier (could be a URL)
 	 * @param url
@@ -252,12 +252,12 @@ public class SearchIndex implements IHelpSearchIndex {
 	/**
 	 * Add any extra fields that need to be added to this document. Subclasses
 	 * should override to add more fields.
-	 * 
+	 *
 	 * @param doc the document to add fields to
 	 */
 	protected void addExtraFields(Document doc) {
 	}
-	
+
 	/**
 	 * Starts additions. To be called before adding documents.
 	 */
@@ -324,7 +324,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Deletes a single document from the index.
-	 * 
+	 *
 	 * @param name -
 	 *            document name
 	 * @return IStatus
@@ -364,7 +364,7 @@ public class SearchIndex implements IHelpSearchIndex {
 				indexedDocs = null;
 				setInconsistent(false);
 			}
-			
+
 			/*
 			 * The searcher's index reader has it's stuff in memory so it won't
 			 * know about this change. Close it so that it gets reloaded next search.
@@ -396,7 +396,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			indexedDocs = null;
 			getDocPlugins().save();
 			saveDependencies();
-			
+
 			/*
 			 * The searcher's index reader has it's stuff in memory so it won't
 			 * know about this change. Close it so that it gets reloaded next search.
@@ -438,7 +438,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * If
-	 * 
+	 *
 	 * @param dirs
 	 * @param monitor
 	 * @return Map. Keys are /pluginid/href of all merged Docs. Values are null for added document,
@@ -555,7 +555,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Removes documents containing term1 and term2
-	 * 
+	 *
 	 * @param doc1
 	 * @param docs2
 	 * @throws IOException
@@ -595,7 +595,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Checks if index exists and is usable.
-	 * 
+	 *
 	 * @return true if index exists
 	 */
 	public boolean exists() {
@@ -626,7 +626,7 @@ public class SearchIndex implements IHelpSearchIndex {
 					openSearcher();
 				}
 				TopDocs topDocs = searcher.search(luceneQuery, null, 1000);
-				collector.addHits(LocalSearchManager.asList(topDocs, searcher), highlightTerms);	
+				collector.addHits(LocalSearchManager.asList(topDocs, searcher), highlightTerms);
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
 			collector.addQTCException(new QueryTooComplexException());
@@ -671,7 +671,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Sets the list of all plug-ns in this session. This method is used for external indexer.
-	 * 
+	 *
 	 * @param docPlugins
 	 */
 	public void setDocPlugins(PluginVersionInfo docPlugins) {
@@ -680,7 +680,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * We use HelpProperties, but a list would suffice. We only need the key values.
-	 * 
+	 *
 	 * @return HelpProperties, keys are URLs of indexed documents
 	 */
 	public HelpProperties getIndexedDocs() {
@@ -758,7 +758,7 @@ public class SearchIndex implements IHelpSearchIndex {
 					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);
 			getDependencies().put(DEPENDENCIES_KEY_LUCENE, luceneBundleVersion);
 		} else {
-			getDependencies().put(DEPENDENCIES_KEY_LUCENE, ""); //$NON-NLS-1$ 
+			getDependencies().put(DEPENDENCIES_KEY_LUCENE, ""); //$NON-NLS-1$
 		}
 		getDependencies().save();
 	}
@@ -962,7 +962,7 @@ public class SearchIndex implements IHelpSearchIndex {
 				// The RandomAccessFile raf cannot be closed yet because closing it will release the
 				// lock. It will be closed when the lock is released.
 				lock = l;
-				return true;  
+				return true;
 			}
 			logLockFailure(null);
 		} catch (IOException ioe) {
@@ -980,10 +980,10 @@ public class SearchIndex implements IHelpSearchIndex {
 	}
 
 	private static boolean errorReported = false;
-	
+
 	private void logLockFailure(IOException ioe) {
 		if (!errorReported) {
-			HelpBasePlugin.logError("Unable to Lock Help Search Index", ioe); //$NON-NLS-1$ 		
+			HelpBasePlugin.logError("Unable to Lock Help Search Index", ioe); //$NON-NLS-1$
 			errorReported = true;
 		}
 	}
@@ -994,7 +994,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Deletes the lock file. The lock must be released prior to this call.
-	 * 
+	 *
 	 * @return <code>true</code> if the file has been deleted, <code>false</code> otherwise.
 	 */
 
@@ -1016,12 +1016,12 @@ public class SearchIndex implements IHelpSearchIndex {
 			lock = null;
 		}
 		if (raf != null ) {
-			try { 
+			try {
 			    raf.close();
 			} catch (IOException ioe) {
 			}
 			raf = null;
-		}       
+		}
 	}
 
 	public static String getIndexableHref(String url) {
@@ -1047,7 +1047,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Checks if document is indexable, and creates a URL to obtain contents.
-	 * 
+	 *
 	 * @param locale
 	 * @param url
 	 *            specified in the navigation
@@ -1059,7 +1059,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	/**
 	 * Checks if document is indexable, and creates a URL to obtain contents.
-	 * 
+	 *
 	 * @param locale
 	 * @param url
 	 * @param participantId

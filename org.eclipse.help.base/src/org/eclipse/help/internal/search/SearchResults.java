@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yaroslav Nikolaiko <nikolaiko.yaroslav@gmail.com> - [webapp][base] Bugs related to Search Scope for filtering content in The Eclipse platform's help infocenter - http://bugs.eclipse.org/441407
@@ -48,10 +48,10 @@ public class SearchResults implements ISearchHitCollector {
 	public SearchResults(WorkingSet[] workingSets, int maxHits, String locale) {
 		this(workingSets, maxHits, locale, false);
 	}
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param workingSets
 	 *            working sets or null if no filtering
 	 */
@@ -62,7 +62,7 @@ public class SearchResults implements ISearchHitCollector {
 		this.criteriaScope = new CriteriaHelpScope(getCriteriaScopes(workingSets));
 		this.isQuickSearch = isQuickSearch;
 	}
-	
+
 	public void setFilter(AbstractHelpScope filter) {
 		this.filter = filter;
 	}
@@ -70,12 +70,12 @@ public class SearchResults implements ISearchHitCollector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(List, String)
 	 */
-	public void addHits(List<SearchHit> hits, String highlightTerms) {	
+	public void addHits(List<SearchHit> hits, String highlightTerms) {
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List<SearchHit> searchHitList = new ArrayList<SearchHit>();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
-		
+
 		Iterator<SearchHit> iter = hits.iterator();
 		for (int filteredHits = 0; filteredHits < maxHits && iter.hasNext(); ) {
 			SearchHit rawHit = iter.next();
@@ -128,7 +128,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (label == null || "".equals(label)) { //$NON-NLS-1$
 				label = href;
 			}
-			
+
 			// Set document href
 			if (urlEncodedWords.length() > 0) {
 				href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
@@ -140,7 +140,7 @@ public class SearchResults implements ISearchHitCollector {
 				.toArray(new SearchHit[searchHitList.size()]);
 
 	}
-	
+
 	public void setHits(SearchHit hits[])
 	{
 		searchHits = hits;
@@ -159,8 +159,8 @@ public class SearchResults implements ISearchHitCollector {
 						return scope;
 					}
 				}
-			}	
-		
+			}
+
 			// add root toc's extradir topics to search scope
 			if (!isQuickSearch) {
 				IToc tocRoot = getTocForScope(scope, locale);
@@ -196,7 +196,7 @@ public class SearchResults implements ISearchHitCollector {
 			IToc toc=(IToc)scope.getAdapter(IToc.class);
 			href=toc.getTopic(null).getHref();
 		}
-		
+
 		if (href != null && href.length() > 0) {
 			return getTocForTopic(href, locale);
 		} else {
@@ -228,7 +228,7 @@ public class SearchResults implements ISearchHitCollector {
 				if (filter == null || filter.inScope(topic)) {
 					return nextToc;
 				}
-			} 
+			}
 			// Test for href attached to Toc element
 			topic = nextToc.getTopic(null);
 			if (topic != null && href != null && href.equals(topic.getHref())) {
@@ -252,13 +252,13 @@ public class SearchResults implements ISearchHitCollector {
 
 	/**
 	 * Gets the searchHits.
-	 * 
+	 *
 	 * @return Returns a SearchHit[]
 	 */
 	public SearchHit[] getSearchHits() {
 		return searchHits;
 	}
-	
+
 	public QueryTooComplexException getException() {
 		return searchException;
 	}
@@ -266,7 +266,7 @@ public class SearchResults implements ISearchHitCollector {
 	/**
 	 * Returns a collection of adaptable help resources that are roots for
 	 * filtering.
-	 * 
+	 *
 	 * @return Collection
 	 */
 	private ArrayList<AdaptableHelpResource> getScopes(WorkingSet[] wSets) {
@@ -281,18 +281,18 @@ public class SearchResults implements ISearchHitCollector {
 		}
 		return scopes;
 	}
-	
+
 	private ArrayList<CriterionResource> getCriteriaScopes(WorkingSet[] wSets){
 		if (wSets == null)
 			return null;
-		
+
 		ArrayList<CriterionResource> criteriaScopes = new ArrayList<CriterionResource>(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			CriterionResource[] elements = wSets[w].getCriteria();
 			for (int i = 0; i < elements.length; i++)
 				criteriaScopes.add(elements[i]);
 		}
-		return criteriaScopes;		
+		return criteriaScopes;
 	}
 
 	public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {

@@ -81,7 +81,7 @@ public class QueryBuilder {
 			searchWords = searchWords + "\""; //$NON-NLS-1$
 			withinQuotation = !withinQuotation;
 		}
-		
+
 		StringTokenizer qTokenizer = new StringTokenizer(searchWords,"\"",true); //$NON-NLS-1$
 		int orCount = 0; // keep track of number of ORs to disallow too many
 		while (qTokenizer.hasMoreTokens()) {
@@ -237,14 +237,14 @@ public class QueryBuilder {
 	}
 	/**
 	 * Get a list of tokens corresponding to a search word or phrase
-	 * 
+	 *
 	 * @return List of String
 	 */
 	private List<String> analyzeText(Analyzer analyzer, String fieldName, String text) {
 		List<String> words = new ArrayList<String>(1);
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
-		
+
 		CharTermAttribute termAttribute = (CharTermAttribute) tStream.getAttribute(CharTermAttribute.class);
 		try {
 			while (tStream.incrementToken()) {
@@ -254,12 +254,12 @@ public class QueryBuilder {
 			reader.close();
 		} catch (IOException ioe) {
 		}
-		
+
 		return words;
 	}
 	/**
 	 * Obtains Lucene Query from tokens
-	 * 
+	 *
 	 * @return Query or null if no query could be created
 	 */
 	private Query createLuceneQuery(List<QueryWordsToken> searchTokens, String[] fieldNames,
@@ -278,7 +278,7 @@ public class QueryBuilder {
 	}
 	/**
 	 * Obtains Lucene queries for token sequences separated at OR.
-	 * 
+	 *
 	 * @return List of Query (could be empty)
 	 */
 	private List<Query> getRequiredQueries(List<QueryWordsToken> tokens, String[] fieldNames,
@@ -313,7 +313,7 @@ public class QueryBuilder {
 	}
 	/**
 	 * Obtains Lucene Query for tokens containing only AND and NOT operators.
-	 * 
+	 *
 	 * @return BooleanQuery or null if no query could be created from the tokens
 	 */
 	private Query getRequiredQuery(List<QueryWordsToken> requiredTokens, String[] fieldNames,

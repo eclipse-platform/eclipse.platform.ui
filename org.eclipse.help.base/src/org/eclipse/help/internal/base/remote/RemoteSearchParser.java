@@ -48,10 +48,10 @@ public class RemoteSearchParser extends DefaultHandler {
 		init();
 		parser.parse(in, this);
 		monitor.worked(1);
-		monitor.done();		
+		monitor.done();
 		return hits;
 	}
-	
+
 	/*
 	 * Initializes the parser's state for a new search. Must be called
 	 * before each parse.
@@ -74,7 +74,7 @@ public class RemoteSearchParser extends DefaultHandler {
 			parser = SAXParserFactory.newInstance().newSAXParser();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
@@ -86,7 +86,7 @@ public class RemoteSearchParser extends DefaultHandler {
 			handleSummary(attributes);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -126,16 +126,16 @@ public class RemoteSearchParser extends DefaultHandler {
 		hits.add(hit);
 		stack.push(hit);
 	}
-	
+
 	private void handleSummary(Attributes attr) {
 		// prepare the buffer to receive text summary
 		summary = new StringBuffer();
 	}
-	
+
 	/*
 	 * Note: throws clause does not declare IOException due to a bug in
 	 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
-	 * 
+	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 	 */
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {

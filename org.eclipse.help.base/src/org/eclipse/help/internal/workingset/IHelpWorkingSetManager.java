@@ -17,7 +17,7 @@ import org.eclipse.help.internal.criteria.CriterionResource;
 /**
  * The working set manager stores help working sets. Working sets are persisted
  * whenever one is added or removed.
- * 
+ *
  * @since 3.0
  */
 public interface IHelpWorkingSetManager {
@@ -35,16 +35,16 @@ public interface IHelpWorkingSetManager {
 			AdaptableHelpResource[] elements);
 
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria);
-	
+
 	/**
 	 * Returns a working set by name
-	 *  
+	 *
 	 */
 	public WorkingSet getWorkingSet(String name);
 
 	/**
 	 * Implements IWorkingSetManager.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
 	public WorkingSet[] getWorkingSets();
@@ -57,7 +57,7 @@ public interface IHelpWorkingSetManager {
 	/**
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
-	 * 
+	 *
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
@@ -71,14 +71,14 @@ public interface IHelpWorkingSetManager {
 	public String getCurrentWorkingSet();
 
 	public void setCurrentWorkingSet(String workingSet);
-	
+
 	public boolean isCriteriaScopeEnabled();
-	
+
 	public String[] getCriterionIds();
-	
+
 	public String[] getCriterionValueIds(String criterionId);
-	
+
 	public String getCriterionDisplayName(String criterionId);
-	
+
 	public String getCriterionValueDisplayName(String criterionId, String criterionValueId);
 }

@@ -70,7 +70,7 @@ public class AdaptableTocsArray implements IAdaptable {
 
 	/**
 	 * Tests the receiver and the object for equality
-	 * 
+	 *
 	 * @param object
 	 *            object to compare the receiver to
 	 * @return true=the object equals the receiver, the name is the same. false
@@ -91,7 +91,7 @@ public class AdaptableTocsArray implements IAdaptable {
 
 	/**
 	 * Returns the hash code.
-	 * 
+	 *
 	 * @return the hash code.
 	 */
 	public int hashCode() {

@@ -72,10 +72,10 @@ import org.xml.sax.InputSource;
  * <p>
  * <pre>
  *                  destination/nl/country/
- *                  
+ *
  *                  or
- *                  
- *                  destination/nl/country/language/ 
+ *
+ *                  destination/nl/country/language/
  * </pre>
  * <p>
  * The relative directory specified in the <code>index</code> element of the
@@ -84,7 +84,7 @@ import org.xml.sax.InputSource;
  * <p>
  * An instance of <code>HelpIndexBuilder</code> can be cached and used
  * multiple times for different manifest and destination values.
- * 
+ *
  * @since 3.1
  */
 
@@ -100,7 +100,7 @@ public class HelpIndexBuilder {
 	private String indexPath;
 
 	private File destination;
-	
+
 	private ArrayList<TocFile> tocFiles = new ArrayList<TocFile>();
 
 	private ArrayList<LocaleDir> localeDirs = new ArrayList<LocaleDir>();
@@ -109,7 +109,7 @@ public class HelpIndexBuilder {
 			.newInstance();
 
 	private DocumentBuilder parser;
-	
+
 	private static Locale[] legalLocales = Locale.getAvailableLocales();
 	private static HashSet<String> legalLanguages = null;
 	private static HashSet<String> legalCountries = null;
@@ -134,7 +134,7 @@ public class HelpIndexBuilder {
 			this.locale = locale;
 			this.relativePath = relativePath;
 		}
-		
+
 		public File findFile(String file) {
 			for (int i=0; i<dirs.size(); i++) {
 				File dir = dirs.get(i);
@@ -190,7 +190,7 @@ public class HelpIndexBuilder {
 		String href;
 		boolean primary;
 		String extraDir;
-		
+
 		public TocFile(String href, boolean primary, String extraDir) {
 			this.href = href;
 			this.primary = primary;
@@ -209,7 +209,7 @@ public class HelpIndexBuilder {
 	 * it is the absolute path of <code>plugin.xml</code> file. If the target
 	 * is a fragment, it is the absolute path of <code>plugin.xml</code> of
 	 * the fragment plug-in.
-	 * 
+	 *
 	 * @return the file that contains TOC extensions
 	 */
 	public File getManifest() {
@@ -221,7 +221,7 @@ public class HelpIndexBuilder {
 	 * the target is a plug-in, it is the absolute path of
 	 * <code>plugin.xml</code> file. If the target is a fragment, it is the
 	 * absolute path of <code>plugin.xml</code> of the fragment plug-in.
-	 * 
+	 *
 	 * @param manifest
 	 *            the file that contains TOC extensions
 	 */
@@ -240,7 +240,7 @@ public class HelpIndexBuilder {
 
 	/**
 	 * Returns the destination directory where index should be created.
-	 * 
+	 *
 	 * @return the destination index directory
 	 */
 	public File getDestination() {
@@ -250,7 +250,7 @@ public class HelpIndexBuilder {
 	/**
 	 * Sets the destination directory where index should be created.
 	 * Locale-specific directories will be created starting from this directory.
-	 * 
+	 *
 	 * @param destination
 	 *            the directory where index should be created
 	 */
@@ -264,7 +264,7 @@ public class HelpIndexBuilder {
 	 * <code>index</code> element, all topics listed in all the TOCs in the
 	 * plug-in will be indexed and stored in the path specified by the
 	 * <code>index</code> element.
-	 * 
+	 *
 	 * @param monitor
 	 *            the monitor to track index creation progress
 	 * @throws CoreException
@@ -281,7 +281,7 @@ public class HelpIndexBuilder {
 
 		PluginIdentifier pid = getPluginID(manifest.getParentFile(), doc);
 		PluginIdentifier fid = null;
-		
+
 		if (!manifest.getParentFile().equals(destination)) {
 			// target is a fragment, source is a plug-in
 			File fragmentFile = new File(destination, "fragment.xml"); //$NON-NLS-1$
@@ -290,7 +290,7 @@ public class HelpIndexBuilder {
 				fdoc = readXMLFile(fragmentFile);
 			fid = getPluginID(destination, fdoc);
 			fdoc=null;
-		}		
+		}
 
 		Element[] extensions = getTocExtensions(doc);
 		for (int i = 0; i < extensions.length; i++) {
@@ -300,9 +300,9 @@ public class HelpIndexBuilder {
 			throwCoreException(HelpBaseResources.HelpIndexBuilder_noDestinationPath, null);
 		}
 		doc = null; // discard the DOM
-		
+
 		// compute the dir tree
-		computeLocaleDirs(fid!=null);		
+		computeLocaleDirs(fid!=null);
 
 		monitor.beginTask(HelpBaseResources.HelpIndexBuilder_buildingIndex, localeDirs.size());
 		MultiStatus multiStatus = null;
@@ -349,8 +349,8 @@ public class HelpIndexBuilder {
 	}
 
 	/*
-	 * Computes the all os/*, ws/*, nl/language/ and 
-	 * nl/language/country/ locale dirs that contain files. We will 
+	 * Computes the all os/*, ws/*, nl/language/ and
+	 * nl/language/country/ locale dirs that contain files. We will
 	 * produce an index for each one.
 	 */
 	private void computeLocaleDirs(boolean fragment) {
@@ -363,7 +363,7 @@ public class HelpIndexBuilder {
 		computeSystem(ws, Platform.knownWSValues());
 		File os = new File(destination, "os"); //$NON-NLS-1$
 		computeSystem(os, Platform.knownOSValues());
-		
+
 		File nl = new File(destination, "nl"); //$NON-NLS-1$
 		if (!nl.exists() || !nl.isDirectory())
 			return;
@@ -403,7 +403,7 @@ public class HelpIndexBuilder {
 			}
 		}
 	}
-	
+
 	private void computeSystem(File systemRoot, String [] values) {
 		if (systemRoot.exists() && systemRoot.isDirectory()) {
 			// check
@@ -439,7 +439,7 @@ public class HelpIndexBuilder {
 		}
 		return false;
 	}
-	
+
 	private boolean isValidLanguage(String language) {
 		if (legalLanguages==null) {
 			legalLanguages = new HashSet<String>();
@@ -450,7 +450,7 @@ public class HelpIndexBuilder {
 		}
 		return legalLanguages.contains(language);
 	}
-	
+
 	private boolean isValidCountry(String country) {
 		if (legalCountries==null) {
 			legalCountries = new HashSet<String>();
@@ -461,7 +461,7 @@ public class HelpIndexBuilder {
 		}
 		return legalCountries.contains(country);
 	}
-	
+
 	/*
 	 * Build an index for the locale directory by collecting
 	 * documents according to the tocs, then building the index.
@@ -472,7 +472,7 @@ public class HelpIndexBuilder {
 			throws CoreException {
 		// build an index for each locale directory
 		String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_indexFor, localeDir.dirs.get(0).getName());
-		monitor.beginTask(message, 5);		
+		monitor.beginTask(message, 5);
 		File directory = localeDir.dirs.get(0);
 		File indexDirectory = new File(directory, indexPath);
 		prepareDirectory(indexDirectory);
@@ -493,7 +493,7 @@ public class HelpIndexBuilder {
 		monitor.done();
 		return status;
 	}
-	
+
 	/*
 	 * Using TOC files found either in the fragment or in the plug-in,
 	 * collect hrefs for the topics.
@@ -512,7 +512,7 @@ public class HelpIndexBuilder {
 		}
 		return docs;
 	}
-	
+
 	/*
 	 * Try to find the actual file for the TOC href. Look in the
 	 * locale dirs first (best match first). If not found,
@@ -566,7 +566,7 @@ public class HelpIndexBuilder {
 			}
 		}
 	}
-	
+
 	/*
 	 * Creates index for the locale dir by iterating over the doc hrefs
 	 * and adding them into the index. Documents that cannot be found
@@ -576,7 +576,7 @@ public class HelpIndexBuilder {
 	private MultiStatus createIndex(String pluginId, boolean fragment, LocaleDir localeDir,
 			SearchIndex index, Collection<String> addedDocs, IProgressMonitor monitor)
 			throws CoreException {
-		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());		
+		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());
 		if (!index.beginAddBatch(true)) {
 			throwCoreException(HelpBaseResources.HelpIndexBuilder_error, null);
 		}
@@ -618,7 +618,7 @@ public class HelpIndexBuilder {
 		monitor.done();
 		return multiStatus;
 	}
-	
+
 	private MultiStatus createMultiStatus() {
 		return new MultiStatus(
 				HelpBasePlugin.PLUGIN_ID,
@@ -644,7 +644,7 @@ public class HelpIndexBuilder {
 	/**
 	 * If the path does not exist, create it. Otherwise, delete all the files in
 	 * it.
-	 * 
+	 *
 	 * @param indexDirectory
 	 */
 

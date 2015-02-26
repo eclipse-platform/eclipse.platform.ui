@@ -116,7 +116,7 @@ private final int jjMoveStringLiteralDfa1_0(long active0)
 private final int jjMoveStringLiteralDfa2_0(long old0, long active0)
 {
    if (((active0 &= old0)) == 0L)
-      return jjStartNfa_0(0, old0); 
+      return jjStartNfa_0(0, old0);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(1, active0);
@@ -136,7 +136,7 @@ private final int jjMoveStringLiteralDfa2_0(long old0, long active0)
 private final int jjMoveStringLiteralDfa3_0(long old0, long active0)
 {
    if (((active0 &= old0)) == 0L)
-      return jjStartNfa_0(1, old0); 
+      return jjStartNfa_0(1, old0);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(2, active0);
@@ -158,7 +158,7 @@ private final int jjMoveStringLiteralDfa3_0(long old0, long active0)
 private final int jjMoveStringLiteralDfa4_0(long old0, long active0)
 {
    if (((active0 &= old0)) == 0L)
-      return jjStartNfa_0(2, old0); 
+      return jjStartNfa_0(2, old0);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(3, active0);
@@ -176,7 +176,7 @@ private final int jjMoveStringLiteralDfa4_0(long old0, long active0)
 private final int jjMoveStringLiteralDfa5_0(long old0, long active0)
 {
    if (((active0 &= old0)) == 0L)
-      return jjStartNfa_0(3, old0); 
+      return jjStartNfa_0(3, old0);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(4, active0);
@@ -194,7 +194,7 @@ private final int jjMoveStringLiteralDfa5_0(long old0, long active0)
 private final int jjMoveStringLiteralDfa6_0(long old0, long active0)
 {
    if (((active0 &= old0)) == 0L)
-      return jjStartNfa_0(4, old0); 
+      return jjStartNfa_0(4, old0);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_0(5, active0);
@@ -1033,7 +1033,7 @@ private final int jjMoveStringLiteralDfa1_6(long active0)
 private final int jjMoveStringLiteralDfa2_6(long old0, long active0)
 {
    if (((active0 &= old0)) == 0L)
-      return jjStartNfa_6(0, old0); 
+      return jjStartNfa_6(0, old0);
    try { curChar = input_stream.readChar(); }
    catch(java.io.IOException e) {
       jjStopStringLiteralDfa_6(1, active0);
@@ -1458,8 +1458,8 @@ private final int jjMoveNfa_2(int startState, int curPos)
    }
 }
 static final int[] jjnextStates = {
-   26, 27, 30, 18, 20, 22, 5, 8, 0, 4, 6, 0, 4, 6, 5, 0, 
-   4, 6, 3, 4, 
+   26, 27, 30, 18, 20, 22, 5, 8, 0, 4, 6, 0, 4, 6, 5, 0,
+   4, 6, 3, 4,
 };
 private static final boolean jjCanMove_0(int hiByte, int i1, int i2, long l1, long l2)
 {
@@ -1467,7 +1467,7 @@ private static final boolean jjCanMove_0(int hiByte, int i1, int i2, long l1, lo
    {
       case 0:
          return ((jjbitVec2[i2] & l2) != 0L);
-      default : 
+      default :
          if ((jjbitVec0[i1] & l1) != 0L)
             return true;
          return false;
@@ -1488,14 +1488,14 @@ public static final String[] lexStateNames = {
    "WithinComment2",  //$NON-NLS-1$
 };
 public static final int[] jjnewLexState = {
-   -1, 1, 2, 2, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, 3, 0, 2, 4, 5, -1, -1, 2, 
-   -1, 2, -1, 0, -1, 0, 
+   -1, 1, 2, 2, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, 3, 0, 2, 4, 5, -1, -1, 2,
+   -1, 2, -1, 0, -1, 0,
 };
 static final long[] jjtoToken = {
-   0x7fbff47fL, 
+   0x7fbff47fL,
 };
 static final long[] jjtoSkip = {
-   0x400000L, 
+   0x400000L,
 };
 protected SimpleCharStream input_stream;
 private final int[] jjrounds = new int[34];
@@ -1557,20 +1557,20 @@ int jjround;
 int jjmatchedPos;
 int jjmatchedKind;
 
-public Token getNextToken() 
+public Token getNextToken()
 {
   Token matchedToken;
   int curPos = 0;
 
   EOFLoop :
   for (;;)
-  {   
-   try   
-   {     
+  {
+   try
+   {
       curChar = input_stream.BeginToken();
-   }     
+   }
    catch(java.io.IOException e)
-   {        
+   {
       jjmatchedKind = 0;
       matchedToken = jjFillToken();
       return matchedToken;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * An abstract search participants for adding XML documents to the search index. Subclass it
  * and implement or override protected methods to handle parsing of the document.
- * 
+ *
  * @since 3.5
  */
 public abstract class SearchParticipantXML extends SearchParticipant {
@@ -52,14 +52,14 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		/**
 		 * Returns the locale of the index.
-		 * 
+		 *
 		 * @return the locale string
 		 */
 		String getLocale();
 
 		/**
 		 * Sets the title of the parsed document for indexing.
-		 * 
+		 *
 		 * @param title
 		 *            the document title
 		 */
@@ -68,7 +68,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		/**
 		 * Sets the optional summary of the parsed document that can be later rendered for the
 		 * search hits.
-		 * 
+		 *
 		 * @param summary
 		 *            the short document summary
 		 */
@@ -76,7 +76,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		/**
 		 * Adds the text to the content buffer for indexing.
-		 * 
+		 *
 		 * @param text
 		 *            the text to add to the document content buffer
 		 */
@@ -165,7 +165,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
 		 */
 		public void startDocument() throws SAXException {
@@ -174,7 +174,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 		 */
 		public void endDocument() throws SAXException {
@@ -183,7 +183,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String,
 		 *      java.lang.String)
 		 */
@@ -193,7 +193,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 		 */
 		public void characters(char[] characters, int start, int length) throws SAXException {
@@ -203,15 +203,15 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 			for (int i = 0; i < length; i++) {
 				buff.append(characters[start + i]);
 			}
-			String text = buff.toString(); 
+			String text = buff.toString();
 			if (text.trim().length() > 0)
 				handleText(text, data);
 		}
-		
+
 		/*
 		 * Note: throws clause does not declare IOException due to a bug in
 		 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
@@ -221,7 +221,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Called when the element has been started.
-	 * 
+	 *
 	 * @param name
 	 *            the element name
 	 * @param attributes
@@ -233,7 +233,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Called when the element has been ended.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the XML element
 	 * @param data
@@ -243,7 +243,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Called when the XML document has been started.
-	 * 
+	 *
 	 * @param data
 	 *            data the parser content data to update
 	 */
@@ -252,7 +252,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Called when the XML document has been ended.
-	 * 
+	 *
 	 * @param data
 	 *            data the parser content data to update
 	 */
@@ -261,7 +261,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Called when a processing instruction has been encountered.
-	 * 
+	 *
 	 * @param type
 	 *            the instruction data
 	 * @param data
@@ -273,7 +273,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	/**
 	 * Called when element body text has been encountered. Use 'getElementStackPath()' to determine
 	 * the element in question.
-	 * 
+	 *
 	 * @param text
 	 *            the body text
 	 * @param data
@@ -281,7 +281,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	 */
 	protected abstract void handleText(String text, IParsedXMLContent data);
 
-	
+
 	public IStatus addDocument(IHelpSearchIndex index, String pluginId,
 			String name, URL url, String id, ISearchDocument doc) {
 		InputStream stream = null;
@@ -325,7 +325,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Returns the name of the element that is currently at the top of the element stack.
-	 * 
+	 *
 	 * @return the name of the element that is currently at the top of the element stack
 	 */
 
@@ -335,7 +335,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 	/**
 	 * Returns the full path of the current element in the stack separated by the '/' character.
-	 * 
+	 *
 	 * @return the path to the current element in the stack.
 	 */
 	protected String getElementStackPath() {
@@ -347,7 +347,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * <p>
 	 * Pre-processes the given document input stream for the given document name and locale.
@@ -359,7 +359,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	 * For performance, implementations that handle documents that do not support dynamic
 	 * content should subclass and return the original stream.
 	 * </p>
-	 * 
+	 *
 	 * @param in the input stream for the document content
 	 * @param name the name of the document as it appears in the index
 	 * @param locale the locale code, e.g. "en_US"

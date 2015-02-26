@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.xml.sax.Attributes;
  * The search participant responsible for indexing XHTML documents.
  */
 public class XHTMLSearchParticipant extends SearchParticipantXML {
-	
+
 	private static final String KEYWORDS = "keywords"; //$NON-NLS-1$
 	private static final String META_TAG = "meta"; //$NON-NLS-1$
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
@@ -32,13 +32,13 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 	private String title;
 	private String summary;
 	private boolean hasDescriptionMetaTag = false;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.search.XMLSearchParticipant#handleEndElement(java.lang.String, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
 	 */
 	protected void handleEndElement(String name, IParsedXMLContent data) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.search.XMLSearchParticipant#handleStartElement(java.lang.String, org.xml.sax.Attributes, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
 	 */
@@ -65,11 +65,11 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 	    	}
 	    }
 	}
-	
+
 	protected void handleStartDocument(IParsedXMLContent data) {
 		hasDescriptionMetaTag = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.search.XMLSearchParticipant#handleText(java.lang.String, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
 	 */
@@ -84,7 +84,7 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 			}
 		} else if (path.segment(1).equalsIgnoreCase("head")) { //$NON-NLS-1$
 			if (path.segment(path.segmentCount() -1).equalsIgnoreCase("title")) { //$NON-NLS-1$
-				if (title == null) { 
+				if (title == null) {
 					title = text;
 				} else {
 					title = title + text;
@@ -93,7 +93,7 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 			}
 		}
 	}
-	
+
 	private boolean isSkipped(String tag) {
 		return tag.equals("script"); //$NON-NLS-1$
 	}
@@ -111,7 +111,7 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 			return in;
 		}
 	}
-		
+
 	public String getSummary() {
 		return summary;
 	}

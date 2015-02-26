@@ -24,10 +24,10 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.base.util.TestConnectionUtility;
 
 public class RemoteStatusData {
-	
+
 	private static int TIMEOUT = 60 * 1000;
-	
-	
+
+
 	/*
 	 * Convenience method to see if any remote help
 	 * is down
@@ -41,29 +41,29 @@ public class RemoteStatusData {
 		for (int s=0;s<sites.size();s++)
 			if (!isConnected(sites.get(s)))
 				return true;
-		
+
 		return false;
 	}
 
 	/*
 	 * Checks each URL in the ArrayList site to see if
-	 * a network connection can be opened to 
+	 * a network connection can be opened to
 	 * url+/index.jsp
-	 * 
+	 *
 	 * Returns a subset of sites that cannot be connected.
 	 * May be empty, or may be the same as sites
 	 */
 	public static ArrayList<URL> checkSitesConnectivity(ArrayList<URL> sites)
 	{
 		ArrayList<URL> badSites = new ArrayList<URL>();
-		
+
 		for (int i=0;i<sites.size();i++)
 			if (!isConnected(sites.get(i)))
 				badSites.add(sites.get(i));
-		
+
 		return badSites;
 	}
-	
+
 	public static boolean isConnected(URL site)
 	{
 		ConnectionCache cache = ConnectionCache.getCache();
@@ -71,28 +71,28 @@ public class RemoteStatusData {
 			return cache.isConnected(site);
 		}catch(CoreException e)
 		{
-			boolean connected = TestConnectionUtility.testConnection(site.getHost(), 
+			boolean connected = TestConnectionUtility.testConnection(site.getHost(),
 					"" + site.getPort(), site.getPath(), site.getProtocol()); //$NON-NLS-1$
 			cache.put(site, connected);
 			cache.resetTimer();
 			return connected;
 		}
 	}
-	
+
 	/*
 	 * Loads the remote sites stored in preferences,
 	 * and places them as URLs in an ArrayList.
-	 * 
+	 *
 	 * Returns the ArrayList with sites in URL form
 	 */
 	public static ArrayList<URL> getRemoteSites()
 	{
 		ArrayList<URL> sites = new ArrayList<URL>();
-		
-		boolean remoteHelpEnabled = 
+
+		boolean remoteHelpEnabled =
 			Platform.getPreferencesService().getBoolean(
 					HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false,null);
-		
+
 		if (!remoteHelpEnabled)
 			return sites;
 
@@ -106,8 +106,8 @@ public class RemoteStatusData {
 				HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, "", null).split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		String enableds[] = Platform.getPreferencesService().getString(
 				HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, "", null).split(","); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		
+
+
 		for (int i=0;i<hosts.length;i++)
 		{
 			try{
@@ -127,25 +127,25 @@ public class RemoteStatusData {
 	public static void clearCache() {
 		ConnectionCache.clear();
 	}
-	
+
 	private static class ConnectionCache
 	{
 		private static ConnectionCache instance;
-		
+
 		private Hashtable<URL, Boolean> cache;
 		private long start;
-		
+
 		private ConnectionCache(){
-		
+
 			cache = new Hashtable<URL, Boolean>();
 			resetTimer();
 		}
-		
+
 		public void resetTimer()
 		{
 			start = new Date().getTime();
 		}
-		
+
 		public static ConnectionCache getCache()
 		{
 			if (instance==null || instance.isExpired())
@@ -154,28 +154,28 @@ public class RemoteStatusData {
 			}
 			return instance;
 		}
-		
+
 		public static void clear()
 		{
 			instance = null;
 		}
-		
+
 		public boolean isExpired()
 		{
 			long now = new Date().getTime();
-			
+
 			return (now > start + TIMEOUT);
 		}
-		
+
 		public boolean isConnected(URL url) throws CoreException
 		{
 			Boolean b = cache.get(url);
 			if (b==null)
 				throw new CoreException(new Status(IStatus.ERROR,HelpBasePlugin.PLUGIN_ID,"Cache Unavailable")); //$NON-NLS-1$
-			
+
 			return b.booleanValue();
 		}
-		
+
 		public void put(URL url,boolean connected)
 		{
 			cache.put(url,new Boolean(connected));

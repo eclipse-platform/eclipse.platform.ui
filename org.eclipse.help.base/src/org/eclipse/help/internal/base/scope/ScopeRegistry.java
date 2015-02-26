@@ -35,27 +35,27 @@ public class ScopeRegistry {
 	public static final String SCOPE_OR = "|"; //$NON-NLS-1$
 
 	private static List<IScopeHandle> scopes = null;
-	
+
 	private static ScopeRegistry instance;
 
 	private boolean initialized = false;
-	
+
 	private ScopeRegistry() {
 	}
-	
+
 	public static ScopeRegistry getInstance() {
 		if (instance == null)
 			instance = new ScopeRegistry();
 		return instance;
 	}
-	
+
 	public AbstractHelpScope getScope(String id) {
 		if (id == null) {
 			return new UniversalScope();
 		}
 		readScopes();
-		
-		
+
+
 		// Lookup in scope registry
 		for (Iterator<IScopeHandle> iter = scopes.iterator(); iter.hasNext();) {
 			IScopeHandle handle = iter.next();
@@ -69,7 +69,7 @@ public class ScopeRegistry {
 	synchronized private void readScopes() {
 		if (initialized ) {
 			return;
-		}	
+		}
 		scopes = new ArrayList<IScopeHandle>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
@@ -97,7 +97,7 @@ public class ScopeRegistry {
 		}
 		initialized = true;
 	}
-	
+
 	public IScopeHandle[] getScopes() {
 		readScopes();
 		return scopes.toArray(new IScopeHandle[scopes.size()]);
@@ -106,21 +106,21 @@ public class ScopeRegistry {
 	/**
 	 * Parse logical sets of Scopes.  All phrases in the
 	 * array are intersected together
-	 * 
+	 *
 	 * @param phrases
 	 * @return
 	 */
 	public AbstractHelpScope parseScopePhrases(String phrases[])
 	{
 		ArrayList<AbstractHelpScope> scopes = new ArrayList<AbstractHelpScope>();
-		
+
 		for (int p=0;p<phrases.length;p++)
 		{
 			AbstractHelpScope scope = parseScopePhrase(phrases[p]);
 			if (scope!=null)
 				scopes.add(scope);
 		}
-		
+
 		if (scopes.size()==0)
 			return null;
 		if (scopes.size()==1)
@@ -129,11 +129,11 @@ public class ScopeRegistry {
 				scopes.toArray(
 						new AbstractHelpScope[scopes.size()]));
 	}
-	
+
 	/**
 	 * Parse a logical phrase of scope names.  i.e.:
 	 * (A^B)|C
-	 * 
+	 *
 	 * @param phrase
 	 * @return
 	 */
@@ -141,12 +141,12 @@ public class ScopeRegistry {
 	{
 		if (!(phrase.startsWith("(") && !phrase.startsWith("("))) //$NON-NLS-1$ //$NON-NLS-2$
 			phrase = '('+phrase+')';
-		
+
 		Stack<TempScope> scopeStack = new Stack<TempScope>();
 		ScopePhrase scopePhrase = new ScopePhrase(phrase);
-		
+
 		String elem;
-		
+
 		while ((elem = scopePhrase.getNextElement())!=null)
 		{
 			if (elem.equals("(")) //$NON-NLS-1$
@@ -185,27 +185,27 @@ public class ScopeRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * A class used to parse a logical scope phrase, by
 	 * returning each part of the phrase as a separate element
-	 * 
+	 *
 	 */
 	class ScopePhrase{
-		
+
 		private String phrase;
 		private int cursor;
-		
+
 		public ScopePhrase(String phrase)
 		{
 			this.phrase = phrase;
 			this.cursor = 0;
 		}
-		
+
 		public String getNextElement()
 		{
 			String next = ""; //$NON-NLS-1$
-			
+
 			for (;cursor<phrase.length();cursor++)
 			{
 				char current = phrase.charAt(cursor);
@@ -223,7 +223,7 @@ public class ScopeRegistry {
 				return null;
 			return next;
 		}
-		
+
 		private String format(String next,char current)
 		{
 			if (next.equals("")) //$NON-NLS-1$
@@ -239,27 +239,27 @@ public class ScopeRegistry {
 	/**
 	 * A class used to contruct a logical AbstractHelpScope based
 	 * on one Scope, or a union/intersection of scopes.
-	 * 
+	 *
 	 */
 	private class TempScope
 	{
 		public final static int SELF=0;
 		public final static int UNION=1;
 		public final static int INTERSECTION=2;
-		
+
 		private ArrayList<AbstractHelpScope> kids = new ArrayList<AbstractHelpScope>();
 		private int type;
-		
+
 		public void setType(int type)
 		{
 			this.type = type;
 		}
-		
+
 		public void add(AbstractHelpScope kid)
 		{
 			kids.add(kid);
 		}
-		
+
 		public AbstractHelpScope getScope()
 		{
 			switch (type){
