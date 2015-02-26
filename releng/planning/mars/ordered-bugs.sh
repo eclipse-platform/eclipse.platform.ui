@@ -27,6 +27,14 @@ sort_csv () {
 	mv tmp.txt search_o.csv
 }
 
+create_wiki_header() {
+echo "Overview page of the planning bugs for the Eclipse 4.5 release"
+echo ""
+echo "'''This list is genereated automatically, please do not update manually'''"
+echo ""
+echo "A detailed planning of the work planned for Eclipse 4.5 can be found on [[https://wiki.eclipse.org/Platform_UI/Plan/4.5/Milestones]]."
+}
+
 gen_bugs_table () {
 	FILE="$1"
 	while read line; do
@@ -141,6 +149,9 @@ process() {
 	get_other_csv_bugs "$BUGS"
 
 	sort_csv
+
+
+	create_wiki_header
 
 	gen_wiki
 
