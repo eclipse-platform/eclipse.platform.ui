@@ -41,7 +41,6 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		/**
 		 * Build call-back
 		 */
-		@SuppressWarnings("unused")
 		public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 			return new IProject[0];
 		}

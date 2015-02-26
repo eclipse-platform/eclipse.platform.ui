@@ -29,7 +29,6 @@ public class TestNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#configure()
 	 */
-	@SuppressWarnings("unused")
 	public void configure() throws CoreException {
 		// do nothing
 	}
@@ -37,7 +36,6 @@ public class TestNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#deconfigure()
 	 */
-	@SuppressWarnings("unused")
 	public void deconfigure() throws CoreException {
 		// do nothing
 	}
