@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,25 +25,25 @@ import org.eclipse.help.internal.webapp.utils.Utils;
 /**
  * Returns the search hits in <code>xml</code> or <code>json</code>
  * form for the query provided in the <code>phrase</code> parameter.
- * 
+ *
  * <p>This servlet is called on infocenters by client workbenches
  * configured for remote help in order to retrieve search hits
  * from the remote help server.
- * 
+ *
  * <p>Extends the {@link org.eclipse.help.internal.webapp.servlet.SearchServlet}
  * servlet.
- * 
+ *
  * @param phrase		- specifies the search keyword
  * @param lang			- (optional) specifies the locale
  * @param returnType	- (Optional) specifies the return type of the servlet.
  * 						  Accepts either <code>xml</code> (default) or
  * 						  <code>json</code>
- * 
+ *
  * @return		The search hits, either as <code>xml</code> (default) or
  * 				<code>json</code>
- * 
+ *
  * @version	$Version$
- * 
+ *
  **/
 public class SearchService extends SearchServlet {
 
@@ -52,28 +52,28 @@ public class SearchService extends SearchServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		// Set standard HTTP/1.1 no-cache headers.
 		resp.setHeader("Cache-Control",  //$NON-NLS-1$
 				"no-store, no-cache, must-revalidate"); //$NON-NLS-1$
-		
+
 		String response = processRequest(req, resp);
 		if ("".equals(response)) { //$NON-NLS-1$
 			resp.sendError(400); // bad request; missing parameter
 			return;
 		}
-		
+
 		String returnType = req.getParameter(Utils.RETURN_TYPE);
-		boolean boolIsJSON = (returnType != null 
+		boolean boolIsJSON = (returnType != null
 				&& returnType.equalsIgnoreCase(Utils.JSON));
-		
+
 		// If JSON output is required
 		if (boolIsJSON) {
 			resp.setContentType("text/plain"); //$NON-NLS-1$
 			response = getJSONResponse(response);
 		}
-		
+
 		resp.getWriter().write(response);
 	}
 
@@ -90,7 +90,7 @@ public class SearchService extends SearchServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if (is != null)
 			is.close();
 

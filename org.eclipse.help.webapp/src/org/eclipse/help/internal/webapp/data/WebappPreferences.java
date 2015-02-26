@@ -36,7 +36,7 @@ public class WebappPreferences {
 	public String getBannerHeight() {
 		return getPreferenceString("banner_height"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return String - URL of footer page or null
 	 */
@@ -88,7 +88,7 @@ public class WebappPreferences {
 	public String getViewBackground() {
 		return getPreferenceString("advanced.viewBackground"); //$NON-NLS-1$
 	}
-	
+
 	public String getViewBackgroundStyle() {
 		String viewBackground = getPreferenceString("advanced.viewBackground"); //$NON-NLS-1$
 		if (viewBackground == null || viewBackground.length() == 0) {
@@ -104,7 +104,7 @@ public class WebappPreferences {
 	public String getViewFont() {
 		return getPreferenceString("advanced.viewFont"); //$NON-NLS-1$
 	}
-	
+
 	public String getTitleResource() {
 		return getPreferenceString("titleResource"); //$NON-NLS-1$
 	}
@@ -112,11 +112,11 @@ public class WebappPreferences {
 	public String getQuickPrintMaxConnections(){
 		return getPreferenceString("maxConnections"); //$NON-NLS-1$
 	}
-	
+
 	public String getQuickPrintMaxTopics(){
 		return getPreferenceString("maxTopics"); //$NON-NLS-1$
 	}
-	
+
 	public boolean isWindowTitlePrefix() {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "windowTitlePrefix"); //$NON-NLS-1$
 	}
@@ -151,7 +151,7 @@ public class WebappPreferences {
 	public void setHighlightDefault(boolean highlight) {
 		setBooleanPreference("default_highlight", highlight); //$NON-NLS-1$
 	}
-	
+
 	public boolean isRestrictTopicParameter() {
 		return getBooleanPreference("restrictTopicParameter"); //$NON-NLS-1$
 	}
@@ -163,7 +163,7 @@ public class WebappPreferences {
 	private boolean getBooleanPreference(String key) {
 		return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, key, false, null);
 	}
-	
+
 	private void setBooleanPreference(String key, boolean value) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.putBoolean(key, value);
@@ -173,5 +173,5 @@ public class WebappPreferences {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

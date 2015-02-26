@@ -16,12 +16,12 @@ import java.io.PrintWriter;
 public class ServletPrintWriter extends PrintWriter{
 
 	private StringBuffer buffer;
-	
+
 	public ServletPrintWriter() {
 		super(new ByteArrayOutputStream());
 		buffer = new StringBuffer();
 	}
-	
+
     /**
      * Writes a single character.
      * @param c int specifying a character to be written.
@@ -78,7 +78,7 @@ public class ServletPrintWriter extends PrintWriter{
 	public void write(String s) {
 	write(s, 0, s.length());
     }
-	
+
     @Override
 	public String toString()
     {

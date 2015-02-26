@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,26 +23,26 @@ import org.eclipse.help.internal.webapp.servlet.TocServlet;
 import org.eclipse.help.internal.webapp.utils.Utils;
 
 /**
- * Returns <code>xml</code> or <code>json</code> representing all toc contributions 
+ * Returns <code>xml</code> or <code>json</code> representing all toc contributions
  * available on this host
- * 
+ *
  * <p>This servlet is called on infocenters by client workbenches
- * configured for remote help in order to gather all the toc fragments and assemble 
+ * configured for remote help in order to gather all the toc fragments and assemble
  * them into a complete toc.
- * 
+ *
  * <p>Extends the {@link org.eclipse.help.internal.webapp.servlet.TocServlet}
  * servlet.
- * 
+ *
  * @param lang			- (optional) specifies the locale
  * @param returnType	- (Optional) specifies the return type of the servlet.
  * 						  Accepts either <code>xml</code> (default) or
  * 						  <code>json</code>
- * 
+ *
  * @return		Toc contributions available on the host, either as <code>xml</code>
  * (default) or <code>json</code>
- * 
+ *
  * @version	$Version$
- * 
+ *
  **/
 public class TocService extends TocServlet {
 
@@ -51,25 +51,25 @@ public class TocService extends TocServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		// Set standard HTTP/1.1 no-cache headers.
 		resp.setHeader("Cache-Control",  //$NON-NLS-1$
 				"no-store, no-cache, must-revalidate"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
-		
+
 		String response = processRequest(req, resp);
-		
+
 		String returnType = req.getParameter(Utils.RETURN_TYPE);
-		boolean boolIsJSON = (returnType != null 
+		boolean boolIsJSON = (returnType != null
 				&& returnType.equalsIgnoreCase(Utils.JSON));
-		
+
 		// If JSON output is required
 		if (boolIsJSON) {
 			resp.setContentType("text/plain"); //$NON-NLS-1$
 			response = getJSONResponse(response);
 		}
-		
+
 		resp.getWriter().write(response);
 	}
 
@@ -86,7 +86,7 @@ public class TocService extends TocServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if (is != null)
 			is.close();
 

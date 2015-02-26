@@ -34,7 +34,7 @@ public class BreadcrumbsFilter implements IFilter {
 	private static final String HEAD_CONTENT1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 	private static final String HEAD_CONTENT2 = "/content/" + HelpWebappPlugin.PLUGIN_ID + "/advanced/breadcrumbs.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>"  //$NON-NLS-1$ //$NON-NLS-2$
 		+ "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
-	private static final String HEAD_CONTENT3 = "/content/" + HelpPlugin.PLUGIN_ID + "/livehelp.js\"> </script>"; //$NON-NLS-1$ //$NON-NLS-2$ 
+	private static final String HEAD_CONTENT3 = "/content/" + HelpPlugin.PLUGIN_ID + "/livehelp.js\"> </script>"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
@@ -60,14 +60,14 @@ public class BreadcrumbsFilter implements IFilter {
 			return out;
 		}
 		boolean showBreadcrumbs = Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_SHOW_BREADCRUMBS, false, null);
-		if (!showBreadcrumbs) { 
+		if (!showBreadcrumbs) {
 			return out;
 		}
 		// Use pathInfo to get the topic path because the uri could have escaped spaces
 		// or other characters, Bug 75360
 		String locale = UrlUtil.getLocale(req, null);
-		String pathParam = req.getParameter(TocData.COMPLETE_PATH_PARAM); 
-		
+		String pathParam = req.getParameter(TocData.COMPLETE_PATH_PARAM);
+
 		String breadcrumbPath;
 		if (pathParam != null && pathParam.length() > 0) {
 			breadcrumbPath = "/nav/" + pathParam; //$NON-NLS-1$
@@ -85,14 +85,14 @@ public class BreadcrumbsFilter implements IFilter {
 				    HEAD_CONTENT3;
 				return new FilterHTMLHeadAndBodyOutputStream(out, headContent
 						.getBytes("ASCII"), bodyContent); //$NON-NLS-1$
-			} 
+			}
 			catch (Exception e) {
 				return out;
 			}
 		}
 		return out;
 	}
-	
+
 	private String getBackpath(String path) {
 		int num = new Path(path).segmentCount();
 		StringBuffer buf = new StringBuffer();
@@ -104,21 +104,21 @@ public class BreadcrumbsFilter implements IFilter {
 		}
 		return buf.toString();
 	}
-	
+
 	private String getBodyContent(int[] path, String backPath, boolean isNarrow, String locale) {
 		StringBuffer buf = new StringBuffer();
 		StringBuffer pathBuf = new StringBuffer();
 		ITopic topic = HelpPlugin.getTocManager().getTocs(locale)[path[0]].getTopic(null);
 		pathBuf.append(path[0]);
-		
+
 		boolean isMirrored = org.eclipse.help.internal.util.ProductPreferences.isRTL();
 		if(isMirrored)
-			buf.append("\u202B"); //$NON-NLS-1$ //append RLE marker at the beginning 
-		
-		buf.append("<div class=\"help_breadcrumbs\">"); //$NON-NLS-1$		
-		
+			buf.append("\u202B"); //$NON-NLS-1$ //append RLE marker at the beginning
+
+		buf.append("<div class=\"help_breadcrumbs\">"); //$NON-NLS-1$
+
 		for (int i=0;i<path.length-1;++i) {
-			
+
 			// add the link
 			buf.append("<a href=\""); //$NON-NLS-1$
 			String href = topic.getHref();
@@ -137,26 +137,26 @@ public class BreadcrumbsFilter implements IFilter {
 			buf.append("\">"); //$NON-NLS-1$
 			buf.append(UrlUtil.htmlEncode(topic.getLabel()));
 			buf.append("</a>"); //$NON-NLS-1$
-			
+
 			// add separator
 			if (i < path.length - 2 || path.length == 2) {
 				// always add if there's only one link
 				if(isMirrored)
 					buf.append(" \u200F> "); //$NON-NLS-1$ //append RLM marker before >
 				else
-					buf.append(" > "); //$NON-NLS-1$ 
+					buf.append(" > "); //$NON-NLS-1$
 			}
-			
+
 			// move to the next topic in the path
 			topic = topic.getSubtopics()[path[i + 1]];
 			pathBuf.append('_');
 			pathBuf.append(path[i + 1]);
 		}
 		buf.append("</div>"); //$NON-NLS-1$
-		
+
 		if(isMirrored)
-			buf.append("\u202C"); //$NON-NLS-1$ //append PDF marker at the end  
-		
+			buf.append("\u202C"); //$NON-NLS-1$ //append PDF marker at the end
+
 		return buf.toString();
 	}
 }

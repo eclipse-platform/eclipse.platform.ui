@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.utils;
 
 public final class JSonHelper {
-	
+
 	//JSON Characters
 	public static final String BEGIN_BRACE = "{"; //$NON-NLS-1$
 	public static final String END_BRACE  = "}"; //$NON-NLS-1$
@@ -22,7 +22,7 @@ public final class JSonHelper {
 	public static final String COMMA  =   ","; //$NON-NLS-1$
 	public static final String NEWLINE  =   "\n"; //$NON-NLS-1$
 	public static final String SPACE  =   "   "; //$NON-NLS-1$
-	
+
 	//JSON items
 	public static final String LABEL			= "label"; //$NON-NLS-1$
 	public static final String IDENTIFIER		= "identifier"; //$NON-NLS-1$
@@ -51,7 +51,7 @@ public final class JSonHelper {
 	public static final String INDEX			= "Index"; //$NON-NLS-1$
 	public static final String TOPIC			= "Topic"; //$NON-NLS-1$
 	public static final String NUMERIC_PATH		= "NumericPath"; //$NON-NLS-1$
-	
+
 	public static String getQuotes(String str){
 		return ((str != null)?QUOTE + str + QUOTE:""); //$NON-NLS-1$
 	}

@@ -40,7 +40,7 @@ public class ServletResources {
 	/**
 	 * Returns a string from a property file. It uses 'name' as a the key to
 	 * retrieve from the webapp.properties file.
-	 * 
+	 *
 	 * @param request
 	 *            HttpServletRequest or null; default locale will be used if
 	 *            null passed
@@ -62,7 +62,7 @@ public class ServletResources {
 	/**
 	 * Returns a string from a property file. It uses 'name' as a the key to
 	 * retrieve from the webapp.properties file.
-	 * 
+	 *
 	 * @param request
 	 *            HttpServletRequest or null; default locale will be used if
 	 *            null passed
@@ -73,12 +73,12 @@ public class ServletResources {
 				request, null), replace0);
 		return property;
 	}
-	
+
 	/**
 	 * Returns a string from a property file. It uses 'name' as a the key to
-	 * retrieve from the webapp.properties file. 'args[]' is used to replace 
+	 * retrieve from the webapp.properties file. 'args[]' is used to replace
 	 * the variables in property string.
-	 * 
+	 *
 	 * @param request
 	 *            HttpServletRequest or null; default locale will be used if
 	 *            null passed
@@ -89,13 +89,13 @@ public class ServletResources {
 				request, null), args);
 		return property;
 	}
-	
+
 	/**
 	 * Returns a string from a property file, with underlined access key. Access
 	 * key can be specified in the label by &amp: character following character
 	 * in the label that is to serve as access key It uses 'name' as a the key
 	 * to retrieve from the webapp.properties file.
-	 * 
+	 *
 	 * @param request
 	 *            HttpServletRequest or null; default locale will be used if
 	 *            null passed
@@ -122,7 +122,7 @@ public class ServletResources {
 	/**
 	 * Returns access key for a named label from property file. It uses 'name'
 	 * as a the key to retrieve from the webapp.properties file.
-	 * 
+	 *
 	 * @param request
 	 *            HttpServletRequest or null; default locale will be used if
 	 *            null passed

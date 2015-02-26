@@ -14,7 +14,7 @@ package org.eclipse.help.internal.webapp.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 public class FilterUtils {
-	
+
 	public static String getRelativePathPrefix(HttpServletRequest req) {
 		// append "../" to get to the webapp
 		StringBuffer result = new StringBuffer(""); //$NON-NLS-1$

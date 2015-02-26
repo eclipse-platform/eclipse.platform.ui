@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,18 +29,18 @@ public class TocFragmentParser extends ResultParser {
 	private String parentId = ""; //$NON-NLS-1$
 	private int tagLevel = -1;
 	private int level = 0;
-	
+
 	public TocFragmentParser() {
 		super(JSonHelper.TITLE);
 	}
 
-	public void parse(URL tocURL, int level) 
+	public void parse(URL tocURL, int level)
 		throws ParserConfigurationException, SAXException, IOException
 	{
 		parse(ProxyUtil.getStream(tocURL), level);
 	}
-	
-	public void parse(InputStream in, int level) 
+
+	public void parse(InputStream in, int level)
 		throws ParserConfigurationException, SAXException, IOException
 	{
 		this.level = level;
@@ -48,14 +48,14 @@ public class TocFragmentParser extends ResultParser {
 	}
 
 	@Override
-	public void startElement(String uri, 
+	public void startElement(String uri,
 			String lname, String name, Attributes attrs) {
-		
-		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE) 
+
+		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE)
 				|| name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH)) {
-			
+
 			tagLevel++;
-			
+
 			if (tagLevel == level) {
 				properties = new Properties();
 				if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH)) {
@@ -64,7 +64,7 @@ public class TocFragmentParser extends ResultParser {
 				}
 				else
 					properties.put(JSonHelper.PROPERTY_NAME, JSonHelper.TOPIC);
-				
+
 				for (int i = 0; i < attrs.getLength(); i++) {
 					String qname = attrs.getQName(i);
 					String val = attrs.getValue(i);
@@ -86,24 +86,24 @@ public class TocFragmentParser extends ResultParser {
 	@Override
 	public void endElement(String uri, String lname, String name) {
 
-		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE) 
+		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE)
 				|| name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH))
 		{
 			if (tagLevel == level && properties != null ) {
-				
+
 				if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH)) {
 					properties.setProperty("id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 					properties.setProperty("type", "topic"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				else
 					properties.setProperty("type", "toc"); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 				ParseElement element = new ParseElement(properties);
 				items.add(element);
-				
+
 				properties = null;
 			}
-			
+
 			tagLevel--;
 		}
 	}

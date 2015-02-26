@@ -71,14 +71,14 @@ public class ToolbarButton {
 		}
 		return list.toArray(new String[list.size()][]);
 	}
-	
+
 	public String getTooltip() {
 		return tooltip;
 	}
 
 	/**
 	 * Returns the image
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getImage() {
@@ -92,12 +92,12 @@ public class ToolbarButton {
 	public String getParam() {
 		return param;
 	}
-	
+
 	public boolean isOn() {
 		return state;
 	}
-	
+
 	public String getStyleClass() {
 		return styleClass;
-	}	
+	}
 }

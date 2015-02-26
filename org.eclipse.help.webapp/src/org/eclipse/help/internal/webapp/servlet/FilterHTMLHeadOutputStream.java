@@ -42,7 +42,7 @@ public class FilterHTMLHeadOutputStream extends FilterOutputStream {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param out
 	 *            sink output stream
 	 * @param bytesToInsert
@@ -60,7 +60,7 @@ public class FilterHTMLHeadOutputStream extends FilterOutputStream {
 	 * the &lt;head&gt; HTML element.
 	 * <p>
 	 * Implements the abstract <tt>write</tt> method of <tt>OutputStream</tt>.
-	 * 
+	 *
 	 * @param b
 	 *            the <code>byte</code>.
 	 * @exception IOException
@@ -153,7 +153,7 @@ public class FilterHTMLHeadOutputStream extends FilterOutputStream {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.io.FilterOutputStream#close()
 	 */
 	@Override

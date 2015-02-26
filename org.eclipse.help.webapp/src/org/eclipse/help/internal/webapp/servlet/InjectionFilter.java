@@ -32,7 +32,7 @@ import org.eclipse.help.webapp.IFilter;
  */
 public class InjectionFilter implements IFilter {
 	private static final String disabledBook3 = "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
-	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$	
+	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$
 
 	private final String TOPIC_CSS = "topic_css"; //$NON-NLS-1$
 	private final String NAV_CSS   = "nav_css"; //$NON-NLS-1$
@@ -40,11 +40,11 @@ public class InjectionFilter implements IFilter {
 	private final String DISABLED_CSS = "disabled_css"; //$NON-NLS-1$
 	private final String REMOTE_CSS = "remote_css"; //$NON-NLS-1$
 	private boolean isRemote;
-	
+
 	public InjectionFilter( boolean isRemote ) {
 		this.isRemote = isRemote;
 	}
-	
+
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
@@ -54,7 +54,7 @@ public class InjectionFilter implements IFilter {
 
 		boolean addNarrow = false;
 		boolean addDisabled = false;
-		boolean needsLiveHelp = false;	 
+		boolean needsLiveHelp = false;
 
 		String uri = req.getRequestURI();
 		boolean isNav = "/nav".equals(req.getServletPath()); //$NON-NLS-1$
@@ -78,8 +78,8 @@ public class InjectionFilter implements IFilter {
 		if(isRemote){
 			CssUtil.addCssFiles(REMOTE_CSS, cssIncludes);
 		}
-		
-		boolean enabled = isUnfiltered || isNav 
+
+		boolean enabled = isUnfiltered || isNav
 		    || HelpBasePlugin.getActivitySupport().isRoleEnabled(pathInfo)
 		    || isRemote;
 		if ("/ntopic".equals(req.getServletPath())) { //$NON-NLS-1$
@@ -90,9 +90,9 @@ public class InjectionFilter implements IFilter {
 			addDisabled = true;
 			CssUtil.addCssFiles(DISABLED_CSS, cssIncludes);
 		}
-		
+
 		needsLiveHelp = !enabled && HelpBasePlugin.getActivitySupport().getDocumentMessageUsesLiveHelp(addNarrow);
-		
+
 		if (cssIncludes.size() == 0 && !addDisabled)
 			return out;
 
@@ -129,7 +129,7 @@ public class InjectionFilter implements IFilter {
 		buff.append("<img src=\""); //$NON-NLS-1$
 		buff.append(relativePath);
 		buff.append("content/org.eclipse.help.webapp/"); //$NON-NLS-1$
-		buff.append("advanced/images/e_show_all.gif\" border=\"0\" align=\"bottom\">&nbsp;"); //$NON-NLS-1$		
+		buff.append("advanced/images/e_show_all.gif\" border=\"0\" align=\"bottom\">&nbsp;"); //$NON-NLS-1$
 		buff.append(message);
 		buff.append("<br><hr></div>"); //$NON-NLS-1$
 	}

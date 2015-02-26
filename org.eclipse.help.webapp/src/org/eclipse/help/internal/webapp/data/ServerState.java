@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,15 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 
 public class ServerState {
-	
+
 	/**
-	 * Function called when index.jsp is loaded, the main purpose here is to detect the 
+	 * Function called when index.jsp is loaded, the main purpose here is to detect the
 	 * situation where the Webapp is run without being launched on the built in server
 	 * in which case we set the mode to infocenter.
 	 */
     public static void webappStarted(ServletContext context, HttpServletRequest request,
-			HttpServletResponse response) { 
+			HttpServletResponse response) {
     	    BaseHelpSystem.checkMode();
     }
-    
+
 }

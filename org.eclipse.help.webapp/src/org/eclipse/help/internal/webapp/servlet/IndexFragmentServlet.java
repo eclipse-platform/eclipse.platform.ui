@@ -43,12 +43,12 @@ import com.ibm.icu.text.Collator;
  * Creates xml representing selected parts of the index
  * Parameter "start" represents the part of the index to start reading from
  * Parameter "size" indicates the number of entries to read, no size parameter
- * or a negative size parameter indicates that all entries which match the start 
+ * or a negative size parameter indicates that all entries which match the start
  * letters should be displayed.
  * Parameter "offset" represents the starting point relative to the start
  */
 public class IndexFragmentServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private static Map<String, String> locale2Response = new WeakHashMap<String, String>();
 	private String startParameter;
@@ -73,7 +73,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		resp.getWriter().write(processRequest(req, resp));
 	}
-	
+
 	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);
@@ -83,16 +83,16 @@ public class IndexFragmentServlet extends HttpServlet {
 		}
 
 		size = 30;
-		sizeParameter = req.getParameter(SIZE); 
+		sizeParameter = req.getParameter(SIZE);
 		if (sizeParameter != null) {
 			try {
 			    size = Integer.parseInt(sizeParameter);
 			} catch (NumberFormatException n) {
 			}
 		}
-		
+
 		entry = -1;
-		entryParameter = req.getParameter(ENTRY); 
+		entryParameter = req.getParameter(ENTRY);
 		if (entryParameter != null) {
 			try {
 			    entry = Integer.parseInt(entryParameter);
@@ -104,30 +104,30 @@ public class IndexFragmentServlet extends HttpServlet {
 		showAllParameter = req.getParameter(SHOW_ALL);
 		if (showAllParameter != null) {
 			// Use activities data to toggle the show all state
-			new ActivitiesData(this.getServletContext(), req, resp);	
+			new ActivitiesData(this.getServletContext(), req, resp);
 		}
-		
+
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		// Cache suppression required because the set of in scope
 		// topics could change between requests
 
 		resp.setHeader("Cache-Control","no-cache");   //$NON-NLS-1$//$NON-NLS-2$
 		resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
-		resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$	
+		resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$
 
 		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 		Serializer serializer = new Serializer(locale, scope);
-		String response = serializer.generateIndexXml();	
+		String response = serializer.generateIndexXml();
 		locale2Response.put(locale, response);
-		
+
 		return response;
 	}
-	
+
 	/*
 	 * Class which creates the xml file based upon the request parameters
 	 */
 	private class Serializer {
-		
+
 		private IIndex index;
 		private StringBuffer buf;
 		private int count = 0;
@@ -144,7 +144,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			index = HelpPlugin.getIndexManager().getIndex(locale);
 			buf = new StringBuffer();
 		}
-		
+
 		/*
 		 * There are three modes of generation, current page, next page and previous page.
 		 * Current page returns a screenful of entries starting at the startParameter.
@@ -152,7 +152,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		 * Previous page returns a screenful of entries going back from the start parameter
 		 */
 		private String generateIndexXml() {
-			
+
 			entries = index.getEntries();
 			if (entries.length == 0) {
 				generateEmptyIndexMessage();
@@ -179,7 +179,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			buf.append("</tree_data>\n"); //$NON-NLS-1$
 			return header + buf.toString();
 		}
-		
+
 		private int getCategory(String keyword) {
 			if (keyword != null && keyword.length() > 0) {
 				char c = keyword.charAt(0);
@@ -192,7 +192,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 			return 4;
 		}
-		
+
 		private int compare (String left, String right) {
 			int catLeft = getCategory(left);
 			int catRight = getCategory(right);
@@ -223,9 +223,9 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 			int nextEntry = 0;
 			while (nextEntry < entries.length) {
-			    String keyword = entries[nextEntry].getKeyword().toLowerCase();	            
-				if (keyword != null) {					
-					if (compare(startParameter, keyword) <= 0) { 
+			    String keyword = entries[nextEntry].getKeyword().toLowerCase();
+				if (keyword != null) {
+					if (compare(startParameter, keyword) <= 0) {
 				        break;
 					}
 				}
@@ -233,7 +233,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 			return nextEntry;
 		}
-		
+
 		private int getNextEntries(int nextEntry, int remaining) {
 			while (nextEntry < entries.length) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
@@ -245,7 +245,7 @@ public class IndexFragmentServlet extends HttpServlet {
 					break;
 				}
 				nextEntry++;
-			}	
+			}
 			return remaining;
 		}
 
@@ -264,7 +264,7 @@ public class IndexFragmentServlet extends HttpServlet {
 				nextEntry--;
 			}
 			return remaining;
-		}		
+		}
 
 		private void setFlags(int nextEntry) {
 			if (nextEntry == 0) {
@@ -272,9 +272,9 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 			if (nextEntry == entries.length - 1) {
 				enableNext = false;
-			}			
+			}
 		}
-		
+
 		private int enabledEntryCount(IIndexEntry entry) {
 			if (!ScopeUtils.showInTree(entry, scope)) return 0;
 			if (entry.getKeyword() == null || entry.getKeyword().length() == 0) {
@@ -288,7 +288,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			for (IIndexEntry subentrie : subentries) {
 				count += enabledEntryCount(subentrie);
 			}
-			
+
 			int seeCount = 0;
 			IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : new IIndexSee[0];
 			for (IIndexSee see : sees) {
@@ -296,7 +296,7 @@ public class IndexFragmentServlet extends HttpServlet {
 					seeCount++;
 				}
 			}
-			
+
 			if (topicCount + subentryCount + seeCount > 1) {
 				count += topicCount;
 			}
@@ -315,23 +315,23 @@ public class IndexFragmentServlet extends HttpServlet {
 		    }
 			return topicCount;
 		}
-		
+
 		private void generateEmptyIndexMessage() {
-			buf.append("<node"); //$NON-NLS-1$			
+			buf.append("<node"); //$NON-NLS-1$
 			buf.append('\n' + "      title=\"" + XMLGenerator.xmlEscape(WebappResources.getString("IndexEmpty", UrlUtil.getLocale(locale))) + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			buf.append('\n' + "      id=\"no_index\""); //$NON-NLS-1$
-			buf.append(">\n"); //$NON-NLS-1$		
-			buf.append("</node>\n"); //$NON-NLS-1$	
+			buf.append(">\n"); //$NON-NLS-1$
+			buf.append("</node>\n"); //$NON-NLS-1$
 			enableNext = false;
 			enablePrevious = false;
 		}
-		
+
 		private void generateEntry(IIndexEntry entry, int level, String id) {
 			if (!ScopeUtils.showInTree(entry, scope)) return;
 			if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
 				ITopic[] topics = ScopeUtils.inScopeTopics(entry.getTopics(), scope);
 				IIndexEntry[] subentries = ScopeUtils.inScopeEntries(entry.getSubentries(), scope);
-				IIndexSee[] sees; 
+				IIndexSee[] sees;
 				if (entry instanceof IIndexEntry2) {
 					sees = ((IIndexEntry2)entry).getSees();
 				} else {
@@ -339,14 +339,14 @@ public class IndexFragmentServlet extends HttpServlet {
 				}
 				boolean multipleTopics = topics.length > 1;
 				boolean singleTopic = topics.length == 1;
-				
+
 				buf.append("<node"); //$NON-NLS-1$
-				if (entry.getKeyword() != null) { 
+				if (entry.getKeyword() != null) {
 					buf.append('\n' + "      title=\"" + XMLGenerator.xmlEscape(entry.getKeyword()) + '"'); //$NON-NLS-1$
 				}
-				
-				buf.append('\n' + "      id=\"" + id + '"'); //$NON-NLS-1$			
-			
+
+				buf.append('\n' + "      id=\"" + id + '"'); //$NON-NLS-1$
+
 				String href;
 				if (singleTopic) {
 					href = UrlUtil.getHelpURL((topics[0]).getHref());
@@ -354,27 +354,27 @@ public class IndexFragmentServlet extends HttpServlet {
 				    	XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 				}
 				buf.append(">\n"); //$NON-NLS-1$
-				
+
 				if (multipleTopics || subentries.length > 0 || sees.length > 0) {
 					if (multipleTopics) generateTopicList(entry);
 					generateSubentries(entry, level + 1);
 					generateSees(sees);
 				}
-				
-				buf.append("</node>\n"); //$NON-NLS-1$	
+
+				buf.append("</node>\n"); //$NON-NLS-1$
 			}
 		}
-		
+
 		private void generateSubentries(IIndexEntry entry, int level) {
 			IIndexEntry[] subentries = entry.getSubentries();
 			for (IIndexEntry subentrie : subentries) {
 				generateEntry(subentrie, level, "s" + count++); //$NON-NLS-1$
 			}
 		}
-		
+
 		private void generateTopicList(IIndexEntry entry) {
 			ITopic[] topics = entry.getTopics();
-			
+
 			for (ITopic topic : topics) {
 				if (ScopeUtils.showInTree(topic, scope)) {
 					//
@@ -385,20 +385,20 @@ public class IndexFragmentServlet extends HttpServlet {
 
 					buf.append("<node"); //$NON-NLS-1$
 					if (entry.getKeyword() != null) {
-						buf.append('\n' + "      title=\"" + label + '"'); //$NON-NLS-1$ 
+						buf.append('\n' + "      title=\"" + label + '"'); //$NON-NLS-1$
 					}
 
 					count++;
-					buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$							
+					buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$
 					String href = UrlUtil.getHelpURL(topic.getHref());
 					buf.append('\n' + "      href=\"" //$NON-NLS-1$
 							+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 					buf.append(">\n"); //$NON-NLS-1$
-					buf.append("</node>\n"); //$NON-NLS-1$	
+					buf.append("</node>\n"); //$NON-NLS-1$
 				}
 			}
 		}
-		
+
 		private void generateSees(IIndexSee[] sees) {
 	        for (IIndexSee see : sees) {
 	        	if (ScopeUtils.showInTree(see, scope)) {
@@ -416,17 +416,17 @@ public class IndexFragmentServlet extends HttpServlet {
 					String encodedLabel = UrlUtil.htmlEncode(label);
 					buf.append("<node"); //$NON-NLS-1$
 
-					buf.append('\n' + "      title=\"" + encodedLabel + '"'); //$NON-NLS-1$ 
+					buf.append('\n' + "      title=\"" + encodedLabel + '"'); //$NON-NLS-1$
 
 					count++;
-					buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$							
-					String href = "see:" + seeTarget; //$NON-NLS-1$ 
+					buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$
+					String href = "see:" + seeTarget; //$NON-NLS-1$
 					buf.append('\n' + "      href=\"" //$NON-NLS-1$
 							+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 					buf.append(">\n"); //$NON-NLS-1$
-					buf.append("</node>\n"); //$NON-NLS-1$	
+					buf.append("</node>\n"); //$NON-NLS-1$
 	        	}
-	        }	
+	        }
 		}
 	}
 

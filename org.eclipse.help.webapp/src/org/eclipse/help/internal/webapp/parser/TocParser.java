@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,12 +23,12 @@ public class TocParser extends ResultParser {
 	public TocParser() {
 		super(JSonHelper.LABEL);
 	}
-	
+
 	@Override
 	public void startElement(String uri, String lname, String name, Attributes attrs) {
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_TOC_CONTRIBUTIONS))
 			return;
-		
+
 		Properties properties = new Properties();
 		properties.put(JSonHelper.PROPERTY_NAME, name);
 		for (int i = 0; i < attrs.getLength(); i++) {
@@ -36,25 +36,25 @@ public class TocParser extends ResultParser {
 			String val = attrs.getValue(i);
 			properties.put(qname, val);
 		}
-		
+
 		ParseElement elem = new ParseElement(properties, element);
 		if (element != null)
 			element.addChild(elem);
 		else
 			items.add(elem);
-		
+
 		element = elem;
-		
+
 	}
-	
+
 	@Override
 	public void endElement(String uri, String lname, String name) {
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_TOC_CONTRIBUTIONS))
 			return;
-		
+
 		if (element != null) {
 			element = element.getParent();
-		}		
+		}
 	}
 
 }

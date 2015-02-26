@@ -43,25 +43,25 @@ public class View extends AbstractView {
 
 	/**
 	 * Returns the image shown on the view tab
-	 * 
+	 *
 	 * @return String
 	 */
 	@Override
 	public String getImageURL() {
 		int i = imageURL.lastIndexOf('/');
 		return imageURL.substring(0, i) + "/e_" + imageURL.substring(i + 1); //$NON-NLS-1$
-	
+
 	}
 	/**
 	 * Returns the image when selected
-	 * 
+	 *
 	 * @return char or 0 if no shortcut
 	 */
 	@Override
 	public char getKey() {
 		return shortcut;
 	}
-	
+
 	/**
 	 * Returns whether or not this view should do a deferred load; i.e. it will
 	 * take some time to load and should show a progress message while loading.

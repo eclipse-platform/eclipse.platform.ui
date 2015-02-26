@@ -75,10 +75,10 @@ public class WebappResources {
 		}
 
 	}
-	
+
 	/**
 	 * Returns a string from a property file. It uses 'name' as the key to
-	 * retrieve from the webapp.properties file. And it uses args[] to replace the variables in property string. 
+	 * retrieve from the webapp.properties file. And it uses args[] to replace the variables in property string.
 	 */
 	public static String getString(String name, Locale locale, String[] args) {
 
@@ -100,7 +100,7 @@ public class WebappResources {
 	}
 	/**
 	 * Obtains resource bundle for specified locale. Loads bundle if necessary
-	 * 
+	 *
 	 * @param locale
 	 *            Locale or null to use default locale
 	 * @return ResourceBundle or null if not found
@@ -150,7 +150,7 @@ public class WebappResources {
 		}
 		return bundle;
 	}
-	
+
 	private static ResourceBundle getResourceBundle(String key) {
 		ResourceBundle bundle;
 		Bundle hostBundle = Platform.getBundle(HelpWebappPlugin.getDefault()
@@ -178,7 +178,7 @@ public class WebappResources {
 		}
 		return bundle;
 	}
-	
+
 	private static Locale getDefaultLocale() {
 		String nl = Platform.getNL();
 		// sanity test

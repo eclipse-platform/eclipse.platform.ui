@@ -31,18 +31,18 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  * Sends all toc contributions available on this host in XML form. The toc
  * is not send in assembled form, but instead fragments, because complete books
  * may be distributed between remote and local.
- * 
+ *
  * This is called on infocenters by client workbenches configured for remote
  * help in order to gather all the toc fragments and assemble them into a
  * complete toc.
  */
 public class TocServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Map<String, String> responseByLocale;
 	private DocumentWriter writer;
 	private static boolean clearCache;
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -56,12 +56,12 @@ public class TocServlet extends HttpServlet {
 		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		
+
 		if (clearCache){
 			responseByLocale = new WeakHashMap<String, String>();
 			clearCache = false;
 		}
-		
+
 		if (responseByLocale == null) {
 			responseByLocale = new WeakHashMap<String, String>();
 		}
@@ -76,10 +76,10 @@ public class TocServlet extends HttpServlet {
 			}
 			responseByLocale.put(locale, response);
 		}
-		
+
 		return (response != null) ? response : ""; //$NON-NLS-1$
 	}
-		
+
 	protected String serialize(TocContribution[] contributions, String locale) throws TransformerException {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class TocServlet extends HttpServlet {
 		buf.append("</tocContributions>\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
+
 	public static void clearCache()
 	{
 		clearCache = true;

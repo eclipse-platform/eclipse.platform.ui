@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,13 +26,13 @@ import org.eclipse.help.internal.base.scope.ScopeUtils;
  */
 
 public class TopicFinder {
-	
+
 	private ITopic[] foundTopicPath;
 	private int selectedToc;
 	private IToc[] tocs;
 	private String numericPath = null;
 	private AbstractHelpScope scope;
-	
+
 	public TopicFinder(String topicHref, IToc[] tocs, AbstractHelpScope scope) {
 		this.tocs = tocs;
 		this.scope = scope;
@@ -43,7 +43,7 @@ public class TopicFinder {
 				index = topicHref.indexOf("/nav/"); //$NON-NLS-1$
 				if (index != -1) {
 					foundTopicPath = getTopicPathFromNav(topicHref.substring(index + 5));
-			
+
 				} else {
 					ITopic topic = findTopic(UrlUtil.getHelpURL(topicHref));
 					if (topic != null && selectedToc >= 0) {
@@ -62,9 +62,9 @@ public class TopicFinder {
 	    } else {
 	    	selectedToc = -1;
 			foundTopicPath = null;
-	    }	
+	    }
 	}
-	
+
 	public ITopic[] getTopicPathFromNav(String nav) {
 		StringTokenizer tok = new StringTokenizer(nav, "_"); //$NON-NLS-1$
 		try {
@@ -90,11 +90,11 @@ public class TopicFinder {
     public ITopic[] getTopicPath() {
 		return foundTopicPath;
 	}
-    
+
     public int getSelectedToc() {
     	return selectedToc;
     }
-    
+
     public String getNumericPath() {
     	return numericPath;
     }
@@ -130,7 +130,7 @@ public class TopicFinder {
 		}
 		return path;
 	}
-	
+
 	private boolean sameTopic(ITopic topicToFind, ITopic topic) {
 		if (! topic.getLabel().equals(topicToFind.getLabel())) {
 			return false;
@@ -167,7 +167,7 @@ public class TopicFinder {
 		return null;
 	}
 
-	// Append an entry to the numeric path representing the position in the list 
+	// Append an entry to the numeric path representing the position in the list
 	// of filtered topics. Note that we need to convert the index in the unfiltered
 	// list to an index in a filtered list of topics
 	private void appendFilteredIndex(int indexInUnfilteredList, ITopic[] unfiltered) {
@@ -177,15 +177,15 @@ public class TopicFinder {
 				indexInFilteredList++;
 			}
 		}
-		
+
 		if (numericPath == null) {
 			numericPath = "" + indexInFilteredList; //$NON-NLS-1$
 		} else {
 			numericPath = numericPath  + '_' + indexInFilteredList;
-		}						
+		}
 	}
-	
-	// Prepend an entry to the numeric path representing the position in the list 
+
+	// Prepend an entry to the numeric path representing the position in the list
 	// of filtered topics. Note that we need to convert the index in the unfiltered
 	// list to an index in a filtered list of topics
 	private void prependFilteredIndex(int indexInUnfilteredList, ITopic[] unfiltered) {
@@ -195,18 +195,18 @@ public class TopicFinder {
 				indexInFilteredList++;
 			}
 		}
-		
+
 		if (numericPath == null) {
 			numericPath = "" + indexInFilteredList; //$NON-NLS-1$
 		} else {
 			numericPath = "" + indexInFilteredList + '_' + numericPath; //$NON-NLS-1$
-		}				
-		
+		}
+
 	}
 
 	/**
 	 * Finds a TOC that contains specified topic
-	 * 
+	 *
 	 * @param topic
 	 *            the topic href
 	 * @return -1 if the toc is not found
@@ -268,7 +268,7 @@ public class TopicFinder {
 
 	/**
 	 * Finds topic in a TOC
-	 * 
+	 *
 	 * @return ITopic or null
 	 */
 	private ITopic findTopic(String topic) {
@@ -322,7 +322,7 @@ public class TopicFinder {
 
 	/**
 	 * Check if given TOC is visible and non empty
-	 * 
+	 *
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */

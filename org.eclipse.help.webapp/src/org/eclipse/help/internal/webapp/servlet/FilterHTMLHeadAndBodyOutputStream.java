@@ -21,7 +21,7 @@ import org.eclipse.help.internal.search.HTMLDocParser;
 
 /**
  * Filters output stream and inserts specified bytes before the end of HEAD
- * element (before &lt;/html&gt; tag) and immediately after the BODY 
+ * element (before &lt;/html&gt; tag) and immediately after the BODY
  * element tag of HTML in the stream.
  */
 public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
@@ -50,11 +50,11 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private static final int STATE_LT_BODY = 11;
 
 	private static final int STATE_DONE = 17;
-	
+
 	private static final int STATE_LT_M = 18;
 	private static final int STATE_LT_ME = 19;
 	private static final int STATE_LT_MET = 20;
-	private static final int STATE_LT_META = 21;	
+	private static final int STATE_LT_META = 21;
 
 	private int areaState = STATE_START;
 
@@ -63,14 +63,14 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private byte[] toHead;
 
 	private String bodyContent;
-	
+
 	private String charset;
 
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream(7);
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param out
 	 *            sink output stream
 	 * @param bytesForHead
@@ -97,7 +97,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	 * the &lt;head&gt; HTML element.
 	 * <p>
 	 * Implements the abstract <tt>write</tt> method of <tt>OutputStream</tt>.
-	 * 
+	 *
 	 * @param b
 	 *            the <code>byte</code>.
 	 * @exception IOException
@@ -209,7 +209,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 							if (decodedChar.equals(nextChar)) {
 								out.write(codedChar);
 							} else {
-								int value = bodyContent.charAt(i);							
+								int value = bodyContent.charAt(i);
 							    String code = "&#" + value + ';'; //$NON-NLS-1$
 							    out.write(code.getBytes());
 							}
@@ -273,7 +273,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 			break;
 		}
 	}
-	
+
 	private void parseMetaTag(ByteArrayOutputStream buffer) {
 		ByteArrayInputStream is = new ByteArrayInputStream(buffer.toByteArray());
 		String value = HTMLDocParser.getCharsetFromHTML(is);
@@ -305,7 +305,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.io.FilterOutputStream#close()
 	 */
 	@Override

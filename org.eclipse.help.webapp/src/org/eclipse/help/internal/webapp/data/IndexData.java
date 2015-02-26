@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
@@ -139,7 +139,7 @@ public class IndexData extends ActivitiesData {
 			IIndexEntry[] subentries = EnabledTopicUtils.getEnabled(entry.getSubentries());
 			boolean multipleTopics = topics.length > 1;
 			boolean singleTopic = topics.length == 1;
-	
+
 			out.write("<li>"); //$NON-NLS-1$
 			if (usePlusMinus && advancedUI) generatePlusImage(multipleTopics);
 			generateAnchor(singleTopic, entry, level);
@@ -310,7 +310,7 @@ public class IndexData extends ActivitiesData {
 				out.write("\" alt=\"\">"); //$NON-NLS-1$
 			}
 			out.write("<a href=\""); //$NON-NLS-1$
-			out.write(UrlUtil.getHelpURL(topic.getHref())); 
+			out.write(UrlUtil.getHelpURL(topic.getHref()));
 			out.write("\"><img src=\""); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/topic.gif\" "); //$NON-NLS-1$

@@ -23,10 +23,10 @@ import org.eclipse.help.internal.util.ProductPreferences;
  */
 
 public class CssUtil {
-	
+
 	private final static String cssLink1 = "<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 	private static final String cssLink2 = "\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
-	
+
 	private static String replaceParameters(String input) {
 		final String OS = "${os}"; //$NON-NLS-1$
 		int index = input.indexOf(OS);
@@ -34,11 +34,11 @@ public class CssUtil {
 			return input;
 		}
 		String result = input.substring(0, index) + Platform.getOS() + input.substring(index + OS.length());
-		return replaceParameters(result); 
+		return replaceParameters(result);
 	}
-	
+
 	/**
-	 * @param filenames 
+	 * @param filenames
 	 * @return
 	 */
 	public static String[] getCssFilenames(String filenames ) {
@@ -52,7 +52,7 @@ public class CssUtil {
 		}
 		return result;
 	}
-	
+
 	public static void addCssFiles(final String preference, List<String> list) {
 		String topicCssPath = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, preference, "", null);  //$NON-NLS-1$
 		String[] cssFiles = CssUtil.getCssFilenames(topicCssPath);
@@ -60,7 +60,7 @@ public class CssUtil {
 			list.add(cssFile);
 		}
 	}
-	
+
 	public static String createCssIncludes(List<String> cssFiles, String backPath) {
 		StringBuffer script = new StringBuffer();
 		for (String cssPath : cssFiles) {
@@ -70,7 +70,7 @@ public class CssUtil {
 		}
 		return script.toString();
 	}
-	
+
 	/*
 	 * Substitute for PLUGINS_ROOT and PRODUCT_PLUGIN
 	 */

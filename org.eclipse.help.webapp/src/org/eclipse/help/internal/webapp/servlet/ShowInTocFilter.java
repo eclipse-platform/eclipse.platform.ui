@@ -39,7 +39,7 @@ public class ShowInTocFilter implements IFilter {
 		if ("/nftopic".equals(req.getServletPath()) ||  //$NON-NLS-1$
 			"/ntopic".equals(req.getServletPath()) ||  //$NON-NLS-1$
 			"/rtopic".equals(req.getServletPath()) ||  //$NON-NLS-1$
-			UrlUtil.isBot(req)) { 
+			UrlUtil.isBot(req)) {
 			return out;
 		}
 
@@ -55,7 +55,7 @@ public class ShowInTocFilter implements IFilter {
 		StringBuffer script = new StringBuffer(scriptPart1);
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
 		script.append(relativePath);
-	
+
 		script.append(scriptPart3);
 		try {
 			return new FilterHTMLHeadOutputStream(out, script.toString()
@@ -64,6 +64,6 @@ public class ShowInTocFilter implements IFilter {
 			return out;
 		}
 	}
-	
-	
+
+
 }

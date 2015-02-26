@@ -22,8 +22,8 @@ import org.eclipse.help.webapp.IFilter;
  * which replaces PLUGINS_ROOT with a relative path to eliminate redirects.
  * It also performs preprocessing to add child links at runtime.
  */
-public class PluginsRootFilter implements IFilter {	
-	
+public class PluginsRootFilter implements IFilter {
+
     @Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String pathPrefix = FilterUtils.getRelativePathPrefix(req);

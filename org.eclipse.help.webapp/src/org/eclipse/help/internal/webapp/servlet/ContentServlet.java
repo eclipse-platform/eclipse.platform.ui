@@ -48,12 +48,12 @@ public class ContentServlet extends HttpServlet {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * Called by the server (via the <code>service</code> method) to allow a
 	 * servlet to handle a POST request.
-	 * 
+	 *
 	 * Handle the search requests,
-	 *  
+	 *
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)

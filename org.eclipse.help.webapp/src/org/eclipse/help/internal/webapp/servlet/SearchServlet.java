@@ -33,12 +33,12 @@ import org.eclipse.help.internal.webapp.utils.SearchXMLGenerator;
 
 /*
  * Returns the search hits for the query provided in the phrase parameter.
- * 
+ *
  * This is called on infocenters by client workbenches configured for remote
  * help in order to retrieve search hits from the remote help server.
  */
 public class SearchServlet extends HttpServlet {
-	
+
 	private final class HitCollector implements ISearchHitCollector {
 		public Collection<SearchHit> results = new ArrayList<SearchHit>();
 
@@ -52,14 +52,14 @@ public class SearchServlet extends HttpServlet {
 		@Override
 		public void addQTCException(QueryTooComplexException exception)
 				throws QueryTooComplexException {
-			searchException = exception;			
+			searchException = exception;
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
 	private static final String PARAMETER_PHRASE = "phrase"; //$NON-NLS-1$
 	private QueryTooComplexException searchException;
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -69,7 +69,7 @@ public class SearchServlet extends HttpServlet {
 		else
 			resp.getWriter().write(response);
 	}
-	
+
 	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
@@ -88,7 +88,7 @@ public class SearchServlet extends HttpServlet {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	public static String serialize(Collection<SearchHit> results) {
 		return SearchXMLGenerator.serialize(results);
 	}

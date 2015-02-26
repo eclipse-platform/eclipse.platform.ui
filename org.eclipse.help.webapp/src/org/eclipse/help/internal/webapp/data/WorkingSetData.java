@@ -76,7 +76,7 @@ public class WorkingSetData extends RequestData {
 
 	/**
 	 * Returns the state of the TOC
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public short getTocState(int toc) {
@@ -116,7 +116,7 @@ public class WorkingSetData extends RequestData {
 		IToc toc = (IToc) adaptableToc.getAdapter(IToc.class);
 		return ScopeUtils.showInTree(toc, filter);
 	}
-	
+
 	public boolean isTopicEnabled(int tocIndex, int topicIndex) {
 		AdaptableToc adaptableToc = tocs[tocIndex];
 		IToc toc = (IToc) adaptableToc.getAdapter(IToc.class);
@@ -129,7 +129,7 @@ public class WorkingSetData extends RequestData {
 	 * state, the caller must use the parent state as well. This is not done
 	 * here for performance reasons. In the JSP, by the time one looks at the
 	 * topic, the parent toc has already been processed.
-	 * 
+	 *
 	 * @param toc
 	 * @param topic
 	 * @return short
@@ -183,7 +183,7 @@ public class WorkingSetData extends RequestData {
 	public String getTopicLabel(int toc, int topic) {
 		return tocs[toc].getTopics()[topic].getLabel();
 	}
-	
+
 	public String getDefaultName() {
 		for (int i = 1; i < 100; i++) {
 			String name = ServletResources.getString("DefaultScopeName", request) + i; //$NON-NLS-1$
@@ -193,15 +193,15 @@ public class WorkingSetData extends RequestData {
 		}
 	    return ""; //$NON-NLS-1$
 	}
-	
+
 	public boolean isCriteriaScopeEnabled(){
 		return wsmgr.isCriteriaScopeEnabled();
 	}
-	
+
 	public String[] getCriterionIds() {
 		return wsmgr.getCriterionIds();
 	}
-	
+
 
 	public String[] getCriterionValueIds(String criterionId) {
 		return wsmgr.getCriterionValueIds(criterionId);
@@ -211,14 +211,14 @@ public class WorkingSetData extends RequestData {
 	public String getCriterionDisplayName(String criterionId) {
 		return wsmgr.getCriterionDisplayName(criterionId);
 	}
-	
+
 	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
 		return wsmgr.getCriterionValueDisplayName(criterionId, criterionValueId);
 	}
-	
+
 	public short getCriterionCategoryState(int index) {
 		String[] categories = getCriterionIds();
-		
+
 		if (!isEditMode())
 			return STATE_UNCHECKED;
 		WorkingSet ws = getWorkingSet();
@@ -233,7 +233,7 @@ public class WorkingSetData extends RequestData {
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		if(!criteriaMap.keySet().contains(category))
 			return STATE_UNCHECKED;
-		
+
 		Set<String> criterionValuesFromWS = criteriaMap.get(category);
 		Set<String> criterionValuesSet = new HashSet<String>(Arrays.asList(getCriterionValueIds(category)));
 		if(criterionValuesFromWS.containsAll(criterionValuesSet)){
@@ -257,7 +257,7 @@ public class WorkingSetData extends RequestData {
 		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriterionResource[] criteria = ws.getCriteria();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
-		
+
 		Set<String> criterionValuesFromWS = criteriaMap.get(category);
 		String[] crietriaValues = getCriterionValueIds(category);
 		if (valueIndex < 0 || valueIndex >= crietriaValues.length){
@@ -270,5 +270,5 @@ public class WorkingSetData extends RequestData {
 			return STATE_UNCHECKED;
 		}
 	}
-	
+
 }

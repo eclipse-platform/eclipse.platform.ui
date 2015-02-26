@@ -19,52 +19,52 @@ import java.util.Locale;
  */
 
 public abstract class AbstractView {
-	
+
 	/**
-	 * 
-	 * @return a non translated name which is root name of the 
+	 *
+	 * @return a non translated name which is root name of the
 	 * View and Toolbar jsp files used in this view. For example if the name
 	 * is toc the help system will look for the files tocView.jsp
 	 * and tocToolbar.jsp
 	 */
     public abstract String getName();
-    
+
     /**
-     * @return a URL path, relative to /help which is the 
+     * @return a URL path, relative to /help which is the
      * location of the jsp files in the advanced presentation
      */
     public abstract String getURL();
-    
+
     /**
-     * @return a URL path, relative to /help which is the 
+     * @return a URL path, relative to /help which is the
      * location of the jsp files in the basic presentation
      */
     public String getBasicURL() {
     	return getURL();
     }
-    
+
     /**
      * @return a URL relative to /help which is the location
      * of the 16x16 image icon which will appear in the tab
      */
     public abstract String getImageURL();
-    
+
     /**
-     * @return a character which can be used as an accesskey to 
+     * @return a character which can be used as an accesskey to
      * navigate directly to this view, or (char)0 if no
      * acceskey is specified
      */
-    public abstract char getKey(); 
-    
+    public abstract char getKey();
+
     /**
-     * Used to allow for views whose loading is deferred until 
+     * Used to allow for views whose loading is deferred until
      * their contents are visible
      * @return true if this view has deferred loading
      */
     public boolean isDeferred() {
     	return false;
     }
-    
+
     /**
      * A user visible title for the view which will appear in the tooltip
      * @param locale the locale of the client
@@ -78,12 +78,12 @@ public abstract class AbstractView {
     public boolean isVisible() {
         return true;
     }
-    
+
     /**
      * @return true if the view should be shown in the basic presentation
      */
     public boolean isVisibleBasic() {
         return true;
     }
-    
+
 }

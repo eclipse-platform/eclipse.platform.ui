@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,18 +21,18 @@ public class SearchParser extends ResultParser {
 //	private ParseElement element;
 	private Properties properties;
 	private String currentTag;
-	
+
 	public SearchParser() {
 		super(JSonHelper.LABEL);
 	}
 
 	@Override
-	public void startElement(String uri, 
+	public void startElement(String uri,
 			String lname, String name, Attributes attrs) {
-		
+
 		currentTag = name;
 		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_HIT)) {
-			
+
 			properties = new Properties();
 			properties.put(JSonHelper.PROPERTY_NAME, name);
 			for (int i = 0; i < attrs.getLength(); i++) {
@@ -40,10 +40,10 @@ public class SearchParser extends ResultParser {
 				String val = attrs.getValue(i);
 				properties.put(qname, val);
 			}
-			
+
 			String id = "" + items.size(); //$NON-NLS-1$
 			properties.put(JSonHelper.ID, id);
-			
+
 		} else if (name.equalsIgnoreCase(XMLHelper.ELEMENT_CATEGORY)) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String qname = attrs.getQName(i);
@@ -54,24 +54,24 @@ public class SearchParser extends ResultParser {
 			}
 		}
 	}
-	
+
 	@Override
 	public void characters(char[] ch, int start, int length) {
-		
-		if (currentTag.equalsIgnoreCase(XMLHelper.ELEMENT_HIT) 
+
+		if (currentTag.equalsIgnoreCase(XMLHelper.ELEMENT_HIT)
 				|| currentTag.equalsIgnoreCase(XMLHelper.ELEMENT_HITS))
 			return;
-		
+
 		if (properties != null)
 		{
 			String content = new String(ch, start, length);
-			
+
 			String existing = (String) properties.get(currentTag);
 			if (existing == null)
 				existing = ""; //$NON-NLS-1$
-			
+
 			content = content.replaceAll("[\\n\\t]", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			properties.put(currentTag, existing + content);
 		}
 	}

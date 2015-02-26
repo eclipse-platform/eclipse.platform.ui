@@ -47,7 +47,7 @@ public class DynamicXHTMLFilter implements IFilter {
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
-		
+
 		/*
 		 * Remote help does all XHTML processing on the client side, so we
 		 * want raw XHTML topics from the remote help server.
@@ -66,7 +66,7 @@ public class DynamicXHTMLFilter implements IFilter {
 				super.close();
 				byte[] buf = toByteArray();
 				ByteArrayInputStream in = new ByteArrayInputStream(buf);
-				
+
 				String locale = UrlUtil.getLocale(req, null);
 				String contextPath = req.getContextPath();
 				String servletPath = req.getServletPath();
@@ -77,7 +77,7 @@ public class DynamicXHTMLFilter implements IFilter {
 				if (href.startsWith(servletPath)) {
 					href = href.substring(servletPath.length());
 				}
-				
+
 				try {
 					boolean filter = ProductPreferences.useEnablementFilters();
 					InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, filter);
@@ -90,11 +90,11 @@ public class DynamicXHTMLFilter implements IFilter {
 					writer.println(WebappResources.getString("ProcessingError", req.getLocale())); //$NON-NLS-1$
 					writer.println("</p>"); //$NON-NLS-1$
 					writer.println("<pre>"); //$NON-NLS-1$
-					
+
 					StringWriter w1 = new StringWriter();
 					PrintWriter w2 = new PrintWriter(w1);
 					t.printStackTrace(w2);
-					
+
 					writer.println(UrlUtil.htmlEncode(w1.getBuffer().toString()));
 					writer.println("</pre>"); //$NON-NLS-1$
 					writer.println(ERROR_PAGE_SUFFIX);

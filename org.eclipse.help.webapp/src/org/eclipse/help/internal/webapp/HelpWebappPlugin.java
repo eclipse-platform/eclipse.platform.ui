@@ -65,7 +65,7 @@ public class HelpWebappPlugin extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -83,7 +83,7 @@ public class HelpWebappPlugin extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -92,7 +92,7 @@ public class HelpWebappPlugin extends Plugin {
 		//bundleContext = null;
 		super.stop(context);
 	}
-	
+
 	public static BundleContext getContext() {
 		return bundleContext;
 	}

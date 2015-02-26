@@ -26,7 +26,7 @@ public class PrioritizedFilter implements IFilter, Comparable<PrioritizedFilter>
 		this.priority = priority;
 		this.filter = filter;
 	}
-	
+
 	private int priority() {
 		return priority;
 	}
@@ -38,7 +38,7 @@ public class PrioritizedFilter implements IFilter, Comparable<PrioritizedFilter>
 	public int compareTo(PrioritizedFilter o) {
 		return priority() - o.priority();
 	}
-	
+
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		return filter.filter(req, out);

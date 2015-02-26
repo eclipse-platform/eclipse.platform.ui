@@ -33,7 +33,7 @@ public class ToolbarData extends RequestData {
 	private ToolbarButton[] buttons;
 	private String[] scriptFiles;
 	private static Pattern jsNamePattern = Pattern.compile("^[a-zA-Z_$][a-zA-Z1-9_]*"); //$NON-NLS-1$
-	
+
 
 	public ToolbarData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -53,7 +53,7 @@ public class ToolbarData extends RequestData {
 		}
 		return false;
 	}
-	
+
 	private void loadButtons() {
 		String[] names = request.getParameterValues("name"); //$NON-NLS-1$
 		String[] tooltips = request.getParameterValues("tooltip"); //$NON-NLS-1$
@@ -86,12 +86,12 @@ public class ToolbarData extends RequestData {
 							.getString(tooltips[i], request), preferences
 							.getImagesDirectory()
 							+ "/e_" + images[i], //$NON-NLS-1$
-							actions[i], params[i], states[i]));			
+							actions[i], params[i], states[i]));
 			}
 		}
-		
+
 		addExtensionButtons(buttonList);
-		
+
 		// add implicit maximize/restore button on all toolbars
 		if (isIE() || isMozilla()
 				&& "1.2.1".compareTo(getMozillaVersion()) <= 0 //$NON-NLS-1$
@@ -109,7 +109,7 @@ public class ToolbarData extends RequestData {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(BUTTON_EXTENSION_POINT);
-		
+
 		List<AbstractButton> extensionButtons = new ArrayList<AbstractButton>();
 		List<String> scripts = new ArrayList<String>();
 		for (IConfigurationElement element : elements) {
@@ -127,12 +127,12 @@ public class ToolbarData extends RequestData {
 				{
 					toolbarName = request.getParameter("toolbar"); //$NON-NLS-1$
 				}
-				if (button.isAddedToToolbar(toolbarName)) {	
+				if (button.isAddedToToolbar(toolbarName)) {
 				    extensionButtons.add(button);
 				}
 			}
 		}
-		
+
 		Collections.sort(extensionButtons);
 
 		for (AbstractButton button : extensionButtons) {
@@ -140,14 +140,14 @@ public class ToolbarData extends RequestData {
 			if (scriptFile != null) {
 				scripts.add(UrlUtil.getRelativePath(request, scriptFile));
 			}
-			ToolbarButton toolButton = new ToolbarButton(button.getId(), 
+			ToolbarButton toolButton = new ToolbarButton(button.getId(),
 					button.getTooltip(UrlUtil.getLocaleObj(request, response)),
-					request.getContextPath() + button.getImageURL(), 
+					request.getContextPath() + button.getImageURL(),
 					button.getAction(),
 					"", //$NON-NLS-1$
 					button.getState());
 			 buttonList.add(toolButton);
-		}	
+		}
 		scriptFiles = scripts.toArray(new String[scripts.size()]);
 	}
 
@@ -183,7 +183,7 @@ public class ToolbarData extends RequestData {
 	public String getRestoreTooltip() {
 		return ServletResources.getString("restore", request); //$NON-NLS-1$
 	}
-	
+
 	public String[] getScriptFiles() {
 		return scriptFiles;
 	}

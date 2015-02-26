@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.webapp.AbstractButton;
 
 public class ButtonData extends RequestData {
-	
+
 	private static final String BUTTON_EXTENSION_POINT = "org.eclipse.help.webapp.toolbarButton"; //$NON-NLS-1$
 	private List<AbstractButton> allButtons;
 
@@ -35,7 +35,7 @@ public class ButtonData extends RequestData {
 			HttpServletResponse response) {
 		super(context, request, response);
 	}
-	
+
 	public AbstractButton[] getButtons() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
@@ -62,11 +62,11 @@ public class ButtonData extends RequestData {
 			//if (button.isVisible() && button.getLocation() == location) {
 				buttonList.add(button);
 			//}
-		}			
+		}
 		AbstractButton[] buttons = buttonList.toArray(new AbstractButton[buttonList.size()]);
-		return buttons;		
+		return buttons;
 	}
-	
+
 	public String getImageUrl(AbstractButton button) {
 		return request.getContextPath() + button.getImageURL();
 	}

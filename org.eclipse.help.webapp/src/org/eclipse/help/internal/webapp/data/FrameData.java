@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.webapp.AbstractFrame;
 
 public class FrameData extends RequestData {
-	
+
 	private static final String FRAME_EXTENSION_POINT = "org.eclipse.help.webapp.frame"; //$NON-NLS-1$
 	private List<AbstractFrame> allFrames;
 
@@ -35,7 +35,7 @@ public class FrameData extends RequestData {
 			HttpServletResponse response) {
 		super(context, request, response);
 	}
-	
+
 	public AbstractFrame[] getFrames(int location) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
@@ -62,15 +62,15 @@ public class FrameData extends RequestData {
 			if (frame.isVisible() && frame.getLocation() == location) {
 				frameList.add(frame);
 			}
-		}			
+		}
 		AbstractFrame[] frames = frameList.toArray(new AbstractFrame[frameList.size()]);
-		return frames;		
+		return frames;
 	}
-	
+
 	public String getUrl(AbstractFrame frame) {
 		return request.getContextPath() + frame.getURL();
 	}
-	
+
 	public String getContentAreaFrameSizes() {
 		String size = "24,*"; //$NON-NLS-1$
 		AbstractFrame[] frames = getFrames(AbstractFrame.BELOW_CONTENT);
@@ -80,11 +80,11 @@ public class FrameData extends RequestData {
 		}
 		return size;
 	}
-	
+
 	/**
 	 * Get the additional frame added to the Main Help Toolbar
 	 * Considering of the layout and space of Main Help Toolbar, only one extra frame is supported
-	 * 
+	 *
 	 * @return AbstractFrame or null if not found
 	 */
 	public AbstractFrame getHelpToolbarFrame() {
@@ -98,7 +98,7 @@ public class FrameData extends RequestData {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Get layout(frame sizes) of Main Help Toolbar
 	 */

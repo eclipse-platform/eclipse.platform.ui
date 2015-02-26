@@ -54,7 +54,7 @@ public class PrintData extends RequestData {
 
 	// where to inject the section numbers
 	private static final Pattern PATTERN_HEADING = Pattern.compile("<body.*?>[\\s]*?([^<\\s])", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
-	
+
 	// to normalize external links to new base href
 	private static final Pattern PATTERN_LINK = Pattern.compile("(src|href)=\"(.*?\")", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
@@ -68,7 +68,7 @@ public class PrintData extends RequestData {
 	private static int allowedMaxTopics;
 
 	private boolean confirmed;
-	
+
 	// flag right-to-left direction of text
 	private boolean isRTL;
 
@@ -86,7 +86,7 @@ public class PrintData extends RequestData {
 
 		isRTL = UrlUtil.isRTL(request, response);
 		scope = RequestScope.getScope(request, response, false);
-		
+
 		String confirmString = request.getParameter("confirmed"); //$NON-NLS-1$
 		if ((confirmString != null) && ("true".equals(confirmString))) { //$NON-NLS-1$
 			confirmed = true;
@@ -109,7 +109,7 @@ public class PrintData extends RequestData {
 	public String getTocHref() {
 		return getToc().getHref();
 	}
-	
+
 	/*
 	 * Returns the href of the root topic to print.
 	 */
@@ -164,9 +164,9 @@ public class PrintData extends RequestData {
             RequestDispatcher rd = context.getRequestDispatcher("/advanced/printError.jsp"); //$NON-NLS-1$
             request.setAttribute("msg", "noConnection"); //$NON-NLS-1$ //$NON-NLS-2$
             rd.forward(request, response);
-            return;    
+            return;
 		}
-        
+
 
 		ITopic topic = getTopic(); // topic selected for print
 		int topicRequested = topicsRequested(topic);
@@ -204,9 +204,9 @@ public class PrintData extends RequestData {
     private static synchronized void releaseConnection() {
     	allowedConnections++;
     }
-	
+
 	/*
-	 * Calculate the amount of topics to print in one request 
+	 * Calculate the amount of topics to print in one request
 	 */
 	private int topicsRequested(ITopic topic) {
 		int topicsRequested = 0;
@@ -230,7 +230,7 @@ public class PrintData extends RequestData {
 		out.write("<html>\n"); //$NON-NLS-1$
 		out.write("<head>\n"); //$NON-NLS-1$
 		out.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"); //$NON-NLS-1$
-		out.write("<title>" + UrlUtil.htmlEncode(getTitle()) +"</title>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		out.write("<title>" + UrlUtil.htmlEncode(getTitle()) +"</title>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		out.write("<link rel=\"stylesheet\" href=\"print.css\" charset=\"utf-8\" type=\"text/css\">\n"); //$NON-NLS-1$
 		out.write("</head>\n"); //$NON-NLS-1$
 		out.write("<body dir=\"" + (isRTL ? "right" : "left") + "\" onload=\"print()\">\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -340,7 +340,7 @@ public class PrintData extends RequestData {
 		return content;
 	}
 	/*
-	 * 
+	 *
 	 * Injects the sectionId into the document heading.
 	 */
 	private String injectCss(String content) {
@@ -351,7 +351,7 @@ public class PrintData extends RequestData {
 		}
 		return content;
 	}
-	
+
 	/*
 	 * Normalizes all external links since we're not at the same base href as the
 	 * topics we're printing.
@@ -369,7 +369,7 @@ public class PrintData extends RequestData {
 		buf.append(content.substring(prev));
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Returns the string content of the referenced topic in UTF-8.
 	 */
@@ -483,7 +483,7 @@ public class PrintData extends RequestData {
 		}
 		return getToc().getTopic(null);
 	}
-	
+
 	private static String removeAnchor(String href) {
 		int index = href.indexOf('#');
 		if (index != -1) {
@@ -491,7 +491,7 @@ public class PrintData extends RequestData {
 		}
 		return href;
 	}
-	
+
 	private String getCssIncludes() {
 		List<String> css = new ArrayList<String>();
 		CssUtil.addCssFiles("topic_css", css); //$NON-NLS-1$

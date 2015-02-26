@@ -28,26 +28,26 @@ import org.osgi.service.prefs.BackingStoreException;
  * Used by the about.html page to display help system preferences
  */
 
-public class PreferenceWriter {	
+public class PreferenceWriter {
 	private StringBuffer buf;
 	private Locale locale;
 	private boolean isXML;
-	
+
 	public PreferenceWriter(StringBuffer buf, Locale locale) {
 		this(buf, locale, false);
 	}
-	
+
 	public PreferenceWriter(StringBuffer buf, Locale locale, boolean isXML) {
 		this.buf = buf;
 		this.locale = locale;
 		this.isXML = isXML;
 	}
-	
+
 	public void writePreferences() {
 		writePreference("org.eclipse.help"); //$NON-NLS-1$
 		writePreference("org.eclipse.help.base"); //$NON-NLS-1$
 	}
-	
+
 	private void writePreference(String plugin) {
 		try {
 		    IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(plugin);
@@ -57,7 +57,7 @@ public class PreferenceWriter {
 			String[] allKeys = keySet.toArray(new String[keySet.size()]);
 			if (allKeys.length > 0) {
 			    Arrays.sort(allKeys);
-			    
+
 			    if (!isXML) {
 			    	buf.append("\n<h3>"); //$NON-NLS-1$
 			    	buf.append(plugin);

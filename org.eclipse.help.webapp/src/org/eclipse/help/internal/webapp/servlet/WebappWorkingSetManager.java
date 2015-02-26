@@ -26,7 +26,7 @@ import org.eclipse.help.internal.workingset.WorkingSet;
 
 /**
  * Proxy for WorkingSetManager or InfocenterWorkingSetManager.
- * 
+ *
  * @since 3.0
  */
 public class WebappWorkingSetManager implements IHelpWorkingSetManager {
@@ -37,7 +37,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param locale
 	 */
 	public WebappWorkingSetManager(HttpServletRequest request,
@@ -75,10 +75,10 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		return wSetManager.createWorkingSet(name, elements, criteria);
 	}
-	
+
 	/**
 	 * Returns a working set by name
-	 *  
+	 *
 	 */
 	@Override
 	public WorkingSet getWorkingSet(String name) {
@@ -86,7 +86,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	}
 	/**
 	 * Implements IWorkingSetManager.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
 	@Override
@@ -104,7 +104,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
-	 * 
+	 *
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
@@ -133,17 +133,17 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	public void setCurrentWorkingSet(String scope) {
 		wSetManager.setCurrentWorkingSet(scope);
 	}
-	
+
 	@Override
 	public boolean isCriteriaScopeEnabled(){
 		return wSetManager.isCriteriaScopeEnabled();
 	}
-	
+
 	@Override
 	public String[] getCriterionIds() {
 		return wSetManager.getCriterionIds();
 	}
-	
+
 
 	@Override
 	public String[] getCriterionValueIds(String criterionId) {
@@ -155,7 +155,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	public String getCriterionDisplayName(String criterionId) {
 		return wSetManager.getCriterionDisplayName(criterionId);
 	}
-	
+
 	@Override
 	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
 		return wSetManager.getCriterionValueDisplayName(criterionId, criterionValueId);

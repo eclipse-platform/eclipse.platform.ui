@@ -20,7 +20,7 @@ import org.eclipse.help.internal.webapp.data.*;
 
 /**
  * Utilities for working with cookies
- * 
+ *
  * @since 3.0
  */
 public class CookieUtil {
@@ -55,7 +55,7 @@ public class CookieUtil {
 			HttpServletRequest request, HttpServletResponse response) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setMaxAge(COOKIE_LIFE);
-		
+
 		if ( needsCookiePath(request)) {
 			cookie.setPath(getCookiePath(request)); // Only set path if necessary
 		}
@@ -65,19 +65,19 @@ public class CookieUtil {
 					.println("CookieUtil.setCookieValue(" + name + ", " + value + ",...)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	public static void setCookieValueWithoutPath(String name, String value,
 			HttpServletRequest request, HttpServletResponse response ) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setMaxAge(COOKIE_LIFE);
-		
+
 		response.addCookie(cookie);
 		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 			System.out
 					.println("CookieUtil.setCookieValueWithoutPath(" + name + ", " + value + ",...)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	private static boolean needsCookiePath(HttpServletRequest request) {
 		// All cookies should be at the same path level as the context ( /help )
 		// The cookie path needs to be set if there are more path segments
@@ -86,7 +86,7 @@ public class CookieUtil {
 		String contextPath = request.getContextPath();
 		return requestURI.indexOf('/', contextPath.length() + 1) > 0;
 	}
-	
+
 	private static String getCookiePath(HttpServletRequest request) {
 		return request.getContextPath() + '/';
 	}
@@ -94,18 +94,18 @@ public class CookieUtil {
 	public static void deleteCookie(String name, HttpServletRequest request, HttpServletResponse response) {
 		deleteCookieUsingPath(name, request, response, getCookiePath(request));
 	}
-	
-	protected static void deleteCookieUsingPath(String name, HttpServletRequest request, 
+
+	protected static void deleteCookieUsingPath(String name, HttpServletRequest request,
 			HttpServletResponse response, String cookiePath) {
 		Cookie cookie = new Cookie(name, ""); //$NON-NLS-1$
 		String requestURI = request.getRequestURI();
 		if (!(requestURI.startsWith(cookiePath) && requestURI.indexOf('/', cookiePath.length() + 1) == -1)) {
-		     cookie.setPath(cookiePath); 
+		     cookie.setPath(cookiePath);
 	    }
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
-	
+
 	public static void deleteObsoleteCookies(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
 		HashSet<String> cookiesToKeep= new HashSet<String>();
@@ -116,7 +116,7 @@ public class CookieUtil {
 				    if (isObsoleteCookie(name) || cookiesToKeep.contains(name)) {
 				    	cookiesToDelete.add(name);
 				    }
-					cookiesToKeep.add(name); {				
+					cookiesToKeep.add(name); {
 				}
 			}
 
@@ -128,7 +128,7 @@ public class CookieUtil {
 	}
 
 	/*
-	 * Is this one of the cookies that was used before Eclipse 3.6 of the 
+	 * Is this one of the cookies that was used before Eclipse 3.6 of the
 	 * form wset_nn
 	 */
 	private static boolean isObsoleteCookie(String name) {
@@ -144,13 +144,13 @@ public class CookieUtil {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Saves string in multiple browser cookies. Cookies can store limited
 	 * length string. This method will attemt to split string among multiple
 	 * cookies. The following cookies will be set name1=length <substing1
 	 * name2=substring2 ... namen=substringn
-	 * 
+	 *
 	 * @param data
 	 *            a string containing legal characters for cookie value
 	 * @throws IOException

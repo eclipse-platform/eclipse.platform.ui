@@ -63,7 +63,7 @@ public class EclipseConnector {
 
 	private ServletContext context;
 	private static INotFoundCallout notFoundCallout = null; // For JUnit Testing
-	 
+
  	public EclipseConnector(ServletContext context) {
 		this.context= context;
  	}
@@ -71,7 +71,7 @@ public class EclipseConnector {
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		
+
 		// URL
 		String pathInfo = req.getPathInfo();
 		if (pathInfo == null)
@@ -82,18 +82,18 @@ public class EclipseConnector {
 		String url = query == null ? pathInfo : (pathInfo + "?" + query); //$NON-NLS-1$
 
 		try {
-	        
+
 		    //System.out.println("Transfer " + url); //$NON-NLS-1$
 			// Redirect if the request includes PLUGINS_ROOT and is not a content request
 			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
 			if (index!= -1 && url.indexOf("content/" + HelpURLConnection.PLUGINS_ROOT) == -1) {  //$NON-NLS-1$
 				StringBuffer redirectURL = new StringBuffer();
-				
+
 				redirectURL.append(req.getContextPath());
 				redirectURL.append(req.getServletPath());
 				redirectURL.append("/"); //$NON-NLS-1$
 				redirectURL.append(url.substring(index+HelpURLConnection.PLUGINS_ROOT.length()));
-				
+
 				resp.sendRedirect(redirectURL.toString());
 				return;
 			}
@@ -102,7 +102,7 @@ public class EclipseConnector {
 					|| lowerCaseuRL.startsWith("platform:") //$NON-NLS-1$
 					|| (lowerCaseuRL.startsWith("file:") && UrlUtil.wasOpenedFromHelpDisplay(url))) { //$NON-NLS-1$
 				url = pathInfo; // without query
-				
+
 				// ensure the file is only accessed from a local installation
 				if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER
 						|| !UrlUtil.isLocalRequest(req)) {
@@ -126,19 +126,19 @@ public class EclipseConnector {
 			    pageNotFound = true;
 			    if (notFoundCallout != null) {
 			    	notFoundCallout.notFound(url);
-			    }				
-			    
+			    }
+
 			    boolean isRTopicPath = isRTopicPath(req.getServletPath());
-			    
-			    if (requiresErrorPage(lowerCaseuRL) && !isRTopicPath) { 
-					
+
+			    if (requiresErrorPage(lowerCaseuRL) && !isRTopicPath) {
+
 			    	String errorPage = null;
 			    	if (RemoteStatusData.isAnyRemoteHelpUnavailable()) {
 			            errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+ MissingContentManager.MISSING_TOPIC_HREF;
 			    	} else {
 				        errorPage = MissingContentManager.getInstance().getPageNotFoundPage(url, false);
 			    	}
-			        if (errorPage != null && errorPage.length() > 0) {				
+			        if (errorPage != null && errorPage.length() > 0) {
 						con = createConnection(req, resp, "help:" + errorPage); //$NON-NLS-1$
 						resp.setContentType("text/html"); //$NON-NLS-1$
 						try {
@@ -146,7 +146,7 @@ public class EclipseConnector {
 						} catch (IOException ioe2) {
 							// Cannot open error page
 						    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-							return;							
+							return;
 						}
 					} else {
 						// Error page not defined
@@ -179,7 +179,7 @@ public class EclipseConnector {
 				message.append(writer.toString());
 				message.append("</pre>"); //$NON-NLS-1$
 				message.append(errorPageEnd);
-				
+
 				is = new ByteArrayInputStream(message.toString().getBytes("UTF8")); //$NON-NLS-1$
 			}
 
@@ -187,7 +187,7 @@ public class EclipseConnector {
 			IFilter filters[] = pageNotFound ? errorPageFilters : allFilters;
 			if (isProcessingRequired(resp.getContentType())) {
 				for (IFilter filter : filters) {
-					// condition for enabling remote css 
+					// condition for enabling remote css
 					if((filter instanceof InjectionFilter) && is instanceof RemoteHelpInputStream){
 						InjectionFilter ifilter = new InjectionFilter(true);
 						out=ifilter.filter(req, out);
@@ -301,7 +301,7 @@ public class EclipseConnector {
 			}
 		} catch (Exception e) {
 		}
-		
+
 		try{
 			dataStream.close();
 		}catch(Exception e){}
@@ -313,7 +313,7 @@ public class EclipseConnector {
 	private URLConnection openConnection(String url,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		
+
 		URLConnection con = null;
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
@@ -360,14 +360,14 @@ public class EclipseConnector {
 	public static void setNotFoundCallout(INotFoundCallout callout) {
 		notFoundCallout = callout;
 	}
-	
+
 	public static boolean isRTopicPath(String servletPath)
 	{
 		boolean isRTopicPath=false;
-		
+
 		if(servletPath.equals("/rtopic")) //$NON-NLS-1$
 			isRTopicPath = true;
-		
+
 		return isRTopicPath;
 	}
 }

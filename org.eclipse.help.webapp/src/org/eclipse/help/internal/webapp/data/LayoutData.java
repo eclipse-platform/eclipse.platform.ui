@@ -71,7 +71,7 @@ public class LayoutData extends RequestData {
 		}
 		return height;
 	}
-	
+
 	public String getFooterURL() {
 		String footer = preferences.getFooter();
 		if (footer == null || footer.trim().length() == 0) {
@@ -92,7 +92,7 @@ public class LayoutData extends RequestData {
 		}
 		return height;
 	}
-	
+
 	/**
 	 * @return the text to be added to the rows attribute of the frameset
 	 */
@@ -166,10 +166,10 @@ public class LayoutData extends RequestData {
 		if (bookmarksview !=null) {
 			viewList.add(bookmarksview);
 		}
-		
+
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
-				.getConfigurationElementsFor(VIEW_EXTENSION_POINT); 
+				.getConfigurationElementsFor(VIEW_EXTENSION_POINT);
 		for (IConfigurationElement element : elements) {
 			Object obj = null;
 			try {
@@ -182,7 +182,7 @@ public class LayoutData extends RequestData {
 				viewList.add((AbstractView) obj);
 			}
 		}
-		
+
 		views = viewList.toArray(new AbstractView[viewList.size()]);
 		return views;
 	}
@@ -206,24 +206,24 @@ public class LayoutData extends RequestData {
 				return view;
 		return null;
 	}
-	
+
 	public String getWindowTitle() {
 		String titlePref = preferences.getTitleResource();
 		int slash = titlePref.indexOf('/');
 		if (slash > 0) {
 			String resourceContainer = titlePref.substring(0, slash);
-			String resource = titlePref.substring(slash + 1);	
+			String resource = titlePref.substring(slash + 1);
 			try {
 				Bundle bundle = Platform.getBundle(resourceContainer);
 				BundleContext bundleContext = HelpWebappPlugin.getContext();
-				ServiceReference<?> ref = bundleContext.getServiceReference(BundleLocalization.class.getName()); 
-				BundleLocalization localization = (BundleLocalization) bundleContext.getService(ref); 
+				ServiceReference<?> ref = bundleContext.getServiceReference(BundleLocalization.class.getName());
+				BundleLocalization localization = (BundleLocalization) bundleContext.getService(ref);
                 return localization.getLocalization(bundle, locale).getString(resource);
 			} catch (Exception e) {
 				// Fall through
 			}
 		}
-		
+
 		if (preferences.isWindowTitlePrefix()) {
 			return ServletResources.getString("browserTitle", //$NON-NLS-1$
 					BaseHelpSystem.getProductName(), request);
@@ -237,7 +237,7 @@ public class LayoutData extends RequestData {
 	public String getAdvancedURL(AbstractView view, String fileSuffix) {
 		return createURL(view.getURL(), view.getName(), fileSuffix);
 	}
-	
+
 	/**
 	 * Returns the URL of a JSP file in the basic presentation
 	 */
@@ -254,7 +254,7 @@ public class LayoutData extends RequestData {
 		}
 		return request.getContextPath() + path + viewName + fileSuffix;
 	}
-	
+
 	public String getImageURL(AbstractView view) {
 		String filename = view.getImageURL();
 		if (filename.length() != 0 && filename.charAt(0) == '/') {
@@ -262,7 +262,7 @@ public class LayoutData extends RequestData {
 		}
 		return filename;
 	}
-	
+
 	public String getTitle(AbstractView view) {
 		return view.getTitle(UrlUtil.getLocaleObj(request, null));
 	}

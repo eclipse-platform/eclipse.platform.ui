@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation    
- *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466   
+ *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466
  *     Dave Carver - modification to isAdvanced(), see Bug 238533
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
@@ -44,7 +44,7 @@ public class UrlUtil {
 	// Locales that infocenter can serve in addition to the default locale.
 	// null indicates that infocenter can serve every possible client locale.
 	private static Collection<String> locales;
-	
+
 	private static final int INFOCENTER_DIRECTION_BY_LOCALE = 1;
 	private static final int INFOCENTER_DIRECTION_LTR = 2;
 	private static final int INFOCENTER_DIRECTION_RTL = 3;
@@ -106,7 +106,7 @@ public class UrlUtil {
 			result.append("&#" + chInt + ';'); //$NON-NLS-1$
 			return;
 		}
-		result.append(ch);		
+		result.append(ch);
 	}
 
 	private static boolean needsEncoding(char ch) {
@@ -144,18 +144,18 @@ public class UrlUtil {
 	/**
 	 * Returns a URL that can be loaded from a browser. This method is used for
 	 * all url's except those from the webapp plugin.
-	 * 
+	 *
 	 * @param url
 	 * @return String
 	 */
 	public static String getHelpURL(String url) {
 		return getHelpURL(url, 1);
 	}
-	
+
 
 	/**
 	 * Returns a URL that can be used as
-	 * 
+	 *
 	 * @param url either a complete url including protocol or a help page
 	 * path of form /plugin/path
 	 * @param depth the number of directory segments beneath /help of the containing pages url
@@ -168,7 +168,7 @@ public class UrlUtil {
 		else if (url.startsWith("file:/") || url.startsWith("jar:file:/")) //$NON-NLS-1$ //$NON-NLS-2$
 			url = getHelpUrlPrefix(depth) +'/' + url;
 		else
-			url =  getHelpUrlPrefix(depth) + url; 
+			url =  getHelpUrlPrefix(depth) + url;
 		return url;
 	}
 
@@ -181,21 +181,21 @@ public class UrlUtil {
 		prefix += "topic"; //$NON-NLS-1$
 		return prefix;
 	}
-	
+
 	/**
 	 * Tests to see if the path specified in a topic parameter can be opened in
-	 * the content frame. See Bug 233466 for an explanation of why in general we do 
+	 * the content frame. See Bug 233466 for an explanation of why in general we do
 	 * do not want to open external sites in the content frame.
-	 * 
+	 *
 	 * If the preference org.eclipse.help.base/restrictTopicParameter is false any
 	 * path is permitted. Any href which was just opened from the help display is
 	 * also permitted, this is required for cheat sheets and intro. Otherwise the
-	 * path is permitted only if it does not contain a protocol. 
+	 * path is permitted only if it does not contain a protocol.
 	 * @param path the path passed as a ?topic parameter. May not be null.
 	 * @return true if the conditions above are met.
 	 */
 	public static boolean isValidTopicParamOrWasOpenedFromHelpDisplay(String path) {
-		// Topics opened via the help display ( including cheat sheets and intro ) 
+		// Topics opened via the help display ( including cheat sheets and intro )
 		// are are always valid
 		if (wasOpenedFromHelpDisplay(path)) {
 			return true;
@@ -215,14 +215,14 @@ public class UrlUtil {
 		}
 		return path.equals(getHelpURL(BaseHelpSystem.getHelpDisplay().getHrefOpenedFromHelpDisplay()));
 	}
-	
+
 	/**
 	 * Returns a path to the given topic in the form of child indexes. For
 	 * example, if the path points to the 3rd subtopic under the 2nd topic of
 	 * the 4th toc, it will return { 3, 1, 2 }.
-	 * 
+	 *
 	 * @param path the path portion of the url without the initial "/help", e.g. "/topic/my.plugin/foo.html"
-	 * @param locale 
+	 * @param locale
 	 * @return path to the topic using zero-based indexes
 	 * If the path is empty or has invalid syntax null is returned
 	 */
@@ -337,12 +337,12 @@ public class UrlUtil {
 	public static boolean isKonqueror(String agent) {
 		if (agent==null)
 		    return false;
-		agent=agent.toLowerCase(Locale.ENGLISH); 
+		agent=agent.toLowerCase(Locale.ENGLISH);
 		return agent.indexOf("konqueror") >= 0; //$NON-NLS-1$
 	}
 
 	/**
-	 * Test to see if this is a "mozilla" browser, i.e. 
+	 * Test to see if this is a "mozilla" browser, i.e.
 	 * just about anything other than Internet Explorer
 	 * @param request a request from the browser
 	 * @return true if the browser is Netcape, Firefox, Safari or Konqueror
@@ -438,7 +438,7 @@ public class UrlUtil {
 		return version;
 	}
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 *            HttpServletResponse or null (locale will not be persisted in
@@ -450,12 +450,12 @@ public class UrlUtil {
 		String localeStr = getLocale(request, response);
 		return getLocale(localeStr);
 	}
-	
+
 	/**
 	 * Returns the locale object from the provided string.
 	 * @param localeStr the encoded locale string
 	 * @return the Locale object
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public static Locale getLocale(String localeStr) {
@@ -469,7 +469,7 @@ public class UrlUtil {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 *            HttpServletResponse or null (locale will not be persisted in
@@ -532,9 +532,9 @@ public class UrlUtil {
 		// no match
 		return defaultLocale;
 	}
-	
+
 	/*
-	 * Replace any characters other than alphanumeric or hyphen in a locale string with "_" 
+	 * Replace any characters other than alphanumeric or hyphen in a locale string with "_"
 	 * See Bug 223361
 	 */
 	public static String cleanLocale(String parameter) {
@@ -556,7 +556,7 @@ public class UrlUtil {
 	/**
 	 * Obtains locale passed as lang parameter with a request during user
 	 * session
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 *            response or null; if null, locale will not be persisted (in
@@ -615,7 +615,7 @@ public class UrlUtil {
 
 	}
 	/**
-	 *  
+	 *
 	 */
 	private static void initializeLocales() {
 		// initialize default locale
@@ -649,7 +649,7 @@ public class UrlUtil {
 		if (infocenterLocales.isEmpty()) {
 			String preferredLocales = Platform.getPreferencesService().getString
 			    (HelpBasePlugin.PLUGIN_ID, ("locales"), "", null); //$NON-NLS-1$ //$NON-NLS-2$
-			StringTokenizer tokenizer = new StringTokenizer(preferredLocales, 
+			StringTokenizer tokenizer = new StringTokenizer(preferredLocales,
 					" ,\t"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				infocenterLocales.add(tokenizer.nextToken());
@@ -670,7 +670,7 @@ public class UrlUtil {
 			}
 		}
 	}
-	
+
 	private static void initializeIcDirection() {
 		// from property
 		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
@@ -696,7 +696,7 @@ public class UrlUtil {
 		}
 		// by client locale
 	}
-	
+
 	public static boolean isRTL(HttpServletRequest request,
 			HttpServletResponse response) {
 		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
@@ -717,7 +717,7 @@ public class UrlUtil {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * Get the version from a string of the form mm.nn
 	 */
@@ -743,14 +743,14 @@ public class UrlUtil {
 		if (isMozilla(agent) && !isKonqueror(agent)) return true;
 		return false;
 	}
-	
+
 	// Return true if the URI is of the form /<context>/nav/*
 	public static boolean isNavPath(String uri) {
 		int slash1 = uri.indexOf('/');
 		int slash2 = uri.indexOf('/', 1);
 		return (slash1 == 0 && slash2 >= 0 && uri.substring(slash2).startsWith("/nav")); //$NON-NLS-1$
 	}
-	
+
 	// Create a relative path based on the current URL
 	public static String getRelativePath(HttpServletRequest req, String filePath) {
 		StringBuffer result = new StringBuffer(""); //$NON-NLS-1$

@@ -31,7 +31,7 @@ public class RequestData {
 	protected boolean advancedUI;
 	/**
 	 * Constructs the data for a request.
-	 * 
+	 *
 	 * @param context
 	 * @param request
 	 */
@@ -79,7 +79,7 @@ public class RequestData {
 	}
 
 	public boolean isMacMozilla() {
-		return UrlUtil.isMozilla(request) && 
+		return UrlUtil.isMozilla(request) &&
 		(request.getHeader("User-Agent").indexOf("Macintosh") > 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

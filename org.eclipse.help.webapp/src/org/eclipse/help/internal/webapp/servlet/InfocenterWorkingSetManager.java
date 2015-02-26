@@ -40,7 +40,7 @@ import org.eclipse.help.internal.workingset.WorkingSetComparator;
 /**
  * The Infocenter working set manager stores help working sets. Working sets are
  * persisted in client cookies whenever one is added or removed.
- * 
+ *
  * @since 3.0
  */
 public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
@@ -55,13 +55,13 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	private SortedSet<WorkingSet> workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
 	private String locale;
 	private AdaptableTocsArray root;
-	
+
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 	private Map<String, Set<String>> allCriteriaValues;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param locale
 	 */
 	public InfocenterWorkingSetManager(HttpServletRequest request,
@@ -104,10 +104,10 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		return new WorkingSet(name, elements, criteria);
 	}
-	
+
 	/**
 	 * Returns a working set by name
-	 *  
+	 *
 	 */
 	@Override
 	public WorkingSet getWorkingSet(String name) {
@@ -125,7 +125,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Implements IWorkingSetManager.
-	 * 
+	 *
 	 * @see org.eclipse.help.internal.workingset.IHelpWorkingSetManager#getWorkingSets()
 	 */
 	@Override
@@ -146,11 +146,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		}
 	}
 
-	private void restoreState() {		
+	private void restoreState() {
 		restoreContents();
 		restoreCriteria();
 	}
-	
+
 	private void restoreContents(){
 		String data = CookieUtil.restoreString(COOKIE_WSET_CONTENTS, request);
 		if (data == null) {
@@ -161,7 +161,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		if (values.length < 1) {
 			return;
 		}
-		
+
 		currentWorkingSet = URLCoder.decode(values[0]);
 		i : for (int i = 1; i < values.length; i++) {
 			String[] nameAndHrefs = values[i].split("&", -1); //$NON-NLS-1$
@@ -195,9 +195,9 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			workingSets.add(ws);
 		}
 	}
-	
+
 	private void restoreCriteria(){
-		
+
 		String data = CookieUtil.restoreString(COOKIE_WSET_CRITERIA, request);
 		if (data == null) {
 			return;
@@ -230,7 +230,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				criteriaResource.add(criterionResource);
 
 			}
-			
+
 			WorkingSet workingset = getWorkingSet(name);
 			if(workingset != null){
 				CriterionResource[] criteria = new CriterionResource[criteriaResource.size()];
@@ -249,9 +249,9 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		saveContents();
 		saveCriteria();
 	}
-	
+
 	private void saveContents() throws IOException {
-		
+
 		StringBuffer data = new StringBuffer();
 		data.append(URLCoder.compactEncode(currentWorkingSet /* , "UTF8" */
 		));
@@ -295,12 +295,12 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				}
 			}
 		}
-		
+
 		saveToCookie(COOKIE_WSET_CONTENTS, data.toString());
 	}
-	
+
 	private void saveCriteria() throws IOException {
-		
+
 		StringBuffer data = new StringBuffer();
 		data.append(URLCoder.compactEncode(currentWorkingSet));
 		//|scope1$platform#AIX,WINDOWS,$version#1.0,2.0,
@@ -320,14 +320,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 						data.append(URLCoder.compactEncode(value+','));
 					}
 				}
-			}	
+			}
 		}
-		
+
 		saveToCookie(COOKIE_WSET_CRITERIA, data.toString());
 	}
-	
+
 	private void saveToCookie(String name, String data) throws IOException{
-		
+
 		try {
 			CookieUtil.saveString(name, data, MAX_COOKIES, request, response);
 		} catch (IOException ioe) {
@@ -338,11 +338,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			throw ioe;
 		}
 	}
-	
+
 
 	/**
 	 * *
-	 * 
+	 *
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
@@ -415,7 +415,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public String[] getCriterionIds() {
 		if(null == allCriteriaValues){
@@ -430,11 +430,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			}
 			Collections.sort(criterionIds);
 		}
-		String[] ids = new String[criterionIds.size()];                                        		
+		String[] ids = new String[criterionIds.size()];
 		criterionIds.toArray(ids);
 		return ids;
 	}
-	
+
 
 	@Override
 	public String[] getCriterionValueIds(String criterionName) {
@@ -450,11 +450,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				valueIds.add(UNCATEGORIZED);
 			}
 		}
-		String[] valueIdsArray = new String[valueIds.size()];                                        		
+		String[] valueIdsArray = new String[valueIds.size()];
 		valueIds.toArray(valueIdsArray);
 		return valueIdsArray;
 	}
-	
+
 
 	@Override
 	public String getCriterionDisplayName(String criterionId) {

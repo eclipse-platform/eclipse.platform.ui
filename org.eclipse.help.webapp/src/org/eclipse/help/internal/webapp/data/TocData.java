@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -51,21 +51,21 @@ public class TocData extends ActivitiesData {
 	private int[] rootPath = null;
 	// path from TOC to the selected topic, excluding TOC;
 	private ITopic[] topicPath = null;
-	
+
 	// String representing the topic path as numbers separated by underscores e.g. 2_4_3
 	private String numericPath;
 
 	// List of TOC's, unfiltered
 	private IToc[] tocs;
-	
+
 	// images directory
 	private String imagesDirectory;
-	
+
 	// Scope
 	private AbstractHelpScope scope;
 	/**
 	 * Constructs the xml data for the contents page.
-	 * 
+	 *
 	 * @param context
 	 * @param request
 	 */
@@ -76,11 +76,11 @@ public class TocData extends ActivitiesData {
 
 		this.tocParameter = request.getParameter("toc"); //$NON-NLS-1$
 		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
-		this.completePath = request.getParameter(COMPLETE_PATH_PARAM); 
+		this.completePath = request.getParameter(COMPLETE_PATH_PARAM);
 		this.expandPathParam = request.getParameter("expandPath"); //$NON-NLS-1$
 		this.scope = RequestScope.getScope(request, response, false);
-		
-		
+
+
 		if (tocParameter != null && tocParameter.length() == 0)
 			tocParameter = null;
 		if (topicHref != null && topicHref.length() == 0)
@@ -89,12 +89,12 @@ public class TocData extends ActivitiesData {
 			expandPathParam = null;
 		if (completePath != null && completePath.length() == 0)
 			completePath = null;
-		
+
 		String anchor = request.getParameter("anchor"); //$NON-NLS-1$
 		if (topicHref != null && anchor != null) {
 			topicHref = topicHref + '#' + anchor;
 		}
-		
+
 		// initialize rootPath
 		String pathStr = request.getParameter("path"); //$NON-NLS-1$
 		if (pathStr != null && pathStr.length() > 0) {
@@ -126,11 +126,11 @@ public class TocData extends ActivitiesData {
 		}
 		return isError;
 	}
-	
+
 	// Accessor methods to avoid exposing help classes directly to JSP.
 	// Note: this seems ok for now, but maybe we need to reconsider this
 	//       and allow help classes in JSP's.
-	
+
 	public int getTocCount() {
 		return tocs.length;
 	}
@@ -149,7 +149,7 @@ public class TocData extends ActivitiesData {
 
 	/**
 	 * Returns the selected TOC
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getSelectedToc() {
@@ -160,7 +160,7 @@ public class TocData extends ActivitiesData {
 	 * Returns the topic to display. If there is a TOC, return its topic
 	 * description. Return null if no topic is specified and there is no toc
 	 * description.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getSelectedTopic() {
@@ -175,12 +175,12 @@ public class TocData extends ActivitiesData {
 			return UrlUtil.getHelpURL(tocDescription.getHref());
 		return UrlUtil.getHelpURL(null);
 	}
-	
+
 	/**
 	 * Returns the topic to display. If there is a TOC, return its topic
 	 * description. Return null if no topic is specified and there is no toc
 	 * description.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getSelectedTopicWithPath() {
@@ -194,7 +194,7 @@ public class TocData extends ActivitiesData {
 	/**
 	 * Returns a list of all the TOC's as xml elements. Individual TOC's are not
 	 * loaded yet.
-	 * 
+	 *
 	 * @return IToc[]
 	 */
 	public IToc[] getTocs() {
@@ -203,7 +203,7 @@ public class TocData extends ActivitiesData {
 
 	/**
 	 * Check if given TOC is visible
-	 * 
+	 *
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */
@@ -212,7 +212,7 @@ public class TocData extends ActivitiesData {
 	}
 	/**
 	 * Check if given TOC is visible
-	 * 
+	 *
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */
@@ -252,7 +252,7 @@ public class TocData extends ActivitiesData {
 			numericPath = finder.getNumericPath();
 		}
 	}
-	
+
 	private void getEnabledTopicPath() {
 		int[] path = UrlUtil.splitPath(expandPathParam);
 		if (path != null) {
@@ -295,7 +295,7 @@ public class TocData extends ActivitiesData {
 
 	/**
 	 * Generates the HTML code (a tree) for a TOC.
-	 * 
+	 *
 	 * @param toc
 	 * @param out
 	 * @throws IOException
@@ -320,7 +320,7 @@ public class TocData extends ActivitiesData {
 			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
 				out.write("name=\"selectedItem\" "); //$NON-NLS-1$
 			}
-			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref())+"\"" + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref())+"\"" + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/container_obj.gif' alt=\"\" border=0>&nbsp;"); //$NON-NLS-1$
@@ -341,7 +341,7 @@ public class TocData extends ActivitiesData {
 			if (getSelectedTopicHelpHref().equals(topic.getHref())) {
 				out.write("name=\"selectedItem\" "); //$NON-NLS-1$
 			}
-			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref()) +"\""+ ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+			out.write("href="+"\"" + UrlUtil.getHelpURL(topic.getHref()) +"\""+ ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out.write("/topic.gif' alt=\"\" border=0>&nbsp;"); //$NON-NLS-1$
@@ -378,7 +378,7 @@ public class TocData extends ActivitiesData {
 	/**
 	 * Obtains children topics for a given navigation element. Topics from TOCs
 	 * not matching enabled activities are filtered out.
-	 * 
+	 *
 	 * @param element ITopic or IToc
 	 * @return ITopic[]
 	 */
@@ -389,7 +389,7 @@ public class TocData extends ActivitiesData {
 	/**
 	 * Obtains children topics for a given navigation element. Topics from TOCs
 	 * not matching enabled activities are filtered out.
-	 * 
+	 *
 	 * @param navigationElement
 	 * @return List of ITopic
 	 */
@@ -468,7 +468,7 @@ public class TocData extends ActivitiesData {
         }
 
     }
-    
+
     public ITopic[] getTopicPathFromRootPath(IToc toc) {
 		ITopic[] topicPath;
 		// Determine the topicPath from the path passed in as a parameter
@@ -490,7 +490,7 @@ public class TocData extends ActivitiesData {
 		}
 		return topicPath;
 	}
-    
+
     public ITopic[] getTopicPath() {
     	return topicPath;
     }
@@ -498,15 +498,15 @@ public class TocData extends ActivitiesData {
     public int[] getRootPath() {
     	return rootPath;
     }
-    
+
     public String getTopicHref() {
     	return topicHref;
     }
-    
+
     public String getNumericPath() {
     	return numericPath;
     }
-    
+
     public boolean isExpandPath() {
         return expandPathParam != null;
     }

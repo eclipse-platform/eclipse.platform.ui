@@ -27,12 +27,12 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
  * Sends all topic extensions available on this host in XML form.
- * 
+ *
  * This is called on infocenters by client workbenches configured for remote
  * help in order to gather all the pieces of a document.
  */
 public class ExtensionServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Map<String, String> responseByLocale;
 	private DocumentWriter writer;
@@ -44,12 +44,12 @@ public class ExtensionServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		resp.getWriter().write(processRequest(req, resp));
 	}
-	
+
 	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		
+
 		if (responseByLocale == null) {
 			responseByLocale = new WeakHashMap<String, String>();
 		}
@@ -66,7 +66,7 @@ public class ExtensionServlet extends HttpServlet {
 		}
 		return response;
 	}
-	
+
 	private String serialize(ContentExtension[] extensions) throws TransformerException {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$

@@ -25,7 +25,7 @@ public class IconFinder {
 	private static final String CLOSED = "_closed"; //$NON-NLS-1$
 	private static final String OPEN = "_open"; //$NON-NLS-1$
 	private static final String ALT = "_alt"; //$NON-NLS-1$
-	private static final String EXT_PT = "org.eclipse.help.toc"; //$NON-NLS-1$ 
+	private static final String EXT_PT = "org.eclipse.help.toc"; //$NON-NLS-1$
 	private static final String TOC_ICON_ELEMENT = "tocIcon"; //$NON-NLS-1$
 	private static final String TOC_ICON_ID = "id"; //$NON-NLS-1$
 	private static final String OPEN_ICON_PATH = "openIcon"; //$NON-NLS-1$
@@ -37,7 +37,7 @@ public class IconFinder {
 	public static int TYPEICON_OPEN   = 0;
 	public static int TYPEICON_CLOSED = 1;
 	public static int TYPEICON_LEAF   = 2;
-	
+
 
 	private static Map<String, String> IconPathMap = null; // hash table
 
@@ -51,7 +51,7 @@ public class IconFinder {
 	private static String getIconPath(String IconKey) {
 		return getEntry(IconKey);
 	}
-	
+
 	private static String getIconAltText(String IconKey) {
 		return getEntry(IconKey);
 	}
@@ -64,13 +64,13 @@ public class IconFinder {
 	}
 
 	private static void setIconImagePath(String bundleId, String path, String key) {
-		String iconPath = IconFinder.getIconPath(key);		
-		if(iconPath == null){			
-			iconPath = bundleId + PATH_SEPARATOR + path; 
+		String iconPath = IconFinder.getIconPath(key);
+		if(iconPath == null){
+			iconPath = bundleId + PATH_SEPARATOR + path;
 			IconFinder.addIconPath(key, iconPath);
 		}
 	}
-	private static void setIconAltText(String value, String key) {		
+	private static void setIconAltText(String value, String key) {
 			IconFinder.addIconPath(key, value);
 	}
 	public static String getImagePathFromId(String iconId, int type) {
@@ -79,12 +79,12 @@ public class IconFinder {
 		}
 		initializeTocIcons();
 		String suffix;
-		
+
 		switch(type){
 		  case 0:suffix = OPEN;break;
 		  case 1:suffix = CLOSED;break;
 		  case 2:suffix = LEAF;break;
-		  default: suffix = OPEN; break;		  
+		  default: suffix = OPEN; break;
 		}
 		String result = lookupImagePath(iconId + suffix);
 		if (result != null) {
@@ -92,17 +92,17 @@ public class IconFinder {
 		}
 		return lookupImagePath(iconId + OPEN);
 	}
-	
+
 	public static String getIconAltFromId(String iconId) {
 		if (iconId == null) {
 			return null;
 		}
-		initializeTocIcons();	
-		return getIconAltText(iconId + ALT);		
+		initializeTocIcons();
+		return getIconAltText(iconId + ALT);
 	}
-	
+
 	/**
-	 * Tests to see if an icon attribute was specified and the icon type was declared 
+	 * Tests to see if an icon attribute was specified and the icon type was declared
 	 * in an extension.
 	 */
 	public static boolean isIconDefined(String icon) {
@@ -112,11 +112,11 @@ public class IconFinder {
 		String result = getImagePathFromId(icon, TYPEICON_OPEN);
 		return result != null;
 	}
-	
+
 	private static String lookupImagePath(String name) {
 		return getIconPath(name);
 	}
-	
+
 	private static void initializeTocIcons() {
 		if (iconsInitialized) {
 			return;

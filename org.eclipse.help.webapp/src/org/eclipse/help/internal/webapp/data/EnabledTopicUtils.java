@@ -24,7 +24,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 
 /**
- * Utilities to test for enabled topics, index entries etc. 
+ * Utilities to test for enabled topics, index entries etc.
  */
 
 public class EnabledTopicUtils {
@@ -43,7 +43,7 @@ public class EnabledTopicUtils {
 		}
 		return hasEnabledSubtopic(topic);
 	}
-	
+
 	public static boolean hasEnabledSubtopic(ITopic topic) {
 		ITopic[] subtopics = topic.getSubtopics();
 		for (ITopic subtopic : subtopics) {
@@ -53,7 +53,7 @@ public class EnabledTopicUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Test whether a toc is enabled
 	 * @param topic
@@ -73,7 +73,7 @@ public class EnabledTopicUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Test whether an entry is enabled
 	 * @param entry

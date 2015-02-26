@@ -83,7 +83,7 @@ public class WorkingSetManagerData extends RequestData {
 			AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements
 					.size()];
 			selectedElements.toArray(elements);
-			
+
 			WorkingSet ws = null;
 			if(!isCriteriaScopeEnabled()) {
 				ws = wsmgr.createWorkingSet(name, elements);
@@ -91,7 +91,7 @@ public class WorkingSetManagerData extends RequestData {
 				CriterionResource[] criteria = getCriteriaResource();
 				ws = wsmgr.createWorkingSet(name, elements, criteria);
 			}
-			
+
 			wsmgr.addWorkingSet(ws);
 		}
 	}
@@ -130,7 +130,7 @@ public class WorkingSetManagerData extends RequestData {
 
 				ws.setElements(elements);
 				ws.setName(name);
-				
+
 				if(isCriteriaScopeEnabled()){
 					ws.setCriteria(getCriteriaResource());
 				}
@@ -209,7 +209,7 @@ public class WorkingSetManagerData extends RequestData {
 		// one criterion value selected(based on criterion category name and index of the value)
 		// eg:version_1_
 		List<String> category = Arrays.asList(getCriterionIds());
-		
+
 		String[] criteria = request.getParameterValues("criteria"); //$NON-NLS-1$
 		if (criteria == null)
 			criteria = new String[0];
@@ -251,24 +251,24 @@ public class WorkingSetManagerData extends RequestData {
 							existedElements = new HashSet<String>();
 						}
 						existedElements.add(selectedValue);
-						selectedElements.put(criterionName, existedElements);	
+						selectedElements.put(criterionName, existedElements);
 					}
 				}
 			}
 		}
 
-		
+
 		List<CriterionResource> resources = new ArrayList<CriterionResource>();
 		for (String key : selectedElements.keySet()) {
 			Set<String> values = selectedElements.get(key);
 			CriterionResource resource = new CriterionResource(key, new ArrayList<String>(values));
 			resources.add(resource);
 		}
-		
+
 		CriterionResource[] processedResources = new CriterionResource[resources.size()];
 		resources.toArray(processedResources);
 		return processedResources;
-		
+
 	}
 
 	public boolean isCriteriaScopeEnabled() {

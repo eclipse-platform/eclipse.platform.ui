@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import java.io.Writer;
 public class Utils {
 
 	public static final String SERVICE_CONTEXT 		= "/vs/service"; //$NON-NLS-1$
-	
+
 	public static final String RETURN_TYPE 			= "returnType"; //$NON-NLS-1$
 	public static final String NO_CATEGORY 			= "noCategory"; //$NON-NLS-1$
 
@@ -31,12 +31,12 @@ public class Utils {
 	public static final String XML 					= "xml"; //$NON-NLS-1$
 	public static final String JSON 				= "json"; //$NON-NLS-1$
 	public static final String HTML 				= "html"; //$NON-NLS-1$
-	
+
 	// Constants for About service
 	public static final long AGENT			= 1L;
 	public static final long PREFERENCE		= 2L;
 	public static final long ABOUT_PLUGIN	= 3L;
-	
+
 	public static String convertStreamToString(InputStream is)
 			throws IOException {
 		if (is != null) {
@@ -57,7 +57,7 @@ public class Utils {
 			return ""; //$NON-NLS-1$
 		}
 	}
-	
+
 	public static void transferContent(InputStream inputStream, OutputStream out)
 			throws IOException {
 		try {
@@ -84,7 +84,7 @@ public class Utils {
 		response = removeString(response, "index.jsp"); //$NON-NLS-1$
 		return response;
 	}
-	
+
 	private static String removeString(String response, String remove) {
 		StringBuffer buff = new StringBuffer(response);
 		int index = buff.indexOf(remove);

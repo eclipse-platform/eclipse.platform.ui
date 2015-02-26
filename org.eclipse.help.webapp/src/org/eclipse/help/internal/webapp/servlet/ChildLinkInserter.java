@@ -28,7 +28,7 @@ import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 public class ChildLinkInserter {
-	
+
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private HttpServletRequest req;
 	private OutputStream out;
@@ -41,8 +41,8 @@ public class ChildLinkInserter {
 		this.out = out;
 		scope = RequestScope.getScope(req, null, false);
 	}
-	
-	public void addContents(String encoding) throws IOException {	
+
+	public void addContents(String encoding) throws IOException {
 		String path = req.getParameter(TocData.COMPLETE_PATH_PARAM);
 	    ITopic[] subtopics = getSubtopics();
 	    if (subtopics.length == 0) {
@@ -83,7 +83,7 @@ public class ChildLinkInserter {
 			out.write(linkString.getBytes());
 		}
 	}
-	
+
 	private ITopic[] getSubtopics() {
 		String locale = UrlUtil.getLocale(req, null);
 		String pathInfo = req.getPathInfo();
@@ -101,7 +101,7 @@ public class ChildLinkInserter {
 		}
 		return   new ITopic[0];
 	}
-	
+
 	private String getBackpath(String path) {
 		int num = new Path(path).segmentCount() - 1;
 		StringBuffer buf = new StringBuffer();

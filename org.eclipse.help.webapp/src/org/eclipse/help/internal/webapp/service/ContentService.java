@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,38 +29,38 @@ import org.eclipse.help.internal.webapp.utils.Utils;
 
 /**
  * Returns an HTML page for the selected topic passed as request path info.
- * 
+ *
  * <p>Passes the request to {@link org.eclipse.help.internal.webapp.servlet.ContentServlet}
  * servlet.
- * 
+ *
  * @param lang	- (optional) specifies the locale
- * 
+ *
  * @return		An html page for the selected topic
- * 
+ *
  * @version	$Version$
- * 
+ *
  **/
 public class ContentService extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		
+
 		String baseURL = req.getRequestURL().toString();
 		String contentURL = baseURL.replaceFirst(Utils.SERVICE_CONTEXT, ""); //$NON-NLS-1$
 		String query = req.getQueryString();
 		if (query != null)
 			contentURL += '?' + query;
-		
+
 		URL url = new URL(contentURL);
 		URLConnection con = ProxyUtil.getConnection(url);
 		con.setAllowUserInteraction(false);
 		con.setDoInput(true);
 		con.connect();
-		
+
 		String contentType;
 		ServletContext context = getServletContext();
 		String pathInfo = req.getPathInfo();
@@ -71,7 +71,7 @@ public class ContentService extends HttpServlet {
 			contentType = con.getContentType();
 		}
 		resp.setContentType(contentType);
-		
+
 		InputStream is = con.getInputStream();
 		OutputStream out = resp.getOutputStream();
 		if (!contentType.equals("application/xhtml+xml")  //$NON-NLS-1$

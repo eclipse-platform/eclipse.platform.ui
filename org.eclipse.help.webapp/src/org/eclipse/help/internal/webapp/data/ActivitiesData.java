@@ -20,7 +20,7 @@ import org.eclipse.help.internal.base.*;
 public class ActivitiesData extends RequestData {
 	/**
 	 * Constructs the data for a request.
-	 * 
+	 *
 	 * @param context
 	 * @param request
 	 */
@@ -52,7 +52,7 @@ public class ActivitiesData extends RequestData {
 	}
 	/**
 	 * Gives state of show all topics button
-	 * 
+	 *
 	 * @return "hidden", "off", or "on"
 	 */
 	public String getButtonState() {

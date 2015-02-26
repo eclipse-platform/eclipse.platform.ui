@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,24 +23,24 @@ import org.eclipse.help.internal.webapp.utils.Utils;
 
 /**
  * Returns <code>xml</code> or <code>String</code> representing search progress monitor
- * 
+ *
  * @param lang			- (optional) specifies the locale
  * @param returnType	- (Optional) specifies the return type of the servlet.
  * 						  Accepts either <code>xml</code> (default) or
  * 						  <code>json</code>
- * 
+ *
  * @return		Search progress monitor state, either as <code>xml</code>
  * or <code>String</code> (default)
- * 
+ *
  * @version	$Version$
- * 
+ *
  **/
 public class SearchStateService extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private final static String STATE = "state"; //$NON-NLS-1$
 	private final static String PERCENT = "percent"; //$NON-NLS-1$
-	
+
 	@Override
 	public void init() throws ServletException {
 	}
@@ -77,10 +77,10 @@ public class SearchStateService extends HttpServlet {
 	 */
 	private void process(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+
 		resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate"); //$NON-NLS-1$ //$NON-NLS-2$
 		resp.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		
+
 		int indexCompletion = 0;
 		String locale = UrlUtil.getLocale(req, resp);
 		SearchProgressMonitor pm = SearchProgressMonitor
@@ -94,7 +94,7 @@ public class SearchStateService extends HttpServlet {
 				indexCompletion = 100 - 1;
 			}
 		}
-		
+
 		String returnType = req.getParameter(Utils.RETURN_TYPE);
 		boolean isXML = Utils.XML.equalsIgnoreCase(returnType);
 		if (isXML) {
@@ -106,7 +106,7 @@ public class SearchStateService extends HttpServlet {
 		}
 		resp.getWriter().flush();
 	}
-	
+
 	public static String toXML(int percent) {
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"; //$NON-NLS-1$
 		xml += '<'+STATE+">\n"; //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class SearchStateService extends HttpServlet {
 		xml += "</"+STATE+">"; //$NON-NLS-1$ //$NON-NLS-2$
 		return xml;
 	}
-	
+
 	public static String toString(int percent) {
 		return "Percent:" + percent; //$NON-NLS-1$
 	}

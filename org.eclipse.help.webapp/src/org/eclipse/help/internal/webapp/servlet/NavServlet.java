@@ -37,7 +37,7 @@ import org.eclipse.help.webapp.IFilter;
  * of contents. Displays links to the direct child topics.
  */
 public class NavServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private static final String XHTML_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n<title>"; //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class NavServlet extends HttpServlet {
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 
 	private static final IFilter filters[] = new IFilter[]{
-		new FramesetFilter(), new InjectionFilter(false), new BreadcrumbsFilter(), 
+		new FramesetFilter(), new InjectionFilter(false), new BreadcrumbsFilter(),
 		new ShowInTocFilter(), new ExtraFilters() };
 
 	@Override
@@ -55,7 +55,7 @@ public class NavServlet extends HttpServlet {
 
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
-		
+
 		String path;
 		ITopic topic;
 		try {
@@ -76,11 +76,11 @@ public class NavServlet extends HttpServlet {
 		writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp), scope);
 		writer.close();
 	}
-	
+
 	private void showPageNotFoundPage(HttpServletRequest req,
 			HttpServletResponse resp) {
 		String errorPage = MissingContentManager.getInstance().getPageNotFoundPage(req.getServletPath(), false);
-        if (errorPage != null && errorPage.length() > 0) {	
+        if (errorPage != null && errorPage.length() > 0) {
         	String href = req.getRequestURL().toString();
         	int navIndex = href.indexOf("/nav"); //$NON-NLS-1$
         	if (navIndex >= 0 ) {
@@ -96,8 +96,8 @@ public class NavServlet extends HttpServlet {
 				} catch (IOException e) {
 					// Fall through
 				}
-        	}    	 
-	    } 
+        	}
+	    }
 	    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	}
 
@@ -117,7 +117,7 @@ public class NavServlet extends HttpServlet {
 			locale = Locale.getDefault();
 		return locale;
 	}
-	
+
 	protected ITopic getTopic(String topicPath, Locale locale) {
 		StringTokenizer tok = new StringTokenizer(topicPath, "_"); //$NON-NLS-1$
 		int index = Integer.parseInt(tok.nextToken());
@@ -128,7 +128,7 @@ public class NavServlet extends HttpServlet {
 		}
 		return topic;
 	}
-	
+
 	private void writeContent(ITopic topic, String path, Locale locale, PrintWriter writer, boolean isRTL, AbstractHelpScope scope) {
 		writer.write(XHTML_1);
 		writer.write(topic.getLabel());

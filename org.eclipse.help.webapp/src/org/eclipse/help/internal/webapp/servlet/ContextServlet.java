@@ -28,15 +28,15 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
  * Returns a context help entry with the id specified in the id parameter.
- * 
+ *
  * This is called on infocenters by client workbenches configured for remote
  * help in order to retrieve context help stored on the remote help server.
  */
 public class ContextServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private static final String PARAMETER_ID = "id"; //$NON-NLS-1$
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -48,7 +48,7 @@ public class ContextServlet extends HttpServlet {
 		else
 			resp.getWriter().write(response);
 	}
-	
+
 	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
@@ -72,7 +72,7 @@ public class ContextServlet extends HttpServlet {
 		IContext context = HelpPlugin.getContextManager().getContext(id, locale);
 		return context;
 	}
-	
+
 	private String serialize(IContext context) throws IOException {
 		StringBuffer buff = new StringBuffer();
 		buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class ContextServlet extends HttpServlet {
 		if (context instanceof IContext2) {
 			String title = ((IContext2)context).getTitle();
 			if (title != null && title.length() > 0) {
-				buff.append(" title=\"" + title + "\""); //$NON-NLS-1$ //$NON-NLS-2$			
+				buff.append(" title=\"" + title + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		buff.append(">\n"); //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class ContextServlet extends HttpServlet {
 		if (description != null) {
 			buff.append("   <description>" + UrlUtil.htmlEncode(description) + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		IHelpResource[] topics = context.getRelatedTopics();
 		for (IHelpResource topic : topics) {
 			buff.append("   <" + Topic.NAME); //$NON-NLS-1$

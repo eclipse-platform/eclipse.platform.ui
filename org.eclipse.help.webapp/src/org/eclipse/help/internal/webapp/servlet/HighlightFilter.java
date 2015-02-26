@@ -23,7 +23,7 @@ import org.eclipse.help.webapp.IFilter;
 
 public class HighlightFilter implements IFilter {
 	private static final String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
-	
+
 	private static final String scriptPart1 = "\n<script type=\"text/javascript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
 	private static final String scriptPart2 = ");\nvar pluginDefault = "; //$NON-NLS-1$
 	private static final String scriptPart3 = ";\n-->\n</script>\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
@@ -31,7 +31,7 @@ public class HighlightFilter implements IFilter {
 
 	private static final String sheetRefPart1 = "<link id=\"highlightStyle\" rel=\"STYLESHEET\" href=\""; //$NON-NLS-1$
 	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
-	
+
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
@@ -61,7 +61,7 @@ public class HighlightFilter implements IFilter {
 
 	/**
 	 * Creates Java Script that does highlighting
-	 * 
+	 *
 	 * @param keywords
 	 * @return byte[]
 	 */
@@ -86,7 +86,7 @@ public class HighlightFilter implements IFilter {
 		String path = FilterUtils.getRelativePathPrefix(req);
 		buf.append(path);
 		buf2.append(path);
-		
+
 		buf.append(scriptPart5);
 		buf.append(buf2.toString());
 		buf.append(sheetRefPart3);
@@ -96,11 +96,11 @@ public class HighlightFilter implements IFilter {
 			return new byte[0];
 		}
 	}
-	
+
 	/**
 	 * Extracts keywords from query that contains keywords dobule quoted and
 	 * separated by space
-	 * 
+	 *
 	 * @return Collection of String
 	 */
 	private Collection<String> getWords(HttpServletRequest req) {
@@ -139,7 +139,7 @@ public class HighlightFilter implements IFilter {
 	}
 	/**
 	 * Encodes strings inside collection for embedding in HTML source
-	 * 
+	 *
 	 * @return Collection of String
 	 */
 	private Collection<String> encodeKeyWords(Collection<String> col) {
@@ -158,7 +158,7 @@ public class HighlightFilter implements IFilter {
 	/**
 	 * Removes wildcard characters from words, by splitting words around wild
 	 * cards
-	 * 
+	 *
 	 * @return Collection of String
 	 */
 	private Collection<String> removeWildCards(Collection<String> col) {

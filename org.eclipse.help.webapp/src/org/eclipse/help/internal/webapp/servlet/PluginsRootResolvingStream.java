@@ -25,15 +25,15 @@ import org.eclipse.help.internal.search.HTMLDocParser;
  * It also performs preprocessing to add child links at runtime.
  */
 public class PluginsRootResolvingStream extends OutputStream {
-	
+
 	protected OutputStream out;
-	
+
 	private int state = INITIAL_STATE;
 	private int charsMatched = 0;
 	private int lastKeywordMatch = 0;
 	private static final int  INITIAL_STATE = 0;
 	private static final int  IN_TAG = 1;
-	private static final int  IN_QUOTE = 2;  
+	private static final int  IN_QUOTE = 2;
 	private static final int  IN_QUOTE_NOT_PLUGINS_ROOT = 3;
 	private static final int  MAY_BE_INCLUDE = 4;
 	private static final int  IN_METATAG = 5;
@@ -59,17 +59,17 @@ public class PluginsRootResolvingStream extends OutputStream {
 	@Override
 	public void write(int b) throws IOException {
 		switch(state) {
-	    case INITIAL_STATE: 
+	    case INITIAL_STATE:
 	    	if (b == '<') {
 	    		state = IN_TAG;
-	    		charsMatched = 0; 
+	    		charsMatched = 0;
 	    		tag = new StringBuffer();
 	    		tagRead = false;
 	    	} else {
 	    	    out.write(b);
 	    	}
 	    	break;
-	    case IN_TAG: 
+	    case IN_TAG:
 			if (charsMatched == 0) {
 				if (b == '!') {
 					state = MAY_BE_INCLUDE;
@@ -130,7 +130,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	    			state = IN_QUOTE_NOT_PLUGINS_ROOT;
 	    		}
 	    	} else {
-	    		// We just discovered that this is not "PLUGINS_ROOT/  
+	    		// We just discovered that this is not "PLUGINS_ROOT/
 	    		// flush out the characters
 	    		state = IN_QUOTE_NOT_PLUGINS_ROOT;
 	    		flushPluginsRootCharacters();
@@ -144,7 +144,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	    	for (int i = 0; i < keywords.length; i++) {
 	    		if (possibleKeywordMatches[i]) {
 	    			if (keywords[i].charAt(charsMatched) == b) {
-	    				canStillMatch = true;  
+	    				canStillMatch = true;
 	    				lastKeywordMatch = i;
 	    				if (keywords[i].length() == charsMatched + 1) {
 	    					perfectMatch = i;
@@ -165,7 +165,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	            out.write(b);
 	    	}
 	    	break;
-	    case IN_METATAG: 
+	    case IN_METATAG:
 	    	out.write(b);
 	    	metaTagBuffer.write(b);
 			if (b=='>') {
@@ -178,7 +178,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 			out.write(b);
 		}
 	}
-	
+
 	private void parseMetaTag(ByteArrayOutputStream buffer) {
 		ByteArrayInputStream is = new ByteArrayInputStream(buffer.toByteArray());
 		String value = HTMLDocParser.getCharsetFromHTML(is);
@@ -199,19 +199,19 @@ public class PluginsRootResolvingStream extends OutputStream {
 		} else {
 			ChildLinkInserter inserter = new ChildLinkInserter(req, out);
 			inserter.addStyle();
-		}		
+		}
 	}
 
 	private void flushPluginsRootCharacters() throws IOException {
 		out.write(PLUGINS_ROOT.substring(0, charsMatched).getBytes(UTF8));
 	}
-	
+
 	private void flushKeywordCharacters() throws IOException {
 		String matchingCharacters = keywords[lastKeywordMatch].substring(0, charsMatched);
-		out.write(matchingCharacters.getBytes(UTF8)); 
+		out.write(matchingCharacters.getBytes(UTF8));
 	}
 
-	
+
 	@Override
 	public void close() throws IOException {
 		if (state == IN_QUOTE) {
@@ -221,8 +221,8 @@ public class PluginsRootResolvingStream extends OutputStream {
 		}
 		out.close();
 		super.close();
-	}	
-	
+	}
+
 	public String getCharset() {
 		return charset;
 	}

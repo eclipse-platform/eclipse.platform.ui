@@ -35,11 +35,11 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 /*
  * Creates xml representing selected parts of one or more TOCs  depending on the parameters
  * With no parameters the head of each toc is included
- * With parameter "href" the node and all its ancestors and siblings is included, corresponds to show in toc 
+ * With parameter "href" the node and all its ancestors and siblings is included, corresponds to show in toc
  * With parameter "toc" and optionally "path" the node, its ancestors and children are included
  */
 public class TocFragmentServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private static Map<String, String> locale2Response = new WeakHashMap<String, String>();
 	private boolean isErrorSuppress;
@@ -51,7 +51,7 @@ public class TocFragmentServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		resp.getWriter().write(processRequest(req, resp));
 	}
-	
+
 	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);
@@ -59,15 +59,15 @@ public class TocFragmentServlet extends HttpServlet {
 	    resp.setHeader("Cache-Control","no-cache");   //$NON-NLS-1$//$NON-NLS-2$
 	    resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
 	    resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$
-		TocData data = new TocData(this.getServletContext(), req, resp);	
-		
+		TocData data = new TocData(this.getServletContext(), req, resp);
+
 		readParameters(req);
-		
+
 		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 		Serializer serializer = new Serializer(data, UrlUtil.getLocaleObj(req, resp), scope);
-		String response = serializer.generateTreeXml();	
+		String response = serializer.generateTreeXml();
 		locale2Response.put(locale, response);
-		
+
 		return response;
 	}
 
@@ -75,12 +75,12 @@ public class TocFragmentServlet extends HttpServlet {
 		String errorSuppressParam = req.getParameter("errorSuppress"); //$NON-NLS-1$
 		isErrorSuppress = "true".equalsIgnoreCase(errorSuppressParam); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * Class which creates the xml file based upon the request parameters
 	 */
 	private class Serializer {
-		
+
 		private TocData tocData;
 		private StringBuffer buf;
 		private int requestKind;
@@ -106,11 +106,11 @@ public class TocFragmentServlet extends HttpServlet {
 				requestKind = REQUEST_SHOW_CHILDREN;
 			}
 		}
-		
+
 		public String generateTreeXml() {
 			buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 			buf.append("<tree_data>\n"); //$NON-NLS-1$
-				
+
 			// Return an error for show in toc if topic was not found in toc
 			if ((requestKind == REQUEST_SHOW_IN_TOC || requestKind == REQUEST_EXPAND_PATH) && tocData.getTopicPath() == null) {
 				addError(WebappResources.getString("CannotSync", locale)); //$NON-NLS-1$
@@ -122,12 +122,12 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append("</tree_data>\n"); //$NON-NLS-1$
 			return buf.toString();
 		}
-		
-		
+
+
 		private void generateNumericPath() {
 			int selectedToc = tocData.getSelectedToc();
-		    if (selectedToc < 0) {		    	
-		    	addError(WebappResources.getString("CannotSync", locale)); //$NON-NLS-1$			
+		    if (selectedToc < 0) {
+		    	addError(WebappResources.getString("CannotSync", locale)); //$NON-NLS-1$
 		    } else {
 				// Count the number of enabled tocs
 				int enabled = 0;
@@ -149,13 +149,13 @@ public class TocFragmentServlet extends HttpServlet {
 			if (!isErrorSuppress) {
 			    buf.append("<error>"); //$NON-NLS-1$
 				buf.append(XMLGenerator.xmlEscape(message));
-				buf.append("</error>"); //$NON-NLS-1$	
+				buf.append("</error>"); //$NON-NLS-1$
 			}
 		}
 
 		private void serializeTocs() {
  			ITopic[] topicPath = tocData.getTopicPath();
-	
+
 			int selectedToc = tocData.getSelectedToc();
 			// Iterate over all tocs - if there is a selected toc only generate that
 			// toc, otherwise generate the root of every toc.
@@ -172,21 +172,21 @@ public class TocFragmentServlet extends HttpServlet {
 				}
 			}
 		}
-	
-		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {		
-			
+
+		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {
+
 			if (!ScopeUtils.showInTree(toc, scope)) {
 				// do not generate toc when there are no leaf topics or if it is filtered out
 				return;
 			}
 			ITopic[] topics = toc.getTopics();
-			
+
 			if (requestKind == REQUEST_SHOW_CHILDREN) {
 				topicPath = tocData.getTopicPathFromRootPath(toc);
 			}
-			
+
 			buf.append("<node"); //$NON-NLS-1$
-			if (toc.getLabel() != null) { 
+			if (toc.getLabel() != null) {
 				buf.append('\n' + "      title=\"" + XMLGenerator.xmlEscape(toc.getLabel()) + '"'); //$NON-NLS-1$
 			}
 			buf.append('\n' + "      id=\"" + XMLGenerator.xmlEscape(toc.getHref()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -195,7 +195,7 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			buf.append(createTocImageTag(toc));
-				
+
 			boolean serializeChildren = true;
 			if (requestKind == REQUEST_SHOW_TOCS) {
 				serializeChildren = false;
@@ -203,24 +203,24 @@ public class TocFragmentServlet extends HttpServlet {
 			if (requestKind == REQUEST_EXPAND_PATH && topicPath.length == 0) {
 				serializeChildren = false;
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
-				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
+				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$
 			}
 			buf.append(">\n"); //$NON-NLS-1$
-			if (serializeChildren) { 
+			if (serializeChildren) {
 				serializeChildTopics(topics, topicPath, "", isSelected); //$NON-NLS-1$
 			}
 			buf.append("</node>\n"); //$NON-NLS-1$
-			
+
 		}
 
 		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {
 		    ITopic[] subtopics = topic.getSubtopics();
 		     boolean isLeaf = !ScopeUtils.hasInScopeDescendent(topic, scope);
 		    buf.append("<node"); //$NON-NLS-1$
-			if (topic.getLabel() != null) { 
+			if (topic.getLabel() != null) {
 				buf.append('\n'	+ "      title=\"" + XMLGenerator.xmlEscape(topic.getLabel()) + '"'); //$NON-NLS-1$
 			}
-	
+
 			buf.append('\n' + "      id=\"" + parentPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			String href = topic.getHref();
@@ -232,24 +232,24 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			if (isSelected && requestKind == REQUEST_EXPAND_PATH) {
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
-				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
+				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$
 			}
 			String imageTags = createTopicImageTags(topic, isLeaf);
-			buf.append(imageTags); 
-			
+			buf.append(imageTags);
+
 			buf.append(">\n"); //$NON-NLS-1$
 			serializeChildTopics(subtopics, topicPath, parentPath, isSelected);
-			buf.append("</node>\n"); //$NON-NLS-1$	
+			buf.append("</node>\n"); //$NON-NLS-1$
 		}
-		
+
 		private String createTocImageTag(IToc toc) {
 			if (toc instanceof Toc) {
 				String icon = ((Toc) toc).getIcon();
-				
-				if (IconFinder.isIconDefined(icon)) {			
+
+				if (IconFinder.isIconDefined(icon)) {
 				    String openIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN);
 					String closedIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED);
-					String imageTags = '\n' + "      openImage=\"/"+ openIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
+					String imageTags = '\n' + "      openImage=\"/"+ openIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					if (!openIcon.equals(closedIcon)) {
 					    imageTags += '\n' + "      closedImage=\"/" + closedIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					}
@@ -267,22 +267,22 @@ public class TocFragmentServlet extends HttpServlet {
 			if (topic instanceof Topic) {
 				String icon = ((Topic) topic).getIcon();
 			    String altText = IconFinder.getIconAltFromId(icon);
-				
-				if (IconFinder.isIconDefined(icon)) {					
+
+				if (IconFinder.isIconDefined(icon)) {
 					String imageTags;
-					if (isLeaf) {		
+					if (isLeaf) {
 						imageTags = '\n' + "      openImage=\"/" +IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_LEAF) + "\"";   //$NON-NLS-1$//$NON-NLS-2$
 					} else {
 					    String openIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN);
 						String closedIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED);
-						imageTags = '\n' + "      openImage=\"/" + openIcon+ "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
+						imageTags = '\n' + "      openImage=\"/" + openIcon+ "\""; //$NON-NLS-1$ //$NON-NLS-2$
 						if (!openIcon.equals(closedIcon)) {
 						    imageTags += '\n' + "      closedImage=\"/" +  closedIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 						}
 				    }
 					if(altText != null) {
 						imageTags += '\n' + "      imageAlt=\""+ altText + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-					}	
+					}
 					return imageTags;
 				}
 			}
@@ -297,7 +297,7 @@ public class TocFragmentServlet extends HttpServlet {
 			String imageTags = '\n' + "      image=\"" + icon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 			return imageTags;
 		}
-	
+
 		private void serializeChildTopics(ITopic[] childTopics, ITopic[] topicPath, String parentPath, boolean parentIsSelected) {
 			if (parentIsSelected && requestKind == REQUEST_SHOW_CHILDREN) {
 				// Show the children of this node
@@ -323,17 +323,17 @@ public class TocFragmentServlet extends HttpServlet {
 						}
 					}
 				}
-			} 
+			}
 		}
 
 		private String addSuffix(String parentPath, int subtopic) {
 			if (parentPath.length() == 0) {
 				return parentPath + subtopic;
-			} 
+			}
 			return parentPath + '_' + subtopic;
 		}
 	}
-	
+
 	/*
 	 * Add an extra parameter which represents the path within the tree. This enables show
 	 * in Toc, print selected topic and search selected topic and all subtopics to work
@@ -354,7 +354,7 @@ public class TocFragmentServlet extends HttpServlet {
 
 		int questionIndex = href.indexOf('?');
 		if  (questionIndex > 0 ) {
-			return hrefPart + "&" + TocData.COMPLETE_PATH_PARAM + '=' + path + anchorPart; //$NON-NLS-1$			
+			return hrefPart + "&" + TocData.COMPLETE_PATH_PARAM + '=' + path + anchorPart; //$NON-NLS-1$
 		} else {
 			return hrefPart + "?" + TocData.COMPLETE_PATH_PARAM + '=' + path + anchorPart; //$NON-NLS-1$
 		}

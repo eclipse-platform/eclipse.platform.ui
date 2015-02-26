@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466 
+ *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466
  *     Holger Voormann - fix for bug 365549 (http://eclip.se/365549)
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
@@ -88,7 +88,7 @@ public class SearchData extends ActivitiesData {
 
 	/**
 	 * Constructs the xml data for the search results page.
-	 * 
+	 *
 	 * @param context
 	 * @param request
 	 */
@@ -102,14 +102,14 @@ public class SearchData extends ActivitiesData {
 
 		searchWord = request.getParameter("searchWord"); //$NON-NLS-1$
 		readDisplayFlags(request, response);
-		
+
 		if (isScopeRequest()) {
 			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
 			if ( canSaveScope() ) {
 			    saveWorkingSet(workingSetName);
 			}
-		} 
-		
+		}
+
 		// try loading search results or get the indexing progress info.
 		readSearchResults();
 	}
@@ -121,7 +121,7 @@ public class SearchData extends ActivitiesData {
 	}
 
 	private void readDisplayFlags(HttpServletRequest request, HttpServletResponse response) {
-		String showCategoriesParam = request.getParameter(SHOW_CATEGORIES); 
+		String showCategoriesParam = request.getParameter(SHOW_CATEGORIES);
 		if (showCategoriesParam != null) {
 			showCategories = "true".equalsIgnoreCase(showCategoriesParam); //$NON-NLS-1$
 			RequestScope.setFlag(request, response, SHOW_CATEGORIES, showCategories);
@@ -131,15 +131,15 @@ public class SearchData extends ActivitiesData {
 	}
 
 	public void readSearchResults() {
-		
+
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
-			
+
 			altList.clear();
-			
+
 			AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
 			for (AbstractSearchProcessor processor : processors) {
-				SearchProcessorInfo result = 
+				SearchProcessorInfo result =
 					processor.preSearch(searchWord);
 				if (result!=null)
 				{
@@ -147,11 +147,11 @@ public class SearchData extends ActivitiesData {
 					if (alternates!=null)
 					{
 						for (String alternate : alternates) {
-							String div = 
+							String div =
 									"<div><a target=\"_self\" href=\"./searchView.jsp?searchWord="+alternate+"\">"+ //$NON-NLS-1$ //$NON-NLS-2$
 									alternate+
 									"</a></div>"; //$NON-NLS-1$
-							
+
 							if (!altList.contains(div))
 								altList.add(div);
 						}
@@ -162,7 +162,7 @@ public class SearchData extends ActivitiesData {
 				}
 			}
 			Collections.sort(altList);
-			
+
 			loadSearchResults();
 			if (queryException != null) {
 				return;
@@ -175,7 +175,7 @@ public class SearchData extends ActivitiesData {
 						break;
 					}
 				}
-				
+
 				ISearchResult results[] = SearchManager.convertHitsToResults(hits);
 				boolean reset= false;
 				for (AbstractSearchProcessor processor : processors) {
@@ -196,7 +196,7 @@ public class SearchData extends ActivitiesData {
 
 	/**
 	 * Returns true when there is a search request
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isSearchRequest() {
@@ -217,11 +217,11 @@ public class SearchData extends ActivitiesData {
 	public boolean isScopeRequest() {
 		return (request.getParameter("workingSet") != null); //$NON-NLS-1$
 	}
-	
+
 	protected boolean isQuickSearch() {
 		return request.getParameterValues("quickSearch") != null; //$NON-NLS-1$
 	}
-	
+
 	public boolean isSelectedTopicQuickSearchRequest() {
 		String quickSearchType = request.getParameter("quickSearchType"); //$NON-NLS-1$
 		return (null != quickSearchType && "QuickSearchTopic".equalsIgnoreCase(quickSearchType)); //$NON-NLS-1$
@@ -256,13 +256,13 @@ public class SearchData extends ActivitiesData {
 
 	/**
 	 * Return the number of links
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getResultsCount() {
 		return hits.length;
 	}
-	
+
 	public SearchHit[] getResults() {
 		return hits;
 	}
@@ -284,7 +284,7 @@ public class SearchData extends ActivitiesData {
 			return UrlUtil.htmlEncode(hits[i].getToc().getLabel());
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	public String getTopicDescription(int i) {
 		String description = hits[i].getDescription();
 		if (description != null) {
@@ -302,12 +302,12 @@ public class SearchData extends ActivitiesData {
 		return HelpBasePlugin.getActivitySupport().isEnabledTopic(href,
 				getLocale());
 	}
-	
+
 	/**
 	 * Returns whether or not the ith hit is a potential hit. This means
 	 * it may not be an actual hit (i.e. it found something in a filtered
 	 * section of the document).
-	 * 
+	 *
 	 * @param i the index of the hit to check
 	 * @return whether or not the hit is a potential hit
 	 */
@@ -384,7 +384,7 @@ public class SearchData extends ActivitiesData {
 	/**
 	 * Returns the working set selected. This is used to display the working set
 	 * name in the search banner.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getScope() {
@@ -466,7 +466,7 @@ public class SearchData extends ActivitiesData {
 		if (request.getParameterValues("scopedSearch") != null) { //$NON-NLS-1$
 			// scopes are books (advanced search)
 			workingSets = createTempWorkingSets();
-		} else if (isQuickSearch()) { 
+		} else if (isQuickSearch()) {
 			// scopes is just the selected toc or topic
 			if(isSelectedTopicQuickSearchRequest()){
 				workingSets = createQuickSearchWorkingSetOnSelectedTopic();
@@ -545,7 +545,7 @@ public class SearchData extends ActivitiesData {
 		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs); //$NON-NLS-1$
 		return workingSets;
 	}
-	
+
 	/**
 	 * @return WorkingSet[] consisting of a single toc or topic or null
 	 */
@@ -571,7 +571,7 @@ public class SearchData extends ActivitiesData {
 		workingSets[0] = new WorkingSet("quickSearch", resources); //$NON-NLS-1$
 		return workingSets;
 	}
-	
+
 	/**
 	 * @return WorkingSet[] consisting of a single selected toc or topic or null
 	 */
@@ -604,13 +604,13 @@ public class SearchData extends ActivitiesData {
 		}
 		return ServletResources.getString("searchTooComplex", request); //$NON-NLS-1$
 	}
-	
+
 	public boolean isScopeActive() {
-		return ! getScope().equals(ServletResources.getString("All", request)); //$NON-NLS-1$		
+		return ! getScope().equals(ServletResources.getString("All", request)); //$NON-NLS-1$
 	}
 
 	public String getNotFoundMessage() {
-	    String scope = getScope(); 
+	    String scope = getScope();
 	    if (scope.equals(ServletResources.getString("All", request))) { //$NON-NLS-1$
 		    return ServletResources.getString("Nothing_found", request); //$NON-NLS-1$
 		} else {
@@ -619,13 +619,13 @@ public class SearchData extends ActivitiesData {
 	}
 
 	public String getScopeActiveMessage() {
-	    String scope = getScope(); 
-		return NLS.bind(ServletResources.getString("activeScope", request), scope); //$NON-NLS-1$ 
+	    String scope = getScope();
+		return NLS.bind(ServletResources.getString("activeScope", request), scope); //$NON-NLS-1$
 	}
-		
+
 	public String getMatchesInScopeMessage() {
-	    String scope = getScope(); 
-	    return NLS.bind(ServletResources.getString("matchesInScope", request), "" + getResultsCount(), scope); //$NON-NLS-1$ //$NON-NLS-2$		
+	    String scope = getScope();
+	    return NLS.bind(ServletResources.getString("matchesInScope", request), "" + getResultsCount(), scope); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getPreProcessorResults()
@@ -634,22 +634,22 @@ public class SearchData extends ActivitiesData {
 			return ""; //$NON-NLS-1$
 
 		StringBuffer result = new StringBuffer();
-		
+
 		result.append(ServletResources.getString("AlternateSearchQueries", request)); //$NON-NLS-1$
 		result.append("<ul>"); //$NON-NLS-1$
 		for (int a=0;a<altList.size();a++)
 			result.append("<li>"+altList.get(a)+"</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 		result.append("</ul>"); //$NON-NLS-1$
-		
+
 		return result.toString();
 	}
-	
+
 	/*
 	 * Filters out results that help doesn't know how to open (i.e. those hits
 	 * that implement ISearchEngineResult2 and canOpen() returns true.
 	 */
 	private static class SearchResultFilter extends SearchResults {
-		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale, 
+		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale,
 				AbstractHelpScope filter, boolean isQuickSearch) {
 			super(workingSets, maxHits, locale, isQuickSearch);
 			setFilter(filter);
@@ -667,13 +667,13 @@ public class SearchData extends ActivitiesData {
 			super.addHits(filtered, highlightTerms);
 		}
 	}
-	
+
 	/**
 	 * Sorts the given {@link ISearchEngineResult} array alphabetically (case
 	 * insensitive) by category label but keeps the order within each category.
 	 * Results without a category or of a category without a label or with an
 	 * empty label are sorted to the end ({@code "Category Label" < "" < null}).
-	 * 
+	 *
 	 * @param toSort the {@link ISearchEngineResult} array to sort; must not
 	 *               contain {@code null} elements
 	 */

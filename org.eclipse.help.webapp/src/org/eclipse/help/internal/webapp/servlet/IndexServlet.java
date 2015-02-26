@@ -31,13 +31,13 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  * Sends all available keyword index data in XML form. The data is sent as one
  * large index contribution that includes all merged contributions from the
  * system.
- * 
+ *
  * This is called on infocenters by client workbenches configured for remote
  * help in order to gather all the index keywords and assemble them into a
  * complete index.
  */
 public class IndexServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Map<String, String> responseByLocale;
 	private DocumentWriter writer;
@@ -49,13 +49,13 @@ public class IndexServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		resp.getWriter().write(processRequest(req, resp));
 	}
-	
+
 	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		
+
 		if (responseByLocale == null) {
 			responseByLocale = new WeakHashMap<String, String>();
 		}
@@ -70,10 +70,10 @@ public class IndexServlet extends HttpServlet {
 			}
 			responseByLocale.put(locale, response);
 		}
-		
+
 		return (response != null) ? response : ""; //$NON-NLS-1$
 	}
-		
+
 	public String serialize(IndexContribution[] contributions, String locale) throws TransformerException {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$

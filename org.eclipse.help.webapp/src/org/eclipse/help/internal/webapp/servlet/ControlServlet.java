@@ -31,7 +31,7 @@ import org.osgi.framework.Bundle;
  * Servlet to control Eclipse helpApplication from standalone application.
  * Accepts the following parameters: command=displayHelp | shutdown
  * | install | update | enable | disable | uninstall | search | listFeatures
- * | addSite | removeSite | apply.  
+ * | addSite | removeSite | apply.
  * href - may be provided if comand==displayHelp.
  * featureId, version, from, to, verifyOnly may be provided for update commands
  */
@@ -40,7 +40,7 @@ public class ControlServlet extends HttpServlet {
 	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core"; //$NON-NLS-1$
 
 	public static final String CMD_DISPLAYHELP = "displayHelp"; //$NON-NLS-1$
-	
+
 	public static final String CMD_DISPLAYHELPWINDOW = "displayHelpWindow"; //$NON-NLS-1$
 
 	public static final String CMD_SHUTDOWN = "shutdown"; //$NON-NLS-1$
@@ -287,11 +287,11 @@ public class ControlServlet extends HttpServlet {
 	}
 
 	private Object[] getInitArgs(String className, HttpServletRequest req) {
-		String featureId = req.getParameter(PARAM_FEATUREID); 
-		String version = req.getParameter(PARAM_VERSION); 
-		String fromSite = req.getParameter(PARAM_FROM); 
-		String toSite = req.getParameter(PARAM_TO); 
-		String verifyOnly = req.getParameter(PARAM_VERIFYONLY); 
+		String featureId = req.getParameter(PARAM_FEATUREID);
+		String version = req.getParameter(PARAM_VERSION);
+		String fromSite = req.getParameter(PARAM_FROM);
+		String toSite = req.getParameter(PARAM_TO);
+		String verifyOnly = req.getParameter(PARAM_VERIFYONLY);
 		if (CLASS_INSTALL.equals(className))
 			return new Object[]{featureId, version, fromSite, toSite,
 					verifyOnly};
@@ -317,7 +317,7 @@ public class ControlServlet extends HttpServlet {
 
 	/**
 	 * Displays help.
-	 * 
+	 *
 	 * @param req
 	 *            HttpServletRequest that might contain href parameter, which is
 	 *            the resource to display

@@ -42,10 +42,10 @@ import org.eclipse.help.internal.webapp.utils.Utils;
  * Class is responsible for implementing security protection.  All servlets
  * who use the org.eclipse.help.webapp.validatedServlet extension point will
  * will be processed for security failures by this class.
- * 
+ *
  * Any URL that starts with <path>/vs<etc> will be redirected here for further
- * processing.  If the validatedServlet extension point has an alias that 
- * matches the URL passed here, it will finish the processing and return 
+ * processing.  If the validatedServlet extension point has an alias that
+ * matches the URL passed here, it will finish the processing and return
  * results here for validation.  If there are no malicious threats detected,
  * this class will return the output to the client.
  *
@@ -54,58 +54,58 @@ public class ValidatorServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3783758607845176051L;
 	private Hashtable<String, HttpServlet> servletTable = new Hashtable<String, HttpServlet>();
-	
+
 	protected void process(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String baseURL = req.getRequestURL().toString();		
+		String baseURL = req.getRequestURL().toString();
 		baseURL = baseURL.substring(0, baseURL.indexOf(req.getServletPath()));
-		
+
 		Locale locale = UrlUtil.getLocaleObj(req,resp);
 
 		String service = req.getRequestURL().toString().substring(
 				(baseURL).length()+("/vs".length())); //$NON-NLS-1$
-		
+
 		try {
 			HttpServletResponseAdv response = new HttpServletResponseAdv(resp);
-			
+
 			HttpServlet servlet = getServlet(service);
 			ServletConfig config = getServletConfig();
 			servlet.init(config);
 			servlet.service(req, response);
-			
+
 			if (isSecure(req, response))
 				response.commitOutput();
-			
+
 		} catch(Exception ex) {
-			
+
 			String errorMsg = WebappResources.getString("cantCreateServlet", //$NON-NLS-1$
 					locale, service);
 			HelpWebappPlugin.logError(errorMsg, ex);
-			
+
 			PrintWriter writer = resp.getWriter();
 			writer.println(errorMsg);
 			ex.printStackTrace(writer);
-			
+
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	private HttpServlet getServlet(String name) 
+
+	private HttpServlet getServlet(String name)
 			throws CoreException {
-		
+
 		HttpServlet servlet = servletTable.get(name);
-		
+
 		if (servlet == null) {
-			
-			IConfigurationElement[] configs = 
+
+			IConfigurationElement[] configs =
 				Platform.getExtensionRegistry().getConfigurationElementsFor(HelpWebappPlugin.PLUGIN_ID+".validatedServlet"); //$NON-NLS-1$
-			
+
 			for (IConfigurationElement config2 : configs) {
-				
+
 				String alias = config2.getAttribute("alias"); //$NON-NLS-1$
 				if (alias != null) {
-					
+
 					if (isMatch(alias, name)) {
 						servlet = (HttpServlet)config2.createExecutableExtension("class"); //$NON-NLS-1$
 						servletTable.put(name, servlet);
@@ -114,12 +114,12 @@ public class ValidatorServlet extends HttpServlet {
 				}
 			}
 		}
-		
+
 		return servlet;
 	}
-	
+
 	private boolean isMatch(String alias, String name) {
-		
+
 		int index = name.indexOf(alias);
 		if (index == 0) {
 			int offset = alias.length();
@@ -137,43 +137,43 @@ public class ValidatorServlet extends HttpServlet {
 			throws ServletException, IOException {
 		process(req, resp);
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		process(req, resp);
 	}
-	
-	public boolean isSecure(HttpServletRequest req,HttpServletResponseAdv resp) 
+
+	public boolean isSecure(HttpServletRequest req,HttpServletResponseAdv resp)
 			throws SecurityException {
 		Enumeration<String> names = req.getParameterNames();
 		List<String> values = new ArrayList<String>();
 		List<String> scripts = new ArrayList<String>();
-		
+
 		while (names.hasMoreElements()) {
-			
+
 			String name = names.nextElement();
 			String val = req.getParameter(name);
 			values.add(val);
 			if (replaceAll(val, '+', "").indexOf("<script")>-1) //$NON-NLS-1$ //$NON-NLS-2$
 				scripts.add(val);
 		}
-		
+
 		if (resp.getWriter() != null) {
 			String data = resp.getString();
 			for (int s=0; s < scripts.size(); s++)
 				if (data.indexOf(scripts.get(s)) > -1)
 					throw new SecurityException("Potential cross-site scripting detected."); //$NON-NLS-1$
 		}
-		
+
 		return true;
 	}
-	
+
 	public String replaceAll(String str, char remove, String add) {
-		
+
 		StringBuffer buffer = new StringBuffer();
 		for (int s=0; s < str.length(); s++) {
-			
+
 			char ch = str.charAt(s);
 			if (ch == remove)
 				buffer.append(add);
@@ -182,13 +182,13 @@ public class ValidatorServlet extends HttpServlet {
 		}
 		return buffer.toString();
 	}
-	
+
 	private class HttpServletResponseAdv extends HttpServletResponseWrapper {
-		
+
 		private HttpServletResponse response;
 		private ServletPrintWriter writer;
 		private ServletOutputStream stream;
-		
+
 		public HttpServletResponseAdv(HttpServletResponse response) {
 			super(response);
 			this.response = response;
@@ -196,22 +196,22 @@ public class ValidatorServlet extends HttpServlet {
 
 		@Override
 		public PrintWriter getWriter() {
-			
+
 			if (writer == null && stream == null)
 				writer = new ServletPrintWriter();
 			return writer;
 		}
-		
+
 		@Override
 		public ServletOutputStream getOutputStream() throws IOException {
-			
+
 			if (stream == null && writer == null)
 				stream = response.getOutputStream();
 			return stream;
 		}
-		
+
 		public void commitOutput() throws IOException {
-			
+
 			OutputStream os = response.getOutputStream();
 			InputStream is = getInputStream();
 			if (is != null) {
@@ -219,10 +219,10 @@ public class ValidatorServlet extends HttpServlet {
 			}
 			os.flush();
 		}
-		
+
 		public InputStream getInputStream() {
 			if (writer != null) {
-				
+
 				try {
 					return new ByteArrayInputStream(writer.toString().getBytes(getCharacterEncoding()));
 				} catch (UnsupportedEncodingException e) {
@@ -231,12 +231,12 @@ public class ValidatorServlet extends HttpServlet {
 			}
 			return null;
 		}
-		
+
 		public String getString() {
-			
+
 			if (writer != null)
 				return writer.toString();
-			
+
 			return null;
 		}
 	}

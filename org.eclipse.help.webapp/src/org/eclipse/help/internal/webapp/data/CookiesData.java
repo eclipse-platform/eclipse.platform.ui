@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class CookiesData extends RequestData {
 	public CookiesData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		super(context, request, response);
-		
+
 	}
 
 	public boolean isSynchToc() {
@@ -42,7 +42,7 @@ public class CookiesData extends RequestData {
 		boolean isSynchToc = Platform.getPreferencesService().getBoolean
 		    (HelpBasePlugin.PLUGIN_ID, "advanced.syncDefault", false, null); //$NON-NLS-1$
 		CookieUtil.setCookieValue("synchToc", Boolean.toString(isSynchToc), request, response); //$NON-NLS-1$
-		return isSynchToc; 
+		return isSynchToc;
     }
 
 }
