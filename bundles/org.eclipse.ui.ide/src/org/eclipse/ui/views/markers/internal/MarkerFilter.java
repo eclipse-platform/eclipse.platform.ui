@@ -12,24 +12,19 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
@@ -170,145 +165,6 @@ public class MarkerFilter implements Cloneable {
 	}
 
 	/**
-	 * Adds all markers in the given set of resources to the given list
-	 *
-	 * @param resultList
-	 * @param resources
-	 * @param markerTypeId
-	 * @param depth
-	 * @throws CoreException
-	 */
-	private List findMarkers(IResource[] resources, int depth, int limit,
-			IProgressMonitor mon, boolean ignoreExceptions)
-			throws CoreException {
-		if (resources == null) {
-			return Collections.EMPTY_LIST;
-		}
-
-		List resultList = new ArrayList(resources.length * 2);
-
-		// Optimization: if a type appears in the selectedTypes list along with
-		// all of its
-		// subtypes, then combine these in a single search.
-
-		// List of types that haven't been replaced by one of their supertypes
-		HashSet typesToSearch = new HashSet(selectedTypes.size());
-
-		// List of types that appeared in selectedTypes along with all of their
-		// subtypes
-		HashSet includeAllSubtypes = new HashSet(selectedTypes.size());
-
-		typesToSearch.addAll(selectedTypes);
-
-		Iterator iter = selectedTypes.iterator();
-
-		while (iter.hasNext()) {
-			MarkerType type = (MarkerType) iter.next();
-
-			Collection subtypes = Arrays.asList(type.getAllSubTypes());
-
-			if (selectedTypes.containsAll(subtypes)) {
-				typesToSearch.removeAll(subtypes);
-
-				includeAllSubtypes.add(type);
-			}
-		}
-
-		mon.beginTask(MarkerMessages.MarkerFilter_searching, typesToSearch
-				.size()
-				* resources.length);
-
-		// Use this hash set to determine if there are any resources in the
-		// list that appear along with their parent.
-		HashSet resourcesToSearch = new HashSet();
-
-		// Insert all the resources into the hashset
-		for (int idx = 0; idx < resources.length; idx++) {
-			IResource next = resources[idx];
-
-			if (!next.exists()) {
-				continue;
-			}
-
-			if (resourcesToSearch.contains(next)) {
-				mon.worked(typesToSearch.size());
-			} else {
-				resourcesToSearch.add(next);
-			}
-		}
-
-		// Iterate through all the selected resources
-		for (int resourceIdx = 0; resourceIdx < resources.length; resourceIdx++) {
-			iter = typesToSearch.iterator();
-
-			IResource resource = resources[resourceIdx];
-
-			// Skip resources that don't exist
-			if (!resource.isAccessible()) {
-				continue;
-			}
-
-			if (depth == IResource.DEPTH_INFINITE) {
-				// Determine if any parent of this resource is also in our
-				// filter
-				IResource parent = resource.getParent();
-				boolean found = false;
-				while (parent != null) {
-					if (resourcesToSearch.contains(parent)) {
-						found = true;
-					}
-
-					parent = parent.getParent();
-				}
-
-				// If a parent of this resource is also in the filter, we can
-				// skip it
-				// because we'll pick up its markers when we search the parent.
-				if (found) {
-					continue;
-				}
-			}
-
-			// Iterate through all the marker types
-			while (iter.hasNext()) {
-				MarkerType markerType = (MarkerType) iter.next();
-
-				// Only search for subtypes of the marker if we found all of its
-				// subtypes in the filter criteria.
-				IMarker[] markers = resource.findMarkers(markerType.getId(),
-						includeAllSubtypes.contains(markerType), depth);
-
-				mon.worked(1);
-
-				for (int idx = 0; idx < markers.length; idx++) {
-					ConcreteMarker marker;
-					try {
-						marker = MarkerList.createMarker(markers[idx]);
-					} catch (CoreException e) {
-						if (ignoreExceptions) {
-							continue;
-						}
-						throw e;
-
-					}
-
-					if (limit != -1 && resultList.size() >= limit) {
-						return resultList;
-					}
-
-					if (selectMarker(marker)) {
-						resultList.add(marker);
-					}
-				}
-			}
-		}
-
-		mon.done();
-
-		return resultList;
-	}
-
-	/**
 	 * Subclasses should override to determine if the given marker passes the
 	 * filter.
 	 *
@@ -318,60 +174,6 @@ public class MarkerFilter implements Cloneable {
 	 */
 	protected boolean selectMarker(ConcreteMarker marker) {
 		return true;
-	}
-
-	/**
-	 * Searches the workspace for markers that pass this filter.
-	 *
-	 * @return Collection of markers.
-	 */
-	Collection findMarkers(IProgressMonitor mon, boolean ignoreExceptions)
-			throws CoreException {
-
-		List unfiltered = Collections.EMPTY_LIST;
-
-		if (!isEnabled()) {
-			unfiltered = findMarkers(new IResource[] { ResourcesPlugin
-					.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE, -1,
-					mon, ignoreExceptions);
-		} else {
-			// int limit = getFilterOnMarkerLimit() ? getMarkerLimit() + 1 : -1;
-			int limit = -1;
-
-			switch (getOnResource()) {
-			case ON_ANY: {
-				unfiltered = findMarkers(new IResource[] { ResourcesPlugin
-						.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
-						limit, mon, ignoreExceptions);
-				break;
-			}
-			case ON_SELECTED_ONLY: {
-				unfiltered = findMarkers(focusResource, IResource.DEPTH_ZERO,
-						limit, mon, ignoreExceptions);
-				break;
-			}
-			case ON_SELECTED_AND_CHILDREN: {
-				unfiltered = findMarkers(focusResource,
-						IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
-				break;
-			}
-			case ON_ANY_IN_SAME_CONTAINER: {
-				unfiltered = findMarkers(getProjects(focusResource),
-						IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
-				break;
-			}
-			case ON_WORKING_SET: {
-				unfiltered = findMarkers(getResourcesInWorkingSet(),
-						IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
-			}
-			}
-		}
-
-		if (unfiltered == null) {
-			unfiltered = Collections.EMPTY_LIST;
-		}
-
-		return unfiltered;
 	}
 
 	/**
@@ -393,8 +195,7 @@ public class MarkerFilter implements Cloneable {
 		List result = new ArrayList(elements.length);
 
 		for (int idx = 0; idx < elements.length; idx++) {
-			IResource next = (IResource) elements[idx]
-					.getAdapter(IResource.class);
+			IResource next = elements[idx].getAdapter(IResource.class);
 
 			if (next != null) {
 				result.add(next);
