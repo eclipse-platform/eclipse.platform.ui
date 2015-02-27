@@ -12,6 +12,7 @@
  *     Marco Descher <marco@descher.at> - Bug 397677
  *     Dmitry Spiridenok - Bug 429756
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445723, 450863
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 461026
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -433,12 +434,8 @@ public class HandledContributionItem extends ContributionItem {
 		ParameterizedCommand parmCmd = model.getWbCommand();
 		String keyBindingText = null;
 		if (parmCmd != null) {
-			if (text == null) {
-				try {
-					text = parmCmd.getName();
-				} catch (NotDefinedException e) {
-					// we'll just ignore a failure
-				}
+			if (text == null || text.isEmpty()) {
+				text = model.getCommand().getLocalizedCommandName();
 			}
 			if (bindingService != null) {
 				TriggerSequence binding = bindingService
@@ -480,7 +477,7 @@ public class HandledContributionItem extends ContributionItem {
 					// Set some text so that the item stays visible in the menu
 					item.setText("UnLabled"); //$NON-NLS-1$
 				} else {
-					item.setText(command.getCommandName());
+					item.setText(command.getLocalizedCommandName());
 				}
 			} else {
 				item.setText(text);
