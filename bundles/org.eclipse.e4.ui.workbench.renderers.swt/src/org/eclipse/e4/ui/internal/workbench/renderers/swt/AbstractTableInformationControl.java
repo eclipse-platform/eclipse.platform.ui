@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
-import org.eclipse.e4.ui.workbench.swt.internal.copy.StringMatcher;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -65,7 +65,7 @@ public abstract class AbstractTableInformationControl {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			StringMatcher matcher = getMatcher();
+			SearchPattern matcher = getMatcher();
 			if (matcher == null || !(viewer instanceof TableViewer)) {
 				return true;
 			}
@@ -82,7 +82,7 @@ public abstract class AbstractTableInformationControl {
 			if (matchName.startsWith("*")) { //$NON-NLS-1$
 				matchName = matchName.substring(1);
 			}
-			return matcher.match(matchName);
+			return matcher.matches(matchName);
 		}
 	}
 
@@ -98,8 +98,8 @@ public abstract class AbstractTableInformationControl {
 	/** The control's table widget */
 	private TableViewer fTableViewer;
 
-	/** The current string matcher */
-	private StringMatcher fStringMatcher;
+	/** The current search pattern */
+	private SearchPattern fSearchPattern;
 
 	/**
 	 * Creates an information control with the given shell as parent. The given
@@ -401,10 +401,6 @@ public abstract class AbstractTableInformationControl {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String text = ((Text) e.widget).getText();
-				int length = text.length();
-				if (length > 0 && text.charAt(length - 1) != '*') {
-					text = text + '*';
-				}
 				setMatcherString(text);
 			}
 		});
@@ -412,7 +408,7 @@ public abstract class AbstractTableInformationControl {
 
 	/**
 	 * The string matcher has been modified. The default implementation
-	 * refreshes the view and selects the first macthed element
+	 * refreshes the view and selects the first matched element
 	 */
 	private void stringMatcherUpdated() {
 		// refresh viewer to refilter
@@ -431,16 +427,17 @@ public abstract class AbstractTableInformationControl {
 	 */
 	private void setMatcherString(String pattern) {
 		if (pattern.length() == 0) {
-			fStringMatcher = null;
+			fSearchPattern = null;
 		} else {
-			boolean ignoreCase = pattern.toLowerCase().equals(pattern);
-			fStringMatcher = new StringMatcher(pattern, ignoreCase, false);
+			SearchPattern patternMatcher = new SearchPattern();
+			patternMatcher.setPattern(pattern);
+			fSearchPattern = patternMatcher;
 		}
 		stringMatcherUpdated();
 	}
 
-	private StringMatcher getMatcher() {
-		return fStringMatcher;
+	private SearchPattern getMatcher() {
+		return fSearchPattern;
 	}
 
 	/**
@@ -479,7 +476,7 @@ public abstract class AbstractTableInformationControl {
 				.getLabelProvider();
 		for (int i = 0; i < items.length; i++) {
 			Object element = items[i].getData();
-			if (fStringMatcher == null) {
+			if (fSearchPattern == null) {
 				return element;
 			}
 
@@ -492,7 +489,7 @@ public abstract class AbstractTableInformationControl {
 				if (label.startsWith("*")) { //$NON-NLS-1$
 					label = label.substring(1);
 				}
-				if (fStringMatcher.match(label)) {
+				if (fSearchPattern.matches(label)) {
 					return element;
 				}
 			}
