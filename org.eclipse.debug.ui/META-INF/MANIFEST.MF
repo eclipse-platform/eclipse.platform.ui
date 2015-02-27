@@ -90,4 +90,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Import-Package: com.ibm.icu.text,
  org.eclipse.ui.forms.widgets
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

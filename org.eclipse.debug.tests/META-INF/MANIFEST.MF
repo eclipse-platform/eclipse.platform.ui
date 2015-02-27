@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.tests;singleton:=true
-Bundle-Version: 3.9.200.qualifier
+Bundle-Version: 3.10.000.qualifier
 Bundle-Activator: org.eclipse.debug.tests.TestsPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.debug.core;bundle-version="[3.9.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.debug.tests,
  org.eclipse.debug.tests.breakpoint,
