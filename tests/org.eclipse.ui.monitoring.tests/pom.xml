@@ -23,7 +23,7 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-	<junittestclass>org.eclipse.ui.internal.monitoring.MonitoringTestSuite</junittestclass>
+	<testSuiteMonitoring>org.eclipse.ui.internal.monitoring.MonitoringTestSuite</testSuiteMonitoring>
  	<skipTests>false</skipTests>
   </properties>
 
@@ -34,7 +34,8 @@
   			<artifactId>tycho-surefire-plugin</artifactId>
   			<version>${tycho.version}</version>
 			<configuration>
-				<testClass>${junittestclass}</testClass>
+				<testSuite>org.eclipse.ui.monitoring.tests</testSuite>
+				<testClass>${testSuiteMonitoring}</testClass>
 				<useUIHarness>true</useUIHarness>
 				<useUIThread>true</useUIThread>
 	  			<dependencies>
