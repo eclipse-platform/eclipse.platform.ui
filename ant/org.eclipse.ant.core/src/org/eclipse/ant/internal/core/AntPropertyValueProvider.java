@@ -8,15 +8,17 @@
  * Contributors:
  *     Thierry Lach (thierry.lach@bbdodetroit.com) - initial API and implementation for bug 40502
  *     IBM Corporation - added eclipse.running property, bug 65655
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
+ *     Ericsson AB, Julian Enoch - Bug 389564
  *******************************************************************************/
 package org.eclipse.ant.internal.core;
 
-import java.io.File;
 import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.IAntPropertyValueProvider;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.URIUtil;
 
 /**
  * Dynamic provider for Ant properties.
@@ -49,7 +51,8 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 			return "true"; //$NON-NLS-1$
 		} else if ("eclipse.home".equals(propertyName)) { //$NON-NLS-1$
 			try {
-				value = new File(FileLocator.resolve(new URL("platform:/base/")).getPath()).getAbsolutePath(); //$NON-NLS-1$
+				URL fileURL = FileLocator.toFileURL(new URL("platform:/base/")); //$NON-NLS-1$
+				value = (URIUtil.toFile(URIUtil.toURI(fileURL))).getAbsolutePath();
 				if (value.endsWith("/")) { //$NON-NLS-1$
 					value = value.substring(0, value.length() - 1);
 				}

@@ -7,16 +7,22 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
+ *     Ericsson AB, Julian Enoch - Bug 389564
  *******************************************************************************/
 
 package org.eclipse.ant.internal.core;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.variables.VariablesPlugin;
 
 public class AntClasspathEntry implements IAntClasspathEntry {
@@ -70,7 +76,13 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 
 	public AntClasspathEntry(URL url) {
 		this.url = url;
-		this.entryString = new File(url.getPath()).getAbsolutePath();
+		try {
+			URL fileURL = FileLocator.toFileURL(url);
+			this.entryString = (URIUtil.toFile(URIUtil.toURI(fileURL))).getAbsolutePath();
+		}
+		catch (URISyntaxException | IOException e) {
+			AntCorePlugin.log(e);
+		}
 	}
 
 	/*

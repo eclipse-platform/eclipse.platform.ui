@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +32,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -148,7 +151,18 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 				if (install != null) {
 					IAntClasspathEntry entry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry(new Path(install.getInstallLocation().getAbsolutePath()));
 					if (entry != null) {
-						rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
+						String pathString = null;
+						try {
+							pathString = URIUtil.toURL(URIUtil.toURI(entry.getEntryURL())).getPath();
+							rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(pathString)));
+						}
+						catch (MalformedURLException e) {
+							AntLaunching.log(e);
+
+						}
+						catch (URISyntaxException e) {
+							AntLaunching.log(e);
+						}
 					}
 				}
 			}
@@ -177,7 +191,12 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 				String urlFileName = bundleURL.getFile();
 				if (urlFileName.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
 					try {
-						urlFileName = new URL(urlFileName).getFile();
+						try {
+							urlFileName = URIUtil.toURL(URIUtil.toURI(new URL(urlFileName))).getFile();
+						}
+						catch (URISyntaxException e) {
+							AntLaunching.log(e);
+						}
 						if (urlFileName.endsWith("!/")) { //$NON-NLS-1$
 							urlFileName = urlFileName.substring(0, urlFileName.length() - 2);
 						}

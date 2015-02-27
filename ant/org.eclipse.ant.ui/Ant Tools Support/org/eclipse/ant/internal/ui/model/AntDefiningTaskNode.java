@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -33,6 +35,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
@@ -154,7 +157,15 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		File file = null;
 		for (int i = 0; i < antClasspath.length; i++) {
 			try {
-				file = new File(FileLocator.toFileURL(antClasspath[i]).getPath());
+				try {
+					URL thisURL = URIUtil.toURI(antClasspath[i]).toURL();
+					file = URIUtil.toFile(FileLocator.toFileURL(thisURL).toURI());
+				}
+				catch (URISyntaxException e) {
+					file = new File(FileLocator.toFileURL(antClasspath[i]).getPath());
+					AntUIPlugin.log(e);
+					e.printStackTrace();
+				}
 			}
 			catch (IOException e) {
 				continue;

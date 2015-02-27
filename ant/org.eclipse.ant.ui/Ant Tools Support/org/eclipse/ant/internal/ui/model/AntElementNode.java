@@ -11,12 +11,15 @@
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
  *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49445
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
+ *     Ericsson AB, Julian Enoch - Bug 389564
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.model;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +27,15 @@ import java.util.List;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.graphics.Image;
@@ -232,7 +238,17 @@ public class AntElementNode implements IAdaptable, IAntElement {
 			fFilePath = path;
 			return;
 		}
-		fFilePath = new Path(new File(url.getPath()).getAbsolutePath()).toString();
+
+		try {
+			URL fileURL = FileLocator.toFileURL(url);
+			fFilePath = new Path((URIUtil.toFile(URIUtil.toURI(fileURL))).getAbsolutePath()).toString();
+		}
+		catch (URISyntaxException e) {
+			AntUIPlugin.log(e);
+		}
+		catch (IOException e) {
+			AntUIPlugin.log(e);
+		}
 	}
 
 	/**

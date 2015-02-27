@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *     Juan A. Hernandez - bug 89926
  *     dakshinamurthy.karra@gmail.com - bug 165371
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -740,9 +743,14 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			Bundle fragBundle = fragmentWires.get(0).getRequirer().getBundle();
 			try {
 				URL url = FileLocator.toFileURL(fragBundle.getEntry("/")); //$NON-NLS-1$
-				IPath path = new Path(url.getPath());
-				path = path.removeTrailingSeparator();
-				fgSWTLibraryLocation = path.toOSString();
+				try {
+					IPath path = new Path(URIUtil.toURL(URIUtil.toURI(url)).getPath());
+					path = path.removeTrailingSeparator();
+					fgSWTLibraryLocation = path.toOSString();
+				}
+				catch (URISyntaxException e) {
+					AntLaunching.log(e);
+				}
 			}
 			catch (IOException e) {
 				// do nothing

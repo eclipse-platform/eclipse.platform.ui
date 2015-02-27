@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Thierry Lach (thierry.lach@bbdodetroit.com) - bug 40502
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
+ *     Ericsson AB, Julian Enoch - Bug 389564
  *******************************************************************************/
 package org.eclipse.ant.core;
 
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +45,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -677,14 +681,22 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Create a "file:" URL for the specified File making sure the URL ends with a slash if the File denotes a directory.
 	 */
 	private URL getClasspathEntryURL(Bundle bundle, String library) throws IOException {
-		File urlFile;
+		File urlFile = null;
 		if (library.equals("/")) { //$NON-NLS-1$
 			urlFile = FileLocator.getBundleFile(bundle);
 		} else {
-			urlFile = new File(FileLocator.toFileURL(bundle.getEntry(library)).getPath());
+			try {
+				URL fileURL = FileLocator.toFileURL(bundle.getEntry(library));
+				urlFile = URIUtil.toFile(URIUtil.toURI(fileURL));
+			}
+			catch (URISyntaxException e) {
+				AntCorePlugin.log(e);
+			}
 		}
-		if (!urlFile.exists())
+
+		if (urlFile == null || !urlFile.exists())
 			return null;
+
 		String path = urlFile.getAbsolutePath();
 		return new URL(IAntCoreConstants.FILE_PROTOCOL + (urlFile.isDirectory() ? path + "/" : path)); //$NON-NLS-1$
 	}

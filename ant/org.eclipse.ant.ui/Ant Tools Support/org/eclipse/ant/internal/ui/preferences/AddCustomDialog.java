@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ericsson AB, Hamdan Msheik - Bug 389564
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -25,6 +28,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -579,7 +583,17 @@ public class AddCustomDialog extends StatusDialog {
 		} else {
 			className = ((File) file).getAbsolutePath();
 			IPath classPath = new Path(className);
-			IPath libraryPath = new Path(library.getEntryURL().getPath());
+			IPath libraryPath = null;
+			try {
+				libraryPath = new Path(URIUtil.toURL(URIUtil.toURI(library.getEntryURL())).getPath());
+			}
+			catch (MalformedURLException e) {
+				AntUIPlugin.log(e);
+			}
+			catch (URISyntaxException e) {
+				AntUIPlugin.log(e);
+			}
+
 			int matching = classPath.matchingFirstSegments(libraryPath);
 			classPath = classPath.removeFirstSegments(matching);
 			classPath = classPath.setDevice(null);
