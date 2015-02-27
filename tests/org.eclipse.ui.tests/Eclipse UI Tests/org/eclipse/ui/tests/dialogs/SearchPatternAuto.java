@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.ui.tests.dialogs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
@@ -27,26 +27,15 @@ import org.eclipse.ui.dialogs.SearchPattern;
  */
 public class SearchPatternAuto extends TestCase {
 
-	private static ArrayList resources = new ArrayList();
-
+	private static List<String> resources = new ArrayList();
 
 	static {
-
 		generateRescourcesTestCases('A', 'C', 8, "");
-
 		generateRescourcesTestCases('A', 'C', 4, "");
-
 	}
-	/**
-	 * @param name
-	 */
+
 	public SearchPatternAuto(String name) {
 		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
 	}
 
 	/**
@@ -70,41 +59,22 @@ public class SearchPatternAuto extends TestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	/**
 	 * Tests exact match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
 	 * Result for "abcd " pattern should be similar to regexp pattern "abcd" with case insensitive.
 	 */
 	public void testExactMatch1() {
-		String patternText = "abcd ";
 		Pattern pattern = Pattern.compile("abcd", Pattern.CASE_INSENSITIVE);
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_EXACT_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("abcd ", SearchPattern.RULE_EXACT_MATCH, pattern);
 	}
 
 	/**
 	 * Tests exact match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
-	 * Result for "abcdefgh " pattern should be similar to regexp pattern "abcdefgh" with case insensitive.
+	 * Result for "abcdefgh<" pattern should be similar to regexp pattern "abcdefgh" with case insensitive.
 	 */
 	public void testExactMatch2() {
-		String patternText = "abcdefgh<";
 		Pattern pattern = Pattern.compile("abcdefgh", Pattern.CASE_INSENSITIVE);
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_EXACT_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("abcdefgh<", SearchPattern.RULE_EXACT_MATCH, pattern);
 	}
 
 	/**
@@ -112,15 +82,8 @@ public class SearchPatternAuto extends TestCase {
 	 * Result for "ab" pattern should be similar to regexp pattern "ab.*" with case insensitive.
 	 */
 	public void testPrefixMatch() {
-		String patternText = "ab";
 		Pattern pattern = Pattern.compile("ab.*", Pattern.CASE_INSENSITIVE);
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_PREFIX_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("ab", SearchPattern.RULE_PREFIX_MATCH, pattern);
 	}
 
 	/**
@@ -128,15 +91,8 @@ public class SearchPatternAuto extends TestCase {
 	 * Result for "**cDe" pattern should be similar to regexp pattern ".*cde.*" with case insensitive.
 	 */
 	public void testPatternMatch1() {
-		String patternText = "**cDe";
 		Pattern pattern = Pattern.compile(".*cde.*", Pattern.CASE_INSENSITIVE);
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_PATTERN_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("**cDe", SearchPattern.RULE_PATTERN_MATCH, pattern);
 	}
 
 	/**
@@ -144,15 +100,8 @@ public class SearchPatternAuto extends TestCase {
 	 * Result for "**c*e*i" pattern should be similar to regexp pattern ".*c.*e.*i.*" with case insensitive.
 	 */
 	public void testPatternMatch2() {
-		String patternText = "**c*e*i";
 		Pattern pattern = Pattern.compile(".*c.*e.*i.*", Pattern.CASE_INSENSITIVE);
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_PATTERN_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("**c*e*i", SearchPattern.RULE_PATTERN_MATCH, pattern);
 	}
 
 	/**
@@ -162,18 +111,9 @@ public class SearchPatternAuto extends TestCase {
 	 * If pattern contains only upperCase characters result contains all prefix match elements.
 	 */
 	public void testCamelCaseMatch1() {
-		String patternText = "CD";
 		Pattern pattern = Pattern.compile("C[^A-Z]*D.*");
 		Pattern pattern2 = Pattern.compile("CD.*", Pattern.CASE_INSENSITIVE);
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_CAMELCASE_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			if (patternMatcher.matches(res) != pattern.matcher(res).matches()) {
-				assertEquals(patternMatcher.matches(res), pattern2.matcher(res).matches());
-			}
-		}
+		assertMatches("CD", SearchPattern.RULE_CAMELCASE_MATCH, pattern, pattern2);
 	}
 
 	/**
@@ -182,15 +122,8 @@ public class SearchPatternAuto extends TestCase {
 	 * Result for "AbCd " SearchPattern should be similar to regexp pattern "C[^A-Z]*D.*" or "CD.*"
 	 */
 	public void testCamelCaseMatch2() {
-		String patternText = "AbCd ";
 		Pattern pattern = Pattern.compile("Ab[^A-Z]*Cd[^A-Z]*");
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_CAMELCASE_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("AbCd ", SearchPattern.RULE_CAMELCASE_MATCH, pattern);
 	}
 
 	/**
@@ -199,15 +132,8 @@ public class SearchPatternAuto extends TestCase {
 	 * Result for "AbCdE<" SearchPattern should be similar to regexp pattern "Ab[^A-Z]*Cd[^A-Z]*E[^A-Z]*"
 	 */
 	public void testCamelCaseMatch3() {
-		String patternText = "AbCdE<";
 		Pattern pattern = Pattern.compile("Ab[^A-Z]*Cd[^A-Z]*E[^A-Z]*");
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_CAMELCASE_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
+		assertMatches("AbCdE<", SearchPattern.RULE_CAMELCASE_MATCH, pattern);
 	}
 
 	/**
@@ -217,15 +143,25 @@ public class SearchPatternAuto extends TestCase {
 	 * Result for SearchPattern should be similar to regexp pattern ".*"
 	 */
 	public void testBlankMatch() {
-		String patternText = "";
 		Pattern pattern = Pattern.compile(".*", Pattern.CASE_INSENSITIVE);
+		assertMatches("", SearchPattern.RULE_BLANK_MATCH, pattern);
+	}
+
+	private void assertMatches(String patternText, int searchPattern, Pattern... patterns) {
 		SearchPattern patternMatcher = new SearchPattern();
 		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_BLANK_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
+		assertEquals(patternMatcher.getMatchRule(), searchPattern);
+		for (String res : resources) {
+			assertEquals(patternMatcher.matches(res), anyMatches(res, patterns));
 		}
+	}
+
+	private static boolean anyMatches(String res, Pattern... patterns) {
+		boolean result = false;
+		for (Pattern pattern : patterns) {
+			result |= pattern.matcher(res).matches();
+		}
+		return result;
 	}
 
 }
