@@ -13,10 +13,13 @@ package org.eclipse.ui.internal.monitoring;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String DefaultUiFreezeEventLogger_holding_1;
 	public static String DefaultUiFreezeEventLogger_sample_header_2;
 	public static String DefaultUiFreezeEventLogger_stack_trace_header;
+	public static String DefaultUiFreezeEventLogger_starved_awake_and_asleep;
+	public static String DefaultUiFreezeEventLogger_starved_awake;
+	public static String DefaultUiFreezeEventLogger_starved_asleep;
 	public static String DefaultUiFreezeEventLogger_thread_details;
 	public static String DefaultUiFreezeEventLogger_thread_header_2;
 	public static String DefaultUiFreezeEventLogger_ui_freeze_finished_header_2;

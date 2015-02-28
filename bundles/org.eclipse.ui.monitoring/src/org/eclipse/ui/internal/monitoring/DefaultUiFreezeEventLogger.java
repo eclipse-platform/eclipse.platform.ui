@@ -53,19 +53,29 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 		long lastTimestamp = event.getStartTimestamp();
 		String startTime = dateFormat.format(new Date(lastTimestamp));
 
-		String pattern = event.isStillRunning()
+		String template = event.isStillRunning()
 				? Messages.DefaultUiFreezeEventLogger_ui_freeze_ongoing_header_2
 				: Messages.DefaultUiFreezeEventLogger_ui_freeze_finished_header_2;
 		long duration = event.getTotalDuration();
 		String format = duration >= 100000 ? "%.0f" : duration >= 10 ? "%.2g" : "%.1g"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		String header = NLS.bind(pattern, String.format(format, duration / 1000.0), startTime);
+		String header = NLS.bind(template, String.format(format, duration / 1000.0), startTime);
+
+		StackSample[] stackTraceSamples = event.getStackTraceSamples();
+		if (stackTraceSamples.length == 0 && (event.isStarvedAwake() || event.isStarvedAsleep())) {
+			String note =
+					(event.isStarvedAwake() || event.isStarvedAsleep()) ?
+							Messages.DefaultUiFreezeEventLogger_starved_awake_and_asleep :
+					event.isStarvedAwake() ?
+							Messages.DefaultUiFreezeEventLogger_starved_awake :
+							Messages.DefaultUiFreezeEventLogger_starved_asleep;
+			header += note;
+		}
 
 		int severity = duration >= longEventErrorThresholdMillis ?
 				IStatus.ERROR : IStatus.WARNING;
 		MultiStatus loggedEvent =
 				new SeverityMultiStatus(severity, PreferenceConstants.PLUGIN_ID, header, null);
 
-		StackSample[] stackTraceSamples = event.getStackTraceSamples();
 		for (StackSample sample : stackTraceSamples) {
 			double deltaInSeconds = (sample.getTimestamp() - lastTimestamp) / 1000.0;
 			ThreadInfo[] threads = sample.getStackTraces();

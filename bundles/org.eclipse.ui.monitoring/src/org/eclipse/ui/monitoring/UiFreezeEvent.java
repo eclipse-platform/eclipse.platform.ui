@@ -22,6 +22,8 @@ public class UiFreezeEvent {
 	private final long totalDuration;
 	private final StackSample[] stackTraceSamples;
 	private final boolean isStillRunning;
+	private final boolean isStarvedAwake;
+	private final boolean isStarvedAsleep;
 
 	/**
 	 * Creates a UiFreezeEvent.
@@ -34,31 +36,33 @@ public class UiFreezeEvent {
 	 *     was created. If {@code true}, this UiFreezeEvent may indicate a deadlock.
 	 */
 	public UiFreezeEvent(long startTime, long duration, StackSample[] samples,
-			boolean stillRunning) {
+			boolean stillRunning, boolean starvedAwake, boolean starvedAsleep) {
 		this.startTimestamp = startTime;
 		this.stackTraceSamples = samples;
 		this.totalDuration = duration;
 		this.isStillRunning = stillRunning;
+		this.isStarvedAwake = starvedAwake;
+		this.isStarvedAsleep = starvedAsleep;
 	}
 
 	/**
 	 * Returns the time when the UI thread froze, in milliseconds since January 1, 1970 UTC.
 	 */
-	public long getStartTimestamp() {
+	public final long getStartTimestamp() {
 		return startTimestamp;
 	}
 
 	/**
 	 * Returns the total amount of time in milliseconds that the UI thread remained frozen.
 	 */
-	public long getTotalDuration() {
+	public final long getTotalDuration() {
 		return totalDuration;
 	}
 
 	/**
 	 * Returns the stack trace samples obtained during the event.
 	 */
-	public StackSample[] getStackTraceSamples() {
+	public final StackSample[] getStackTraceSamples() {
 		return stackTraceSamples;
 	}
 
@@ -66,8 +70,22 @@ public class UiFreezeEvent {
 	 * Returns {@code true} if this event was still ongoing at the time the event was logged,
 	 * which can happen for deadlocks.
 	 */
-	public boolean isStillRunning() {
+	public final boolean isStillRunning() {
 		return isStillRunning;
+	}
+
+	/**
+	 * Returns {@code true} if the monitoring thread starved for CPU while awake.
+	 */
+	public final boolean isStarvedAwake() {
+		return isStarvedAwake;
+	}
+
+	/**
+	 * Returns {@code true} if the monitoring thread starved for CPU while asleep.
+	 */
+	public final boolean isStarvedAsleep() {
+		return isStarvedAsleep;
 	}
 
 	/** For debugging only. */
@@ -83,6 +101,12 @@ public class UiFreezeEvent {
 		}
 		buf.append(totalDuration);
 		buf.append("ms"); //$NON-NLS-1$
+		if (isStarvedAwake || isStarvedAsleep) {
+			String when =
+					isStarvedAwake && isStarvedAsleep ?	"awake and asleep" : //$NON-NLS-1$
+					isStarvedAwake ? "awake" : "asleep"; //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append(", monitoring thread starved for CPU while " + when); //$NON-NLS-1$
+		}
 		if (stackTraceSamples.length != 0) {
 			buf.append("\nStack trace samples:"); //$NON-NLS-1$
 			for (StackSample stackTraceSample : stackTraceSamples) {
