@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,12 @@
 
 package org.eclipse.ui.tests.progress;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.internal.jobs.InternalJob;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.progress.JobInfo;
 
@@ -85,54 +81,4 @@ public class JobInfoTestOrdering extends TestCase {
 		assertEquals(Job.NONE,     ((JobInfo)jobinfos.get(3)).getJob().getState());
 	}
 
-	/*
-	 * ========================================================================
-	 */
-
-	/**
-	 * Only provides better readable {@link #toString()} method.
-	 */
-	private static class ExtendedJobInfo extends JobInfo {
-
-		public ExtendedJobInfo(Job enclosingJob) {
-			super(enclosingJob);
-		}
-
-		@Override
-		public String toString() {
-			return "ExtendedJobInfo [getName()=" + getJob().getName() + ", getPriority()="
-						+ getJob().getPriority() + ", getState()=" + getJob().getState()
-						+ ", isSystem()=" + getJob().isSystem() + ", isUser()=" + getJob().isUser()
-						+ "]";
-		}
-
-	}
-
-	/**
-	 * Enables access to internal state, by using reflection
-	 * Provides better readable {@link #toString()} method.
-	 */
-	private static class TestJob extends Job {
-
-		public TestJob(String name) {
-			super(name);
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			throw new UnsupportedOperationException("Not implemented, because of just a unit test");
-		}
-
-		public void setInternalJobState(int state) {
-			try {
-				final Field field = InternalJob.class.getDeclaredField("flags");
-				field.setAccessible(true); // hack for testing
-				field.set(this, new Integer(state));
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		}
-
-	}
 }
