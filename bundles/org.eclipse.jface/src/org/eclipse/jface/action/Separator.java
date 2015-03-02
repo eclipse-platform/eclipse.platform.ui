@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,8 @@ public class Separator extends AbstractGroupMarker {
         super(groupName);
     }
 
-    @Override
+	@SuppressWarnings("unused")
+	@Override
 	public void fill(Menu menu, int index) {
         if (index >= 0) {
 			new MenuItem(menu, SWT.SEPARATOR, index);
@@ -55,7 +56,8 @@ public class Separator extends AbstractGroupMarker {
 		}
     }
 
-    @Override
+	@SuppressWarnings("unused")
+	@Override
 	public void fill(ToolBar toolbar, int index) {
         if (index >= 0) {
 			new ToolItem(toolbar, SWT.SEPARATOR, index);
