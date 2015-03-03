@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -566,18 +566,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
         IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         String string = store.getString(PREF_STATE_MEMENTO);
         if(string.length() > 0) {
-        	ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes());
-        	InputStreamReader reader = new InputStreamReader(bin);
-        	try {
+			try (ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes()); InputStreamReader reader = new InputStreamReader(bin);) {
         		XMLMemento stateMemento = XMLMemento.createReadRoot(reader);
         		setMemento(stateMemento);
         	} catch (WorkbenchException e) {
-        	} finally {
-        		try {
-        			reader.close();
-        			bin.close();
-        		} catch (IOException e){}
-        	}
+			} catch (IOException e1) {
+			}
         }
         IMemento mem = getMemento();
         // check the weights to makes sure they are valid -- bug 154025
@@ -619,10 +613,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void partDeactivated(IWorkbenchPart part) {
 		String id = part.getSite().getId();
 		if (id.equals(getSite().getId())) {
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			OutputStreamWriter writer = new OutputStreamWriter(bout);
-
-			try {
+			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(bout);) {
 				XMLMemento memento = XMLMemento.createWriteRoot("VariablesViewMemento"); //$NON-NLS-1$
 				saveViewerState(memento);
 				memento.save(writer);
@@ -631,12 +622,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				String xmlString = bout.toString();
 				store.putValue(PREF_STATE_MEMENTO, xmlString);
 			} catch (IOException e) {
-			} finally {
-				try {
-					writer.close();
-					bout.close();
-				} catch (IOException e) {
-				}
 			}
 		}
 		super.partDeactivated(part);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -797,75 +797,79 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				//read piped data on Win 95, 98, and ME
 				Properties p= new Properties();
 				File file= new File(fileName);
-				InputStream stream = new BufferedInputStream(new FileInputStream(file));
-				p.load(stream);
-				stream.close();
-				if (!file.delete()) {
-					file.deleteOnExit(); // if delete() fails try again on VM close
-				}
-				for (Entry<Object, Object> entry : p.entrySet()) {
-					// Win32's environment variables are case insensitive. Put everything
-					// to uppercase so that (for example) the "PATH" variable will match
-					// "pAtH" correctly on Windows.
-					String key = (String) entry.getKey();
-					//no need to cast value
-					cache.put(key, (String) p.get(key));
+				try(InputStream stream = new BufferedInputStream(new FileInputStream(file))){
+					p.load(stream);
+					if (!file.delete()) {
+						file.deleteOnExit(); // if delete() fails try again on VM close
+					}
+					for (Entry<Object, Object> entry : p.entrySet()) {
+						// Win32's environment variables are case insensitive. Put everything
+						// to uppercase so that (for example) the "PATH" variable will match
+						// "pAtH" correctly on Windows.
+						String key = (String) entry.getKey();
+						//no need to cast value
+						cache.put(key, (String) p.get(key));
+					}
 				}
 			} else {
 				//read process directly on other platforms
 				//we need to parse out matching '{' and '}' for function declarations in .bash environments
 				// pattern is [func name]=() { and we must find the '}' on its own line with no trailing ';'
-				InputStream stream = process.getInputStream();
+				try (InputStream stream = process.getInputStream();
 				InputStreamReader isreader = new InputStreamReader(stream);
-				BufferedReader reader = new BufferedReader(isreader);
-				String line = reader.readLine();
-				String key = null;
-				String value = null;
-				String newLine =  System.getProperty("line.separator"); //$NON-NLS-1$
-				while (line != null) {
-					int func = line.indexOf("=()"); //$NON-NLS-1$
-					if(func > 0) {
-						key = line.substring(0, func);
-						//scan until we find the closing '}' with no following chars
-						value = line.substring(func+1);
-						while(line != null && !line.equals("}")) { //$NON-NLS-1$
-							line = reader.readLine();
-							if(line != null) {
-								value += newLine + line;
-							}
-						}
-						line = reader.readLine();
-					}
-					else {
-						int separator = line.indexOf('=');
-						if (separator > 0) {
-							key = line.substring(0, separator);
-							value = line.substring(separator + 1);
-							line = reader.readLine();
-							if(line != null) {
-								// this line has a '=' read ahead to check next line for '=', might be broken on more than one line
-								// also if line starts with non-identifier - it is remainder of previous variable
-								while (line.indexOf('=') < 0 || (line.length()>0 && !Character.isJavaIdentifierStart(line.charAt(0)))) {
+                BufferedReader reader = new BufferedReader(isreader)) {
+					String line = reader.readLine();
+					String key = null;
+					String value = null;
+					String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
+					while (line != null) {
+						int func = line.indexOf("=()"); //$NON-NLS-1$
+						if (func > 0) {
+							key = line.substring(0, func);
+							// scan until we find the closing '}' with no
+							// following chars
+							value = line.substring(func + 1);
+							while (line != null && !line.equals("}")) { //$NON-NLS-1$
+								line = reader.readLine();
+								if (line != null) {
 									value += newLine + line;
-									line = reader.readLine();
-									if(line == null) {
-										//if next line read is the end of the file quit the loop
-										break;
+								}
+							}
+							line = reader.readLine();
+						}
+						else {
+							int separator = line.indexOf('=');
+							if (separator > 0) {
+								key = line.substring(0, separator);
+								value = line.substring(separator + 1);
+								line = reader.readLine();
+								if (line != null) {
+									// this line has a '=' read ahead to check
+									// next line for '=', might be broken on
+									// more than one line
+									// also if line starts with non-identifier -
+									// it is remainder of previous variable
+									while (line.indexOf('=') < 0 || (line.length() > 0 && !Character.isJavaIdentifierStart(line.charAt(0)))) {
+										value += newLine + line;
+										line = reader.readLine();
+										if (line == null) {
+											// if next line read is the end of
+											// the file quit the loop
+											break;
+										}
 									}
 								}
 							}
 						}
-					}
-					if(key != null) {
-						cache.put(key, value);
-						key = null;
-						value = null;
-					}
-					else {
-						line = reader.readLine();
+						if (key != null) {
+							cache.put(key, value);
+							key = null;
+							value = null;
+						} else {
+							line = reader.readLine();
+						}
 					}
 				}
-				reader.close();
 			}
 		} catch (IOException e) {
 			// Native environment-fetching code failed.
@@ -2632,15 +2636,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.4.0
 	 */
 	private void copyFile(File in, File out) throws IOException {
-	    FileInputStream fis  = new FileInputStream(in);
-	    FileOutputStream fos = new FileOutputStream(out);
-	    byte[] buf = new byte[1024];
-	    int i = 0;
-	    while((i = fis.read(buf)) != -1) {
-	    	fos.write(buf, 0, i);
+		try (FileInputStream fis = new FileInputStream(in); FileOutputStream fos = new FileOutputStream(out)) {
+			byte[] buf = new byte[1024];
+			int i = 0;
+			while ((i = fis.read(buf)) != -1) {
+				fos.write(buf, 0, i);
+			}
 	    }
-	    fis.close();
-	    fos.close();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,7 +39,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -442,14 +440,12 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	 * @since 3.5
 	 */
 	protected void copyFile(IFileStore in, File out) throws CoreException, IOException {
-	    BufferedInputStream is  = new BufferedInputStream(in.openInputStream(EFS.NONE, null));
-	    BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(out));
-	    byte[] buf = new byte[1024];
-	    int i = 0;
-	    while((i = is.read(buf)) != -1) {
-	    	os.write(buf, 0, i);
+		try (BufferedInputStream is = new BufferedInputStream(in.openInputStream(EFS.NONE, null)); BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(out))) {
+			byte[] buf = new byte[1024];
+			int i = 0;
+			while ((i = is.read(buf)) != -1) {
+				os.write(buf, 0, i);
+			}
 	    }
-	    is.close();
-	    os.close();
 	}
 }

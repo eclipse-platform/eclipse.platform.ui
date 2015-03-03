@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,14 +160,27 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	@Override
 	public void run(final IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ImportOperation_0, 1);
-		Reader reader = null;
 		try {
+			XMLMemento memento = null;
 			if (fBuffer == null) {
-				reader = new InputStreamReader(new FileInputStream(fFileName), "UTF-8"); //$NON-NLS-1$
+				try (Reader reader = new InputStreamReader(new FileInputStream(fFileName), "UTF-8")) { //$NON-NLS-1$
+					memento = XMLMemento.createReadRoot(reader);
+				} catch (FileNotFoundException e) {
+					throw new InvocationTargetException(e, MessageFormat.format("Breakpoint import file not found: {0}", new Object[] { //$NON-NLS-1$
+							fFileName }));
+				} catch (UnsupportedEncodingException e) {
+					throw new InvocationTargetException(e, MessageFormat.format("The import file was written in non-UTF-8 encoding.", new Object[] { //$NON-NLS-1$
+							fFileName }));
+				} catch (IOException e) {
+					throw new InvocationTargetException(e);
+				}
 			} else {
-				reader = new StringReader(fBuffer.toString());
+				try (Reader reader = new StringReader(fBuffer.toString())) {
+					memento = XMLMemento.createReadRoot(reader);
+				} catch (IOException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
-			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			IMemento[] nodes = memento.getChildren(IImportExportConstants.IE_NODE_BREAKPOINT);
 			IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 			localmonitor.setWorkRemaining(nodes.length);
@@ -217,28 +230,12 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				fManager.addBreakpoints(fAdded.toArray(new IBreakpoint[fAdded.size()]));
 			}
 		} 
-		catch(FileNotFoundException e) {
-			throw new InvocationTargetException(e, 
- MessageFormat.format("Breakpoint import file not found: {0}", new Object[] { fFileName })); //$NON-NLS-1$
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new InvocationTargetException(e, 
- MessageFormat.format("The import file was written in non-UTF-8 encoding.", new Object[] { fFileName })); //$NON-NLS-1$
-		}
 		catch(CoreException ce) {
 			throw new InvocationTargetException(ce, 
  MessageFormat.format("There was a problem importing breakpoints from: {0}", new Object[] { fFileName })); //$NON-NLS-1$
 		}
 		finally {
 			localmonitor.done();
-			if(reader != null) {
-				try {
-					reader.close();
-				} 
-				catch (IOException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
 		}
 	}
 	

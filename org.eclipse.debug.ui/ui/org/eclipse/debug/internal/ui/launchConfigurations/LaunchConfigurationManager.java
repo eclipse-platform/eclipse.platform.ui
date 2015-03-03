@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -472,9 +472,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			File file = new File(osHistoryPath);
 			file.createNewFile();
 			
-			FileOutputStream stream = new FileOutputStream(file);
-			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
-			stream.close();
+			try (FileOutputStream stream = new FileOutputStream(file)) {
+				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -491,11 +491,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		if (!file.exists()) {
 			return;
 		}
-		InputStream stream= null;
+
 		Element rootHistoryElement= null;
-		try {
+		try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
 			// Parse the history file
-			stream = new BufferedInputStream(new FileInputStream(file));
 			try {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				parser.setErrorHandler(new DefaultHandler());
@@ -506,8 +505,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			} catch (ParserConfigurationException e) {
 				DebugUIPlugin.log(e);
 				return;
-			} finally {
-				stream.close();
 			}
 		} catch (IOException exception) {
 			DebugUIPlugin.log(exception);

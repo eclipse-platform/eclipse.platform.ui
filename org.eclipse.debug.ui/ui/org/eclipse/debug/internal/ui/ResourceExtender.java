@@ -56,11 +56,9 @@ public class ResourceExtender extends PropertyTester {
 		            IPath path= editorInput.getPath();
 		            File file= path.toFile();
 		            if (file.exists()) {
-		                try {
-		                    FileReader reader= new FileReader(file);
+						try (FileReader reader = new FileReader(file)) {
 		                    IContentType contentType= Platform.getContentTypeManager().getContentType((String)expectedValue);
 		                    IContentDescription description= contentType.getDescriptionFor(reader, IContentDescription.ALL);
-		                    reader.close();
 		                    if (description != null) {
 		                    	return matchesContentType(description.getContentType(), (String)expectedValue);
 		                    }

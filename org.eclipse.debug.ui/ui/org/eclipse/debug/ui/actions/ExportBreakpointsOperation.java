@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConst
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportExportMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -89,10 +88,9 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ExportOperation_0, fBreakpoints.length);
 		XMLMemento memento = XMLMemento.createWriteRoot(IImportExportConstants.IE_NODE_BREAKPOINTS);
-		Writer writer = fWriter;
-		try {
+		try (Writer writer = fWriter;) {
 			for (int i = 0; i < fBreakpoints.length; i++) {
-				if(localmonitor.isCanceled()) {
+				if (localmonitor.isCanceled()) {
 					return;
 				}
 				IBreakpoint breakpoint = fBreakpoints[i];
@@ -142,9 +140,13 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 				localmonitor.worked(1);
 			}
 			if (writer == null) {
-				writer = new OutputStreamWriter(new FileOutputStream(fFileName), "UTF-8"); //$NON-NLS-1$
-			} 
-			memento.save(writer);
+				try (Writer outWriter = new OutputStreamWriter(new FileOutputStream(fFileName), "UTF-8")) { //$NON-NLS-1$
+					memento.save(outWriter);
+				}
+			} else {
+				memento.save(writer);
+			}
+
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (IOException e) {
@@ -152,13 +154,6 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		finally {
 			localmonitor.done();
-			if(writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
 		}
 	}
 
