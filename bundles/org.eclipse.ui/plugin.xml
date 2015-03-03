@@ -2541,13 +2541,4 @@
             id="31.SystemPage">
           </page>
    </extension>
-   <extension
-         point="org.eclipse.ui.themes">
-      <theme
-            id="org.eclipse.ui.theme1">
-      </theme>
-      <themeElementCategory
-            id="org.eclipse.ui.themeElementCategory1">
-      </themeElementCategory>
-   </extension>
 </plugin>
