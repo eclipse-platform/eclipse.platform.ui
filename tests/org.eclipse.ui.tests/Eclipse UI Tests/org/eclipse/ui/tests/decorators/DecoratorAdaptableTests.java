@@ -14,10 +14,8 @@ package org.eclipse.ui.tests.decorators;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -26,7 +24,6 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
-import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
 
 public class DecoratorAdaptableTests extends UITestCase {
 
@@ -53,8 +50,8 @@ public class DecoratorAdaptableTests extends UITestCase {
         return result.decorateWithText("Default label");
     }
 
-	private void assertDecorated(String testSubName, String[] expectedSuffixes,
-			Object[] elements, Class adaptedClass, boolean shouldHaveMatches) {
+	private void assertDecorated(String testSubName, String[] expectedSuffixes, Object[] elements,
+			boolean shouldHaveMatches) {
         for (Object object : elements) {
             String text = getDecorationTextFor(object);
             boolean allMatchesFound = true;
@@ -65,7 +62,6 @@ public class DecoratorAdaptableTests extends UITestCase {
             }
             assertTrue("Adaptable test " + testSubName + " has failed for object " + object.toString(), allMatchesFound == shouldHaveMatches);
         }
-
     }
 
     @Override
@@ -101,7 +97,6 @@ public class DecoratorAdaptableTests extends UITestCase {
                         new ObjectContributionClasses.B(),
                         new ObjectContributionClasses.A()
                 },
-                ICommon.class,
                 true
             );
         // Assert that decorators contributed to ICommon are not applied to the given object
@@ -110,7 +105,6 @@ public class DecoratorAdaptableTests extends UITestCase {
                 new Object[] {
                         new Object()
                 },
-                ICommon.class,
                 false
             );
     }
@@ -126,7 +120,6 @@ public class DecoratorAdaptableTests extends UITestCase {
                 new Object[] {
                         new ObjectContributionClasses.A(),
                         new ObjectContributionClasses.B()},
-                ICommon.class,
                 false
             );
         assertDecorated("2",
@@ -135,7 +128,6 @@ public class DecoratorAdaptableTests extends UITestCase {
                         new ObjectContributionClasses.D(),
                         new ObjectContributionClasses.C(),
                         new ObjectContributionClasses.Common()},
-                ICommon.class,
                 true
             );
     }
@@ -163,7 +155,6 @@ public class DecoratorAdaptableTests extends UITestCase {
                 new Object[] {
                     new ObjectContributionClasses.CResource(),
                     new ObjectContributionClasses.CFile()},
-                IResource.class,
                 true
             );
 
@@ -172,14 +163,12 @@ public class DecoratorAdaptableTests extends UITestCase {
                 new Object[] {
                         new ObjectContributionClasses.CFile(),
                         new ObjectContributionClasses.CResource()},
-                ResourceMapping.class,
                 true
             );
         assertDecorated("3",
                 new String[] {"ResourceMapping.1", "IResource.1"},
                 new Object[] {
                     new ObjectContributionClasses.ModelElement()},
-                ResourceMapping.class,
                 true
             );
         // Ensure that the case where an object uses a contribution adapter that doesn't handle mappings
@@ -188,7 +177,6 @@ public class DecoratorAdaptableTests extends UITestCase {
                 new String[] {"ResourceMapping.1", "IResource.1"},
                 new Object[] {
                     new ObjectContributionClasses.CResourceOnly()},
-                ResourceMapping.class,
                 true
             );
     }
