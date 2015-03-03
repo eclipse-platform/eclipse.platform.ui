@@ -40,7 +40,7 @@ public class MultiPageResourceEditor extends MultiPageEditorPart {
 	private IPropertySheetPage page;
 
 	public void updateSelection() {
-		IFile file = (IFile) getEditorInput().getAdapter(IFile.class);
+		IFile file = getEditorInput().getAdapter(IFile.class);
 		editor.setSelection(new StructuredSelection(file));
 	}
 

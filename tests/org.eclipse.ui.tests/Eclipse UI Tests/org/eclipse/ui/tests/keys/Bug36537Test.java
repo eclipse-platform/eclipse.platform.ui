@@ -49,8 +49,7 @@ public class Bug36537Test extends UITestCase {
 	public void testForRedundantKeySequenceBindings() {
 		final IWorkbenchWindow window = openTestWindow();
 		final IWorkbench workbench = window.getWorkbench();
-		final IBindingService bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
+		final IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		final Binding[] bindings = bindingService.getBindings();
 		final int bindingCount = bindings.length;
 		Map keySequenceBindingsByKeySequence = new HashMap();

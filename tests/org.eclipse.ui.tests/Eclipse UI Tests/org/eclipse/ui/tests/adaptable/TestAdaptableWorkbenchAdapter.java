@@ -121,8 +121,7 @@ public class TestAdaptableWorkbenchAdapter extends LabelProvider implements
         if (!(o instanceof IAdaptable)) {
             return null;
         }
-        return (IWorkbenchAdapter) ((IAdaptable) o)
-                .getAdapter(IWorkbenchAdapter.class);
+		return ((IAdaptable) o).getAdapter(IWorkbenchAdapter.class);
     }
 
     @Override

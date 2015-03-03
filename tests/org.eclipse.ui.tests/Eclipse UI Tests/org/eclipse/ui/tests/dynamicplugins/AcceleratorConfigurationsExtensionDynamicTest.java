@@ -73,8 +73,7 @@ public final class AcceleratorConfigurationsExtensionDynamicTest extends
 	 * extension. It tests that the data then doesn't exist.
 	 */
 	public final void testAcceleratorConfigurations() {
-		final IBindingService service = (IBindingService) getWorkbench()
-				.getAdapter(IBindingService.class);
+		final IBindingService service = getWorkbench().getAdapter(IBindingService.class);
 		NamedHandleObject namedHandleObject;
 
 		namedHandleObject = service.getScheme("monkey");

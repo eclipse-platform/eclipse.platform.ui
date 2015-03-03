@@ -50,8 +50,7 @@ public class Bug87856Test extends UITestCase {
 	public final void testHandlerLeak() {
 		final IWorkbenchCommandSupport commandSupport = fWorkbench
 				.getCommandSupport();
-		final ICommandService commandService = (ICommandService) fWorkbench
-				.getAdapter(ICommandService.class);
+		final ICommandService commandService = fWorkbench.getAdapter(ICommandService.class);
 		final String commandId = Bug87856Test.class.getName();
 		final Command command = commandService.getCommand(commandId);
 

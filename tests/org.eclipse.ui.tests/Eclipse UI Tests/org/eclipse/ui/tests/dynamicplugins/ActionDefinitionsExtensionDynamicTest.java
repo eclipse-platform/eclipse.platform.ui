@@ -73,8 +73,7 @@ public final class ActionDefinitionsExtensionDynamicTest extends
 	 * extension. It tests that the data then doesn't exist.
 	 */
 	public final void testActionDefinitions() {
-		final ICommandService service = (ICommandService) getWorkbench()
-				.getAdapter(ICommandService.class);
+		final ICommandService service = getWorkbench().getAdapter(ICommandService.class);
 		NamedHandleObject namedHandleObject;
 
 		namedHandleObject = service.getCommand("monkey");

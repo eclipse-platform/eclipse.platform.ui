@@ -104,8 +104,7 @@ public class UIPreferences extends TestCase {
         PropertyPageContributorManager.getManager()
                 .contribute(manager, element);
 
-        IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
-                .getAdapter(IWorkbenchAdapter.class);
+		IWorkbenchAdapter adapter = element.getAdapter(IWorkbenchAdapter.class);
         if (adapter != null) {
             name = adapter.getLabel(element);
         }

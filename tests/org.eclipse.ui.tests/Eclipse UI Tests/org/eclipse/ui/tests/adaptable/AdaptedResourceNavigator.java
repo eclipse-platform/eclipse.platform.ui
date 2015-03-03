@@ -137,8 +137,7 @@ public class AdaptedResourceNavigator extends ViewPart {
                     resource = (IResource) o;
                 } else {
                     if (o instanceof IAdaptable) {
-                        resource = (IResource) ((IAdaptable) o)
-                                .getAdapter(IResource.class);
+						resource = ((IAdaptable) o).getAdapter(IResource.class);
                     }
                 }
                 if (resource != null) {
@@ -268,7 +267,7 @@ public class AdaptedResourceNavigator extends ViewPart {
         if (input instanceof IResource) {
             resource = (IResource) input;
         } else {
-            resource = (IResource) input.getAdapter(IResource.class);
+			resource = input.getAdapter(IResource.class);
         }
         if (resource != null) {
             switch (resource.getType()) {

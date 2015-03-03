@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.tests.operations;
 
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.PlatformUI;
@@ -75,7 +75,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	}
 
 	public void testWorkspaceAdapter() {
-		IUndoContext workspaceContext = (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		IUndoContext workspaceContext = ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		assertTrue("Should have context registered on workspace", workspaceContext == context);
 	}
 

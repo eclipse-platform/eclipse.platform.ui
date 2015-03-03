@@ -86,12 +86,9 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 *             If "M1+W" can't be parsed by the extension point.
 	 */
 	public final void testCommands() throws ParseException {
-		final IBindingService bindingService = (IBindingService) getWorkbench()
-				.getAdapter(IBindingService.class);
-		final ICommandService commandService = (ICommandService) getWorkbench()
-				.getAdapter(ICommandService.class);
-		final IContextService contextService = (IContextService) getWorkbench()
-				.getAdapter(IContextService.class);
+		final IBindingService bindingService = getWorkbench().getAdapter(IBindingService.class);
+		final ICommandService commandService = getWorkbench().getAdapter(ICommandService.class);
+		final IContextService contextService = getWorkbench().getAdapter(IContextService.class);
 		final TriggerSequence triggerSequence = KeySequence.getInstance("M1+W");
 		NamedHandleObject namedHandleObject;
 		Binding[] bindings;

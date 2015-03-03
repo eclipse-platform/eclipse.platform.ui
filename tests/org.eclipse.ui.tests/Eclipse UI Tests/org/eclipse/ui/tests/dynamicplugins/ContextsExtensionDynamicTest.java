@@ -71,8 +71,7 @@ public final class ContextsExtensionDynamicTest extends DynamicTestCase {
 	 * extension. It tests that the data then doesn't exist.
 	 */
 	public final void testContexts() {
-		final IContextService service = (IContextService) getWorkbench()
-				.getAdapter(IContextService.class);
+		final IContextService service = getWorkbench().getAdapter(IContextService.class);
 		NamedHandleObject namedHandleObject;
 
 		namedHandleObject = service.getContext("monkey");
