@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic" xmi:id="org.eclipse.e4.legacy.ide.application" elementId="org.eclipse.e4.legacy.ide.application" bindingContexts="_SeXUHO8EEd6BC9cDb6iV7y">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="IDEWindow" elementId="IDEWindow" label="%trimmedwindow.label.eclipseSDK" width="5" height="5">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="IDEWindow" elementId="IDEWindow" width="5" height="5">
     <trimBars xmi:id="_vCH1AF1sEeOF8qbLMOkG7A" elementId="org.eclipse.ui.main.toolbar"/>
     <trimBars xmi:id="_CT96oF6VEeO_3ZCXGA_PQg" elementId="org.eclipse.ui.trim.status" side="Bottom"/>
     <trimBars xmi:id="_DU4lEF6VEeO_3ZCXGA_PQg" elementId="org.eclipse.ui.trim.vertical1" side="Left"/>
