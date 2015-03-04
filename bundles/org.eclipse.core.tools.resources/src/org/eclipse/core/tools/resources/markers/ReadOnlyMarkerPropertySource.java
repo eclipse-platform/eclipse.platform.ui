@@ -23,7 +23,6 @@ import org.eclipse.ui.views.properties.*;
  * A read-only IPropertySource for Marker attributes.
  */
 public class ReadOnlyMarkerPropertySource implements IPropertySource {
-
 	private PropertyDescriptor persistentDescriptor = new PropertyDescriptor("persistent", "persistent");
 	protected MarkerExtensionModel model;
 	protected MarkerView view;
@@ -36,16 +35,12 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		this.view = view;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
-	 */
+	@Override
 	public Object getEditableValue() {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
-	 */
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		ArrayList<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
 		findPropertyDescriptors(descriptors);
@@ -97,9 +92,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyValue(Object)
-	 */
+	@Override
 	public Object getPropertyValue(Object id) {
 		String name = (String) id;
 		if ("persistent".equals(name))
@@ -112,9 +105,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(Object)
-	 */
+	@Override
 	public boolean isPropertySet(Object id) {
 		String name = (String) id;
 		if ("persistent".equals(name))
@@ -127,22 +118,18 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#resetPropertyValue(Object)
-	 */
+	@Override
 	public void resetPropertyValue(Object id) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#setPropertyValue(Object, Object)
-	 */
+	@Override
 	public void setPropertyValue(Object id, Object value) {
 		// do nothing
 	}
 
 	/**
-	 * sets the Marker this source will act on behalf of
+	 * Sets the Marker this source will act on behalf of.
 	 */
 	public void setSourceMarker(IMarker marker) {
 		this.marker = marker;

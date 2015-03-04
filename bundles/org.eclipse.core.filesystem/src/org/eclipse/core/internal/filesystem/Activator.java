@@ -70,10 +70,12 @@ public class Activator implements BundleActivator {
 		return null;
 	}
 
+	@Override
 	public void start(BundleContext aContext) throws Exception {
 		this.context = aContext;
 	}
 
+	@Override
 	public void stop(BundleContext aContext) throws Exception {
 		//nothing to do
 	}

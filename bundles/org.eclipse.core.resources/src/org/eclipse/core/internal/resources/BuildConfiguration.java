@@ -55,6 +55,7 @@ public class BuildConfiguration extends PlatformObject implements IBuildConfigur
 	 * (non-Javadoc)
 	 * @see IBuildConfiguration#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -63,6 +64,7 @@ public class BuildConfiguration extends PlatformObject implements IBuildConfigur
 	 * (non-Javadoc)
 	 * @see IBuildConfiguration#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return project;
 	}

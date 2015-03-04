@@ -27,6 +27,7 @@ public class ConcurrentOperation01 extends ConcurrentOperation {
 		reset();
 	}
 
+	@Override
 	protected void assertRequisites() throws Exception {
 	}
 
@@ -34,11 +35,13 @@ public class ConcurrentOperation01 extends ConcurrentOperation {
 		return isRunning;
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
 		isRunning = false;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) {
 		isRunning = true;
 		syncPoint();

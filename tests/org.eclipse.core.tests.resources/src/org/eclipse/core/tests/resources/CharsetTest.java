@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class CharsetTest extends ResourceTest {
 			this.flags = flags;
 		}
 
+		@Override
 		void internalVerifyDelta(IResourceDelta delta) {
 			// do NOT ignore any changes to project preferences only to .project
 			IPath path = delta.getFullPath();
@@ -47,6 +48,7 @@ public class CharsetTest extends ResourceTest {
 			return (mask & flags) == mask;
 		}
 
+		@Override
 		public synchronized void resourceChanged(IResourceChangeEvent e) {
 			// to make testing easier, we allow events from the main or other thread to be ignored
 			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread)
@@ -116,6 +118,7 @@ public class CharsetTest extends ResourceTest {
 			ensureExistsInWorkspace(file, true);
 			project.setDefaultCharset("FOO", getMonitor());
 			workspace.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					assertEquals("0.9", "FOO", file.getCharset());
 					file.setCharset("BAR", getMonitor());
@@ -179,6 +182,7 @@ public class CharsetTest extends ResourceTest {
 		if (root == null || !root.exists())
 			return;
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				if (!resource.exists())
 					return false;
@@ -238,12 +242,14 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// save the workspace charset so it can be restored after the test
 		savedWorkspaceCharset = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		// restore the workspace charset 
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, savedWorkspaceCharset);
@@ -1320,6 +1326,7 @@ public class CharsetTest extends ResourceTest {
 			verifier.addExpectedChange(prefs, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 			try {
 				workspace.run(new IWorkspaceRunnable() {
+					@Override
 					public void run(IProgressMonitor monitor) throws CoreException {
 						file1.setCharset("FOO", getMonitor());
 						file2.setCharset("FOO", getMonitor());

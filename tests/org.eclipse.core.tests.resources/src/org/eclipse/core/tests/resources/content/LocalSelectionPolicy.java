@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
  * belong to the runtime plug-in or this test plug-in. 
  */
 public class LocalSelectionPolicy implements ISelectionPolicy {
+	@Override
 	public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
 		List<IContentType> result = new ArrayList<IContentType>(candidates.length);
 		for (int i = 0; i < candidates.length; i++) {

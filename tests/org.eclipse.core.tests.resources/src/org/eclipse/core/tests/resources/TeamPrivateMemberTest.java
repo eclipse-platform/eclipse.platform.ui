@@ -626,6 +626,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 				}
@@ -649,6 +650,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setTeamPrivateMember("2.0", folder, true, IResource.DEPTH_ZERO);
@@ -673,6 +675,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setTeamPrivateMember("3.0", project, true, IResource.DEPTH_INFINITE);
@@ -793,6 +796,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 
 	protected void assertTeamPrivateMember(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				boolean expected = false;
 				if (resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
@@ -810,6 +814,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 
 	protected void setTeamPrivateMember(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					resource.setTeamPrivateMember(value);

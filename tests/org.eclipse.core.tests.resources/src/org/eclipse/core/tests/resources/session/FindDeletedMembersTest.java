@@ -52,6 +52,7 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		root = getWorkspace().getRoot();
 		project = root.getProject("MyProject");
@@ -66,6 +67,7 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().save(true, getMonitor());
 	}

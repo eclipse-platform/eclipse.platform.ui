@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 	 * Sets up the fixture, for example, open a network connection.
 	 * This method is called before a test is executed.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -63,6 +64,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 
 		// Create and open the resources
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ensureExistsInWorkspace(allResources, true);
 				marker2 = file2.createMarker(IMarker.BOOKMARK);
@@ -84,6 +86,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 	 * Tears down the fixture, for example, close a network connection.
 	 * This method is called after a test is executed.
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
@@ -100,6 +103,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 		 * - change marker3
 		 */
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				//bookmark type, no subtypes
 				IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.BOOKMARK, false);
@@ -136,6 +140,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 
 		//do the work	
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				marker1 = file1.createMarker(IMarker.BOOKMARK);
 				marker2.delete();
@@ -157,6 +162,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 		 * - change file1
 		 */
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				//bookmark type, no subtypes
 				IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.BOOKMARK, false);

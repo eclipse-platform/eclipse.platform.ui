@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,6 +263,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getBuildConfigReferences(String)
 	 */
+	@Override
 	public IBuildConfiguration[] getBuildConfigReferences(String configName) {
 		return getBuildConfigRefs(configName, true);
 	}
@@ -286,6 +287,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getBuildSpec()
 	 */
+	@Override
 	public ICommand[] getBuildSpec() {
 		return getBuildSpec(true);
 	}
@@ -306,6 +308,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getComment()
 	 */
+	@Override
 	public String getComment() {
 		return comment;
 	}
@@ -313,6 +316,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getDynamicReferences()
 	 */
+	@Override
 	public IProject[] getDynamicReferences() {
 		return getDynamicReferences(true);
 	}
@@ -373,6 +377,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see IProjectDescription#getLocation()
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public IPath getLocation() {
 		if (location == null)
@@ -383,6 +388,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getLocationURI()
 	 */
+	@Override
 	public URI getLocationURI() {
 		return location;
 	}
@@ -390,6 +396,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getNatureIds()
 	 */
+	@Override
 	public String[] getNatureIds() {
 		return getNatureIds(true);
 	}
@@ -403,6 +410,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#getReferencedProjects()
 	 */
+	@Override
 	public IProject[] getReferencedProjects() {
 		return getReferencedProjects(true);
 	}
@@ -435,6 +443,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#hasNature(String)
 	 */
+	@Override
 	public boolean hasNature(String natureID) {
 		String[] natureIDs = getNatureIds(false);
 		for (int i = 0; i < natureIDs.length; ++i)
@@ -547,10 +556,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#newCommand()
 	 */
+	@Override
 	public ICommand newCommand() {
 		return new BuildCommand();
 	}
 
+	@Override
 	public void setActiveBuildConfig(String configName) {
 		Assert.isNotNull(configName);
 		if (!configName.equals(activeConfiguration))
@@ -561,6 +572,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setBuildSpec(ICommand[])
 	 */
+	@Override
 	public void setBuildSpec(ICommand[] value) {
 		Assert.isLegal(value != null);
 		//perform a deep copy in case clients perform further changes to the command
@@ -582,6 +594,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setComment(String)
 	 */
+	@Override
 	public void setComment(String value) {
 		comment = value;
 	}
@@ -589,6 +602,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setDynamicReferences(IProject[])
 	 */
+	@Override
 	public void setDynamicReferences(IProject[] value) {
 		Assert.isLegal(value != null);
 		dynamicRefs = copyAndRemoveDuplicates(value);
@@ -603,6 +617,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setDynamicConfigReferences(String, IBuildConfiguration[])
 	 */
+	@Override
 	public void setBuildConfigReferences(String configName, IBuildConfiguration[] references) {
 		Assert.isLegal(configName != null);
 		Assert.isLegal(references != null);
@@ -616,6 +631,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * (non-Javadoc)
 	 * @see IProjectDescription#setBuildConfigurations(String[])
 	 */
+	@Override
 	public void setBuildConfigs(String[] names) {
 		// Remove references for deleted buildConfigs
 		LinkedHashSet<String> buildConfigNames = new LinkedHashSet<String>();
@@ -818,10 +834,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setLocation(IPath)
 	 */
+	@Override
 	public void setLocation(IPath path) {
 		this.location = path == null ? null : URIUtil.toURI(path);
 	}
 
+	@Override
 	public void setLocationURI(URI location) {
 		this.location = location;
 	}
@@ -837,6 +855,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setNatureIds(String[])
 	 */
+	@Override
 	public void setNatureIds(String[] value) {
 		natures = value.clone();
 	}
@@ -844,6 +863,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setReferencedProjects(IProject[])
 	 */
+	@Override
 	public void setReferencedProjects(IProject[] value) {
 		Assert.isLegal(value != null);
 		staticRefs = copyAndRemoveDuplicates(value);

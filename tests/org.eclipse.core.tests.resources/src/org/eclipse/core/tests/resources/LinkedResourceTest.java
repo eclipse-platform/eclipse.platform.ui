@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,14 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import org.eclipse.core.runtime.IPath;
-
 import java.io.*;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.FileUtil;
@@ -111,6 +110,7 @@ public class LinkedResourceTest extends ResourceTest {
 		return uri;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		existingProject = getWorkspace().getRoot().getProject("ExistingProject");
@@ -149,6 +149,7 @@ public class LinkedResourceTest extends ResourceTest {
 			existingProjectInSubDirectory.open(getMonitor());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		Workspace.clear(resolve(localFolder).toFile());
@@ -332,6 +333,7 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testCopyFile") {
 			protected static final String CANCELED = "canceled";
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
 				try {
@@ -341,6 +343,7 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile source = (IFile) args[0];
 				IResource destination = (IResource) args[1];
@@ -359,6 +362,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFile source = (IFile) args[0];
 				IResource destination = (IResource) args[1];
@@ -379,6 +383,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile source = (IFile) args[0];
 				IResource destination = (IResource) args[1];
@@ -420,6 +425,7 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testCopyFolder") {
 			protected static final String CANCELED = "canceled";
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
 				try {
@@ -429,6 +435,7 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
@@ -447,6 +454,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
@@ -469,6 +477,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
@@ -720,6 +729,7 @@ public class LinkedResourceTest extends ResourceTest {
 		try {
 			//recreate the link in a workspace runnable with create scheduling rule
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					dotProject.setContents(new ByteArrayInputStream(finalContents), IResource.NONE, getMonitor());
 				}
@@ -1194,6 +1204,7 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testLinkFile") {
 			protected static final String CANCELED = "canceled";
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
 				try {
@@ -1203,6 +1214,7 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile file = (IFile) args[0];
 				IPath location = (IPath) args[1];
@@ -1219,6 +1231,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
@@ -1248,6 +1261,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile resource = (IFile) args[0];
 				IPath location = (IPath) args[1];
@@ -1277,6 +1291,7 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testLinkFolder") {
 			protected static final String CANCELED = "canceled";
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
 				try {
@@ -1286,6 +1301,7 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFolder folder = (IFolder) args[0];
 				IPath location = (IPath) args[1];
@@ -1302,6 +1318,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
@@ -1330,6 +1347,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFolder resource = (IFolder) args[0];
 				IPath location = (IPath) args[1];
@@ -1434,6 +1452,7 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testMoveFile") {
 			protected static final String CANCELED = "canceled";
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
 				try {
@@ -1443,6 +1462,7 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile source = (IFile) args[0];
 				IResource destination = (IResource) args[1];
@@ -1461,6 +1481,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFile source = (IFile) args[0];
 				IResource destination = (IResource) args[1];
@@ -1483,6 +1504,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
@@ -1522,6 +1544,7 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testMoveFolder") {
 			protected static final String CANCELED = "canceled";
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				super.cleanUp(args, count);
 				try {
@@ -1531,6 +1554,7 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
@@ -1548,6 +1572,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
@@ -1569,6 +1594,7 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource destination = (IResource) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];

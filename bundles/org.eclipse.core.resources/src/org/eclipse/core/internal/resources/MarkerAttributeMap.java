@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	protected static final int DEFAULT_SIZE = 16;
 	protected static final int GROW_SIZE = 10;
 
-	private static final Object[] EMPTY = new Object[0]; 
+	private static final Object[] EMPTY = new Object[0];
 
 	/**
 	 * Creates a new marker attribute map of default size
@@ -60,6 +60,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#clear()
 	 */
+	@Override
 	public void clear() {
 		count = 0;
 		elements = EMPTY;
@@ -68,6 +69,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#containsKey(java.lang.Object)
 	 */
+	@Override
 	public boolean containsKey(Object key) {
 		if (count == 0)
 			return false;
@@ -81,6 +83,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#containsValue(java.lang.Object)
 	 */
+	@Override
 	public boolean containsValue(Object value) {
 		if (count == 0)
 			return false;
@@ -96,6 +99,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
+	@Override
 	public Set<Entry<String, V>> entrySet() {
 		return toHashMap().entrySet();
 	}
@@ -130,13 +134,14 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#get(java.lang.Object)
 	 */
+	@Override
 	public V get(Object key) {
 		if (count == 0)
 			return null;
-		key = ((String)key).intern();
+		key = ((String) key).intern();
 		for (int i = 0; i < elements.length; i = i + 2)
 			if (elements[i] == key)
-				return (V)elements[i + 1];
+				return (V) elements[i + 1];
 		return null;
 	}
 
@@ -169,6 +174,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return count == 0;
 	}
@@ -179,13 +185,14 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
+	@Override
 	public Set<String> keySet() {
 		Set<String> result = new HashSet<String>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add((String)elements[i]);
+				result.add((String) elements[i]);
 			}
 		}
 		return result;
@@ -194,6 +201,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public V put(String k, V value) {
 		if (k == null)
 			throw new NullPointerException();
@@ -217,7 +225,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 			if (elements[i] == key) {
 				Object oldValue = elements[i + 1];
 				elements[i + 1] = value;
-				return (V)oldValue;
+				return (V) oldValue;
 			}
 		}
 
@@ -236,6 +244,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#putAll(java.util.Map)
 	 */
+	@Override
 	public void putAll(Map<? extends String, ? extends V> map) {
 		for (Map.Entry<? extends String, ? extends V> e : map.entrySet())
 			put(e.getKey(), e.getValue());
@@ -244,17 +253,18 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#remove(java.lang.Object)
 	 */
+	@Override
 	public V remove(Object key) {
 		if (count == 0)
 			return null;
-		key = ((String)key).intern();
+		key = ((String) key).intern();
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] == key) {
 				elements[i] = null;
 				Object result = elements[i + 1];
 				elements[i + 1] = null;
 				count--;
-				return (V)result;
+				return (V) result;
 			}
 		}
 		return null;
@@ -263,6 +273,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc)
 	 * @see Map#size()
 	 */
+	@Override
 	public int size() {
 		return count;
 	}
@@ -270,6 +281,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	/* (non-Javadoc
 	 * Method declared on IStringPoolParticipant
 	 */
+	@Override
 	public void shareStrings(StringPool set) {
 		//copy elements for thread safety
 		Object[] array = elements;
@@ -279,9 +291,9 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 		for (int i = 1; i < array.length; i = i + 2) {
 			Object o = array[i];
 			if (o instanceof String)
-				array[i] = set.add((String)o);
+				array[i] = set.add((String) o);
 			else if (o instanceof IStringPoolParticipant)
-				((IStringPoolParticipant)o).shareStrings(set);
+				((IStringPoolParticipant) o).shareStrings(set);
 		}
 	}
 
@@ -294,7 +306,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.put((String)elements[i], (V)elements[i + 1]);
+				result.put((String) elements[i], (V) elements[i + 1]);
 			}
 		}
 		return result;
@@ -306,13 +318,14 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
+	@Override
 	public Collection<V> values() {
 		Set<V> result = new HashSet<V>(size());
 		if (count == 0)
 			return result;
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add((V)elements[i]);
+				result.add((V) elements[i]);
 			}
 		}
 		return result;

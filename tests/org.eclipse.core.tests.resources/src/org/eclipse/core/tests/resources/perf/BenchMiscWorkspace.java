@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class BenchMiscWorkspace extends ResourceTest {
 	public void testNoOp() throws Exception {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 			}
 		};
@@ -55,6 +56,7 @@ public class BenchMiscWorkspace extends ResourceTest {
 		waitForBuild();
 		//now start the test
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					ws.run(noop, null);
@@ -67,6 +69,7 @@ public class BenchMiscWorkspace extends ResourceTest {
 
 	public void testGetProject() {
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				for (int i = 0; i < 2000; i++)

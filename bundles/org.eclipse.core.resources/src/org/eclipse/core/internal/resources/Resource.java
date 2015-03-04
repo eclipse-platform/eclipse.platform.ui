@@ -46,16 +46,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		this.workspace = workspace;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#accept(IResourceProxyVisitor, int)
-	 */
+	@Override
 	public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException {
 		accept(visitor, IResource.DEPTH_INFINITE, memberFlags);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#accept(IResourceProxyVisitor, int, int)
-	 */
+	@Override
 	public void accept(final IResourceProxyVisitor visitor, final int depth, final int memberFlags) throws CoreException {
 		// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
@@ -64,6 +60,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 		final ResourceProxy proxy = new ResourceProxy();
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object contents) {
 				ResourceInfo info = (ResourceInfo) contents;
 				if (!isMember(getFlags(info), memberFlags))
@@ -102,27 +99,22 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#accept(IResourceVisitor)
-	 */
+	@Override
 	public void accept(IResourceVisitor visitor) throws CoreException {
 		accept(visitor, IResource.DEPTH_INFINITE, 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#accept(IResourceVisitor, int, boolean)
-	 */
+	@Override
 	public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms) throws CoreException {
 		accept(visitor, depth, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#accept(IResourceVisitor, int, int)
-	 */
+	@Override
 	public void accept(final IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
 		//use the fast visitor if visiting to infinite depth
 		if (depth == IResource.DEPTH_INFINITE) {
 			accept(new IResourceProxyVisitor() {
+				@Override
 				public boolean visit(IResourceProxy proxy) throws CoreException {
 					return visitor.visit(proxy.requestResource());
 				}
@@ -489,17 +481,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return Status.OK_STATUS;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#clearHistory(IProgressMonitor)
-	 */
+	@Override
 	public void clearHistory(IProgressMonitor monitor) {
 		getLocalManager().getHistoryStore().remove(getFullPath(), monitor);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see ISchedulingRule#contains(ISchedulingRule)
-	 */
+	@Override
 	public boolean contains(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -538,17 +525,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.setMarkers(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#copy(IPath, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		copy(destination, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#copy(IPath, int, IProgressMonitor)
-	 */
+	@Override
 	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor = Policy.monitorFor(monitor);
@@ -577,9 +560,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#copy(IProjectDescription, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		copy(destDesc, updateFlags, monitor);
@@ -589,6 +570,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * Used when a folder is to be copied to a project.
 	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
 	 */
+	@Override
 	public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(destDesc);
 		monitor = Policy.monitorFor(monitor);
@@ -724,9 +706,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#createMarker(String)
-	 */
+	@Override
 	public IMarker createMarker(String type) throws CoreException {
 		Assert.isNotNull(type);
 		final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
@@ -744,6 +724,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
+	@Override
 	public IResourceProxy createProxy() {
 		ResourceProxy result = new ResourceProxy();
 		result.info = getResourceInfo(false, false);
@@ -763,16 +744,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		delete(updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#delete(boolean, IProgressMonitor)
-	 */
+	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 		delete(force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#delete(int, IProgressMonitor)
-	 */
+	@Override
 	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -836,9 +813,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#deleteMarkers(String, boolean, int)
-	 */
+	@Override
 	public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 		final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
 		try {
@@ -976,9 +951,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return filters;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#equals(Object)
-	 */
 	@Override
 	public boolean equals(Object target) {
 		if (this == target)
@@ -989,9 +961,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getType() == resource.getType() && path.equals(resource.path) && workspace.equals(resource.workspace);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#exists()
-	 */
+	@Override
 	public boolean exists() {
 		ResourceInfo info = getResourceInfo(false, false);
 		return exists(getFlags(info), true);
@@ -1026,16 +996,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getRoot().findMember(result);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#findMarker(long)
-	 */
+	@Override
 	public IMarker findMarker(long id) {
 		return workspace.getMarkerManager().findMarker(this, id);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#findMarkers(String, boolean, int)
-	 */
+	@Override
 	public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
@@ -1045,9 +1011,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getMarkerManager().findMarkers(this, type, includeSubtypes, depth);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#findMaxProblemSeverity(String, boolean, int)
-	 */
+	@Override
 	public int findMaxProblemSeverity(String type, boolean includeSubtypes, int depth) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
@@ -1104,9 +1068,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.setMarkers(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getFileExtension()
-	 */
+	@Override
 	public String getFileExtension() {
 		String name = getName();
 		int index = name.lastIndexOf('.');
@@ -1121,9 +1083,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return (info == null) ? NULL_FLAG : info.getFlags();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getFullPath()
-	 */
+	@Override
 	public IPath getFullPath() {
 		return path;
 	}
@@ -1132,17 +1092,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getFileSystemManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getLocalTimeStamp()
-	 */
+	@Override
 	public long getLocalTimeStamp() {
 		ResourceInfo info = getResourceInfo(false, false);
 		return (info == null || isVirtual()) ? IResource.NULL_STAMP : info.getLocalSyncInfo();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getLocation()
-	 */
+	@Override
 	public IPath getLocation() {
 		IProject project = getProject();
 		if (project != null && !project.exists())
@@ -1150,9 +1106,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getLocalManager().locationFor(this, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getLocation()
-	 */
+	@Override
 	public URI getLocationURI() {
 		IProject project = getProject();
 		if (project != null && !project.exists())
@@ -1160,9 +1114,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getLocalManager().locationURIFor(this, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getMarker(long)
-	 */
+	@Override
 	public IMarker getMarker(long id) {
 		return new Marker(this, id);
 	}
@@ -1171,24 +1123,18 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getMarkerManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getModificationStamp()
-	 */
+	@Override
 	public long getModificationStamp() {
 		ResourceInfo info = getResourceInfo(false, false);
 		return info == null ? IResource.NULL_STAMP : info.getModificationStamp();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getName()
-	 */
+	@Override
 	public String getName() {
 		return path.lastSegment();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getParent()
-	 */
+	@Override
 	public IContainer getParent() {
 		int segments = path.segmentCount();
 		//zero and one segments handled by subclasses
@@ -1199,32 +1145,24 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return (IFolder) workspace.newResource(path.removeLastSegments(1), IResource.FOLDER);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getPersistentProperty(QualifiedName)
-	 */
+	@Override
 	public String getPersistentProperty(QualifiedName key) throws CoreException {
 		checkAccessibleAndLocal(DEPTH_ZERO);
 		return getPropertyManager().getProperty(this, key);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getPersistentProperties()
-	 */
+	@Override
 	public Map<QualifiedName, String> getPersistentProperties() throws CoreException {
 		checkAccessibleAndLocal(DEPTH_ZERO);
 		return getPropertyManager().getProperties(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getProject()
-	 */
+	@Override
 	public IProject getProject() {
 		return workspace.getRoot().getProject(path.segment(0));
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getProjectRelativePath()
-	 */
+	@Override
 	public IPath getProjectRelativePath() {
 		return getFullPath().removeFirstSegments(ICoreConstants.PROJECT_SEGMENT_LENGTH);
 	}
@@ -1233,27 +1171,21 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getPropertyManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getRawLocation()
-	 */
+	@Override
 	public IPath getRawLocation() {
 		if (isLinked())
 			return FileUtil.toPath(((Project) getProject()).internalGetDescription().getLinkLocationURI(getProjectRelativePath()));
 		return getLocation();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getRawLocation()
-	 */
+	@Override
 	public URI getRawLocationURI() {
 		if (isLinked())
 			return ((Project) getProject()).internalGetDescription().getLinkLocationURI(getProjectRelativePath());
 		return getLocationURI();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getResourceAttributes()
-	 */
+	@Override
 	public ResourceAttributes getResourceAttributes() {
 		if (!isAccessible() || isVirtual())
 			return null;
@@ -1269,17 +1201,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getResourceInfo(getFullPath(), phantom, mutable);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getSessionProperty(QualifiedName)
-	 */
+	@Override
 	public Object getSessionProperty(QualifiedName key) throws CoreException {
 		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		return info.getSessionProperty(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getSessionProperties()
-	 */
+	@Override
 	public Map<QualifiedName, Object> getSessionProperties() throws CoreException {
 		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		return info.getSessionProperties();
@@ -1289,9 +1217,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getLocalManager().getStore(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getType()
-	 */
+	@Override
 	public abstract int getType();
 
 	public String getTypeString() {
@@ -1308,9 +1234,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getWorkspace()
-	 */
+	@Override
 	public IWorkspace getWorkspace() {
 		return workspace;
 	}
@@ -1347,16 +1271,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isAccessible()
-	 */
+	@Override
 	public boolean isAccessible() {
 		return exists();
 	}
 
-	/* (non-Javadoc)
-	 * @see ISchedulingRule#isConflicting(ISchedulingRule)
-	 */
+	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -1380,16 +1300,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return path.isPrefixOf(otherPath) || otherPath.isPrefixOf(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isDerived()
-	 */
+	@Override
 	public boolean isDerived() {
 		return isDerived(IResource.NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isDerived(int)
-	 */
+	@Override
 	public boolean isDerived(int options) {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -1401,18 +1317,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isHidden()
-	 */
+	@Override
 	public boolean isHidden() {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isHidden(int)
-	 */
+	@Override
 	public boolean isHidden(int options) {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -1424,16 +1336,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isLinked()
-	 */
+	@Override
 	public boolean isLinked() {
 		return isLinked(NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isLinked()
-	 */
+	@Override
 	public boolean isLinked(int options) {
 		if ((options & CHECK_ANCESTORS) != 0) {
 			IProject project = getProject();
@@ -1457,9 +1365,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return info != null && info.isSet(M_LINK);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResource#isVirtual()
-	 */
+	@Override
 	public boolean isVirtual() {
 		ResourceInfo info = getResourceInfo(false, false);
 		return info != null && info.isSet(M_VIRTUAL);
@@ -1478,10 +1384,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return false;
 	}
 
-	/**
-	 * @see IResource#isLocal(int)
-	 * @deprecated
-	 */
+	@Override
 	@Deprecated
 	public boolean isLocal(int depth) {
 		ResourceInfo info = getResourceInfo(false, false);
@@ -1520,9 +1423,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return flags != NULL_FLAG && (flags & excludeMask) == 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isPhantom()
-	 */
+	@Override
 	public boolean isPhantom() {
 		ResourceInfo info = getResourceInfo(true, false);
 		return isPhantom(getFlags(info));
@@ -1532,35 +1433,26 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_PHANTOM);
 	}
 
-	/** (non-Javadoc)
-	 * @see IResource#isReadOnly()
-	 * @deprecated
-	 */
 	@Deprecated
+	@Override
 	public boolean isReadOnly() {
 		final ResourceAttributes attributes = getResourceAttributes();
 		return attributes == null ? false : attributes.isReadOnly();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isSynchronized(int)
-	 */
+	@Override
 	public boolean isSynchronized(int depth) {
 		return getLocalManager().isSynchronized(this, depth);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isTeamPrivateMember()
-	 */
+	@Override
 	public boolean isTeamPrivateMember() {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isTeamPrivateMember(int)
-	 */
+	@Override
 	public boolean isTeamPrivateMember(int options) {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -1603,16 +1495,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		move(destination, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#move(IPath, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 		move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#move(IPath, int, IProgressMonitor)
-	 */
+	@Override
 	public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1666,18 +1554,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#move(IProjectDescription, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 		move(description, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#move(IPath, int, IProgressMonitor)
-	 */
+	@Override
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(description);
 		if (getType() != IResource.PROJECT) {
@@ -1687,9 +1571,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		((Project) this).move(description, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#refreshLocal(int, IProgressMonitor)
-	 */
+	@Override
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1720,23 +1602,17 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on {@link IPathRequestor}.
-	 */
+	@Override
 	public String requestName() {
 		return getName();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on {@link IPathRequestor}.
-	 */
+	@Override
 	public IPath requestPath() {
 		return getFullPath();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#revertModificationStamp
-	 */
+	@Override
 	public void revertModificationStamp(long value) throws CoreException {
 		if (value < 0)
 			throw new IllegalArgumentException("Illegal value: " + value); //$NON-NLS-1$
@@ -1746,12 +1622,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.setModificationStamp(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setDerived(boolean)
-	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which 
-	 * is a workspace operation and reports changes in resource deltas.
-	 */
 	@Deprecated
+	@Override
 	public void setDerived(boolean isDerived) throws CoreException {
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
@@ -1769,9 +1641,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setDerived(boolean, IProgressMonitor)
-	 */
+	@Override
 	public void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1804,9 +1674,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setHidden(boolean)
-	 */
+	@Override
 	public void setHidden(boolean isHidden) throws CoreException {
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
@@ -1821,11 +1689,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/**
-	 * @see IResource#setLocal(boolean, int, IProgressMonitor)
-	 * @deprecated
-	 */
 	@Deprecated
+	@Override
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1844,9 +1709,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setLocalTimeStamp(long)
-	 */
+	@Override
 	public long setLocalTimeStamp(long value) throws CoreException {
 		if (value < 0)
 			throw new IllegalArgumentException("Illegal value: " + value); //$NON-NLS-1$
@@ -1856,19 +1719,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getLocalManager().setLocalTimeStamp(this, info, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setPersistentProperty(QualifiedName, String)
-	 */
+	@Override
 	public void setPersistentProperty(QualifiedName key, String value) throws CoreException {
 		checkAccessibleAndLocal(DEPTH_ZERO);
 		getPropertyManager().setProperty(this, key, value);
 	}
 
-	/** (non-Javadoc)
-	 * @see IResource#setReadOnly(boolean)
-	 * @deprecated
-	 */
 	@Deprecated
+	@Override
 	public void setReadOnly(boolean readonly) {
 		ResourceAttributes attributes = getResourceAttributes();
 		if (attributes == null)
@@ -1881,17 +1739,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResource#setResourceAttributes(org.eclipse.core.resources.ResourceAttributes)
-	 */
+	@Override
 	public void setResourceAttributes(ResourceAttributes attributes) throws CoreException {
 		checkAccessibleAndLocal(DEPTH_ZERO);
 		getLocalManager().setResourceAttributes(this, attributes);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setSessionProperty(QualifiedName, Object)
-	 */
+	@Override
 	public void setSessionProperty(QualifiedName key, Object value) throws CoreException {
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
@@ -1900,9 +1754,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		info.setSessionProperty(key, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setTeamPrivateMember(boolean)
-	 */
+	@Override
 	public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
@@ -1928,17 +1780,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return info != null && info.getSyncInfo(false) != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getTypeString() + getFullPath().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#touch(IProgressMonitor)
-	 */
+	@Override
 	public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -2065,9 +1912,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getPathVariableManager()
-	 */
+	@Override
 	public IPathVariableManager getPathVariableManager() {
 		if (getProject() == null)
 			return workspace.getPathVariableManager();
@@ -2225,13 +2070,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#setLinkLocation(URI)
 	 */
 	public void setLinkLocation(IPath location, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		if (location.isAbsolute())
+		if (location.isAbsolute()) {
 			setLinkLocation(URIUtil.toURI(location.toPortableString()), updateFlags, monitor);
-		else
+		} else {
 			try {
 				setLinkLocation(new URI(null, null, location.toPortableString(), null), updateFlags, monitor);
 			} catch (URISyntaxException e) {
 				setLinkLocation(URIUtil.toURI(location.toPortableString()), updateFlags, monitor);
 			}
+		}
 	}
 }

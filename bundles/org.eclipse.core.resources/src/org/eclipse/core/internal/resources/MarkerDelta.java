@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttribute(String)
 	 */
+	@Override
 	public Object getAttribute(String attributeName) {
 		return info.getAttribute(attributeName);
 	}
@@ -43,6 +44,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttribute(String, int)
 	 */
+	@Override
 	public int getAttribute(String attributeName, int defaultValue) {
 		Object value = info.getAttribute(attributeName);
 		if (value instanceof Integer)
@@ -53,6 +55,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttribute(String, String)
 	 */
+	@Override
 	public String getAttribute(String attributeName, String defaultValue) {
 		Object value = info.getAttribute(attributeName);
 		if (value instanceof String)
@@ -63,6 +66,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttribute(String, boolean)
 	 */
+	@Override
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
 		Object value = info.getAttribute(attributeName);
 		if (value instanceof Boolean)
@@ -73,6 +77,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttributes()
 	 */
+	@Override
 	public Map<String, Object> getAttributes() {
 		return info.getAttributes();
 	}
@@ -80,6 +85,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttributes(String[])
 	 */
+	@Override
 	public Object[] getAttributes(String[] attributeNames) {
 		return info.getAttributes(attributeNames);
 	}
@@ -87,6 +93,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getId()
 	 */
+	@Override
 	public long getId() {
 		return info.getId();
 	}
@@ -94,6 +101,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -101,6 +109,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getMarker()
 	 */
+	@Override
 	public IMarker getMarker() {
 		return new Marker(resource, getId());
 	}
@@ -108,6 +117,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return resource;
 	}
@@ -115,6 +125,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getType()
 	 */
+	@Override
 	public String getType() {
 		return info.getType();
 	}
@@ -122,6 +133,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#isSubtypeOf(String)
 	 */
+	@Override
 	public boolean isSubtypeOf(String superType) {
 		return ((Workspace) getResource().getWorkspace()).getMarkerManager().isSubtype(getType(), superType);
 	}

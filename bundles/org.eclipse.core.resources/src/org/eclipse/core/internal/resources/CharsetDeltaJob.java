@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,6 +82,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		// ensure all resources under the affected project are 
 		// reported as having encoding changes
 		ICharsetListenerFilter filter = new ICharsetListenerFilter() {
+			@Override
 			public IPath getRoot() {
 				//make sure it is still the same project - it could have been deleted and recreated
 				ResourceInfo currentInfo = ((Project) project).getResourceInfo(false, false);
@@ -94,6 +95,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 				return project.getFullPath();
 			}
 
+			@Override
 			public boolean isAffected(ResourceInfo info, IPathRequestor requestor) {
 				// for now, mark all resources in the project as potential encoding resource changes 
 				return true;
@@ -102,17 +104,20 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		addToQueue(filter);
 	}
 
+	@Override
 	public void contentTypeChanged(final ContentTypeChangeEvent event) {
 		// check all files that may be affected by this change (taking
 		// only the current content type state into account
 		// dispatch a job to generate the deltas
 		ICharsetListenerFilter filter = new ICharsetListenerFilter() {
 
+			@Override
 			public IPath getRoot() {
 				// visit all resources in the workspace
 				return Path.ROOT;
 			}
 
+			@Override
 			public boolean isAffected(ResourceInfo info, IPathRequestor requestor) {
 				if (info.getType() != IResource.FILE)
 					return false;
@@ -128,6 +133,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 
 	private void processNextEvent(final ICharsetListenerFilter filter, IProgressMonitor monitor) throws CoreException {
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				ResourceInfo info = (ResourceInfo) elementContents;
 				if (!filter.isAffected(info, requestor))

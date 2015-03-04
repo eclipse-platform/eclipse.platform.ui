@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class Bug_226264 extends ResourceTest {
 		project2.open(null);
 
 		final WorkspaceJob job = new WorkspaceJob("job") {
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				project2.delete(true, null);
 				return Status.OK_STATUS;
@@ -55,6 +56,7 @@ public class Bug_226264 extends ResourceTest {
 
 		// the listener will schedule another project delete
 		workspace.addResourceChangeListener(new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				if (event.getResource() == project1) {
 					// because notification is run in a protected block,

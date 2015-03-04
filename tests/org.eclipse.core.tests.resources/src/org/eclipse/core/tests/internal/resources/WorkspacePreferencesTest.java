@@ -33,6 +33,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 	/**
 	 * @see TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		workspace = ResourcesPlugin.getWorkspace();
@@ -43,6 +44,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 	/**
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		workspace.setDescription(Workspace.defaultWorkspaceDescription());
@@ -133,6 +135,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 
 		final List<String> changedProperties = new LinkedList<String>();
 		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
+			@Override
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
 				changedProperties.add(event.getProperty());
 			}

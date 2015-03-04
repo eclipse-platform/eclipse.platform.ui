@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,12 @@ public class ContextBuilder extends TestBuilder {
 		}
 	}
 
+	@Override
 	protected void startupOnInitialize() {
 		builders.put(getBuildConfig(), this);
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		contextForLastBuild = getContext();
 		triggerForLastBuild = kind;
@@ -82,6 +84,7 @@ public class ContextBuilder extends TestBuilder {
 		return super.build(kind, args, monitor);
 	}
 
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		super.clean(monitor);
 		contextForLastBuild = getContext();
@@ -93,6 +96,7 @@ public class ContextBuilder extends TestBuilder {
 	 * (non-Javadoc)
 	 * @see IncrementalProjectBuilder#getRule(int, Map)
 	 */
+	@Override
 	public ISchedulingRule getRule(int kind, Map<String, String> args) {
 		getRuleCalledForLastBuild = true;
 		contextForLastBuildInGetRule = getContext();

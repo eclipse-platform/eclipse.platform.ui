@@ -42,6 +42,7 @@ public class CycleBuilder extends TestBuilder {
 		singleton = this;
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (beforeProjects != null) {
 			for (int i = 0; i < beforeProjects.length; i++) {
@@ -77,6 +78,7 @@ public class CycleBuilder extends TestBuilder {
 	 */
 	private void changeAllFiles() throws CoreException {
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				if (resource.getType() == IResource.FILE) {
 					if (resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME))

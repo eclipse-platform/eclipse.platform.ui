@@ -27,14 +27,17 @@ import org.eclipse.core.internal.filesystem.local.unix.UnixFileNatives;
  */
 public class LocalFileNativesManager {
 	private static final NativeHandler DEFAULT = new NativeHandler() {
+		@Override
 		public boolean putFileInfo(String fileName, IFileInfo info, int options) {
 			return false;
 		}
 
+		@Override
 		public int getSupportedAttributes() {
 			return 0;
 		}
 
+		@Override
 		public FileInfo fetchFileInfo(String fileName) {
 			return new FileInfo();
 		}

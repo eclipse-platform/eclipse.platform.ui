@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,10 @@ import org.eclipse.core.runtime.*;
  */
 public class LinkDescription implements Comparable<LinkDescription> {
 	public static final URI VIRTUAL_LOCATION = getVirtualLocation();
+
 	private static URI getVirtualLocation() {
 		try {
-			return  new URI("virtual:/virtual"); //$NON-NLS-1$
+			return new URI("virtual:/virtual"); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
 			//cannot happen
 			return null;
@@ -80,7 +81,7 @@ public class LinkDescription implements Comparable<LinkDescription> {
 	public int getType() {
 		return type;
 	}
-	
+
 	public boolean isGroup() {
 		return localLocation.equals(VIRTUAL_LOCATION);
 	}
@@ -107,6 +108,7 @@ public class LinkDescription implements Comparable<LinkDescription> {
 	 * This is important to ensure we process links in topological (breadth-first) order when reconciling
 	 * links.  See {@link Project#reconcileLinksAndGroups(ProjectDescription)}.
 	 */
+	@Override
 	public int compareTo(LinkDescription that) {
 		IPath path1 = this.getProjectRelativePath();
 		IPath path2 = that.getProjectRelativePath();

@@ -37,6 +37,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 			expected.add(resources[i]);
 	}
 
+	@Override
 	public boolean visit(IResource resource) {
 		boolean included = expected.remove(resource);
 		if (!included) {

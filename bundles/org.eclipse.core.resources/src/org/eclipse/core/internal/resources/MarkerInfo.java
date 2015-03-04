@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	protected static final Integer INTEGER_ONE = new Integer(1);
 	protected static final Integer INTEGER_TWO = new Integer(2);
 	protected static final Integer INTEGER_ZERO = new Integer(0);
-	
+
 	//
 	protected static final long UNDEFINED_ID = -1;
 	/** The store of attributes for this marker. */
@@ -130,6 +130,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		return creationTime;
 	}
 
+	@Override
 	public long getId() {
 		return id;
 	}
@@ -198,6 +199,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	/* (non-Javadoc
 	 * Method declared on IStringPoolParticipant
 	 */
+	@Override
 	public void shareStrings(StringPool set) {
 		type = set.add(type);
 		Map<String, Object> map = attributes;

@@ -52,12 +52,14 @@ public class ConfigurationBuilder extends TestBuilder {
 		}
 	}
 
+	@Override
 	protected void startupOnInitialize() {
 		super.startupOnInitialize();
 		builders.put(getBuildConfig(), this);
 		buildCount = 0;
 	}
 
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		buildCount++;
 		triggerForLastBuild = kind;
@@ -66,6 +68,7 @@ public class ConfigurationBuilder extends TestBuilder {
 		return super.build(kind, args, monitor);
 	}
 
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		super.clean(monitor);
 		IResourceDelta delta = getDelta(getProject());

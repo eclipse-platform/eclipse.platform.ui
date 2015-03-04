@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 
 		//change the case of the folder on disk
 		project.getLocation().append("A").toFile().renameTo((project.getLocation().append("a").toFile()));
-		
+
 		try {
 			//refresh the project
 			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
@@ -217,6 +217,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		final IFile hackFile = file;
 		final Workspace workspace = (Workspace) getWorkspace();
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				workspace.createResource(hackFile, false);
 				((Resource) hackFile).getResourceInfo(false, true).set(M_LOCAL_EXISTS);

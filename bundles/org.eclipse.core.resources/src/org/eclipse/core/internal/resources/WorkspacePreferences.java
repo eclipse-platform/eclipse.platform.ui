@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * corresponding property preference store. To keep the cache synchronized with
  * the preference store, a property change listener is used.
  */
-
 public class WorkspacePreferences extends WorkspaceDescription {
 
 	public final static String PROJECT_SEPARATOR = "/"; //$NON-NLS-1$
@@ -100,6 +99,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		// This property listener ensures we are being updated properly when changes
 		// are done directly to the preference store.
 		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				synchronizeWithPreferences(event.getProperty());
 			}

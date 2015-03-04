@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class PropertyBucket extends Bucket {
 	public static class PropertyEntry extends Entry {
 
 		private final static Comparator<String[]> COMPARATOR = new Comparator<String[]>() {
+			@Override
 			public int compare(String[] o1, String[] o2) {
 				int qualifierComparison = o1[0].compareTo(o2[0]);
 				return qualifierComparison != 0 ? qualifierComparison : o1[1].compareTo(o2[1]);

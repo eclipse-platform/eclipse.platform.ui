@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,10 +25,12 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class BenchFileStore extends ResourceTest {
 
 	abstract class StoreTestRunner extends PerformanceTestRunner {
+		@Override
 		protected void setUp() throws CoreException {
 			createStores();
 		}
 
+		@Override
 		protected void tearDown() throws CoreException {
 			deleteStores();
 		}
@@ -69,6 +71,7 @@ public class BenchFileStore extends ResourceTest {
 
 	public void testStoreExists() {
 		new StoreTestRunner() {
+			@Override
 			protected void test() {
 				existingStore.fetchInfo().exists();
 				nonexistingStore.fetchInfo().exists();
@@ -78,6 +81,7 @@ public class BenchFileStore extends ResourceTest {
 
 	public void testStoreIsReadOnly() {
 		StoreTestRunner storeTestRunner = new StoreTestRunner() {
+			@Override
 			protected void test() {
 				existingStore.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 				nonexistingStore.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY);
@@ -89,6 +93,7 @@ public class BenchFileStore extends ResourceTest {
 
 	public void testStoreLastModified() {
 		StoreTestRunner runner = new StoreTestRunner() {
+			@Override
 			protected void test() {
 				existingStore.fetchInfo().getLastModified();
 				nonexistingStore.fetchInfo().getLastModified();

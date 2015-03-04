@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,7 @@ public class File extends Resource implements IFile {
 		super(path, container);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#appendContents(InputStream, int, IProgressMonitor)
-	 */
+	@Override
 	public void appendContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -63,9 +61,7 @@ public class File extends Resource implements IFile {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#appendContents(InputStream, boolean, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -96,9 +92,7 @@ public class File extends Resource implements IFile {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#create(InputStream, int, IProgressMonitor)
-	 */
+	@Override
 	public void create(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		final boolean monitorNull = monitor == null;
 		monitor = Policy.monitorFor(monitor);
@@ -180,24 +174,18 @@ public class File extends Resource implements IFile {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#create(InputStream, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		create(content, (force ? IResource.FORCE : IResource.NONE), monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#getCharset()
-	 */
+	@Override
 	public String getCharset() throws CoreException {
 		return getCharset(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#getCharset(boolean)
-	 */
+	@Override
 	public String getCharset(boolean checkImplicit) throws CoreException {
 		// non-existing resources default to parent's charset
 		ResourceInfo info = getResourceInfo(false, false);
@@ -208,9 +196,7 @@ public class File extends Resource implements IFile {
 		return internalGetCharset(checkImplicit, info);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#getCharsetFor(Reader)
-	 */
+	@Override
 	public String getCharsetFor(Reader contents) throws CoreException {
 		String charset;
 		ResourceInfo info = getResourceInfo(false, false);
@@ -254,10 +240,7 @@ public class File extends Resource implements IFile {
 		return workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFile#getContentDescription()
-	 */
+	@Override
 	public IContentDescription getContentDescription() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -272,16 +255,12 @@ public class File extends Resource implements IFile {
 		return workspace.getContentDescriptionManager().getDescriptionFor(this, info, isSynchronized);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#getContents()
-	 */
+	@Override
 	public InputStream getContents() throws CoreException {
 		return getContents(getLocalManager().isLightweightAutoRefreshEnabled());
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#getContents(boolean)
-	 */
+	@Override
 	public InputStream getContents(boolean force) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -290,11 +269,8 @@ public class File extends Resource implements IFile {
 		return getLocalManager().read(this, force, null);
 	}
 
-	/**
-	 * @see IFile#getEncoding()
-	 * @deprecated
-	 */
 	@Deprecated
+	@Override
 	public int getEncoding() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -303,16 +279,11 @@ public class File extends Resource implements IFile {
 		return getLocalManager().getEncoding(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#getHistory(IProgressMonitor)
-	 */
+	@Override
 	public IFileState[] getHistory(IProgressMonitor monitor) {
 		return getLocalManager().getHistoryStore().getStates(getFullPath(), monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getType()
-	 */
 	@Override
 	public int getType() {
 		return FILE;
@@ -337,16 +308,12 @@ public class File extends Resource implements IFile {
 			super.refreshLocal(IResource.DEPTH_ZERO, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#setContents(IFileState, int, IProgressMonitor)
-	 */
+	@Override
 	public void setContents(IFileState content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		setContents(content.getContents(), updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#setContents(InputStream, int, IProgressMonitor)
-	 */
+	@Override
 	public void setContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -374,9 +341,6 @@ public class File extends Resource implements IFile {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#setLocalTimeStamp(long)
-	 */
 	@Override
 	public long setLocalTimeStamp(long value) throws CoreException {
 		//override to handle changing timestamp on project description file
@@ -417,21 +381,15 @@ public class File extends Resource implements IFile {
 		}
 	}
 
-	/** (non-Javadoc)
-	 * @see IFile#setCharset(String)
-	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which 
-	 * 	is a workspace operation and reports changes in resource deltas.
-	 */
 	@Deprecated
+	@Override
 	public void setCharset(String newCharset) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 		workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#setCharset(String, IProgressMonitor)
-	 */
+	@Override
 	public void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -460,9 +418,7 @@ public class File extends Resource implements IFile {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#setContents(InputStream, boolean, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -470,9 +426,7 @@ public class File extends Resource implements IFile {
 		setContents(content, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFile#setContents(IFileState, boolean, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;

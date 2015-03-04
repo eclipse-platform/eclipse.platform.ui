@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,9 @@ package org.eclipse.core.internal.properties;
 
 import java.io.File;
 import java.util.*;
-import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.localstore.Bucket;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
+import org.eclipse.core.internal.localstore.BucketTree;
 import org.eclipse.core.internal.properties.PropertyBucket.PropertyEntry;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
@@ -26,7 +27,6 @@ import org.eclipse.osgi.util.NLS;
  * @see org.eclipse.core.internal.properties.IPropertyManager
  */
 public class PropertyManager2 implements IPropertyManager {
-	
 	private static final int MAX_VALUE_SIZE = 2 * 1024;
 
 	class PropertyCopyVisitor extends Bucket.Visitor {
@@ -74,6 +74,7 @@ public class PropertyManager2 implements IPropertyManager {
 		this.tree = new BucketTree(workspace, new PropertyBucket());
 	}
 
+	@Override
 	public void closePropertyStore(IResource target) throws CoreException {
 		// ensure any uncommitted are written to disk
 		tree.getCurrent().save();
@@ -82,6 +83,7 @@ public class PropertyManager2 implements IPropertyManager {
 		tree.getCurrent().flush();
 	}
 
+	@Override
 	public synchronized void copy(IResource source, IResource destination, int depth) throws CoreException {
 		copyProperties(source.getFullPath(), destination.getFullPath(), depth);
 	}
@@ -99,6 +101,7 @@ public class PropertyManager2 implements IPropertyManager {
 		tree.accept(copyVisitor, source, BucketTree.DEPTH_INFINITE);
 	}
 
+	@Override
 	public synchronized void deleteProperties(IResource target, int depth) throws CoreException {
 		tree.accept(new PropertyBucket.Visitor() {
 			@Override
@@ -109,10 +112,12 @@ public class PropertyManager2 implements IPropertyManager {
 		}, target.getFullPath(), depth == IResource.DEPTH_INFINITE ? BucketTree.DEPTH_INFINITE : depth);
 	}
 
+	@Override
 	public void deleteResource(IResource target) throws CoreException {
 		deleteProperties(target, IResource.DEPTH_INFINITE);
 	}
 
+	@Override
 	public synchronized Map<QualifiedName, String> getProperties(IResource target) throws CoreException {
 		final Map<QualifiedName, String> result = new HashMap<QualifiedName, String>();
 		tree.accept(new PropertyBucket.Visitor() {
@@ -128,6 +133,7 @@ public class PropertyManager2 implements IPropertyManager {
 		return result;
 	}
 
+	@Override
 	public synchronized String getProperty(IResource target, QualifiedName name) throws CoreException {
 		if (name.getQualifier() == null) {
 			String message = Messages.properties_qualifierIsNull;
@@ -147,6 +153,7 @@ public class PropertyManager2 implements IPropertyManager {
 		return tree.getVersionFile();
 	}
 
+	@Override
 	public synchronized void setProperty(IResource target, QualifiedName name, String value) throws CoreException {
 		//resource may have been deleted concurrently
 		//must check for existence within synchronized method
@@ -171,10 +178,12 @@ public class PropertyManager2 implements IPropertyManager {
 		current.save();
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		tree.close();
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		// nothing to do
 	}

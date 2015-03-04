@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -237,6 +238,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		public BuildConfigurationComparator() {
 		}
 
+		@Override
 		public int compare(IBuildConfiguration px, IBuildConfiguration py) {
 			int cmp = py.getProject().getName().compareTo(px.getProject().getName());
 			if (cmp == 0)
@@ -308,33 +310,25 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		lifecycleListeners.addIfAbsent(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#addResourceChangeListener(IResourceChangeListener)
-	 */
+	@Override
 	public void addResourceChangeListener(IResourceChangeListener listener) {
 		notificationManager.addListener(listener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#addResourceChangeListener(IResourceChangeListener, int)
-	 */
+	@Override
 	public void addResourceChangeListener(IResourceChangeListener listener, int eventMask) {
 		notificationManager.addListener(listener, eventMask);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#addSaveParticipant(Plugin, ISaveParticipant)
-	 */
 	@Deprecated
+	@Override
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
 		return saveManager.addParticipant(plugin.getBundle().getSymbolicName(), participant);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#addSaveParticipant(String, ISaveParticipant)
-	 */
+	@Override
 	public ISavedState addSaveParticipant(String pluginId, ISaveParticipant participant) throws CoreException {
 		Assert.isNotNull(pluginId, "Plugin id must not be null"); //$NON-NLS-1$
 		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
@@ -396,17 +390,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#build(int, IProgressMonitor)
-	 */
+	@Override
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		buildInternal(EMPTY_BUILD_CONFIG_ARRAY, trigger, true, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IWorkspace#build(IBuildConfiguration[], int, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void build(IBuildConfiguration[] configs, int trigger, boolean buildReferences, IProgressMonitor monitor) throws CoreException {
 		if (configs.length == 0)
 			return;
@@ -526,9 +515,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#checkpoint(boolean)
-	 */
+	@Override
 	public void checkpoint(boolean build) {
 		try {
 			final ISchedulingRule rule = getWorkManager().getNotifyRule();
@@ -636,10 +623,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @since 2.1
 	 */
 	private VertexOrder computeFullProjectOrder() {
-
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
 		SortedSet<IProject> allAccessibleProjects = new TreeSet<IProject>(new Comparator<IProject>() {
+			@Override
 			public int compare(IProject px, IProject py) {
 				return py.getName().compareTo(px.getName());
 			}
@@ -834,15 +821,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return new ProjectBuildConfigOrder(buildConfigs, order.hasCycles, knots);
 	}
 
-	/**
-	 * Implementation of API method declared on IWorkspace.
-	 * 
-	 * @see IWorkspace#computePrerequisiteOrder(IProject[])
-	 * @deprecated Replaced by {@link IWorkspace#computeProjectOrder(IProject[])} and
-	 * {@link Workspace#computeProjectBuildConfigOrder(IBuildConfiguration[])} which
-	 * produces more usable results when there are cycles in project reference.
-	 */
 	@Deprecated
+	@Override
 	public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 		return computePrerequisiteOrder1(targets);
 	}
@@ -892,12 +872,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return new IProject[][] {result1, result2};
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#computeProjectOrder(IProject[])
-	 * @since 2.1
-	 */
+	@Override
 	public ProjectOrder computeProjectOrder(IProject[] projects) {
-
 		// Compute the full project order for all accessible projects
 		VertexOrder fullProjectOrder = computeFullProjectOrder();
 
@@ -905,6 +881,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		final Set<IProject> projectSet = new HashSet<IProject>(projects.length);
 		projectSet.addAll(Arrays.asList(projects));
 		VertexFilter filter = new VertexFilter() {
+			@Override
 			public boolean matches(Object vertex) {
 				return !projectSet.contains(vertex);
 			}
@@ -956,6 +933,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		final Set<IBuildConfiguration> projectConfigSet = new HashSet<IBuildConfiguration>(buildConfigs.length);
 		projectConfigSet.addAll(Arrays.asList(buildConfigs));
 		VertexFilter filter = new VertexFilter() {
+			@Override
 			public boolean matches(Object vertex) {
 				return !projectConfigSet.contains(vertex);
 			}
@@ -965,17 +943,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.filterVertexOrder(fullBuildConfigOrder, filter));
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#copy(IResource[], IPath, boolean, IProgressMonitor)
-	 */
+	@Override
 	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		return copy(resources, destination, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#copy(IResource[], IPath, int, IProgressMonitor)
-	 */
+	@Override
 	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1265,6 +1239,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			case IResource.DEPTH_INFINITE :
 				final int[] count = new int[1];
 				IElementContentVisitor visitor = new IElementContentVisitor() {
+					@Override
 					public boolean visitElement(ElementTree aTree, IPathRequestor requestor, Object elementContents) {
 						if (phantom || !((ResourceInfo) elementContents).isSet(M_PHANTOM))
 							count[0]++;
@@ -1358,18 +1333,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return info;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#delete(IResource[], boolean, IProgressMonitor)
-	 */
+	@Override
 	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		updateFlags |= IResource.KEEP_HISTORY;
 		return delete(resources, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#delete(IResource[], int, IProgressMonitor)
-	 */
+	@Override
 	public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1418,9 +1389,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#deleteMarkers(IMarker[])
-	 */
+	@Override
 	public void deleteMarkers(IMarker[] markers) throws CoreException {
 		Assert.isNotNull(markers);
 		if (markers.length == 0)
@@ -1522,9 +1491,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		buildOrder = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#forgetSavedTree(String)
-	 */
+	@Override
 	public void forgetSavedTree(String pluginId) {
 		saveManager.forgetSavedTree(pluginId);
 	}
@@ -1608,9 +1575,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return contentDescriptionManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getDanglingReferences()
-	 */
+	@Override
 	public Map<IProject, IProject[]> getDanglingReferences() {
 		IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		Map<IProject, IProject[]> result = new HashMap<IProject, IProject[]>(projects.length);
@@ -1629,9 +1594,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getDescription()
-	 */
+	@Override
 	public IWorkspaceDescription getDescription() {
 		WorkspaceDescription workingCopy = defaultWorkspaceDescription();
 		description.copyTo(workingCopy);
@@ -1666,24 +1629,22 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return moveDeleteHook;
 	}
 
+	@Override
 	public IFilterMatcherDescriptor getFilterMatcherDescriptor(String filterMatcherId) {
 		return filterManager.getFilterDescriptor(filterMatcherId);
 	}
 
+	@Override
 	public IFilterMatcherDescriptor[] getFilterMatcherDescriptors() {
 		return filterManager.getFilterDescriptors();
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getNatureDescriptor(String)
-	 */
+	@Override
 	public IProjectNatureDescriptor getNatureDescriptor(String natureId) {
 		return natureManager.getNatureDescriptor(natureId);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getNatureDescriptors()
-	 */
+	@Override
 	public IProjectNatureDescriptor[] getNatureDescriptors() {
 		return natureManager.getNatureDescriptors();
 	}
@@ -1699,9 +1660,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return notificationManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getPathVariableManager()
-	 */
+	@Override
 	public IPathVariableManager getPathVariableManager() {
 		return pathVariableManager;
 	}
@@ -1747,16 +1706,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getRoot()
-	 */
+	@Override
 	public IWorkspaceRoot getRoot() {
 		return defaultRoot;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getRuleFactory()
-	 */
+	@Override
 	public IResourceRuleFactory getRuleFactory() {
 		//note that the rule factory is created lazily because it
 		//requires loading the teamHook extension
@@ -1769,9 +1724,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return saveManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#getSynchronizer()
-	 */
+	@Override
 	public ISynchronizer getSynchronizer() {
 		return synchronizer;
 	}
@@ -1923,9 +1876,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return description;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#isAutoBuilding()
-	 */
+	@Override
 	public boolean isAutoBuilding() {
 		return description.isAutoBuilding();
 	}
@@ -1934,9 +1885,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return openFlag;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#isTreeLocked()
-	 */
+	@Override
 	public boolean isTreeLocked() {
 		return treeLocked == Thread.currentThread();
 	}
@@ -1948,10 +1897,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		tree = tree.mergeDeltaChain(path, newTrees);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#loadProjectDescription(InputStream)
-	 * @since 3.1
-	 */
+	@Override
 	public IProjectDescription loadProjectDescription(InputStream stream) throws CoreException {
 		IProjectDescription result = null;
 		result = new ProjectDescriptionReader().read(new InputSource(stream));
@@ -1963,10 +1909,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#loadProjectDescription(IPath)
-	 * @since 2.0
-	 */
+	@Override
 	public IProjectDescription loadProjectDescription(IPath path) throws CoreException {
 		IProjectDescription result = null;
 		IOException e = null;
@@ -1991,18 +1934,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#move(IResource[], IPath, boolean, IProgressMonitor)
-	 */
+	@Override
 	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		updateFlags |= IResource.KEEP_HISTORY;
 		return move(resources, destination, updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#move(IResource[], IPath, int, IProgressMonitor)
-	 */
+	@Override
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -2106,16 +2045,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IWorkspace#newBuildConfig(java.lang.String, java.lang.String)
-	 */
+	@Override
 	public IBuildConfiguration newBuildConfig(String projectName, String configName) {
 		return new BuildConfiguration(getRoot().getProject(projectName), configName);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#newProjectDescription(String)
-	 */
+	@Override
 	public IProjectDescription newProjectDescription(String projectName) {
 		IProjectDescription result = new ProjectDescription();
 		result.setName(projectName);
@@ -2264,40 +2199,30 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#removeResourceChangeListener(IResourceChangeListener)
-	 */
+	@Override
 	public void removeResourceChangeListener(IResourceChangeListener listener) {
 		notificationManager.removeListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#removeSaveParticipant(Plugin)
-	 */
 	@Deprecated
+	@Override
 	public void removeSaveParticipant(Plugin plugin) {
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		saveManager.removeParticipant(plugin.getBundle().getSymbolicName());
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#removeSaveParticipant(String)
-	 */
+	@Override
 	public void removeSaveParticipant(String pluginId) {
 		Assert.isNotNull(pluginId, "Plugin id must not be null"); //$NON-NLS-1$
 		saveManager.removeParticipant(pluginId);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
-	 */
+	@Override
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
 		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
-	 */
+	@Override
 	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -2326,9 +2251,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#save(boolean, IProgressMonitor)
-	 */
+	@Override
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException {
 		return this.save(full, false, monitor);
 	}
@@ -2366,9 +2289,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#setDescription(IWorkspaceDescription)
-	 */
+	@Override
 	public void setDescription(IWorkspaceDescription value) {
 		// if both the old and new description's build orders are null, leave the
 		// workspace's build order slot because it is caching the computed order.
@@ -2430,9 +2351,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#sortNatureSet(String[])
-	 */
+	@Override
 	public String[] sortNatureSet(String[] natureIds) {
 		return natureManager.sortNatureSet(natureIds);
 	}
@@ -2491,6 +2410,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		final StringBuffer buffer = new StringBuffer("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree aTree, IPathRequestor requestor, Object elementContents) {
 				buffer.append("\n  " + requestor.requestPath() + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
@@ -2504,9 +2424,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		info.incrementModificationStamp();
 	}
 
-	/* (non-javadoc)
-	 * @see IWorkspace#validateEdit(IFile[], Object)
-	 */
+	@Override
 	public IStatus validateEdit(final IFile[] files, final Object context) {
 		// if validation is turned off then just return
 		if (!shouldValidate) {
@@ -2531,10 +2449,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// otherwise call the API and throw an exception if appropriate
 		final IStatus[] status = new IStatus[1];
 		ISafeRunnable body = new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable exception) {
 				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.resources_errorValidator, exception);
 			}
 
+			@Override
 			public void run() throws Exception {
 				Object c = context;
 				//must null any reference to FileModificationValidationContext for backwards compatibility
@@ -2548,52 +2468,37 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return status[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
-	 */
+	@Override
 	public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
 		return locationValidator.validateLinkLocation(resource, unresolvedLocation);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validateLinkLocation(IResource, IPath)
-	 */
+	@Override
 	public IStatus validateLinkLocationURI(IResource resource, URI unresolvedLocation) {
 		return locationValidator.validateLinkLocationURI(resource, unresolvedLocation);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validateName(String, int)
-	 */
+	@Override
 	public IStatus validateName(String segment, int type) {
 		return locationValidator.validateName(segment, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validateNatureSet(String[])
-	 */
+	@Override
 	public IStatus validateNatureSet(String[] natureIds) {
 		return natureManager.validateNatureSet(natureIds);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validatePath(String, int)
-	 */
+	@Override
 	public IStatus validatePath(String path, int type) {
 		return locationValidator.validatePath(path, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validateProjectLocation(IProject, IPath)
-	 */
+	@Override
 	public IStatus validateProjectLocation(IProject context, IPath location) {
 		return locationValidator.validateProjectLocation(context, location);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.resources.IWorkspace#validateProjectLocation(org.eclipse.core.resources.IProject, java.net.URI)
-	 */
+	@Override
 	public IStatus validateProjectLocationURI(IProject project, URI location) {
 		return locationValidator.validateProjectLocationURI(project, location);
 	}
@@ -2622,10 +2527,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// otherwise call the API and throw an exception if appropriate
 		final IStatus[] status = new IStatus[1];
 		ISafeRunnable body = new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable exception) {
 				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.resources_errorValidator, exception);
 			}
 
+			@Override
 			public void run() throws Exception {
 				status[0] = validator.validateSave(file);
 			}
@@ -2635,9 +2542,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			throw new ResourceException(status[0]);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkspace#validateFiltered(IResource)
-	 */
+	@Override
 	public IStatus validateFiltered(IResource resource) {
 		try {
 			if (((Resource) resource).isFilteredWithException(true))

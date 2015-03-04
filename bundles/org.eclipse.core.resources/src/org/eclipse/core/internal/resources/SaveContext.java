@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public IPath[] getFiles() {
 		return getFileTable().getFiles();
 	}
@@ -57,6 +58,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -68,6 +70,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public int getPreviousSaveNumber() {
 		return previousSaveNumber;
 	}
@@ -75,6 +78,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public IProject getProject() {
 		return project;
 	}
@@ -82,6 +86,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public int getSaveNumber() {
 		int result = getPreviousSaveNumber() + 1;
 		return result > 0 ? result : 1;
@@ -98,6 +103,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public IPath lookup(IPath file) {
 		return getFileTable().lookup(file);
 	}
@@ -105,6 +111,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public void map(IPath file, IPath location) {
 		getFileTable().map(file, location);
 	}
@@ -112,6 +119,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public void needDelta() {
 		needDelta = true;
 	}
@@ -119,6 +127,7 @@ public class SaveContext implements ISaveContext {
 	/**
 	 * @see ISaveContext
 	 */
+	@Override
 	public void needSaveNumber() {
 		needSaveNumber = true;
 	}

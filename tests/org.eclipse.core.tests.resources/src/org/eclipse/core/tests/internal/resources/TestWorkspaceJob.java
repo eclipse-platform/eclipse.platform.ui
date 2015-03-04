@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class TestWorkspaceJob extends WorkspaceJob {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.resources.InternalWorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		int ticks = (int) (duration / tickLength);
 		monitor.beginTask(getName(), ticks <= 0 ? 1 : ticks);

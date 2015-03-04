@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	 */
 	public void testCreateElement() {
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				createTestTree(false);
 			}
@@ -276,6 +277,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	/**
 	 * The environment should be set-up in the main method.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		//benchmarks don't use the core testing infrastructure
 	}
@@ -302,6 +304,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	/**
 	 * 
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		//ElementTree tests don't use the CoreTest infrastructure
 	}

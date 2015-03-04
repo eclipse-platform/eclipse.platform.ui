@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	 */
 	protected void dirty(final IProject[] projects) throws CoreException {
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < projects.length; i++) {
 					IResource[] members = projects[i].members();
@@ -94,6 +95,7 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	/*
 	 * @see TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		setAutoBuilding(true);
@@ -113,6 +115,7 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	/*
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		getWorkspace().getRoot().delete(true, getMonitor());
@@ -142,10 +145,12 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 		//hold onto projects that have been modified since the last time the builder was run.
 		final HashSet<IProject> previouslyModified = new HashSet<IProject>();
 		new TestPerformer("testDeltas") {
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				//set requests for next build
 				IProject[] requested = (IProject[]) args[0];
@@ -165,10 +170,12 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 				return result;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				HashSet<IProject> requested = new HashSet<IProject>(Arrays.asList((IProject[]) result));
 				HashSet<IProject> modified = new HashSet<IProject>(Arrays.asList((IProject[]) args[1]));

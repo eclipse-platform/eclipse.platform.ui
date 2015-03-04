@@ -26,6 +26,7 @@ public class LocationDumper extends MultiStrategyDumper {
 	/**
 	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
+	@Override
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream input) throws Exception {
 		return new LocationStrategy();
 	}
@@ -33,6 +34,7 @@ public class LocationDumper extends MultiStrategyDumper {
 	/**
 	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(java.io.File)
 	 */
+	@Override
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);
 	}

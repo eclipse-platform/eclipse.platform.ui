@@ -77,6 +77,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			return fKind;
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buf = new StringBuffer("ExpectedChange(");
 			buf.append(fResource);
@@ -790,6 +791,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * Part of the <code>IResourceChangedListener</code> interface.
 	 * @see IResourceChangedListener
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent e) {
 		verifyDelta(e.getDelta());
 	}

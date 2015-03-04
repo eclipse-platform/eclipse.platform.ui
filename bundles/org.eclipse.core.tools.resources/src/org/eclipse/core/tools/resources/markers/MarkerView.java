@@ -72,18 +72,22 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		private List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
 		private ISelection selection;
 
+		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			listeners.add(listener);
 		}
 
+		@Override
 		public ISelection getSelection() {
 			return selection;
 		}
 
+		@Override
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			listeners.remove(listener);
 		}
 
+		@Override
 		public synchronized void setSelection(ISelection selection) {
 			this.selection = selection;
 			SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
@@ -101,6 +105,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			this.view = view;
 		}
 
+		@Override
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 			if (part == view)
 				super.selectionChanged(part, selection);
@@ -116,6 +121,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			this.depth = depth;
 		}
 
+		@Override
 		public void run() {
 			markerDepth = depth;
 			updateActionChecks();
@@ -129,16 +135,19 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			super(provider, text);
 		}
 
+		@Override
 		public void selectionChanged(IStructuredSelection selection) {
 			setEnabled(!selection.isEmpty());
 		}
 
+		@Override
 		public void run() {
 			final IStructuredSelection selection = getStructuredSelection();
 			if (selection.isEmpty())
 				return;
 
 			IRunnableWithProgress op = new WorkspaceModifyOperation() {
+				@Override
 				public void execute(IProgressMonitor monitor) {
 					int count = selection.size();
 					int deleted = 1;
@@ -177,28 +186,34 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 
 	class PagePartListener implements IPartListener, IPageListener {
 
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 			if (part instanceof IEditorPart)
 				viewer.setInput(part);
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 			if (part instanceof IEditorPart)
 				viewer.setInput(part);
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 			// do nothing
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 			// do nothing
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 			// do nothing
 		}
 
+		@Override
 		public void pageActivated(IWorkbenchPage page) {
 			if (currentPage != null)
 				currentPage.removePartListener(this);
@@ -206,10 +221,12 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			page.addPartListener(this);
 		}
 
+		@Override
 		public void pageClosed(IWorkbenchPage page) {
 			// do nothing
 		}
 
+		@Override
 		public void pageOpened(IWorkbenchPage page) {
 			// do nothing
 		}
@@ -220,6 +237,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		IMarker[] markers;
 		String[] message = new String[1];
 
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			errorMsg = null;
 			warningMsg = null;
@@ -231,7 +249,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 				findResourceMarkers((IResource) newInput);
 				return;
 			} else if (newInput instanceof EditorPart) {
-				currentResource = (IResource) ((EditorPart) newInput).getEditorInput().getAdapter(IResource.class);
+				currentResource = ((EditorPart) newInput).getEditorInput().getAdapter(IResource.class);
 				if (currentResource != null) {
 					findResourceMarkers(currentResource);
 				} else {
@@ -252,7 +270,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 						if (selected instanceof IMarker) {
 							currentResource = ((IMarker) selected).getResource();
 						} else if (selected instanceof IAdaptable) {
-							currentResource = (IResource) ((IAdaptable) selected).getAdapter(IResource.class);
+							currentResource = ((IAdaptable) selected).getAdapter(IResource.class);
 						}
 						if (currentResource != null)
 							findResourceMarkers(currentResource);
@@ -277,10 +295,12 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			}
 		}
 
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent.equals(viewer.getInput())) {
 				if (warningMsg != null) {
@@ -296,18 +316,21 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			return getChildren(parent);
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof String || child instanceof IMarker)
 				return selection;
 			return null;
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent == viewer.getInput())
 				return markers;
 			return new Object[0];
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			if (parent == viewer.getInput())
 				return true;
@@ -317,6 +340,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 
 	class ViewLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object obj) {
 			try {
 				if (obj instanceof IMarker) {
@@ -331,6 +355,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			return obj.toString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			if (obj instanceof String) {
@@ -383,6 +408,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * create the viewer and initialize it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		IWorkbenchWindow window = CoreResourcesToolsPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 
@@ -395,6 +421,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				IStructuredSelection newSelection = emptySelection;
@@ -429,6 +456,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		contributeToActionBars();
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		IWorkbenchWindow window = CoreResourcesToolsPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -441,6 +469,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				MarkerView.this.fillContextMenu(manager);
 			}
@@ -514,6 +543,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -523,6 +553,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IEditorPart)
 			viewer.setInput(part);
@@ -533,6 +564,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (currentResource == null)
 			return;
@@ -542,6 +574,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		// could have been called from a non-UI thread.
 		// handle appropriately
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				viewer.setInput(currentResource);
 			}
@@ -551,6 +584,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			propertyPage = new MarkerViewPropertySheetPage(this);
@@ -562,6 +596,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * @see org.eclipse.ui.IViewPart#init(IViewSite, IMemento)
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento != null)
@@ -593,6 +628,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	/**
 	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		IMemento child = memento.createChild(MEMENTO_TAG1);

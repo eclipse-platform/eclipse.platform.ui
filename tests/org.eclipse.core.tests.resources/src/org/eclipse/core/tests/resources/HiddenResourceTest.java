@@ -586,6 +586,7 @@ public class HiddenResourceTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 				}
@@ -609,6 +610,7 @@ public class HiddenResourceTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setHidden("2.0", folder, true, IResource.DEPTH_ZERO);
@@ -633,6 +635,7 @@ public class HiddenResourceTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					ensureExistsInWorkspace(resources, true);
 					setHidden("3.0", project, true, IResource.DEPTH_INFINITE);
@@ -789,6 +792,7 @@ public class HiddenResourceTest extends ResourceTest {
 
 	protected void assertHidden(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				boolean expected = false;
 				if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
@@ -806,6 +810,7 @@ public class HiddenResourceTest extends ResourceTest {
 
 	protected void setHidden(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					resource.setHidden(value);

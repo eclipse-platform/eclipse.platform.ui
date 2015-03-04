@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class Bug_029851 extends ResourceTest {
 		return result;
 	}
 
+	@Override
 	public String[] defineHierarchy() {
 		int depth = 3;
 		int breadth = 3;
@@ -62,12 +63,13 @@ public class Bug_029851 extends ResourceTest {
 
 	public void test() {
 		// disable for now.
-		if (DISABLED )
+		if (DISABLED)
 			return;
 		createHierarchy();
 		final QualifiedName key = new QualifiedName("local", getUniqueString());
 		final String value = getUniqueString();
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				resource.setPersistentProperty(key, value);
 				return true;

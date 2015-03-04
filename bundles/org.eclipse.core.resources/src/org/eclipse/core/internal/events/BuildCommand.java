@@ -138,6 +138,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#getArguments()
 	 */
+	@Override
 	public Map<String, String> getArguments() {
 		return getArguments(true);
 	}
@@ -174,6 +175,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#getBuilderName()
 	 */
+	@Override
 	public String getBuilderName() {
 		return getName();
 	}
@@ -190,10 +192,12 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#isBuilding(int)
 	 */
+	@Override
 	public boolean isBuilding(int trigger) {
 		return (triggers & maskForTrigger(trigger)) != 0;
 	}
 
+	@Override
 	public boolean isConfigurable() {
 		if ((triggers & MASK_CONFIG_COMPUTED) == 0)
 			computeIsConfigurable();
@@ -218,6 +222,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#setArguments(Map)
 	 */
+	@Override
 	public void setArguments(Map<String, String> value) {
 		// copy parameter for safety's sake
 		arguments = value == null ? null : new HashMap<String, String>(value);
@@ -266,6 +271,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#setBuilderName(String)
 	 */
+	@Override
 	public void setBuilderName(String value) {
 		//don't allow builder name to be null
 		setName(value == null ? "" : value); //$NON-NLS-1$
@@ -274,6 +280,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#setBuilding(int, boolean)
 	 */
+	@Override
 	public void setBuilding(int trigger, boolean value) {
 		if (!isConfigurable())
 			return;

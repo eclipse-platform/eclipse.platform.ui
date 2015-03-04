@@ -88,6 +88,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	/**
 	 * Notification from the workspace.  Extract the marker changes.
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		resourceChanged(event.getDelta());
 	}

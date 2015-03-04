@@ -28,7 +28,6 @@ import org.eclipse.ui.*;
  * @see org.eclipse.core.tools.resources.ResourceContentProvider
  */
 public class ResourceView extends SpyView {
-
 	/** JFace's tree component used to present resource details. */
 	protected AbstractTreeViewer viewer;
 
@@ -60,6 +59,7 @@ public class ResourceView extends SpyView {
 	 * @param parent the parent control
 	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite) 
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -87,6 +87,7 @@ public class ResourceView extends SpyView {
 		final MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(copyAction);
 			}
@@ -117,7 +118,7 @@ public class ResourceView extends SpyView {
 			if (item instanceof IResource)
 				resource = (IResource) item;
 			else if (item instanceof IAdaptable)
-				resource = (IResource) ((IAdaptable) item).getAdapter(IResource.class);
+				resource = ((IAdaptable) item).getAdapter(IResource.class);
 		}
 		// loads the selected resource 
 		if (resource != null)
@@ -136,6 +137,7 @@ public class ResourceView extends SpyView {
 
 		// creates a selection listener that ignores who generated the event	
 		selectionListener = new ISelectionListener() {
+			@Override
 			public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				processSelection(sel);
 			}
@@ -187,6 +189,7 @@ public class ResourceView extends SpyView {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		removeSelectionListener();
@@ -227,6 +230,7 @@ public class ResourceView extends SpyView {
 		public SelectedResourceChangeListener() {
 		}
 
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 
 			final IResource currentResource = (IResource) viewer.getInput();
@@ -243,6 +247,7 @@ public class ResourceView extends SpyView {
 			if (resourceDelta != null) {
 				// so rebuild the resource view contents with the new state
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						loadResource(currentResource);
 					}

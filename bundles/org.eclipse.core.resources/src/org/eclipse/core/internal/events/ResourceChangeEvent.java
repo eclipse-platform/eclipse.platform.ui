@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 
 public class ResourceChangeEvent extends EventObject implements IResourceChangeEvent {
-
 	private static final IMarkerDelta[] NO_MARKER_DELTAS = new IMarkerDelta[0];
 	private static final long serialVersionUID = 1L;
 	IResourceDelta delta;
@@ -45,6 +44,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 	/**
 	 * @see IResourceChangeEvent#findMarkerDeltas(String, boolean)
 	 */
+	@Override
 	public IMarkerDelta[] findMarkerDeltas(String findType, boolean includeSubtypes) {
 		if (delta == null)
 			return NO_MARKER_DELTAS;
@@ -73,6 +73,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 	/**
 	 * @see IResourceChangeEvent#getBuildKind()
 	 */
+	@Override
 	public int getBuildKind() {
 		return trigger;
 	}
@@ -80,6 +81,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 	/**
 	 * @see IResourceChangeEvent#getDelta()
 	 */
+	@Override
 	public IResourceDelta getDelta() {
 		return delta;
 	}
@@ -87,6 +89,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 	/**
 	 * @see IResourceChangeEvent#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return resource;
 	}
@@ -94,6 +97,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 	/**
 	 * @see IResourceChangeEvent#getType()
 	 */
+	@Override
 	public int getType() {
 		return type;
 	}

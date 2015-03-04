@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,12 +142,14 @@ public class ElementTreeIterator implements IPathRequestor {
 		}
 	}
 
+	@Override
 	public String requestName() {
 		if (nextFreeSegment == 0)
 			return ""; //$NON-NLS-1$
 		return segments[nextFreeSegment - 1];
 	}
 
+	@Override
 	public IPath requestPath() {
 		if (nextFreeSegment == 0)
 			return Path.ROOT;

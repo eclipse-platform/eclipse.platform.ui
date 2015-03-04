@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		super(name);
 	}
 
+	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/Folder1/", "/Folder1/File1", "/Folder1/Folder2/", "/Folder1/Folder2/File2", "/Folder1/Folder2/Folder3/"};
 	}
@@ -158,6 +159,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		// test the depth parameter
 		final IFolder folder = project.getFolder("Folder1");
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IResource[] members = folder.members();
 				for (int i = 0; i < members.length; i++)
@@ -419,6 +421,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		// create project and then delete from file system
 		// wrap in runnable to prevent snapshot from occurring in the middle.
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ensureDoesNotExistInFileSystem(project);
 				assertTrue("2.1", !fileStore.fetchInfo().isDirectory());
@@ -433,6 +436,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor pm) throws CoreException {
 				int flags = force ? IResource.FORCE : IResource.NONE;
 				IFileInfo info = ((Resource) file).getStore().fetchInfo();
@@ -444,6 +448,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 	protected void write(final IFolder folder, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor pm) throws CoreException {
 				getLocalManager().write(folder, force, null);
 			}

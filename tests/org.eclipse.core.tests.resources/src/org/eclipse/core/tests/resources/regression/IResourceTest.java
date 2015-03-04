@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class IResourceTest extends ResourceTest {
 		super(name);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		getWorkspace().getRoot().delete(true, null);
@@ -128,6 +129,7 @@ public class IResourceTest extends ResourceTest {
 	 */
 	public void testBug31750() {
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+			@Override
 			public boolean visit(IResourceProxy proxy) {
 				throw new OperationCanceledException();
 			}
@@ -168,6 +170,7 @@ public class IResourceTest extends ResourceTest {
 				this.mySeen = mySeen;
 			}
 
+			@Override
 			public boolean visit(IResourceDelta aDelta) {
 				if (aDelta.getResource().equals(file))
 					mySeen[0] = true;
@@ -175,6 +178,7 @@ public class IResourceTest extends ResourceTest {
 			}
 		}
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				IResourceDelta delta = event.getDelta();
 				if (delta == null)
@@ -193,6 +197,7 @@ public class IResourceTest extends ResourceTest {
 			try {
 				//removing and adding sync info causes phantom to be deleted and recreated
 				getWorkspace().run(new IWorkspaceRunnable() {
+					@Override
 					public void run(IProgressMonitor monitor) throws CoreException {
 						ISynchronizer synchronizer = getWorkspace().getSynchronizer();
 						synchronizer.flushSyncInfo(name, file, IResource.DEPTH_INFINITE);
@@ -610,6 +615,7 @@ public class IResourceTest extends ResourceTest {
 
 		final boolean[] failed = new boolean[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				try {
 					failed[0] = true;

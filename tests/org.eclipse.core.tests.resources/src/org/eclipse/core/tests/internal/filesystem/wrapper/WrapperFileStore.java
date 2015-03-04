@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.*;
  * local file system.
  */
 public class WrapperFileStore extends FileStore {
-
 	private final IFileStore baseStore;
 
 	public WrapperFileStore(IFileStore baseStore) {
@@ -42,14 +41,17 @@ public class WrapperFileStore extends FileStore {
 		return newInstance(getClass(), store);
 	}
 
+	@Override
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.childInfos(options, monitor);
 	}
 
+	@Override
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.childNames(options, monitor);
 	}
 
+	@Override
 	public IFileStore[] childStores(int options, IProgressMonitor monitor) throws CoreException {
 		IFileStore[] childStores = baseStore.childStores(options, monitor);
 		for (int i = 0; i < childStores.length; i++)
@@ -58,14 +60,17 @@ public class WrapperFileStore extends FileStore {
 		return childStores;
 	}
 
+	@Override
 	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		baseStore.copy(destination, options, monitor);
 	}
 
+	@Override
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
 		baseStore.delete(options, monitor);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -74,10 +79,12 @@ public class WrapperFileStore extends FileStore {
 		return baseStore.equals(((WrapperFileStore) obj).baseStore);
 	}
 
+	@Override
 	public IFileInfo fetchInfo() {
 		return baseStore.fetchInfo();
 	}
 
+	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.fetchInfo(options, monitor);
 	}
@@ -86,35 +93,44 @@ public class WrapperFileStore extends FileStore {
 		return baseStore;
 	}
 
+	@Deprecated
+	@Override
 	public IFileStore getChild(IPath path) {
 		return createNewWrappedStore(baseStore.getChild(path));
 	}
 
+	@Override
 	public IFileStore getFileStore(IPath path) {
 		return createNewWrappedStore(baseStore.getFileStore(path));
 	}
 
+	@Override
 	public IFileStore getChild(String name) {
 		return createNewWrappedStore(baseStore.getChild(name));
 	}
 
+	@Override
 	public IFileSystem getFileSystem() {
 		return WrapperFileSystem.getInstance();
 	}
 
+	@Override
 	public String getName() {
 		return baseStore.getName();
 	}
 
+	@Override
 	public IFileStore getParent() {
 		IFileStore baseParent = baseStore.getParent();
 		return baseParent == null ? null : createNewWrappedStore(baseParent);
 	}
 
+	@Override
 	public int hashCode() {
 		return baseStore.hashCode();
 	}
 
+	@Override
 	public boolean isParentOf(IFileStore other) {
 		if (!(other instanceof WrapperFileStore))
 			return false;
@@ -122,33 +138,40 @@ public class WrapperFileStore extends FileStore {
 		return baseStore.isParentOf(otherBaseStore);
 	}
 
+	@Override
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
 		baseStore.mkdir(options, monitor);
 		return this;
 	}
 
+	@Override
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		if (destination instanceof WrapperFileStore)
 			destination = ((WrapperFileStore) destination).baseStore;
 		baseStore.move(destination, options, monitor);
 	}
 
+	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.openInputStream(options, monitor);
 	}
 
+	@Override
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.openOutputStream(options, monitor);
 	}
 
+	@Override
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		baseStore.putInfo(info, options, monitor);
 	}
 
+	@Override
 	public File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.toLocalFile(options, monitor);
 	}
 
+	@Override
 	public URI toURI() {
 		return WrapperFileSystem.getWrappedURI(baseStore.toURI());
 	}

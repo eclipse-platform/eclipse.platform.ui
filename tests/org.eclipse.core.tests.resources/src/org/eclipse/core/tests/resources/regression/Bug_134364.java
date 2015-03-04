@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class Bug_134364 extends CoreTest {
 		final RuntimeException[] failure = new RuntimeException[1];
 		//create a job that continually tries to read the workspace tree
 		new Job("Reader-134364") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				try {
@@ -80,6 +81,7 @@ public class Bug_134364 extends CoreTest {
 		}.schedule();
 		//create a job that continually creates projects, thus causing snapshots to occur
 		Job writer = new Job("Writer-134364") {
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("TestBug134364");
 				for (int i = 0; i < 100; i++) {

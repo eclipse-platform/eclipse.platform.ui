@@ -38,6 +38,7 @@ public class BrokenFileStore extends FileStore {
 		}
 	}
 
+	@Override
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException {
 		fail();
 		return null;
@@ -47,6 +48,7 @@ public class BrokenFileStore extends FileStore {
 		throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.core.tests.resources", 1, "This exception is thrown on purpose as part of a test", null));
 	}
 
+	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		fail();
 		return null;
@@ -56,14 +58,17 @@ public class BrokenFileStore extends FileStore {
 		return new Path(uri.getSchemeSpecificPart());
 	}
 
+	@Override
 	public IFileStore getChild(String name) {
 		return new BrokenFileStore(getPath().append(name));
 	}
 
+	@Override
 	public String getName() {
 		return getPath().lastSegment();
 	}
 
+	@Override
 	public IFileStore getParent() {
 		IPath path = getPath();
 		if (path.segmentCount() == 0)
@@ -71,11 +76,13 @@ public class BrokenFileStore extends FileStore {
 		return new BrokenFileStore(path.removeLastSegments(1));
 	}
 
+	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
 		fail();
 		return null;
 	}
 
+	@Override
 	public URI toURI() {
 		return uri;
 	}

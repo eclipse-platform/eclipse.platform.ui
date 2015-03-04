@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a build operation.
 	 */
+	@Override
 	public ISchedulingRule buildRule() {
 		//team hook currently cannot change this rule
 		return root;
@@ -55,6 +56,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factories for a copy operation.
 	 */
+	@Override
 	public ISchedulingRule copyRule(IResource source, IResource destination) {
 		if (source.getType() == IResource.ROOT || destination.getType() == IResource.ROOT)
 			return root;
@@ -65,6 +67,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a create operation.
 	 */
+	@Override
 	public ISchedulingRule createRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return root;
@@ -74,6 +77,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a delete operation.
 	 */
+	@Override
 	public ISchedulingRule deleteRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return root;
@@ -99,6 +103,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.ILifecycleListener#handleEvent(org.eclipse.core.internal.events.LifecycleEvent)
 	 */
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		//clear resource rule factory for projects that are about to be closed
 		//or deleted. It is ok to do this during a PRE event because the rule
@@ -114,6 +119,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a charset change operation.
 	 */
+	@Override
 	public ISchedulingRule charsetRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return null;
@@ -123,6 +129,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a derived flag change operation.
 	 */
+	@Override
 	public ISchedulingRule derivedRule(IResource resource) {
 		//team hook currently cannot change this rule	
 		return null;
@@ -131,6 +138,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a marker change operation.
 	 */
+	@Override
 	public ISchedulingRule markerRule(IResource resource) {
 		//team hook currently cannot change this rule
 		return null;
@@ -139,6 +147,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a modify operation.
 	 */
+	@Override
 	public ISchedulingRule modifyRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return root;
@@ -148,6 +157,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factories for a move operation.
 	 */
+	@Override
 	public ISchedulingRule moveRule(IResource source, IResource destination) {
 		if (source.getType() == IResource.ROOT || destination.getType() == IResource.ROOT)
 			return root;
@@ -160,6 +170,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Obtains the scheduling rule from the appropriate factory for a refresh operation.
 	 */
+	@Override
 	public ISchedulingRule refreshRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return root;
@@ -180,6 +191,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	 * Combines rules for each parameter to validateEdit from the corresponding
 	 * rule factories.
 	 */
+	@Override
 	public ISchedulingRule validateEditRule(IResource[] resources) {
 		if (resources.length == 0)
 			return null;

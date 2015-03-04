@@ -36,6 +36,7 @@ public class MarkersSnapshotDumper extends MultiStrategyDumper {
 	/**
 	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
+	@Override
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId;
 		IStringDumpingStrategy strategy;
@@ -56,6 +57,7 @@ public class MarkersSnapshotDumper extends MultiStrategyDumper {
 	/**
 	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(java.io.File)
 	 */
+	@Override
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);
 	}

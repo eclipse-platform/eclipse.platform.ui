@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2012 Broadcom Corporation and others.
+ *  Copyright (c) 2011, 2015 Broadcom Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class Bug_303517 extends ResourceTest {
 
 	String[] resources = new String[] {"/", "/Bug303517/", "/Bug303517/Folder/", "/Bug303517/Folder/Resource",};
 
+	@Override
 	public String[] defineHierarchy() {
 		return resources;
 	}

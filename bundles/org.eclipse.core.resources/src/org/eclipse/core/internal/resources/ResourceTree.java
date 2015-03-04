@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eclipse.osgi.util.NLS;
  * be done in an acquire/release pair.
  */
 class ResourceTree implements IResourceTree {
-
 	private boolean isValid = true;
 	private final FileSystemResourceManager localManager;
 	/**
@@ -57,6 +56,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#addToLocalHistory(IFile)
 	 */
+	@Override
 	public void addToLocalHistory(IFile file) {
 		Assert.isLegal(isValid);
 		try {
@@ -86,6 +86,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#computeTimestamp(IFile)
 	 */
+	@Override
 	public long computeTimestamp(IFile file) {
 		Assert.isLegal(isValid);
 		try {
@@ -111,6 +112,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#deletedFile(IFile)
 	 */
+	@Override
 	public void deletedFile(IFile file) {
 		Assert.isLegal(isValid);
 		try {
@@ -134,6 +136,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#deletedFolder(IFolder)
 	 */
+	@Override
 	public void deletedFolder(IFolder folder) {
 		Assert.isLegal(isValid);
 		try {
@@ -157,6 +160,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#deletedProject(IProject)
 	 */
+	@Override
 	public void deletedProject(IProject target) {
 		Assert.isLegal(isValid);
 		try {
@@ -207,6 +211,7 @@ class ResourceTree implements IResourceTree {
 	 * This operation has failed for the given reason. Add it to this
 	 * resource tree's status.
 	 */
+	@Override
 	public void failed(IStatus reason) {
 		Assert.isLegal(isValid);
 		multistatus.add(reason);
@@ -222,6 +227,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#getTimestamp(IFile)
 	 */
+	@Override
 	public long getTimestamp(IFile file) {
 		Assert.isLegal(isValid);
 		try {
@@ -352,7 +358,7 @@ class ResourceTree implements IResourceTree {
 			localManager.delete(folder, flags, Policy.subMonitorFor(monitor, Policy.totalWork));
 		} catch (CoreException ce) {
 			message = NLS.bind(Messages.localstore_couldnotDelete, folder.getFullPath());
-			IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message, ce);		
+			IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message, ce);
 			failed(status);
 			return false;
 		}
@@ -466,7 +472,7 @@ class ResourceTree implements IResourceTree {
 	private boolean isNameChange(IProject project, IProjectDescription description) {
 		return !project.getName().equals(description.getName());
 	}
-	
+
 	/**
 	 * Refreshes the resource hierarchy with its children. In case of failure
 	 * adds an appropriate status to the resource tree's status.
@@ -475,7 +481,7 @@ class ResourceTree implements IResourceTree {
 		try {
 			resource.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		} catch (CoreException ce) {
-			IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), Messages.refresh_refreshErr, ce);			
+			IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), Messages.refresh_refreshErr, ce);
 			failed(status);
 		}
 	}
@@ -483,6 +489,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#isSynchronized(IResource, int)
 	 */
+	@Override
 	public boolean isSynchronized(IResource resource, int depth) {
 		try {
 			lock.acquire();
@@ -504,6 +511,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#movedFile(IFile, IFile)
 	 */
+	@Override
 	public void movedFile(IFile source, IFile destination) {
 		Assert.isLegal(isValid);
 		try {
@@ -561,6 +569,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#movedFolderSubtree(IFolder, IFolder)
 	 */
+	@Override
 	public void movedFolderSubtree(IFolder source, IFolder destination) {
 		Assert.isLegal(isValid);
 		try {
@@ -619,6 +628,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#movedProjectSubtree(IProject, IProjectDescription)
 	 */
+	@Override
 	public boolean movedProjectSubtree(IProject project, IProjectDescription destDescription) {
 		Assert.isLegal(isValid);
 		try {
@@ -778,6 +788,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardDeleteFile(IFile, int, IProgressMonitor)
 	 */
+	@Override
 	public void standardDeleteFile(IFile file, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
@@ -791,6 +802,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardDeleteFolder(IFolder, int, IProgressMonitor)
 	 */
+	@Override
 	public void standardDeleteFolder(IFolder folder, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
@@ -808,6 +820,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardDeleteProject(IProject, int, IProgressMonitor)
 	 */
+	@Override
 	public void standardDeleteProject(IProject project, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
@@ -831,7 +844,7 @@ class ResourceTree implements IResourceTree {
 				if (alwaysDeleteContent || isSynchronized(project, IResource.DEPTH_INFINITE)) {
 					flags |= IResource.FORCE;
 				}
-					
+
 				// If the project is open we have to recursively try and delete all the files doing best-effort.
 				if (project.isOpen()) {
 					success = internalDeleteProject(project, flags, monitor);
@@ -843,7 +856,7 @@ class ResourceTree implements IResourceTree {
 					}
 					return;
 				}
-				
+
 				// If the project is closed we can short circuit this operation and delete all the files on disk.
 				// The .project file is deleted at the end of the operation.
 				try {
@@ -882,6 +895,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardMoveFile(IFile, IFile, int, IProgressMonitor)
 	 */
+	@Override
 	public void standardMoveFile(IFile source, IFile destination, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
@@ -956,6 +970,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardMoveFolder(IFolder, IFolder, int, IProgressMonitor)
 	 */
+	@Override
 	public void standardMoveFolder(IFolder source, IFolder destination, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
@@ -1022,6 +1037,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#standardMoveProject(IProject, IProjectDescription, int, IProgressMonitor)
 	 */
+	@Override
 	public void standardMoveProject(IProject source, IProjectDescription description, int flags, IProgressMonitor monitor) {
 		Assert.isLegal(isValid);
 		try {
@@ -1097,6 +1113,7 @@ class ResourceTree implements IResourceTree {
 	/**
 	 * @see IResourceTree#updateMovedFileTimestamp(IFile, long)
 	 */
+	@Override
 	public void updateMovedFileTimestamp(IFile file, long timestamp) {
 		Assert.isLegal(isValid);
 		try {
@@ -1121,6 +1138,7 @@ class ResourceTree implements IResourceTree {
 	 */
 	private void updateTimestamps(IResource root, final boolean isDeep) {
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				if (resource.isLinked()) {
 					if (isDeep && !((Resource) resource).isUnderVirtual()) {

@@ -30,6 +30,7 @@ public class SnowNature extends TestNature {
 	/**
 	 * @see IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		//install the snow builder
 		IProject project = getProject();
@@ -50,6 +51,7 @@ public class SnowNature extends TestNature {
 	/**
 	 * @see IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		//remove the snow builder
 		IProjectDescription description = getProject().getDescription();

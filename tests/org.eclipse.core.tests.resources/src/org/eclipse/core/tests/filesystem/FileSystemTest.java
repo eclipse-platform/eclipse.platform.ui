@@ -97,12 +97,14 @@ public abstract class FileSystemTest extends CoreTest {
 		return (EFS.getLocalFileSystem().attributes() & attribute) != 0;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		doFSSetUp();
 		localFileBaseStore = EFS.getLocalFileSystem().getStore(FileSystemHelper.getRandomLocation(getTempDir()));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		localFileBaseStore.delete(EFS.NONE, null);

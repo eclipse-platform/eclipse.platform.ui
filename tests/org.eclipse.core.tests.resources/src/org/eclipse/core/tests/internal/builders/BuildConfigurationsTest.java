@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Broadcom Corporation and others. All rights reserved.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -37,6 +37,7 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Create resources
@@ -52,6 +53,7 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		setupProject(project1);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 

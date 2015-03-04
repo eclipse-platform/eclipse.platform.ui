@@ -91,6 +91,7 @@ public class FileInfo implements IFileInfo {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();
@@ -109,9 +110,7 @@ public class FileInfo implements IFileInfo {
 		return name.compareTo(o.getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#exists()
-	 */
+	@Override
 	public boolean exists() {
 		return getAttribute(ATTRIBUTE_EXISTS);
 	}
@@ -120,10 +119,12 @@ public class FileInfo implements IFileInfo {
 	 * @since 1.4
 	 * @see IFileInfo#getError()
 	 */
+	@Override
 	public int getError() {
 		return errorCode;
 	}
 
+	@Override
 	public boolean getAttribute(int attribute) {
 		if (attribute == EFS.ATTRIBUTE_READ_ONLY && isAttributeSuported(EFS.ATTRIBUTE_OWNER_WRITE))
 			return (!isSet(EFS.ATTRIBUTE_OWNER_WRITE)) || isSet(EFS.ATTRIBUTE_IMMUTABLE);
@@ -133,39 +134,29 @@ public class FileInfo implements IFileInfo {
 			return isSet(attribute);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#getStringAttribute(int)
-	 */
+	@Override
 	public String getStringAttribute(int attribute) {
 		if (attribute == EFS.ATTRIBUTE_LINK_TARGET)
 			return this.linkTarget;
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#lastModified()
-	 */
+	@Override
 	public long getLastModified() {
 		return lastModified;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#length()
-	 */
+	@Override
 	public long getLength() {
 		return length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#getName()
-	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#isDirectory()
-	 */
+	@Override
 	public boolean isDirectory() {
 		return isSet(ATTRIBUTE_DIRECTORY);
 	}
@@ -178,9 +169,7 @@ public class FileInfo implements IFileInfo {
 		attributes |= mask;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#setAttribute(int, boolean)
-	 */
+	@Override
 	public void setAttribute(int attribute, boolean value) {
 		if (attribute == EFS.ATTRIBUTE_READ_ONLY && isAttributeSuported(EFS.ATTRIBUTE_OWNER_WRITE)) {
 			if (value) {
@@ -244,9 +233,7 @@ public class FileInfo implements IFileInfo {
 		this.errorCode = errorCode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileInfo#setLastModified(long)
-	 */
+	@Override
 	public void setLastModified(long value) {
 		lastModified = value;
 	}
@@ -289,6 +276,7 @@ public class FileInfo implements IFileInfo {
 	/**
 	 * For debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -56,6 +56,7 @@ public class BuilderTest extends AbstractBuilderTest {
 	 * Tears down the fixture, for example, close a network connection. This
 	 * method is called after a test is executed.
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		getWorkspace().getRoot().delete(true, null);
@@ -394,6 +395,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		final boolean[] notified = new boolean[] {false};
 		IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
 		final IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				notified[0] = true;
 			}
@@ -532,6 +534,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			getWorkspace().setDescription(wsDescription);
 			// Create and set a build spec for project two
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					proj2.create(getMonitor());
 					proj2.open(getMonitor());
@@ -551,6 +554,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		//reference from proj2->proj1 in the same operation
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create and set a build specs for project one
 					proj1.create(getMonitor());
@@ -606,6 +610,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 		// Add pre-build listener that swap around the dependencies
 		IResourceChangeListener buildListener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				try {
 					IProjectDescription desc1 = proj1.getDescription();
@@ -908,6 +913,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		}
 		final boolean[] listenerCalled = new boolean[] {false};
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				listenerCalled[0] = true;
 			}
@@ -1031,6 +1037,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
 					project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
@@ -1081,6 +1088,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		//install a listener that will cause autobuild to be interrupted
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				blockedJob.schedule();
 				//wait for autobuild to become blocking
@@ -1288,6 +1296,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Now make a change and then turn autobuild on. Turning it on should
 		// cause a build.
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				file.setContents(getRandomContents(), IResource.NONE, getMonitor());
 				IWorkspaceDescription desc = getWorkspace().getDescription();

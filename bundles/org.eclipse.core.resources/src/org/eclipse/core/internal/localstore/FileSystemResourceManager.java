@@ -1059,12 +1059,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			workspace.getRefreshManager().refresh(resource);
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		if (_historyStore != null)
 			_historyStore.shutdown(monitor);
 		ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.addPropertyChangeListener(this);

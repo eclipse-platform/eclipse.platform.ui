@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			fWriter = writer;
 		}
 
+		@Override
 		public void run() {
 			try {
 				doWrite(fWriter, fDataOutputStream);
@@ -60,6 +61,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			return fRefried;
 		}
 
+		@Override
 		public void run() {
 			try {
 				fRefried = doRead(fReader, fDataInputStream);
@@ -234,6 +236,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 	 */
 	public IElementInfoFlattener getFlattener() {
 		return new IElementInfoFlattener() {
+			@Override
 			public void writeElement(IPath path, Object data, DataOutput output) throws IOException {
 				if (data == null) {
 					output.writeUTF("null");
@@ -242,6 +245,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 				}
 			}
 
+			@Override
 			public Object readElement(IPath path, DataInput input) throws IOException {
 				String data = input.readUTF();
 				if ("null".equals(data)) {
@@ -262,6 +266,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 		return new int[] {-1, 0, 1, 2, 3, 4};
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fTree = TestUtil.createTestElementTree();
 		/* default subtree we are interested in */
@@ -274,6 +279,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 	/**
 	 * 
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		//ElementTree tests don't use the CoreTest infrastructure
 		tempFile.delete();

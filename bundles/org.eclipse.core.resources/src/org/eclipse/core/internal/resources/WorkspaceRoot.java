@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
-
 
 import java.net.URI;
 import java.util.*;
@@ -28,7 +27,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * name strings to project handles.
 	 */
 	private final Map<String, Project> projectTable = Collections.synchronizedMap(new HashMap<String, Project>(16));
-	
+
 	/**
 	 * Cache of the canonicalized platform location.
 	 */
@@ -41,9 +40,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		Assert.isNotNull(workspaceLocation);
 	}
 
-	/**
-	 * @see IWorkspaceRoot#delete(boolean, boolean, IProgressMonitor)
-	 */
 	@Override
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -51,83 +47,59 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		delete(updateFlags, monitor);
 	}
 
-	/**
-	 * @see org.eclipse.core.internal.resources.Resource#delete(boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		delete(updateFlags, monitor);
 	}
 
-	/**
-	 * @see org.eclipse.core.internal.resources.Resource#exists(int, boolean)
-	 */
 	@Override
 	public boolean exists(int flags, boolean checkType) {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocation(org.eclipse.core.runtime.IPath)
-	 * @deprecated
-	 */
 	@Deprecated
+	@Override
 	public IContainer[] findContainersForLocation(IPath location) {
 		return findContainersForLocationURI(URIUtil.toURI(location.makeAbsolute()));
 	}
 
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocationURI(java.net.URI)
-	 */
+	@Override
 	public IContainer[] findContainersForLocationURI(URI location) {
 		return findContainersForLocationURI(location, NONE);
 	}
-	
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocationURI(java.net.URI, int)
-	 */
+
+	@Override
 	public IContainer[] findContainersForLocationURI(URI location, int memberFlags) {
 		if (!location.isAbsolute())
 			throw new IllegalArgumentException();
 		return (IContainer[]) getLocalManager().allResourcesFor(location, false, memberFlags);
 	}
 
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocation(org.eclipse.core.runtime.IPath)
-	 * @deprecated
-	 */
 	@Deprecated
+	@Override
 	public IFile[] findFilesForLocation(IPath location) {
 		return findFilesForLocationURI(URIUtil.toURI(location.makeAbsolute()));
 	}
 
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocationURI(java.net.URI)
-	 */
+	@Override
 	public IFile[] findFilesForLocationURI(URI location) {
 		return findFilesForLocationURI(location, NONE);
 	}
-	
-	/**
-	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocationURI(java.net.URI, int)
-	 */
+
+	@Override
 	public IFile[] findFilesForLocationURI(URI location, int memberFlags) {
 		if (!location.isAbsolute())
 			throw new IllegalArgumentException();
 		return (IFile[]) getLocalManager().allResourcesFor(location, true, memberFlags);
 	}
 
-	/**
-	 * @see IWorkspaceRoot#getContainerForLocation(IPath)
-	 */
+	@Override
 	public IContainer getContainerForLocation(IPath location) {
 		return getLocalManager().containerForLocation(location);
 	}
 
-	/**
-	 * @see IContainer#getDefaultCharset(boolean)
-	 */
+	@Override
 	public String getDefaultCharset(boolean checkImplicit) {
 		if (checkImplicit)
 			return ResourcesPlugin.getEncoding();
@@ -135,56 +107,37 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		return enc == null || enc.length() == 0 ? null : enc;
 	}
 
-	/**
-	 * @see IWorkspaceRoot#getFileForLocation(IPath)
-	 */
+	@Override
 	public IFile getFileForLocation(IPath location) {
 		return getLocalManager().fileForLocation(location);
 	}
 
-	/**
-	 * @see IResource#getLocalTimeStamp()
-	 */
 	@Override
 	public long getLocalTimeStamp() {
 		return IResource.NULL_STAMP;
 	}
 
-	/**
-	 * @see IResource#getLocation()
-	 */
 	@Override
 	public IPath getLocation() {
 		return workspaceLocation;
 	}
 
-	/**
-	 * @see IResource#getName()
-	 */
 	@Override
 	public String getName() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IResource#getParent()
-	 */
 	@Override
 	public IContainer getParent() {
 		return null;
 	}
 
-	/**
-	 * @see IResource#getProject()
-	 */
 	@Override
 	public IProject getProject() {
 		return null;
 	}
 
-	/**
-	 * @see IWorkspaceRoot#getProject(String)
-	 */
+	@Override
 	public IProject getProject(String name) {
 		//first check our project cache
 		Project result = projectTable.get(name);
@@ -202,25 +155,18 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		}
 		return result;
 	}
-	
-	/**
-	 * @see IResource#getProjectRelativePath()
-	 */
+
 	@Override
 	public IPath getProjectRelativePath() {
 		return Path.EMPTY;
 	}
 
-	/**
-	 * @see IWorkspaceRoot#getProjects()
-	 */
+	@Override
 	public IProject[] getProjects() {
 		return getProjects(IResource.NONE);
 	}
 
-	/**
-	 * @see IWorkspaceRoot#getProjects(int)
-	 */
+	@Override
 	public IProject[] getProjects(int memberFlags) {
 		IResource[] roots = getChildren(memberFlags);
 		IProject[] result = new IProject[roots.length];
@@ -239,9 +185,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		return result;
 	}
 
-	/**
-	 * @see IResource#getType()
-	 */
 	@Override
 	public int getType() {
 		return IResource.ROOT;
@@ -260,51 +203,32 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		for (int i = 0; i < children.length; i++)
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.Resource#isDerived(int)
-	 */
+
 	@Override
 	public boolean isDerived(int options) {
 		return false;//the root is never derived
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.Resource#isHidden()
-	 */
+
 	@Override
 	public boolean isHidden() {
 		return false;//the root is never hidden
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.Resource#isHidden(int)
-	 */
+
 	@Override
 	public boolean isHidden(int options) {
 		return false;//the root is never hidden
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.Resource#isTeamPrivateMember(int)
-	 */
+
 	@Override
 	public boolean isTeamPrivateMember(int options) {
 		return false;//the root is never a team private member
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.Resource#isLinked(int)
-	 */
 	@Override
 	public boolean isLinked(int options) {
 		return false;//the root is never linked
 	}
-	
-	/**
-	 * @see IResource#isLocal(int)
-	 * @deprecated
-	 */
+
 	@Deprecated
 	@Override
 	public boolean isLocal(int depth) {
@@ -312,10 +236,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		return isLocal(-1, depth);
 	}
 
-	/**
-	 * @see IResource#isLocal(int)
-	 * @deprecated
-	 */
 	@Deprecated
 	@Override
 	public boolean isLocal(int flags, int depth) {
@@ -333,19 +253,11 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		return true;
 	}
 
-	/**
-	 * @see IResource#isPhantom()
-	 */
 	@Override
 	public boolean isPhantom() {
 		return false;
 	}
 
-	/**
-	 * @see IContainer#setDefaultCharset(String)
-	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
-	 * 	is a workspace operation and reports changes in resource deltas.
-	 */
 	@Deprecated
 	@Override
 	public void setDefaultCharset(String charset) {
@@ -356,15 +268,12 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		else
 			resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
 	}
-	
+
 	@Override
 	public void setHidden(boolean isHidden) {
 		//workspace root cannot be set hidden
 	}
 
-	/**
-	 * @see IResource#setLocalTimeStamp(long)
-	 */
 	@Override
 	public long setLocalTimeStamp(long value) {
 		if (value < 0)
@@ -373,19 +282,12 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		return value;
 	}
 
-	/**
-	 * @deprecated
-	 * @see IResource#setReadOnly(boolean)
-	 */
 	@Deprecated
 	@Override
 	public void setReadOnly(boolean readonly) {
 		//can't set the root read only
 	}
 
-	/**
-	 * @see IResource#touch(IProgressMonitor)
-	 */
 	@Override
 	public void touch(IProgressMonitor monitor) {
 		// do nothing for the workspace root

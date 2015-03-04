@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,9 +36,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	class MasterTable extends Properties {
 		private static final long serialVersionUID = 1L;
 
-		/* (non-Javadoc)
-		 * @see java.util.Hashtable#put(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public synchronized Object put(Object key, Object value) {
 			Object prev = super.put(key, value);
@@ -184,6 +181,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				/* Be extra careful when calling lifecycle method on arbitrary plugin */
 				ISafeRunnable code = new ISafeRunnable() {
 
+					@Override
 					public void handleException(Throwable e) {
 						String message = Messages.resources_saveProblem;
 						IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
@@ -193,6 +191,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 						it.remove();
 					}
 
+					@Override
 					public void run() throws Exception {
 						executeLifecycle(lifecycle, participant, context);
 					}
@@ -501,6 +500,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath location = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 		java.io.File target = location.toFile().getParentFile();
 		FilenameFilter filter = new FilenameFilter() {
+			@Override
 			public boolean accept(java.io.File dir, String name) {
 				if (!name.endsWith(LocalMetaArea.F_SNAP))
 					return false;
@@ -538,6 +538,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * @see IElementInfoFlattener#readElement(IPath, DataInput)
 	 */
+	@Override
 	public Object readElement(IPath path, DataInput input) throws IOException {
 		Assert.isNotNull(path);
 		Assert.isNotNull(input);
@@ -628,6 +629,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		valuables.add(location.lastSegment());
 		java.io.File target = location.toFile().getParentFile();
 		FilenameFilter filter = new FilenameFilter() {
+			@Override
 			public boolean accept(java.io.File dir, String name) {
 				return name.endsWith(LocalMetaArea.F_TREE);
 			}
@@ -1431,10 +1433,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/* (non-Javadoc)
 	 * Method declared on IStringPoolParticipant
 	 */
+	@Override
 	public void shareStrings(StringPool pool) {
 		lastSnap.shareStrings(pool);
 	}
 
+	@Override
 	public void shutdown(final IProgressMonitor monitor) {
 		// do a last snapshot if it was scheduled
 		// we force it in the same thread because it would not  
@@ -1579,6 +1583,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		return sorted;
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		restore(monitor);
 		java.io.File table = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES).toFile();
@@ -1672,6 +1677,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 		// Create the visitor 
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				ResourceInfo info = (ResourceInfo) elementContents;
 				if (info != null) {
@@ -1785,6 +1791,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		final long[] snapTimes = new long[2];
 
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				ResourceInfo info = (ResourceInfo) elementContents;
 				if (info != null) {
@@ -1878,9 +1885,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 	}
 
-	/**
-	 * @see IElementInfoFlattener#writeElement(IPath, Object, DataOutput)
-	 */
+	@Override
 	public void writeElement(IPath path, Object element, DataOutput output) throws IOException {
 		Assert.isNotNull(path);
 		Assert.isNotNull(element);

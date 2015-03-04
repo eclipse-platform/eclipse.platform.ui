@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -131,8 +131,10 @@ public class MarkerTest extends ResourceTest {
 
 		// Create an array with a bunch of markers.
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IResourceVisitor visitor = new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						for (int i = 0; i < markersPerResource; i++)
 							resource.createMarker(IMarker.PROBLEM);
@@ -165,6 +167,7 @@ public class MarkerTest extends ResourceTest {
 
 		// create attributes on each marker
 		body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < markers.length; i++)
 					markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
@@ -182,6 +185,7 @@ public class MarkerTest extends ResourceTest {
 
 		// get the attribute from each marker
 		body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < markers.length; i++)
 					markers[i].getAttribute(IMarker.MESSAGE);
@@ -211,6 +215,7 @@ public class MarkerTest extends ResourceTest {
 		// Create an array with a bunch of markers.
 		final IMarker markers[] = new IMarker[numMarkers];
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IResource resource = getWorkspace().getRoot();
 				for (int i = 0; i < markers.length; i++) {
@@ -230,6 +235,7 @@ public class MarkerTest extends ResourceTest {
 
 		// create attributes on each marker
 		body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < markers.length; i++)
 					markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
@@ -246,6 +252,7 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		java.util.Comparator<IMarker> c = new java.util.Comparator<IMarker>() {
+			@Override
 			public int compare(IMarker o1, IMarker o2) {
 				try {
 					String name1 = (String) o1.getAttribute(IMarker.MESSAGE);
@@ -358,6 +365,7 @@ public class MarkerTest extends ResourceTest {
 	protected IMarker[] createMarkers(final IResource[] hosts, final String type) throws CoreException {
 		final IMarker[] result = new IMarker[hosts.length];
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < hosts.length; i++) {
 					result[i] = hosts[i].createMarker(type);
@@ -380,6 +388,7 @@ public class MarkerTest extends ResourceTest {
 	 * Return a string array which defines the hierarchy of a tree.
 	 * Folder resources must have a trailing slash.
 	 */
+	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/", "1/", "1/1", "1/2/", "1/2/1", "1/2/2/", "2/", "2/1", "2/2/", "2/2/1", "2/2/2/"};
 	}
@@ -416,6 +425,7 @@ public class MarkerTest extends ResourceTest {
 		return a == b || (a != null && b != null && a.equals(b));
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		resources = createHierarchy();
@@ -432,6 +442,7 @@ public class MarkerTest extends ResourceTest {
 		//		return suite;
 	}
 
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 		try {
@@ -984,6 +995,7 @@ public class MarkerTest extends ResourceTest {
 		// create markers on various resources
 		final IMarker[] markers = new IMarker[3];
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				markers[0] = resources[0].createMarker(IMarker.BOOKMARK);
 				markers[1] = resources[1].createMarker(IMarker.BOOKMARK);
@@ -1027,6 +1039,7 @@ public class MarkerTest extends ResourceTest {
 			//add+change
 			listener.expectChanges(markers[1]);
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					markers[1].setAttribute(IMarker.CHAR_START, 5);
 					markers[1].setAttribute(IMarker.CHAR_END, 10);
@@ -1037,6 +1050,7 @@ public class MarkerTest extends ResourceTest {
 			//change+remove same marker
 			listener.expectChanges(markers[1]);
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					markers[1].setAttribute(IMarker.CHAR_START, 5);
 					markers[1].setAttribute(IMarker.CHAR_START, null);
@@ -1047,6 +1061,7 @@ public class MarkerTest extends ResourceTest {
 			//change multiple markers
 			listener.expectChanges(markers);
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					markers[0].setAttribute(IMarker.CHAR_START, 5);
 					markers[1].setAttribute(IMarker.CHAR_START, 10);
@@ -1077,8 +1092,10 @@ public class MarkerTest extends ResourceTest {
 			final int[] count = new int[1];
 			count[0] = 0;
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IResourceVisitor visitor = new IResourceVisitor() {
+						@Override
 						public boolean visit(IResource resource) throws CoreException {
 							if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
 								return true;
@@ -1163,6 +1180,7 @@ public class MarkerTest extends ResourceTest {
 				// ADD + REMOVE = nothing
 				try {
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							listener.reset();
 							IMarker marker = resource.createMarker(IMarker.PROBLEM);
@@ -1184,6 +1202,7 @@ public class MarkerTest extends ResourceTest {
 					// put our marker value inside an array and set the element.
 					final IMarker[] markers = new IMarker[1];
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							listener.reset();
 							markers[0] = resource.createMarker(IMarker.PROBLEM);
@@ -1227,6 +1246,7 @@ public class MarkerTest extends ResourceTest {
 					markers[0] = resource.createMarker(IMarker.PROBLEM);
 					assertExists("4.0." + resource.getFullPath(), markers[0]);
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							listener.reset();
 							markers[0].setAttribute(IMarker.MESSAGE, "my message text");
@@ -1248,6 +1268,7 @@ public class MarkerTest extends ResourceTest {
 					markers[0] = resource.createMarker(IMarker.PROBLEM);
 					assertExists("5.0." + resource.getFullPath(), markers[0]);
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							listener.reset();
 							markers[0].setAttribute(IMarker.MESSAGE, "my message text");
@@ -1429,8 +1450,10 @@ public class MarkerTest extends ResourceTest {
 			final int[] count = new int[1];
 			count[0] = 0;
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IResourceVisitor visitor = new IResourceVisitor() {
+						@Override
 						public boolean visit(IResource resource) throws CoreException {
 							if (resource.getType() == IResource.ROOT)
 								return true;
@@ -1463,6 +1486,7 @@ public class MarkerTest extends ResourceTest {
 
 			// verify marker deltas
 			IResourceVisitor visitor = new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource resource) throws CoreException {
 					if (resource.getType() == IResource.ROOT)
 						return true;
@@ -1526,16 +1550,19 @@ public class MarkerTest extends ResourceTest {
 		final DataOutputStream output = o1;
 		final List<String> list = new ArrayList<String>(5);
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(final IResource resource) {
 				try {
 					ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
 					if (info == null)
 						return true;
 					IPathRequestor requestor = new IPathRequestor() {
+						@Override
 						public IPath requestPath() {
 							return resource.getFullPath();
 						}
 
+						@Override
 						public String requestName() {
 							return resource.getName();
 						}
@@ -1572,6 +1599,7 @@ public class MarkerTest extends ResourceTest {
 			InputStream fileInput = new FileInputStream(file);
 			final DataInputStream input = new DataInputStream(fileInput);
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
 					try {
@@ -1617,6 +1645,7 @@ public class MarkerTest extends ResourceTest {
 		// and persistent markers.
 		final ArrayList<IMarker> persistentMarkers = new ArrayList<IMarker>();
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				IMarker marker = resource.createMarker(IMarker.PROBLEM);
 				persistentMarkers.add(marker);
@@ -1658,16 +1687,19 @@ public class MarkerTest extends ResourceTest {
 		final DataOutputStream output = o1;
 		final List<String> list = new ArrayList<String>(5);
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(final IResource resource) {
 				try {
 					ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
 					if (info == null)
 						return true;
 					IPathRequestor requestor = new IPathRequestor() {
+						@Override
 						public IPath requestPath() {
 							return resource.getFullPath();
 						}
 
+						@Override
 						public String requestName() {
 							return resource.getName();
 						}
@@ -1704,6 +1736,7 @@ public class MarkerTest extends ResourceTest {
 			InputStream fileInput = new FileInputStream(file);
 			final DataInputStream input = new DataInputStream(fileInput);
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
 					try {

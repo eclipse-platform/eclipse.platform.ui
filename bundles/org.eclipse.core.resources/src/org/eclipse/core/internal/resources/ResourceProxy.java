@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,18 +31,22 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#getModificationStamp()
 	 */
+	@Override
 	public long getModificationStamp() {
 		return info.getModificationStamp();
 	}
 
+	@Override
 	public String getName() {
 		return requestor.requestName();
 	}
 
+	@Override
 	public Object getSessionProperty(QualifiedName key) {
 		return info.getSessionProperty(key);
 	}
 
+	@Override
 	public int getType() {
 		return info.getType();
 	}
@@ -50,6 +54,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#isAccessible()
 	 */
+	@Override
 	public boolean isAccessible() {
 		int flags = info.getFlags();
 		if (info.getType() == IResource.PROJECT)
@@ -60,6 +65,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#isDerived()
 	 */
+	@Override
 	public boolean isDerived() {
 		int flags = info.getFlags();
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_DERIVED);
@@ -68,6 +74,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#isLinked()
 	 */
+	@Override
 	public boolean isLinked() {
 		int flags = info.getFlags();
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LINK);
@@ -76,6 +83,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#isPhantom()
 	 */
+	@Override
 	public boolean isPhantom() {
 		int flags = info.getFlags();
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_PHANTOM);
@@ -84,14 +92,16 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#isTeamPrivateMember()
 	 */
+	@Override
 	public boolean isTeamPrivateMember() {
 		int flags = info.getFlags();
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_TEAM_PRIVATE_MEMBER);
 	}
-	
+
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#isHidden()
 	 */
+	@Override
 	public boolean isHidden() {
 		int flags = info.getFlags();
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_HIDDEN);
@@ -100,6 +110,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#requestFullPath()
 	 */
+	@Override
 	public IPath requestFullPath() {
 		if (fullPath == null)
 			fullPath = requestor.requestPath();
@@ -109,6 +120,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	/**
 	 * @see org.eclipse.core.resources.IResourceProxy#requestResource()
 	 */
+	@Override
 	public IResource requestResource() {
 		if (resource == null)
 			resource = workspace.newResource(requestFullPath(), info.getType());

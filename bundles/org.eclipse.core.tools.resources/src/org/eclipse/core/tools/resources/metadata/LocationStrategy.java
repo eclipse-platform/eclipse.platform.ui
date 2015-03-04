@@ -22,12 +22,13 @@ class LocationStrategy implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
+	@Override
 	public String dumpStringContents(DataInputStream dataInput) throws IOException {
 		StringBuffer contents = new StringBuffer(100);
 		String location = dataInput.readUTF();
 		contents.append("Location: '"); //$NON-NLS-1$
 		contents.append(location);
-		contents.append('\''); //$NON-NLS-1$		
+		contents.append('\''); 
 		//try to read the dynamic references
 		int numRefs = dataInput.readInt();
 		if (numRefs < 0)
@@ -47,6 +48,7 @@ class LocationStrategy implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
+	@Override
 	public String getFormatDescription() {
 		return "Project location file"; //$NON-NLS-1$
 	}

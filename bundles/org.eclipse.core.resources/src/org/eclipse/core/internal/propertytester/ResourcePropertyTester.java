@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.core.internal.propertytester;
 
 import org.eclipse.core.expressions.PropertyTester;
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.QualifiedName;
  * @since 3.2
  */
 public class ResourcePropertyTester extends PropertyTester {
-
 	/**
 	 * A property indicating the file extension (value <code>"extension"</code>).
 	 * "*" and "?" wild cards are supported.
@@ -93,12 +91,7 @@ public class ResourcePropertyTester extends PropertyTester {
 	 */
 	protected static final String SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object,
-	 *      java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
+	@Override
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		if (!(receiver instanceof IResource))
 			return false;

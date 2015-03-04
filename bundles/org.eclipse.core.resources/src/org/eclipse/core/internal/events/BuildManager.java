@@ -279,6 +279,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (work == 0)
 				return;
 			ISafeRunnable code = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable e) {
 					if (e instanceof OperationCanceledException) {
 						if (Policy.DEBUG_BUILD_INVOKING)
@@ -294,6 +295,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, errorText, e));
 				}
 
+				@Override
 				public void run() throws Exception {
 					basicBuild(buildConfiguration, trigger, context, commands, status, monitor);
 				}
@@ -698,6 +700,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	private ISafeRunnable getSafeRunnable(final int trigger, final Map<String, String> args, final MultiStatus status, final IProgressMonitor monitor) {
 		return new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable e) {
 				if (e instanceof OperationCanceledException) {
 					if (Policy.DEBUG_BUILD_INVOKING)
@@ -723,6 +726,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					status.add(((CoreException) e).getStatus());
 			}
 
+			@Override
 			public void run() throws Exception {
 				IProject[] prereqs = null;
 				//invoke the appropriate build method depending on the trigger
@@ -751,6 +755,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		return null;
 	}
 
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		IProject project = null;
 		switch (event.kind) {
@@ -1046,10 +1051,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		autoBuildJob.cancel();
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		workspace.addLifecycleListener(this);
 	}

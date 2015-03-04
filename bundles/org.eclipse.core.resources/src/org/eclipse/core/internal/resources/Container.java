@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,8 @@ public abstract class Container extends Resource implements IContainer {
 		for (int i = 0; i < members.length; i++)
 			((Resource) members[i]).convertToPhantom();
 	}
-	/**
-	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
-	 */
+
+	@Override
 	public IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(getProject());
 		monitor = Policy.monitorFor(monitor);
@@ -60,7 +59,7 @@ public abstract class Container extends Resource implements IContainer {
 				//save the filter in the project description
 				filter = new FilterDescription(this, type, matcherDescription);
 				filter.setId(System.currentTimeMillis());
-				
+
 				Project project = (Project) getProject();
 				project.internalGetDescription().addFilter(getProjectRelativePath(), filter);
 				project.writeDescription(IResource.NONE);
@@ -89,39 +88,29 @@ public abstract class Container extends Resource implements IContainer {
 		return filter;
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#exists(IPath)
-	 */
+	@Override
 	public boolean exists(IPath childPath) {
 		return workspace.getResourceInfo(getFullPath().append(childPath), false, false) != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#findMember(String)
-	 */
+	@Override
 	public IResource findMember(String memberPath) {
 		return findMember(memberPath, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#findMember(String, boolean)
-	 */
+	@Override
 	public IResource findMember(String memberPath, boolean phantom) {
 		IPath childPath = getFullPath().append(memberPath);
 		ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
 		return info == null ? null : workspace.newResource(childPath, info.getType());
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#findMember(IPath)
-	 */
+	@Override
 	public IResource findMember(IPath childPath) {
 		return findMember(childPath, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#findMember(IPath)
-	 */
+	@Override
 	public IResource findMember(IPath childPath, boolean phantom) {
 		childPath = getFullPath().append(childPath);
 		ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
@@ -162,16 +151,11 @@ public abstract class Container extends Resource implements IContainer {
 		return trimmedResult;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFolder#getFile(String) and IProject#getFile(String)
-	 */
 	public IFile getFile(String name) {
 		return (IFile) workspace.newResource(getFullPath().append(name), FILE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IContainer#getFilters()
-	 */
+	@Override
 	public IResourceFilterDescription[] getFilters() throws CoreException {
 		IResourceFilterDescription[] results = null;
 		checkValidPath(path, FOLDER | PROJECT, true);
@@ -189,7 +173,7 @@ public abstract class Container extends Resource implements IContainer {
 		}
 		return new IResourceFilterDescription[0];
 	}
-	
+
 	public boolean hasFilters() {
 		IProject project = getProject();
 		if (project == null)
@@ -203,30 +187,20 @@ public abstract class Container extends Resource implements IContainer {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#getFile(IPath)
-	 */
+	@Override
 	public IFile getFile(IPath childPath) {
 		return (IFile) workspace.newResource(getFullPath().append(childPath), FILE);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFolder#getFolder(String) and IProject#getFolder(String)
-	 */
 	public IFolder getFolder(String name) {
 		return (IFolder) workspace.newResource(getFullPath().append(name), FOLDER);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#getFolder(IPath)
-	 */
+	@Override
 	public IFolder getFolder(IPath childPath) {
 		return (IFolder) workspace.newResource(getFullPath().append(childPath), FOLDER);
 	}
 
-	/**
-	 * @deprecated
-	 */
 	@Deprecated
 	@Override
 	public boolean isLocal(int flags, int depth) {
@@ -245,25 +219,19 @@ public abstract class Container extends Resource implements IContainer {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#members()
-	 */
+	@Override
 	public IResource[] members() throws CoreException {
 		// forward to central method
 		return members(IResource.NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#members(boolean)
-	 */
+	@Override
 	public IResource[] members(boolean phantom) throws CoreException {
 		// forward to central method
 		return members(phantom ? INCLUDE_PHANTOMS : IResource.NONE);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#members(int)
-	 */
+	@Override
 	public IResource[] members(int memberFlags) throws CoreException {
 		final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(phantom, false);
@@ -289,7 +257,7 @@ public abstract class Container extends Resource implements IContainer {
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the filter in the project description
 				Project project = (Project) getProject();
-				project.internalGetDescription().removeFilter(getProjectRelativePath(), (FilterDescription)filterDescription);
+				project.internalGetDescription().removeFilter(getProjectRelativePath(), (FilterDescription) filterDescription);
 				project.writeDescription(IResource.NONE);
 				monitor.worked(Policy.opWork * 5 / 100);
 
@@ -315,16 +283,12 @@ public abstract class Container extends Resource implements IContainer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#getDefaultCharset()
-	 */
+	@Override
 	public String getDefaultCharset() throws CoreException {
 		return getDefaultCharset(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#findDeletedMembersWithHistory(int, IProgressMonitor)
-	 */
+	@Override
 	public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) {
 		IHistoryStore historyStore = getLocalManager().getHistoryStore();
 		IPath basePath = getFullPath();
@@ -351,21 +315,15 @@ public abstract class Container extends Resource implements IContainer {
 		return deletedFiles.toArray(new IFile[deletedFiles.size()]);
 	}
 
-	/** (non-Javadoc)
-	 * @see IContainer#setDefaultCharset(String)
-	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
-	 * 	is a workspace operation and reports changes in resource deltas.
-	 */
 	@Deprecated
+	@Override
 	public void setDefaultCharset(String charset) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 		workspace.getCharsetManager().setCharsetFor(getFullPath(), charset);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#setDefaultCharset(String, IProgressMonitor)
-	 */
+	@Override
 	public void setDefaultCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -383,6 +341,7 @@ public abstract class Container extends Resource implements IContainer {
 				IElementContentVisitor visitor = new IElementContentVisitor() {
 					boolean visitedRoot = false;
 
+					@Override
 					public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 						if (elementContents == null)
 							return false;
@@ -397,7 +356,7 @@ public abstract class Container extends Resource implements IContainer {
 								return false;
 							info.incrementCharsetGenerationCount();
 							return true;
-						}						
+						}
 						// does it already have an encoding explicitly set?
 						if (workspace.getCharsetManager().getCharsetFor(nodePath, false) != null)
 							return false;

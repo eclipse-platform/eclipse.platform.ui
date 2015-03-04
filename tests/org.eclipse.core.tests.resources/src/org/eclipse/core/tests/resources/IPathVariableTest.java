@@ -30,6 +30,7 @@ public class IPathVariableTest extends ResourceTest {
 	IPathVariableManager manager = null;
 	IProject project = null;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = getWorkspace().getRoot().getProject("MyProject");
@@ -66,6 +67,7 @@ public class IPathVariableTest extends ResourceTest {
 				this.value = value;
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				if (obj == null || !(obj instanceof Event))
 					return false;
@@ -75,6 +77,7 @@ public class IPathVariableTest extends ResourceTest {
 				return this.value == null ? that.value == null : this.value.equals(that.value);
 			}
 
+			@Override
 			public String toString() {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("Event(");
@@ -130,6 +133,7 @@ public class IPathVariableTest extends ResourceTest {
 			actual = new ArrayList<Event>();
 		}
 
+		@Override
 		public void pathVariableChanged(IPathVariableChangeEvent event) {
 			actual.add(new Event(event.getType(), event.getVariableName(), event.getValue()));
 		}
@@ -719,6 +723,7 @@ public class IPathVariableTest extends ResourceTest {
 	/**
 	 * Ensure there are no path variables in the workspace.
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		String[] names = manager.getPathVariableNames();
@@ -727,6 +732,7 @@ public class IPathVariableTest extends ResourceTest {
 		}
 	}
 
+	@Override
 	protected void cleanup() throws CoreException {
 		project.delete(true, getMonitor());
 		super.cleanup();

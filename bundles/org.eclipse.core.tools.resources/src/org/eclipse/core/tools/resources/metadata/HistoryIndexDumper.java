@@ -30,6 +30,7 @@ public class HistoryIndexDumper extends AbstractDumper {
 		return timestamp;
 	}
 
+	@Override
 	protected void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
 		DataInputStream source = new DataInputStream(input);
 		int version = source.readByte();

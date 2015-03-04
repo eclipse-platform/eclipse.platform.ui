@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,23 +42,17 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		this.deltaInfo = deltaInfo;
 	}
 
-	/*
-	 * @see IResourceDelta#accept(IResourceDeltaVisitor)
-	 */
+	@Override
 	public void accept(IResourceDeltaVisitor visitor) throws CoreException {
 		accept(visitor, 0);
 	}
 
-	/*
-	 * @see IResourceDelta#accept(IResourceDeltaVisitor, boolean)
-	 */
+	@Override
 	public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException {
 		accept(visitor, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
 	}
 
-	/*
-	 * @see IResourceDelta#accept(IResourceDeltaVisitor, int)
-	 */
+	@Override
 	public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 		final boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
@@ -76,7 +70,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			if (!includePhantoms && childDelta.isPhantom())
 				continue;
 			if (!includeHidden && childDelta.isHidden())
-				continue; 
+				continue;
 			childDelta.accept(visitor, memberFlags);
 		}
 	}
@@ -102,9 +96,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		}
 	}
 
-	/**
-	 * @see IResourceDelta#findMember(IPath)
-	 */
+	@Override
 	public IResourceDelta findMember(IPath path) {
 		int segmentCount = path.segmentCount();
 		if (segmentCount == 0)
@@ -178,23 +170,17 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			children[i].fixMovesAndMarkers(oldTree);
 	}
 
-	/**
-	 * @see IResourceDelta#getAffectedChildren()
-	 */
+	@Override
 	public IResourceDelta[] getAffectedChildren() {
 		return getAffectedChildren(ADDED | REMOVED | CHANGED, IResource.NONE);
 	}
 
-	/**
-	 * @see IResourceDelta#getAffectedChildren(int)
-	 */
+	@Override
 	public IResourceDelta[] getAffectedChildren(int kindMask) {
 		return getAffectedChildren(kindMask, IResource.NONE);
 	}
 
-	/*
-	 * @see IResourceDelta#getAffectedChildren(int, int)
-	 */
+	@Override
 	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 		int numChildren = children.length;
 		//if there are no children, they all match
@@ -247,30 +233,22 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return deltaInfo;
 	}
 
-	/**
-	 * @see IResourceDelta#getFlags()
-	 */
+	@Override
 	public int getFlags() {
 		return status & ~KIND_MASK;
 	}
 
-	/**
-	 * @see IResourceDelta#getFullPath()
-	 */
+	@Override
 	public IPath getFullPath() {
 		return path;
 	}
 
-	/**
-	 * @see IResourceDelta#getKind()
-	 */
+	@Override
 	public int getKind() {
 		return status & KIND_MASK;
 	}
 
-	/**
-	 * @see IResourceDelta#getMarkerDeltas()
-	 */
+	@Override
 	public IMarkerDelta[] getMarkerDeltas() {
 		Map<IPath, MarkerSet> markerDeltas = deltaInfo.getMarkerDeltas();
 		if (markerDeltas == null)
@@ -287,9 +265,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return result;
 	}
 
-	/**
-	 * @see IResourceDelta#getMovedFromPath()
-	 */
+	@Override
 	public IPath getMovedFromPath() {
 		if ((status & MOVED_FROM) != 0) {
 			return deltaInfo.getNodeIDMap().getOldPath(newInfo.getNodeId());
@@ -297,9 +273,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return null;
 	}
 
-	/**
-	 * @see IResourceDelta#getMovedToPath()
-	 */
+	@Override
 	public IPath getMovedToPath() {
 		if ((status & MOVED_TO) != 0) {
 			return deltaInfo.getNodeIDMap().getNewPath(oldInfo.getNodeId());
@@ -307,9 +281,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return null;
 	}
 
-	/**
-	 * @see IResourceDelta#getProjectRelativePath()
-	 */
+	@Override
 	public IPath getProjectRelativePath() {
 		IPath full = getFullPath();
 		int count = full.segmentCount();
@@ -320,9 +292,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return full.removeFirstSegments(1);
 	}
 
-	/**
-	 * @see IResourceDelta#getResource()
-	 */
+	@Override
 	public IResource getResource() {
 		// return a cached copy if we have one
 		if (cachedResource != null)
@@ -365,7 +335,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 	}
-	
+
 	/**
 	 * Returns true if this delta represents a hidden member, and false
 	 * otherwise.

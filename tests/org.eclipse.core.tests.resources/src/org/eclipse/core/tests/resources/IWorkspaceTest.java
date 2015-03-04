@@ -33,6 +33,7 @@ public class IWorkspaceTest extends ResourceTest {
 		super(name);
 	}
 
+	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/", "/Project/", "/Project/Folder/", "/Project/Folder/File",};
 	}
@@ -54,10 +55,12 @@ public class IWorkspaceTest extends ResourceTest {
 		//		return suite;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
@@ -71,6 +74,7 @@ public class IWorkspaceTest extends ResourceTest {
 		boolean cancelled = false;
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					throw new OperationCanceledException();
 				}
@@ -735,6 +739,7 @@ public class IWorkspaceTest extends ResourceTest {
 		final IProject project = getWorkspace().getRoot().getProject("bar");
 		final IResource[] resources = buildResources(project, new String[] {"a/", "a/b"});
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.create(null);
 				project.open(null);
@@ -779,6 +784,7 @@ public class IWorkspaceTest extends ResourceTest {
 		Thread[] threads = new Thread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {
 			threads[i] = new Thread(new Runnable() {
+				@Override
 				public void run() {
 					IWorkspace workspace = ResourcesPlugin.getWorkspace();
 					IWorkspaceDescription description = workspace.getDescription();

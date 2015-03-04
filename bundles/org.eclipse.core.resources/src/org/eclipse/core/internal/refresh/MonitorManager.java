@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,6 +110,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		return resourcesToMonitor;
 	}
 
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
 			case LifecycleEvent.PRE_LINK_DELETE :
@@ -187,6 +188,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableChangeListener#pathVariableChanged(org.eclipse.core.resources.IPathVariableChangeEvent)
 	 */
+	@Override
 	public void pathVariableChanged(IPathVariableChangeEvent event) {
 		if (registeredMonitors.isEmpty())
 			return;
@@ -324,6 +326,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 					unmonitor(children[i]);
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta == null)
@@ -335,6 +338,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		}
 	}
 
+	@Override
 	public boolean visit(IResourceDelta delta) {
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			IResource resource = delta.getResource();

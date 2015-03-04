@@ -46,6 +46,7 @@ public class MarkerAttributeChangeListener extends Assert implements IResourceCh
 	/**
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IMarkerDelta[] deltas = event.findMarkerDeltas(null, true);
 		try {

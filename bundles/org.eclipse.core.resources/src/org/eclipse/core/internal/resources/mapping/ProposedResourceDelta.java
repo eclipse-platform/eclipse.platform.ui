@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
  * Concrete implementation of IResourceDelta used for operation validation
  */
 public final class ProposedResourceDelta extends PlatformObject implements IResourceDelta {
-
 	protected static int KIND_MASK = 0xFF;
 
 	private HashMap<String, ProposedResourceDelta> children = new HashMap<String, ProposedResourceDelta>(8);
@@ -35,6 +34,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#accept(org.eclipse.core.resources.IResourceDeltaVisitor)
 	 */
+	@Override
 	public void accept(IResourceDeltaVisitor visitor) throws CoreException {
 		accept(visitor, 0);
 	}
@@ -42,6 +42,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#accept(org.eclipse.core.resources.IResourceDeltaVisitor, boolean)
 	 */
+	@Override
 	public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException {
 		accept(visitor, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
 	}
@@ -49,6 +50,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#accept(org.eclipse.core.resources.IResourceDeltaVisitor, int)
 	 */
+	@Override
 	public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
 		if (!visitor.visit(this))
 			return;
@@ -80,6 +82,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#findMember(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public IResourceDelta findMember(IPath path) {
 		int segmentCount = path.segmentCount();
 		if (segmentCount == 0)
@@ -98,6 +101,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getAffectedChildren()
 	 */
+	@Override
 	public IResourceDelta[] getAffectedChildren() {
 		return getAffectedChildren(ADDED | REMOVED | CHANGED, IResource.NONE);
 	}
@@ -105,6 +109,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getAffectedChildren(int)
 	 */
+	@Override
 	public IResourceDelta[] getAffectedChildren(int kindMask) {
 		return getAffectedChildren(kindMask, IResource.NONE);
 	}
@@ -112,6 +117,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getAffectedChildren(int, int)
 	 */
+	@Override
 	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 		List<ProposedResourceDelta> result = new ArrayList<ProposedResourceDelta>();
 		for (Iterator<ProposedResourceDelta> iter = children.values().iterator(); iter.hasNext();) {
@@ -121,7 +127,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 		}
 		return result.toArray(new IResourceDelta[result.size()]);
 	}
-	
+
 	/**
 	 * Returns the child delta corresponding to the given child resource name,
 	 * or <code>null</code>.
@@ -133,6 +139,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getFlags()
 	 */
+	@Override
 	public int getFlags() {
 		return status & ~KIND_MASK;
 	}
@@ -140,6 +147,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath() {
 		return getResource().getFullPath();
 	}
@@ -147,6 +155,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return status & KIND_MASK;
 	}
@@ -154,6 +163,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getMarkerDeltas()
 	 */
+	@Override
 	public IMarkerDelta[] getMarkerDeltas() {
 		return new IMarkerDelta[0];
 	}
@@ -161,6 +171,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getMovedFromPath()
 	 */
+	@Override
 	public IPath getMovedFromPath() {
 		return movedFromPath;
 	}
@@ -168,6 +179,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getMovedToPath()
 	 */
+	@Override
 	public IPath getMovedToPath() {
 		return movedToPath;
 	}
@@ -175,6 +187,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getProjectRelativePath()
 	 */
+	@Override
 	public IPath getProjectRelativePath() {
 		return getResource().getProjectRelativePath();
 	}
@@ -182,6 +195,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDelta#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return resource;
 	}

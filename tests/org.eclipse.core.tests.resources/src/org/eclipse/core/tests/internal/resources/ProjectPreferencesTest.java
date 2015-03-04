@@ -65,6 +65,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 		 */
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			log.append("[");
 			log.append(event.getKey());
@@ -584,6 +585,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 		// add a log listener to ensure that no errors are reported silently
 		ILogListener logListener = new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				Throwable exception = status.getException();
 				if (exception == null || !(exception instanceof CoreException))
@@ -595,6 +597,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 		// listener to react to changes in the workspace
 		IResourceChangeListener rclistener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				new ProjectScope(project).getNode(qualifier);
 			}

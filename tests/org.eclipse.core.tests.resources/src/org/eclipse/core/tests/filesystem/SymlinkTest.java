@@ -93,11 +93,13 @@ public class SymlinkTest extends FileSystemTest {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		baseStore = getFileSystem().getStore(getWorkspace().getRoot().getLocation().append("temp"));
 		baseStore.mkdir(EFS.NONE, null);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		baseStore.delete(EFS.NONE, null);
 	}

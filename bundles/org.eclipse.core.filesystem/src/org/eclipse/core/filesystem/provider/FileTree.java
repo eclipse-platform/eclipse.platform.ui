@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,23 +36,17 @@ public abstract class FileTree implements IFileTree {
 		this.treeRoot = treeRoot;
 	}
 
+	@Override
 	public IFileStore getTreeRoot() {
 		return treeRoot;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileTree#getChildrenFileInfos(org.eclipse.core.filesystem.IFileStore)
-	 */
+	@Override
 	public abstract IFileInfo[] getChildInfos(IFileStore store);
 
-	/*(non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileTree#getFileInfo(org.eclipse.core.filesystem.IFileStore)
-	 */
+	@Override
 	public abstract IFileInfo getFileInfo(IFileStore store);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileTree#getChildrenFileStores(org.eclipse.core.filesystem.IFileStore)
-	 */
+	@Override
 	public abstract IFileStore[] getChildStores(IFileStore store);
-
 }

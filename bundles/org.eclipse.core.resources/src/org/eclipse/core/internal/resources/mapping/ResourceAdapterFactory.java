@@ -20,10 +20,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
  * @since 3.1
  */
 public class ResourceAdapterFactory implements IAdapterFactory {
-
-	/* (non-Javadoc)
-	 * Method declared on IAdapterFactory
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType == ResourceMapping.class && adaptableObject instanceof IResource) {
@@ -32,9 +29,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IAdapterFactory
-	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {ResourceMapping.class};
 	}

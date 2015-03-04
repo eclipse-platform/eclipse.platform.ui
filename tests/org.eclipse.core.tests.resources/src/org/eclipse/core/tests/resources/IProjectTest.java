@@ -47,6 +47,7 @@ public class IProjectTest extends ResourceTest {
 		if (project == null)
 			return;
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.create(description, monitor);
 				project.open(monitor);
@@ -70,6 +71,7 @@ public class IProjectTest extends ResourceTest {
 		assertNull("non-existant persistent property not missing", target.getPersistentProperty(name));
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
@@ -2468,6 +2470,7 @@ public class IProjectTest extends ResourceTest {
 
 			// make sure all the resources still exist.	
 			IResourceVisitor visitor = new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource resource) {
 					assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
 					return true;
@@ -2829,6 +2832,7 @@ public class IProjectTest extends ResourceTest {
 	public void testWorkspaceNotificationClose() {
 		final int[] count = new int[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				assertEquals("1.0", IResourceChangeEvent.PRE_CLOSE, event.getType());
 				count[0]++;
@@ -2861,6 +2865,7 @@ public class IProjectTest extends ResourceTest {
 	public void testWorkspaceNotificationDelete() {
 		final int[] count = new int[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
 				count[0]++;
@@ -2890,6 +2895,7 @@ public class IProjectTest extends ResourceTest {
 	public void testWorkspaceNotificationMove() {
 		final int[] count = new int[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
 				count[0]++;

@@ -40,11 +40,13 @@ public class CustomTriggerBuilder extends TestBuilder {
 	/* (non-Javadoc)
 	 * Method declared on IncrementalProjectBuilder
 	 */
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		triggerForLastBuild = kind;
 		return super.build(kind, args, monitor);
 	}
 
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		super.clean(monitor);
 		triggerForLastBuild = IncrementalProjectBuilder.CLEAN_BUILD;

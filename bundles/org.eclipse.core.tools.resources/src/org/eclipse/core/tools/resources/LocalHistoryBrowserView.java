@@ -55,32 +55,39 @@ public class LocalHistoryBrowserView extends ViewPart {
 			this.state = state;
 		}
 
+		@Override
 		public IStorage getStorage() {
 			return state;
 		}
 
+		@Override
 		public boolean exists() {
 			return false;
 		}
 
+		@Override
 		public ImageDescriptor getImageDescriptor() {
 			return null;
 		}
 
+		@Override
 		public String getName() {
 			if (state instanceof FileState)
 				return ((FileState) state).getUUID() + " (" + state.getFullPath() + ')'; //$NON-NLS-1$
 			return state.getFullPath().toString();
 		}
 
+		@Override
 		public IPersistableElement getPersistable() {
 			return null;
 		}
 
+		@Override
 		public String getToolTipText() {
 			return null;
 		}
 
+		@Override
 		public <T> T getAdapter(Class<T> adapter) {
 			return null;
 		}
@@ -125,6 +132,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 			return null;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}
@@ -135,14 +143,17 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 		private Node invisibleRoot;
 
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			// do nothing
 		}
 
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent.equals(getViewSite())) {
 				if (invisibleRoot == null)
@@ -152,14 +163,17 @@ public class LocalHistoryBrowserView extends ViewPart {
 			return getChildren(parent);
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			return child instanceof Node ? ((Node) child).getParent() : null;
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			return parent instanceof Node ? ((Node) parent).getChildren() : new Object[0];
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			return parent instanceof Node ? ((Node) parent).getChildren().length != 0 : false;
 		}
@@ -187,10 +201,12 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 	class ViewLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object obj) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_FOLDER;
 			if (obj instanceof IFileState)
@@ -203,6 +219,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 		super();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
@@ -220,6 +237,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				LocalHistoryBrowserView.this.fillContextMenu(manager);
 			}
@@ -255,6 +273,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 	private void makeActions() {
 		refreshAction = new Action() {
+			@Override
 			public void run() {
 				((ViewContentProvider) viewer.getContentProvider()).initialize();
 				showMessage("View refreshed."); //$NON-NLS-1$
@@ -265,6 +284,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 		refreshAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
 
 		doubleClickAction = new Action() {
+			@Override
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -290,6 +310,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
@@ -303,6 +324,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

@@ -53,10 +53,12 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			child.setParent(this);
 		}
 
-		public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
+		@Override
+		@SuppressWarnings("unchecked")
+		public <T> T getAdapter(Class<T> key) {
 			if (key != IResource.class)
 				return null;
-			return resource;
+			return (T) resource;
 		}
 
 		public DeltaNode[] getChildren() {
@@ -106,6 +108,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			this.parent = parent;
 		}
 
+		@Override
 		public String toString() {
 			return resource.getName();
 		}
@@ -122,6 +125,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		/**
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			typeFilter = type;
 			for (Action action : eventActions) {
@@ -135,6 +139,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			super("Show Phantoms"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void run() {
 			showPhantoms = !showPhantoms;
 			setChecked(showPhantoms);
@@ -157,14 +162,17 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 		private DeltaNode invisibleRoot;
 
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			return ((DeltaNode) parent).getChildren();
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 
 			if (parent.equals(rootObject)) {
@@ -180,10 +188,12 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			return getChildren(parent);
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			return ((DeltaNode) child).getParent();
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			return ((DeltaNode) parent).hasChildren();
 		}
@@ -204,6 +214,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			invisibleRoot.addChild(root);
 		}
 
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			invisibleRoot = null;
 		}
@@ -296,6 +307,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			return buffer.toString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			DeltaNode node = (DeltaNode) obj;
 			String imageKey;
@@ -323,6 +335,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			return " kind(" + getFlagsAsString(kind) + ") "; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
+		@Override
 		public String getText(Object obj) {
 			StringBuffer buffer = new StringBuffer(obj.toString());
 			if (obj instanceof ResourceEventNode) {
@@ -362,6 +375,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -373,6 +387,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		IActionBars bars = getViewSite().getActionBars();
 		IMenuManager menuMgr = bars.getMenuManager();
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(final IMenuManager manager) {
 				fillPullDownBar(manager);
 			}
@@ -387,6 +402,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -427,6 +443,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 	/**
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getType() != typeFilter)
 			return;
@@ -441,6 +458,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			return;
 		rootObject = event;
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				viewer.getControl().setRedraw(false);
 				viewer.setInput(ResourceChangeView.this.rootObject);

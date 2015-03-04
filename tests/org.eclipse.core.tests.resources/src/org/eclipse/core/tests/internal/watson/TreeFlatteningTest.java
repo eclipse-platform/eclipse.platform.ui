@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Performs the serialization activity for this test
 	 */
+	@Override
 	public Object doRead(ElementTreeReader reader, DataInputStream input) throws IOException {
 		return reader.readTree(input);
 	}
@@ -40,6 +41,7 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Runs a test for this class at a certain depth and path
 	 */
+	@Override
 	public void doTest(IPath path, int depth) {
 		/* Get an element tree from somewhere. */
 		fTree = TestUtil.createTestElementTree();
@@ -54,10 +56,12 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Performs the serialization activity for this test
 	 */
+	@Override
 	public void doWrite(ElementTreeWriter writer, DataOutputStream output) throws IOException {
 		writer.writeTree(fTree, fSubtreePath, fDepth, output);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fTree = TestUtil.createTestElementTree();

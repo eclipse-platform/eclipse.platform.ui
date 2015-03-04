@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class MarkerPerformanceTest extends ResourceTest {
 	public void testSetAttributes1() {
 		//benchmark setting many attributes in a single operation
 		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//set all attributes for each marker
 				for (int i = 0; i < NUM_MARKERS; i++) {
@@ -59,6 +60,7 @@ public class MarkerPerformanceTest extends ResourceTest {
 			}
 		};
 		PerformanceTestRunner runner = new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					getWorkspace().run(runnable, null);
@@ -74,6 +76,7 @@ public class MarkerPerformanceTest extends ResourceTest {
 	public void testSetAttributes2() {
 		//benchmark setting many attributes in a single operation
 		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//set one attribute per marker, repeat for all attributes
 				for (int j = 0; j < REPEAT; j++) {
@@ -84,6 +87,7 @@ public class MarkerPerformanceTest extends ResourceTest {
 			}
 		};
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					getWorkspace().run(runnable, null);
@@ -97,11 +101,13 @@ public class MarkerPerformanceTest extends ResourceTest {
 	/**
 	 * @see ResourceTest#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		final IMarker[] createdMarkers = new IMarker[NUM_MARKERS];
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//create resources
 				project = getWorkspace().getRoot().getProject("TestProject");
@@ -127,6 +133,7 @@ public class MarkerPerformanceTest extends ResourceTest {
 	/**
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		project.delete(true, true, null);

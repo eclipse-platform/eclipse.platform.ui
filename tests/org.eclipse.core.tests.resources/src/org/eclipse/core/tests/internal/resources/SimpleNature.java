@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class SimpleNature extends TestNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		super.configure();
 		wasConfigured = true;
@@ -47,6 +48,7 @@ public class SimpleNature extends TestNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		super.deconfigure();
 		wasDeconfigured = true;

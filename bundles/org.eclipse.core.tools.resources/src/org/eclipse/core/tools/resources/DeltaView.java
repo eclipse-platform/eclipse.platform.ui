@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 	 * @param aParent the parent control
 	 * @see IWorkbenchPart#createPartControl
 	 */
+	@Override
 	public void createPartControl(Composite aParent) {
 
 		this.parent = aParent;
@@ -75,6 +76,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 		// so we need our key binding service to handle Delete keystrokes for us
 
 		this.viewer.getControl().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL)
 					clearOutputAction.run();
@@ -102,6 +104,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 	 * 
 	 * @see IWorkbenchPart#dispose
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -116,6 +119,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 	 * @see ResourceDelta#toDeepDebugString()
 	 * @see IResourceChangeListener#resourceChanged  
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getType() != IResourceChangeEvent.POST_CHANGE)
 			return;
@@ -130,6 +134,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 
 		// we need to access UI widgets from a SWT thread 
 		Runnable update = new Runnable() {
+			@Override
 			public void run() {
 				// the view might have been disposed at the moment this code runs
 				if (parent.isDisposed())

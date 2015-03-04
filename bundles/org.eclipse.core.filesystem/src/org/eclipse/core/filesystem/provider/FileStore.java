@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,6 +102,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * is possible.  This default implementation calls {@link #fetchInfo()} on each
 	 * child, which will result in a file system call for each child.
 	 */
+	@Override
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
 		IFileStore[] childStores = childStores(options, monitor);
 		IFileInfo[] childInfos = new IFileInfo[childStores.length];
@@ -111,15 +112,14 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		return childInfos;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#childNames(int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public abstract String[] childNames(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * The default implementation of {@link IFileStore#childStores(int, IProgressMonitor)}.
 	 * Subclasses may override.
 	 */
+	@Override
 	public IFileStore[] childStores(int options, IProgressMonitor monitor) throws CoreException {
 		String[] children = childNames(options, monitor);
 		IFileStore[] wrapped = new IFileStore[children.length];
@@ -133,6 +133,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * This implementation performs a copy by using other primitive methods. 
 	 * Subclasses may override this method.
 	 */
+	@Override
 	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		Policy.checkCanceled(monitor);
@@ -187,7 +188,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	/**
 	 * Copies a file as specified by 
 	 * {@link IFileStore#copy(IFileStore, int, IProgressMonitor)}.
-
+	
 	 * @param sourceInfo The current file information for the source of the move
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
@@ -244,6 +245,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
+	@Override
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
 	}
@@ -262,6 +264,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * and <code>false</code> otherwise.
 	 * @since org.eclipse.core.filesystem 1.1
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -275,6 +278,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * This implementation forwards to {@link IFileStore#fetchInfo(int, IProgressMonitor)}.
 	 * Subclasses may override this method.
 	 */
+	@Override
 	public IFileInfo fetchInfo() {
 		try {
 			return fetchInfo(EFS.NONE, null);
@@ -286,16 +290,11 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#fetchInfo(int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
-	/**
-	 * The default implementation of {@link IFileStore#getChild(IPath)}.
-	 * Subclasses may override.
-	 * @deprecated
-	 */
+	@Deprecated
+	@Override
 	public IFileStore getChild(IPath path) {
 		IFileStore result = this;
 		for (int i = 0, imax = path.segmentCount(); i < imax; i++)
@@ -309,6 +308,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * 
 	 * @since org.eclipse.core.filesystem 1.2
 	 */
+	@Override
 	public IFileStore getFileStore(IPath path) {
 		IFileStore result = this;
 		String segment = null;
@@ -324,15 +324,14 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#getChild(java.lang.String)
-	 */
+	@Override
 	public abstract IFileStore getChild(String name);
 
 	/**
 	 * The default implementation of {@link IFileStore#getFileSystem()}.
 	 * Subclasses may override.
 	 */
+	@Override
 	public IFileSystem getFileSystem() {
 		try {
 			return EFS.getFileSystem(toURI().getScheme());
@@ -342,14 +341,10 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#getName()
-	 */
+	@Override
 	public abstract String getName();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#getParent()
-	 */
+	@Override
 	public abstract IFileStore getParent();
 
 	/**
@@ -361,6 +356,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @return A hash code value for this file store
 	 * @since org.eclipse.core.filesystem 1.1
 	 */
+	@Override
 	public int hashCode() {
 		return toURI().hashCode();
 	}
@@ -374,6 +370,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @return <code>true</code> if this store is a parent of the provided
 	 * store, and <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean isParentOf(IFileStore other) {
 		while (true) {
 			other = other.getParent();
@@ -393,6 +390,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
+	@Override
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
 		return null;//can't get here
@@ -403,6 +401,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * This implementation performs a move by using other primitive methods. 
 	 * Subclasses may override this method.
 	 */
+	@Override
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -418,9 +417,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#openInputStream(int, IProgressMonitor)
-	 */
+	@Override
 	public abstract InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -439,6 +436,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
+	@Override
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
 		return null;//can't get here
@@ -453,6 +451,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
+	@Override
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.noImplWrite, toString()));
 	}
@@ -463,6 +462,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * a cached copy of this store in the local file system, or <code>null</code> if
 	 * this store does not exist.
 	 */
+	@Override
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		//caching is the only recognized option
@@ -478,13 +478,12 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * 
 	 * @return A string representation of this store.
 	 */
+	@Override
 	public String toString() {
 		return toURI().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileStore#toURI()
-	 */
+	@Override
 	public abstract URI toURI();
 
 	private void transferAttributes(IFileInfo sourceInfo, IFileStore destination) throws CoreException {

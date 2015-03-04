@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -36,6 +37,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		return new TestSuite(IWorkspaceRootTest.class);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		IProject[] projects = getWorkspace().getRoot().getProjects();
 		getWorkspace().delete(projects, true, null);
@@ -343,6 +345,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		final QualifiedName name = new QualifiedName("test", "testProperty");
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					root.setPersistentProperty(name, value);
 				}
@@ -354,6 +357,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		try {
 			final String[] storedValue = new String[1];
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					storedValue[0] = root.getPersistentProperty(name);
 				}
@@ -367,6 +371,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 			final QualifiedName name2 = new QualifiedName("test", "testNonProperty");
 			final String[] storedValue = new String[1];
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					storedValue[0] = root.getPersistentProperty(name2);
 				}
@@ -414,7 +419,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 
 		IContainer[] containers = root.findContainersForLocationURI(folder.getLocationURI());
 		assertEquals("2.0", 0, containers.length);
-		
+
 		containers = root.findContainersForLocationURI(folder.getLocationURI(), IContainer.INCLUDE_HIDDEN);
 		assertEquals("3.0", 1, containers.length);
 	}
@@ -449,42 +454,18 @@ public class IWorkspaceRootTest extends ResourceTest {
 		containers = root.findContainersForLocationURI(file.getLocationURI(), IContainer.INCLUDE_HIDDEN);
 		assertEquals("6.0", 1, containers.length);
 	}
-	
+
 	/*
 	* see bug 232765 for details
 	*/
 	public void testFindMethodsWithHiddenAndTeamPrivateFlags() {
-		checkFindMethods(IResource.NONE, new int[][] { 
-				{IResource.NONE, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
-				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-				}
-		);
+		checkFindMethods(IResource.NONE, new int[][] {{IResource.NONE, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}});
 
-		checkFindMethods(IResource.HIDDEN, new int[][] { 
-				{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
-				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0}
-				}
-		);
-		
-		checkFindMethods(IResource.TEAM_PRIVATE, new int[][] { 
-				{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
-				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-				}
-		);
-		
-		checkFindMethods(IResource.TEAM_PRIVATE | IResource.HIDDEN, new int[][] { 
-				{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
-				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0}
-				}
-		);
+		checkFindMethods(IResource.HIDDEN, new int[][] {{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0}});
+
+		checkFindMethods(IResource.TEAM_PRIVATE, new int[][] {{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}});
+
+		checkFindMethods(IResource.TEAM_PRIVATE | IResource.HIDDEN, new int[][] {{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0}});
 	}
 
 	public void checkFindMethods(int updateFlags, int[][] results) {
@@ -498,13 +479,13 @@ public class IWorkspaceRootTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		
+
 		// a team private folder
 		IFolder teamFolder = createFolder(project, IResource.TEAM_PRIVATE, false);
 
 		IFile mFileInTeamFolder = createFile(teamFolder, updateFlags, false);
 		IFile mLinkedFileInTeamFolder = createFile(teamFolder, updateFlags, true);
-		
+
 		IFolder mFolderInTeamFolder = createFolder(teamFolder, updateFlags, false);
 		IFolder mLinkedFolderInTeamFolder = createFolder(teamFolder, updateFlags, true);
 
@@ -513,7 +494,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 
 		IFile mFileInHiddenFolder = createFile(hiddenFolder, updateFlags, false);
 		IFile mLinkedFileInHiddenFolder = createFile(hiddenFolder, updateFlags, true);
-		
+
 		IFolder mFolderInHiddenFolder = createFolder(hiddenFolder, updateFlags, false);
 		IFolder mLinkedFolderInHiddenFolder = createFolder(hiddenFolder, updateFlags, true);
 
@@ -525,20 +506,20 @@ public class IWorkspaceRootTest extends ResourceTest {
 
 		IFolder mFolderInFolder = createFolder(folder, updateFlags, false);
 		IFolder mLinkedFolderInFolder = createFolder(folder, updateFlags, true);
-		
+
 		for (int i = 0; i < results.length; i++) {
 			checkFindContainers(hiddenFolder.getLocationURI(), results[i][0], results[i][1]);
 			checkFindFiles(mFileInHiddenFolder.getLocationURI(), results[i][0], results[i][4]);
 			checkFindFiles(mLinkedFileInHiddenFolder.getLocationURI(), results[i][0], results[i][5]);
 			checkFindContainers(mFolderInHiddenFolder.getLocationURI(), results[i][0], results[i][2]);
 			checkFindContainers(mLinkedFolderInHiddenFolder.getLocationURI(), results[i][0], results[i][3]);
-			
+
 			checkFindContainers(folder.getLocationURI(), results[i][0], results[i][6]);
 			checkFindFiles(mFileInFolder.getLocationURI(), results[i][0], results[i][7]);
 			checkFindFiles(mLinkedFileInFolder.getLocationURI(), results[i][0], results[i][8]);
 			checkFindContainers(mFolderInFolder.getLocationURI(), results[i][0], results[i][9]);
 			checkFindContainers(mLinkedFolderInFolder.getLocationURI(), results[i][0], results[i][10]);
-			
+
 			checkFindContainers(teamFolder.getLocationURI(), results[i][0], results[i][11]);
 			checkFindFiles(mFileInTeamFolder.getLocationURI(), results[i][0], results[i][12]);
 			checkFindFiles(mLinkedFileInTeamFolder.getLocationURI(), results[i][0], results[i][13]);

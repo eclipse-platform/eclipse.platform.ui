@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#delete()
 	 */
+	@Override
 	public void delete() throws CoreException {
 		final ISchedulingRule rule = getWorkspace().getRuleFactory().markerRule(resource);
 		try {
@@ -86,6 +87,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return getInfo() != null;
 	}
@@ -93,6 +95,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getAttribute(String)
 	 */
+	@Override
 	public Object getAttribute(String attributeName) throws CoreException {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -103,6 +106,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getAttribute(String, int)
 	 */
+	@Override
 	public int getAttribute(String attributeName, int defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -117,6 +121,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getAttribute(String, String)
 	 */
+	@Override
 	public String getAttribute(String attributeName, String defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -131,6 +136,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getAttribute(String, boolean)
 	 */
+	@Override
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -145,6 +151,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getAttributes()
 	 */
+	@Override
 	public Map<String, Object> getAttributes() throws CoreException {
 		MarkerInfo info = getInfo();
 		checkInfo(info);
@@ -154,6 +161,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getAttributes(String[])
 	 */
+	@Override
 	public Object[] getAttributes(String[] attributeNames) throws CoreException {
 		Assert.isNotNull(attributeNames);
 		MarkerInfo info = getInfo();
@@ -164,6 +172,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getCreationTime()
 	 */
+	@Override
 	public long getCreationTime() throws CoreException {
 		MarkerInfo info = getInfo();
 		checkInfo(info);
@@ -173,6 +182,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getId()
 	 */
+	@Override
 	public long getId() {
 		return id;
 	}
@@ -184,6 +194,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return resource;
 	}
@@ -191,6 +202,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#getType()
 	 */
+	@Override
 	public String getType() throws CoreException {
 		MarkerInfo info = getInfo();
 		checkInfo(info);
@@ -214,6 +226,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#isSubtypeOf(String)
 	 */
+	@Override
 	public boolean isSubtypeOf(String type) throws CoreException {
 		return getWorkspace().getMarkerManager().isSubtype(getType(), type);
 	}
@@ -221,6 +234,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#setAttribute(String, int)
 	 */
+	@Override
 	public void setAttribute(String attributeName, int value) throws CoreException {
 		setAttribute(attributeName, new Integer(value));
 	}
@@ -228,6 +242,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#setAttribute(String, Object)
 	 */
+	@Override
 	public void setAttribute(String attributeName, Object value) throws CoreException {
 		Assert.isNotNull(attributeName);
 		Workspace workspace = getWorkspace();
@@ -257,6 +272,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#setAttribute(String, boolean)
 	 */
+	@Override
 	public void setAttribute(String attributeName, boolean value) throws CoreException {
 		setAttribute(attributeName, value ? Boolean.TRUE : Boolean.FALSE);
 	}
@@ -264,6 +280,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#setAttributes(String[], Object[])
 	 */
+	@Override
 	public void setAttributes(String[] attributeNames, Object[] values) throws CoreException {
 		Assert.isNotNull(attributeNames);
 		Assert.isNotNull(values);
@@ -294,6 +311,7 @@ public class Marker extends PlatformObject implements IMarker {
 	/**
 	 * @see IMarker#setAttributes(Map)
 	 */
+	@Override
 	public void setAttributes(Map<String, ? extends Object> values) throws CoreException {
 		Workspace workspace = getWorkspace();
 		MarkerManager manager = workspace.getMarkerManager();

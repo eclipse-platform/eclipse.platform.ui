@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class PR_1GHOM0N_Test extends ResourceTest {
 	 * Sets up the fixture, for example, open a network connection.
 	 * This method is called before a test is executed.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
@@ -42,6 +43,7 @@ public class PR_1GHOM0N_Test extends ResourceTest {
 	 * Tears down the fixture, for example, close a network connection.
 	 * This method is called after a test is executed.
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
@@ -77,6 +79,7 @@ public class PR_1GHOM0N_Test extends ResourceTest {
 		// try and reproduce the error (there are problems when calling an incremental
 		// build from within an operation...it leaves the tree immutable)
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 				IFile file = project.getFile("test.txt");

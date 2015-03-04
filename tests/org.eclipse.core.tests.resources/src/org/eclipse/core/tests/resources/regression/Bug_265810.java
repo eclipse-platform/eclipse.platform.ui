@@ -46,12 +46,14 @@ public class Bug_265810 extends ResourceTest {
 		return new TestSuite(Bug_265810.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		IPath base = super.getRandomLocation();
 		toDelete.add(base);
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		IPath[] paths = toDelete.toArray(new IPath[0]);
 		toDelete.clear();
@@ -63,6 +65,7 @@ public class Bug_265810 extends ResourceTest {
 	/**
 	 * @see org.eclipse.core.tests.harness.ResourceTest#getRandomLocation()
 	 */
+	@Override
 	public IPath getRandomLocation() {
 		IPath path = FileSystemHelper.computeRandomLocation(getTempDir());
 		try {
@@ -178,9 +181,11 @@ public class Bug_265810 extends ResourceTest {
 	}
 
 	IResourceChangeListener ll = new IResourceChangeListener() {
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			try {
 				event.getDelta().accept(new IResourceDeltaVisitor() {
+					@Override
 					public boolean visit(IResourceDelta delta) {
 						IResource resource = delta.getResource();
 						if (resource instanceof IFile && !resource.getName().equals(".project"))

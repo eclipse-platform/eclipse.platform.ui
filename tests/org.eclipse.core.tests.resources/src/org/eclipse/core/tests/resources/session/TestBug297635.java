@@ -170,19 +170,23 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 
 	// ISaveParticipant methods
 
+	@Override
 	public void doneSaving(ISaveContext context) {
 		// nothing to do
 	}
 
+	@Override
 	public void prepareToSave(ISaveContext context) {
 		context.needDelta();
 		context.needSaveNumber();
 	}
 
+	@Override
 	public void rollback(ISaveContext context) {
 		// nothing to do
 	}
 
+	@Override
 	public void saving(ISaveContext context) {
 		// nothing to do
 	}

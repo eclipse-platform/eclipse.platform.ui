@@ -27,10 +27,12 @@ public class BogusFileStore extends MemoryFileStore {
 		super(path);
 	}
 
+	@Override
 	public URI toURI() {
 		return BogusFileSystem.toURI(path);
 	}
 
+	@Override
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) {
 		IPath parentPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().append("bogus_fs");
 		File parent = new java.io.File(parentPath.toOSString());
@@ -39,6 +41,7 @@ public class BogusFileStore extends MemoryFileStore {
 		return new java.io.File(parentPath.append(getName()).toOSString());
 	}
 
+	@Override
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) {
 		// ignore
 	}

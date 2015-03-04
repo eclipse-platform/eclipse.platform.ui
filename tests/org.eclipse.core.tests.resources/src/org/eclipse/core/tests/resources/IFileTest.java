@@ -246,6 +246,7 @@ public class IFileTest extends ResourceTest {
 			refreshFile(file);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -256,6 +257,7 @@ public class IFileTest extends ResourceTest {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
@@ -384,15 +386,18 @@ public class IFileTest extends ResourceTest {
 	public void testCreate() {
 		Object[][] inputs = new Object[][] {interestingFiles(), interestingStreams(), TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IFileTest.testCreate") {
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 				refreshFile(file);
 			}
 
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile file = (IFile) args[0];
 				InputStream stream = (InputStream) args[1];
@@ -406,6 +411,7 @@ public class IFileTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 				IPath fileLocation = file.getLocation();
@@ -425,6 +431,7 @@ public class IFileTest extends ResourceTest {
 				return fileExistsInWS || fileExistsInFS;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
 				return file.exists();
@@ -612,6 +619,7 @@ public class IFileTest extends ResourceTest {
 		ensureDoesNotExistInFileSystem(target);
 
 		InputStream content = new InputStream() {
+			@Override
 			public int read() throws IOException {
 				throw new IOException();
 			}
@@ -659,6 +667,7 @@ public class IFileTest extends ResourceTest {
 		ensureDoesNotExistInFileSystem(target);
 
 		InputStream content = new InputStream() {
+			@Override
 			public int read() {
 				throw new OperationCanceledException();
 			}
@@ -767,20 +776,24 @@ public class IFileTest extends ResourceTest {
 	public void testGetContents() {
 		Object[][] inputs = new Object[][] {interestingFiles()};
 		new TestPerformer("IFileTest.testGetContents") {
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 				refreshFile(file);
 			}
 
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile file = (IFile) args[0];
 				return file.getContents(false);
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 
@@ -796,6 +809,7 @@ public class IFileTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
 				InputStream contents = (InputStream) result;
@@ -854,6 +868,7 @@ public class IFileTest extends ResourceTest {
 			// expected
 		}
 		content = new InputStream() {
+			@Override
 			public int read() throws IOException {
 				throw new IOException();
 			}
@@ -934,15 +949,18 @@ public class IFileTest extends ResourceTest {
 	public void testSetContents1() {
 		Object[][] inputs = new Object[][] {interestingFiles(), interestingStreams(), TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IFileTest.testSetContents1") {
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 				refreshFile(file);
 			}
 
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IFile file = (IFile) args[0];
 				InputStream stream = (InputStream) args[1];
@@ -956,6 +974,7 @@ public class IFileTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IFile file = (IFile) args[0];
 				boolean force = ((Boolean) args[2]).booleanValue();
@@ -972,6 +991,7 @@ public class IFileTest extends ResourceTest {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile file = (IFile) args[0];
 				return file.exists();

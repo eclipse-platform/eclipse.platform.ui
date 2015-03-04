@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -295,6 +295,7 @@ public interface IMarker extends IAdaptable {
 	 * @param object the other object
 	 * @return an indication of whether the objects are equal
 	 */
+	@Override
 	public boolean equals(Object object);
 
 	/**
@@ -366,7 +367,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public Map<String,Object> getAttributes() throws CoreException;
+	public Map<String, Object> getAttributes() throws CoreException;
 
 	/**
 	 * Returns the attributes with the given names.  The result is an an array 

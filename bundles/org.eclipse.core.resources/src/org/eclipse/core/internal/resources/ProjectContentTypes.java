@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,9 @@ import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -70,14 +71,17 @@ public class ProjectContentTypes {
 			return projectScope;
 		}
 
+		@Override
 		public IPath getLocation() {
 			return getDelegate().getLocation();
 		}
 
+		@Override
 		public String getName() {
 			return getDelegate().getName();
 		}
 
+		@Override
 		public IEclipsePreferences getNode(String qualifier) {
 			return getDelegate().getNode(qualifier);
 		}
@@ -90,6 +94,7 @@ public class ProjectContentTypes {
 			return getName().hashCode();
 		}
 
+		@Override
 		public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
 			return ProjectContentTypes.this.select(project, candidates, fileName, content);
 		}

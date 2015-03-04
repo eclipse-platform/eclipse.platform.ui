@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * <li> This state does not exist.</li>
 	 * </ul>
 	 */
+	@Override
 	public InputStream getContents() throws CoreException;
 
 	/**
@@ -78,6 +79,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * @see IResource#getFullPath()
 	 * @see IStorage#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath();
 
 	/**
@@ -103,6 +105,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * @see IResource#getName()
 	 * @see IStorage#getName()
 	 */
+	@Override
 	public String getName();
 
 	/**
@@ -113,5 +116,6 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 *
 	 * @see IStorage
 	 */
+	@Override
 	public boolean isReadOnly();
 }

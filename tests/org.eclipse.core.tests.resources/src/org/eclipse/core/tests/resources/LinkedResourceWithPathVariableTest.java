@@ -55,6 +55,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		//		return suite;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		IPath base = super.getRandomLocation();
 		toDelete.add(base);
@@ -66,6 +67,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		existingProject.getPathVariableManager().setValue(PROJECT_RELATIVE_VARIABLE_NAME, Path.fromPortableString(PROJECT_RELATIVE_VARIABLE_VALUE));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (toSetWritable != null) {
 			IFileInfo info = toSetWritable.fetchInfo();
@@ -127,6 +129,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	/**
 	 * @see org.eclipse.core.tests.harness.ResourceTest#getRandomLocation()
 	 */
+	@Override
 	public IPath getRandomLocation() {
 		IPathVariableManager pathVars = getWorkspace().getPathVariableManager();
 		//low order bits are current time, high order bits are static counter
@@ -187,6 +190,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	/**
 	 * @see LinkedResourceTest#resolve(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IPath resolve(IPath path) {
 		return getWorkspace().getPathVariableManager().resolvePath(path);
 	}
@@ -194,6 +198,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	/**
 	 * @see LinkedResourceTest#resolve(java.net.URI)
 	 */
+	@Override
 	protected URI resolve(URI uri) {
 		return getWorkspace().getPathVariableManager().resolveURI(uri);
 	}

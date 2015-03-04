@@ -31,12 +31,14 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		// do nothing
 	}
 
 	static void setupElementTree(ElementTree tree, int num) {
 		final IElementTreeData data = new IElementTreeData() {
+			@Override
 			public Object clone() {
 				try {
 					return super.clone();
@@ -71,12 +73,14 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		modifyTree(tree);
 		final ArrayList<Object> elts = new ArrayList<Object>();
 		final IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
 				elts.add(info);
 				return true;
 			}
 		};
 		Thread reader = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				for (int i = 0; i < 80000; i++) {
 					new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
@@ -84,6 +88,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 			}
 		}, "Holmes (reader)");
 		Thread writer = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				for (int i = 0; i < 1000; i++) {
 					modifyTree(tree);
@@ -111,6 +116,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 	/**
 	 * 
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		//ElementTree tests don't use the CoreTest infrastructure
 	}
@@ -121,6 +127,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		setupElementTree(tree, n);
 		final ArrayList<IPath> elts = new ArrayList<IPath>();
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
 				elts.add(requestor.requestPath());
 				return true;

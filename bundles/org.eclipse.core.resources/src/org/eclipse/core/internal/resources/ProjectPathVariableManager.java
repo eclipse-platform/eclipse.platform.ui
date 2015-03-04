@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2015 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,9 +67,10 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
+	@Override
 	public String[] getPathVariableNames() {
 		List<String> result = new LinkedList<String>();
-		HashMap<String,VariableDescription> map;
+		HashMap<String, VariableDescription> map;
 		try {
 			map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
 		} catch (CoreException e) {
@@ -90,6 +91,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public IPath getValue(String varName) {
 		URI uri = getURIValue(varName);
@@ -97,13 +99,14 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			return URIUtil.toPath(uri);
 		return null;
 	}
-	
+
 	/**
 	 * If the variable is not listed in the project description, we fall back on
 	 * the workspace variables.
 	 * 
 	 * @see org.eclipse.core.resources.IPathVariableManager#getURIValue(String)
 	 */
+	@Override
 	public URI getURIValue(String varName) {
 		String value = internalGetValue(varName);
 		if (value != null) {
@@ -129,7 +132,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	public String internalGetValue(String varName) {
-		HashMap<String,VariableDescription> map;
+		HashMap<String, VariableDescription> map;
 		try {
 			map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
 		} catch (CoreException e) {
@@ -144,13 +147,13 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			name = varName.substring(0, index);
 		else
 			name = varName;
- 		for (int i = 0; i < variableProviders.length; i++) {
- 			if (variableProviders[i].getName().equals(name))
- 				return variableProviders[i].getValue(varName, resource);
+		for (int i = 0; i < variableProviders.length; i++) {
+			if (variableProviders[i].getName().equals(name))
+				return variableProviders[i].getValue(varName, resource);
 		}
- 		for (int i = 0; i < variableProviders.length; i++) {
- 			if (name.startsWith(variableProviders[i].getName()))
- 				return variableProviders[i].getValue(varName, resource);
+		for (int i = 0; i < variableProviders.length; i++) {
+			if (name.startsWith(variableProviders[i].getName()))
+				return variableProviders[i].getValue(varName, resource);
 		}
 		return null;
 	}
@@ -158,20 +161,21 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined(String)
 	 */
+	@Override
 	public boolean isDefined(String varName) {
 		for (int i = 0; i < variableProviders.length; i++) {
-//			if (variableProviders[i].getName().equals(varName))
-//				return true;
-			
+			//			if (variableProviders[i].getName().equals(varName))
+			//				return true;
+
 			if (varName.startsWith(variableProviders[i].getName()))
 				return true;
 		}
-		
+
 		try {
-			HashMap<String,VariableDescription> map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
+			HashMap<String, VariableDescription> map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
 			if (map != null) {
 				Iterator<String> it = map.keySet().iterator();
-				while(it.hasNext()) {
+				while (it.hasNext()) {
 					String name = it.next();
 					if (name.equals(varName))
 						return true;
@@ -195,6 +199,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public IPath resolvePath(IPath path) {
 		if (path == null || path.segmentCount() == 0 || path.isAbsolute() || path.getDevice() != null)
@@ -267,6 +272,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		return value;
 	}
 
+	@Override
 	public URI resolveURI(URI uri) {
 		if (uri == null || uri.isAbsolute() || (uri.getSchemeSpecificPart() == null))
 			return uri;
@@ -276,7 +282,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		URI value = resolveVariable(raw.segment(0));
 		if (value == null)
 			return uri;
-		
+
 		String path = value.getPath();
 		if (path != null) {
 			IPath p = Path.fromPortableString(path);
@@ -294,18 +300,21 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		if (newValue == null)
 			setURIValue(varName, (URI) null);
 		else
 			setURIValue(varName, URIUtil.toURI(newValue));
-			
+
 	}
-		/**
-		 * @see org.eclipse.core.resources.IPathVariableManager#setValue(String,
-		 *      IPath)
-		 */
+
+	/**
+	 * @see org.eclipse.core.resources.IPathVariableManager#setValue(String,
+	 *      IPath)
+	 */
+	@Override
 	public void setURIValue(String varName, URI newValue) throws CoreException {
 		checkIsValidName(varName);
 		checkIsValidValue(newValue);
@@ -333,9 +342,9 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 				return;
 
 			for (int i = 0; i < variableProviders.length; i++) {
-//				if (variableProviders[i].getName().equals(varName))
-//					return;
-				
+				//				if (variableProviders[i].getName().equals(varName))
+				//					return;
+
 				if (varName.startsWith(variableProviders[i].getName()))
 					return;
 			}
@@ -367,13 +376,14 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			getWorkspaceManager().setURIValue(varName, newValue);
 		else {
 			// notify listeners from outside the synchronized block to avoid deadlocks
-			getWorkspaceManager().fireVariableChangeEvent(project, varName, newValue != null? URIUtil.toPath(newValue):null, eventType);
+			getWorkspaceManager().fireVariableChangeEvent(project, varName, newValue != null ? URIUtil.toPath(newValue) : null, eventType);
 		}
 	}
 
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#shutdown(IProgressMonitor)
 	 */
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		// nothing to do here
 	}
@@ -381,6 +391,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
 	 */
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		// nothing to do here
 	}
@@ -388,6 +399,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#validateName(String)
 	 */
+	@Override
 	public IStatus validateName(String name) {
 		String message = null;
 		if (name.length() == 0) {
@@ -418,6 +430,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see IPathVariableManager#validateValue(IPath)
 	 */
+	@Override
 	public IStatus validateValue(IPath value) {
 		// accept any format
 		return Status.OK_STATUS;
@@ -426,6 +439,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see IPathVariableManager#validateValue(URI)
 	 */
+	@Override
 	public IStatus validateValue(URI value) {
 		// accept any format
 		return Status.OK_STATUS;
@@ -435,6 +449,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 * @throws CoreException 
 	 * @see IPathVariableManager#convertToRelative(URI, boolean, String)
 	 */
+	@Override
 	public URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException {
 		return PathVariableUtil.convertToRelative(this, path, resource, force, variableHint);
 	}
@@ -442,18 +457,22 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * @see IPathVariableManager#convertToUserEditableFormat(String, boolean)
 	 */
-	public String convertToUserEditableFormat(String value, boolean locationFormat) { 
+	@Override
+	public String convertToUserEditableFormat(String value, boolean locationFormat) {
 		return PathVariableUtil.convertToUserEditableFormatInternal(value, locationFormat);
 	}
-	
+
+	@Override
 	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat) {
 		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat);
 	}
-	
+
+	@Override
 	public void addChangeListener(IPathVariableChangeListener listener) {
 		getWorkspaceManager().addChangeListener(listener, resource.getProject());
 	}
 
+	@Override
 	public void removeChangeListener(IPathVariableChangeListener listener) {
 		getWorkspaceManager().removeChangeListener(listener, resource.getProject());
 	}
@@ -463,6 +482,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 * 
 	 * @see IPathVariableManager#getVariableRelativePathLocation(IResource, URI)
 	 */
+	@Override
 	public URI getVariableRelativePathLocation(URI location) {
 		try {
 			URI result = convertToRelative(location, false, null);
@@ -481,6 +501,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		return resource;
 	}
 
+	@Override
 	public boolean isUserDefined(String name) {
 		return ProjectVariableProviderManager.getDefault().findDescriptor(name) == null;
 	}

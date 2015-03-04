@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class ProjectReferencesTest extends ResourceTest {
 		super(name);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		project0 = getWorkspace().getRoot().getProject("ProjectReferencesTest_p0");
 		project1 = getWorkspace().getRoot().getProject("ProjectReferencesTest_p1");
@@ -63,6 +64,7 @@ public class ProjectReferencesTest extends ResourceTest {
 		project3v1 = new BuildConfiguration(project3, bc1);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 

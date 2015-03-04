@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,15 +72,13 @@ public class Folder extends Container implements IFolder {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFolder#create(int, boolean, IProgressMonitor)
-	 */
-	public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException {	
+	@Override
+	public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException {
 		if ((updateFlags & IResource.VIRTUAL) == IResource.VIRTUAL) {
 			createLink(LinkDescription.VIRTUAL_LOCATION, updateFlags, monitor);
 			return;
 		}
-		
+
 		final boolean force = (updateFlags & IResource.FORCE) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -117,9 +115,7 @@ public class Folder extends Container implements IFolder {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IFolder#create(boolean, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		create((force ? IResource.FORCE : IResource.NONE), local, monitor);
@@ -151,9 +147,7 @@ public class Folder extends Container implements IFolder {
 			internalCreate(IResource.FORCE, true, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#getDefaultCharset(boolean)
-	 */
+	@Override
 	public String getDefaultCharset(boolean checkImplicit) {
 		// non-existing resources default to parent's charset
 		if (!exists())
@@ -161,9 +155,6 @@ public class Folder extends Container implements IFolder {
 		return workspace.getCharsetManager().getCharsetFor(getFullPath(), checkImplicit);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getType()
-	 */
 	@Override
 	public int getType() {
 		return FOLDER;

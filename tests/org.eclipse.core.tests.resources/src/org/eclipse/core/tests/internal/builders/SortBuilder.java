@@ -133,6 +133,7 @@ public class SortBuilder extends TestBuilder {
 	 * <code>BaseBuilder</code>.
 	 * @see BaseBuilder#build(IResourceDelta,int,IProgressMonitor)
 	 */
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		arguments = args;
 		super.build(kind, args, monitor);
@@ -397,9 +398,7 @@ public class SortBuilder extends TestBuilder {
 		if (delta == null)
 			return;
 		delta.accept(new IResourceDeltaVisitor() {
-			/*
-			 * @see IResourceDeltaVisitor#visit(IResourceDelta)
-			 */
+			@Override
 			public boolean visit(IResourceDelta delta) {
 				changedResources.add(delta.getResource());
 				return true;
@@ -427,6 +426,7 @@ public class SortBuilder extends TestBuilder {
 		bytes[pos2] = temp;
 	}
 
+	@Override
 	public String toString() {
 		return "SortBuilder(" + getProject() + ')';
 	}

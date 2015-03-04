@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see IFileState#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return store.exists(this);
 	}
@@ -44,12 +45,13 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IEncodedStorage#getCharset()
 	 */
+	@Override
 	public String getCharset() throws CoreException {
 		// if there is an existing file at this state's path, use the encoding of that file
 		IResource file = workspace.getRoot().findMember(fullPath);
 		if (file != null && file.getType() == IResource.FILE)
-			return ((IFile)file).getCharset();
-		
+			return ((IFile) file).getCharset();
+
 		// tries to obtain a description for the file contents
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		InputStream contents = new BufferedInputStream(getContents());
@@ -58,7 +60,7 @@ public class FileState extends PlatformObject implements IFileState {
 			contents.close();
 			return description == null ? null : description.getCharset();
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());		
+			String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 		} finally {
 			FileUtil.safeClose(contents);
@@ -68,6 +70,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see IFileState#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws CoreException {
 		return store.getContents(this);
 	}
@@ -75,6 +78,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see IFileState#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath() {
 		return fullPath;
 	}
@@ -82,6 +86,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see IFileState#getModificationTime()
 	 */
+	@Override
 	public long getModificationTime() {
 		return lastModified;
 	}
@@ -89,6 +94,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see IFileState#getName()
 	 */
+	@Override
 	public String getName() {
 		return fullPath.lastSegment();
 	}
@@ -100,6 +106,7 @@ public class FileState extends PlatformObject implements IFileState {
 	/* (non-Javadoc)
 	 * @see IFileState#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}

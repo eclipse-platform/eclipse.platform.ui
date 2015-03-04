@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
  */
 public class NaySayerContentDescriber implements ITextContentDescriber {
 
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		for (int i = 0; contents.read() != -1 && i < 2048; i++) {
 			// read some data so performance tests are more reallistic
@@ -30,6 +31,7 @@ public class NaySayerContentDescriber implements ITextContentDescriber {
 		return INVALID;
 	}
 
+	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
 		for (int i = 0; contents.read() != -1 && i < 2048; i++) {
 			// read some data so performance tests are more reallistic
@@ -37,6 +39,7 @@ public class NaySayerContentDescriber implements ITextContentDescriber {
 		return INVALID;
 	}
 
+	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return IContentDescription.ALL;
 	}

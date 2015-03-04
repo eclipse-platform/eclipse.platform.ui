@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,6 +123,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		return values.toArray(new IProjectNatureDescriptor[values.size()]);
 	}
 
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
 			case LifecycleEvent.POST_PROJECT_CHANGE :
@@ -139,6 +140,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	protected void configureNature(final Project project, final String natureID, final MultiStatus errors) {
 		ISafeRunnable code = new ISafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				IProjectNature nature = createNature(project, natureID);
 				nature.configure();
@@ -146,6 +148,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 				info.setNature(natureID, nature);
 			}
 
+			@Override
 			public void handleException(Throwable exception) {
 				if (exception instanceof CoreException)
 					errors.add(((CoreException) exception).getStatus());
@@ -256,11 +259,13 @@ public class NatureManager implements ILifecycleListener, IManager {
 		}
 		final IProjectNature nature = existingNature;
 		ISafeRunnable code = new ISafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				nature.deconfigure();
 				info.setNature(natureID, null);
 			}
 
+			@Override
 			public void handleException(Throwable exception) {
 				if (exception instanceof CoreException)
 					status.add(((CoreException) exception).getStatus());
@@ -458,6 +463,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		detectCycles();
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
 	}
@@ -484,6 +490,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		((Workspace) ResourcesPlugin.getWorkspace()).addLifecycleListener(this);
 	}

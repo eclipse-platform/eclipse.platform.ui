@@ -45,6 +45,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * @see org.eclipse.core.resources.
 	 * IPathVariableManager#addChangeListener(IPathVariableChangeListener)
 	 */
+	@Override
 	public void addChangeListener(IPathVariableChangeListener listener) {
 		listeners.add(listener);
 	}
@@ -107,10 +108,12 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		for (int i = 0; i < listenerArray.length; ++i) {
 			final IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
 			ISafeRunnable job = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					// already being logged in SafeRunner#run()
 				}
 
+				@Override
 				public void run() throws Exception {
 					l.pathVariableChanged(pve);
 				}
@@ -135,6 +138,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
+	@Override
 	public String[] getPathVariableNames() {
 		List<String> result = new LinkedList<String>();
 		String[] names = preferences.propertyNames();
@@ -174,6 +178,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined(String)
 	 */
+	@Override
 	public boolean isDefined(String varName) {
 		return getValue(varName) != null;
 	}
@@ -182,6 +187,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * @see org.eclipse.core.resources.
 	 * IPathVariableManager#removeChangeListener(IPathVariableChangeListener)
 	 */
+	@Override
 	public void removeChangeListener(IPathVariableChangeListener listener) {
 		listeners.remove(listener);
 	}
@@ -207,6 +213,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return value == null ? path : value.append(path.removeFirstSegments(1));
 	}
 
+	@Override
 	public URI resolveURI(URI uri) {
 		if (uri == null || uri.isAbsolute())
 			return uri;
@@ -220,6 +227,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#setValue(String, IPath)
 	 */
+	@Override
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		checkIsValidName(varName);
 		//convert path value to canonical form
@@ -250,6 +258,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#shutdown(IProgressMonitor)
 	 */
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		// The preferences for this plug-in are saved in the Plugin.shutdown
 		// method so we don't have to do it here.
@@ -258,6 +267,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
 	 */
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		// since we are accessing the preference store directly, we don't
 		// need to do any setup here.
@@ -266,6 +276,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#validateName(String)
 	 */
+	@Override
 	public IStatus validateName(String name) {
 		String message = null;
 		if (name.length() == 0) {
@@ -294,6 +305,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see IPathVariableManager#validateValue(IPath)
 	 */
+	@Override
 	public IStatus validateValue(IPath value) {
 		if (value != null && (!value.isValidPath(value.toString()) || !value.isAbsolute())) {
 			String message = Messages.pathvar_invalidValue;
@@ -305,6 +317,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see IPathVariableManager#convertToRelative(URI, boolean, String)
 	 */
+	@Override
 	public URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException {
 		return PathVariableUtil.convertToRelative(this, path, null, false, variableHint);
 	}
@@ -312,6 +325,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * see IPathVariableManager#getURIValue(String)
 	 */
+	@Override
 	public URI getURIValue(String name) {
 		IPath path = getValue(name);
 		if (path != null)
@@ -322,6 +336,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * see IPathVariableManager#setURIValue(String, URI)
 	 */
+	@Override
 	public void setURIValue(String name, URI value) throws CoreException {
 		setValue(name, (value != null ? URIUtil.toPath(value) : null));
 	}
@@ -329,6 +344,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see IPathVariableManager#validateValue(URI)
 	 */
+	@Override
 	public IStatus validateValue(URI path) {
 		return validateValue(path != null ? URIUtil.toPath(path) : (IPath) null);
 	}
@@ -346,6 +362,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * 
 	 * @see IPathVariableManager#getVariableRelativePathLocation(IResource, URI)
 	 */
+	@Override
 	public URI getVariableRelativePathLocation(URI location) {
 		try {
 			URI result = convertToRelative(location, false, null);
@@ -360,14 +377,17 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see IPathVariableManager#convertToUserEditableFormat(String, boolean)
 	 */
+	@Override
 	public String convertToUserEditableFormat(String value, boolean locationFormat) {
 		return PathVariableUtil.convertToUserEditableFormatInternal(value, locationFormat);
 	}
 
+	@Override
 	public String convertFromUserEditableFormat(String userFormat, boolean locationFormat) {
 		return PathVariableUtil.convertFromUserEditableFormatInternal(this, userFormat, locationFormat);
 	}
 
+	@Override
 	public boolean isUserDefined(String name) {
 		return ProjectVariableProviderManager.getDefault().findDescriptor(name) == null;
 	}

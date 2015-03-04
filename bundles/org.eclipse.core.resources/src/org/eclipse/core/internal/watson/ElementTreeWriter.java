@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class ElementTreeWriter {
 
 		/* wrap the IElementInfoFlattener in an IDataFlattener */
 		IDataFlattener f = new IDataFlattener() {
+			@Override
 			public void writeData(IPath path, Object data, DataOutput output) throws IOException {
 				// never write the root node of an ElementTree
 				//because it contains the parent backpointer.
@@ -63,6 +64,7 @@ public class ElementTreeWriter {
 				}
 			}
 
+			@Override
 			public Object readData(IPath path, DataInput input) {
 				return null;
 			}

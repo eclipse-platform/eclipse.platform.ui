@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -244,7 +244,7 @@ public class Bug_026294 extends ResourceTest {
 			assertTrue("2.1", project.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
 			assertExistsInFileSystem("2.8", projectFile);
-			
+
 			assertClose(input);
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -311,17 +311,17 @@ public class Bug_026294 extends ResourceTest {
 			} catch (CoreException ce) {
 				// success - a file couldn't be removed
 			}
-			
+
 			assertTrue("3.0", project.exists());
 			assertTrue("3.1", project.isSynchronized(IResource.DEPTH_INFINITE));
 			assertExistsInFileSystem("3.2", projectFile);
-			
+
 			try {
 				project.open(getMonitor());
 			} catch (CoreException e) {
 				fail("4.0", e);
 			}
-			
+
 			setReadOnly(folder, false);
 			try {
 				project.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
@@ -467,6 +467,7 @@ public class Bug_026294 extends ResourceTest {
 	/**
 	 * @see org.eclipse.core.tests.harness.ResourceTest#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

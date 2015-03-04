@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * @see IHistoryStore#addState(IPath, IFileStore, IFileInfo, boolean)
 	 */
+	@Override
 	public synchronized IFileState addState(IPath key, IFileStore localFile, IFileInfo info, boolean moveContents) {
 		long lastModified = info.getLastModified();
 		if (Policy.DEBUG_HISTORY)
@@ -102,6 +103,7 @@ public class HistoryStore2 implements IHistoryStore {
 		return new FileState(this, key, lastModified, uuid);
 	}
 
+	@Override
 	public synchronized Set<IPath> allFiles(IPath root, int depth, IProgressMonitor monitor) {
 		final Set<IPath> allFiles = new HashSet<IPath>();
 		try {
@@ -149,6 +151,7 @@ public class HistoryStore2 implements IHistoryStore {
 		tree.getCurrent().save();
 	}
 
+	@Override
 	public synchronized void clean(final IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
@@ -205,6 +208,7 @@ public class HistoryStore2 implements IHistoryStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.localstore.IHistoryStore#closeHistory(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public void closeHistoryStore(IResource resource) {
 		try {
 			tree.getCurrent().save();
@@ -218,6 +222,7 @@ public class HistoryStore2 implements IHistoryStore {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.internal.localstore.IHistoryStore#copyHistory(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IResource, boolean)
 	 */
+	@Override
 	public synchronized void copyHistory(IResource sourceResource, IResource destinationResource, boolean moving) {
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
@@ -259,10 +264,12 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
+	@Override
 	public boolean exists(IFileState target) {
 		return blobStore.fileFor(((FileState) target).getUUID()).fetchInfo().exists();
 	}
 
+	@Override
 	public InputStream getContents(IFileState target) throws CoreException {
 		if (!target.exists()) {
 			String message = Messages.history_notValid;
@@ -271,6 +278,7 @@ public class HistoryStore2 implements IHistoryStore {
 		return blobStore.getBlob(((FileState) target).getUUID());
 	}
 
+	@Override
 	public synchronized IFileState[] getStates(IPath filePath, IProgressMonitor monitor) {
 		try {
 			tree.loadBucketFor(filePath);
@@ -325,6 +333,7 @@ public class HistoryStore2 implements IHistoryStore {
 		Policy.log(status);
 	}
 
+	@Override
 	public synchronized void remove(IPath root, IProgressMonitor monitor) {
 		try {
 			final Set<UniversalUniqueIdentifier> tmpBlobsToRemove = blobsToRemove;
@@ -346,6 +355,7 @@ public class HistoryStore2 implements IHistoryStore {
 	/**
 	 * @see IHistoryStore#removeGarbage()
 	 */
+	@Override
 	public synchronized void removeGarbage() {
 		try {
 			final Set<UniversalUniqueIdentifier> tmpBlobsToRemove = blobsToRemove;
@@ -367,10 +377,12 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
+	@Override
 	public synchronized void shutdown(IProgressMonitor monitor) throws CoreException {
 		tree.close();
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		// nothing to be done
 	}

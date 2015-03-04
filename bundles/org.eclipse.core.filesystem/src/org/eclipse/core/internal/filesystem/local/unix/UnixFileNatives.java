@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 
 public abstract class UnixFileNatives {
-
 	private static final String LIBRARY_NAME = "unixfile_1_0_0"; //$NON-NLS-1$
 	private static final int UNICODE_SUPPORTED = 1 << 0;
 	private static final int CHFLAGS_SUPPORTED = 1 << 1;
@@ -101,13 +100,13 @@ public abstract class UnixFileNatives {
 		// If the file does not exist, or the file system is not case sensitive, or the name
 		// of the file is not case sensitive, use the name we have. Otherwise obtain the real
 		// name of the file from a parent directory listing.
-		if (!info.exists() || EFS.getLocalFileSystem().isCaseSensitive() ||
-				lastName.toLowerCase().equals(lastName.toUpperCase())) {
+		if (!info.exists() || EFS.getLocalFileSystem().isCaseSensitive() || lastName.toLowerCase().equals(lastName.toUpperCase())) {
 			info.setName(lastName);
 		} else {
 			// Notice that file.getParentFile() is guaranteed to be not null since fileName == "/"
 			// case is handled by the other branch of the 'if' statement.
 			String[] names = file.getParentFile().list(new FilenameFilter() {
+				@Override
 				public boolean accept(File dir, String n) {
 					return n.equalsIgnoreCase(lastName);
 				}

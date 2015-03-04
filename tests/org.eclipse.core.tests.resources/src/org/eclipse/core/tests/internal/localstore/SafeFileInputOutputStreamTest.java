@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		return null; // never happens
 	}
 
+	@Override
 	public InputStream getContents(java.io.File target, String errorCode) {
 		try {
 			return new SafeFileInputStream(target);
@@ -53,6 +54,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		return null; // never happens
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		IPath location = getRandomLocation();
@@ -65,6 +67,7 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		return new TestSuite(SafeFileInputOutputStreamTest.class);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		Workspace.clear(temp.getParentFile());
 		super.tearDown();

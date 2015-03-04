@@ -79,6 +79,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		for (int j = 0; j < THREAD_COUNT; j++) {
 			final String id = "GetSetProperty" + j;
 			threads[j] = new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						doGetSetProperties(target, id, names, values);

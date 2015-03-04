@@ -52,6 +52,7 @@ public class HistoryStoreTest extends ResourceTest {
 		/**
 		 * @see org.eclipse.core.runtime.ILogListener#logging(org.eclipse.core.runtime.IStatus, java.lang.String)
 		 */
+		@Override
 		public void logging(IStatus status, String plugin) {
 			actual.add(new Integer(status.getCode()));
 		}
@@ -154,11 +155,13 @@ public class HistoryStoreTest extends ResourceTest {
 		return currentDescription;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		original = getWorkspace().getDescription();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().setDescription(original);
 		super.tearDown();

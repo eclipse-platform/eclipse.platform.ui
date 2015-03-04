@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
 	@Override
-	protected abstract IProject[] build(int kind, Map<String,String> args, IProgressMonitor monitor) throws CoreException;
+	protected abstract IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Clean is an opportunity for a builder to discard any additional state that has 
@@ -377,6 +377,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * </p>
 	 * @throws CoreException if fails.
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		//default implementation does nothing
 		//thwart compiler warning
@@ -416,8 +417,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <li>
 	 * The rule returned here may have no effect if the build is invoked within the 
 	 * scope of another operation that locks the entire workspace.
-     * </li>
-     * <li>
+	 * </li>
+	 * <li>
 	 * If this method returns any rule other than the workspace root,
 	 * resources outside of the rule scope can be modified concurrently with the build. 
 	 * The delta returned by {@link #getDelta(IProject)} for any project

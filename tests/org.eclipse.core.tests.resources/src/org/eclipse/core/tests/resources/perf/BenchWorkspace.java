@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,10 @@ public class BenchWorkspace extends ResourceTest {
 	 */
 	private void addProblems(final int problemCount) {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				getWorkspace().getRoot().accept(new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						for (int i = 0; i < problemCount; i++) {
 							IMarker marker = resource.createMarker(IMarker.PROBLEM);
@@ -70,6 +72,7 @@ public class BenchWorkspace extends ResourceTest {
 		}
 	}
 
+	@Override
 	public String[] defineHierarchy() {
 		//define a hierarchy with NUM_FOLDERS folders, NUM_FILES files.
 		String[] names = new String[NUM_FOLDERS * (FILES_PER_FOLDER + 1)];
@@ -100,6 +103,7 @@ public class BenchWorkspace extends ResourceTest {
 		class ResourceVisitor implements IResourceVisitor {
 			int maxSeverity = -1;
 
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 				for (int i = 0; i < markers.length; i++) {
@@ -132,10 +136,12 @@ public class BenchWorkspace extends ResourceTest {
 	/**
 	 * @see ResourceTest#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//create resources
 				project = getWorkspace().getRoot().getProject("TestProject");
@@ -155,6 +161,7 @@ public class BenchWorkspace extends ResourceTest {
 	/**
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		project.delete(true, true, null);
@@ -164,11 +171,13 @@ public class BenchWorkspace extends ResourceTest {
 		final Workspace workspace = (Workspace) getWorkspace();
 		final IWorkspaceRoot root = workspace.getRoot();
 		new PerformanceTestRunner() {
+			@Override
 			protected void setUp() throws CoreException {
 				super.setUp();
 				waitForBackgroundActivity();
 			}
 
+			@Override
 			protected void test() {
 				workspace.countResources(root.getFullPath(), IResource.DEPTH_INFINITE, true);
 			}
@@ -187,15 +196,18 @@ public class BenchWorkspace extends ResourceTest {
 	public void testCountResourcesDuringOperation() {
 		final Workspace workspace = (Workspace) getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//touch all files
 				workspace.getRoot().accept(new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						resource.touch(null);
 						return true;
 					}
 				});
 				new PerformanceTestRunner() {
+					@Override
 					protected void test() {
 						workspace.countResources(project.getFullPath(), IResource.DEPTH_INFINITE, true);
 					}
@@ -217,6 +229,7 @@ public class BenchWorkspace extends ResourceTest {
 		final Workspace workspace = (Workspace) getWorkspace();
 		final IWorkspaceRoot root = workspace.getRoot();
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				findMaxProblemSeverity2(root);
 			}

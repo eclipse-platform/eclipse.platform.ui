@@ -40,6 +40,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 *   action
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run(IAction action) {
 		List<IResource> resources = getSelectedResources();
 		try {
@@ -122,7 +123,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) object;
-			return (IResource) adaptable.getAdapter(IResource.class);
+			return adaptable.getAdapter(IResource.class);
 		}
 
 		return null;
@@ -157,6 +158,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 		/**
 		 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
 		 */
+		@Override
 		public boolean visit(IResource resource) {
 			count++;
 			return true;
@@ -166,6 +168,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// do nothing
 	}
@@ -173,6 +176,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing
 	}
@@ -183,6 +187,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * @param workbenchWindow the window that provides the context for this delegate
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow workbenchWindow) {
 		this.window = workbenchWindow;
 	}
@@ -200,6 +205,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 
 		//	we sort the resources list by path so it is easier to check for redundancies     
 		Collections.sort(resourcesList, new Comparator<IResource>() {
+			@Override
 			public int compare(IResource resource1, IResource resource2) {
 				return resource1.getFullPath().toString().compareTo(resource2.getFullPath().toString());
 			}

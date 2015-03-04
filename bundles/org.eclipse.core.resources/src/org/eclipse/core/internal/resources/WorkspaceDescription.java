@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#getBuildOrder()
 	 */
+	@Override
 	public String[] getBuildOrder() {
 		return getBuildOrder(true);
 	}
@@ -69,6 +70,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#getFileStateLongevity()
 	 */
+	@Override
 	public long getFileStateLongevity() {
 		return fileStateLongevity;
 	}
@@ -76,6 +78,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#getMaxBuildIterations()
 	 */
+	@Override
 	public int getMaxBuildIterations() {
 		return maxBuildIterations;
 	}
@@ -83,6 +86,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#getMaxFileStates()
 	 */
+	@Override
 	public int getMaxFileStates() {
 		return maxFileStates;
 	}
@@ -90,6 +94,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#getMaxFileStateSize()
 	 */
+	@Override
 	public long getMaxFileStateSize() {
 		return maxFileStateSize;
 	}
@@ -97,6 +102,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#isApplyFileStatePolicy()
 	 */
+	@Override
 	public boolean isApplyFileStatePolicy() {
 		return applyFileStatePolicy;
 	}
@@ -108,6 +114,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#getSnapshotInterval()
 	 */
+	@Override
 	public long getSnapshotInterval() {
 		return snapshotInterval;
 	}
@@ -119,6 +126,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#isAutoBuilding()
 	 */
+	@Override
 	public boolean isAutoBuilding() {
 		return autoBuilding;
 	}
@@ -130,6 +138,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setAutoBuilding(boolean)
 	 */
+	@Override
 	public void setAutoBuilding(boolean value) {
 		autoBuilding = value;
 	}
@@ -137,6 +146,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setBuildOrder(String[])
 	 */
+	@Override
 	public void setBuildOrder(String[] value) {
 		buildOrder = (value == null) ? null : (String[]) value.clone();
 	}
@@ -144,6 +154,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setFileStateLongevity(long)
 	 */
+	@Override
 	public void setFileStateLongevity(long time) {
 		fileStateLongevity = time;
 	}
@@ -151,6 +162,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setMaxBuildIterations(int)
 	 */
+	@Override
 	public void setMaxBuildIterations(int number) {
 		maxBuildIterations = number;
 	}
@@ -158,6 +170,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setMaxFileStates(int)
 	 */
+	@Override
 	public void setMaxFileStates(int number) {
 		maxFileStates = number;
 	}
@@ -165,6 +178,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setMaxFileStateSize(long)
 	 */
+	@Override
 	public void setMaxFileStateSize(long size) {
 		maxFileStateSize = size;
 	}
@@ -172,6 +186,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setApplyFileStatePolicy(boolean)
 	 */
+	@Override
 	public void setApplyFileStatePolicy(boolean apply) {
 		applyFileStatePolicy = apply;
 	}
@@ -179,6 +194,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	/**
 	 * @see IWorkspaceDescription#setSnapshotInterval(long)
 	 */
+	@Override
 	public void setSnapshotInterval(long snapshotInterval) {
 		this.snapshotInterval = snapshotInterval;
 	}

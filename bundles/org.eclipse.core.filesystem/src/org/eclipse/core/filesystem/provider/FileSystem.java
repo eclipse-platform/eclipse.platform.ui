@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * @return The attributes supported by this file system
 	 * @see IFileSystem#attributes()
 	 */
+	@Override
 	public int attributes() {
 		return 0;
 	}
@@ -59,6 +60,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * <code>false</code> otherwise.
 	 * @see IFileSystem#canDelete()
 	 */
+	@Override
 	public boolean canDelete() {
 		return false;
 	}
@@ -72,14 +74,12 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * <code>false</code> otherwise.
 	 * @see IFileSystem#canWrite()
 	 */
+	@Override
 	public boolean canWrite() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#getScheme()
-	 */
+	@Override
 	public final String getScheme() {
 		return scheme;
 	}
@@ -100,6 +100,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * @see IFileSystem#getStore(IPath)
 	 * @see EFS#getNullFileSystem()
 	 */
+	@Override
 	public IFileStore getStore(IPath path) {
 		try {
 			return getStore(new URI(scheme, path.toString(), null));
@@ -114,6 +115,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * store corresponding to the provided URI for this file system, a file store
 	 * belonging to the null file system should be returned
 	 */
+	@Override
 	public abstract IFileStore getStore(URI uri);
 
 	/**
@@ -125,6 +127,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * @throws CoreException if fails.
 	 * @see IFileSystem#fetchFileTree(IFileStore, IProgressMonitor)
 	 */
+	@Override
 	public IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor) throws CoreException {
 		return null;
 	}
@@ -136,6 +139,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * Subclasses may override to provide a concrete mapping from local
 	 * files to an IFileStore in their file system.
 	 */
+	@Override
 	public IFileStore fromLocalFile(java.io.File file) {
 		return null;
 	}
@@ -166,6 +170,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * <code>false</code> otherwise.
 	 * @see IFileSystem#isCaseSensitive()
 	 */
+	@Override
 	public boolean isCaseSensitive() {
 		return true;
 	}

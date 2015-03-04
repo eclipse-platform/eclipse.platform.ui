@@ -66,10 +66,12 @@ public class MarkerExtensionModel {
 
 	private void registerForExtensionChanges() {
 		IExtensionChangeHandler changeHandler = new IExtensionChangeHandler() {
+			@Override
 			public void addExtension(IExtensionTracker tracker, IExtension extension) {
 				readMarkerDeclarations();
 			}
 
+			@Override
 			public void removeExtension(IExtension extension, Object[] objects) {
 				readMarkerDeclarations();
 			}

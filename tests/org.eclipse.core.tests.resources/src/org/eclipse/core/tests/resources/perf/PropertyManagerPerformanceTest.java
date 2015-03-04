@@ -80,6 +80,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		}
 
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				for (int j = 0; j < properties; j++)
 					for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
@@ -118,6 +119,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		final List<IResource> allResources = createTree(folder1, filesPerFolder);
 		new PerformanceTestRunner() {
 
+			@Override
 			protected void tearDown() {
 				try {
 					((Workspace) getWorkspace()).getPropertyManager().deleteProperties(folder1, IResource.DEPTH_INFINITE);
@@ -126,6 +128,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			protected void test() {
 				for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
 					IResource resource = i.next();

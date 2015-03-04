@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,11 +56,13 @@ public class MemoryTree {
 			return null;
 		}
 
+		@Override
 		protected void initializeInfo(FileInfo fileInfo) {
 			super.initializeInfo(fileInfo);
 			fileInfo.setDirectory(true);
 		}
 
+		@Override
 		boolean isFile() {
 			return false;
 		}
@@ -71,6 +73,7 @@ public class MemoryTree {
 				children.remove(child);
 		}
 
+		@Override
 		public String toString() {
 			return super.toString() + ' ' + children;
 		}
@@ -83,6 +86,7 @@ public class MemoryTree {
 			super(parent, name);
 		}
 
+		@Override
 		boolean isFile() {
 			return true;
 		}
@@ -93,6 +97,7 @@ public class MemoryTree {
 
 		public OutputStream openOutputStream(final int options) {
 			return new ByteArrayOutputStream() {
+				@Override
 				public void close() throws IOException {
 					super.close();
 					setContents(toByteArray(), options);
@@ -150,6 +155,7 @@ public class MemoryTree {
 		/**
 		 * For debugging purposes only.
 		 */
+		@Override
 		public String toString() {
 			return info.getName();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Init tests
 	 */
+	@Override
 	protected void setUp() {
 
 		emptyTree = new DeltaDataTree();
@@ -229,6 +230,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
 	 */
+	@Override
 	public void testCreateChild() {
 
 		boolean caught;
@@ -309,6 +311,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ObjectNotFoundException
 	 *	a child of parentKey with name localName does not exist in the receiver
 	 */
+	@Override
 	public void testDeleteChild() {
 
 		boolean caught;
@@ -421,6 +424,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * not represent a delta on another tree.  An empty tree is defined to 
 	 * have a root node with nil data and no children.
 	 */
+	@Override
 	public void testEmpty() {
 
 		assertTrue("1", emptyTree.includes(rootKey));
@@ -527,6 +531,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ArrayIndexOutOfBoundsException
 	 *	if no child with the given index (runtime exception)
 	 */
+	@Override
 	public void testGetChild() {
 
 		boolean caught;
@@ -592,6 +597,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ObjectNotFoundException 
 	 *	parentKey does not exist in the receiver
 	 */
+	@Override
 	public void testGetChildCount() {
 
 		boolean caught;
@@ -645,6 +651,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver"
 	 */
+	@Override
 	public void testGetChildren() {
 
 		boolean caught;
@@ -710,6 +717,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ArrayIndexOutOfBoundsException
 	 *	if no child with the given index
 	 */
+	@Override
 	public void testGetNameOfChild() {
 
 		/* tested thoroughly in testGetChild() and testGetNamesOfChildren */
@@ -723,6 +731,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
 	 */
+	@Override
 	public void testGetNamesOfChildren() {
 
 		boolean caught;
@@ -788,6 +797,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * Returns true if the receiver includes a node with the given key, false
 	 * otherwise.
 	 */
+	@Override
 	public void testIncludes() {
 
 		/* tested in testCreateChild() and testDeleteChild() */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -205,9 +205,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		return interrupted;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 */
+	@Deprecated
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING))
 			return;
@@ -221,9 +220,6 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel

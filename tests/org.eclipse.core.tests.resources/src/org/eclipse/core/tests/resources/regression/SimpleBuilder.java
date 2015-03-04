@@ -41,6 +41,7 @@ public class SimpleBuilder extends IncrementalProjectBuilder {
 		return instance;
 	}
 
+	@Override
 	protected void startupOnInitialize() {
 	}
 

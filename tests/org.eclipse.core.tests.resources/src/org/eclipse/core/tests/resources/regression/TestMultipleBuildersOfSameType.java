@@ -41,6 +41,7 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		project1 = root.getProject("Project1");

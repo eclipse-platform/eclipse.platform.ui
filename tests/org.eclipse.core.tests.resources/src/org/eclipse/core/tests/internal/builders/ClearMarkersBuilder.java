@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class ClearMarkersBuilder extends TestBuilder {
 	/*
 	 * @see InternalBuilder#build(int, Map, IProgressMonitor)
 	 */
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		getProject().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		//wait after build if requested

@@ -86,6 +86,7 @@ public class ChangeValidationTest extends ResourceTest {
 		return null;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		TestModelProvider.enabled = true;
 		super.setUp();
@@ -96,6 +97,7 @@ public class ChangeValidationTest extends ResourceTest {
 		factory = createEmptyChangeDescription();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		TestModelProvider.enabled = false;
 		super.tearDown();

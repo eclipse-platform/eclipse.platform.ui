@@ -214,8 +214,10 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	 *  
 	 * @param input the new input object - must not be null
 	 */
+	@Override
 	protected void rebuild(Viewer viewer, final Object input) {
 		SafeRunner.run(new SafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				extractInfo(((IResource) input).getProject());
 			}
@@ -229,6 +231,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	 * @return true if the provided input is a resource
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#acceptInput(java.lang.Object)
 	 */
+	@Override
 	protected boolean acceptInput(Object input) {
 		return input instanceof IResource;
 	}

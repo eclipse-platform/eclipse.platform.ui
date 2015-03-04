@@ -14,7 +14,8 @@ import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.IRefreshResult;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
@@ -54,9 +55,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.refresh.IRefreshResult#monitorFailed(org.eclipse.core.resources.refresh.IRefreshMonitor, org.eclipse.core.resources.IResource)
-	 */
+	@Override
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource) {
 		monitors.monitorFailed(monitor, resource);
 	}
@@ -76,9 +75,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.refresh.IRefreshResult#refresh(org.eclipse.core.resources.IResource)
-	 */
+	@Override
 	public void refresh(IResource resource) {
 		//do nothing if we have already shutdown
 		if (refreshJob != null)
@@ -89,6 +86,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	 * Shuts down the refresh manager.  This only happens when
 	 * the resources plugin is going away.
 	 */
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
 		if (monitors != null) {
@@ -105,6 +103,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	 * Initializes the refresh manager. This does a minimal amount of work
 	 * if auto-refresh is turned off.
 	 */
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.addPropertyChangeListener(this);

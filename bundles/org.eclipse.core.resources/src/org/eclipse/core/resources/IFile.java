@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -582,6 +582,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
 	 */
+	@Override
 	public String getCharset() throws CoreException;
 
 	/**
@@ -626,7 +627,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @since 3.0
 	 */
 	public String getCharset(boolean checkImplicit) throws CoreException;
-	
+
 	/**
 	 * Returns the name of a charset to be used to encode the given contents 
 	 * when saving to this file. This file does not have to exist. The character stream is <em>not</em> automatically closed.   
@@ -714,6 +715,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *       is disabled).</li>
 	 * </ul>
 	 */
+	@Override
 	public InputStream getContents() throws CoreException;
 
 	/**
@@ -773,6 +775,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#getFullPath()
 	 * @see IStorage#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath();
 
 	/**
@@ -802,6 +805,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#getName()
 	 * @see IStorage#getName()
 	 */
+	@Override
 	public String getName();
 
 	/**
@@ -811,7 +815,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *
 	 * @see IResource#isReadOnly()
 	 * @see IStorage#isReadOnly()
+	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public boolean isReadOnly();
 
 	/**

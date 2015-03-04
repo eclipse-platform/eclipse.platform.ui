@@ -46,6 +46,7 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 	void createAndPopulateProject(final IProject project, final IFolder folder, final int totalResources) {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
 					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Builder1"), createCommand(desc, "Builder2"), createCommand(desc, "Builder3"), createCommand(desc, "Builder4"), createCommand(desc, "Builder5")});
@@ -80,6 +81,7 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 		return command;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		otherProjects = new IProject[PROJECT_COUNT];
@@ -98,14 +100,17 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			IProject[] projects;
 
+			@Override
 			protected void setUp() {
 				waitForBackgroundActivity();
 				projects = getWorkspace().computeProjectOrder(getWorkspace().getRoot().getProjects()).projects;
 			}
 
+			@Override
 			protected void tearDown() {
 			}
 
+			@Override
 			protected void test() {
 				try {
 					for (int repeats = 0; repeats < REPEAT; repeats++) {

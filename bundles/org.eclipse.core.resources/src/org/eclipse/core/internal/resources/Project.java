@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 
 public class Project extends Container implements IProject {
-
 	/**
 	 * Option constant (value 2) indicating that the snapshot location shall be
 	 * persisted with the project for autoloading the snapshot when the project
@@ -43,7 +42,7 @@ public class Project extends Container implements IProject {
 	 * @since 3.6
 	 */
 	public static final int SNAPSHOT_SET_AUTOLOAD = 2;
-	
+
 	protected Project(IPath path, Workspace container) {
 		super(path, container);
 	}
@@ -79,7 +78,7 @@ public class Project extends Container implements IProject {
 		ProjectDescription current = internalGetDescription();
 		current.setComment(description.getComment());
 		current.setSnapshotLocationURI(description.getSnapshotLocationURI());
-		
+
 		// set the build order before setting the references or the natures
 		current.setBuildSpec(description.getBuildSpec(true));
 
@@ -105,18 +104,14 @@ public class Project extends Container implements IProject {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#build(int, IProgressMonitor)
-	 */
+	@Override
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		if (!isAccessible())
-			return;		
+			return;
 		internalBuild(getActiveBuildConfig(), trigger, null, null, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#build(int, String, Map, IProgressMonitor)
-	 */
+	@Override
 	public void build(int trigger, String builderName, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(builderName);
 		if (!isAccessible())
@@ -124,10 +119,7 @@ public class Project extends Container implements IProject {
 		internalBuild(getActiveBuildConfig(), trigger, builderName, args, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IProject#build(org.eclipse.core.resources.IBuildConfiguration, int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void build(IBuildConfiguration config, int trigger, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(config);
 		// If project isn't accessible, or doesn't contain the build configuration, nothing to do.
@@ -176,9 +168,7 @@ public class Project extends Container implements IProject {
 			throw new ResourceException(status);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#close(IProgressMonitor)
-	 */
+	@Override
 	public void close(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -217,9 +207,6 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#copy(IPath, int, IProgressMonitor)
-	 */
 	@Override
 	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
@@ -232,7 +219,7 @@ public class Project extends Container implements IProject {
 			IProjectDescription desc = getDescription();
 			desc.setName(projectName);
 			desc.setLocation(null);
-			((ProjectDescription)desc).setSnapshotLocationURI(null);
+			((ProjectDescription) desc).setSnapshotLocationURI(null);
 			internalCopy(desc, updateFlags, monitor);
 		} else {
 			// will fail since we're trying to copy a project to a non-project
@@ -240,9 +227,6 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
-	 */
 	@Override
 	public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// FIXME - the logic here for copying projects needs to be moved to Resource.copy
@@ -258,23 +242,17 @@ public class Project extends Container implements IProject {
 		oldMetaArea.copy(newMetaArea, EFS.NONE, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#create(IProgressMonitor)
-	 */
+	@Override
 	public void create(IProgressMonitor monitor) throws CoreException {
 		create(null, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#create(IProjectDescription, IProgressMonitor)
-	 */
+	@Override
 	public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 		create(description, IResource.NONE, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#create(IProjectDescription, IProgressMonitor)
-	 */
+	@Override
 	public void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -338,9 +316,6 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
-	 */
 	@Override
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -348,9 +323,6 @@ public class Project extends Container implements IProject {
 		delete(updateFlags, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#delete(boolean, IProgressMonitor)
-	 */
 	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -373,9 +345,7 @@ public class Project extends Container implements IProject {
 		ProjectPreferences.deleted(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProject#getActiveBuildConfig()
-	 */
+	@Override
 	public IBuildConfiguration getActiveBuildConfig() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
@@ -383,9 +353,7 @@ public class Project extends Container implements IProject {
 		return internalGetActiveBuildConfig();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProject#getBuildConfig(java.lang.String)
-	 */
+	@Override
 	public IBuildConfiguration getBuildConfig(String configName) throws CoreException {
 		if (configName == null)
 			return getActiveBuildConfig();
@@ -400,26 +368,19 @@ public class Project extends Container implements IProject {
 		throw new ResourceException(IResourceStatus.BUILD_CONFIGURATION_NOT_FOUND, getFullPath(), null, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProject#getBuildConfigs()
-	 */
+	@Override
 	public IBuildConfiguration[] getBuildConfigs() throws CoreException {
 		ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 		return internalGetBuildConfigs(true);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see IProject#getContentTypeMatcher
-	 */
+	@Override
 	public IContentTypeMatcher getContentTypeMatcher() throws CoreException {
 		return workspace.getContentDescriptionManager().getContentTypeMatcher(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContainer#getDefaultCharset(boolean)
-	 */
+	@Override
 	public String getDefaultCharset(boolean checkImplicit) {
 		// non-existing resources default to parent's charset
 		if (!exists())
@@ -427,9 +388,7 @@ public class Project extends Container implements IProject {
 		return workspace.getCharsetManager().getCharsetFor(getFullPath(), checkImplicit);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#getDescription()
-	 */
+	@Override
 	public IProjectDescription getDescription() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
@@ -440,9 +399,7 @@ public class Project extends Container implements IProject {
 		return (IProjectDescription) description.clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#getNature(String)
-	 */
+	@Override
 	public IProjectNature getNature(String natureID) throws CoreException {
 		// Has it already been initialized?
 		ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
@@ -458,18 +415,12 @@ public class Project extends Container implements IProject {
 		return nature;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getParent()
-	 */
 	@Override
 	public IContainer getParent() {
 		return workspace.getRoot();
 	}
 
-	/** (non-Javadoc)
-	 * @see IProject#getPluginWorkingLocation(IPluginDescriptor)
-	 * @deprecated
-	 */
+	@Override
 	@Deprecated
 	public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
 		if (plugin == null)
@@ -477,43 +428,29 @@ public class Project extends Container implements IProject {
 		return getWorkingLocation(plugin.getUniqueIdentifier());
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getProject()
-	 */
 	@Override
 	public IProject getProject() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getProjectRelativePath()
-	 */
 	@Override
 	public IPath getProjectRelativePath() {
 		return Path.EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getRawLocation()
-	 */
 	@Override
 	public IPath getRawLocation() {
 		ProjectDescription description = internalGetDescription();
 		return description == null ? null : description.getLocation();
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getRawLocation()
-	 */
 	@Override
 	public URI getRawLocationURI() {
 		ProjectDescription description = internalGetDescription();
 		return description == null ? null : description.getLocationURI();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProject#getReferencedBuildConfigs(java.lang.String, boolean)
-	 */
+	@Override
 	public IBuildConfiguration[] getReferencedBuildConfigs(String configName, boolean includeMissing) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
@@ -526,9 +463,7 @@ public class Project extends Container implements IProject {
 		return internalGetReferencedBuildConfigs(configName, includeMissing);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#getReferencedProjects()
-	 */
+	@Override
 	public IProject[] getReferencedProjects() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
@@ -539,9 +474,7 @@ public class Project extends Container implements IProject {
 		return description.getAllReferences(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#getReferencingProjects()
-	 */
+	@Override
 	public IProject[] getReferencingProjects() {
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		List<IProject> result = new ArrayList<IProject>(projects.length);
@@ -562,18 +495,12 @@ public class Project extends Container implements IProject {
 		return result.toArray(new IProject[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#getType()
-	 */
 	@Override
 	public int getType() {
 		return PROJECT;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see IProject#getWorkingLocation(String)
-	 */
+	@Override
 	public IPath getWorkingLocation(String id) {
 		if (id == null || !exists())
 			return null;
@@ -582,18 +509,14 @@ public class Project extends Container implements IProject {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProject#hasBuildConfig(java.lang.String)
-	 */
+	@Override
 	public boolean hasBuildConfig(String configName) throws CoreException {
 		ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 		return internalHasBuildConfig(configName);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#hasNature(String)
-	 */
+	@Override
 	public boolean hasNature(String natureID) throws CoreException {
 		checkAccessible(getFlags(getResourceInfo(false, false)));
 		// use #internal method to avoid copy but still throw an
@@ -609,6 +532,7 @@ public class Project extends Container implements IProject {
 	 */
 	protected void internalBuild(final IBuildConfiguration config, final int trigger, final String builderName, final Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		workspace.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor innerMonitor) throws CoreException {
 				innerMonitor = Policy.monitorFor(innerMonitor);
 				final ISchedulingRule rule = workspace.getRoot();
@@ -650,6 +574,7 @@ public class Project extends Container implements IProject {
 					innerMonitor.done();
 				}
 			}
+
 			/**
 			 * Returns whether this project should be built for a given trigger. 
 			 * @return <code>true</code> if the build should proceed, and <code>false</code> otherwise.
@@ -664,7 +589,6 @@ public class Project extends Container implements IProject {
 
 		}, null, IWorkspace.AVOID_UPDATE, monitor);
 	}
-
 
 	/**
 	 * Closes the project.  This is called during restore when there is a failure
@@ -788,7 +712,7 @@ public class Project extends Container implements IProject {
 
 		//copy the hidden metadata that we store in the project description
 		ProjectDescription projectDesc = (ProjectDescription) destDesc;
-		ProjectDescription internalDesc = ((Project)destination.getProject()).internalGetDescription();
+		ProjectDescription internalDesc = ((Project) destination.getProject()).internalGetDescription();
 		projectDesc.setLinkDescriptions(internalDesc.getLinks());
 		projectDesc.setFilterDescriptions(internalDesc.getFilters());
 		projectDesc.setVariableDescriptions(internalDesc.getVariables());
@@ -850,7 +774,7 @@ public class Project extends Container implements IProject {
 		Collection<IBuildConfiguration> configs = new LinkedHashSet<IBuildConfiguration>(refs.length);
 		for (int i = 0; i < refs.length; i++) {
 			try {
-				configs.add((((BuildConfiguration)refs[i]).getBuildConfig()));
+				configs.add((((BuildConfiguration) refs[i]).getBuildConfig()));
 			} catch (CoreException e) {
 				// The project isn't accessible, or the build configuration doesn't exist
 				// on the project.  If requested return the full set of build references which may
@@ -900,26 +824,17 @@ public class Project extends Container implements IProject {
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isAccessible()
-	 */
 	@Override
 	public boolean isAccessible() {
 		return isOpen();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.Resource#isDerived(int)
-	 */
 	@Override
 	public boolean isDerived(int options) {
 		//projects are never derived
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isLinked(int)
-	 */
 	@Override
 	public boolean isLinked(int options) {
 		return false;//projects are never linked
@@ -930,18 +845,11 @@ public class Project extends Container implements IProject {
 		return false; // projects are never virtual
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#isTeamPrivateMember(int)
-	 */
 	@Override
 	public boolean isTeamPrivateMember(int options) {
 		return false;//projects are never team private members
 	}
 
-	/**
-	 * @see IResource#isLocal(int)
-	 * @deprecated
-	 */
 	@Deprecated
 	@Override
 	public boolean isLocal(int depth) {
@@ -949,10 +857,6 @@ public class Project extends Container implements IProject {
 		return isLocal(-1, depth);
 	}
 
-	/**
-	 * @see IResource#isLocal(int)
-	 * @deprecated
-	 */
 	@Deprecated
 	@Override
 	public boolean isLocal(int flags, int depth) {
@@ -970,25 +874,18 @@ public class Project extends Container implements IProject {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#isNatureEnabled(String)
-	 */
+	@Override
 	public boolean isNatureEnabled(String natureId) throws CoreException {
 		checkAccessible(getFlags(getResourceInfo(false, false)));
 		return workspace.getNatureManager().isNatureEnabled(this, natureId);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#isOpen()
-	 */
+	@Override
 	public boolean isOpen() {
 		ResourceInfo info = getResourceInfo(false, false);
 		return isOpen(getFlags(info));
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#isOpen()
-	 */
 	public boolean isOpen(int flags) {
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_OPEN);
 	}
@@ -1001,9 +898,7 @@ public class Project extends Container implements IProject {
 		return resource.getType() == IResource.FILE && resource.getFullPath().segmentCount() == 2 && resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#loadSnapshot(int, URI, IProgressMonitor)
-	 */
+	@Override
 	public void loadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
 		// load a snapshot of refresh information when project is not opened
 		if (isOpen()) {
@@ -1013,7 +908,7 @@ public class Project extends Container implements IProject {
 		}
 		internalLoadSnapshot(options, snapshotLocation, monitor);
 	}
-	
+
 	/**
 	 * Loads a snapshot of project meta-data from the given location URI.
 	 * Like {@link IProject#loadSnapshot(int, URI, IProgressMonitor)} but can be
@@ -1036,17 +931,12 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(destination);
 		move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#move(IProjectDescription, int, IProgressMonitor)
-	 */
 	@Override
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(description);
@@ -1097,9 +987,7 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#open(IProgressMonitor)
-	 */
+	@Override
 	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1167,9 +1055,8 @@ public class Project extends Container implements IProject {
 				if ((!used && unknownChildren) || !minorIssuesDuringRestore) {
 					boolean refreshed = false;
 					if (!used) {
-						refreshed = workspace.getSaveManager().restoreFromRefreshSnapshot(
-								this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-						if (refreshed) {	// account for the refresh work
+						refreshed = workspace.getSaveManager().restoreFromRefreshSnapshot(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+						if (refreshed) { // account for the refresh work
 							monitor.worked(Policy.opWork * 60 / 100);
 						}
 					}
@@ -1196,9 +1083,7 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#open(IProgressMonitor)
-	 */
+	@Override
 	public void open(IProgressMonitor monitor) throws CoreException {
 		open(IResource.NONE, monitor);
 	}
@@ -1214,12 +1099,12 @@ public class Project extends Container implements IProject {
 	 */
 	public IStatus reconcileLinksAndGroups(ProjectDescription newDescription) {
 		String msg = Messages.links_errorLinkReconcile;
-		HashMap<IPath,LinkDescription> newLinks = newDescription.getLinks();
+		HashMap<IPath, LinkDescription> newLinks = newDescription.getLinks();
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 		//walk over old linked resources and remove those that are no longer defined
 		ProjectDescription oldDescription = internalGetDescription();
 		if (oldDescription != null) {
-			HashMap<IPath,LinkDescription> oldLinks = oldDescription.getLinks();
+			HashMap<IPath, LinkDescription> oldLinks = oldDescription.getLinks();
 			if (oldLinks != null) {
 				for (Iterator<LinkDescription> it = oldLinks.values().iterator(); it.hasNext();) {
 					LinkDescription oldLink = it.next();
@@ -1251,6 +1136,7 @@ public class Project extends Container implements IProject {
 			return status;
 		//sort links to avoid creating nested links before their parents
 		TreeSet<LinkDescription> newLinksAndGroups = new TreeSet<LinkDescription>(new Comparator<LinkDescription>() {
+			@Override
 			public int compare(LinkDescription arg0, LinkDescription arg1) {
 				int numberOfSegments0 = arg0.getProjectRelativePath().segmentCount();
 				int numberOfSegments1 = arg1.getProjectRelativePath().segmentCount();
@@ -1287,9 +1173,7 @@ public class Project extends Container implements IProject {
 		return status;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor)
-	 */
+	@Override
 	public void saveSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1326,10 +1210,8 @@ public class Project extends Container implements IProject {
 			monitor.done();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
-	 */
+
+	@Override
 	public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// FIXME - update flags should be honored:
 		//    KEEP_HISTORY means capture .project file in local history
@@ -1393,9 +1275,7 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IProject#setDescription(IProjectDescription, IProgressMonitor)
-	 */
+	@Override
 	public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		setDescription(description, IResource.KEEP_HISTORY, monitor);
@@ -1413,9 +1293,6 @@ public class Project extends Container implements IProject {
 		workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_OPEN, this));
 	}
 
-	/* (non-Javadoc)
-	 * @see IResource#touch(IProgressMonitor)
-	 */
 	@Override
 	public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);

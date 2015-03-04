@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,12 @@ public class WorkManager implements IManager {
 	 * resource rule.
 	 */
 	class NotifyRule implements ISchedulingRule {
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return (rule instanceof IResource) || rule.getClass().equals(NotifyRule.class);
 		}
 
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return contains(rule);
 		}
@@ -295,10 +297,12 @@ public class WorkManager implements IManager {
 		return false;
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		jobManager.beginRule(workspace.getRoot(), monitor);
 		lock.acquire();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				/* delete open project because we must re-open with BACKGROUND_REFRESH */
 				project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
@@ -105,6 +106,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 		project.accept(new IResourceVisitor() {
 			int resourceCount = 0;
 
+			@Override
 			public boolean visit(IResource resource) {
 				resourceCount++;
 				//We have 1 root + 3 folders + 4 elements --> 8 elements to visit at most
@@ -121,6 +123,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				/* delete open project because we must re-open with BACKGROUND_REFRESH */
 				project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
@@ -134,6 +137,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 		waitForRefresh();
 		final int resourceCount[] = new int[] {0};
 		project.accept(new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				resourceCount[0]++;
 				return true;

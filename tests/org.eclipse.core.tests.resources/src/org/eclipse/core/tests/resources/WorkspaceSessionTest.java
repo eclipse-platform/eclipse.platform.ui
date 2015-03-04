@@ -49,6 +49,7 @@ public class WorkspaceSessionTest extends ResourceTest {
 		super(name);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		// We should not run super.tearDown() on session tests.
 		// If needed, we should call it explicitly.

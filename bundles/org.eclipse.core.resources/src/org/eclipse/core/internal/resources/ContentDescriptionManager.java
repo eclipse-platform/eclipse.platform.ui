@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,6 +211,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	/**
 	 * @see org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(IContentTypeManager.ContentTypeChangeEvent)
 	 */
+	@Override
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
 		if (Policy.DEBUG_CONTENT_TYPE)
 			Policy.debug("Content type settings changed for " + event.getContentType()); //$NON-NLS-1$
@@ -253,6 +254,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			Policy.debug("Flushing content type cache for " + root); //$NON-NLS-1$		
 		// discard content type related flags for all files in the tree 
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
@@ -461,6 +463,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	/**
 	 * @see IRegistryChangeListener#registryChanged(IRegistryChangeEvent)
 	 */
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		// no changes related to the content type registry
 		if (event.getExtensionDeltas(Platform.PI_RUNTIME, PT_CONTENTTYPES).length == 0)
@@ -471,6 +474,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	/**
 	 * @see ILifecycleListener#handleEvent(LifecycleEvent)
 	 */
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		//TODO are these the only events we care about?
 		switch (event.kind) {
@@ -495,6 +499,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		workspace.getRoot().setPersistentProperty(CACHE_TIMESTAMP, Long.toString(timeStamp));
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		if (getCacheState() != INVALID_CACHE)
 			// remember the platform timestamp for which we have a valid cache 
@@ -513,6 +518,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		projectContentTypes = null;
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		cache = new Cache(100, 1000, 0.1);

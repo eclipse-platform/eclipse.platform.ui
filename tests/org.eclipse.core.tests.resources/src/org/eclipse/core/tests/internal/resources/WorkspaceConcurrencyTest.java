@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		try {
 			final IProject project = getWorkspace().getRoot().getProject("testEndRuleInWorkspaceOperation");
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					Job.getJobManager().endRule(project);
 				}
@@ -74,6 +75,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		final int[] barrier = new int[1];
 		final Throwable[] error = new Throwable[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				//block until we are told to do otherwise
 				barrier[0] = TestBarrier.STATUS_START;
@@ -100,9 +102,11 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			//cancels itself. This thread should terminate immediately with a cancelation exception
 			final boolean[] canceled = new boolean[] {false};
 			Thread t2 = new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						getWorkspace().run(new IWorkspaceRunnable() {
+							@Override
 							public void run(IProgressMonitor monitor) {
 								//no-op
 							}
@@ -143,16 +147,19 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 	 */
 	public void testRunnableWithOtherRule() {
 		ISchedulingRule rule = new ISchedulingRule() {
+			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return rule == this;
 			}
 
+			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return rule == this;
 			}
 		};
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					//noop
 				}
@@ -184,6 +191,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		ensureExistsInWorkspace(ruleFile, true);
 		final Throwable[] failure = new Throwable[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				try {
 					touch.touch(null);
@@ -199,9 +207,11 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			//create one job that does a build, and then waits
 			final int[] status = new int[3];
 			Job jobOne = new Job("jobOne") {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
+							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
 								//do a build
 								workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
@@ -223,9 +233,11 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 
 			//create job two that does an empty workspace operation
 			Job jobTwo = new Job("jobTwo") {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
+							@Override
 							public void run(IProgressMonitor monitor) {
 								//signal that this job has started
 								status[1] = TestBarrier.STATUS_RUNNING;
@@ -244,9 +256,11 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			jobTwo.schedule();
 			//create job three that has a non-null rule
 			Job jobThree = new Job("jobThree") {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
+							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
 								//signal that this job has started
 								status[2] = TestBarrier.STATUS_RUNNING;

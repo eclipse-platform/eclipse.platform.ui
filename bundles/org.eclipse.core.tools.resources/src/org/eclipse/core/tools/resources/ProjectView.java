@@ -60,6 +60,7 @@ public class ProjectView extends SpyView {
 	 * @param parent the parent control 
 	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent);
 		contentProvider = new ProjectContentProvider();
@@ -78,6 +79,7 @@ public class ProjectView extends SpyView {
 		final MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(copyAction);
 				// Other plug-ins can contribute their actions here
@@ -109,7 +111,7 @@ public class ProjectView extends SpyView {
 			if (item instanceof IResource)
 				resource = (IResource) item;
 			else if (item instanceof IAdaptable)
-				resource = (IResource) ((IAdaptable) item).getAdapter(IResource.class);
+				resource = ((IAdaptable) item).getAdapter(IResource.class);
 		}
 
 		// loads a new resource (or cleans the resource view, if resource == null)
@@ -126,6 +128,7 @@ public class ProjectView extends SpyView {
 	private void addSelectionListener() {
 		ISelectionService selectionService = getSite().getPage().getWorkbenchWindow().getSelectionService();
 		selectionListener = new ISelectionListener() {
+			@Override
 			public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				processSelection(sel);
 			}
@@ -165,6 +168,7 @@ public class ProjectView extends SpyView {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		ISelectionService selectionService = getSite().getPage().getWorkbenchWindow().getSelectionService();
@@ -186,6 +190,7 @@ public class ProjectView extends SpyView {
 		public SelectedResourceChangeListener() {
 		}
 
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			final IResource currentResource = (IResource) viewer.getInput();
 
@@ -203,6 +208,7 @@ public class ProjectView extends SpyView {
 
 			// rebuild the project view contents with the new state
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					loadResource(currentResource);
 				}

@@ -44,6 +44,7 @@ public class MarkerSetTest extends ResourceTest {
 		IMarkerSetElement[] m2 = new IMarkerSetElement[array2.length];
 		System.arraycopy(array2, 0, m2, 0, array2.length);
 		java.util.Comparator<IMarkerSetElement> compare = new java.util.Comparator<IMarkerSetElement>() {
+			@Override
 			public int compare(IMarkerSetElement e1, IMarkerSetElement e2) {
 				long id1 = e1.getId();
 				long id2 = e2.getId();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 		this.id = id;
 	}
 
+	@Override
 	public int getType() {
 		return type;
 	}
@@ -80,10 +81,12 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 		this.resource = resource;
 	}
 
+	@Override
 	public IResource getResource() {
 		return resource;
 	}
 
+	@Override
 	public FileInfoMatcherDescription getFileInfoMatcherDescription() {
 		return matcherDescription;
 	}
@@ -117,6 +120,7 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 	/**
 	 * Compare filter descriptions in a way that sorts them topologically by path.
 	 */
+	@Override
 	public int compareTo(FilterDescription that) {
 		IPath path1 = this.getResource().getProjectRelativePath();
 		IPath path2 = that.getResource().getProjectRelativePath();
@@ -132,7 +136,8 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 		return 0;
 	}
 
+	@Override
 	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
-		((Container)getResource()).removeFilter(this, updateFlags, monitor);
+		((Container) getResource()).removeFilter(this, updateFlags, monitor);
 	}
 }

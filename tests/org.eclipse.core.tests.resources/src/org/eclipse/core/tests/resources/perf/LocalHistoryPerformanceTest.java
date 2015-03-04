@@ -59,6 +59,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		final IWorkspace workspace = getWorkspace();
 		try {
 			workspace.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(org.eclipse.core.runtime.IProgressMonitor monitor) {
 					ensureExistsInWorkspace(folders, true);
 					for (int i = 0; i < folders.length; i++)
@@ -91,11 +92,13 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		return currentDescription;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		original = getWorkspace().getDescription();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().setDescription(original);
 		super.tearDown();
@@ -107,10 +110,12 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		final IFile file = getWorkspace().getRoot().getProject("proj1").getFile("file.txt");
 		new PerformanceTestRunner() {
 
+			@Override
 			protected void setUp() {
 				ensureExistsInWorkspace(file, getRandomContents());
 			}
 
+			@Override
 			protected void tearDown() {
 				try {
 					file.clearHistory(getMonitor());
@@ -120,6 +125,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			protected void test() {
 				try {
 					file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
@@ -139,6 +145,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 
 		new PerformanceTestRunner() {
 
+			@Override
 			protected void setUp() {
 				ensureExistsInWorkspace(new IResource[] {project, folder1, folder2}, true);
 				try {
@@ -151,6 +158,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			protected void tearDown() {
 				try {
 					ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
@@ -165,6 +173,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 
+			@Override
 			protected void test() {
 				try {
 					file1.move(file2.getFullPath(), true, true, getMonitor());
@@ -183,6 +192,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		new PerformanceTestRunner() {
 			private IWorkspaceDescription original;
 
+			@Override
 			protected void setUp() {
 				original = setMaxFileStates("0.1", 1);
 				// make sure we start with no garbage
@@ -192,11 +202,13 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				ensureDoesNotExistInWorkspace(base);
 			}
 
+			@Override
 			protected void tearDown() throws CoreException {
 				if (original != null)
 					getWorkspace().setDescription(original);
 			}
 
+			@Override
 			protected void test() {
 				try {
 					base.clearHistory(getMonitor());
@@ -226,6 +238,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		// need a final reference so the inner class can see it
 		final IProject[] tmpProject = new IProject[] {project};
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					String newProjectName = getUniqueString();
@@ -259,6 +272,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		// need a final reference so the inner class can see it
 		final IProject tmpProject = project;
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					tmpProject.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, getMonitor());
@@ -292,6 +306,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 			fail("0.5", ce);
 		}
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					file.getHistory(getMonitor());
@@ -309,6 +324,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		new PerformanceTestRunner() {
 			private IWorkspaceDescription original;
 
+			@Override
 			protected void setUp() {
 				original = setMaxFileStates("0.1", 1);
 				// make sure we start with no garbage
@@ -318,11 +334,13 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				ensureDoesNotExistInWorkspace(base);
 			}
 
+			@Override
 			protected void tearDown() throws CoreException {
 				if (original != null)
 					getWorkspace().setDescription(original);
 			}
 
+			@Override
 			protected void test() {
 				cleanHistory();
 			}

@@ -60,6 +60,7 @@ public class WorkspaceTest extends ResourceTest {
 	 * are files.  It is generally assumed that this hierarchy will be 
 	 * inserted under some solution and project structure.
 	 */
+	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1", "/2/2", "/2/3", "/3/", "/3/1", "/3/2", "/3/3", "/4/", "/5"};
 	}
@@ -125,6 +126,7 @@ public class WorkspaceTest extends ResourceTest {
 		return suite;
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		// overwrite the superclass and do nothing since our test methods build on each other
 	}
@@ -252,6 +254,7 @@ public class WorkspaceTest extends ResourceTest {
 		final IProject project = getWorkspace().getRoot().getProject("bar");
 		final IResource[] resources = buildResources(project, new String[] {"a/", "a/b"});
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if (!project.exists())
 					project.create(null);

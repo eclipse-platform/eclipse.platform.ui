@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
-
 	private static final String DIR_NAME = ".settings";
 	private static final String FILE_EXTENSION = "prefs";
 
@@ -34,6 +33,7 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 		super(name);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().save(true, getMonitor());
 	}
@@ -68,6 +68,7 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 		IProject project = getProject("testDeleteFileBeforeLoad");
 		Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(project.getName());
 		ILogListener listener = new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				if (!Platform.PI_RUNTIME.equals(plugin))
 					return;

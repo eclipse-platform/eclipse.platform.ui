@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class MoveTest extends LocalStoreTest {
 		super(name);
 	}
 
+	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/", "/file1", "/file2", "/folder1/", "/folder1/file3", "/folder1/file4", "/folder2/", "/folder2/file5", "/folder2/file6", "/folder1/folder3/", "/folder1/folder3/file7", "/folder1/folder3/file8"};
 	}
@@ -542,6 +543,7 @@ public class MoveTest extends LocalStoreTest {
 		final IFile hackFile = file;
 		final Workspace workspace = (Workspace) getWorkspace();
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				workspace.createResource(hackFile, false);
 			}
@@ -559,6 +561,7 @@ public class MoveTest extends LocalStoreTest {
 		/* move file over a phantom */
 		assertTrue("6.1", file.exists());
 		operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				((Resource) hackFile).convertToPhantom();
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	public class AddToCollectionDoit implements Doit {
 		Collection<IResource> collection;
 
+		@Override
 		public void doit(IResource resource) {
 			collection.add(resource);
 		}
@@ -70,6 +71,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		private int aliasType;
 		private IPath searchPath;
 
+		@Override
 		public void doit(IResource match) {
 			//don't record the resource we're computing aliases against as a match
 			if (match.getFullPath().isPrefixOf(searchPath))
@@ -445,6 +447,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	public IResource[] findResources(IFileStore location) {
 		final ArrayList<IResource> resources = new ArrayList<IResource>();
 		locationsMap.matchingResourcesDo(location, new Doit() {
+			@Override
 			public void doit(IResource resource) {
 				resources.add(resource);
 			}
@@ -492,6 +495,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 */
 	Comparator<IFileStore> getComparator() {
 		return new Comparator<IFileStore>() {
+			@Override
 			public int compare(IFileStore store1, IFileStore store2) {
 				//scheme takes precedence over all else
 				int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
@@ -562,6 +566,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		};
 	}
 
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		/*
 		 * We can't determine the end state for most operations because they may
@@ -654,6 +659,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				nonDefaultResourceCount--;
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		final IResourceDelta delta = event.getDelta();
 		if (delta == null)
@@ -676,6 +682,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	/* (non-Javadoc)
 	 * @see IManager#shutdown(IProgressMonitor)
 	 */
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		workspace.removeResourceChangeListener(this);
 		locationsMap.clear();
@@ -684,6 +691,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	/* (non-Javadoc)
 	 * @see IManager#startup(IProgressMonitor)
 	 */
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		workspace.addLifecycleListener(this);
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);

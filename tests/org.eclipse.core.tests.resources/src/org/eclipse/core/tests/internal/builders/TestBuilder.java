@@ -102,6 +102,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @see InternalBuilder#build(IResourceDelta,int,IProgressMonitor)
 	 */
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		arguments = args == null ? new HashMap<String, String>(1) : args;
 		logPluginLifecycleEvent(getBuildId());
@@ -115,6 +116,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * Allow overriding the default scheduling rule
 	 * @see IncrementalProjectBuilder#getRule(int, Map)
 	 */
+	@Override
 	public ISchedulingRule getRule(int trigger, Map<String, String> args) {
 		if (ruleCallBack == null)
 			return super.getRule(trigger, args);
@@ -190,6 +192,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * @see IExecutableExtensionAdaptor
 	 * @see IConfigurationElement#createExecutableExtension(String)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String name, Object data) {
 		logPluginLifecycleEvent(SET_INITIALIZATION_DATA);
 		this.config = config;
@@ -202,6 +205,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @see BaseBuilder#startupOnInitialize
 	 */
+	@Override
 	protected void startupOnInitialize() {
 		logPluginLifecycleEvent(STARTUP_ON_INITIALIZE);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -350,6 +350,7 @@ public class MarkerManager implements IManager {
 
 		// we removed from the source and added to the destination
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				Resource r = (Resource) resource;
 				ResourceInfo info = r.getResourceInfo(false, true);
@@ -448,13 +449,15 @@ public class MarkerManager implements IManager {
 	 */
 	private void recursiveRemoveMarkers(final IPath path, String type, boolean includeSubtypes, int depth) {
 		ResourceInfo info = workspace.getResourceInfo(path, false, false);
-		if (info == null)//phantoms don't have markers
+		if (info == null) //phantoms don't have markers
 			return;
 		IPathRequestor requestor = new IPathRequestor() {
+			@Override
 			public String requestName() {
 				return path.lastSegment();
 			}
 
+			@Override
 			public IPath requestPath() {
 				return path;
 			}
@@ -578,6 +581,7 @@ public class MarkerManager implements IManager {
 	/* (non-Javadoc)
 	 * @see IManager#shutdown(IProgressMonitor)
 	 */
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
 	}
@@ -589,6 +593,7 @@ public class MarkerManager implements IManager {
 	/* (non-Javadoc)
 	 * @see IManager#startup(IProgressMonitor)
 	 */
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		// do nothing
 	}
@@ -598,6 +603,7 @@ public class MarkerManager implements IManager {
 	 */
 	private void visitorFindMarkers(IPath path, final ArrayList<IMarker> list, final String type, final boolean includeSubtypes) {
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				ResourceInfo info = (ResourceInfo) elementContents;
 				if (info == null)
@@ -626,6 +632,7 @@ public class MarkerManager implements IManager {
 		class MaxSeverityVisitor implements IElementContentVisitor {
 			int max = -1;
 
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				// bail if an earlier sibling already hit the max
 				if (max >= IMarker.SEVERITY_ERROR) {
@@ -653,6 +660,7 @@ public class MarkerManager implements IManager {
 	 */
 	private void visitorRemoveMarkers(IPath path, final String type, final boolean includeSubtypes) {
 		IElementContentVisitor visitor = new IElementContentVisitor() {
+			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				ResourceInfo info = (ResourceInfo) elementContents;
 				if (info == null)

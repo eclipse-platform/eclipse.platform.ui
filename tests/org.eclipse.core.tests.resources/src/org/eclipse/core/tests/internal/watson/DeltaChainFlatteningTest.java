@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class DeltaChainFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * doRead method comment.
 	 */
+	@Override
 	public Object doRead(ElementTreeReader reader, DataInputStream input) throws IOException {
 		return reader.readDeltaChain(input);
 	}
@@ -38,6 +39,7 @@ public class DeltaChainFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Runs a test for this class at a certain depth and path
 	 */
+	@Override
 	public void doTest(IPath path, int depth) {
 		fSubtreePath = path;
 		fDepth = depth;
@@ -53,6 +55,7 @@ public class DeltaChainFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * doWrite method comment.
 	 */
+	@Override
 	public void doWrite(ElementTreeWriter writer, DataOutputStream output) throws IOException {
 		writer.writeDeltaChain(fDeltaChain, fSubtreePath, fDepth, output, DefaultElementComparator.getComparator());
 	}
@@ -60,6 +63,7 @@ public class DeltaChainFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Sets up the delta chain to be serialized
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fTree = TestUtil.createTestElementTree();

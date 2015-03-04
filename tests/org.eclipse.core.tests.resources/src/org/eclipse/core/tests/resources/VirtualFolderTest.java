@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IPath;
  * Tests Virtual Folders
  */
 public class VirtualFolderTest extends ResourceTest {
-
 	protected IProject existingProject;
 	protected IFolder existingVirtualFolderInExistingProject;
 
@@ -45,6 +44,7 @@ public class VirtualFolderTest extends ResourceTest {
 		existingVirtualFolderInExistingProject.create(IResource.VIRTUAL, true, getMonitor());
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		existingProject = getWorkspace().getRoot().getProject("ExistingProject");
@@ -52,6 +52,7 @@ public class VirtualFolderTest extends ResourceTest {
 		doCleanup();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

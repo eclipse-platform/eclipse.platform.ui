@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2012 Broadcom Corporation and others.
+ *  Copyright (c) 2011, 2015 Broadcom Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,9 +40,11 @@ public class Bug_332543 extends ResourceTest {
 			super(store);
 		}
 
+		@Override
 		public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
 			OutputStream os = super.openOutputStream(options, monitor);
 			os = new BufferedOutputStream(os) {
+				@Override
 				public void close() throws java.io.IOException {
 					// We close the output stream (so there aren't issues deleting the project during tear-down)
 					super.close();

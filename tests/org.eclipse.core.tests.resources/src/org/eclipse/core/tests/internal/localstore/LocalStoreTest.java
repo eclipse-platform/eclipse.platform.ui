@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,12 +149,14 @@ public abstract class LocalStoreTest extends ResourceTest {
 		return tree;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		projectNames = new String[numberOfProjects];
 		projects = new IProject[numberOfProjects];
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < projectNames.length; i++) {
 					projectNames[i] = "Project" + i;
@@ -166,6 +168,7 @@ public abstract class LocalStoreTest extends ResourceTest {
 		}, null);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

@@ -53,7 +53,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	protected void extractInfo(IResource selectedResource) {
 
 		if (!(selectedResource instanceof Resource)) {
-			String message = NLS.bind(Messages.resource_error_unknown_resource_impl, selectedResource.getClass().getName()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.resource_error_unknown_resource_impl, selectedResource.getClass().getName()); 
 			getRootNode().addChild(message);
 			return;
 		}
@@ -87,13 +87,13 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			if (properties.isEmpty())
 				return;
 			// creates a node for persistent properties and populates it
-			TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_persistent_properties); //$NON-NLS-1$
+			TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_persistent_properties); 
 			getRootNode().addChild(propertiesRootNode);
 			for (Map.Entry<QualifiedName, String> entry : properties.entrySet()) {
 				propertiesRootNode.addChild(createNode(entry.getKey().toString(), entry.getValue()));
 			}
 		} catch (CoreException ce) {
-			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_stored_properties, ce.toString()))); //$NON-NLS-1$
+			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_stored_properties, ce.toString()))); 
 		}
 	}
 
@@ -110,7 +110,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			return;
 
 		// creates a node for session properties and populates it
-		TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_session_properties); //$NON-NLS-1$
+		TreeContentProviderNode propertiesRootNode = createNode(Messages.resource_session_properties); 
 		getRootNode().addChild(propertiesRootNode);
 
 		for (Map.Entry<QualifiedName, Object> entry : properties.entrySet()) {
@@ -181,21 +181,21 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		boolean isHidden = info.isSet(ICoreConstants.M_HIDDEN);
 
 		// creates a node for flags
-		TreeContentProviderNode flagsParentNode = createNode(Messages.resource_flags); //$NON-NLS-1$
+		TreeContentProviderNode flagsParentNode = createNode(Messages.resource_flags); 
 		getRootNode().addChild(flagsParentNode);
 
 		// creates a child node in "Flags" node for each basic information
-		flagsParentNode.addChild(createNode(Messages.resource_open, Boolean.valueOf(isOpen))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_local_exists, Boolean.valueOf(localExists))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_phantom, Boolean.valueOf(isPhantom))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_used, Boolean.valueOf(isUsed))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_derived, Boolean.valueOf(isDerived))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_team_private, Boolean.valueOf(isTeamPrivateMember))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_markers_snap_dirty, Boolean.valueOf(isMarkersSnapDirty))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_sync_info_snap_dirty, Boolean.valueOf(isSyncInfoSnapDirty))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_no_content_description, Boolean.valueOf(noContentDescription))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_default_content_description, Boolean.valueOf(defaultContentDescription))); //$NON-NLS-1$
-		flagsParentNode.addChild(createNode(Messages.resource_hidden, Boolean.valueOf(isHidden))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_open, Boolean.valueOf(isOpen))); 
+		flagsParentNode.addChild(createNode(Messages.resource_local_exists, Boolean.valueOf(localExists))); 
+		flagsParentNode.addChild(createNode(Messages.resource_phantom, Boolean.valueOf(isPhantom))); 
+		flagsParentNode.addChild(createNode(Messages.resource_used, Boolean.valueOf(isUsed))); 
+		flagsParentNode.addChild(createNode(Messages.resource_derived, Boolean.valueOf(isDerived))); 
+		flagsParentNode.addChild(createNode(Messages.resource_team_private, Boolean.valueOf(isTeamPrivateMember))); 
+		flagsParentNode.addChild(createNode(Messages.resource_markers_snap_dirty, Boolean.valueOf(isMarkersSnapDirty))); 
+		flagsParentNode.addChild(createNode(Messages.resource_sync_info_snap_dirty, Boolean.valueOf(isSyncInfoSnapDirty))); 
+		flagsParentNode.addChild(createNode(Messages.resource_no_content_description, Boolean.valueOf(noContentDescription))); 
+		flagsParentNode.addChild(createNode(Messages.resource_default_content_description, Boolean.valueOf(defaultContentDescription))); 
+		flagsParentNode.addChild(createNode(Messages.resource_hidden, Boolean.valueOf(isHidden))); 
 
 	}
 
@@ -206,12 +206,12 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		// creates a node for flags
 		try {
 			boolean cached = org.eclipse.core.internal.resources.SpySupport.isContentDescriptionCached(file);
-			String description = file.getContentDescription() + " (" + NLS.bind(Messages.resource_content_description_from_cache, Boolean.toString(cached)) + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			TreeContentProviderNode contentDescriptionNode = createNode(Messages.resource_content_description, description); //$NON-NLS-1$
+			String description = file.getContentDescription() + " (" + NLS.bind(Messages.resource_content_description_from_cache, Boolean.toString(cached)) + ")"; //$NON-NLS-1$//$NON-NLS-2$ 
+			TreeContentProviderNode contentDescriptionNode = createNode(Messages.resource_content_description, description); 
 			getRootNode().addChild(contentDescriptionNode);
 		} catch (CoreException ce) {
 			// in the case of a CoreException, just present it as node
-			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_content_description, ce.toString()))); //$NON-NLS-1$
+			getRootNode().addChild(createNode(NLS.bind(Messages.resource_error_content_description, ce.toString()))); 
 		}
 
 	}
@@ -233,7 +233,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			return;
 
 		// creates a root node for all markers
-		TreeContentProviderNode markersParentNode = createNode(Messages.resource_markers); //$NON-NLS-1$
+		TreeContentProviderNode markersParentNode = createNode(Messages.resource_markers); 
 		getRootNode().addChild(markersParentNode);
 
 		int markerSetSize = markerSetElements.length;
@@ -250,7 +250,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 
 			} catch (CoreException ce) {
 				// in the case of a CoreException, just present it as node
-				markersParentNode.addChild(createNode(NLS.bind(Messages.resource_error_marker, ce.toString()))); //$NON-NLS-1$
+				markersParentNode.addChild(createNode(NLS.bind(Messages.resource_error_marker, ce.toString()))); 
 			}
 		}
 	}
@@ -293,7 +293,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 			return;
 
 		// creates a root node for all sync info		
-		TreeContentProviderNode syncInfoParentNode = createNode(Messages.resource_sync_info); //$NON-NLS-1$
+		TreeContentProviderNode syncInfoParentNode = createNode(Messages.resource_sync_info); 
 		getRootNode().addChild(syncInfoParentNode);
 
 		for (Map.Entry<QualifiedName, Object> entry : syncInfo.entrySet()) {
@@ -310,8 +310,10 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 *  
 	 * @param input the new input object - must not be null
 	 */
+	@Override
 	protected void rebuild(Viewer viewer, final Object input) {
 		SafeRunner.run(new SafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				extractInfo((IResource) input);
 			}
@@ -324,6 +326,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 * @param input an input object
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#acceptInput(java.lang.Object)
 	 */
+	@Override
 	protected boolean acceptInput(Object input) {
 		return input instanceof IResource;
 	}

@@ -36,6 +36,7 @@ public class MarkersDumper extends MultiStrategyDumper {
 	/**
 	 * @see org.eclipse.core.tools.metadata.MultiStrategyDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
+	@Override
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();
 		IStringDumpingStrategy strategy;

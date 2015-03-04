@@ -30,6 +30,7 @@ public class Bug29116Nature extends TestNature {
 	/**
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		//install the snow builder
 		IProject project = getProject();
@@ -52,6 +53,7 @@ public class Bug29116Nature extends TestNature {
 	/**
 	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public void setProject(IProject project) {
 		super.setProject(project);
 	}

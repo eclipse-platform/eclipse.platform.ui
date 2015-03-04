@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class Bug127562Nature extends TestNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		super.configure();
 		IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("Project" + System.currentTimeMillis());
@@ -37,6 +38,7 @@ public class Bug127562Nature extends TestNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		super.deconfigure();
 		IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("Project" + System.currentTimeMillis());

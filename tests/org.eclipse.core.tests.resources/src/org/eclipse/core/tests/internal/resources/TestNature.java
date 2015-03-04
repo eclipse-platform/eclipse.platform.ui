@@ -29,6 +29,7 @@ public class TestNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		// do nothing
 	}
@@ -36,6 +37,7 @@ public class TestNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		// do nothing
 	}
@@ -43,6 +45,7 @@ public class TestNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return project;
 	}
@@ -50,6 +53,7 @@ public class TestNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#setProject(IProject)
 	 */
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}

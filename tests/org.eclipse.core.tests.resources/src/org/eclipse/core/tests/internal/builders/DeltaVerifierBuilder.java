@@ -124,6 +124,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * Like a wiley restaurant critic, this method masquerades as a builder, but
 	 * is actually verifying that the provided delta is correct.
 	 */
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		super.build(kind, args, monitor);
 		triggerForLastBuild = kind;
@@ -144,6 +145,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 		checkDeltas = projects;
 	}
 
+	@Override
 	protected void clean(IProgressMonitor monitor) {
 		triggerForLastBuild = CLEAN_BUILD;
 	}
@@ -239,6 +241,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	/*
 	 * @see TestBuilder#reset()
 	 */
+	@Override
 	public void reset() {
 		super.reset();
 		triggerForLastBuild = 0;

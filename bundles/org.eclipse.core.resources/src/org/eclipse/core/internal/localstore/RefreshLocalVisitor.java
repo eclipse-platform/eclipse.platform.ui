@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
-//
 /**
  * Visits a unified tree, and synchronizes the file system with the
  * resource tree.  After the visit is complete, the file system will
@@ -259,6 +258,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		resourceChanged = true;
 	}
 
+	@Override
 	public boolean visit(UnifiedTreeNode node) throws CoreException {
 		Policy.checkCanceled(monitor);
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,7 @@ public class LocalFileSystem extends FileSystem {
 		instance = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#attributes()
-	 */
+	@Override
 	public int attributes() {
 		if (attributes != -1)
 			return attributes;
@@ -105,50 +102,32 @@ public class LocalFileSystem extends FileSystem {
 		return attributes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#canDelete()
-	 */
+	@Override
 	public boolean canDelete() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#canWrite()
-	 */
+	@Override
 	public boolean canWrite() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#fromLocalFile(java.io.File)
-	 */
+	@Override
 	public IFileStore fromLocalFile(File file) {
 		return new LocalFile(file);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#getStore(org.eclipse.core.runtime.IPath)
-	 */
+	@Override
 	public IFileStore getStore(IPath path) {
 		return new LocalFile(path.toFile());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#getStore(java.net.URI)
-	 */
+	@Override
 	public IFileStore getStore(URI uri) {
 		return new LocalFile(new File(uri.getSchemeSpecificPart()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.IFileSystem#isCaseSensitive()
-	 */
+	@Override
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}

@@ -134,6 +134,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] changes = event.getExtensionDeltas(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
 		if (changes.length == 0)

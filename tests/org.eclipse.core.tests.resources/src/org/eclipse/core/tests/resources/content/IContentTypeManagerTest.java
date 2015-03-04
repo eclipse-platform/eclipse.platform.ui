@@ -36,6 +36,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		public ContentTypeChangeTracer() {
 		}
 
+		@Override
 		public void contentTypeChanged(ContentTypeChangeEvent event) {
 			changed.add(event.getContentType());
 		}
@@ -144,6 +145,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		return candidate.isKindOf(text);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 
@@ -175,6 +177,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		//test late addition of content type 
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("2", new Runnable() {
+			@Override
 			public void run() {
 				IContentType alias = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".alias");
 				assertNull("2.1.1", alias);
@@ -682,6 +685,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		//	make arbitrary dynamic changes to the contentTypes extension point
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("3", new Runnable() {
+			@Override
 			public void run() {
 				IContentType missing = manager.getContentType("org.eclipse.bundle01.missing");
 				assertNotNull("3.1", missing);
@@ -860,6 +864,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertNull("3.0", contentTypeManager.getContentType(PI_RESOURCES_TESTS + '.' + "invalid-missing-name"));
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("1", new Runnable() {
+			@Override
 			public void run() {
 				// ensure the invalid content types are not available
 				assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
@@ -904,6 +909,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			 */
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public String getMessage() {
 				return "This exception was thrown for testing purposes";
 			}
@@ -911,15 +917,18 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		try {
 			selected = manager.findContentTypesFor(new InputStream() {
 
+				@Override
 				public int available() {
 					// trick the client into reading the file 
 					return Integer.MAX_VALUE;
 				}
 
+				@Override
 				public int read() throws IOException {
 					throw new FakeIOException();
 				}
 
+				@Override
 				public int read(byte[] b, int off, int len) throws IOException {
 					throw new FakeIOException();
 				}
@@ -1031,6 +1040,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("1", new Runnable() {
+			@Override
 			public void run() {
 				final String namespace = "org.eclipse.bundle04";
 
@@ -1112,6 +1122,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 
 		BundleTestingHelper.runWithBundles("2", new Runnable() {
+			@Override
 			public void run() {
 				IContentType orphan = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".orphan");
 				assertNotNull("2.1", orphan);
@@ -1388,6 +1399,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("1.1", type_bug182337_B, contentTypes[1]);
 
 		InputStream is = new InputStream() {
+			@Override
 			public int read() {
 				// throw a non checked exception to emulate a problem with the describer itself
 				throw new RuntimeException();

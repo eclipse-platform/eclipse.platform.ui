@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,67 +36,82 @@ public class NullFileStore extends FileStore {
 		this.path = path;
 	}
 
+	@Override
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) {
 		return EMPTY_FILE_INFO_ARRAY;
 	}
 
+	@Override
 	public String[] childNames(int options, IProgressMonitor monitor) {
 		return EMPTY_STRING_ARRAY;
 	}
 
+	@Override
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
 		//super implementation will always fail
 		super.delete(options, monitor);
 	}
 
+	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
 		FileInfo result = new FileInfo(getName());
 		result.setExists(false);
 		return result;
 	}
 
+	@Override
 	public IFileStore getChild(String name) {
 		return new NullFileStore(path.append(name));
 	}
 
+	@Override
 	public IFileSystem getFileSystem() {
 		return NullFileSystem.getInstance();
 	}
 
+	@Override
 	public String getName() {
 		return String.valueOf(path.lastSegment());
 	}
 
+	@Override
 	public IFileStore getParent() {
 		return path.segmentCount() == 0 ? null : new NullFileStore(path.removeLastSegments(1));
 	}
 
+	@Override
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
 		//super implementation will always fail
 		return super.mkdir(options, monitor);
 	}
 
+	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 
+	@Override
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) {
 		return new OutputStream() {
+			@Override
 			public void write(int b) {
 				//do nothing
 			}
 		};
 	}
 
+	@Override
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		//super implementation will always fail
 		super.putInfo(info, options, monitor);
 	}
 
+	@Override
 	public String toString() {
 		return path.toString();
 	}
 
+	@Override
 	public URI toURI() {
 		try {
 			return new URI(EFS.SCHEME_NULL, null, path.isEmpty() ? "/" : path.toString(), null); //$NON-NLS-1$

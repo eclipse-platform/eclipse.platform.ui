@@ -44,6 +44,7 @@ public class ISynchronizerTest extends ResourceTest {
 	 * Return a string array which defines the hierarchy of a tree.
 	 * Folder resources must have a trailing slash.
 	 */
+	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/", "1/", "1/1", "1/2/", "1/2/1", "1/2/2/", "2/", "2/1", "2/2/", "2/2/1", "2/2/2/"};
 	}
@@ -58,8 +59,10 @@ public class ISynchronizerTest extends ResourceTest {
 		final ISynchronizer synchronizer = getWorkspace().getSynchronizer();
 		final QualifiedName[] partners = synchronizer.getPartners();
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IResourceVisitor visitor = new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						for (int i = 0; i < partners.length; i++)
 							synchronizer.setSyncInfo(partners[i], resource, null);
@@ -72,6 +75,7 @@ public class ISynchronizerTest extends ResourceTest {
 		getWorkspace().run(body, null);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		resources = createHierarchy();
@@ -85,6 +89,7 @@ public class ISynchronizerTest extends ResourceTest {
 		//		return suite;
 	}
 
+	@Override
 	public void tearDown() throws Exception {
 		// remove all registered sync partners so we don't create
 		// phantoms when we delete
@@ -106,6 +111,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// setup the sync bytes
 		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				if (resource.getType() == IResource.ROOT)
 					return true;
@@ -123,6 +129,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// get the info and ensure its the same
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -148,6 +155,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// delete all resources under the projects.
 		final IProject[] projects = getWorkspace().getRoot().getProjects();
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < projects.length; i++) {
 					IResource[] children = projects[i].members();
@@ -164,6 +172,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// sync info should remain for the resources since they are now phantoms
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -198,6 +207,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// sync info should be gone since projects can't become phantoms
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					assertNull("5.0." + resource.getFullPath(), synchronizer.getSyncInfo(qname, resource));
@@ -224,6 +234,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// setup the sync bytes
 		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				if (resource.getType() == IResource.ROOT)
 					return true;
@@ -241,6 +252,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// get the info and ensure its the same
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -266,6 +278,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// delete all resources under the projects.
 		final IProject[] projects = getWorkspace().getRoot().getProjects();
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < projects.length; i++) {
 					IResource[] children = projects[i].members();
@@ -284,6 +297,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// sync info should remain for the resources since they are now phantoms
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -308,6 +322,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// remove the sync info for the immediate children of the projects.
 		body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < projects.length; i++) {
 					IResource[] children = projects[i].members(true);
@@ -324,6 +339,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// there should be no sync info for any resources except the project
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				int type = resource.getType();
 				if (type == IResource.ROOT || type == IResource.PROJECT)
@@ -506,6 +522,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// register the sync partner and set the sync info on the resources
 		synchronizer.add(qname);
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
@@ -538,16 +555,19 @@ public class ISynchronizerTest extends ResourceTest {
 		final DataOutputStream output = o1;
 		final List<QualifiedName> list = new ArrayList<QualifiedName>(5);
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(final IResource resource) {
 				try {
 					ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
 					if (info == null)
 						return true;
 					IPathRequestor requestor = new IPathRequestor() {
+						@Override
 						public IPath requestPath() {
 							return resource.getFullPath();
 						}
 
+						@Override
 						public String requestName() {
 							return resource.getName();
 						}
@@ -583,6 +603,7 @@ public class ISynchronizerTest extends ResourceTest {
 			InputStream fileInput = new FileInputStream(file);
 			final DataInputStream input = new DataInputStream(fileInput);
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					SyncInfoReader reader = new SyncInfoReader((Workspace) getWorkspace(), synchronizer);
 					try {
@@ -609,6 +630,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// confirm the sync bytes are the same
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				byte[] actual = synchronizer.getSyncInfo(qname, resource);
 				if (resource.getType() == IResource.ROOT) {
@@ -764,6 +786,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// setup the sync bytes
 		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
@@ -780,6 +803,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// should not be able to set sync info before the target has been registered.
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
@@ -799,6 +823,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// should not be able to get sync info before the target has been registered
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					synchronizer.getSyncInfo(qname, resource);
@@ -819,6 +844,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// there shouldn't be any info yet
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -837,6 +863,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// set the sync info
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					synchronizer.setSyncInfo(qname, resource, table.get(resource.getFullPath()));
@@ -854,6 +881,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// get the info and ensure its the same
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -878,6 +906,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// change the info and then set it
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
@@ -899,6 +928,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// get the new info
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
@@ -926,6 +956,7 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// should not be able to get sync info because the target has been unregistered
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				try {
 					synchronizer.getSyncInfo(qname, resource);

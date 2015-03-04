@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * 
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#buildRule()
 	 */
+	@Override
 	public final ISchedulingRule buildRule() {
 		return workspace.getRoot();
 	}
@@ -62,6 +63,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#charsetRule(IResource)
 	 * @since 3.1
 	 */
+	@Override
 	public ISchedulingRule charsetRule(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return null;
@@ -78,6 +80,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#derivedRule(IResource)
 	 * @since 3.6
 	 */
+	@Override
 	public final ISchedulingRule derivedRule(IResource resource) {
 		return null;
 	}
@@ -93,6 +96,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#copyRule(IResource, IResource)
 	 */
+	@Override
 	public ISchedulingRule copyRule(IResource source, IResource destination) {
 		//source is not modified, destination is created
 		return parent(destination);
@@ -109,6 +113,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#createRule(IResource)
 	 */
+	@Override
 	public ISchedulingRule createRule(IResource resource) {
 		return parent(resource);
 	}
@@ -124,6 +129,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#deleteRule(IResource)
 	 */
+	@Override
 	public ISchedulingRule deleteRule(IResource resource) {
 		return parent(resource);
 	}
@@ -141,6 +147,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * 
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#markerRule(IResource)
 	 */
+	@Override
 	public final ISchedulingRule markerRule(IResource resource) {
 		return null;
 	}
@@ -159,6 +166,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see FileModificationValidator#validateSave(IFile)
 	 * @see IProjectDescription#DESCRIPTION_FILE_NAME
 	 */
+	@Override
 	public ISchedulingRule modifyRule(IResource resource) {
 		IPath path = resource.getFullPath();
 		//modifying the project description may cause linked resources to be created or deleted
@@ -178,6 +186,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#moveRule(IResource, IResource)
 	 */
+	@Override
 	public ISchedulingRule moveRule(IResource source, IResource destination) {
 		//move needs the parent of both source and destination
 		return MultiRule.combine(parent(source), parent(destination));
@@ -211,6 +220,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#refreshRule(IResource)
 	 */
+	@Override
 	public ISchedulingRule refreshRule(IResource resource) {
 		return parent(resource);
 	}
@@ -227,6 +237,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#validateEditRule(IResource[])
 	 */
+	@Override
 	public ISchedulingRule validateEditRule(IResource[] resources) {
 		if (resources.length == 0)
 			return null;

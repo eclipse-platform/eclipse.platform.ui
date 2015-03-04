@@ -50,6 +50,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 				count++;
 			}
 
+			@Override
 			public int compareTo(Counter o) {
 				return o.getCount() - count;
 			}
@@ -185,6 +186,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			hiddenCount = 0;
 			syncInfoCount = 0;
 			IElementContentVisitor visitor = new IElementContentVisitor() {
+				@Override
 				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 					ResourceInfo info = (ResourceInfo) elementContents;
 					if (info == null)
@@ -228,6 +230,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			nonIdenticalStrings = 0;
 		}
 
+		@Override
 		public void run() {
 			super.run();
 			reset();
@@ -320,6 +323,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			List<Map.Entry<Object, Integer>> result = new ArrayList<Map.Entry<Object, Integer>>();
 			result.addAll(set);
 			Collections.sort(result, new Comparator<Map.Entry<Object, Integer>>() {
+				@Override
 				public int compare(Map.Entry<Object, Integer> arg0, Map.Entry<Object, Integer> arg1) {
 					return arg1.getValue().intValue() - arg0.getValue().intValue();
 				}
@@ -367,6 +371,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 			//post changes to UI thread
 			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!viewer.getControl().isDisposed()) {
 						IDocument doc = viewer.getDocument();
@@ -403,6 +408,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
@@ -424,6 +430,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		// so we need our key binding service to handle Delete keystrokes for us
 
 		this.viewer.getControl().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL)
 					clearOutputAction.run();
@@ -455,6 +462,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -499,6 +507,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 	/**
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (updateAction != null)
 			updateAction.run();

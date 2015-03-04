@@ -41,10 +41,12 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		getWorkspace().getRoot().delete(true, null);
@@ -78,10 +80,12 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		// Create a builder set a null scheduling rule
 		EmptyDeltaBuilder builder = EmptyDeltaBuilder.getInstance();
 		builder.setRuleCallback(new BuilderRuleCallback() {
+			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				return null;
 			}
 
+			@Override
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				assertTrue(Job.getJobManager().currentRule() == null);
 				tb.setStatus(TestBarrier.STATUS_START);
@@ -97,6 +101,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		});
 
 		Job j = new Job("build job") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
@@ -150,11 +155,13 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// Set the rule call-back
 		builder.setRuleCallback(new BuilderRuleCallback() {
+			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				tb1.setStatus(TestBarrier.STATUS_START);
 				return project;
 			}
 
+			@Override
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				// shared scheduling rule
 				assertTrue(Job.getJobManager().currentRule().contains(project));
@@ -166,12 +173,14 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		});
 		// Set the rule call-back
 		builder2.setRuleCallback(new BuilderRuleCallback() {
+			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				// get rule is called before starting
 				tb2.setStatus(TestBarrier.STATUS_START);
 				return null;
 			}
 
+			@Override
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				// shared scheduling rule
 				assertTrue(Job.getJobManager().currentRule() == null || Job.getJobManager().currentRule().contains(getWorkspace().getRoot()));
@@ -184,6 +193,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// Run the build
 		Job j = new Job("build job1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
@@ -249,6 +259,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 			boolean called = false;
 
+			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				// Remove once Bug 331187 is fixed.
 				// Currently #getRule is called twice when building a specific build configuration (so as to minimized change in 
@@ -270,6 +281,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 				return project;
 			}
 
+			@Override
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				// shared scheduling rule
 				assertTrue(Job.getJobManager().currentRule().equals(project));
@@ -285,6 +297,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// Run the incremental build
 		Job j = new Job("IProject.build()") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					getWorkspace().build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.INCREMENTAL_BUILD, true, monitor);
@@ -300,6 +313,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		tb1.waitForStatus(TestBarrier.STATUS_START);
 		// Modify a file in the project
 		j = new Job("IProject.build()") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
 				ensureExistsInWorkspace(foo, new ByteArrayInputStream(new byte[0]));
@@ -340,11 +354,13 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// Set the rule call-back
 		builder.setRuleCallback(new BuilderRuleCallback() {
+			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				tb1.waitForStatus(TestBarrier.STATUS_START);
 				return getRules[0];
 			}
 
+			@Override
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				HashSet<ISchedulingRule> h1 = getRulesAsSet(Job.getJobManager().currentRule());
 				HashSet<ISchedulingRule> h2 = getRulesAsSet(buildRules[0]);
@@ -356,11 +372,13 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		});
 		// Set the rule call-back
 		builder2.setRuleCallback(new BuilderRuleCallback() {
+			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				tb2.waitForStatus(TestBarrier.STATUS_START);
 				return getRules[1];
 			}
 
+			@Override
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				HashSet<ISchedulingRule> h1 = getRulesAsSet(Job.getJobManager().currentRule());
 				HashSet<ISchedulingRule> h2 = getRulesAsSet(buildRules[1]);
@@ -401,6 +419,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		// IWorkspace.build(IBuildConfiguration[],...)
 		j = new Job("IWorkspace.build(IBuildConfiguration[],...)") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					getWorkspace().build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.FULL_BUILD, true, monitor);

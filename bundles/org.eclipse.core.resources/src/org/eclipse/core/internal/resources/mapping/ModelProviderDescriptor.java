@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,18 +48,22 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		throw new ResourceException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, reason, null));
 	}
 
+	@Override
 	public String[] getExtendedModels() {
 		return extendedModels;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public IResource[] getMatchingResources(IResource[] resources) throws CoreException {
 		Set<IResource> result = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
@@ -72,6 +76,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		return result.toArray(new IResource[result.size()]);
 	}
 
+	@Override
 	public synchronized ModelProvider getModelProvider() throws CoreException {
 		if (provider == null) {
 			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MODEL_PROVIDERS, id);
@@ -125,6 +130,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		extendedModels = extendsList.toArray(new String[extendsList.size()]);
 	}
 
+	@Override
 	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException {
 		List<ResourceTraversal> result = new ArrayList<ResourceTraversal>();
 		for (int i = 0; i < traversals.length; i++) {

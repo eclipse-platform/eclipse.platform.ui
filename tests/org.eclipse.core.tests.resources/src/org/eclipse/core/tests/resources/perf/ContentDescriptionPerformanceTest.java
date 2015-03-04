@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,9 +77,11 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 	public void doTestContentDescription() {
 		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("bigproject");
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					project.accept(new IResourceVisitor() {
+						@Override
 						public boolean visit(IResource resource) throws CoreException {
 							if (resource.getType() == IResource.FILE && !resource.getName().equals(".project"))
 								assertHasExpectedDescription(resource.getName(), ((IFile) resource).getContentDescription());
@@ -105,6 +107,7 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		// do not call super.tearDown() because we want to keep the test data accross test cases
 	}

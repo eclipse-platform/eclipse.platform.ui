@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,7 @@ public class BuildContext implements IBuildContext {
 	private int findBuildConfigurationIndex() {
 		int position = -1;
 		for (int i = 0; i < buildOrder.length; i++) {
-			if (buildOrder[i].equals(buildConfiguration))
-			{
+			if (buildOrder[i].equals(buildConfiguration)) {
 				position = i;
 				break;
 			}
@@ -61,6 +60,7 @@ public class BuildContext implements IBuildContext {
 		return position;
 	}
 
+	@Override
 	public IBuildConfiguration[] getRequestedConfigs() {
 		return requestedBuilt.clone();
 	}
@@ -69,6 +69,7 @@ public class BuildContext implements IBuildContext {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.resources.IBuildContext#getAllReferencedBuildConfigurations()
 	 */
+	@Override
 	public IBuildConfiguration[] getAllReferencedBuildConfigs() {
 		int position = findBuildConfigurationIndex();
 		IBuildConfiguration[] builtBefore = new IBuildConfiguration[position];
@@ -80,6 +81,7 @@ public class BuildContext implements IBuildContext {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.resources.IBuildContext#getAllReferencingBuildConfigurations()
 	 */
+	@Override
 	public IBuildConfiguration[] getAllReferencingBuildConfigs() {
 		int position = findBuildConfigurationIndex();
 		IBuildConfiguration[] builtAfter = new IBuildConfiguration[buildOrder.length - position - 1];

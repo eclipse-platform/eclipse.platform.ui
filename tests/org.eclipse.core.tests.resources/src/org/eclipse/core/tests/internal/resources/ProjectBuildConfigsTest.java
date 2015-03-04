@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class ProjectBuildConfigsTest extends ResourceTest {
 	private IBuildConfiguration variant2;
 	private IBuildConfiguration defaultVariant;
 
+	@Override
 	public void setUp() throws Exception {
 		project = getWorkspace().getRoot().getProject("ProjectBuildConfigsTest_Project");
 		ensureExistsInWorkspace(new IProject[] {project}, true);
@@ -47,6 +48,7 @@ public class ProjectBuildConfigsTest extends ResourceTest {
 		defaultVariant = new BuildConfiguration(project, IBuildConfiguration.DEFAULT_CONFIG_NAME);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		project.delete(true, null);

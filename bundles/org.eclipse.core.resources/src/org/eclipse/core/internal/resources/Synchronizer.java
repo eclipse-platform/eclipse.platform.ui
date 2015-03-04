@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#accept(QualifiedName, IResource, IResourceVisitor, int)
 	 */
+	@Override
 	public void accept(QualifiedName partner, IResource resource, IResourceVisitor visitor, int depth) throws CoreException {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(resource != null);
@@ -66,6 +67,7 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#add(QualifiedName)
 	 */
+	@Override
 	public void add(QualifiedName partner) {
 		Assert.isLegal(partner != null);
 		registry.add(partner);
@@ -74,13 +76,16 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#flushSyncInfo(QualifiedName, IResource, int)
 	 */
+	@Override
 	public void flushSyncInfo(final QualifiedName partner, final IResource root, final int depth) throws CoreException {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(root != null);
 
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IResourceVisitor visitor = new IResourceVisitor() {
+					@Override
 					public boolean visit(IResource resource) throws CoreException {
 						//only need to flush sync info if there is sync info
 						if (getSyncInfo(partner, resource) != null)
@@ -97,6 +102,7 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#getPartners()
 	 */
+	@Override
 	public QualifiedName[] getPartners() {
 		return registry.toArray(new QualifiedName[registry.size()]);
 	}
@@ -111,6 +117,7 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#getSyncInfo(QualifiedName, IResource)
 	 */
+	@Override
 	public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws CoreException {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(resource != null);
@@ -189,6 +196,7 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#remove(QualifiedName)
 	 */
+	@Override
 	public void remove(QualifiedName partner) {
 		Assert.isLegal(partner != null);
 		if (isRegistered(partner)) {
@@ -218,6 +226,7 @@ public class Synchronizer implements ISynchronizer {
 	/**
 	 * @see ISynchronizer#setSyncInfo(QualifiedName, IResource, byte[])
 	 */
+	@Override
 	public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) throws CoreException {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(resource != null);
@@ -240,7 +249,7 @@ public class Synchronizer implements ISynchronizer {
 					return;
 				//ensure it is possible to create this resource
 				target.checkValidPath(target.getFullPath(), target.getType(), false);
-				Container parent = (Container)target.getParent();
+				Container parent = (Container) target.getParent();
 				parent.checkAccessible(parent.getFlags(parent.getResourceInfo(true, false)));
 				workspace.createResource(target, true);
 			}

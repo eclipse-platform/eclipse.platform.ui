@@ -376,6 +376,7 @@ public abstract class ResourceTest extends CoreTest {
 		final IFileStore[] toDelete = storesToDelete.toArray(new IFileStore[0]);
 		storesToDelete.clear();
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
 				//clear stores in workspace runnable to avoid interaction with resource jobs
@@ -549,6 +550,7 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureDoesNotExistInWorkspace(final IResource[] resources) {
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				for (int i = 0; i < resources.length; i++)
 					ensureDoesNotExistInWorkspace(resources[i]);
@@ -600,6 +602,7 @@ public abstract class ResourceTest extends CoreTest {
 		if (resource == null)
 			return;
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if (resource.exists()) {
 					resource.setContents(contents, true, false, null);
@@ -628,6 +631,7 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureExistsInWorkspace(final IResource resource, final boolean local) {
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				create(resource, local);
 			}
@@ -645,6 +649,7 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureExistsInWorkspace(final IResource[] resources, final boolean local) {
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < resources.length; i++)
 					create(resources[i], local);
@@ -779,6 +784,7 @@ public abstract class ResourceTest extends CoreTest {
 
 	}
 
+	@Override
 	public String getUniqueString() {
 		return new UniversalUniqueIdentifier().toString();
 	}
@@ -957,6 +963,7 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * The environment should be set-up in the main method.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		assertNotNull("Workspace was not setup", getWorkspace());
 		if (EclipseTestHarnessApplication.deltasEnabled() && deltaListener == null) {
@@ -965,6 +972,7 @@ public abstract class ResourceTest extends CoreTest {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// Ensure everything is in a clean state for next one.

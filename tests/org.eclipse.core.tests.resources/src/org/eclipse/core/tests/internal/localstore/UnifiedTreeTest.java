@@ -60,6 +60,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 	protected void createFiles(final IContainer target, final Hashtable<String, String> set) throws CoreException {
 		final Workspace workspace = (Workspace) getWorkspace();
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < limit; i++) {
 					IFile child = target.getFile(new Path("wbFile" + i));
@@ -125,6 +126,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 
 		/* create a visitor */
 		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
+			@Override
 			public boolean visit(UnifiedTreeNode node) {
 				/* test the node.getLocalName() method */
 				final IResource resource = node.getResource();
@@ -170,6 +172,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 
 		/* create a visitor */
 		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
+			@Override
 			public boolean visit(UnifiedTreeNode node) {
 
 				/* test the node.getLocalName() method */
@@ -226,6 +229,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 
 		/* create a visitor */
 		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
+			@Override
 			public boolean visit(UnifiedTreeNode node) {
 				/* test the node.getLocalName() method */
 				final IResource resource = node.getResource();

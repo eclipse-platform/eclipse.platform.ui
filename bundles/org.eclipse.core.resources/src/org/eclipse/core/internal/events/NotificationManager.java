@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class NotificationManager implements IManager, ILifecycleListener {
 	class NotifyJob extends Job {
 		private final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				// do nothing
 			}
@@ -242,6 +243,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		return listeners.getListeners();
 	}
 
+	@Override
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
 			case LifecycleEvent.PRE_PROJECT_CLOSE :
@@ -285,10 +287,12 @@ public class NotificationManager implements IManager, ILifecycleListener {
 					if (ResourceStats.TRACE_LISTENERS)
 						ResourceStats.startNotify(listener);
 					SafeRunner.run(new ISafeRunnable() {
+						@Override
 						public void handleException(Throwable e) {
 							// exception logged in SafeRunner#run
 						}
 
+						@Override
 						public void run() throws Exception {
 							if (Policy.DEBUG_NOTIFICATIONS)
 								Policy.debug("Notifying " + listener.getClass().getName() + " about resource change event" + event.toDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -320,11 +324,13 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		return !isNotifying && notificationRequested;
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		//wipe out any existing listeners
 		listeners = new ResourceChangeListenerList();
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		// get the current state of the workspace as the starting point and
 		// tell the workspace to track changes from there. This gives the

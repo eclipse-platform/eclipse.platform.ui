@@ -364,6 +364,7 @@ public class IResourceTest extends ResourceTest {
 		return true;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		IWorkspaceDescription description = getWorkspace().getDescription();
@@ -521,6 +522,7 @@ public class IResourceTest extends ResourceTest {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (noSideEffects)
 			return;
@@ -551,12 +553,14 @@ public class IResourceTest extends ResourceTest {
 				visitedResources.addElement(r);
 			}
 
+			@Override
 			public boolean visit(IResource r) {
 				throw new RuntimeException("this class is abstract");
 			}
 		}
 
 		final LoggingResourceVisitor deepVisitor = new LoggingResourceVisitor() {
+			@Override
 			public boolean visit(IResource r) {
 				recordVisit(r);
 				return true;
@@ -564,6 +568,7 @@ public class IResourceTest extends ResourceTest {
 		};
 
 		final LoggingResourceVisitor shallowVisitor = new LoggingResourceVisitor() {
+			@Override
 			public boolean visit(IResource r) {
 				recordVisit(r);
 				return false;
@@ -574,10 +579,12 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingVisitors, TRUE_AND_FALSE,};
 		new TestPerformer("IResourceTest.testAccept2") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				IResourceVisitor visitor = (IResourceVisitor) args[1];
@@ -586,6 +593,7 @@ public class IResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				deepVisitor.clear();
 				shallowVisitor.clear();
@@ -593,6 +601,7 @@ public class IResourceTest extends ResourceTest {
 				return nonExistingResources.contains(resource) || !resource.isAccessible();
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource resource = (IResource) args[0];
 				LoggingResourceVisitor visitor = (LoggingResourceVisitor) args[1];
@@ -627,6 +636,7 @@ public class IResourceTest extends ResourceTest {
 		try {
 			// pass DEPTH_ONE to avoid using proxy visitor
 			a.accept(new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource resource) {
 					// we should not get that far if the resource does not exist
 					fail("1.0");
@@ -640,6 +650,7 @@ public class IResourceTest extends ResourceTest {
 
 		try {
 			a.accept(new IResourceProxyVisitor() {
+				@Override
 				public boolean visit(IResourceProxy proxy) {
 					// we should not get that far if the resource does not exist
 					fail("2.0");
@@ -654,6 +665,7 @@ public class IResourceTest extends ResourceTest {
 		// pass DEPTH_ONE to avoid using proxy visitor
 		// if we don't check for existence, then no exception should be thrown
 		a.accept(new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				// we should not get that far if the resource does not exist
 				fail("3.0");
@@ -663,6 +675,7 @@ public class IResourceTest extends ResourceTest {
 
 		// if we don't check for existence, then no exception should be thrown
 		a.accept(new IResourceProxyVisitor() {
+			@Override
 			public boolean visit(IResourceProxy proxy) {
 				// we should not get that far if the resource does not exist
 				fail("4.0");
@@ -686,6 +699,7 @@ public class IResourceTest extends ResourceTest {
 		final int toVisitCount[] = new int[] {0};
 
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+			@Override
 			public boolean visit(IResourceProxy proxy) {
 				toVisit.remove(proxy.requestResource());
 				toVisitCount[0]--;
@@ -778,6 +792,7 @@ public class IResourceTest extends ResourceTest {
 		//add markers to all resources ... markers should not be copied
 		try {
 			getWorkspace().getRoot().accept(new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource resource) throws CoreException {
 					if (resource.isAccessible())
 						resource.createMarker(IMarker.TASK);
@@ -791,10 +806,12 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IResourceTest.testCopy") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
@@ -808,6 +825,7 @@ public class IResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
@@ -821,6 +839,7 @@ public class IResourceTest extends ResourceTest {
 				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws CoreException {
 				IResource source = (IResource) args[0];
 				IPath destination = (IPath) args[1];
@@ -851,12 +870,14 @@ public class IResourceTest extends ResourceTest {
 		final String CANCELED = "canceled";
 		new TestPerformer("IResourceTest.testDelete") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IResource resource = (IResource) args[2];
 				return new Object[] {new Boolean(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
@@ -873,6 +894,7 @@ public class IResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
@@ -901,6 +923,7 @@ public class IResourceTest extends ResourceTest {
 				final boolean[] hasUnsynchronizedResources = new boolean[] {false};
 				try {
 					resource.accept(new IResourceVisitor() {
+						@Override
 						public boolean visit(IResource toVisit) throws CoreException {
 							File target = toVisit.getLocation().toFile();
 							if (target.exists() != toVisit.exists()) {
@@ -937,6 +960,7 @@ public class IResourceTest extends ResourceTest {
 				return hasUnsynchronizedResources[0];
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
@@ -1318,20 +1342,24 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingResources};
 		new TestPerformer("IResourceTest.testEquals") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource0 = (IResource) args[0];
 				IResource resource1 = (IResource) args[1];
 				return resource0.equals(resource1) ? Boolean.TRUE : Boolean.FALSE;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource resource0 = (IResource) args[0];
 				IResource resource1 = (IResource) args[1];
@@ -1353,19 +1381,23 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testExists") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				return resource.exists() ? Boolean.TRUE : Boolean.FALSE;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				boolean booleanResult = ((Boolean) result).booleanValue();
 				IResource resource = (IResource) args[0];
@@ -1381,19 +1413,23 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testGetLocation") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				return resource.getLocation();
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource resource = (IResource) args[0];
 				IPath resultPath = (IPath) result;
@@ -1530,6 +1566,7 @@ public class IResourceTest extends ResourceTest {
 			fail("7.1", e);
 		}
 		IResourceVisitor visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				//projects and root are always local
 				if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
@@ -1625,6 +1662,7 @@ public class IResourceTest extends ResourceTest {
 			fail("12.0", e);
 		}
 		visitor = new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) {
 				if (resource.getType() != IResource.ROOT)
 					assertTrue("12.1." + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
@@ -1651,6 +1689,7 @@ public class IResourceTest extends ResourceTest {
 
 		// Remove and re-create the file in a workspace operation
 		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				file.delete(false, getMonitor());
 				create(file, true);
@@ -1822,19 +1861,23 @@ public class IResourceTest extends ResourceTest {
 		ensureExistsInWorkspace(project, true);
 
 		ISchedulingRule wrapper = new ISchedulingRule() {
+			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return this == rule || project.isConflicting(rule);
 			}
 
+			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return this == rule || project.contains(rule);
 			}
 		};
 		ISchedulingRule multi = MultiRule.combine(wrapper, new ISchedulingRule() {
+			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return this == rule;
 			}
 
+			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return this == rule;
 			}
@@ -1862,10 +1905,12 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				cleanUpAfterRefreshTest(args);
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) {
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
@@ -1878,10 +1923,12 @@ public class IResourceTest extends ResourceTest {
 				return result ? Boolean.TRUE : Boolean.FALSE;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
 					return true; //combination didn't make sense
@@ -1922,10 +1969,12 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IResourceTest.testMove") {
 
+			@Override
 			public Object[] interestingOldState(Object[] args) {
 				return null;
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
@@ -1939,6 +1988,7 @@ public class IResourceTest extends ResourceTest {
 				return null;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
@@ -1955,6 +2005,7 @@ public class IResourceTest extends ResourceTest {
 				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				return true;
 			}
@@ -2099,6 +2150,7 @@ public class IResourceTest extends ResourceTest {
 	 * Tests IResource.isReadOnly and setReadOnly
 	 * @deprecated This test is for deprecated API
 	 */
+	@Deprecated
 	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
@@ -2150,10 +2202,12 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 				cleanUpAfterRefreshTest(args);
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
@@ -2166,10 +2220,12 @@ public class IResourceTest extends ResourceTest {
 				return Boolean.TRUE;
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				return false;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
 					return true; //permutation didn't make sense
@@ -2233,6 +2289,7 @@ public class IResourceTest extends ResourceTest {
 		//revert all existing resources
 		try {
 			getWorkspace().getRoot().accept(new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource resource) throws CoreException {
 					if (!resource.isAccessible())
 						return false;
@@ -2303,9 +2360,11 @@ public class IResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingTimes};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
+			@Override
 			public void cleanUp(Object[] args, int count) {
 			}
 
+			@Override
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
 				long time = ((Long) args[1]).longValue();
@@ -2313,11 +2372,13 @@ public class IResourceTest extends ResourceTest {
 				return new Long(actual);
 			}
 
+			@Override
 			public boolean shouldFail(Object[] args, int count) {
 				long time = ((Long) args[1]).longValue();
 				return time < 0;
 			}
 
+			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource receiver = (IResource) args[0];
 				if (receiver.getType() == IResource.ROOT)

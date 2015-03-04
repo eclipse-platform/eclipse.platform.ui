@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2015 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,20 +38,24 @@ class FilterTypeManager implements IManager {
 				processExtension(extension);
 			}
 			RegistryFactory.getRegistry().addListener(new IRegistryEventListener() {
+				@Override
 				public void added(IExtension[] extensions) {
 					for (int i = 0; i < extensions.length; i++)
 						processExtension(extensions[i]);
 				}
 
+				@Override
 				public void added(IExtensionPoint[] extensionPoints) {
 					// nothing to do
 				}
 
+				@Override
 				public void removed(IExtension[] extensions) {
 					for (int i = 0; i < extensions.length; i++)
 						processRemovedExtension(extensions[i]);
 				}
 
+				@Override
 				public void removed(IExtensionPoint[] extensionPoints) {
 					// nothing to do
 				}
@@ -89,10 +93,12 @@ class FilterTypeManager implements IManager {
 		}
 	}
 
+	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		//nothing to do
 	}
 
+	@Override
 	public void startup(IProgressMonitor monitor) {
 		//nothing to do
 	}

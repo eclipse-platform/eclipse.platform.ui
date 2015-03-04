@@ -35,6 +35,7 @@ public class BucketTreeTests extends ResourceTest {
 				this.value = value;
 			}
 
+			@Override
 			public int getOccurrences() {
 				return value.size();
 			}
@@ -43,6 +44,7 @@ public class BucketTreeTests extends ResourceTest {
 				return value.get(key);
 			}
 
+			@Override
 			public Object getValue() {
 				return value;
 			}
@@ -52,23 +54,28 @@ public class BucketTreeTests extends ResourceTest {
 			super();
 		}
 
+		@Override
 		protected String getIndexFileName() {
 			return "simple_bucket.index";
 		}
 
+		@Override
 		protected String getVersionFileName() {
 			return "simple_bucket.version";
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected Entry createEntry(IPath path, Object value) {
 			return new SimpleEntry(path, (Map<String, String>) value);
 		}
 
+		@Override
 		protected byte getVersion() {
 			return 0;
 		}
 
+		@Override
 		protected Object readEntryValue(DataInputStream source) throws IOException {
 			int length = source.readUnsignedShort();
 			Map<String, String> value = new HashMap<String, String>(length);
@@ -98,6 +105,7 @@ public class BucketTreeTests extends ResourceTest {
 			setEntryValue(pathAsString, existing);
 		}
 
+		@Override
 		protected void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException {
 			@SuppressWarnings("unchecked")
 			Map<String, String> value = (Map<String, String>) entryValue;
@@ -172,6 +180,7 @@ public class BucketTreeTests extends ResourceTest {
 	public void verify(BucketTree tree, final String tag, IPath root, int depth, final Collection<IPath> expected) {
 		final Set<IPath> visited = new HashSet<IPath>();
 		SimpleBucket.Visitor verifier = new SimpleBucket.Visitor() {
+			@Override
 			public int visit(org.eclipse.core.internal.localstore.Bucket.Entry entry) {
 				SimpleBucket.SimpleEntry simple = (SimpleBucket.SimpleEntry) entry;
 				IPath path = simple.getPath();

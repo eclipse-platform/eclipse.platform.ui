@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.PreferenceModifyListener;
 
 public class ProjectPreferenceModifyListener extends PreferenceModifyListener {
-
 	/*
 	 * Return the segment from the given path or null.
 	 * "segment" parameter is 0-based.
@@ -43,6 +42,7 @@ public class ProjectPreferenceModifyListener extends PreferenceModifyListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.PreferenceModifyListener#preApply(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
+	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		if (equalsQualifier(node, "test.load.is.import"))
 			return testLoadIsImport(node);
