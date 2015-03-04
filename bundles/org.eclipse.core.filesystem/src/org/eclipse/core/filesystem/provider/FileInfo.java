@@ -87,16 +87,12 @@ public class FileInfo implements IFileInfo {
 		attributes &= ~mask;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-			//we know this object is cloneable
+			// We know this object is cloneable.
 			return null;
 		}
 	}
@@ -116,7 +112,6 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * @since 1.4
-	 * @see IFileInfo#getError()
 	 */
 	@Override
 	public int getError() {
