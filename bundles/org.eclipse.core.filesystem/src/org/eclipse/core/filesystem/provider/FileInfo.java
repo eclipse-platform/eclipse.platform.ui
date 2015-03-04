@@ -101,9 +101,8 @@ public class FileInfo implements IFileInfo {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	/**
+	 * @since 1.5
 	 */
 	@Override
 	public int compareTo(IFileInfo o) {
