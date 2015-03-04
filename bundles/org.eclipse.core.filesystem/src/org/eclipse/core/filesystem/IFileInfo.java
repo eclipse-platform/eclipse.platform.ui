@@ -44,7 +44,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * @return <code>true</code> if this file exists, and <code>false</code>
 	 * if the file does not exist or an I/O error was encountered.
 	 */
-	public abstract boolean exists();
+	public boolean exists();
 
 	/**
 	 * Checks whether an I/O error was encountered while accessing this file or directory.
@@ -52,7 +52,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * @return {@link #IO_ERROR} if an I/O error was encountered, or {@link #NONE} otherwise.
 	 * @since 1.4
 	 */
-	public abstract int getError();
+	public int getError();
 
 	/**
 	 * Returns the value of the specified attribute for this file.  The attribute
@@ -65,7 +65,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * @return the value of the specified attribute for this file.
 	 * @see IFileSystem#attributes()
 	 */
-	public abstract boolean getAttribute(int attribute);
+	public boolean getAttribute(int attribute);
 
 	/**
 	 * Returns the value of the specified attribute for this file.  The attribute
@@ -80,7 +80,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * @see IFileSystem#attributes()
 	 * @since org.eclipse.core.filesystem 1.1
 	 */
-	public abstract String getStringAttribute(int attribute);
+	public String getStringAttribute(int attribute);
 
 	/**
 	 * Returns the last modified time for this file, or {@link EFS#NONE}
@@ -92,7 +92,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * 
 	 * @return the last modified time for this file, or {@link EFS#NONE}
 	 */
-	public abstract long getLastModified();
+	public long getLastModified();
 
 	/**
 	 * Returns the length of this file, or {@link EFS#NONE}
@@ -101,14 +101,14 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * 
 	 * @return the length of this file, or {@link EFS#NONE}
 	 */
-	public abstract long getLength();
+	public long getLength();
 
 	/**
 	 * Returns the name of this file.
 	 * 
 	 * @return the name of this file.
 	 */
-	public abstract String getName();
+	public String getName();
 
 	/**
 	 * Returns whether this file is a directory, or <code>false</code> if this
@@ -117,7 +117,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * @return <code>true</code> if this file is a directory, and <code>false</code>
 	 * otherwise.
 	 */
-	public abstract boolean isDirectory();
+	public boolean isDirectory();
 
 	/**
 	 * Sets the value of the specified attribute for this file info.  The attribute
@@ -133,7 +133,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * @param value the value of the specified attribute for this file.
 	 * @see IFileSystem#attributes()
 	 */
-	public abstract void setAttribute(int attribute, boolean value);
+	public void setAttribute(int attribute, boolean value);
 
 	/**
 	 * Sets the last modified time for this file.  A value of {@link EFS#NONE}
@@ -145,5 +145,5 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * 
 	 * @param time the last modified time for this file, or {@link EFS#NONE}
 	 */
-	public abstract void setLastModified(long time);
+	public void setLastModified(long time);
 }
