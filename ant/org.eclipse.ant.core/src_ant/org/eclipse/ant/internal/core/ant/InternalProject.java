@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -143,16 +143,12 @@ public class InternalProject extends Project {
 	 */
 	private void initializeTypes() {
 		typeNameToClass = new Hashtable<String, Class<?>>(18);
-		String dataDefs = "/org/apache/tools/ant/types/defaults.properties"; //$NON-NLS-1$
-		try {
-			Properties props = new Properties();
-			InputStream in = Project.class.getResourceAsStream(dataDefs);
+		try (InputStream in = Project.class.getResourceAsStream("/org/apache/tools/ant/types/defaults.properties")) { //$NON-NLS-1$
 			if (in == null) {
 				return;
 			}
+			Properties props = new Properties();
 			props.load(in);
-			in.close();
-
 			Enumeration<?> enumeration = props.propertyNames();
 			while (enumeration.hasMoreElements()) {
 				String typeName = (String) enumeration.nextElement();

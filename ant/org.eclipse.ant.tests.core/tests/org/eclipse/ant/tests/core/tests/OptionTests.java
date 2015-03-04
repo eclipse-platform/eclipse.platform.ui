@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -130,11 +130,8 @@ public class OptionTests extends AbstractAntTest {
 	public void testLogFile() throws CoreException, IOException {
 		run("TestForEcho.xml", new String[] { "-logfile", "TestLogFile.txt" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		IFile file = checkFileExists("TestLogFile.txt"); //$NON-NLS-1$
-		InputStream stream = file.getContents();
 
-		InputStreamReader in = null;
-		try {
-			in = new InputStreamReader(new BufferedInputStream(stream));
+		try (InputStream stream = file.getContents(); InputStreamReader in = new InputStreamReader(new BufferedInputStream(stream))) {
 			StringBuffer buffer = new StringBuffer();
 			char[] readBuffer = new char[2048];
 			int n = in.read(readBuffer);
@@ -143,12 +140,6 @@ public class OptionTests extends AbstractAntTest {
 				n = in.read(readBuffer);
 			}
 			assertTrue("File should have started with Buildfile", buffer.toString().startsWith("Buildfile")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		finally {
-			if (in != null) {
-				in.close();
-			}
-			stream.close();
 		}
 
 	}

@@ -658,11 +658,9 @@ public class InternalAntRunner {
 	 */
 	private String getAntVersionNumber() throws BuildException {
 		if (antVersionNumber == null) {
-			try {
+			try (InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt")) {//$NON-NLS-1$
 				Properties props = new Properties();
-				InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt"); //$NON-NLS-1$
 				props.load(in);
-				in.close();
 				String versionNumber = props.getProperty("VERSION"); //$NON-NLS-1$
 				antVersionNumber = versionNumber;
 			}
@@ -1175,25 +1173,12 @@ public class InternalAntRunner {
 		for (String filename : propertyFiles) {
 			File file = getFileRelativeToBaseDir(filename);
 			Properties props = new Properties();
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(file);
+			try (FileInputStream fis = new FileInputStream(file)) {
 				props.load(fis);
 			}
 			catch (IOException e) {
 				fEarlyErrorMessage = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new Object[] { filename, e.getMessage() }); //$NON-NLS-1$
 			}
-			finally {
-				if (fis != null) {
-					try {
-						fis.close();
-					}
-					catch (IOException e) {
-						// do nothing
-					}
-				}
-			}
-
 			if (userProperties == null) {
 				userProperties = new HashMap<String, String>();
 			}

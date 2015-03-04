@@ -239,22 +239,10 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 * Parses the dtd.
 	 */
 	private ISchema parseDtd() throws ParseError, IOException {
-		InputStream stream = null;
-		Reader reader = null;
-		try {
-			stream = getClass().getResourceAsStream(ANT_DTD_FILENAME);
-			reader = new InputStreamReader(stream, "UTF-8"); //$NON-NLS-1$
+		try (InputStream stream = getClass().getResourceAsStream(ANT_DTD_FILENAME); Reader reader = new InputStreamReader(stream, "UTF-8");) {//$NON-NLS-1$
 			Parser parser = new Parser();
 			ISchema schema = parser.parseDTD(reader, "project"); //$NON-NLS-1$
 			return schema;
-		}
-		finally {
-			if (reader != null) {
-				reader.close();
-			}
-			if (stream != null) {
-				stream.close();
-			}
 		}
 	}
 

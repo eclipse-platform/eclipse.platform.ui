@@ -985,11 +985,9 @@ public class InternalAntRunner {
 	 */
 	protected String getAntVersionNumber() throws BuildException {
 		if (antVersionNumber == null) {
-			try {
+			try (InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt")) { //$NON-NLS-1$
 				Properties props = new Properties();
-				InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt"); //$NON-NLS-1$
 				props.load(in);
-				in.close();
 				String versionNumber = props.getProperty("VERSION"); //$NON-NLS-1$
 				antVersionNumber = versionNumber;
 			}

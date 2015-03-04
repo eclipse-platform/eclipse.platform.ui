@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1985,9 +1985,7 @@ public class AntModel implements IAntModel {
 		IPath path = getLocationProvider().getLocation();
 		if (path != null) {
 			File buildfile = path.toFile();
-			FileReader reader = null;
-			try {
-				reader = new FileReader(buildfile);
+			try (FileReader reader = new FileReader(buildfile)) {
 				QualifiedName[] options = new QualifiedName[] { IContentDescription.CHARSET };
 				IContentDescription desc = Platform.getContentTypeManager().getDescriptionFor(reader, buildfile.getName(), options);
 				if (desc != null) {
@@ -1997,16 +1995,6 @@ public class AntModel implements IAntModel {
 			}
 			catch (IOException ioe) {
 				// do nothing
-			}
-			finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					}
-					catch (IOException e) {
-						// do nothing
-					}
-				}
 			}
 		}
 		fEncoding = IAntCoreConstants.UTF_8;

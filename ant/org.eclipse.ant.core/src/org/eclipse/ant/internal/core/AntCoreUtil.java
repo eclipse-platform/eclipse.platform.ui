@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,20 +146,8 @@ public class AntCoreUtil {
 			String filename = fileNames.get(i);
 			File file = getFileRelativeToBaseDir(filename, base, buildFileLocation);
 			Properties props = new Properties();
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(file);
+			try (FileInputStream fis = new FileInputStream(file)) {
 				props.load(fis);
-			}
-			finally {
-				if (fis != null) {
-					try {
-						fis.close();
-					}
-					catch (IOException e) {
-						// do nothing
-					}
-				}
 			}
 			Enumeration<?> propertyNames = props.propertyNames();
 			while (propertyNames.hasMoreElements()) {

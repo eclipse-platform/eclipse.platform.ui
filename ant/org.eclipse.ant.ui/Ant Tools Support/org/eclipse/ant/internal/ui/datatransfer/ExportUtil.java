@@ -550,9 +550,7 @@ public class ExportUtil {
 	public static boolean existsUserFile(String filename) {
 		File buildFile = new File(filename);
 		if (buildFile.exists()) {
-			BufferedReader in = null;
-			try {
-				in = new BufferedReader(new FileReader(buildFile));
+			try (BufferedReader in = new BufferedReader(new FileReader(buildFile))) {
 				int i = BuildFileCreator.WARNING.indexOf(NEWLINE);
 				String warning = BuildFileCreator.WARNING.substring(0, i);
 				String line;
@@ -568,16 +566,6 @@ public class ExportUtil {
 			}
 			catch (IOException e) {
 				return false;
-			}
-			finally {
-				try {
-					if (in != null) {
-						in.close();
-					}
-				}
-				catch (IOException e) {
-					// ignore
-				}
 			}
 		}
 		return false;
