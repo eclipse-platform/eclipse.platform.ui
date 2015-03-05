@@ -477,6 +477,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			clearModelToContribution(copy, ici);
 			if (ici != null) {
 				record.getManagerForModel().remove(ici);
+				ici.dispose();
 			}
 		}
 	}
