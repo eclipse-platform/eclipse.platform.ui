@@ -94,7 +94,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	public ContentTypeManager() {
-		super(null, new InstanceScope());
+		super(null, InstanceScope.INSTANCE);
 	}
 
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {

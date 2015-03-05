@@ -131,7 +131,7 @@ public class PreferenceStatsView extends SpyView {
 
 			// Properties properties
 			count += 4;
-			IEclipsePreferences node = new InstanceScope().getNode(pluginID);
+			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginID);
 			if (node != null) {
 				// add the key/value pairs
 				// TODO rough estimate

@@ -851,7 +851,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		};
 		ps.addPropertyChangeListener(listener);
 		ps.setValue("key2", "value2");
-		IEclipsePreferences node = new InstanceScope().getNode(id);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(id);
 
 		// add our log listener and remove the node. nothing should be logged.
 		RuntimeLog.addLogListener(logListener);
