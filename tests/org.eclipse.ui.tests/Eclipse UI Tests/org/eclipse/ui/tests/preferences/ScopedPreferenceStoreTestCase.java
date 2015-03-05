@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
-import java.io.*;
-import org.eclipse.core.runtime.preferences.*;
+import java.io.IOException;
+
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -26,7 +29,7 @@ public class ScopedPreferenceStoreTestCase extends UITestCase {
 	}
 
 	public void testNeedsSaving() {
-		IScopeContext context = new InstanceScope();
+		IScopeContext context = InstanceScope.INSTANCE;
 		String qualifier = "org.eclipse.ui.tests.preferences";
 		ScopedPreferenceStore store = new ScopedPreferenceStore(context,
 				qualifier);
@@ -64,7 +67,7 @@ public class ScopedPreferenceStoreTestCase extends UITestCase {
 	}
 
 	public void testRestoreDefaults() {
-		IScopeContext context = new InstanceScope();
+		IScopeContext context = InstanceScope.INSTANCE;
 		String qualifier = "org.eclipse.ui.tests.preferences#testRestoreDefaults";
 		ScopedPreferenceStore store = new ScopedPreferenceStore(context, qualifier);
 		final String key = "key";

@@ -188,7 +188,7 @@ public class Library {
 
 	private void initializeWorkspace() {
 		workspace.addResourceChangeListener(listener);
-		IEclipsePreferences node = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 		try {
 			node.flush();
