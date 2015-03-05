@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,20 +164,10 @@ public class PreProcessor extends Task {
 			}
 		} else {
 			// write new file
-			FileWriter writer = null;
-			try {
-				writer = new FileWriter(destFile);
+			try (FileWriter writer = new FileWriter(destFile)) {
 				writer.write(contents);
 			} catch (IOException e) {
 				throw new BuildException(e);
-			} finally {
-				try {
-					if (writer != null) {
-						writer.close();
-					}
-				} catch (IOException e) {
-					throw new BuildException(e);
-				}
 			}
 		}
 	}
@@ -191,11 +181,9 @@ public class PreProcessor extends Task {
 	 */
 	public String preProcessFile(File srcFile, String strip) {
 		try {
-			FileReader fileReader = new FileReader(srcFile);
-			BufferedReader reader = new BufferedReader(fileReader);
 			boolean changed = false;
 			StringBuffer buffer = new StringBuffer();
-			try {
+			try (FileReader fileReader = new FileReader(srcFile); BufferedReader reader = new BufferedReader(fileReader)) {
 				String line = reader.readLine();
 				String activeSymbol = null;
 				int state = STATE_OUTSIDE_CONDITION;
@@ -282,9 +270,6 @@ public class PreProcessor extends Task {
 					changed = changed || !written;
 					line = reader.readLine();
 				}
-			}
-			finally {
-				reader.close();
 			}
 			if (!changed) {
 				return null;

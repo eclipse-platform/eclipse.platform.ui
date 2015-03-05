@@ -127,10 +127,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	}
 	
 	private int findLine(IFile file, String var) throws CoreException {
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
-	    
 	    int lineNum = 0;
-	    try {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()))) {
     	    while(true) {
     	        String line = reader.readLine().trim();
 				if (line.startsWith("var")) { //$NON-NLS-1$
@@ -144,12 +142,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	    } catch (IOException e) {
 	        // end of file reached and line wasn't found
 	        return -1;
-	    } finally {
-	        try {
-	            reader.close();
-	        } catch (IOException e) {}
-	    }
-	    return lineNum;
+		}
+		return lineNum;
 	}
 	
     /* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 Wind River Systems and others.
+ * Copyright (c) 2005, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -387,10 +387,9 @@ public class PDAVirtualMachine {
         fFilename = inputFile;
 
         // Load all the code into memory
-        FileReader fileReader = new FileReader(inputFile);
         StringWriter stringWriter = new StringWriter();
 		List<String> code = new LinkedList<String>();
-        try {
+		try (FileReader fileReader = new FileReader(inputFile)) {
 	        int c = fileReader.read();
 	        while (c != -1) {
 	            if (c == '\n') {
@@ -402,9 +401,7 @@ public class PDAVirtualMachine {
 	            c = fileReader.read();
 	        }
         }
-        finally {
-        	fileReader.close();
-        }
+
         code.add(stringWriter.toString().trim());
         fCode = code.toArray(new String[code.size()]);
 
@@ -456,16 +453,16 @@ public class PDAVirtualMachine {
             System.out.println("-debug " + fCommandPort + " " + fEventPort); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        ServerSocket commandServerSocket = new ServerSocket(fCommandPort);
-        fCommandSocket = commandServerSocket.accept();
-        fCommandReceiveStream = new BufferedReader(new InputStreamReader(fCommandSocket.getInputStream()));
-        fCommandResponseStream = new PrintStream(fCommandSocket.getOutputStream());
-        commandServerSocket.close();
+		try (ServerSocket commandServerSocket = new ServerSocket(fCommandPort)) {
+			fCommandSocket = commandServerSocket.accept();
+			fCommandReceiveStream = new BufferedReader(new InputStreamReader(fCommandSocket.getInputStream()));
+			fCommandResponseStream = new PrintStream(fCommandSocket.getOutputStream());
+		}
 
-        ServerSocket eventServerSocket = new ServerSocket(fEventPort);
-        fEventSocket = eventServerSocket.accept();
-        fEventStream = new PrintStream(fEventSocket.getOutputStream());
-        eventServerSocket.close();
+		try (ServerSocket eventServerSocket = new ServerSocket(fEventPort)) {
+        	fEventSocket = eventServerSocket.accept();
+        	fEventStream = new PrintStream(fEventSocket.getOutputStream());
+        }
 
         System.out.println("debug connection accepted"); //$NON-NLS-1$
 

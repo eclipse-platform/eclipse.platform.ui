@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,18 +128,9 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	 * @return a free port number on localhost, or -1 if unable to find a free port
 	 */
 	public static int findFreePort() {
-		ServerSocket socket= null;
-		try {
-			socket= new ServerSocket(0);
+		try (ServerSocket socket = new ServerSocket(0)) {
 			return socket.getLocalPort();
 		} catch (IOException e) {
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return -1;
 	}
