@@ -245,6 +245,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	private MPerspectiveStack _perspectiveStack;
 
+	/** Ids of parts used as Show In targets, maintained in MRU order */
+	private List<String> mruShowInPartIds = new ArrayList<String>();
+
 	/**
 	 * Deactivate the last editor's action bars if another type of editor has //
 	 * * been activated.
@@ -2476,7 +2479,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 *            the id of the part that the action was performed on
 	 */
 	public void performedShowIn(String partId) {
-		// TODO compat: show in
+		mruShowInPartIds.remove(partId);
+		mruShowInPartIds.add(0, partId);
 	}
 
 	/**
@@ -2486,7 +2490,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 *            the collection of part ids to rearrange
 	 */
 	public void sortShowInPartIds(ArrayList<?> partIds) {
-		// TODO compat: can't sort what we don't have
+		Collections.sort(partIds, new Comparator<Object>() {
+			@Override
+			public int compare(Object ob1, Object ob2) {
+				int index1 = mruShowInPartIds.indexOf(ob1);
+				int index2 = mruShowInPartIds.indexOf(ob2);
+				if (index1 != -1 && index2 == -1)
+					return -1;
+				if (index1 == -1 && index2 != -1)
+					return 1;
+				return index1 - index2;
+			}
+		});
 	}
 
     /**
@@ -2697,6 +2712,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 		restoreWorkingSets();
+		restoreShowInMruPartIdsList();
     }
 
 	public void restoreWorkingSets() {
@@ -2737,6 +2753,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 				ATT_AGGREGATE_WORKING_SET_ID);
 	}
 
+	private void restoreShowInMruPartIdsList() {
+		String mruList = getWindowModel().getPersistedState().get(IWorkbenchConstants.TAG_SHOW_IN_TIME);
+		if (mruList != null) {
+			try {
+				IMemento memento = XMLMemento.createReadRoot(new StringReader(mruList));
+				IMemento[] mementoChildren = memento.getChildren();
+				for (IMemento child : mementoChildren) {
+					mruShowInPartIds.add(child.getID());
+				}
+			} catch (WorkbenchException e) {
+				StatusManager.getManager().handle(
+						new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+								WorkbenchMessages.WorkbenchPage_problemRestoringTitle, e));
+			}
+		}
+	}
+
 	@PreDestroy
 	public void saveWorkingSets() {
 		// Save working set if set
@@ -2747,25 +2780,35 @@ public class WorkbenchPage implements IWorkbenchPage {
 			getWindowModel().getPersistedState().remove(IWorkbenchConstants.TAG_WORKING_SET);
 		}
 
-		XMLMemento workingSetMem = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SETS);
-		for (int i = 0; i < workingSets.length; i++) {
-			workingSetMem
-					.createChild(IWorkbenchConstants.TAG_WORKING_SET, workingSets[i].getName());
+		List<String> workingSetNames = new ArrayList<String>(workingSets.length);
+		for (IWorkingSet workingSet : workingSets) {
+			workingSetNames.add(workingSet.getName());
 		}
-		StringWriter writer = new StringWriter();
-		try {
-			workingSetMem.save(writer);
-			getWindowModel().getPersistedState().put(IWorkbenchConstants.TAG_WORKING_SETS,
-					writer.getBuffer().toString());
-		} catch (IOException e) {
-			// Simply don't store the settings
-			StatusManager.getManager().handle(
-					new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
-							WorkbenchMessages.SavingProblem, e));
-		}
+		saveMemento(IWorkbenchConstants.TAG_WORKING_SETS, IWorkbenchConstants.TAG_WORKING_SET, workingSetNames);
 
 		getWindowModel().getPersistedState().put(ATT_AGGREGATE_WORKING_SET_ID,
 				aggregateWorkingSetId);
+	}
+
+	@PreDestroy
+	public void saveShowInMruPartIdsList() {
+		saveMemento(IWorkbenchConstants.TAG_SHOW_IN_TIME, IWorkbenchConstants.TAG_ID, mruShowInPartIds);
+	}
+
+	private void saveMemento(String rootType, String childType, Collection<String> ids) {
+		XMLMemento memento = XMLMemento.createWriteRoot(rootType);
+		for (String id : ids) {
+			memento.createChild(childType, id);
+		}
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+			getWindowModel().getPersistedState().put(rootType, writer.getBuffer().toString());
+		} catch (IOException e) {
+			// Simply don't store the settings
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, WorkbenchMessages.SavingProblem, e));
+		}
 	}
 
 	/**
