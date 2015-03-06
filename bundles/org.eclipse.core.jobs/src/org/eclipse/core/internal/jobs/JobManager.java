@@ -1030,15 +1030,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			jobCount = jobGroup.getActiveJobsCount();
 		}
 
-		if (jobCount == 0) {
-			if (monitor != null) {
-				// Call monitor methods outside synchronized block because monitors may call untrusted code.
-				monitor.beginTask(JobMessages.jobs_blocked0, 1);
-				monitor.done();
-			}
-			return true;
-		}
-
 		SubMonitor subMonitor = SubMonitor.convert(monitor, JobMessages.jobs_blocked0, jobCount);
 		try {
 			int jobsLeft;

@@ -1257,6 +1257,30 @@ public class JobGroupTest extends AbstractJobTest {
 		assertEquals("4.0", returnedGroupResult[0], jobGroup.getResult());
 	}
 
+	// https://bugs.eclipse.org/461621
+	public void testSlowComputeGroupResult() throws Exception {
+		final JobGroup jobGroup = new JobGroup("group", 1, 1) {
+			protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
+				sleep(500);
+				return new MultiStatus("org.eclipse.core.jobs", 0, new IStatus[0], "custom result", null);
+			}
+		};
+
+		Job job = new Job("TestJob") {
+			public IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+		job.setJobGroup(jobGroup);
+		job.schedule();
+		waitForCompletion(job, 100);
+
+		boolean completed = jobGroup.join(1000, null);
+		assertTrue("2.0", completed);
+		MultiStatus result = jobGroup.getResult();
+		assertNotNull("3.0", result);
+	}
+
 	/**
 	 * Tests that job groups work fine with normal jobs that are not belonging to any group.
 	 */
