@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 327086
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 413611
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 449022
+ *     Eugen Neufeld - bug 461560
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
@@ -326,6 +327,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.custom.CLabel</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
+	 * <li>org.eclipse.swt.widgets.Group (as of 1.7)</li>
 	 * <li>org.eclipse.swt.widgets.Item</li>
 	 * <li>org.eclipse.swt.widgets.Label</li>
 	 * <li>org.eclipse.swt.widgets.Link (as of 1.2)</li>
@@ -355,6 +357,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.custom.CLabel</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
+	 * <li>org.eclipse.swt.widgets.Group (as of 1.7)</li>
 	 * <li>org.eclipse.swt.widgets.Label</li>
 	 * <li>org.eclipse.swt.widgets.Link (as of 1.2)</li>
 	 * <li>org.eclipse.swt.widgets.Shell</li>

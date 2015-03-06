@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,9 @@
  *                    255734, 263693, 169876, 266038, 268336, 270461, 271720,
  *                    283204, 281723, 283428
  *     Ovidio Mallo - bugs 237163, 235195, 299619, 306611, 305367
+ *     Eugen Neufeld - bug 461560
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.tests.databinding.AggregateValidationStatusTest;
 import org.eclipse.core.tests.databinding.BindingTest;
@@ -196,6 +193,7 @@ import org.eclipse.jface.tests.internal.databinding.swt.DateTimeCalendarObservab
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeDateObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeSelectionPropertyTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeTimeObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.GroupObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
@@ -228,6 +226,10 @@ import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementMapTest
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementWrapperTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerInputObservableValueTest;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class BindingTestSuite extends TestSuite {
 
@@ -466,6 +468,7 @@ public class BindingTestSuite extends TestSuite {
 
 		addTestSuite(ControlObservableValueTest.class);
 		addTest(LabelObservableValueTest.suite());
+		addTest(GroupObservableValueTest.suite());
 		addTestSuite(ListSingleSelectionObservableValueTest.class);
 		addTest(ScaleObservableValueMinTest.suite());
 		addTest(ScaleObservableValueMaxTest.suite());
