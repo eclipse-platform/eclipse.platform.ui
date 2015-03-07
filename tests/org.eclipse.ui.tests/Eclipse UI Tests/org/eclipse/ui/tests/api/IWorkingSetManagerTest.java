@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tomasz Zarna <tomasz.zarna@tasktop.com> - Bug 37183
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
@@ -41,16 +42,16 @@ public class IWorkingSetManagerTest extends UITestCase {
 
     String fChangeProperty;
 
-    Object fChangeNewValue;
+	IWorkingSet fChangeNewValue;
 
-    Object fChangeOldValue;
+	IWorkingSet fChangeOldValue;
 
     class TestPropertyChangeListener implements IPropertyChangeListener {
         @Override
 		public void propertyChange(PropertyChangeEvent event) {
             fChangeProperty = event.getProperty();
-            fChangeNewValue = event.getNewValue();
-            fChangeOldValue = event.getOldValue();
+			fChangeNewValue = (IWorkingSet) event.getNewValue();
+			fChangeOldValue = (IWorkingSet) event.getOldValue();
         }
     }
 
@@ -125,27 +126,25 @@ public class IWorkingSetManagerTest extends UITestCase {
         assertEquals(null, fChangeNewValue);
 
         resetChangeData();
-		fWorkingSet.setLabel(WORKING_SET_NAME_3); // set the label first to
-													// something other than the
-													// new name. This will allow
-													// us to test for the name
-													// property apart from the
-													// label property
+		// Set the label first to something other than the new name.
+		// This will allow us to test for the name property apart from the label
+		// property
+		fWorkingSet.setLabel(WORKING_SET_NAME_3);
 		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE,
 				fChangeProperty);
-		assertEquals(null, fChangeOldValue);
+		assertEquals(WORKING_SET_NAME_1, fChangeOldValue.getLabel());
 		assertEquals(fWorkingSet, fChangeNewValue);
 		fWorkingSet.setName(WORKING_SET_NAME_2);
 		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE,
 				fChangeProperty);
-		assertEquals(null, fChangeOldValue);
+		assertEquals(WORKING_SET_NAME_1, fChangeOldValue.getName());
 		assertEquals(fWorkingSet, fChangeNewValue);
 
         resetChangeData();
         fWorkingSet.setElements(new IAdaptable[] {});
         assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE,
                 fChangeProperty);
-        assertEquals(null, fChangeOldValue);
+		assertEquals(1, fChangeOldValue.getElements().length);
         assertEquals(fWorkingSet, fChangeNewValue);
     }
 
