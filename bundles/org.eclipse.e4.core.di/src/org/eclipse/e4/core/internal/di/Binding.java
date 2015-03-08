@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class Binding implements IBinding {
 		this.qualifierName = source.qualifierName;
 	}
 
+	@Override
 	public IBinding named(String name) {
 		Binding binding = new Binding(this);
 		binding.qualifierName = name;
@@ -40,6 +41,7 @@ public class Binding implements IBinding {
 		return binding;
 	}
 
+	@Override
 	public IBinding implementedBy(Class<?> implClazz) {
 		Binding binding = new Binding(this);
 		binding.implementationClazz = implClazz;

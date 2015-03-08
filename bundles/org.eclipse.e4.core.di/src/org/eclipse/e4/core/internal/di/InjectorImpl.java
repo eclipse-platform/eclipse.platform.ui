@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,6 +80,7 @@ public class InjectorImpl implements IInjector {
 
 	private PrimaryObjectSupplier defaultSupplier;
 
+	@Override
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		try {
 			inject(object, objectSupplier, null);
@@ -173,6 +174,7 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
+	@Override
 	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) {
 		try {
 			if (!forgetInjectedObject(object, objectSupplier))
@@ -210,6 +212,7 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
+	@Override
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) {
 		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier, null, true);
 		if (result == IInjector.NOT_A_VALUE) {
@@ -221,10 +224,12 @@ public class InjectorImpl implements IInjector {
 		return result;
 	}
 
+	@Override
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) {
 		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, null, false);
 	}
 
+	@Override
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier) {
 		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, localSupplier, false);
 	}
@@ -253,6 +258,7 @@ public class InjectorImpl implements IInjector {
 		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, tempSupplier, throwUnresolved);
 	}
 
+	@Override
 	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) {
 		Class<?> implementationClass = getImplementationClass(clazz);
 		return clazz.cast(internalMake(implementationClass, objectSupplier, null));
@@ -266,6 +272,7 @@ public class InjectorImpl implements IInjector {
 		return binding.getImplementationClass();
 	}
 
+	@Override
 	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier) {
 		Class<?> implementationClass = getImplementationClass(clazz);
 		return clazz.cast(internalMake(implementationClass, objectSupplier, staticSupplier));
@@ -309,6 +316,7 @@ public class InjectorImpl implements IInjector {
 			for (Constructor<?> constructor : constructors)
 				sortedConstructors.add(constructor);
 			Collections.sort(sortedConstructors, new Comparator<Constructor<?>>() {
+				@Override
 				public int compare(Constructor<?> c1, Constructor<?> c2) {
 					int l1 = c1.getParameterTypes().length;
 					int l2 = c2.getParameterTypes().length;
@@ -784,10 +792,12 @@ public class InjectorImpl implements IInjector {
 		return (Class<?>) actualTypes[0];
 	}
 
+	@Override
 	public IBinding addBinding(Class<?> clazz) {
 		return addBinding(new Binding(clazz, this));
 	}
 
+	@Override
 	public IBinding addBinding(IBinding binding) {
 		Binding internalBinding = (Binding) binding;
 		Class<?> clazz = internalBinding.getDescribedClass();
@@ -889,6 +899,7 @@ public class InjectorImpl implements IInjector {
 		}
 	}
 
+	@Override
 	public void setDefaultSupplier(PrimaryObjectSupplier objectSupplier) {
 		defaultSupplier = objectSupplier;
 	}

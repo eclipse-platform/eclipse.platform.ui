@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,12 @@ public class ObjectDescriptor implements IObjectDescriptor {
 		this.annotations = (allAnnotations == null) ? null : qualifiers(allAnnotations);
 	}
 
+	@Override
 	public Type getDesiredType() {
 		return desiredType;
 	}
 
+	@Override
 	public boolean hasQualifier(Class<? extends Annotation> clazz) {
 		if (clazz == null)
 			return false;
@@ -43,6 +45,7 @@ public class ObjectDescriptor implements IObjectDescriptor {
 		return false;
 	}
 
+	@Override
 	public Annotation[] getQualifiers() {
 		return annotations;
 	}
@@ -50,6 +53,7 @@ public class ObjectDescriptor implements IObjectDescriptor {
 	/**
 	 * Returns null if qualifier is not present
 	 */
+	@Override
 	public <T extends Annotation> T getQualifier(Class<T> clazz) {
 		if (clazz == null)
 			return null;

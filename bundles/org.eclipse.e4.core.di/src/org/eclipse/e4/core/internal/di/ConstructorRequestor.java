@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 		super(constructor, injector, primarySupplier, tempSupplier, null, false /* do not track */);
 	}
 
+	@Override
 	public Object execute() throws InjectionException {
 		Object result = null;
 		boolean wasAccessible = true;
@@ -63,6 +64,7 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 		return result;
 	}
 
+	@Override
 	public IObjectDescriptor[] calcDependentObjects() {
 		Annotation[][] annotations = location.getParameterAnnotations();
 		Type[] logicalParams = location.getGenericParameterTypes();
@@ -83,6 +85,7 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 		return descriptors;
 	}
 
+	@Override
 	public Class<?> getRequestingObjectClass() {
 		return location.getDeclaringClass();
 	}
