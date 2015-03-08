@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * method that performs the "visual state persit" operation
  * <p>
  * This annotation must not be applied to more than one method on a class. If multiple methods of
- * the class are tagged with this this annotation, only one of them will be called to persist visual 
+ * the class are tagged with this this annotation, only one of them will be called to persist visual
  * state.
  * </p>
  * @since 1.0

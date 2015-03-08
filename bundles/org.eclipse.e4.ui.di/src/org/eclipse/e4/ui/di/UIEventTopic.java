@@ -26,14 +26,14 @@ import javax.inject.Qualifier;
  * </p>
  * <p>
  * Example usage:
- * 
+ *
  * <pre>
  *   public class Car {
  *     &#064;void handle(@Optional @UIEventTopic("org/eclipse/e4/some/event/topic") Payload payload);
  *     ...
  *   }
  * </pre>
- * 
+ *
  * </p>
  * @since 1.0
  */

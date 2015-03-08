@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * <p>
  * {@literal @}AboutToHide<br>
  * public void aboutToHide(List&lt;MMenuElement&gt; items) { }
- * 
+ *
  * @see org.eclipse.jface.action.IMenuListener2
  * @since 1.0
  */

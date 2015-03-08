@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * <p>
  * {@literal @}AboutToShow<br>
  * public void aboutToShow(List&lt;MMenuElement&gt; items) { }
- * 
+ *
  * @see org.eclipse.jface.action.IMenuListener
  * @since 1.0
  */

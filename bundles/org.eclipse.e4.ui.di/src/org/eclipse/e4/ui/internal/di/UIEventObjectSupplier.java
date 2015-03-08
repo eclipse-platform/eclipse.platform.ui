@@ -57,12 +57,12 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 					}
 				});
 			}
-		}		
+		}
 	}
-	
+
 	@Inject
 	protected UISynchronize uiSync;
-	
+
 	@Inject @Optional
 	protected Logger logger;
 
