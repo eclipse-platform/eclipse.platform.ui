@@ -101,6 +101,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return new ContentTypeBuilder(newCatalog);
 	}
 
+	@Override
 	public IContentType[] getAllContentTypes() {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] types = currentCatalog.getAllContentTypes();
@@ -130,12 +131,14 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return newCatalog;
 	}
 
+	@Override
 	public IContentType getContentType(String contentTypeIdentifier) {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		ContentType type = currentCatalog.getContentType(contentTypeIdentifier);
 		return type == null ? null : new ContentTypeHandler(type, currentCatalog.getGeneration());
 	}
 
+	@Override
 	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy, final IScopeContext context) {
 		return new ContentTypeMatcher(customPolicy, context == null ? getContext() : context);
 	}
@@ -148,6 +151,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return context.getNode(CONTENT_TYPE_PREF_NODE);
 	}
 
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		// no changes related to the content type registry
 		if (event.getExtensionDeltas(IContentConstants.RUNTIME_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0 && 
@@ -168,6 +172,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	/* (non-Javadoc)
 	 * @see IContentTypeManager#addContentTypeChangeListener(IContentTypeChangeListener)
 	 */
+	@Override
 	public void addContentTypeChangeListener(IContentTypeChangeListener listener) {
 		contentTypeListeners.add(listener);
 	}
@@ -175,6 +180,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	/* (non-Javadoc)
 	 * @see IContentTypeManager#removeContentTypeChangeListener(IContentTypeChangeListener)
 	 */
+	@Override
 	public void removeContentTypeChangeListener(IContentTypeChangeListener listener) {
 		contentTypeListeners.remove(listener);
 	}
@@ -186,10 +192,12 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(eventObject);
 			final IContentTypeChangeListener listener = (IContentTypeChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					// already logged in SafeRunner#run()
 				}
 
+				@Override
 				public void run() throws Exception {
 					listener.contentTypeChanged(event);
 				}
@@ -198,6 +206,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		}
 	}
 
+	@Override
 	public IContentDescription getSpecificDescription(BasicDescription description) {
 		// this is the platform content type manager, no specificities
 		return description;

@@ -26,6 +26,7 @@ public class LazyInputStream extends InputStream implements ILazySource {
 		this.blockCapacity = blockCapacity;
 	}
 
+	@Override
 	public int available() throws IOException {
 		try {
 			return bufferSize - offset + in.available();
@@ -89,6 +90,7 @@ public class LazyInputStream extends InputStream implements ILazySource {
 		return offset;
 	}
 
+	@Override
 	public boolean isText() {
 		return false;
 	}
@@ -107,14 +109,17 @@ public class LazyInputStream extends InputStream implements ILazySource {
 		return readCount;
 	}
 
+	@Override
 	public synchronized void mark(int readlimit) {
 		mark = offset;
 	}
 
+	@Override
 	public boolean markSupported() {
 		return true;
 	}
 
+	@Override
 	public int read() throws IOException {
 		ensureAvailable(1);
 		if (bufferSize <= offset)
@@ -124,25 +129,30 @@ public class LazyInputStream extends InputStream implements ILazySource {
 		return nextByte;
 	}
 
+	@Override
 	public int read(byte[] b) throws IOException {
 		return read(b, 0, b.length);
 	}
 
+	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		ensureAvailable(len);
 		int copied = copyFromBuffer(b, off, len);
 		return copied == 0 ? -1 : copied;
 	}
 
+	@Override
 	public synchronized void reset() {
 		offset = mark;
 	}
 
+	@Override
 	public void rewind() {
 		mark = 0;
 		offset = 0;
 	}
 
+	@Override
 	public long skip(long toSkip) throws IOException {
 		if (toSkip <= 0)
 			return 0;

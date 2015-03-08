@@ -36,7 +36,7 @@ public class Util {
 		// simple cases, do not create temporary list
 		if (!tokenizer.hasMoreTokens())
 			return wasSeparator ? /* two empty strings */new String[] {first, first} : /*single non-empty element  */new String[] {first};
-		ArrayList items = new ArrayList();
+		ArrayList<String> items = new ArrayList<String>();
 		items.add(first);
 		String current;
 		do {
@@ -52,15 +52,15 @@ public class Util {
 		if (wasSeparator)
 			// trailing separator
 			items.add(""); //$NON-NLS-1$
-		return (String[]) items.toArray(new String[items.size()]);
+		return items.toArray(new String[items.size()]);
 	}
 
-	public static List parseItemsIntoList(String string) {
+	public static List<String> parseItemsIntoList(String string) {
 		return parseItemsIntoList(string, ","); //$NON-NLS-1$
 	}
 
-	public static List parseItemsIntoList(String string, String separator) {
-		List items = new ArrayList(5);
+	public static List<String> parseItemsIntoList(String string, String separator) {
+		List<String> items = new ArrayList<String>(5);
 		if (string == null)
 			return items;
 		StringTokenizer tokenizer = new StringTokenizer(string, separator, true);

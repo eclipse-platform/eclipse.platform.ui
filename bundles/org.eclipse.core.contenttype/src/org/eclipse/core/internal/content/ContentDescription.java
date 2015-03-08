@@ -45,6 +45,7 @@ public final class ContentDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public String getCharset() {
 		byte[] bom = (byte[]) getProperty(BYTE_ORDER_MARK);
 		if (bom == BOM_UTF_8)
@@ -73,6 +74,7 @@ public final class ContentDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public Object getProperty(QualifiedName key) {
 		Object describedProperty = getDescribedProperty(key);
 		if (describedProperty != null)
@@ -83,6 +85,7 @@ public final class ContentDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public boolean isRequested(QualifiedName propertyKey) {
 		// all options requested
 		if ((flags & FLAG_ALL_OPTIONS) != 0)
@@ -126,6 +129,7 @@ public final class ContentDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public void setProperty(QualifiedName newKey, Object newValue) {
 		assertMutable();
 		if (keys == null) {
@@ -166,6 +170,7 @@ public final class ContentDescription extends BasicDescription {
 		values = tmpValues;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer("{"); //$NON-NLS-1$
 		if (keys != null)

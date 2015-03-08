@@ -54,34 +54,36 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private static final String FULL_XML_DECL = "org.eclipse.core.runtime.content.XMLContentDescriber.fullXMLDecl"; //$NON-NLS-1$
 	private static final String RESULT = "org.eclipse.core.runtime.content.XMLContentDescriber.processed"; //$NON-NLS-1$
 
+	@Override
 	public int describe(InputStream input, IContentDescription description) throws IOException {
-		return describe2(input, description, new HashMap());
+		return describe2(input, description, new HashMap<String, Object>());
 	}
 
-	int describe2(InputStream input, IContentDescription description, Map properties) throws IOException {
+	int describe2(InputStream input, IContentDescription description, Map<String, Object> properties) throws IOException {
 		if (!isProcessed(properties))
 			fillContentProperties(input, description, properties);
 		return internalDescribe(description, properties);
 	}
 
+	@Override
 	public int describe(Reader input, IContentDescription description) throws IOException {
-		return describe2(input, description, new HashMap());
+		return describe2(input, description, new HashMap<String, Object>());
 	}
 
-	int describe2(Reader input, IContentDescription description, Map properties) throws IOException {
+	int describe2(Reader input, IContentDescription description, Map<String, Object> properties) throws IOException {
 		if (!isProcessed(properties))
 			fillContentProperties(readXMLDecl(input), description, properties);
 		return internalDescribe(description, properties);
 	}
 
-	private boolean isProcessed(Map properties) {
+	private boolean isProcessed(Map<String, Object> properties) {
 		Boolean result = (Boolean) properties.get(RESULT);
 		if (result != null)
 			return true;
 		return false;
 	}
 
-	private void fillContentProperties(InputStream input, IContentDescription description, Map properties) throws IOException {
+	private void fillContentProperties(InputStream input, IContentDescription description, Map<String, Object> properties) throws IOException {
 		byte[] bom = Util.getByteOrderMark(input);
 		String xmlDeclEncoding = "UTF-8"; //$NON-NLS-1$
 		input.reset();
@@ -97,7 +99,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		fillContentProperties(readXMLDecl(input, xmlDeclEncoding), description, properties);
 	}
 
-	private void fillContentProperties(String line, IContentDescription description, Map properties) throws IOException {
+	private void fillContentProperties(String line, IContentDescription description, Map<String, Object> properties) throws IOException {
 		// XMLDecl should be the first string (no blanks allowed)
 		if (line != null && line.startsWith(XML_PREFIX))
 			properties.put(FULL_XML_DECL, new Boolean(true));
@@ -107,7 +109,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		properties.put(RESULT, new Boolean(true));
 	}
 
-	private int internalDescribe(IContentDescription description, Map properties) {
+	private int internalDescribe(IContentDescription description, Map<String, Object> properties) {
 		if (description != null) {
 			byte[] bom = (byte[]) properties.get(BOM);
 			if (bom != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
@@ -241,6 +243,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		return true;
 	}
 
+	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return SUPPORTED_OPTIONS;
 	}

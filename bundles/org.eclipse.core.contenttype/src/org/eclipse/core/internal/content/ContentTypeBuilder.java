@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
+import org.eclipse.core.runtime.QualifiedName;
+
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
@@ -102,6 +104,7 @@ public class ContentTypeBuilder {
 			final ContentTypeCatalog localCatalog = catalog;
 			final IEclipsePreferences root = localCatalog.getManager().getPreferences();
 			root.accept(new IPreferenceNodeVisitor() {
+				@Override
 				public boolean visit(IEclipsePreferences node) {
 					if (node == root)
 						return true;
@@ -141,9 +144,9 @@ public class ContentTypeBuilder {
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
 		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("alias-for")); //$NON-NLS-1$		
 		IConfigurationElement[] propertyCEs = null;
-		Map defaultProperties = null;
+		Map<QualifiedName, String> defaultProperties = null;
 		if ((propertyCEs = contentTypeCE.getChildren("property")).length > 0) { //$NON-NLS-1$
-			defaultProperties = new HashMap();
+			defaultProperties = new HashMap<QualifiedName, String>();
 			for (int i = 0; i < propertyCEs.length; i++) {
 				String defaultValue = propertyCEs[i].getAttributeAsIs("default"); //$NON-NLS-1$
 				if (defaultValue == null)

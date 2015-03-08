@@ -22,6 +22,7 @@ public final class DefaultDescription extends BasicDescription {
 		super(contentTypeInfo);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof DefaultDescription))
 			return false;
@@ -32,6 +33,7 @@ public final class DefaultDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public String getCharset() {
 		return (String) getProperty(CHARSET);
 	}
@@ -39,10 +41,12 @@ public final class DefaultDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public Object getProperty(QualifiedName key) {
 		return contentTypeInfo.getDefaultProperty(key);
 	}
 
+	@Override
 	public int hashCode() {
 		return contentTypeInfo.getContentType().hashCode();
 	}
@@ -50,6 +54,7 @@ public final class DefaultDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public boolean isRequested(QualifiedName key) {
 		return false;
 	}
@@ -57,10 +62,12 @@ public final class DefaultDescription extends BasicDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public void setProperty(QualifiedName key, Object value) {
 		throw new IllegalStateException();
 	}
 
+	@Override
 	public String toString() {
 		return "{default} : " + contentTypeInfo.getContentType(); //$NON-NLS-1$
 	}

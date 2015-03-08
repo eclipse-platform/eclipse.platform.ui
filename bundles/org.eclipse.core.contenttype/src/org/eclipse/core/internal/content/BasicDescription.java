@@ -24,6 +24,7 @@ public abstract class BasicDescription implements IContentDescription {
 	/**
 	 * @see IContentDescription
 	 */
+	@Override
 	public IContentType getContentType() {
 		ContentType contentType = contentTypeInfo.getContentType();
 		//TODO performance: potential creation of garbage		

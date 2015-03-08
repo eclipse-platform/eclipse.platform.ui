@@ -28,22 +28,27 @@ public class ContentTypeHandler implements IContentType {
 	 * handler's target cannot be determined. 
 	 */
 	private class DummyContentDescription implements IContentDescription {
+		@Override
 		public String getCharset() {
 			return null;
 		}
 
+		@Override
 		public IContentType getContentType() {
 			return ContentTypeHandler.this;
 		}
 
+		@Override
 		public Object getProperty(QualifiedName key) {
 			return null;
 		}
 
+		@Override
 		public boolean isRequested(QualifiedName key) {
 			return false;
 		}
 
+		@Override
 		public void setProperty(QualifiedName key, Object value) {
 			// don't do anything
 		}
@@ -51,20 +56,22 @@ public class ContentTypeHandler implements IContentType {
 
 	private int generation;
 	String id;
-	private SoftReference targetRef;
+	private SoftReference<ContentType> targetRef;
 
 	ContentTypeHandler(ContentType target, int generation) {
 		this.id = target.getId();
-		this.targetRef = new SoftReference(target);
+		this.targetRef = new SoftReference<ContentType>(target);
 		this.generation = generation;
 	}
 
+	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
 		final IContentType target = getTarget();
 		if (target != null)
 			target.addFileSpec(fileSpec, type);
 	}
 
+	@Override
 	public boolean equals(Object another) {
 		if (another instanceof ContentType)
 			return id.equals(((ContentType) another).id);
@@ -73,6 +80,7 @@ public class ContentTypeHandler implements IContentType {
 		return false;
 	}
 
+	@Override
 	public IContentType getBaseType() {
 		final ContentType target = getTarget();
 		if (target == null)
@@ -81,40 +89,48 @@ public class ContentTypeHandler implements IContentType {
 		return (baseType != null) ? new ContentTypeHandler(baseType, baseType.getCatalog().getGeneration()) : null;
 	}
 
+	@Override
 	public String getDefaultCharset() {
 		final IContentType target = getTarget();
 		return (target != null) ? target.getDefaultCharset() : null;
 	}
 
+	@Override
 	public IContentDescription getDefaultDescription() {
 		final IContentType target = getTarget();
 		return (target != null) ? target.getDefaultDescription() : new DummyContentDescription();
 	}
 
+	@Override
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
 		final IContentType target = getTarget();
 		return (target != null) ? target.getDescriptionFor(contents, options) : null;
 	}
 
+	@Override
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
 		final IContentType target = getTarget();
 		return (target != null) ? target.getDescriptionFor(contents, options) : null;
 	}
 
+	@Override
 	public String[] getFileSpecs(int type) {
 		final IContentType target = getTarget();
 		return (target != null) ? target.getFileSpecs(type) : new String[0];
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		final IContentType target = getTarget();
 		return (target != null) ? target.getName() : id;
 	}
 
+	@Override
 	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException {
 		final ContentType target = getTarget();
 		if (target == null)
@@ -132,30 +148,34 @@ public class ContentTypeHandler implements IContentType {
 	 * Public for testing purposes only.
 	 */
 	public ContentType getTarget() {
-		ContentType target = (ContentType) targetRef.get();
+		ContentType target = targetRef.get();
 		ContentTypeCatalog catalog = ContentTypeManager.getInstance().getCatalog();
 		if (target == null || catalog.getGeneration() != generation) {
 			target = catalog.getContentType(id);
-			targetRef = new SoftReference(target);
+			targetRef = new SoftReference<ContentType>(target);
 			generation = catalog.getGeneration();
 		}
 		return target == null ? null : target.getAliasTarget(true);
 	}
 
+	@Override
 	public int hashCode() {
 		return id.hashCode();
 	}
 
+	@Override
 	public boolean isAssociatedWith(String fileName) {
 		final IContentType target = getTarget();
 		return (target != null) ? target.isAssociatedWith(fileName) : false;
 	}
 
+	@Override
 	public boolean isAssociatedWith(String fileName, IScopeContext context) {
 		final IContentType target = getTarget();
 		return (target != null) ? target.isAssociatedWith(fileName, context) : false;
 	}
 
+	@Override
 	public boolean isKindOf(IContentType another) {
 		if (another instanceof ContentTypeHandler)
 			another = ((ContentTypeHandler) another).getTarget();
@@ -163,18 +183,21 @@ public class ContentTypeHandler implements IContentType {
 		return (target != null) ? target.isKindOf(another) : false;
 	}
 
+	@Override
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
 		final IContentType target = getTarget();
 		if (target != null)
 			target.removeFileSpec(fileSpec, type);
 	}
 
+	@Override
 	public void setDefaultCharset(String userCharset) throws CoreException {
 		final IContentType target = getTarget();
 		if (target != null)
 			target.setDefaultCharset(userCharset);
 	}
 
+	@Override
 	public String toString() {
 		return id;
 	}

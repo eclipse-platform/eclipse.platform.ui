@@ -16,6 +16,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class PreferenceModifyListener extends org.eclipse.core.runtime.preferences.PreferenceModifyListener {
+	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		Preferences root = node.node("/"); //$NON-NLS-1$
 		try {

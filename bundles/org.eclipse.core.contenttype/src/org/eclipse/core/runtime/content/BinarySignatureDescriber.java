@@ -61,6 +61,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] buffer = new byte[signature.length];
 		int notValid = required ? INVALID : INDETERMINATE;
@@ -77,6 +78,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#getSupportedOptions
 	 */
+	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return new QualifiedName[0];
 	}
@@ -84,12 +86,13 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 	/* (Intentionally not included in javadoc)
 	 * @see IExecutableExtension#setInitializationData
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		try {
 			if (data instanceof String)
 				signature = parseSignature((String) data);
 			else if (data instanceof Hashtable) {
-				Hashtable parameters = (Hashtable) data;
+				Hashtable<?,?> parameters = (Hashtable<?,?>) data;
 				if (!parameters.containsKey(SIGNATURE)) {
 					String message = NLS.bind(ContentMessages.content_badInitializationData, BinarySignatureDescriber.class.getName());
 					throw new CoreException(new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, null));
@@ -107,13 +110,13 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 	}
 
 	private static byte[] parseSignature(String data) {
-		List bytes = new ArrayList();
+		List<Byte> bytes = new ArrayList<Byte>();
 		StringTokenizer tokenizer = new StringTokenizer(data, " \t\n\r\f,"); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
 			bytes.add(new Byte((byte) Integer.parseInt(tokenizer.nextToken().trim(), 16)));
 		byte[] signature = new byte[bytes.size()];
 		for (int i = 0; i < signature.length; i++)
-			signature[i] = ((Byte) bytes.get(i)).byteValue();
+			signature[i] = bytes.get(i).byteValue();
 		return signature;
 	}
 }

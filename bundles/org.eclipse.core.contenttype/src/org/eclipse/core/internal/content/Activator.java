@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,38 +22,34 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 /**
  * The bundle activator for the runtime content manager plug-in.
  */
-public class Activator implements BundleActivator, ServiceTrackerCustomizer {
+public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExtensionRegistry, IExtensionRegistry> {
 
 	private static Activator singleton;
 	private static BundleContext bundleContext;
-	private ServiceRegistration contentManagerService = null;
-	private ServiceTracker parserTracker = null;
-	private ServiceTracker debugTracker = null;
-	private ServiceTracker registryTracker = null;
+	private ServiceRegistration<IContentTypeManager> contentManagerService;
+	private ServiceTracker<SAXParserFactory, Object> parserTracker;
+	private ServiceTracker<DebugOptions, Object> debugTracker;
+	private ServiceTracker<IExtensionRegistry, IExtensionRegistry> registryTracker;
 
-	/*
+	/**
 	 * Return this activator's singleton instance or null if it has not been started.
 	 */
 	public static Activator getDefault() {
 		return singleton;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 		singleton = this;
 		// ContentTypeManager should be started first
 		ContentTypeManager.startup();
-		contentManagerService = bundleContext.registerService(IContentTypeManager.class.getName(), ContentTypeManager.getInstance(), new Hashtable());
-		registryTracker = new ServiceTracker(context, IExtensionRegistry.class.getName(), this);
+		contentManagerService = bundleContext.registerService(IContentTypeManager.class, ContentTypeManager.getInstance(), new Hashtable<String, Object>());
+		registryTracker = new ServiceTracker<IExtensionRegistry, IExtensionRegistry>(context, IExtensionRegistry.class, this);
 		registryTracker.open();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (contentManagerService != null) {
 			contentManagerService.unregister();
@@ -75,20 +71,20 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer {
 		bundleContext = null;
 	}
 
-	/*
+	/**
 	 * Return this plug-in's bundle context.
 	 */
 	static BundleContext getContext() {
 		return bundleContext;
 	}
 
-	/*
+	/**
 	 * Return the registered SAX parser factory or null if one
 	 * does not exist.
 	 */
 	public SAXParserFactory getFactory() {
 		if (parserTracker == null) {
-			parserTracker = new ServiceTracker(bundleContext, SAXParserFactory.class.getName(), null);
+			parserTracker = new ServiceTracker<SAXParserFactory, Object>(bundleContext, SAXParserFactory.class, null);
 			parserTracker.open();
 		}
 		SAXParserFactory theFactory = (SAXParserFactory) parserTracker.getService();
@@ -97,13 +93,13 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer {
 		return theFactory;
 	}
 
-	/*
+	/**
 	 * Return the boolean value in the debug options for the given key, or
 	 * return the default value if there is none.
 	 */
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker = new ServiceTracker<DebugOptions, Object>(bundleContext, DebugOptions.class, null);
 			debugTracker.open();
 		}
 		DebugOptions options = (DebugOptions) debugTracker.getService();
@@ -115,20 +111,23 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer {
 		return defaultValue;
 	}
 
-	public Object addingService(ServiceReference reference) {
-		IExtensionRegistry registry = (IExtensionRegistry) bundleContext.getService(reference);
+	@Override
+	public IExtensionRegistry addingService(ServiceReference<IExtensionRegistry> reference) {
+		IExtensionRegistry registry = bundleContext.getService(reference);
 		// registry is available; add the change listener
 		ContentTypeManager.addRegistryChangeListener(registry);
 		return registry;
 	}
 
-	public void modifiedService(ServiceReference reference, Object service) {
+	@Override
+	public void modifiedService(ServiceReference<IExtensionRegistry> reference, IExtensionRegistry service) {
 		// do nothing
 	}
 
-	public void removedService(ServiceReference reference, Object service) {
+	@Override
+	public void removedService(ServiceReference<IExtensionRegistry> reference, IExtensionRegistry service) {
 		// registry is unavailable; remove the change listener
-		ContentTypeManager.removeRegistryChangeListener((IExtensionRegistry) service);
+		ContentTypeManager.removeRegistryChangeListener(service);
 		bundleContext.ungetService(reference);
 	}
 }

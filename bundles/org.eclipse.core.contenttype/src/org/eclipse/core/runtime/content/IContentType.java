@@ -115,6 +115,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * 
 	 * @return the default charset, or <code>null</code>
 	 */
+	@Override
 	public String getDefaultCharset();
 
 	/**
@@ -140,6 +141,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * @see #IGNORE_PRE_DEFINED
 	 * @see #IGNORE_USER_DEFINED
 	 */
+	@Override
 	public String[] getFileSpecs(int type);
 
 	/**
@@ -148,6 +150,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * 
 	 * @return this content type's unique identifier
 	 */
+	@Override
 	public String getId();
 
 	/**

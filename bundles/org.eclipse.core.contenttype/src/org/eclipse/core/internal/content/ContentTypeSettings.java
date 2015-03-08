@@ -27,9 +27,9 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 	static void addFileSpec(IScopeContext context, String contentTypeId, String fileSpec, int type) throws CoreException {
 		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentTypeId);
 		String key = ContentType.getPreferenceKey(type);
-		List existingValues = Util.parseItemsIntoList(contentTypeNode.get(key, null));
+		List<String> existingValues = Util.parseItemsIntoList(contentTypeNode.get(key, null));
 		for (int i = 0; i < existingValues.size(); i++)
-			if (((String) existingValues.get(i)).equalsIgnoreCase(fileSpec))
+			if (existingValues.get(i).equalsIgnoreCase(fileSpec))
 				// don't do anything if already exists
 				return;
 		existingValues.add(fileSpec);
@@ -80,11 +80,11 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		if (existing == null)
 			// content type has no settings - nothing to do
 			return;
-		List existingValues = Util.parseItemsIntoList(contentTypeNode.get(key, null));
+		List<String> existingValues = Util.parseItemsIntoList(contentTypeNode.get(key, null));
 		int index = -1;
 		int existingCount = existingValues.size();
 		for (int i = 0; index == -1 && i < existingCount; i++)
-			if (((String) existingValues.get(i)).equalsIgnoreCase(fileSpec))
+			if (existingValues.get(i).equalsIgnoreCase(fileSpec))
 				index = i;
 		if (index == -1)
 			// did not find the file spec to be removed - nothing to do
@@ -110,18 +110,22 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 	/*
 	 * @see IContentTypeSettings 
 	 */
+	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
 		addFileSpec(context, contentType.getId(), fileSpec, type);
 	}
 
+	@Override
 	public ContentType getContentType() {
 		return contentType;
 	}
 
+	@Override
 	public String getDefaultCharset() {
 		return getDefaultProperty(IContentDescription.CHARSET);
 	}
 
+	@Override
 	public String getDefaultProperty(final QualifiedName key) {
 		final Preferences contentTypePrefs = ContentTypeManager.getInstance().getPreferences(context);
 		try {
@@ -132,18 +136,22 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		}
 	}
 
+	@Override
 	public String[] getFileSpecs(int type) {
 		return getFileSpecs(context, contentType.getId(), type);
 	}
 
+	@Override
 	public String getId() {
 		return contentType.getId();
 	}
 
+	@Override
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
 		removeFileSpec(context, contentType.getId(), fileSpec, type);
 	}
 
+	@Override
 	public void setDefaultCharset(String userCharset) throws CoreException {
 		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentType.getId());
 		ContentType.setPreference(contentTypeNode, ContentType.PREF_DEFAULT_CHARSET, userCharset);

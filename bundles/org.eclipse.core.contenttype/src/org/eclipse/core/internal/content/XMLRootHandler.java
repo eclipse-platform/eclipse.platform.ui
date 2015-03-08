@@ -82,6 +82,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * 
 	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
 	 */
+	@Override
 	public final void comment(final char[] ch, final int start, final int length) {
 		// Not interested.
 	}
@@ -125,6 +126,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * 
 	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
 	 */
+	@Override
 	public final void endCDATA() {
 		// Not interested.
 	}
@@ -134,6 +136,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * 
 	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
 	 */
+	@Override
 	public final void endDTD() {
 		// Not interested.
 	}
@@ -143,6 +146,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * 
 	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
 	 */
+	@Override
 	public final void endEntity(final String name) {
 		// Not interested.
 	}
@@ -184,6 +188,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * of the DTD is ok, as only the System ID of the DTD declaration is used.
 	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
@@ -193,6 +198,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * 
 	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
 	 */
+	@Override
 	public final void startCDATA() {
 		// Not interested.
 	}
@@ -203,6 +209,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String,
 	 *      java.lang.String, java.lang.String)
 	 */
+	@Override
 	public final void startDTD(final String name, final String publicId, final String systemId) throws SAXException {
 		dtdFound = systemId;
 		// If we don't care about the top-level element, we can stop here.
@@ -216,6 +223,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
 	 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
+	@Override
 	public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
 		elementFound = elementName;
 		namespaceFound = uri;
@@ -227,6 +235,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * 
 	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
 	 */
+	@Override
 	public final void startEntity(final String name) {
 		// Not interested.
 	}

@@ -127,13 +127,13 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	 * </ul>
 	 * @throws IOException
 	 */
-	private int checkCriteria(InputSource contents, Map properties) throws IOException {
+	private int checkCriteria(InputSource contents, Map<String, Object> properties) throws IOException {
 		if (!isProcessed(properties))
 			fillContentProperties(contents, properties);
 		return checkCriteria(properties);
 	}
 
-	private int checkCriteria(Map properties) throws IOException {
+	private int checkCriteria(Map<String, Object> properties) throws IOException {
 		Boolean result = (Boolean) properties.get(RESULT);
 		if (!result.booleanValue())
 			return INDETERMINATE;
@@ -156,14 +156,15 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
-		return describe(contents, description, new HashMap());
+		return describe(contents, description, new HashMap<String, Object>());
 	}
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public int describe(InputStream contents, IContentDescription description, Map properties) throws IOException {
+	public int describe(InputStream contents, IContentDescription description, Map<String, Object> properties) throws IOException {
 		// call the basic XML describer to do basic recognition
 		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
@@ -176,14 +177,15 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(Reader, IContentDescription)
 	 */
+	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
-		return describe(contents, description, new HashMap());
+		return describe(contents, description, new HashMap<String, Object>());
 	}
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public int describe(Reader contents, IContentDescription description, Map properties) throws IOException {
+	public int describe(Reader contents, IContentDescription description, Map<String, Object> properties) throws IOException {
 		// call the basic XML describer to do basic recognition
 		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
@@ -193,7 +195,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		return checkCriteria(new InputSource(contents), properties);
 	}
 
-	static boolean isProcessed(Map properties) {
+	static boolean isProcessed(Map<String, Object> properties) {
 		Boolean result = (Boolean) properties.get(RESULT);
 		// It can be set to false which means that content can't be parsed
 		if (result != null)
@@ -201,7 +203,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		return false;
 	}
 
-	static void fillContentProperties(InputSource input, Map properties) throws IOException {
+	static void fillContentProperties(InputSource input, Map<String, Object> properties) throws IOException {
 		XMLRootHandler xmlHandler = new XMLRootHandler(true);
 		try {
 			if (!xmlHandler.parseContents(input)) {
@@ -233,11 +235,12 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	/* (Intentionally not included in javadoc)
 	 * @see IExecutableExtension#setInitializationData
 	 */
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		if (data instanceof String)
 			elementsToFind = new QualifiedElement[] {new QualifiedElement((String) data)};
 		else if (data instanceof Hashtable) {
-			List elements = null;
+			List<QualifiedElement> elements = null;
 
 			// the describer parameters have to be read again, because "element" parameter can be specified multiple times 
 			// and the given hashtable carries only one of them
@@ -248,20 +251,20 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 				pname = params[i].getAttribute("name"); //$NON-NLS-1$
 				if (ELEMENT_TO_FIND.equals(pname)) {
 					if (elements == null)
-						elements = new LinkedList();
+						elements = new LinkedList<QualifiedElement>();
 					elements.add(new QualifiedElement(params[i].getAttribute("value"))); //$NON-NLS-1$
 				}
 			}
 
-			List qualifiedElements = new ArrayList();
+			List<QualifiedElement> qualifiedElements = new ArrayList<QualifiedElement>();
 
 			// create list of qualified elements
 			if (elements != null) {
-				for (Iterator it = elements.iterator(); it.hasNext();) {
+				for (Iterator<QualifiedElement> it = elements.iterator(); it.hasNext();) {
 					qualifiedElements.add(it.next());
 				}
 			}
-			elementsToFind = (QualifiedElement[]) qualifiedElements.toArray(new QualifiedElement[qualifiedElements.size()]);
+			elementsToFind = qualifiedElements.toArray(new QualifiedElement[qualifiedElements.size()]);
 		}
 
 		if (elementsToFind.length == 0) {

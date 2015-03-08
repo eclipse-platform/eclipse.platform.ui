@@ -33,6 +33,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * @see IContentTypeMatcher
 	 */
+	@Override
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] all = currentCatalog.findContentTypesFor(this, contents, fileName);
@@ -42,6 +43,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * @see IContentTypeMatcher
 	 */
+	@Override
 	public IContentType findContentTypeFor(String fileName) {
 		// basic implementation just gets all content types
 		ContentTypeCatalog currentCatalog = getCatalog();
@@ -52,6 +54,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * @see IContentTypeMatcher
 	 */
+	@Override
 	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] types = currentCatalog.findContentTypesFor(this, contents, fileName);
@@ -65,6 +68,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * @see IContentTypeMatcher
 	 */
+	@Override
 	public IContentType[] findContentTypesFor(String fileName) {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] types = currentCatalog.findContentTypesFor(this, fileName);
@@ -82,6 +86,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * @see IContentTypeMatcher
 	 */
+	@Override
 	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException {
 		return getCatalog().getDescriptionFor(this, contents, fileName, options);
 	}
@@ -89,6 +94,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * @see IContentTypeMatcher
 	 */
+	@Override
 	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException {
 		return getCatalog().getDescriptionFor(this, contents, fileName, options);
 	}
@@ -104,12 +110,13 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	/**
 	 * Enumerates all content types whose settings satisfy the given file spec type mask.
 	 */
-	public Collection getDirectlyAssociated(final ContentTypeCatalog catalog, final String fileSpec, final int typeMask) {
+	public Collection<ContentType> getDirectlyAssociated(final ContentTypeCatalog catalog, final String fileSpec, final int typeMask) {
 		//TODO: make sure we include built-in associations as well
 		final IEclipsePreferences root = context.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
-		final Set result = new HashSet(3);
+		final Set<ContentType> result = new HashSet<ContentType>(3);
 		try {
 			root.accept(new IPreferenceNodeVisitor() {
+				@Override
 				public boolean visit(IEclipsePreferences node) {
 					if (node == root)
 						return true;

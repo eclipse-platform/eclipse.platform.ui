@@ -38,6 +38,7 @@ class FileSpec {
 		return BASIC_TYPE & type;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof FileSpec))
 			return false;
@@ -49,6 +50,7 @@ class FileSpec {
 		return ((!strict && getBasicType(type) == getBasicType(otherType)) || type == otherType) && this.text.equalsIgnoreCase(text);
 	}
 
+	@Override
 	public int hashCode() {
 		return text.hashCode();
 	}
@@ -57,6 +59,7 @@ class FileSpec {
 		return fileSpecText.toLowerCase();
 	}
 
+	@Override
 	public String toString() {
 		return getText();
 	}

@@ -67,13 +67,13 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * </ul>
 	 * @throws IOException
 	 */
-	private int checkCriteria(InputSource contents, Map properties) throws IOException {
+	private int checkCriteria(InputSource contents, Map<String, Object> properties) throws IOException {
 		if (!XMLRootElementContentDescriber2.isProcessed(properties))
 			XMLRootElementContentDescriber2.fillContentProperties(contents, properties);
 		return checkCriteria(properties);
 	}
 
-	private int checkCriteria(Map properties) throws IOException {
+	private int checkCriteria(Map<String, Object> properties) throws IOException {
 		Boolean result = (Boolean) properties.get(XMLRootElementContentDescriber2.RESULT);
 		if (!result.booleanValue())
 			return INDETERMINATE;
@@ -89,14 +89,15 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
-		return describe(contents, description, new HashMap());
+		return describe(contents, description, new HashMap<String, Object>());
 	}
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public int describe(InputStream contents, IContentDescription description, Map properties) throws IOException {
+	public int describe(InputStream contents, IContentDescription description, Map<String, Object> properties) throws IOException {
 		// call the basic XML describer to do basic recognition
 		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
@@ -109,14 +110,15 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(Reader, IContentDescription)
 	 */
+	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
-		return describe(contents, description, new HashMap());
+		return describe(contents, description, new HashMap<String, Object>());
 	}
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public int describe(Reader contents, IContentDescription description, Map properties) throws IOException {
+	public int describe(Reader contents, IContentDescription description, Map<String, Object> properties) throws IOException {
 		// call the basic XML describer to do basic recognition
 		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
@@ -129,11 +131,12 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	/* (Intentionally not included in javadoc)
 	 * @see IExecutableExtension#setInitializationData
 	 */
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		if (data instanceof String)
 			elementToFind = (String) data;
 		else if (data instanceof Hashtable) {
-			Hashtable parameters = (Hashtable) data;
+			Hashtable<?, ?> parameters = (Hashtable<?, ?>) data;
 			dtdToFind = (String) parameters.get(DTD_TO_FIND);
 			elementToFind = (String) parameters.get(ELEMENT_TO_FIND);
 		}
