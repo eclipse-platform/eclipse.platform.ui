@@ -48,6 +48,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IEvaluationContext getParent() {
 		return fParent;
 	}
@@ -55,6 +56,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IEvaluationContext getRoot() {
 		return fParent.getRoot();
 	}
@@ -62,6 +64,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
@@ -69,6 +72,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setAllowPluginActivation(boolean value) {
 		fParent.setAllowPluginActivation(value);
 	}
@@ -76,6 +80,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean getAllowPluginActivation() {
 		return fParent.getAllowPluginActivation();
 	}
@@ -83,6 +88,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addVariable(String name, Object value) {
 		fManagedPool.addVariable(name, value);
 	}
@@ -90,6 +96,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object removeVariable(String name) {
 		return fManagedPool.removeVariable(name);
 	}
@@ -97,6 +104,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getVariable(String name) {
 		return fManagedPool.getVariable(name);
 	}
@@ -104,6 +112,7 @@ public final class DefaultVariable implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
 		return fManagedPool.resolveVariable(name, args);
 	}

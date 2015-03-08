@@ -50,6 +50,7 @@ public class AdaptExpression extends CompositeExpression {
 		fTypeName= typeName;
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof AdaptExpression))
 			return false;
@@ -59,6 +60,7 @@ public class AdaptExpression extends CompositeExpression {
 				&& equals(this.fExpressions, that.fExpressions);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + fTypeName.hashCode();
@@ -67,6 +69,7 @@ public class AdaptExpression extends CompositeExpression {
 	/* (non-Javadoc)
 	 * @see Expression#evaluate(IVariablePool)
 	 */
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		if (fTypeName == null)
 			return EvaluationResult.FALSE;
@@ -82,7 +85,7 @@ public class AdaptExpression extends CompositeExpression {
 				// if the adapter manager doesn't have an adapter contributed, 
 				// try to see if the variable itself implements IAdaptable
 				if (var instanceof IAdaptable) {
-					Class typeClazz= Expressions.loadClass(var.getClass().getClassLoader(), fTypeName);
+					Class<?> typeClazz= Expressions.loadClass(var.getClass().getClassLoader(), fTypeName);
 					if (typeClazz == null) {
 						return EvaluationResult.FALSE;
 					}
@@ -106,6 +109,7 @@ public class AdaptExpression extends CompositeExpression {
 		return evaluateAnd(new DefaultVariable(context, adapted));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		// Although the default variable is passed to the children of this
 		// expression as an instance of the adapted type it is OK to only

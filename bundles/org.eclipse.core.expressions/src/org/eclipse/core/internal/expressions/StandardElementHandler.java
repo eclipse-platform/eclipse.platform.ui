@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class StandardElementHandler extends ElementHandler {
 
+	@Override
 	public Expression create(ExpressionConverter converter, IConfigurationElement element) throws CoreException {
 		String name= element.getName();
 		if (ExpressionTagNames.INSTANCEOF.equals(name)) {
@@ -71,6 +72,7 @@ public class StandardElementHandler extends ElementHandler {
 		return null;
 	}
 
+	@Override
 	public Expression create(ExpressionConverter converter, Element element) throws CoreException {
 		String name= element.getNodeName();
 		if (ExpressionTagNames.INSTANCEOF.equals(name)) {

@@ -31,14 +31,17 @@ public class NotExpression extends Expression {
 		fExpression= expression;
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		return fExpression.evaluate(context).not();
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		fExpression.collectExpressionInfo(info);
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof NotExpression))
 			return false;
@@ -47,6 +50,7 @@ public class NotExpression extends Expression {
 		return this.fExpression.equals(that.fExpression);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fExpression.hashCode();
 	}

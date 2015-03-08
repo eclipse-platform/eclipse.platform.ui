@@ -65,11 +65,13 @@ public class ReferenceExpression extends Expression {
 		Expressions.checkAttribute(ATT_DEFINITION_ID, fDefinitionId.length() > 0 ? fDefinitionId : null);
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Expression expr= getDefinitionRegistry().getExpression(fDefinitionId);
 		return expr.evaluate(context);
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		Expression expr;
 		try {
@@ -82,6 +84,7 @@ public class ReferenceExpression extends Expression {
 		expr.collectExpressionInfo(info);
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof ReferenceExpression))
 			return false;
@@ -90,6 +93,7 @@ public class ReferenceExpression extends Expression {
 		return this.fDefinitionId.equals(that.fDefinitionId);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fDefinitionId.hashCode();
 	}

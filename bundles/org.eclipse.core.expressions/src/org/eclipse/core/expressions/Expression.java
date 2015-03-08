@@ -144,9 +144,11 @@ public abstract class Expression {
 	 * The expression corresponding to {@link EvaluationResult#TRUE}.
 	 */
 	public static final Expression TRUE= new Expression() {
+		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) {
 			return EvaluationResult.TRUE;
 		}
+		@Override
 		public void collectExpressionInfo(ExpressionInfo info) {
 		}
 	};
@@ -155,9 +157,11 @@ public abstract class Expression {
 	 * The expression corresponding to {@link EvaluationResult#FALSE}.
 	 */
 	public static final Expression FALSE= new Expression() {
+		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) {
 			return EvaluationResult.FALSE;
 		}
+		@Override
 		public void collectExpressionInfo(ExpressionInfo info) {
 		}
 	};
@@ -231,6 +235,7 @@ public abstract class Expression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int hashCode() {
 		if (fHashCode != HASH_CODE_NOT_COMPUTED)
 			return fHashCode;

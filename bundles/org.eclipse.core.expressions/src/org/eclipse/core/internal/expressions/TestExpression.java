@@ -85,6 +85,7 @@ public class TestExpression extends Expression {
 		fForcePluginActivation= forcePluginActivation;
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object element= context.getDefaultVariable();
 		if (System.class.equals(element)) {
@@ -99,11 +100,13 @@ public class TestExpression extends Expression {
 		return EvaluationResult.valueOf(property.test(element, fArgs, fExpectedValue));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
 		info.addAccessedPropertyName(fNamespace + PROP_SEP + fProperty);
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof TestExpression))
 			return false;
@@ -114,6 +117,7 @@ public class TestExpression extends Expression {
 			&& equals(this.fArgs, that.fArgs) && equals(this.fExpectedValue, that.fExpectedValue);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fArgs)
 			* HASH_FACTOR + hashCode(fExpectedValue)
@@ -127,6 +131,7 @@ public class TestExpression extends Expression {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer args= new StringBuffer();
 		for (int i= 0; i < fArgs.length; i++) {

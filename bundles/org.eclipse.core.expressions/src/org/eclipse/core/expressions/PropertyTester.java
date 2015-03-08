@@ -98,6 +98,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final boolean handles(String namespace, String property) {
 		return fNamespace.equals(namespace) && fProperties.indexOf("," + property + ",") != -1;  //$NON-NLS-1$//$NON-NLS-2$
 	}
@@ -105,6 +106,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final boolean isInstantiated() {
 		return true;
 	}
@@ -112,6 +114,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isDeclaringPluginActive() {
 		Bundle bundle= Platform.getBundle(fConfigElement.getContributor().getName());
 		return bundle.getState() == Bundle.ACTIVE;
@@ -120,6 +123,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final IPropertyTester instantiate() {
 		return this;
 	}

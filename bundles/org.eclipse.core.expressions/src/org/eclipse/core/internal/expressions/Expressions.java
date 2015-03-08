@@ -42,19 +42,19 @@ public class Expressions {
 	 * conflicts caused by multiple classloader contributions with the same class name. It's a rare
 	 * occurrence but is supported by the OSGi classloader.
 	 */
-	private static WeakHashMap/*<Class, Map<String, Boolean>>*/ fgKnownClasses;
+	private static WeakHashMap<Class<?>, Map<String, Boolean>> fgKnownClasses;
 
 	/**
 	 * Cache to optimize loading of classes for evaluation of adapt expressions. Keys are class
 	 * loaders. Values are sets of qualified class names that the corresponding class loader was
 	 * not able to find.
 	 */
-	private static WeakHashMap/*<ClassLoader, Set<String>>*/ fgNotFoundClasses;
+	private static WeakHashMap<ClassLoader, Set<String>> fgNotFoundClasses;
 
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.core.expressions/tracePropertyResolving")); //$NON-NLS-1$ //$NON-NLS-2$
 
-	
+
 	private Expressions() {
 		// no instance
 	}
@@ -66,16 +66,16 @@ public class Expressions {
 		return isSubtype(element.getClass(), type);
 	}
 
-	private static synchronized boolean isSubtype(Class clazz, String type) {
-		WeakHashMap knownClassesMap= getKnownClasses();
-		Map nameMap = (Map) knownClassesMap.get(clazz);
+	private static synchronized boolean isSubtype(Class<?> clazz, String type) {
+		WeakHashMap<Class<?>, Map<String, Boolean>> knownClassesMap= getKnownClasses();
+		Map<String, Boolean> nameMap = knownClassesMap.get(clazz);
 		if (nameMap != null) {
 			Object obj = nameMap.get(type);
 			if (obj != null)
 				return ((Boolean)obj).booleanValue();
 		}
 		if (nameMap == null) {
-			nameMap = new HashMap();
+			nameMap = new HashMap<String, Boolean>();
 			knownClassesMap.put(clazz, nameMap);
 		}
 		boolean isSubtype = uncachedIsSubtype(clazz, type);
@@ -91,15 +91,15 @@ public class Expressions {
 	 * @param className the qualified name of the class
 	 * @return the loaded class, or {@code null} if the class was not found
 	 */
-	static Class loadClass(ClassLoader classLoader, String className) {
+	static Class<?> loadClass(ClassLoader classLoader, String className) {
 		/*
 		 * Class.forName is pretty slow when it throws a ClassNotFoundException. Since expression
 		 * evaluation is done very often, we use a cache of names of classes that failed to load.
 		 */
-		WeakHashMap cache;
+		WeakHashMap<ClassLoader, Set<String>> cache;
 		synchronized (Expressions.class) {
 			cache = getNotFoundClasses();
-			Set classNames= (Set)cache.get(classLoader);
+			Set<String> classNames= cache.get(classLoader);
 			if (classNames != null && classNames.contains(className)) {
 				return null;
 			}
@@ -109,9 +109,9 @@ public class Expressions {
 			return Class.forName(className, false, classLoader);
 		} catch (ClassNotFoundException e) {
 			synchronized (Expressions.class) {
-				Set classNames= (Set)cache.get(classLoader);
+				Set<String> classNames= cache.get(classLoader);
 				if (classNames == null) {
-					classNames= new HashSet();
+					classNames= new HashSet<String>();
 					cache.put(classLoader, classNames);
 				}
 				classNames.add(className);
@@ -120,22 +120,23 @@ public class Expressions {
 		return null;
 	}
 
-	private static WeakHashMap getKnownClasses() {
+	private static WeakHashMap<Class<?>, Map<String, Boolean>> getKnownClasses() {
 		createClassCaches();
 		return fgKnownClasses;
 	}
 
-	private static WeakHashMap getNotFoundClasses() {
+	private static WeakHashMap<ClassLoader, Set<String>> getNotFoundClasses() {
 		createClassCaches();
 		return fgNotFoundClasses;
 	}
 
 	private static void createClassCaches() {
 		if (fgKnownClasses == null) {
-			fgKnownClasses= new WeakHashMap();
-			fgNotFoundClasses = new WeakHashMap();
+			fgKnownClasses= new WeakHashMap<>();
+			fgNotFoundClasses = new WeakHashMap<>();
 			BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
 			BundleListener listener= new BundleListener() {
+				@Override
 				public void bundleChanged(BundleEvent event) {
 					// Invalidate the caches if any of the bundles is stopped
 					if (event.getType() == BundleEvent.STOPPED) {
@@ -151,13 +152,13 @@ public class Expressions {
 		}
 	}
 
-	public static boolean uncachedIsSubtype(Class clazz, String type) {
+	public static boolean uncachedIsSubtype(Class<?> clazz, String type) {
 		if (clazz.getName().equals(type))
 			return true;
-		Class superClass= clazz.getSuperclass();
+		Class<?> superClass= clazz.getSuperclass();
 		if (superClass != null && uncachedIsSubtype(superClass, type))
 			return true;
-		Class[] interfaces= clazz.getInterfaces();
+		Class<?>[] interfaces= clazz.getInterfaces();
 		for (int i= 0; i < interfaces.length; i++) {
 			if (uncachedIsSubtype(interfaces[i], type))
 				return true;
@@ -211,12 +212,12 @@ public class Expressions {
 	 *
 	 * @throws CoreException if the var can't be adapted to an <code>IIterable</code>
 	 */
-	public static IIterable getAsIIterable(Object var, Expression expression) throws CoreException {
+	public static IIterable<?> getAsIIterable(Object var, Expression expression) throws CoreException {
 		if (var instanceof IIterable) {
-			return (IIterable)var;
+			return (IIterable<?>)var;
 		} else {
 			IAdapterManager manager= Platform.getAdapterManager();
-			IIterable result= (IIterable)manager.getAdapter(var, IIterable.class);
+			IIterable<?> result= manager.getAdapter(var, IIterable.class);
 			if (result != null)
 				return result;
 
@@ -245,7 +246,7 @@ public class Expressions {
 			return (ICountable)var;
 		} else {
 			IAdapterManager manager= Platform.getAdapterManager();
-			ICountable result= (ICountable)manager.getAdapter(var, ICountable.class);
+			ICountable result= manager.getAdapter(var, ICountable.class);
 			if (result != null)
 				return result;
 
@@ -295,7 +296,7 @@ public class Expressions {
 	}
 
 	public static Object[] parseArguments(String args) throws CoreException {
-		List result= new ArrayList();
+		List<Object> result= new ArrayList<>();
 		int start= 0;
 		int comma;
 		while ((comma= findNextComma(args, start)) != -1) {

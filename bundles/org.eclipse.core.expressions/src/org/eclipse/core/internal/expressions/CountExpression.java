@@ -93,11 +93,12 @@ public class CountExpression extends Expression {
 		}
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();
 		int size;
 		if (var instanceof Collection) {
-			size= ((Collection)var).size();
+			size= ((Collection<?>)var).size();
 		} else {
 			ICountable countable= Expressions.getAsICountable(var, this);
 			if (countable == null)
@@ -125,10 +126,12 @@ public class CountExpression extends Expression {
 		return EvaluationResult.FALSE;
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof CountExpression))
 			return false;
@@ -137,6 +140,7 @@ public class CountExpression extends Expression {
 		return (this.fMode == that.fMode) && (this.fSize == that.fSize);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fMode
 			* HASH_FACTOR + fSize;

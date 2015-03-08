@@ -22,18 +22,23 @@ public class TypeExtension {
 
 	/* a special property tester instance that is used to signal that method searching has to continue */
 	/* package */ static final IPropertyTester CONTINUE= new IPropertyTester() {
+		@Override
 		public boolean handles(String namespace, String method) {
 			return false;
 		}
+		@Override
 		public boolean isInstantiated() {
 			return true;
 		}
+		@Override
 		public boolean isDeclaringPluginActive() {
 			return true;
 		}
+		@Override
 		public IPropertyTester instantiate() {
 			return this;
 		}
+		@Override
 		public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 			return false;
 		}
@@ -41,13 +46,14 @@ public class TypeExtension {
 
 	/* a special type extension instance that marks the end of an evaluation chain */
 	private static final TypeExtension END_POINT= new TypeExtension() {
-		/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, boolean staticMethod, boolean forcePluginActivation) throws CoreException {
+		@Override
+		IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, boolean staticMethod, boolean forcePluginActivation) throws CoreException {
 			return CONTINUE;
 		}
 	};
 
 	/* the type this extension is extending */
-	private Class fType;
+	private Class<?> fType;
 	/* the list of associated extenders */
 	private IPropertyTester[] fExtenders;
 
@@ -60,7 +66,7 @@ public class TypeExtension {
 		// special constructor to create the CONTINUE instance
 	}
 
-	/* package */ TypeExtension(Class type) {
+	/* package */ TypeExtension(Class<?> type) {
 		Assert.isNotNull(type);
 		fType= type;
 	}
@@ -114,7 +120,7 @@ public class TypeExtension {
 
 		// handle extends chain
 		if (fExtends == null) {
-			Class superClass= fType.getSuperclass();
+			Class<?> superClass= fType.getSuperclass();
 			if (superClass != null) {
 				fExtends= manager.get(superClass);
 			} else {
@@ -127,7 +133,7 @@ public class TypeExtension {
 
 		// handle implements chain
 		if (fImplements == null) {
-			Class[] interfaces= fType.getInterfaces();
+			Class<?>[] interfaces= fType.getInterfaces();
 			if (interfaces.length == 0) {
 				fImplements= EMPTY_TYPE_EXTENSION_ARRAY;
 			} else {

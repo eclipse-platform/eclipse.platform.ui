@@ -16,13 +16,13 @@ import org.eclipse.core.runtime.Assert;
 
 public class Property {
 
-	private Class fType;
+	private Class<?> fType;
 	private String fNamespace;
 	private String fName;
 
 	private IPropertyTester fTester;
 
-	/* package */ Property(Class type, String namespace, String name) {
+	/* package */ Property(Class<?> type, String namespace, String name) {
 		Assert.isNotNull(type);
 		Assert.isNotNull(namespace);
 		Assert.isNotNull(name);
@@ -58,6 +58,7 @@ public class Property {
 		return fTester.test(receiver, fName, args, expectedValue);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Property))
 			return false;
@@ -65,6 +66,7 @@ public class Property {
 		return fType.equals(other.fType) && fNamespace.equals(other.fNamespace) && fName.equals(other.fName);
 	}
 
+	@Override
 	public int hashCode() {
 		return (fType.hashCode() << 16) | fNamespace.hashCode() << 8 | fName.hashCode();
 	}

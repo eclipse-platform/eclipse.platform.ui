@@ -42,18 +42,23 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	private static final IPropertyTester[] EMPTY_PROPERTY_TESTER_ARRAY= new IPropertyTester[0];
 
 	private static final IPropertyTester NULL_PROPERTY_TESTER= new IPropertyTester() {
+		@Override
 		public boolean handles(String namespace, String property) {
 			return false;
 		}
+		@Override
 		public boolean isInstantiated() {
 			return true;
 		}
+		@Override
 		public boolean isDeclaringPluginActive() {
 			return true;
 		}
+		@Override
 		public IPropertyTester instantiate() throws CoreException {
 			return this;
 		}
+		@Override
 		public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 			return false;
 		}
@@ -62,12 +67,12 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	/*
 	 * Map containing all already created type extension object.
 	 */
-	private Map/*<Class, TypeExtension>*/ fTypeExtensionMap;
+	private Map<Class<?>, TypeExtension> fTypeExtensionMap;
 
 	/*
 	 * Table containing mapping of class name to configuration element
 	 */
-	private Map/*<String, List<IConfigurationElement>>*/ fConfigurationElementMap;
+	private Map<String, List<IConfigurationElement>> fConfigurationElementMap;
 
 	/*
 	 * A cache to give fast access to the last 1000 method invocations.
@@ -92,7 +97,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			start= System.currentTimeMillis();
 
 		// if we call a static method than the receiver is the class object
-		Class clazz= receiver instanceof Class ? (Class)receiver : receiver.getClass();
+		Class<?> clazz= receiver instanceof Class ? (Class<?>)receiver : receiver.getClass();
 		Property result= new Property(clazz, namespace, method);
 		Property cached= fPropertyCache.get(result);
 		if (cached != null) {
@@ -142,8 +147,8 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	 * This method doesn't need to be synchronized since it is called
 	 * from withing the getProperty method which is synchronized
 	 */
-	/* package */ TypeExtension get(Class clazz) {
-		TypeExtension result= (TypeExtension)fTypeExtensionMap.get(clazz);
+	/* package */ TypeExtension get(Class<?> clazz) {
+		TypeExtension result= fTypeExtensionMap.get(clazz);
 		if (result == null) {
 			result= new TypeExtension(clazz);
 			fTypeExtensionMap.put(clazz, result);
@@ -155,9 +160,9 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	 * This method doesn't need to be synchronized since it is called
 	 * from withing the getProperty method which is synchronized
 	 */
-	/* package */ IPropertyTester[] loadTesters(Class type) {
+	/* package */ IPropertyTester[] loadTesters(Class<?> type) {
 		if (fConfigurationElementMap == null) {
-			fConfigurationElementMap= new HashMap();
+			fConfigurationElementMap= new HashMap<>();
 			IExtensionRegistry registry= Platform.getExtensionRegistry();
 			IConfigurationElement[] ces= registry.getConfigurationElementsFor(
 				ExpressionPlugin.getPluginId(),
@@ -165,22 +170,22 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			for (int i= 0; i < ces.length; i++) {
 				IConfigurationElement config= ces[i];
 				String typeAttr= config.getAttribute(TYPE);
-				List typeConfigs= (List)fConfigurationElementMap.get(typeAttr);
+				List<IConfigurationElement> typeConfigs= fConfigurationElementMap.get(typeAttr);
 				if (typeConfigs == null) {
-					typeConfigs= new ArrayList();
+					typeConfigs= new ArrayList<IConfigurationElement>();
 					fConfigurationElementMap.put(typeAttr, typeConfigs);
 				}
 				typeConfigs.add(config);
 			}
 		}
 		String typeName= type.getName();
-		List typeConfigs= (List)fConfigurationElementMap.get(typeName);
+		List<IConfigurationElement> typeConfigs= fConfigurationElementMap.get(typeName);
 		if (typeConfigs == null)
 			return EMPTY_PROPERTY_TESTER_ARRAY;
 		else {
 			IPropertyTester[] result= new IPropertyTester[typeConfigs.size()];
 			for (int i= 0; i < result.length; i++) {
-				IConfigurationElement config= (IConfigurationElement)typeConfigs.get(i);
+				IConfigurationElement config= typeConfigs.get(i);
 				try {
 					result[i]= new PropertyTesterDescriptor(config);
 				} catch (CoreException e) {
@@ -193,6 +198,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		}
 	}
 
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas= event.getExtensionDeltas(ExpressionPlugin.getPluginId(), fExtensionPoint);
 		if (deltas.length > 0) {
@@ -201,7 +207,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	}
 
 	private synchronized void initializeCaches() {
-		fTypeExtensionMap= new HashMap();
+		fTypeExtensionMap= new HashMap<>();
 		fConfigurationElementMap= null;
 		fPropertyCache= new PropertyCache(1000);
 	}

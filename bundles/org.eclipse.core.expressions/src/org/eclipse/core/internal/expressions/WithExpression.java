@@ -46,6 +46,7 @@ public class WithExpression extends CompositeExpression {
 		fVariable= variable;
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof WithExpression))
 			return false;
@@ -54,11 +55,13 @@ public class WithExpression extends CompositeExpression {
 		return this.fVariable.equals(that.fVariable) && equals(this.fExpressions, that.fExpressions);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + fVariable.hashCode();
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object variable= context.getVariable(fVariable);
 		if (variable == null) {
@@ -72,6 +75,7 @@ public class WithExpression extends CompositeExpression {
 		return evaluateAnd(new EvaluationContext(context, variable));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		ExpressionInfo other= new ExpressionInfo();
 		super.collectExpressionInfo(other);

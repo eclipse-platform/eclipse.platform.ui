@@ -76,6 +76,7 @@ public class LRUCache implements Cloneable {
 		 * Returns a String that represents the value of this object.
 		 * @return a string
 		 */
+		@Override
 		public String toString() {
 
 			return "LRUCacheEntry [" + _fKey + "-->" + _fValue + "]"; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
@@ -100,7 +101,7 @@ public class LRUCache implements Cloneable {
 	/**
 	 * Hash table for fast random access to cache entries
 	 */
-	protected Hashtable fEntryTable;
+	protected Hashtable<Object, LRUCacheEntry> fEntryTable;
 
 	/**
 	 * Start of queue (most recently used entry)
@@ -132,7 +133,7 @@ public class LRUCache implements Cloneable {
 
 		fTimestampCounter = fCurrentSpace = 0;
 		fEntryQueue = fEntryQueueTail = null;
-		fEntryTable = new Hashtable(size);
+		fEntryTable = new Hashtable<Object, LRUCacheEntry>(size);
 		fSpaceLimit = size;
 	}
 	/**
@@ -140,6 +141,7 @@ public class LRUCache implements Cloneable {
 	 *
 	 * @return New copy of object.
 	 */
+	@Override
 	public Object clone() {
 
 		LRUCache newCache = newInstance(fSpaceLimit);
@@ -163,7 +165,7 @@ public class LRUCache implements Cloneable {
 
 		fCurrentSpace = 0;
 		LRUCacheEntry entry = fEntryQueueTail; // Remember last entry
-		fEntryTable = new Hashtable();  // Clear it out
+		fEntryTable = new Hashtable<Object, LRUCacheEntry>();  // Clear it out
 		fEntryQueue = fEntryQueueTail = null;
 		while (entry != null) {  // send deletion notifications in LRU order
 			privateNotifyDeletionFromCache(entry);
@@ -180,7 +182,7 @@ public class LRUCache implements Cloneable {
 
 		LRUCacheEntry entry;
 
-		entry = (LRUCacheEntry) fEntryTable.get(key);
+		entry = fEntryTable.get(key);
 
 		/* If entry does not exist, return */
 		if (entry == null) return;
@@ -196,7 +198,7 @@ public class LRUCache implements Cloneable {
 	 */
 	public Object get(Object key) {
 
-		LRUCacheEntry entry = (LRUCacheEntry) fEntryTable.get(key);
+		LRUCacheEntry entry = fEntryTable.get(key);
 		if (entry == null) {
 			return null;
 		}
@@ -222,7 +224,7 @@ public class LRUCache implements Cloneable {
 	 * Returns an Enumeration of the keys currently in the cache.
 	 * @return an enumeration
 	 */
-	public Enumeration keys() {
+	public Enumeration<Object> keys() {
 		return fEntryTable.keys();
 	}
 	/**
@@ -273,7 +275,7 @@ public class LRUCache implements Cloneable {
 	 */
 	public Object peek(Object key) {
 
-		LRUCacheEntry entry = (LRUCacheEntry) fEntryTable.get(key);
+		LRUCacheEntry entry = fEntryTable.get(key);
 		if (entry == null) {
 			return null;
 		}
@@ -374,7 +376,7 @@ public class LRUCache implements Cloneable {
 
 		/* Check whether there's an entry in the cache */
 		newSpace = spaceFor(value);
-		entry = (LRUCacheEntry) fEntryTable.get (key);
+		entry = fEntryTable.get(key);
 
 		if (entry != null) {
 
@@ -409,7 +411,7 @@ public class LRUCache implements Cloneable {
 	 */
 	public Object removeKey (Object key) {
 
-		LRUCacheEntry entry = (LRUCacheEntry) fEntryTable.get(key);
+		LRUCacheEntry entry = fEntryTable.get(key);
 		if (entry == null) {
 			return null;
 		}
@@ -442,6 +444,7 @@ public class LRUCache implements Cloneable {
 	 * is for debugging purposes only.
 	 * @return a string
 	 */
+	@Override
 	public String toString() {
 		return
 			toStringFillingRation("LRUCache") + //$NON-NLS-1$
@@ -458,7 +461,7 @@ public class LRUCache implements Cloneable {
 		int length = fEntryTable.size();
 		Object[] unsortedKeys = new Object[length];
 		String[] unsortedToStrings = new String[length];
-		Enumeration e = this.keys();
+		Enumeration<Object> e = this.keys();
 		for (int i = 0; i < length; i++) {
 			Object key = e.nextElement();
 			unsortedKeys[i] = key;

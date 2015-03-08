@@ -47,15 +47,18 @@ public class InstanceofExpression extends Expression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.Expression#evaluate(java.lang.Object)
 	 */
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		Object element= context.getDefaultVariable();
 		return EvaluationResult.valueOf(Expressions.isInstanceOf(element, fTypeName));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof InstanceofExpression))
 			return false;
@@ -64,6 +67,7 @@ public class InstanceofExpression extends Expression {
 		return this.fTypeName.equals(that.fTypeName);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fTypeName.hashCode();
 	}
@@ -73,6 +77,7 @@ public class InstanceofExpression extends Expression {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "<instanceof value=\"" + fTypeName + "\"/>"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -52,6 +52,7 @@ public class ResolveExpression extends CompositeExpression {
 		fArgs= args;
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object variable= context.resolveVariable(fVariable, fArgs);
 		if (variable == null) {
@@ -62,6 +63,7 @@ public class ResolveExpression extends CompositeExpression {
 		return evaluateAnd(new EvaluationContext(context, variable));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		ExpressionInfo other= new ExpressionInfo();
 		super.collectExpressionInfo(other);
@@ -71,6 +73,7 @@ public class ResolveExpression extends CompositeExpression {
 		info.mergeExceptDefaultVariable(other);
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof ResolveExpression))
 			return false;
@@ -81,6 +84,7 @@ public class ResolveExpression extends CompositeExpression {
 				&& equals(this.fExpressions, that.fExpressions);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + hashCode(fArgs)

@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.Platform;
  * @since 3.3
  */
 public class DefinitionRegistry implements IRegistryChangeListener {
-	private Map cache= null;
+	private Map<String, Expression> cache= null;
 
-	private Map getCache() {
+	private Map<String, Expression> getCache() {
 		if (cache == null) {
-			cache= new HashMap();
+			cache= new HashMap<String, Expression>();
 		}
 		return cache;
 	}
@@ -54,7 +54,7 @@ public class DefinitionRegistry implements IRegistryChangeListener {
 	 * @throws CoreException If the expression cannot be found.
 	 */
 	public Expression getExpression(String id) throws CoreException {
-		Expression cachedExpression= (Expression)getCache().get(id);
+		Expression cachedExpression= getCache().get(id);
 		if (cachedExpression != null) {
 			return cachedExpression;
 		}
@@ -91,6 +91,7 @@ public class DefinitionRegistry implements IRegistryChangeListener {
 		return expr;
 	}
 
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] extensionDeltas= event.getExtensionDeltas("org.eclipse.core.expressions", "definitions"); //$NON-NLS-1$//$NON-NLS-2$
 		for (int i= 0; i < extensionDeltas.length; i++) {

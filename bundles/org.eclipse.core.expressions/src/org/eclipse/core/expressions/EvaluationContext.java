@@ -31,7 +31,7 @@ public class EvaluationContext implements IEvaluationContext {
 
 	private IEvaluationContext fParent;
 	private Object fDefaultVariable;
-	private Map/*<String, Object>*/ fVariables;
+	private Map<String, Object> fVariables;
 	private IVariableResolver[] fVariableResolvers;
 	private Boolean fAllowPluginActivation;
 
@@ -70,6 +70,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IEvaluationContext getParent() {
 		return fParent;
 	}
@@ -77,6 +78,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IEvaluationContext getRoot() {
 		if (fParent == null)
 			return this;
@@ -86,6 +88,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
@@ -93,6 +96,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setAllowPluginActivation(boolean value) {
 		fAllowPluginActivation= value ? Boolean.TRUE : Boolean.FALSE;
 	}
@@ -100,6 +104,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean getAllowPluginActivation() {
 		if (fAllowPluginActivation == null) {
 			if (fParent != null)
@@ -112,17 +117,19 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addVariable(String name, Object value) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(value);
 		if (fVariables == null)
-			fVariables= new HashMap();
+			fVariables= new HashMap<String, Object>();
 		fVariables.put(name, value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object removeVariable(String name) {
 		Assert.isNotNull(name);
 		if (fVariables == null)
@@ -133,6 +140,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getVariable(String name) {
 		Assert.isNotNull(name);
 		Object result= null;
@@ -149,6 +157,7 @@ public class EvaluationContext implements IEvaluationContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
 		if (fVariableResolvers != null && fVariableResolvers.length > 0) {
 			for (int i= 0; i < fVariableResolvers.length; i++) {

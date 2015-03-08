@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class AndExpression extends CompositeExpression {
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof AndExpression))
 			return false;
@@ -25,6 +26,7 @@ public class AndExpression extends CompositeExpression {
 		return equals(this.fExpressions, that.fExpressions);
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		return evaluateAnd(context);
 	}

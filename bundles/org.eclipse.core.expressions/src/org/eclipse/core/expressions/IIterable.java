@@ -18,18 +18,19 @@ import org.eclipse.core.runtime.IAdapterManager;
 /**
  * Objects that are adaptable to <code>IIterable</code> can be used
  * as the default variable in an iterate expression.
+ * @param <T> the type of elements from this iterator
  *
  * @see IAdaptable
  * @see IAdapterManager
  *
  * @since 3.3
  */
-public interface IIterable {
+public interface IIterable<T> {
 
 	/**
 	 * Returns an iterator to iterate over the elements.
 	 *
 	 * @return an iterator
 	 */
-	public Iterator iterator();
+	public Iterator<T> iterator();
 }

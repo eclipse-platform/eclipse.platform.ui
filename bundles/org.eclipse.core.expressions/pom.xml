@@ -27,8 +27,8 @@
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
         <configuration>
-          <!-- observed BREE as of Juno -->
-          <executionEnvironment>J2SE-1.4</executionEnvironment>
+          <!-- BREE as of Mars -->
+          <executionEnvironment>JavaSE-1.7</executionEnvironment>
         </configuration>
       </plugin>
     </plugins>

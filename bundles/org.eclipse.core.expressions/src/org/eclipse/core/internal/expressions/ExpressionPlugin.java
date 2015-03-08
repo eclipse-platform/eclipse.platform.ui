@@ -39,6 +39,7 @@ public class ExpressionPlugin extends Plugin {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext= context;
@@ -47,6 +48,7 @@ public class ExpressionPlugin extends Plugin {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fgBundleListener != null)
 			context.removeBundleListener(fgBundleListener);

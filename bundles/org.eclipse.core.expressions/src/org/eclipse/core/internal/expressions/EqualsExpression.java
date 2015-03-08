@@ -46,15 +46,18 @@ public class EqualsExpression extends Expression {
 		fExpectedValue= Expressions.convertArgument(value);
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object element= context.getDefaultVariable();
 		return EvaluationResult.valueOf(element.equals(fExpectedValue));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof EqualsExpression))
 			return false;
@@ -63,6 +66,7 @@ public class EqualsExpression extends Expression {
 		return this.fExpectedValue.equals(that.fExpectedValue);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
 	}

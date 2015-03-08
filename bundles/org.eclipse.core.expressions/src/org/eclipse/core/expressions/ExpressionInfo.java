@@ -34,9 +34,9 @@ public class ExpressionInfo {
 
 	// Although we are using this as sets we use lists since
 	// they are faster for smaller numbers of elements
-	private List fAccessedVariableNames;
-	private List fMisbehavingExpressionTypes;
-	private List fAccessedPropertyNames;
+	private List<String> fAccessedVariableNames;
+	private List<Class<?>> fMisbehavingExpressionTypes;
+	private List<String> fAccessedPropertyNames;
 
 	/**
 	 * Returns <code>true</code> if the default variable is accessed
@@ -80,7 +80,7 @@ public class ExpressionInfo {
 	public String[] getAccessedVariableNames() {
 		if (fAccessedVariableNames == null)
 			return new String[0];
-		return (String[])fAccessedVariableNames.toArray(new String[fAccessedVariableNames.size()]);
+		return fAccessedVariableNames.toArray(new String[fAccessedVariableNames.size()]);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class ExpressionInfo {
 	 */
 	public void addVariableNameAccess(String name) {
 		if (fAccessedVariableNames == null) {
-			fAccessedVariableNames= new ArrayList(5);
+			fAccessedVariableNames= new ArrayList<>(5);
 			fAccessedVariableNames.add(name);
 		} else {
 			if (!fAccessedVariableNames.contains(name))
@@ -109,7 +109,7 @@ public class ExpressionInfo {
 	public String[] getAccessedPropertyNames() {
 		if (fAccessedPropertyNames == null)
 			return new String[0];
-		return (String[])fAccessedPropertyNames.toArray(new String[fAccessedPropertyNames.size()]);
+		return fAccessedPropertyNames.toArray(new String[fAccessedPropertyNames.size()]);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class ExpressionInfo {
 	 */
 	public void addAccessedPropertyName(String name) {
 		if (fAccessedPropertyNames == null) {
-			fAccessedPropertyNames= new ArrayList(5);
+			fAccessedPropertyNames= new ArrayList<>(5);
 			fAccessedPropertyNames.add(name);
 		} else {
 			if (!fAccessedPropertyNames.contains(name))
@@ -142,10 +142,10 @@ public class ExpressionInfo {
 	 * @return the set of expression types which don't implement the
 	 *  <code>computeReevaluationInfo</code> method, or <code>null</code> if all do
 	 */
-	public Class[] getMisbehavingExpressionTypes() {
+	public Class<?>[] getMisbehavingExpressionTypes() {
 		if (fMisbehavingExpressionTypes == null)
 			return null;
-		return (Class[])fMisbehavingExpressionTypes.toArray(new Class[fMisbehavingExpressionTypes.size()]);
+		return fMisbehavingExpressionTypes.toArray(new Class[fMisbehavingExpressionTypes.size()]);
 	}
 
 	/**
@@ -153,9 +153,9 @@ public class ExpressionInfo {
 	 *
 	 * @param clazz the class to add.
 	 */
-	public void addMisBehavingExpressionType(Class clazz) {
+	public void addMisBehavingExpressionType(Class<?> clazz) {
 		if (fMisbehavingExpressionTypes == null) {
-			fMisbehavingExpressionTypes= new ArrayList(2);
+			fMisbehavingExpressionTypes= new ArrayList<>(2);
 			fMisbehavingExpressionTypes.add(clazz);
 		} else {
 			if (!fMisbehavingExpressionTypes.contains(clazz))
@@ -219,8 +219,8 @@ public class ExpressionInfo {
 			fAccessedVariableNames= other.fAccessedVariableNames; //TODO: shares the two lists! Can propagate further additions up into sibling branches.
 		} else {
 			if (other.fAccessedVariableNames != null) {
-				for (Iterator iter= other.fAccessedVariableNames.iterator(); iter.hasNext();) {
-					Object variableName= iter.next();
+				for (Iterator<String> iter= other.fAccessedVariableNames.iterator(); iter.hasNext();) {
+					String variableName= iter.next();
 					if (!fAccessedVariableNames.contains(variableName))
 						fAccessedVariableNames.add(variableName);
 				}
@@ -240,8 +240,8 @@ public class ExpressionInfo {
 			fAccessedPropertyNames= other.fAccessedPropertyNames; //TODO: shares the two lists!
 		} else {
 			if (other.fAccessedPropertyNames != null) {
-				for (Iterator iter= other.fAccessedPropertyNames.iterator(); iter.hasNext();) {
-					Object variableName= iter.next();
+				for (Iterator<String> iter= other.fAccessedPropertyNames.iterator(); iter.hasNext();) {
+					String variableName= iter.next();
 					if (!fAccessedPropertyNames.contains(variableName))
 						fAccessedPropertyNames.add(variableName);
 				}
@@ -259,8 +259,8 @@ public class ExpressionInfo {
 			fMisbehavingExpressionTypes= other.fMisbehavingExpressionTypes; //TODO: shares the two lists!
 		} else  {
 			if (other.fMisbehavingExpressionTypes != null) {
-				for (Iterator iter= other.fMisbehavingExpressionTypes.iterator(); iter.hasNext();) {
-					Object clazz= iter.next();
+				for (Iterator<Class<?>> iter= other.fMisbehavingExpressionTypes.iterator(); iter.hasNext();) {
+					Class<?> clazz= iter.next();
 					if (!fMisbehavingExpressionTypes.contains(clazz))
 						fMisbehavingExpressionTypes.add(clazz);
 				}

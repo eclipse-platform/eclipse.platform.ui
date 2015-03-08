@@ -17,10 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 
 public class OrExpression extends CompositeExpression {
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		return evaluateOr(context);
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof OrExpression))
 			return false;

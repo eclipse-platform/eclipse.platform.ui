@@ -241,6 +241,7 @@ public class EvaluationResult {
 	 * @return a string representing this object. The result is not
 	 *  human readable
 	 */
+	@Override
 	public String toString() {
 		switch (fValue) {
 			case 0:

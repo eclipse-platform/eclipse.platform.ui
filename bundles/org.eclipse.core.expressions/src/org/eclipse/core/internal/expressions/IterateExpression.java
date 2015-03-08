@@ -29,40 +29,49 @@ public class IterateExpression extends CompositeExpression {
 
 	private static class IteratePool implements IEvaluationContext {
 
-		private Iterator fIterator;
+		private Iterator<?> fIterator;
 		private Object fDefaultVariable;
 		private IEvaluationContext fParent;
 
-		public IteratePool(IEvaluationContext parent, Iterator iterator) {
+		public IteratePool(IEvaluationContext parent, Iterator<?> iterator) {
 			Assert.isNotNull(parent);
 			Assert.isNotNull(iterator);
 			fParent= parent;
 			fIterator= iterator;
 		}
+		@Override
 		public IEvaluationContext getParent() {
 			return fParent;
 		}
+		@Override
 		public IEvaluationContext getRoot() {
 			return fParent.getRoot();
 		}
+		@Override
 		public Object getDefaultVariable() {
 			return fDefaultVariable;
 		}
+		@Override
 		public boolean getAllowPluginActivation() {
 			return fParent.getAllowPluginActivation();
 		}
+		@Override
 		public void setAllowPluginActivation(boolean value) {
 			fParent.setAllowPluginActivation(value);
 		}
+		@Override
 		public void addVariable(String name, Object value) {
 			fParent.addVariable(name, value);
 		}
+		@Override
 		public Object removeVariable(String name) {
 			return fParent.removeVariable(name);
 		}
+		@Override
 		public Object getVariable(String name) {
 			return fParent.getVariable(name);
 		}
+		@Override
 		public Object resolveVariable(String name, Object[] args) throws CoreException {
 			return fParent.resolveVariable(name, args);
 		}
@@ -134,10 +143,11 @@ public class IterateExpression extends CompositeExpression {
 	/* (non-Javadoc)
 	 * @see Expression#evaluate(IVariablePool)
 	 */
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();
 		if (var instanceof Collection) {
-			Collection col= (Collection)var;
+			Collection<?> col= (Collection<?>)var;
 			switch (col.size()) {
 				case 0:
 					if (fEmptyResult == null) {
@@ -147,7 +157,7 @@ public class IterateExpression extends CompositeExpression {
 					}
 				case 1:
 					if (col instanceof List)
-						return evaluateAnd(new DefaultVariable(context, ((List)col).get(0)));
+						return evaluateAnd(new DefaultVariable(context, ((List<?>)col).get(0)));
 					//$FALL-THROUGH$
 				default:
 					IteratePool iter= new IteratePool(context, col.iterator());
@@ -170,7 +180,7 @@ public class IterateExpression extends CompositeExpression {
 					return result;
 			}
 		} else {
-			IIterable iterable= Expressions.getAsIIterable(var, this);
+			IIterable<?> iterable= Expressions.getAsIIterable(var, this);
 			if (iterable == null)
 				return EvaluationResult.NOT_LOADED;
 			int count= 0;
@@ -204,6 +214,7 @@ public class IterateExpression extends CompositeExpression {
 		}
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		// Although we access every single variable we only mark the default
 		// variable as accessed since we don't have single variables for the
@@ -212,6 +223,7 @@ public class IterateExpression extends CompositeExpression {
 		super.collectExpressionInfo(info);
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof IterateExpression))
 			return false;
@@ -220,6 +232,7 @@ public class IterateExpression extends CompositeExpression {
 		return (this.fOperator == that.fOperator) && equals(this.fExpressions, that.fExpressions);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + fOperator;

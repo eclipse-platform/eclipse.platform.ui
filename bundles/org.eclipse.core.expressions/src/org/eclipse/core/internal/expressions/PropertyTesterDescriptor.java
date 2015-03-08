@@ -75,23 +75,28 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 		return fConfigElement;
 	}
 
+	@Override
 	public boolean handles(String namespace, String property) {
 		return fNamespace.equals(namespace) && fProperties.indexOf("," + property + ",") != -1;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	@Override
 	public boolean isInstantiated() {
 		return false;
 	}
 
+	@Override
 	public boolean isDeclaringPluginActive() {
 		Bundle fBundle= Platform.getBundle(fConfigElement.getContributor().getName());
 		return fBundle.getState() == Bundle.ACTIVE;
 	}
 
+	@Override
 	public IPropertyTester instantiate() throws CoreException {
 		return (IPropertyTester)fConfigElement.createExecutableExtension(CLASS);
 	}
 
+	@Override
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		Assert.isTrue(false, "Method should never be called"); //$NON-NLS-1$
 		return false;

@@ -54,6 +54,7 @@ public class SystemTestExpression extends Expression {
 		fExpectedValue= expectedValue;
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		String str= System.getProperty(fProperty);
 		if (str == null)
@@ -61,10 +62,12 @@ public class SystemTestExpression extends Expression {
 		return EvaluationResult.valueOf(str.equals(fExpectedValue));
 	}
 
+	@Override
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markSystemPropertyAccessed();
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof SystemTestExpression))
 			return false;
@@ -74,6 +77,7 @@ public class SystemTestExpression extends Expression {
 				&& this.fExpectedValue.equals(that.fExpectedValue);
 	}
 
+	@Override
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode()
 			* HASH_FACTOR + fProperty.hashCode();
@@ -84,6 +88,7 @@ public class SystemTestExpression extends Expression {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "<systemTest property=\"" + fProperty +  //$NON-NLS-1$
 		  "\" value=\"" + fExpectedValue + "\""; //$NON-NLS-1$ //$NON-NLS-2$

@@ -38,6 +38,7 @@ public class EnablementExpression extends CompositeExpression {
 		// element not used yet.
 	}
 
+	@Override
 	public boolean equals(final Object object) {
 		if (!(object instanceof EnablementExpression))
 			return false;
@@ -46,6 +47,7 @@ public class EnablementExpression extends CompositeExpression {
 		return equals(this.fExpressions, that.fExpressions);
 	}
 
+	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		long start= 0;
 		if (Expressions.TRACING)
