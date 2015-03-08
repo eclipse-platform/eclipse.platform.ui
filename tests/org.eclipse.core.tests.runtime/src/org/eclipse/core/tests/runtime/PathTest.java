@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Tasse - Add extra constructor to Path class (bug 454959)
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -21,9 +21,6 @@ import org.eclipse.core.runtime.Path;
  * Test cases for the Path class.
  */
 public class PathTest extends RuntimeTest {
-	/** Constant value indicating if the current platform is Windows */
-	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
-
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.
 	 * This constructor should not do any real work nor should it be
@@ -82,6 +79,8 @@ public class PathTest extends RuntimeTest {
 	public void testAppend() {
 
 		IPath fore = new Path("/first/second/third/");
+		IPath win = Path.forWindows("/first/second/third/");
+		IPath posix = Path.forPosix("/first/second/third/");
 		String aftString = "/fourth/fifth";
 		IPath aft = new Path(aftString);
 		IPath combo = new Path("/first/second/third/fourth/fifth");
@@ -92,6 +91,11 @@ public class PathTest extends RuntimeTest {
 		assertTrue("1.3", !fore.append(aft).hasTrailingSeparator());
 		assertTrue("1.4", !Path.ROOT.append(fore).append(aft).hasTrailingSeparator());
 		assertTrue("1.5", !fore.removeTrailingSeparator().append(aft).hasTrailingSeparator());
+		// append empty and root path together
+		assertEquals("1.6", Path.EMPTY, Path.EMPTY.append(Path.EMPTY));
+		assertEquals("1.7", Path.EMPTY, Path.EMPTY.append(Path.ROOT));
+		assertEquals("1.8", Path.ROOT, Path.ROOT.append(Path.EMPTY));
+		assertEquals("1.9", Path.ROOT, Path.ROOT.append(Path.ROOT));
 
 		assertEquals("2.0", combo, fore.append(aftString));
 		assertEquals("2.1", combo, fore.removeTrailingSeparator().append(aftString));
@@ -107,21 +111,25 @@ public class PathTest extends RuntimeTest {
 		assertTrue("3.3", fore.append("/aft/").hasTrailingSeparator());
 		assertTrue("3.4", !fore.append("\\aft").hasTrailingSeparator());
 		//backslash is a trailing separator on windows only
-		assertTrue("3.5", fore.append("aft\\").hasTrailingSeparator() == WINDOWS);
-		assertTrue("3.6", !fore.append("fourth/fifth").hasTrailingSeparator());
-		assertTrue("3.7", fore.append("fourth/fifth/").hasTrailingSeparator());
-		assertTrue("3.8", !fore.append(new Path("aft")).hasTrailingSeparator());
-		assertTrue("3.9", fore.append(new Path("aft/")).hasTrailingSeparator());
-		assertTrue("3.10", !fore.append(new Path("fourth/fifth")).hasTrailingSeparator());
-		assertTrue("3.11", fore.append(new Path("fourth/fifth/")).hasTrailingSeparator());
+		assertTrue("3.5.win", win.append("aft\\").hasTrailingSeparator());
+		assertFalse("3.6.posix", posix.append("aft\\").hasTrailingSeparator());
+		assertTrue("3.7", !fore.append("fourth/fifth").hasTrailingSeparator());
+		assertTrue("3.8", fore.append("fourth/fifth/").hasTrailingSeparator());
+		assertTrue("3.9", !fore.append(new Path("aft")).hasTrailingSeparator());
+		assertTrue("3.10", fore.append(new Path("aft/")).hasTrailingSeparator());
+		assertTrue("3.11", !fore.append(new Path("fourth/fifth")).hasTrailingSeparator());
+		assertTrue("3.12", fore.append(new Path("fourth/fifth/")).hasTrailingSeparator());
 
-		//make sure append converts slashes appropriately
-		if (WINDOWS) {
-			aftString = "fourth\\fifth";
-			assertEquals("4.0", combo, fore.append(aftString));
-			assertEquals("4.1", combo, fore.removeTrailingSeparator().append(aftString));
-			assertEquals("4.2", combo, Path.ROOT.append(fore).append(aftString));
-		}
+		//make sure append converts backslashes appropriately
+		aftString = "fourth\\fifth";
+		assertEquals("4.0.win", combo, win.append(aftString));
+		assertEquals("4.1.win", combo, win.removeTrailingSeparator().append(aftString));
+		// append path to root path uses optimized code
+		assertEquals("4.2.win", combo, Path.forWindows("/").append(win).append(aftString));
+		assertEquals("4.3.win", combo, Path.forWindows("/").append(posix).append(aftString));
+		// append path to empty path uses optimized code
+		assertEquals("4.4.win", combo, Path.forWindows("").append(win).append(aftString).makeAbsolute());
+		assertEquals("4.5.win", combo, Path.forWindows("").append(posix).append(aftString).makeAbsolute());
 
 		assertEquals("5.0", new Path("/foo"), Path.ROOT.append("../foo"));
 		assertEquals("5.1", new Path("/foo"), Path.ROOT.append("./foo"));
@@ -129,32 +137,29 @@ public class PathTest extends RuntimeTest {
 		assertEquals("5.3", new Path("c:/foo/bar/xyz"), new Path("c:/foo/bar").append("./xyz"));
 
 		//append preserves device and leading separator of receiver
-		if (WINDOWS) {
-			assertEquals("6.1", new Path("c:foo/bar"), new Path("c:").append("/foo/bar"));
-			assertEquals("6.2", new Path("c:foo/bar"), new Path("c:").append("foo/bar"));
-			assertEquals("6.3", new Path("c:/foo/bar"), new Path("c:/").append("/foo/bar"));
-			assertEquals("6.4", new Path("c:/foo/bar"), new Path("c:/").append("foo/bar"));
-			assertEquals("6.5", new Path("c:foo/bar"), new Path("c:").append("z:/foo/bar"));
-			assertEquals("6.6", new Path("c:foo/bar"), new Path("c:").append("z:foo/bar"));
-			assertEquals("6.7", new Path("c:/foo/bar"), new Path("c:/").append("z:/foo/bar"));
-			assertEquals("6.8", new Path("c:/foo/bar"), new Path("c:/").append("z:foo/bar"));
-			assertEquals("6.9", new Path("c:/foo"), new Path("c:/").append("z:foo"));
-		} else {
-			assertEquals("6.1", new Path("c:/foo/bar"), new Path("c:").append("/foo/bar"));
-			assertEquals("6.2", new Path("c:/foo/bar/"), new Path("c:").append("foo/bar/"));
-			assertEquals("6.3", new Path("/c:/foo/bar"), new Path("/c:").append("/foo/bar"));
-			assertEquals("6.4", new Path("/c:/foo/bar"), new Path("/c:").append("foo/bar"));
-		}
+		assertEquals("6.1.win", Path.forWindows("c:foo/bar"), Path.forWindows("c:").append("/foo/bar"));
+		assertEquals("6.2.win", Path.forWindows("c:foo/bar"), Path.forWindows("c:").append("foo/bar"));
+		assertEquals("6.3.win", Path.forWindows("c:/foo/bar"), Path.forWindows("c:/").append("/foo/bar"));
+		assertEquals("6.4.win", Path.forWindows("c:/foo/bar"), Path.forWindows("c:/").append("foo/bar"));
+		assertEquals("6.5.win", Path.forWindows("c:foo/bar"), Path.forWindows("c:").append("z:/foo/bar"));
+		assertEquals("6.6.win", Path.forWindows("c:foo/bar"), Path.forWindows("c:").append("z:foo/bar"));
+		assertEquals("6.7.win", Path.forWindows("c:/foo/bar"), Path.forWindows("c:/").append("z:/foo/bar"));
+		assertEquals("6.8.win", Path.forWindows("c:/foo/bar"), Path.forWindows("c:/").append("z:foo/bar"));
+		assertEquals("6.9.win", Path.forWindows("c:/foo"), Path.forWindows("c:/").append("z:foo"));
+		assertEquals("6.10.posix", Path.forPosix("c:/foo/bar"), Path.forPosix("c:").append("/foo/bar"));
+		assertEquals("6.11.posix", Path.forPosix("c:/foo/bar/"), Path.forPosix("c:").append("foo/bar/"));
+		assertEquals("6.12.posix", Path.forPosix("/c:/foo/bar"), Path.forPosix("/c:").append("/foo/bar"));
+		assertEquals("6.13.posix", Path.forPosix("/c:/foo/bar"), Path.forPosix("/c:").append("foo/bar"));
 
-		assertEquals("6.10", new Path("foo/bar"), new Path("foo").append(new Path("/bar")));
-		assertEquals("6.11", new Path("foo/bar"), new Path("foo").append(new Path("bar")));
-		assertEquals("6.12", new Path("/foo/bar"), new Path("/foo/").append(new Path("/bar")));
-		assertEquals("6.13", new Path("/foo/bar"), new Path("/foo/").append(new Path("bar")));
+		assertEquals("6.14", new Path("foo/bar"), new Path("foo").append(new Path("/bar")));
+		assertEquals("6.15", new Path("foo/bar"), new Path("foo").append(new Path("bar")));
+		assertEquals("6.16", new Path("/foo/bar"), new Path("/foo/").append(new Path("/bar")));
+		assertEquals("6.17", new Path("/foo/bar"), new Path("/foo/").append(new Path("bar")));
 
-		assertEquals("6.14", new Path("foo/bar/"), new Path("foo").append(new Path("/bar/")));
-		assertEquals("6.15", new Path("foo/bar/"), new Path("foo").append(new Path("bar/")));
-		assertEquals("6.16", new Path("/foo/bar/"), new Path("/foo/").append(new Path("/bar/")));
-		assertEquals("6.17", new Path("/foo/bar/"), new Path("/foo/").append(new Path("bar/")));
+		assertEquals("6.18", new Path("foo/bar/"), new Path("foo").append(new Path("/bar/")));
+		assertEquals("6.19", new Path("foo/bar/"), new Path("foo").append(new Path("bar/")));
+		assertEquals("6.20", new Path("/foo/bar/"), new Path("/foo/").append(new Path("/bar/")));
+		assertEquals("6.21", new Path("/foo/bar/"), new Path("/foo/").append(new Path("bar/")));
 
 		//append preserves isUNC of receiver
 		assertEquals("7.0", new Path("/foo/bar"), new Path("/foo").append("//bar"));
@@ -171,11 +176,52 @@ public class PathTest extends RuntimeTest {
 		assertEquals("8.5", fore, fore.append("//"));
 		assertEquals("8.6", fore, fore.append("/"));
 		assertEquals("8.7", fore, fore.append(""));
-		if (WINDOWS) {
-			assertEquals("8.8", fore, fore.append("c://"));
-			assertEquals("8.9", fore, fore.append("c:/"));
-			assertEquals("8.10", fore, fore.append("c:"));
-		}
+		assertEquals("8.8.win", win, win.append("c://"));
+		assertEquals("8.9.win", win, win.append("c:/"));
+		assertEquals("8.10.win", win, win.append("c:"));
+
+		// append string respects and preserves the initial path's file system
+		IPath win1 = Path.forWindows("a/b");
+		IPath win2 = win1.append("c:d\\e");
+		assertEquals("9.1.win", "a/b/d/e", win2.toString());
+		assertEquals("9.2.win", null, win2.getDevice());
+		assertEquals("9.3.win", 4, win2.segmentCount());
+		assertEquals("9.4.win", "d", win2.segment(2));
+		assertFalse("9.5.win", win2.isValidSegment(":"));
+		IPath posix1 = Path.forPosix("a/b");
+		IPath posix2 = posix1.append("c:d\\e");
+		assertEquals("9.6.posix", "a/b/c:d\\e", posix2.toString());
+		assertEquals("9.7.posix", null, posix2.getDevice());
+		assertEquals("9.8.posix", 3, posix2.segmentCount());
+		assertEquals("9.9.posix", "c:d\\e", posix2.segment(2));
+		assertTrue("9.10.posix", posix2.isValidSegment(":"));
+		assertTrue("9.11", win1.equals(posix1));
+		assertFalse("9.12", win2.equals(posix2));
+
+		// append path respects and preserves the initial path's file system
+		IPath win3 = win1.append(Path.forPosix("c/d/e"));
+		assertEquals("10.1.win", "a/b/c/d/e", win3.toString());
+		assertEquals("10.2.win", null, win3.getDevice());
+		assertEquals("10.3.win", 5, win3.segmentCount());
+		assertEquals("10.4.win", "c", win3.segment(2));
+		assertFalse("10.5.win", win3.isValidSegment(":"));
+		IPath posix3 = posix1.append(Path.forWindows("c\\d\\e"));
+		assertEquals("10.6.posix", "a/b/c/d/e", posix3.toString());
+		assertEquals("10.7.posix", null, posix3.getDevice());
+		assertEquals("10.8.posix", 5, posix3.segmentCount());
+		assertEquals("10.9.posix", "c", posix3.segment(2));
+		assertTrue("10.10.posix", posix3.isValidSegment(":"));
+		assertTrue("10.11", win3.equals(posix3));
+
+		// append POSIX path to Windows path may produce invalid segments
+		IPath win4 = win1.append(Path.forPosix("c:d\\e"));
+		assertEquals("11.1.win", "a/b/c:d\\e", win4.toString());
+		assertEquals("11.2.win", null, win4.getDevice());
+		assertEquals("11.3.win", 3, win4.segmentCount());
+		assertEquals("11.4.win", "c:d\\e", win4.segment(2));
+		// isValidPath() considers it as device 'a/b/c:' with segments {'d','e'}
+		assertTrue("11.5.win", win4.isValidPath(win4.toString()));
+		assertFalse("11.6.win", win4.isValidSegment(win4.segment(2)));
 	}
 
 	public void testSegmentCount() {
@@ -253,14 +299,27 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.2", anyPath, anyPath);
 
 		//should handle slash before the device (see bug 84697)
-		try {
-			if (WINDOWS) {
-				assertEquals("3.0", "D:/foo/abc.txt", new Path(new java.io.File("D:\\foo\\abc.txt").toURL().getPath()).toString());
-				assertEquals("3.1", "D:/", new Path(new java.io.File("D:/").toURL().getPath()).toString());
-			}
-		} catch (MalformedURLException e) {
-			fail("4.99", e);
-		}
+		// fullPath = new java.io.File("D:\\foo\\abc.txt").toURL().getPath()
+		assertEquals("3.0.win", "D:/foo/abc.txt", Path.forWindows("/D:/foo/abc.txt").toString());
+		// fullPath = new java.io.File("D:/").toURL().getPath()
+		assertEquals("3.1.win", "D:/", Path.forWindows("/D:/").toString());
+	}
+
+	public void testFactoryMethods() {
+
+		IPath win = Path.forWindows("a:b\\c/d");
+		assertEquals("1.1.win", "a:b/c/d", win.toString());
+		assertEquals("1.2.win", "a:", win.getDevice());
+		assertEquals("1.3.win", 3, win.segmentCount());
+		assertEquals("1.4.win", "b", win.segment(0));
+
+		IPath posix = Path.forPosix("a:b\\c/d");
+		assertEquals("2.5.posix", "a:b\\c/d", posix.toString());
+		assertEquals("2.6.posix", null, posix.getDevice());
+		assertEquals("2.7.posix", 2, posix.segmentCount());
+		assertEquals("2.8.posix", "a:b\\c", posix.segment(0));
+
+		assertFalse("3.1", win.equals(posix));
 	}
 
 	public void testFirstSegment() {
@@ -273,15 +332,12 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.2", "a", new Path("/a").segment(0));
 		assertEquals("2.3", "a", new Path("a/b").segment(0));
 		assertEquals("2.4", "a", new Path("//a/b").segment(0));
-		if (WINDOWS) {
-			assertEquals("2.5", "a", new Path("c:a/b").segment(0));
-			assertEquals("2.6", "a", new Path("c:/a/b").segment(0));
-		} else {
-			assertEquals("2.5", "c:", new Path("c:/a/b").segment(0));
-			assertEquals("2.6", "c:", new Path("c:/a\\b").segment(0));
-			assertEquals("2.5", "a", new Path("a/c:/b").segment(0));
-			assertEquals("2.6", "a\\b", new Path("a\\b/b").segment(0));
-		}
+		assertEquals("2.5.win", "a", Path.forWindows("c:a/b").segment(0));
+		assertEquals("2.6.win", "a", Path.forWindows("c:/a/b").segment(0));
+		assertEquals("2.7.posix", "c:", Path.forPosix("c:/a/b").segment(0));
+		assertEquals("2.8.posix", "c:", Path.forPosix("c:/a\\b").segment(0));
+		assertEquals("2.9.posix", "a", Path.forPosix("a/c:/b").segment(0));
+		assertEquals("2.10.posix", "a\\b", Path.forPosix("a\\b/b").segment(0));
 
 	}
 
@@ -300,6 +356,23 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.5", "a/b:c", Path.fromPortableString("a/b:c").toString());
 		assertEquals("2.6", "a:b", Path.fromPortableString("a::b").toString());
 
+		boolean isLocalPosix = java.io.File.separatorChar == '/';
+		IPath win1 = Path.forWindows("a:b\\c/d");
+		IPath win2 = Path.fromPortableString(win1.toPortableString());
+		assertEquals("3.1.win", "a:b/c/d", win2.toString());
+		assertEquals("3.2.win", "a:", win2.getDevice());
+		assertEquals("3.3.win", 3, win2.segmentCount());
+		assertEquals("3.4.win", "b", win2.segment(0));
+		assertTrue("3.5.win", win1.equals(win2));
+		assertEquals("3.6.win", isLocalPosix, win2.isValidSegment(":"));
+		IPath posix1 = Path.forPosix("a:b\\c/d");
+		IPath posix2 = Path.fromPortableString(posix1.toPortableString());
+		assertEquals("3.7.posix", "a:b\\c/d", posix2.toString());
+		assertEquals("3.8.posix", null, posix2.getDevice());
+		assertEquals("3.9.posix", 2, posix2.segmentCount());
+		assertEquals("3.10.posix", "a:b\\c", posix2.segment(0));
+		assertTrue("3.11.posix", posix1.equals(posix2));
+		assertEquals("3.12.posix", isLocalPosix, posix2.isValidSegment(":"));
 	}
 
 	public void testGetFileExtension() {
@@ -354,11 +427,8 @@ public class PathTest extends RuntimeTest {
 		assertTrue("1.0", new Path("/first/second/third").isAbsolute());
 		assertTrue("1.1", Path.ROOT.isAbsolute());
 		assertTrue("1.2", new Path("//first/second/third").isAbsolute());
-		if (WINDOWS) {
-			assertTrue("1.3", new Path("c:/first/second/third").isAbsolute());
-		} else {
-			assertTrue("1.3", new Path("/c:first/second/third").isAbsolute());
-		}
+		assertTrue("1.3.win", Path.forWindows("c:/first/second/third").isAbsolute());
+		assertTrue("1.4.posix", Path.forPosix("/c:first/second/third").isAbsolute());
 
 		// negative
 		assertTrue("2.0", !new Path("first/second/third").isAbsolute());
@@ -366,14 +436,11 @@ public class PathTest extends RuntimeTest {
 		assertTrue("2.2", !new Path("c:first/second/third").isAbsolute());
 
 		// unc
-		if (WINDOWS) {
-			assertTrue("3.0", new Path("c://").isAbsolute());
-		} else {
-			assertTrue("3.0", new Path("//c:/").isAbsolute());
-		}
-		assertTrue("3.1", new Path("//").isAbsolute());
-		assertTrue("3.2", new Path("//a").isAbsolute());
-		assertTrue("3.3", new Path("//a/b/").isAbsolute());
+		assertTrue("3.0.win", Path.forWindows("c://").isAbsolute());
+		assertTrue("3.1.posix", Path.forPosix("//c:/").isAbsolute());
+		assertTrue("3.2", new Path("//").isAbsolute());
+		assertTrue("3.3", new Path("//a").isAbsolute());
+		assertTrue("3.4", new Path("//a/b/").isAbsolute());
 
 	}
 
@@ -383,7 +450,9 @@ public class PathTest extends RuntimeTest {
 		assertTrue("1.0", Path.EMPTY.isEmpty());
 		assertTrue("1.1", new Path("//").isEmpty());
 		assertTrue("1.2", new Path("").isEmpty());
-		assertTrue("1.1", new Path("c:").isEmpty() == WINDOWS);
+		assertTrue("1.3.win", Path.forWindows("c:").isEmpty());
+		assertFalse("1.4.posix", Path.forPosix("c:").isEmpty());
+		assertTrue("1.5", new Path("///").isEmpty());
 
 		// negative
 		assertTrue("2.0", !new Path("first/second/third").isEmpty());
@@ -416,10 +485,13 @@ public class PathTest extends RuntimeTest {
 		assertTrue("1.0", !new Path("/first/second").isRoot());
 		assertTrue("1.1", !Path.EMPTY.isRoot());
 		assertTrue("1.2", !new Path("//").isRoot());
+		assertTrue("1.3", !new Path("///").isRoot());
 
 		// positive
 		assertTrue("2.0", Path.ROOT.isRoot());
 		assertTrue("2.1", new Path("/").isRoot());
+		assertTrue("2.2.win", Path.forWindows("/").isRoot());
+		assertTrue("2.3.posix", Path.forPosix("/").isRoot());
 	}
 
 	public void testIsUNC() {
@@ -445,12 +517,11 @@ public class PathTest extends RuntimeTest {
 		assertTrue("5.0", new Path("//").isUNC());
 		assertTrue("5.1", new Path("//a").isUNC());
 		assertTrue("5.2", new Path("//a/b").isUNC());
-		if (WINDOWS) {
-			assertTrue("5.3", new Path("\\\\ThisMachine\\HOME\\foo.jar").isUNC());
-			assertTrue("6.0", new Path("c://a/").setDevice(null).isUNC());
-			assertTrue("6.1", new Path("c:\\/a/b").setDevice(null).isUNC());
-			assertTrue("6.2", new Path("c:\\\\").setDevice(null).isUNC());
-		}
+		assertTrue("5.3.win", Path.forWindows("\\\\ThisMachine\\HOME\\foo.jar").isUNC());
+
+		assertTrue("6.0.win", Path.forWindows("c://a/").setDevice(null).isUNC());
+		assertTrue("6.1.win", Path.forWindows("c:\\/a/b").setDevice(null).isUNC());
+		assertTrue("6.2.win", Path.forWindows("c:\\\\").setDevice(null).isUNC());
 	}
 
 	public void testIsValidPath() {
@@ -466,11 +537,45 @@ public class PathTest extends RuntimeTest {
 		assertTrue("1.7", test.isValidPath("c://a//b//c//d//e//f"));
 		assertTrue("1.8", test.isValidPath("//a//b//c//d//e//f"));
 
+		// platform-dependent
+		assertFalse("2.1.win", Path.forWindows("").isValidPath("c:b:"));
+		assertFalse("2.2.win", Path.forWindows("").isValidPath("c:a/b:"));
+		assertTrue("2.3.posix", Path.forPosix("").isValidPath("c:b:"));
+		assertTrue("2.4.posix", Path.forPosix("").isValidPath("c:a/b:"));
+
+		// static methods
+		assertFalse("3.1.win", Path.isValidWindowsPath("c:b:"));
+		assertFalse("3.2.win", Path.isValidWindowsPath("c:a/b:"));
+		assertTrue("3.3.posix", Path.isValidPosixPath("c:b:"));
+		assertTrue("3.4.posix", Path.isValidPosixPath("c:a/b:"));
+	}
+
+	public void testIsValidSegment() {
+		IPath test = Path.ROOT;
+		// positive
+		assertTrue("1.0", test.isValidSegment("a"));
+
 		// negative
-		if (WINDOWS) {
-			assertTrue("2.1", !test.isValidPath("c:b:"));
-			assertTrue("2.2", !test.isValidPath("c:a/b:"));
-		}
+		assertFalse("2.1", test.isValidSegment(""));
+		assertFalse("2.2", test.isValidSegment("/"));
+
+		// platform-dependent
+		assertFalse("3.1.win", Path.forWindows("").isValidSegment("\\"));
+		assertFalse("3.2.win", Path.forWindows("").isValidSegment(":"));
+		assertTrue("3.3.posix", Path.forPosix("").isValidSegment("\\"));
+		assertTrue("3.4.posix", Path.forPosix("").isValidSegment(":"));
+
+		// static methods
+		assertFalse("4.1.win", Path.isValidWindowsSegment("\\"));
+		assertFalse("4.2.win", Path.isValidWindowsSegment(":"));
+		assertTrue("4.3.posix", Path.isValidPosixSegment("\\"));
+		assertTrue("4.4.posix", Path.isValidPosixSegment(":"));
+
+		// path constants and Path(String) always on local platform
+		boolean isLocalPosix = java.io.File.separatorChar == '/';
+		assertEquals("5.1", isLocalPosix, Path.EMPTY.isValidSegment(":"));
+		assertEquals("5.2", isLocalPosix, Path.ROOT.isValidSegment(":"));
+		assertEquals("5.3", isLocalPosix, new Path("").isValidSegment(":"));
 	}
 
 	public void testLastSegment() {
@@ -546,8 +651,8 @@ public class PathTest extends RuntimeTest {
 				final IPath base = bases[i];
 				final IPath child = children[j];
 				IPath result = child.makeRelativeTo(base);
-				assertTrue("6." + i + ',' + j, !result.isAbsolute());
-				assertEquals("7." + i + ',' + j, base.append(result), child);
+				assertTrue("4." + i + ',' + j, !result.isAbsolute());
+				assertEquals("5." + i + ',' + j, base.append(result), child);
 			}
 		}
 	}
@@ -556,17 +661,16 @@ public class PathTest extends RuntimeTest {
 	 * Tests for {@link Path#makeRelativeTo(IPath)}.
 	 */
 	public void testMakeRelativeToWindows() {
-		if (!WINDOWS)
-			return;
-		IPath[] bases = new IPath[] {new Path("c:/a/"), new Path("c:/a/b")};
-		IPath[] children = new IPath[] {new Path("d:/a/"), new Path("d:/a/b"), new Path("d:/a/b/c")};
+		IPath[] bases = new IPath[] { Path.forWindows("c:/a/"), Path.forWindows("c:/a/b") };
+		IPath[] children = new IPath[] { Path.forWindows("d:/a/"), Path.forWindows("d:/a/b"),
+				Path.forWindows("d:/a/b/c") };
 		for (int i = 0; i < bases.length; i++) {
 			for (int j = 0; j < children.length; j++) {
 				final IPath base = bases[i];
 				final IPath child = children[j];
 				IPath result = child.makeRelativeTo(base);
-				assertTrue("1." + i + ',' + j, result.isAbsolute());
-				assertEquals("2." + i + ',' + j, child, result);
+				assertTrue("1." + i + ".win," + j, result.isAbsolute());
+				assertEquals("2." + i + ".win," + j, child, result);
 			}
 		}
 
@@ -646,8 +750,8 @@ public class PathTest extends RuntimeTest {
 			assertTrue("1.0." + path + " (" + result + ")", result.isUNC());
 			assertEquals("1.1." + path, expected.get(i), result.toString());
 			result = path.makeUNC(false);
-			assertTrue("1.3." + path, !result.isUNC());
-			assertEquals("1.4." + path, expectedNon.get(i), result.toString());
+			assertTrue("1.2." + path, !result.isUNC());
+			assertEquals("1.3." + path, expectedNon.get(i), result.toString());
 		}
 	}
 
@@ -661,12 +765,10 @@ public class PathTest extends RuntimeTest {
 			fail("1.0", e);
 		}
 		try {
-			if (WINDOWS) {
-				IPath path = new Path("d:\\\\ive");
-				assertTrue("2.0", !path.isUNC());
-				assertEquals("2.1", 1, path.segmentCount());
-				assertEquals("2.2", "ive", path.segment(0));
-			}
+			IPath path = Path.forWindows("d:\\\\ive");
+			assertTrue("2.0.win", !path.isUNC());
+			assertEquals("2.1.win", 1, path.segmentCount());
+			assertEquals("2.2.win", "ive", path.segment(0));
 		} catch (Exception e) {
 			fail("2.99", e);
 		}
@@ -685,18 +787,18 @@ public class PathTest extends RuntimeTest {
 		assertEquals("1.8", Path.EMPTY, new Path("/first/second/").removeFirstSegments(3));
 		assertEquals("1.9", new Path("third/fourth"), new Path("/first/second/third/fourth").removeFirstSegments(2));
 
-		if (WINDOWS) {
-			assertEquals("2.0", new Path("c:second"), new Path("c:/first/second").removeFirstSegments(1));
-			assertEquals("2.1", new Path("c:second/third/"), new Path("c:/first/second/third/").removeFirstSegments(1));
-			assertEquals("2.2", new Path("c:"), new Path("c:first").removeFirstSegments(1));
-			assertEquals("2.3", new Path("c:"), new Path("c:/first/").removeFirstSegments(1));
-			assertEquals("2.4", new Path("c:second"), new Path("c:first/second").removeFirstSegments(1));
-			assertEquals("2.5", new Path("c:"), new Path("c:").removeFirstSegments(1));
-			assertEquals("2.6", new Path("c:"), new Path("c:/").removeFirstSegments(1));
-			assertEquals("2.7", new Path("c:"), new Path("c:/first/second/").removeFirstSegments(2));
-			assertEquals("2.8", new Path("c:"), new Path("c:/first/second/").removeFirstSegments(3));
-			assertEquals("2.9", new Path("c:third/fourth"), new Path("c:/first/second/third/fourth").removeFirstSegments(2));
-		}
+		assertEquals("2.0.win", Path.forWindows("c:second"), Path.forWindows("c:/first/second").removeFirstSegments(1));
+		assertEquals("2.1.win", Path.forWindows("c:second/third/"), Path.forWindows("c:/first/second/third/")
+				.removeFirstSegments(1));
+		assertEquals("2.2.win", Path.forWindows("c:"), Path.forWindows("c:first").removeFirstSegments(1));
+		assertEquals("2.3.win", Path.forWindows("c:"), Path.forWindows("c:/first/").removeFirstSegments(1));
+		assertEquals("2.4.win", Path.forWindows("c:second"), Path.forWindows("c:first/second").removeFirstSegments(1));
+		assertEquals("2.5.win", Path.forWindows("c:"), Path.forWindows("c:").removeFirstSegments(1));
+		assertEquals("2.6.win", Path.forWindows("c:"), Path.forWindows("c:/").removeFirstSegments(1));
+		assertEquals("2.7.win", Path.forWindows("c:"), Path.forWindows("c:/first/second/").removeFirstSegments(2));
+		assertEquals("2.8.win", Path.forWindows("c:"), Path.forWindows("c:/first/second/").removeFirstSegments(3));
+		assertEquals("2.9.win", Path.forWindows("c:third/fourth"), Path.forWindows("c:/first/second/third/fourth")
+				.removeFirstSegments(2));
 
 		assertEquals("3.0", new Path("second"), new Path("//first/second").removeFirstSegments(1));
 		assertEquals("3.1", new Path("second/third/"), new Path("//first/second/third/").removeFirstSegments(1));
@@ -870,14 +972,12 @@ public class PathTest extends RuntimeTest {
 		assertEquals("4.4", new Path("first/second/third/"), anyPath.uptoSegment(4));
 
 		// bug 58835 - upToSegment(0) needs to preserve device
-		if (WINDOWS) {
-			anyPath = new Path("c:/first/second/third");
-			assertEquals("5.0", new Path("c:/"), anyPath.uptoSegment(0));
-			anyPath = new Path("c:/first/second/third/");
-			assertEquals("5.1", new Path("c:/"), anyPath.uptoSegment(0));
-			anyPath = new Path("c:first/second/third/");
-			assertEquals("5.2", new Path("c:"), anyPath.uptoSegment(0));
-		}
+		anyPath = Path.forWindows("c:/first/second/third");
+		assertEquals("5.0.win", Path.forWindows("c:/"), anyPath.uptoSegment(0));
+		anyPath = Path.forWindows("c:/first/second/third/");
+		assertEquals("5.1.win", Path.forWindows("c:/"), anyPath.uptoSegment(0));
+		anyPath = Path.forWindows("c:first/second/third/");
+		assertEquals("5.2.win", Path.forWindows("c:"), anyPath.uptoSegment(0));
 		anyPath = new Path("//one/two/three");
 		assertEquals("5.3", new Path("//"), anyPath.uptoSegment(0));
 		anyPath = new Path("//one/two/three/");
