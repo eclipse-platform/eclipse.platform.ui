@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	 *
 	 * @see Platform#addLogListener(ILogListener)
 	 */
+	@Override
 	public void addLogListener(ILogListener listener) {
 		synchronized (logListeners) {
 			logListeners.add(listener);
@@ -47,6 +48,7 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	/**
 	 * Returns the plug-in with which this log is associated.
 	 */
+	@Override
 	public Bundle getBundle() {
 		return bundle;
 	}
@@ -57,6 +59,7 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	 *
 	 * @see Plugin#getLog()
 	 */
+	@Override
 	public void log(final IStatus status) {
 		// Log to the logger
 		logger.log(PlatformLogWriter.getLog(status), PlatformLogWriter.getLevel(status), status.getMessage(), status.getException());
@@ -68,12 +71,14 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 	 *
 	 * @see Platform#removeLogListener(ILogListener)
 	 */
+	@Override
 	public void removeLogListener(ILogListener listener) {
 		synchronized (logListeners) {
 			logListeners.remove(listener);
 		}
 	}
 
+	@Override
 	public void logged(LogEntry entry) {
 		logToListeners(PlatformLogWriter.convertToStatus(entry));
 	}
@@ -87,10 +92,12 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 		for (int i = 0; i < listeners.length; i++) {
 			final ILogListener listener = listeners[i];
 			ISafeRunnable code = new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					listener.logging(status, bundle.getSymbolicName());
 				}
 
+				@Override
 				public void handleException(Throwable e) {
 					//Ignore
 				}
@@ -99,6 +106,7 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 		}
 	}
 
+	@Override
 	public boolean isLoggable(Bundle loggingBundle, String loggerName, int logLevel) {
 		return PlatformLogWriter.EQUINOX_LOGGER_NAME.equals(loggerName) && bundle.getBundleId() == loggingBundle.getBundleId();
 	}

@@ -33,6 +33,7 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 	 * @deprecated Marked deprecated to suppress warnings. This class is added to support
 	 * backward compatibility only and should not be used in any new code.
 	 */
+	@Override
 	@Deprecated
 	public Object init(Object object, String name) {
 		Plugin plugin = null;

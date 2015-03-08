@@ -373,6 +373,7 @@ public abstract class Plugin implements BundleActivator {
 		// activation).
 		final Preferences[] preferencesCopy = new Preferences[1];
 		Runnable innerCall = new Runnable() {
+			@Override
 			public void run() {
 				preferencesCopy[0] = new org.eclipse.core.internal.preferences.legacy.PreferenceForwarder(this, bundleCopy.getSymbolicName());
 			}
@@ -412,6 +413,7 @@ public abstract class Plugin implements BundleActivator {
 		// as the Plugin class is loaded.
 		final Preferences preferencesCopy = preferences;
 		Runnable innerCall = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					((org.eclipse.core.internal.preferences.legacy.PreferenceForwarder) preferencesCopy).flush();
@@ -763,6 +765,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception Exception if this plug-in did not start up properly
 	 * @since 3.0
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		bundle = context.getBundle();
 		initializeDescriptor(bundle.getSymbolicName());
@@ -826,6 +829,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception Exception if this method fails to shut down this plug-in
 	 * @since 3.0
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 
 		if (this.debugTracker != null) {

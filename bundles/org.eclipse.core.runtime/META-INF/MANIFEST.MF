@@ -19,5 +19,5 @@ Require-Bundle: javax.annotation;bundle-version="1.1.0";resolution:=optional;vis
  org.eclipse.core.contenttype;bundle-version="[3.3.0,4.0.0)";visibility:=reexport,
  org.eclipse.equinox.app;bundle-version="1.0.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 DynamicImport-Package: org.eclipse.core.internal.runtime.auth

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2014 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
+	@Override
 	public synchronized void added(IEclipsePreferences.NodeChangeEvent event) {
 		if (listeners.size() > 0 && pluginID.equals(event.getChild().name())) {
 			try {
@@ -72,6 +73,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
+	@Override
 	public synchronized void removed(IEclipsePreferences.NodeChangeEvent event) {
 		// Do nothing. We can't remove ourselves from the node's list of preference change
 		// listeners because the node has already been removed.
@@ -99,6 +101,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
 		// if we are the ones making this change, then don't broadcast
 		if (!notify)
