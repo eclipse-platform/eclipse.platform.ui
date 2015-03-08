@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 459961
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.converters;
 
@@ -26,10 +27,10 @@ import org.w3c.dom.css.RGBColor;
  * <li>CSS Value to {@link RGB}</li>.
  * <li>{@link RGB} to String CSS Value</li>
  * </ul>
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class CSSValueSWTRGBConverterImpl extends AbstractCSSValueConverter {
 
@@ -42,7 +43,7 @@ public class CSSValueSWTRGBConverterImpl extends AbstractCSSValueConverter {
 	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context)
 			throws Exception {
-		return CSSSWTColorHelper.getRGB(value);
+		return CSSSWTColorHelper.getRGBA(value).rgb;
 	}
 
 	@Override

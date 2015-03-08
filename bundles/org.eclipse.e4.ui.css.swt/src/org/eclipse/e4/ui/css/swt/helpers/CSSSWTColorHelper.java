@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Kai Toedter - added radial gradient support
  *     Robin Stocker - Bug 420035 - [CSS] Support SWT color constants in gradients
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 459961
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
@@ -29,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.css.CSSPrimitiveValue;
@@ -46,7 +48,7 @@ public class CSSSWTColorHelper {
 	/*--------------- SWT Color Helper -----------------*/
 
 	public static Color getSWTColor(RGBColor rgbColor, Display display) {
-		RGB rgb = getRGB(rgbColor);
+		RGBA rgb = getRGBA(rgbColor);
 		return new Color(display, rgb);
 	}
 
@@ -55,25 +57,25 @@ public class CSSSWTColorHelper {
 			return null;
 		}
 		Color color = display.getSystemColor(SWT.COLOR_BLACK);
-		RGB rgb = getRGB((CSSPrimitiveValue) value, display);
-		if (rgb != null) {
-			color = new Color(display, rgb.red, rgb.green, rgb.blue);
+		RGBA rgba = getRGBA((CSSPrimitiveValue) value, display);
+		if (rgba != null) {
+			color = new Color(display, rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
 		}
 		return color;
 	}
 
-	private static RGB getRGB(CSSPrimitiveValue value, Display display) {
-		RGB rgb = getRGB(value);
-		if (rgb == null && display != null) {
+	private static RGBA getRGBA(CSSPrimitiveValue value, Display display) {
+		RGBA rgba = getRGBA(value);
+		if (rgba == null && display != null) {
 			String name = value.getStringValue();
 			if (hasColorDefinitionAsValue(name)) {
-				rgb = findColorByDefinition(name);
+				rgba = findColorByDefinition(name);
 			} else if (name.contains("-")) {
 				name = name.replace('-', '_');
-				rgb = process(display, name);
+				rgba = process(display, name);
 			}
 		}
-		return rgb;
+		return rgba;
 	}
 
 	public static boolean hasColorDefinitionAsValue(CSSValue value) {
@@ -95,19 +97,19 @@ public class CSSSWTColorHelper {
 	}
 
 	/**
-	 * Process the given string and return a corresponding RGB object.
+	 * Process the given string and return a corresponding RGBA object.
 	 *
 	 * @param value
 	 *            the SWT constant <code>String</code>
-	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code>
-	 *         if it could not be determined
+	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code> if
+	 *         it could not be determined
 	 */
-	private static RGB process(Display display, String value) {
+	private static RGBA process(Display display, String value) {
 		Field [] fields = getFields();
 		try {
 			for (Field field : fields) {
 				if (field.getName().equals(value)) {
-					return display.getSystemColor(field.getInt(null)).getRGB();
+					return display.getSystemColor(field.getInt(null)).getRGBA();
 				}
 			}
 		} catch (IllegalArgumentException e) {
@@ -117,7 +119,7 @@ public class CSSSWTColorHelper {
 			// no op - shouldnt happen. We check for public before calling
 			// getInt(null)
 		}
-		return  display.getSystemColor(SWT.COLOR_BLACK).getRGB();
+		return  display.getSystemColor(SWT.COLOR_BLACK).getRGBA();
 	}
 
 	/**
@@ -148,42 +150,45 @@ public class CSSSWTColorHelper {
 		return cachedFields;
 	}
 
-	public static RGB getRGB(String name) {
+	public static RGBA getRGBA(String name) {
 		RGBColor color = CSS2ColorHelper.getRGBColor(name);
 		if (color != null) {
-			return getRGB(color);
+			return getRGBA(color);
 		}
 		return null;
 	}
 
-	public static RGB getRGB(RGBColor color) {
-		return new RGB((int) color.getRed().getFloatValue(
+	public static RGBA getRGBA(RGBColor color) {
+		return new RGBA((int) color.getRed().getFloatValue(
 				CSSPrimitiveValue.CSS_NUMBER), (int) color.getGreen()
 				.getFloatValue(CSSPrimitiveValue.CSS_NUMBER), (int) color
-				.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER));
+				.getBlue().getFloatValue(CSSPrimitiveValue.CSS_NUMBER),
+				// for now, we only support solid RGB colors in CSS - our CSS model
+				// as of now does not have an element for RGBAColor.
+				255);
 	}
 
-	public static RGB getRGB(CSSValue value) {
+	public static RGBA getRGBA(CSSValue value) {
 		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return null;
 		}
-		return getRGB((CSSPrimitiveValue) value);
+		return getRGBA((CSSPrimitiveValue) value);
 	}
 
-	public static RGB getRGB(CSSPrimitiveValue value) {
-		RGB rgb = null;
+	public static RGBA getRGBA(CSSPrimitiveValue value) {
+		RGBA rgba = null;
 		switch (value.getPrimitiveType()) {
 		case CSSPrimitiveValue.CSS_IDENT:
 		case CSSPrimitiveValue.CSS_STRING:
 			String string = value.getStringValue();
-			rgb = getRGB(string);
+			rgba = getRGBA(string);
 			break;
 		case CSSPrimitiveValue.CSS_RGBCOLOR:
 			RGBColor rgbColor = value.getRGBColorValue();
-			rgb = getRGB(rgbColor);
+			rgba = getRGBA(rgbColor);
 			break;
 		}
-		return rgb;
+		return rgba;
 	}
 
 	public static Integer getPercent(CSSPrimitiveValue value) {
@@ -220,9 +225,12 @@ public class CSSSWTColorHelper {
 				case CSSPrimitiveValue.CSS_IDENT:
 				case CSSPrimitiveValue.CSS_STRING:
 				case CSSPrimitiveValue.CSS_RGBCOLOR:
-					RGB rgb = getRGB((CSSPrimitiveValue) value, display);
-					if (rgb != null) {
-						gradient.addRGB(rgb, (CSSPrimitiveValue) value);
+					RGBA rgba = getRGBA((CSSPrimitiveValue) value, display);
+					if (rgba != null) {
+						// note that in this call we lose the RGBA alpha
+						// component - we do currently not support alpha
+						// gradients
+						gradient.addRGB(rgba, (CSSPrimitiveValue) value);
 					} else {
 						//check for vertical gradient
 						gradient.setVertical(!value.getCssText().equals("false"));
@@ -313,10 +321,11 @@ public class CSSSWTColorHelper {
 		return new CSS2RGBColorImpl(red, green, blue);
 	}
 
-	private static RGB findColorByDefinition(String name) {
+	private static RGBA findColorByDefinition(String name) {
 		IColorAndFontProvider provider = CSSActivator.getDefault().getColorAndFontProvider();
 		if (provider != null) {
-			return provider.getColor(normalizeId(name.substring(1)));
+			RGB rgb = provider.getColor(normalizeId(name.substring(1)));
+			return new RGBA(rgb.red, rgb.green, rgb.blue, 255);
 		}
 		return null;
 	}
