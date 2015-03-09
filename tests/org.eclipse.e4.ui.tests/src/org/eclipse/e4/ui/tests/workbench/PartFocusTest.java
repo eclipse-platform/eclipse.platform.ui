@@ -134,7 +134,7 @@ public class PartFocusTest extends TestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void processEvents() {
 		// renderer.run(window, appContext);

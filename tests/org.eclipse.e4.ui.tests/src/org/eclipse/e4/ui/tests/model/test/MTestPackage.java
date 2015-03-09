@@ -66,7 +66,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -75,7 +75,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Persisted State</b></em>' map. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -84,7 +84,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -111,7 +111,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -120,7 +120,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -164,7 +164,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -173,7 +173,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -182,7 +182,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -191,7 +191,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -200,7 +200,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -209,7 +209,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -218,7 +218,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -227,7 +227,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -236,7 +236,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -245,7 +245,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -254,7 +254,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -263,7 +263,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -316,7 +316,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -325,7 +325,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -334,7 +334,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -343,7 +343,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -352,7 +352,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -361,7 +361,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -370,7 +370,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -397,7 +397,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -415,7 +415,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * The number of structural features of the '<em>Harness</em>' class. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 * @ordered
 	 */
@@ -451,7 +451,7 @@ public interface MTestPackage extends EPackage {
 	/**
 	 * Returns the factory that creates the instances of the model. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the factory that creates the instances of the model.
 	 * @generated
 	 */
@@ -475,7 +475,7 @@ public interface MTestPackage extends EPackage {
 		 * {@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl
 		 * <em>Harness</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc
 		 * -->
-		 * 
+		 *
 		 * @see org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl
 		 * @see org.eclipse.e4.ui.tests.model.test.impl.TestPackageImpl#getTestHarness()
 		 * @generated

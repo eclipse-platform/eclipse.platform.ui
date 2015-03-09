@@ -367,7 +367,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	/**
 	 * Ensures that no events were picked up from topics other than the one we
 	 * expect to see changes in.
-	 * 
+	 *
 	 * @param tester
 	 */
 	private void ensureNoCrossTalk(EventTester[] allTesters, EventTester skipMe) {

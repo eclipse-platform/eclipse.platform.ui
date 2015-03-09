@@ -31,14 +31,14 @@ import org.eclipse.emf.ecore.util.Switch;
  * starting with the actual class of the object and proceeding up the
  * inheritance hierarchy until a non-null result is returned, which is the
  * result of the switch. <!-- end-user-doc -->
- * 
+ *
  * @see org.eclipse.e4.ui.tests.model.test.MTestPackage
  * @generated
  */
 public class TestSwitch<T1> extends Switch<T1> {
 	/**
 	 * The cached model package <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected static MTestPackage modelPackage;
@@ -46,7 +46,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	/**
 	 * Creates an instance of the switch. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public TestSwitch() {
@@ -58,7 +58,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	/**
 	 * Checks whether this is a switch for the given package. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @parameter ePackage the package in question.
 	 * @return whether this is a switch for the given package.
 	 * @generated
@@ -72,7 +72,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * Calls <code>caseXXX</code> for each class of the model until one returns
 	 * a non null result; it yields that result. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @return the first non-null result returned by a <code>caseXXX</code>
 	 *         call.
 	 * @generated
@@ -121,7 +121,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Harness</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -138,7 +138,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Element</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -155,7 +155,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Localizable</em>'. <!-- begin-user-doc --> This implementation
 	 * returns null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -172,7 +172,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Command</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -189,7 +189,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Context</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -206,7 +206,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Contribution</em>'. <!-- begin-user-doc --> This implementation
 	 * returns null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -223,7 +223,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>UI Element</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -240,7 +240,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Element Container</em>'. <!-- begin-user-doc --> This implementation
 	 * returns null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -258,7 +258,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Parameter</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -275,7 +275,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Input</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -292,7 +292,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>UI Label</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -309,7 +309,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Dirtyable</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -326,7 +326,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>Snippet Container</em>'. <!-- begin-user-doc --> This implementation
 	 * returns null; returning a non-null result will terminate the switch. <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '
@@ -343,7 +343,7 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * <em>EObject</em>'. <!-- begin-user-doc --> This implementation returns
 	 * null; returning a non-null result will terminate the switch, but this is
 	 * the last case anyway. <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param object
 	 *            the target of the switch.
 	 * @return the result of interpreting the object as an instance of '

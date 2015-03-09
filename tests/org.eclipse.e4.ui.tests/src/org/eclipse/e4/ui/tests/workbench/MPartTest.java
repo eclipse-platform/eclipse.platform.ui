@@ -33,7 +33,7 @@ public class MPartTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -45,7 +45,7 @@ public class MPartTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override

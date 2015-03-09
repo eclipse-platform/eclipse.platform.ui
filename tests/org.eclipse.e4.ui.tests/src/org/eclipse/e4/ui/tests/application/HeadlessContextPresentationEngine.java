@@ -209,7 +209,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.IPresentationEngine#createGui(org.eclipse
 	 * .e4.ui.model.application.MUIElement, java.lang.Object)
@@ -346,7 +346,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.IPresentationEngine#createGui(org.eclipse
 	 * .e4.ui.model.application.MUIElement)
@@ -436,7 +436,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.IPresentationEngine#run(org.eclipse.e4.ui
 	 * .model.application.MApplicationElement)
@@ -447,7 +447,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.IPresentationEngine#stop()
 	 */
 	public void stop() {
@@ -455,7 +455,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.IPresentationEngine#focusGui(org.eclipse.
 	 * e4.ui.model.application.ui.MUIElement)

@@ -1968,7 +1968,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalLabel()
 	 */
 	public String getLocalLabel() {
@@ -1978,7 +1978,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.model.application.ui.MUILabel#setLocalLabel(java.lang
 	 * .String)
@@ -1990,7 +1990,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalTooltip()
 	 */
 	public String getLocalTooltip() {
@@ -2000,7 +2000,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.model.application.ui.MUILabel#setLocalTooltip(java.
 	 * lang.String)
@@ -2012,7 +2012,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalImage()
 	 */
 	public Object getLocalImage() {
@@ -2022,7 +2022,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.model.application.ui.MUILabel#setLocalImage(java.lang
 	 * .Object)

@@ -1482,7 +1482,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * This is an important test as key bindings themselves do not have an id so
 	 * they have to rely on their command's id.
 	 * </p>
-	 * 
+	 *
 	 * @param originalApplicationKeyBindingSequence
 	 *            the key binding that has been defined for the application
 	 * @param userApplicationKeyBindingSequence

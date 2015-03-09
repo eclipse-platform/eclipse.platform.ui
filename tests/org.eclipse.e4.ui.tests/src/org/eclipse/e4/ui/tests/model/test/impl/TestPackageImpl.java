@@ -38,7 +38,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 	 * method {@link #init init()}, which also performs initialization of the
 	 * package, or returns the registered package, if one already exists. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
 	 * @see org.eclipse.e4.ui.tests.model.test.MTestPackage#eNS_URI
 	 * @see #init()
@@ -57,13 +57,13 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model,
 	 * and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>
 	 * This method is used to initialize {@link MTestPackage#eINSTANCE} when
 	 * that field is accessed. Clients should not invoke it directly. Instead,
 	 * they should simply access that field to obtain the package. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #eNS_URI
 	 * @see #createPackageContents()
 	 * @see #initializePackageContents()
@@ -89,7 +89,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		// Mark meta-data to indicate it can't be changed
 		theTestPackage.freeze();
 
-  
+
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(MTestPackage.eNS_URI, theTestPackage);
 		return theTestPackage;
@@ -142,7 +142,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 	 * Complete the initialization of the package and its meta-model. This
 	 * method is guarded to have no affect on any invocation but its first. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public void initializePackageContents() {

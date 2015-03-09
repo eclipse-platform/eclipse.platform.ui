@@ -53,7 +53,7 @@ public class SampleView {
 
 	/**
 	 * Create the sample view.
-	 * 
+	 *
 	 * @param parent
 	 * @param selectionService
 	 */

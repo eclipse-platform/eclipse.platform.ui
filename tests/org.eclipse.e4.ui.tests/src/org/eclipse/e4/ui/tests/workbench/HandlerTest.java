@@ -56,7 +56,7 @@ public class HandlerTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -67,7 +67,7 @@ public class HandlerTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
