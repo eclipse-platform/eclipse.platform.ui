@@ -263,8 +263,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
         int size = wizardDescriptors.length;
         List result = new ArrayList(size);
         for (int i = 0; i < size; i++) {
-            if (!WorkbenchActivityHelper.restrictUseOf(
-            		(WorkbenchWizardElement)wizardDescriptors[i]))
+            if (!WorkbenchActivityHelper.restrictUseOf(wizardDescriptors[i]))
                 result.add(wizardDescriptors[i]);
         }
         return (IWizardDescriptor[])result

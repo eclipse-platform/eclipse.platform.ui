@@ -147,7 +147,7 @@ public class SpyHandler extends AbstractHandler {
 		if (data instanceof ContributionInfo) {
 			return (ContributionInfo) data;
 		}
-		ContributionInfo result = (ContributionInfo) Util.getAdapter(data, ContributionInfo.class);
+		ContributionInfo result = Util.getAdapter(data, ContributionInfo.class);
 		if (optionalElementType != null && result == null && data != null) {
 			Bundle bundle = FrameworkUtil.getBundle(data.getClass());
 			if (bundle != null) {

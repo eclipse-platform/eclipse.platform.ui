@@ -193,8 +193,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
                 action = new NewWizardShortcutAction(workbenchWindow,
 						wizardDesc);
 				actions.put(id, action);
-				IConfigurationElement element = (IConfigurationElement) Util
-						.getAdapter(wizardDesc, IConfigurationElement.class);
+				IConfigurationElement element = Util.getAdapter(wizardDesc, IConfigurationElement.class);
 				if (element != null) {
 					workbenchWindow.getExtensionTracker().registerObject(
 							element.getDeclaringExtension(), action,

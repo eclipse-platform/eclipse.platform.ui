@@ -144,7 +144,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		this.selProvider = prov;
 		this.part = part;
 		this.context = context;
-		this.modelPart = (MPart) part.getSite().getService(MPart.class);
+		this.modelPart = part.getSite().getService(MPart.class);
 		if (includeEditorInput) {
 			bitSet |= INCLUDE_EDITOR_INPUT;
 		}

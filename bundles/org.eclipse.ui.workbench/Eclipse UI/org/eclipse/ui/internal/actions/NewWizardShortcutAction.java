@@ -168,7 +168,6 @@ public class NewWizardShortcutAction extends Action implements
      * @since 3.1
      */
     private IPluginContribution getPluginContribution() {
-		return (IPluginContribution) Util.getAdapter(wizardElement,
-				IPluginContribution.class);
+		return Util.getAdapter(wizardElement, IPluginContribution.class);
 	}
 }

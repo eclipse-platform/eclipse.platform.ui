@@ -451,7 +451,7 @@ public class ActionExpression {
 		}
 
 		private IActionFilter getActionFilter(Object object) {
-			return (IActionFilter)Util.getAdapter(object, IActionFilter.class);
+			return Util.getAdapter(object, IActionFilter.class);
 		}
 
 		/**

@@ -209,8 +209,7 @@ public class WorkingSet extends AbstractWorkingSet {
 			Iterator iterator = elements.iterator();
 			while (iterator.hasNext()) {
 				IAdaptable adaptable = (IAdaptable) iterator.next();
-				final IPersistableElement persistable = (IPersistableElement) Util
-						.getAdapter(adaptable, IPersistableElement.class);
+				final IPersistableElement persistable = Util.getAdapter(adaptable, IPersistableElement.class);
 				if (persistable != null) {
 					final IMemento itemMemento = memento
 							.createChild(IWorkbenchConstants.TAG_ITEM);

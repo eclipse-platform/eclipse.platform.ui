@@ -289,8 +289,7 @@ public class QuickAccessDialog extends PopupDialog {
 	final protected TriggerSequence[] getInvokingCommandKeySequences() {
 		if (invokingCommandKeySequences == null) {
 			if (invokingCommand != null) {
-				IBindingService bindingService = (IBindingService) window.getWorkbench()
-						.getAdapter(IBindingService.class);
+				IBindingService bindingService = window.getWorkbench().getAdapter(IBindingService.class);
 				invokingCommandKeySequences = bindingService.getActiveBindingsFor(invokingCommand
 						.getId());
 			}

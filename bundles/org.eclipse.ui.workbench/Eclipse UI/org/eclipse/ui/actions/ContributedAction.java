@@ -150,7 +150,7 @@ public final class ContributedAction extends CommandAction {
 		appContext.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 				window.getShell());
 
-		partHandler = lookUpHandler((IServiceLocator) site, commandId);
+		partHandler = lookUpHandler(site, commandId);
 		if (partHandler == null) {
 			localHandler = true;
 			// if we can't find the handler, then at least we can

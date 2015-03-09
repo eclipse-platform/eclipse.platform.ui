@@ -27,7 +27,6 @@ import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -95,19 +94,19 @@ public final class Util {
      * @return a representation of sourceObject that is assignable to the
      *         adapter type, or null if no such representation exists
      */
-    public static Object getAdapter(Object sourceObject, Class adapterType) {
+	public static <T> T getAdapter(Object sourceObject, Class<T> adapterType) {
     	Assert.isNotNull(adapterType);
         if (sourceObject == null) {
             return null;
         }
         if (adapterType.isInstance(sourceObject)) {
-            return sourceObject;
+			return adapterType.cast(sourceObject);
         }
 
         if (sourceObject instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) sourceObject;
 
-            Object result = adaptable.getAdapter(adapterType);
+			T result = adaptable.getAdapter(adapterType);
             if (result != null) {
                 // Sanity-check
                 Assert.isTrue(adapterType.isInstance(result));
@@ -116,7 +115,7 @@ public final class Util {
         }
 
         if (!(sourceObject instanceof PlatformObject)) {
-            Object result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
+			T result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
             if (result != null) {
                 return result;
             }

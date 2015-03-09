@@ -132,7 +132,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * object is not adaptable.
      */
     protected final IWorkbenchAdapter getAdapter(Object o) {
-        return (IWorkbenchAdapter)Util.getAdapter(o, IWorkbenchAdapter.class);
+        return Util.getAdapter(o, IWorkbenchAdapter.class);
     }
 
     /**
@@ -143,7 +143,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * object is not adaptable.
      */
     protected final IWorkbenchAdapter2 getAdapter2(Object o) {
-        return (IWorkbenchAdapter2)Util.getAdapter(o, IWorkbenchAdapter2.class);
+        return Util.getAdapter(o, IWorkbenchAdapter2.class);
     }
 
 	/**
@@ -156,7 +156,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 	 * @since 3.7
 	 */
 	protected final IWorkbenchAdapter3 getAdapter3(Object o) {
-		return (IWorkbenchAdapter3) Util.getAdapter(o, IWorkbenchAdapter3.class);
+		return Util.getAdapter(o, IWorkbenchAdapter3.class);
 	}
 
 	/**

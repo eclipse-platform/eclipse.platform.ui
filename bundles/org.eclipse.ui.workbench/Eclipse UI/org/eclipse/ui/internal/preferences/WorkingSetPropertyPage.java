@@ -88,7 +88,7 @@ public class WorkingSetPropertyPage extends WizardPropertyPage {
 		if (element instanceof IWorkingSet) {
 			fWorkingSet= (IWorkingSet)element;
 		} else {
-			fWorkingSet= (IWorkingSet)element.getAdapter(IWorkingSet.class);
+			fWorkingSet= element.getAdapter(IWorkingSet.class);
 		}
 	}
 

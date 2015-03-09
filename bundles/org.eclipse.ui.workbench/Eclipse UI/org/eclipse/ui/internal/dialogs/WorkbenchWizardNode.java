@@ -92,8 +92,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
     @Override
 	public String getLocalId() {
-    	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
-				IPluginContribution.class);
+    	IPluginContribution contribution = Util.getAdapter(wizardElement, IPluginContribution.class);
 		if (contribution != null) {
 			return contribution.getLocalId();
 		}
@@ -102,8 +101,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
     @Override
 	public String getPluginId() {
-       	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
-				IPluginContribution.class);
+       	IPluginContribution contribution = Util.getAdapter(wizardElement, IPluginContribution.class);
 		if (contribution != null) {
 			return contribution.getPluginId();
 		}
@@ -129,7 +127,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                              */
                             @Override
 							public void handleException(Throwable e) {
-                               	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement, IPluginContribution.class);
+                               	IPluginContribution contribution = Util.getAdapter(wizardElement, IPluginContribution.class);
                                 statuses[0] = new Status(
                                         IStatus.ERROR,
                                         contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
@@ -144,7 +142,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                                     workbenchWizard[0] = createWizard();
                                     // create instance of target wizard
                                 } catch (CoreException e) {
-                                	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement, IPluginContribution.class);
+                                	IPluginContribution contribution = Util.getAdapter(wizardElement, IPluginContribution.class);
                                 	statuses[0] = new Status(
                                             IStatus.ERROR,
                                             contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,

@@ -141,7 +141,7 @@ public abstract class WorkbenchPart extends EventManager implements
      * Platform's adapter manager is consulted).
      */
     @Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 
         /**
          * This implementation of the method declared by <code>IAdaptable</code>

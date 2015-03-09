@@ -339,7 +339,7 @@ public class ShowInMenu extends ContributionItem implements
 	 * @return an <code>IShowInSource</code> or <code>null</code>
 	 */
 	private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
-		return (IShowInSource) Util.getAdapter(sourcePart, IShowInSource.class);
+		return Util.getAdapter(sourcePart, IShowInSource.class);
 	}
 
 	/**
@@ -351,8 +351,7 @@ public class ShowInMenu extends ContributionItem implements
 	 * @return the <code>IShowInTargetList</code> or <code>null</code>
 	 */
 	private IShowInTargetList getShowInTargetList(IWorkbenchPart sourcePart) {
-		return (IShowInTargetList) Util.getAdapter(sourcePart,
-				IShowInTargetList.class);
+		return Util.getAdapter(sourcePart, IShowInTargetList.class);
 	}
 
 	/**

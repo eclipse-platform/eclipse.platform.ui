@@ -284,7 +284,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
 			return true;
 		}
         String objectName = null;
-        IWorkbenchAdapter de = (IWorkbenchAdapter)Util.getAdapter(object, IWorkbenchAdapter.class);
+        IWorkbenchAdapter de = Util.getAdapter(object, IWorkbenchAdapter.class);
         if (de != null) {
 			objectName = de.getLabel(object);
 		}

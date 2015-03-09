@@ -47,7 +47,7 @@ public class SplitHandler extends AbstractHandler {
 		if (activeEditor == null)
 			return null;
 
-		MPart editorPart = (MPart) activeEditor.getSite().getService(MPart.class);
+		MPart editorPart = activeEditor.getSite().getService(MPart.class);
 		if (editorPart == null)
 			return null;
 

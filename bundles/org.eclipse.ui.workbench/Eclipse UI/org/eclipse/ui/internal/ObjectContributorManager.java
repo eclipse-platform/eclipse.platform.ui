@@ -323,8 +323,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
         contributorList.add(contributor);
         flushLookup();
 
-        IConfigurationElement element = (IConfigurationElement) Util.getAdapter(contributor,
-        	IConfigurationElement.class);
+        IConfigurationElement element = Util.getAdapter(contributor, IConfigurationElement.class);
 
         //hook the object listener
         if (element != null) {

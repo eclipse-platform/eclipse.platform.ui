@@ -34,7 +34,7 @@ public class ViewSite extends PartSite implements IViewSite {
 	private void initializeDefaultServices() {
 		setActionBars(new ActionBars(((WorkbenchPage) getPage()).getActionBars(), serviceLocator,
 				model));
-		serviceLocator.registerService(IViewPart.class, (IViewPart) getPart());
+		serviceLocator.registerService(IViewPart.class, getPart());
 	}
 
 	@Override

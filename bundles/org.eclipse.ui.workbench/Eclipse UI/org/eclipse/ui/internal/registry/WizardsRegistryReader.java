@@ -273,8 +273,7 @@ public class WizardsRegistryReader extends RegistryReader {
 		}
 
         if (parent != null) {
-			createCollectionElement(parent, (IConfigurationElement) Util.getAdapter(category,
-					IConfigurationElement.class));
+			createCollectionElement(parent, Util.getAdapter(category, IConfigurationElement.class));
 		}
     }
 

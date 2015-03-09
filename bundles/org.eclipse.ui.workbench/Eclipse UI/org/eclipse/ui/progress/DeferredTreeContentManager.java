@@ -201,8 +201,7 @@ public class DeferredTreeContentManager {
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
 	 */
 	protected IDeferredWorkbenchAdapter getAdapter(Object element) {
-		return (IDeferredWorkbenchAdapter) Util.getAdapter(element,
-				IDeferredWorkbenchAdapter.class);
+		return Util.getAdapter(element, IDeferredWorkbenchAdapter.class);
 	}
 
 	/**
@@ -284,8 +283,7 @@ public class DeferredTreeContentManager {
 			 *            The object we are adapting to.
 			 */
 			private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
-				return (IWorkbenchAdapter) Util.getAdapter(element,
-						IWorkbenchAdapter.class);
+				return Util.getAdapter(element, IWorkbenchAdapter.class);
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter() {

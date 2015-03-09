@@ -69,7 +69,7 @@ public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 		if (activePart instanceof ISaveablePart)
 			return (ISaveablePart) activePart;
 
-		ISaveablePart part = (ISaveablePart) Util.getAdapter(activePart, ISaveablePart.class);
+		ISaveablePart part = Util.getAdapter(activePart, ISaveablePart.class);
 		if (part != null)
 			return part;
 
@@ -83,7 +83,7 @@ public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 			return (ISaveablePart) activePart;
 		}
 
-		ISaveablePart part = (ISaveablePart) Util.getAdapter(activePart, ISaveablePart.class);
+		ISaveablePart part = Util.getAdapter(activePart, ISaveablePart.class);
 		if (part != null)
 			return part;
 

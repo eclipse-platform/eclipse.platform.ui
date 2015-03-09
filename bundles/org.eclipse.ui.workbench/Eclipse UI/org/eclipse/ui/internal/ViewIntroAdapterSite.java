@@ -42,7 +42,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
     }
 
     @Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
         return viewSite.getAdapter(adapter);
     }
 

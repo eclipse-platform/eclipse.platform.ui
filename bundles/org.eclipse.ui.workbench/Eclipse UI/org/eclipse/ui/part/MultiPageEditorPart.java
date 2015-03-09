@@ -1188,8 +1188,8 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
 	@Override
-	public Object getAdapter(Class adapter) {
-		Object result = super.getAdapter(adapter);
+	public <T> T getAdapter(Class<T> adapter) {
+		T result = super.getAdapter(adapter);
 		// restrict delegating to the UI thread for bug 144851
 		if (result == null && Display.getCurrent()!=null) {
 			IEditorPart innerEditor = getActiveEditor();
