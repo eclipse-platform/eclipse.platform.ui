@@ -117,19 +117,18 @@ public class TreeViewerFrameSource implements IFrameSource {
         Object parent = provider.getParent(input);
         if (parent == null) {
             return null;
-        } else {
-            TreeFrame frame = createFrame(parent);
-            if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
-                frame.setSelection(viewer.getSelection());
-                // include current input in expanded set
-                Object[] expanded = viewer.getExpandedElements();
-                Object[] newExpanded = new Object[expanded.length + 1];
-                System.arraycopy(expanded, 0, newExpanded, 0, expanded.length);
-                newExpanded[newExpanded.length - 1] = input;
-                frame.setExpandedElements(newExpanded);
-            }
-            return frame;
         }
+		TreeFrame frame = createFrame(parent);
+		if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
+			frame.setSelection(viewer.getSelection());
+			// include current input in expanded set
+			Object[] expanded = viewer.getExpandedElements();
+			Object[] newExpanded = new Object[expanded.length + 1];
+			System.arraycopy(expanded, 0, newExpanded, 0, expanded.length);
+			newExpanded[newExpanded.length - 1] = input;
+			frame.setExpandedElements(newExpanded);
+		}
+		return frame;
     }
 
     /**

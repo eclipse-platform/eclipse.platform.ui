@@ -74,9 +74,8 @@ class BookmarkContentProvider implements IStructuredContentProvider,
         // of the existing bookmarks.  Otherwise, return an empty list.
         if (element instanceof IResource) {
 			return getBookmarks((IResource) element);
-		} else {
-			return new Object[0];
 		}
+		return new Object[0];
     }
 
     @Override
@@ -134,9 +133,8 @@ class BookmarkContentProvider implements IStructuredContentProvider,
     public boolean hasChildren(Object element) {
         if (element instanceof IWorkspace) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
     }
 
     @Override

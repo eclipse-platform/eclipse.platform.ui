@@ -166,9 +166,8 @@ import org.eclipse.ui.part.ResourceTransfer;
         List selection = getSelectedResources();
         if (selection.get(0) instanceof IFile) {
 			return ((IFile) selection.get(0)).getParent();
-		} else {
-			return (IContainer) selection.get(0);
 		}
+		return (IContainer) selection.get(0);
     }
 
     /**
