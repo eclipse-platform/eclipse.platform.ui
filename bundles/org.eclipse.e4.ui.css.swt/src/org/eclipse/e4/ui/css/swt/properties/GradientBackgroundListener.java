@@ -165,7 +165,7 @@ public class GradientBackgroundListener implements Listener {
 			for (Iterator<?> iterator = grad.getRGBs().iterator(); iterator
 					.hasNext();) {
 				RGBA rgba = (RGBA) iterator.next();
-				Color color = new Color(control.getDisplay(), rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue);
+				Color color = new Color(control.getDisplay(), rgba);
 				colors.add(color);
 			}
 			fillGradient(gc, new Rectangle(0, 0, x, y), colors,
