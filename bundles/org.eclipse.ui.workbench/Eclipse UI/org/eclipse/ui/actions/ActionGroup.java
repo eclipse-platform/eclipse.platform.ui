@@ -26,7 +26,7 @@ import org.eclipse.ui.IActionBars;
  * <p>
  * Clients should subclass this class and extend or override the appropriate fill methods.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public abstract class ActionGroup {
@@ -37,7 +37,7 @@ public abstract class ActionGroup {
      */
     private ActionContext context;
 
-    /** 
+    /**
      * Returns the context used to determine which actions are added,
      * and what their enabled state should be.
      */
@@ -45,38 +45,38 @@ public abstract class ActionGroup {
         return context;
     }
 
-    /** 
+    /**
      * Sets the context used to determine which actions are added,
      * and what their enabled state should be.
-     * 
+     *
      * @param context the context to use
      */
     public void setContext(ActionContext context) {
         this.context = context;
     }
 
-    /** 
+    /**
      * Adds the applicable actions to a context menu,
      * based on the state of the <code>ActionContext</code>.
      * <p>
-     * The default implementation does nothing.  
+     * The default implementation does nothing.
      * Subclasses may override or extend this method.
      * </p>
-     * 
+     *
      * @param menu the context menu manager
      */
     public void fillContextMenu(IMenuManager menu) {
         // do nothing
     }
 
-    /** 
+    /**
      * Adds the applicable actions to a part's action bars,
      * including setting any global action handlers.
      * <p>
      * The default implementation does nothing.
      * Subclasses may override or extend this method.
      * </p>
-     * 
+     *
      * @param actionBars the part's action bars
      */
     public void fillActionBars(IActionBars actionBars) {
@@ -96,7 +96,7 @@ public abstract class ActionGroup {
         // do nothing
     }
 
-    /** 
+    /**
      * This method is called by the user of an action group to signal that the group is
      * no longer needed. Subclasses typically implement this method to deregister
      * any listeners or to free other resources.

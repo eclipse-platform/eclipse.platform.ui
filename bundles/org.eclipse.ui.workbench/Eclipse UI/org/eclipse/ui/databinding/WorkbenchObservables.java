@@ -22,7 +22,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Factory methods for creating observables for Workbench objects
- * 
+ *
  * @since 3.5
  */
 public class WorkbenchObservables {
@@ -31,7 +31,7 @@ public class WorkbenchObservables {
 	 * wrapped observable's value is of the target type, or can be adapted to
 	 * the target type, this is taken as the value of the returned observable,
 	 * otherwise <code>null</code>.
-	 * 
+	 *
 	 * @param master
 	 *            the observable whose value should be adapted
 	 * @param adapter
@@ -51,7 +51,7 @@ public class WorkbenchObservables {
 	 * wrapped observable's value is of the target type, or can be adapted to
 	 * the target type, this is taken as the value of the returned observable,
 	 * otherwise <code>null</code>.
-	 * 
+	 *
 	 * @param master
 	 *            the observable whose value should be adapted
 	 * @param adapter
@@ -76,14 +76,14 @@ public class WorkbenchObservables {
 	 * <p>
 	 * This method can be used by view or editor implementers to tie into the
 	 * selection service, for example as follows:
-	 * 
+	 *
 	 * <pre>
 	 * IObservableValue selection = WorkbenchObservables
 	 * 		.observeAdaptedSingleSelection(getSite(), IResource.class);
 	 * </pre>
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param locator
 	 *            a service locator with an available {@link ISelectionService}
 	 * @param targetType

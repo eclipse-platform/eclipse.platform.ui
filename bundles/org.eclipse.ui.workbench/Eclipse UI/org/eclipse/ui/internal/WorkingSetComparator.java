@@ -20,14 +20,14 @@ import com.ibm.icu.text.Collator;
  * Compares two working sets by name.
  */
 public class WorkingSetComparator implements Comparator {
-	
+
 	private static ThreadLocal INSTANCES = new ThreadLocal() {
 		@Override
 		protected synchronized Object initialValue() {
 			return new WorkingSetComparator();
 		}
 	};
-	
+
 	public static WorkingSetComparator getInstance() {
 		return (WorkingSetComparator) INSTANCES.get();
 	}
@@ -36,7 +36,7 @@ public class WorkingSetComparator implements Comparator {
 
     /**
      * Implements Comparator.
-     * 
+     *
      * @see Comparator#compare(Object, Object)
      */
     @Override

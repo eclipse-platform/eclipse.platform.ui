@@ -12,7 +12,7 @@ package org.eclipse.ui;
 
 /**
  * An <code>IWorkingSetUpdater</code> can be used to dynamically update
- * the content of a working set. 
+ * the content of a working set.
  * <p>
  * A working set updater manages a set of working sets. It is contributed
  * via the attribute <code>updaterClass</code> of the <code>
@@ -27,36 +27,36 @@ package org.eclipse.ui;
 public interface IWorkingSetUpdater {
 	/**
 	 * Adds a working set to this updater.
-	 * 
+	 *
 	 * @param workingSet the working set to add to this updater
 	 */
 	public void add(IWorkingSet workingSet);
-	
+
 	/**
 	 * Removes a working set from this updater.
-	 * 
+	 *
 	 * @param workingSet the working set to remove
-	 * 
+	 *
 	 * @return <code>true</code> if the updater changed (e.g.
 	 *  the element got removed)
 	 */
 	public boolean remove(IWorkingSet workingSet);
-	
+
 	/**
 	 * Returns <code>true</code> if the updater contains the
-	 * given working set; otherwise <code>false</code> is 
+	 * given working set; otherwise <code>false</code> is
 	 * returned.
-	 * 
+	 *
 	 * @param workingSet the parameter to check
-	 * 
+	 *
 	 * @return whether the updater contains the given working
 	 *  set
 	 */
 	public boolean contains(IWorkingSet workingSet);
-	
+
 	/**
 	 * Disposes this working set updater. Implementations of this
-	 * method typically remove listeners from some delta providers. 
+	 * method typically remove listeners from some delta providers.
 	 */
 	public void dispose();
 }

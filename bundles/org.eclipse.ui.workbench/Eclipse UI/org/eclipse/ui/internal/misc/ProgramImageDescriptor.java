@@ -25,7 +25,7 @@ public class ProgramImageDescriptor extends ImageDescriptor {
     private int offset;
 
     /**
-     * Creates a new ImageDescriptor. The image is loaded 
+     * Creates a new ImageDescriptor. The image is loaded
      * from a file with the given name <code>name</code>.
      */
     public ProgramImageDescriptor(String fullPath, int offsetInFile) {
@@ -55,7 +55,7 @@ public class ProgramImageDescriptor extends ImageDescriptor {
 
     /**
      * Returns an SWT Image that is described by the information
-     * in this descriptor. 
+     * in this descriptor.
      */
     @Override
 	public ImageData getImageData() {

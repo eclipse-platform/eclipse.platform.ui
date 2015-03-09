@@ -20,7 +20,7 @@ import org.eclipse.ui.services.IDisposable;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class SlavePageService implements IPageService, IDisposable {
 
@@ -69,12 +69,12 @@ public class SlavePageService implements IPageService, IDisposable {
 	@Override
 	public void dispose() {
 		Object[] listeners = pageListeners.getListeners();
-		
+
 		for(int i = 0; i < listeners.length; i++) {
 			parent.removePageListener((IPageListener) listeners[i]);
 		}
 		pageListeners.clear();
-		
+
 		listeners = perspectiveListeners.getListeners();
 		for(int i = 0; i < listeners.length; i++) {
 			parent.removePerspectiveListener((IPerspectiveListener) listeners[i]);

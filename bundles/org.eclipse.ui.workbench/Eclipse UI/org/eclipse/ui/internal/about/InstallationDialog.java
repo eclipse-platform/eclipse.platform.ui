@@ -53,7 +53,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class InstallationDialog extends TrayDialog implements
 		IInstallationPageContainer {
@@ -158,7 +158,7 @@ public class InstallationDialog extends TrayDialog implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
 	 * .Shell)
@@ -176,7 +176,7 @@ public class InstallationDialog extends TrayDialog implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 */
 	@Override
@@ -186,7 +186,7 @@ public class InstallationDialog extends TrayDialog implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
 	 * .Composite)
@@ -332,7 +332,7 @@ public class InstallationDialog extends TrayDialog implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
 	 * .swt.widgets.Composite)
@@ -400,11 +400,11 @@ public class InstallationDialog extends TrayDialog implements
 	 * Set the modal parent dialog that was used to launch this dialog. This
 	 * should be used by any launching dialog so that the {
 	 * {@link #closeModalContainers()} method can be properly implemented.
-	 * 
+	 *
 	 * @param parent
 	 *            the modal parent dialog that launched this dialog, or
 	 *            <code>null</code> if there was no parent.
-	 * 
+	 *
 	 *            This is an internal method and should not be used outside of
 	 *            platform UI.
 	 */

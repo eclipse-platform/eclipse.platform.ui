@@ -47,7 +47,7 @@ public class ShowFastViewContribution extends ContributionItem {
 
 	/**
 	 * Lagacy constructor...automatically points to the legacy FastViewBar
-	 * 
+	 *
 	 * @param window
 	 */
 	public ShowFastViewContribution(IWorkbenchWindow window) {

@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Helper class supporting the prefix based status handling policy.
- * 
+ *
  * @since 3.3
  */
 class StatusHandlerDescriptorsMap {
@@ -36,7 +36,7 @@ class StatusHandlerDescriptorsMap {
 
 	/**
 	 * Adds a new handler descriptor to the prefix tree
-	 * 
+	 *
 	 * @param handlerDescriptor
 	 *            the handler descriptor to add
 	 */
@@ -87,7 +87,7 @@ class StatusHandlerDescriptorsMap {
 	/**
 	 * Returns status handler descriptors whose prefixes are the most specific
 	 * for given pluginId.
-	 * 
+	 *
 	 * @param pluginId
 	 * @return handler descriptors list
 	 */

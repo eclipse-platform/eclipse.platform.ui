@@ -16,11 +16,11 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
- * 
+ *
  * A viewer comparator that sorts elements with registered workbench adapters by
  * their text property. Note that capitalization differences are not considered
  * by this sorter, so a &gt; B &gt; c
- * 
+ *
  * @see IWorkbenchAdapter
  * @since 3.3
  */

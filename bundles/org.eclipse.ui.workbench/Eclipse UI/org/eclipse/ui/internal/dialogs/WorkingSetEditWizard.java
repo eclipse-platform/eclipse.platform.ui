@@ -17,9 +17,9 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * A working set edit wizard allows the user to edit a 
+ * A working set edit wizard allows the user to edit a
  * working set using a plugin specified working set page.
- * 
+ *
  * @since 2.0
  * @see org.eclipse.ui.dialog.IWorkingSetPage
  */
@@ -31,8 +31,8 @@ public class WorkingSetEditWizard extends Wizard implements
 
     /**
      * Creates a new instance of the receiver.
-     * 
-     * @param editPage the working set page that is going to 
+     *
+     * @param editPage the working set page that is going to
      * 	be used for editing a working set.
      */
     public WorkingSetEditWizard(IWorkingSetPage editPage) {
@@ -44,7 +44,7 @@ public class WorkingSetEditWizard extends Wizard implements
 
     /**
      * Overrides Wizard.
-     * 
+     *
      * @see org.eclipse.jface.wizard.Wizard#addPages
      */
     @Override
@@ -55,7 +55,7 @@ public class WorkingSetEditWizard extends Wizard implements
 
     /**
      * Overrides Wizard.
-     * 
+     *
      * @see org.eclipse.jface.wizard.Wizard#canFinish()
      */
     @Override
@@ -65,7 +65,7 @@ public class WorkingSetEditWizard extends Wizard implements
 
     /**
      * Returns the working set that is being edited.
-     * 
+     *
      * @return the working set that is being edited.
      */
     @Override
@@ -76,7 +76,7 @@ public class WorkingSetEditWizard extends Wizard implements
     /**
      * Overrides Wizard.
      * Notifies the IWorkingSetPage that the wizard is being closed.
-     * 
+     *
      * @see org.eclipse.jface.wizard.Wizard#performFinish
      */
     @Override
@@ -87,7 +87,7 @@ public class WorkingSetEditWizard extends Wizard implements
 
     /**
      * Sets the working set that should be edited.
-     * 
+     *
      * @param workingSet the working set that should be edited.
      */
     public void setSelection(IWorkingSet workingSet) {

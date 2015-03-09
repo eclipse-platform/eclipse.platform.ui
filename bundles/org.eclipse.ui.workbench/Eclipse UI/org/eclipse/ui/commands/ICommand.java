@@ -35,7 +35,7 @@ import java.util.Map;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see ICommandListener
  * @see ICommandManager
@@ -50,7 +50,7 @@ public interface ICommand extends Comparable {
     /**
      * Registers an instance of <code>ICommandListener</code> to listen for
      * changes to attributes of this instance.
-     * 
+     *
      * @param commandListener
      *            the instance of <code>ICommandListener</code> to register.
      *            Must not be <code>null</code>. If an attempt is made to
@@ -63,7 +63,7 @@ public interface ICommand extends Comparable {
 
     /**
      * Executes with the map of parameter values by name.
-     * 
+     *
      * @param parameterValuesByName
      *            the map of parameter values by name. Reserved for future use,
      *            must be <code>null</code>.
@@ -84,7 +84,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the map of attribute values by name. This map may be empty, but
      *         is guaranteed not to be <code>null</code>. If this map is not
      *         empty, its collection of keys is guaranteed to only contain
@@ -104,7 +104,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the identifier of the category of the command represented by this
      *         handle. May be <code>null</code>.
      * @throws NotDefinedException
@@ -122,7 +122,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the description of the command represented by this handle.
      *         Guaranteed not to be <code>null</code>.
      * @throws NotDefinedException
@@ -133,7 +133,7 @@ public interface ICommand extends Comparable {
 
     /**
      * Returns the identifier of this handle.
-     * 
+     *
      * @return the identifier of this handle. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -150,7 +150,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the list of key sequence bindings. This list may be empty, but is
      *         guaranteed not to be <code>null</code>. If this list is not
      *         empty, it is guaranteed to only contain instances of
@@ -167,7 +167,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the name of the command represented by this handle. Guaranteed
      *         not to be <code>null</code>.
      * @throws NotDefinedException
@@ -184,7 +184,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return <code>true</code>, iff the command represented by this handle
      *         is defined.
      */
@@ -202,7 +202,7 @@ public interface ICommand extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return <code>true</code>, iff this command is enabled.
      */
 	@Deprecated
@@ -211,7 +211,7 @@ public interface ICommand extends Comparable {
     /**
      * Unregisters an instance of <code>ICommandListener</code> listening for
      * changes to attributes of this instance.
-     * 
+     *
      * @param commandListener
      *            the instance of <code>ICommandListener</code> to unregister.
      *            Must not be <code>null</code>. If an attempt is made to

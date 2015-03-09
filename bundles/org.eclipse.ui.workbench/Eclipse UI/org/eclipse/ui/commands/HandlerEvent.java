@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see IHandlerListener#handlerChanged(HandlerEvent)
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
@@ -48,19 +48,19 @@ public final class HandlerEvent {
      * The map of previous attributes, if they changed.  If they did not change,
      * then this value is <code>null</code>.  The map's keys are the attribute
      * names (strings), and its value are any object.
-     * 
+     *
      * This is the original map passed into the constructor. This object always
      * returns a copy of this map, not the original. However the constructor of
      * this object is called very frequently and the map is rarely requested,
-     * so we only copy the map the first time it is requested. 
-     * 
+     * so we only copy the map the first time it is requested.
+     *
      * @since 3.1
      */
     private final Map originalPreviousAttributeValuesByName;
-    
+
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param handler
      *            the instance of the interface that changed.
      * @param attributeValuesByNameChanged
@@ -97,7 +97,7 @@ public final class HandlerEvent {
 
     /**
      * Returns the instance of the interface that changed.
-     * 
+     *
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -108,7 +108,7 @@ public final class HandlerEvent {
 
     /**
      * Returns the map of previous attribute values by name.
-     * 
+     *
      * @return the map of previous attribute values by name. This map may be
      *         empty. If this map is not empty, it's collection of keys is
      *         guaranteed to only contain instances of <code>String</code>.
@@ -122,19 +122,19 @@ public final class HandlerEvent {
         if (originalPreviousAttributeValuesByName == null) {
             return null;
         }
-        
+
         if (previousAttributeValuesByName == null) {
             previousAttributeValuesByName = Util.safeCopy(
                     originalPreviousAttributeValuesByName, String.class, Object.class,
                     false, true);
         }
-        
+
         return previousAttributeValuesByName;
     }
 
     /**
      * Returns whether or not the attributeValuesByName property changed.
-     * 
+     *
      * @return true, iff the attributeValuesByName property changed.
      */
 	@Deprecated

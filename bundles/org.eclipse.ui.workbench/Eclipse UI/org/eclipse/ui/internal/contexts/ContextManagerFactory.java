@@ -18,14 +18,14 @@ import org.eclipse.core.commands.contexts.ContextManager;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class ContextManagerFactory {
 
 	/**
 	 * Creates a new instance of <code>ContextManagerWrapper</code>.
-	 * 
+	 *
 	 * @param contextManager
 	 *            The context manager that this context manager wrapper should
 	 *            wrap; must not be <code>null</code>.

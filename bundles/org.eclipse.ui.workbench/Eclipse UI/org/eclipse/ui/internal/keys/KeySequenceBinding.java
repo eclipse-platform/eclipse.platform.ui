@@ -75,7 +75,7 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
         if (!Util.equals(keySequence, castedObject.keySequence)) {
             return false;
         }
-        
+
         return Util.equals(match, castedObject.match);
     }
 

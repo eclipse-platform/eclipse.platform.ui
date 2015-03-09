@@ -50,7 +50,7 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 		} catch (CoreException e) {
 			// Just inform the user about the error. The details are
 			// written to the log by now.
-			IStatus errStatus = StatusUtil.newStatus(e.getStatus(), WorkbenchMessages.PreferenceNode_errorMessage); 
+			IStatus errStatus = StatusUtil.newStatus(e.getStatus(), WorkbenchMessages.PreferenceNode_errorMessage);
 			StatusManager.getManager().handle(errStatus, StatusManager.SHOW | StatusManager.LOG);
 			page = new ErrorPreferencePage();
 		}
@@ -70,5 +70,5 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 	public String getCategory() {
 		return getConfigurationElement().getAttribute(
 				CategorizedPageRegistryReader.ATT_CATEGORY);
-	}	
+	}
 }

@@ -18,12 +18,12 @@ package org.eclipse.ui;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEditorReference extends IWorkbenchPartReference {
     /**
-     * Returns the factory id of the factory used to 
+     * Returns the factory id of the factory used to
      * restore this editor. Returns null if the editor
      * is not persistable.
      */
@@ -54,7 +54,7 @@ public interface IEditorReference extends IWorkbenchPartReference {
      * Unlike most of the other methods on this type, this method
      * can trigger plug-in activation.
      * </p>
-     *  
+     *
      * @return the editor input for the editor referenced by this object
      * @throws PartInitException if there was an error restoring the editor input
      * @since 3.1

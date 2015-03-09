@@ -17,13 +17,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 
 /**
- * <code>CellData</code> is the layout data object associated with 
+ * <code>CellData</code> is the layout data object associated with
  * <code>CellLayout</code>. You can attach a CellData object to a
  * control by using the <code>setLayoutData</code> method. CellData
  * objects are optional. If you do not attach any layout data to a control,
  * it will behave just like attaching a CellData created using its default
  * constructor.
- * 
+ *
  * @since 3.0
  **/
 public final class CellData {
@@ -54,26 +54,26 @@ public final class CellData {
      * This flag is useful for buttons. For example, set the width and height hints to
      * the default button size. This will use the default button size unless the button
      * label is too large to fit on the button.
-     * </p>  
+     * </p>
      */
     public final static int MINIMUM = 2;
 
     /**
      * hintType flag (value = 3) indicating that the width of the control should be no more than
      * widthHint (if provided) and the height of the control should be no more
-     * than heightHint (if provided). 
+     * than heightHint (if provided).
      * <p>
      * This flag is useful for wrapping text. For example, set heightHint to SWT.DEFAULT
      * and set widthHint to the desired number of pixels after which text should wrap. This
      * will cause the text to wrap after the given number of pixels, but will not allocate
      * extra space in the column if the text widget does not fill an entire line.
-     * </p> 
+     * </p>
      */
     public final static int MAXIMUM = 3;
 
     /**
      * This flag controls how the width and height hints are to be treated. See the constants
-     * above. 
+     * above.
      */
     public int hintType = OVERRIDE;
 
@@ -89,7 +89,7 @@ public final class CellData {
      * Height hint. This modifies the height of the control, in pixels. If set to SWT.DEFAULT,
      * this dimension will not be constrained. Depending on the value of modifierType,
      * this will be a minimum size, a maximum size, or a replacement for the control's preferred
-     * size. 
+     * size.
      */
     public int heightHint = SWT.DEFAULT;
 
@@ -118,7 +118,7 @@ public final class CellData {
     public int verticalAlignment = SWT.FILL;
 
     /**
-     * Horizontal indentation (pixels). Positive values move the control 
+     * Horizontal indentation (pixels). Positive values move the control
      * to the right, negative to the left.
      */
     public int horizontalIndent = 0;
@@ -139,7 +139,7 @@ public final class CellData {
     /**
      * Creates a new CellData that with properties that are as close as possible to
      * the given GridData. This is used for converting GridLayouts into CellLayouts.
-     * 
+     *
      * @param data
      */
     public CellData(GridData data) {
@@ -184,7 +184,7 @@ public final class CellData {
 
     /**
      * Copies the given CellData
-     * 
+     *
      * @param newData
      */
     public CellData(CellData newData) {
@@ -198,16 +198,16 @@ public final class CellData {
     }
 
     /**
-     * Sets the size hint for this control. This is used to modify the control's 
+     * Sets the size hint for this control. This is used to modify the control's
      * preferred size. If one dimension should remain unmodified, that hint can be
      * set to SWT.DEFAULT. Using a size hint of CellData.MINIMUM ensures that the preferred
      * control size is larger than the hint. Using a size hint of CellData.MAXIMUM ensures
      * that the preferred size is smaller than the hint. Using a size hint of CellData.OVERRIDE
-     * ensures that the preferred size is always equal to the hint. 
-     * 
+     * ensures that the preferred size is always equal to the hint.
+     *
      * @param hintType one of CellData.MINIMUM, CellData.MAXIMUM, or CellData.OVERRIDE
      * @param hint size hint (in pixels). If either dimension is set to SWT.DEFAULT, the
-     * hint will not affect that dimension 
+     * hint will not affect that dimension
      * @return this
      */
     public CellData setHint(int hintType, Point hint) {
@@ -215,18 +215,18 @@ public final class CellData {
     }
 
     /**
-     * Sets the size hint for this control. This is used to modify the control's 
+     * Sets the size hint for this control. This is used to modify the control's
      * preferred size. If one dimension should remain unmodified, that hint can be
      * set to SWT.DEFAULT. Using a size hint of CellData.MINIMUM ensures that the preferred
      * control size is larger than the hint. Using a size hint of CellData.MAXIMUM ensures
      * that the preferred size is smaller than the hint. Using a size hint of CellData.OVERRIDE
      * ensures that the preferred size is always equal to the hint. If both hints are equal
      * to SWT.DEFAULT, then the control's preferred size is unmodified.
-     * 
+     *
      * @param hintType one of CellData.MINIMUM, CellData.MAXIMUM, or CellData.OVERRIDE
      * @param horizontal horizontal hint (pixels). A value of SWT.DEFAULT will leave the result
      * of the control's computeSize method unmodified.
-     * @param vertical vertical hint (pixels). A value of SWT.DEFAULT will leave the result of 
+     * @param vertical vertical hint (pixels). A value of SWT.DEFAULT will leave the result of
      * the control's computeSize method unmodified.
      * @return this
      */
@@ -240,7 +240,7 @@ public final class CellData {
 
     /**
      * Sets the alignment for this control
-     * 
+     *
      * @param horizontalAlignment one of SWT.LEFT, SWT.RIGHT, SWT.FILL, or SWT.CENTER
      * @param verticalAlignment one of SWT.TOP, SWT.BOTTOM, SWT.FILL, or SWT.CENTER
      * @return this
@@ -254,7 +254,7 @@ public final class CellData {
 
     /**
      * Sets the number of rows and columns spanned by this control.
-     * 
+     *
      * @param horizontalSpan number of columns spanned by the control (> 0)
      * @param verticalSpan number of rows spanned by the control (> 0)
      * @return this
@@ -270,7 +270,7 @@ public final class CellData {
      * Sets the indentation for this control. The indentation is added to
      * the control's position within the cell. For example, indentation of
      * (10,4) will move the control right by 10 pixels and down by 4 pixels.
-     * 
+     *
      * @param indent indentation (pixels)
      * @return this
      */
@@ -280,7 +280,7 @@ public final class CellData {
 
     /**
      * Sets the indentation for this cell
-     * 
+     *
      * @param horizontalIndent distance (pixels) to move the control to the right
      * @param verticalIndent distance (pixels) to move the control down
      * @return this
@@ -295,7 +295,7 @@ public final class CellData {
     /**
      * Returns the preferred size of the given control, given the known dimensions of
      * its cell.
-     *  
+     *
      * @param toCompute the control whose size is to be computed
      * @param cellWidth width of the cell, in pixels (or SWT.DEFAULT if unknown)
      * @param cellHeight height of the cell, in pixels (or SWT.DEFAULT if unknown)
@@ -321,7 +321,7 @@ public final class CellData {
         int controlHeight = verticalAlignment == SWT.FILL ? cellHeight
                 : SWT.DEFAULT;
 
-        // Note: this could be optimized further. If we're using a MAXIMUM hint and 
+        // Note: this could be optimized further. If we're using a MAXIMUM hint and
         // non-FILL alignment, we could simply call computeMaximumBoundedSize using the
         // minimum of the cell size and the hint as the boundary -- basically, rather
         // than applying two limits for the hint and the cell boundary, we can do it in
@@ -343,7 +343,7 @@ public final class CellData {
             }
         }
 
-        // If we're going to indent, add the indentation to the required space 
+        // If we're going to indent, add the indentation to the required space
         controlSize.x += absHorizontalIndent;
         controlSize.y += absVerticalIndent;
 
@@ -353,8 +353,8 @@ public final class CellData {
     /**
      * Arranges the given control within the given rectangle using the
      * criteria described by this CellData.
-     * 
-     * @param control 
+     *
+     * @param control
      * @param cellBounds
      * @since 3.0
      */
@@ -396,7 +396,7 @@ public final class CellData {
      * Returns the preferred size of the given control in this cell, given one or both
      * known dimensions of the control. This differs from computeSize, which takes known
      * dimensions of the <b>cell</b> as arguments.
-     * 
+     *
      * @param toCompute
      * @param controlWidth
      * @param controlHeight
@@ -420,7 +420,7 @@ public final class CellData {
         return computeRawSize(toCompute, controlWidth, controlHeight);
     }
 
-    /** 
+    /**
      * Computes the size of the control, given its outer dimensions. This should be used in
      * place of calling Control.computeSize, since Control.computeSize takes control-specific
      * inner dimensions as hints.
@@ -464,13 +464,13 @@ public final class CellData {
     /**
      * Computes the preferred size of the control. Optionally, one or both dimensions
      * may be fixed to a given size.
-     * 
+     *
      * @param control object that can compute the size of the control of interest
-     * @param wHint known width (or SWT.DEFAULT if the width needs to be computed) 
-     * @param hHint known height (or SWT.DEFAULT if the height needs to be computed) 
-     * @param overrideW width that should always be returned by the control, 
+     * @param wHint known width (or SWT.DEFAULT if the width needs to be computed)
+     * @param hHint known height (or SWT.DEFAULT if the height needs to be computed)
+     * @param overrideW width that should always be returned by the control,
      * or SWT.DEFAULT if the width is not being constrained
-     * @param overrideH height that should always be returned by the control, 
+     * @param overrideH height that should always be returned by the control,
      * or SWT.DEFAULT if the height is not being constrained
      * @return
      */
@@ -500,13 +500,13 @@ public final class CellData {
      * Computes the size for the control, optionally bounding the size in the x and
      * y directions. The various hints are used to determine which dimensions are
      * already known and which dimensions need to be computed.
-     * 
+     *
      * @param control The control whose size should be computed
-     * @param wHint known width (or SWT.DEFAULT if the width needs to be computed) 
-     * @param hHint known height (or SWT.DEFAULT if the height needs to be computed) 
+     * @param wHint known width (or SWT.DEFAULT if the width needs to be computed)
+     * @param hHint known height (or SWT.DEFAULT if the height needs to be computed)
      * @param boundedWidth maximum width for the control (or SWT.DEFAULT if the width is unbounded)
      * @param boundedHeight maximum height for the control (or SWT.DEFAULT if the height is unbounded)
-     * @return the preferred size of the control, given that it cannot exceed the given bounds 
+     * @return the preferred size of the control, given that it cannot exceed the given bounds
      */
     private static Point computeMaximumBoundedSize(SizeCache control,
             int wHint, int hHint, int boundedWidth, int boundedHeight) {

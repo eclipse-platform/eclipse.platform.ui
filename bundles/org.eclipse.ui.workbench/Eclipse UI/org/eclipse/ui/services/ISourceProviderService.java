@@ -26,10 +26,10 @@ import org.eclipse.ui.ISourceProvider;
  * <li>This service is available globally.</li>
  * </ul>
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @since 3.4
  * @see org.eclipse.ui.services.IEvaluationService
  */
@@ -38,7 +38,7 @@ public interface ISourceProviderService {
 	/**
 	 * Retrieves a source provider providing the given source. This is used by
 	 * clients who only need specific sources.
-	 * 
+	 *
 	 * @param sourceName
 	 *            The name of the source; must not be <code>null</code>.
 	 * @return A source provider which provides the request source, or
@@ -51,11 +51,11 @@ public interface ISourceProviderService {
 	 * Retrieves all of the source providers registered with this service at the
 	 * time of this call.
 	 * <p>
-	 * <code>org.eclipse.ui.services.IEvaluationService</code> can be used 
+	 * <code>org.eclipse.ui.services.IEvaluationService</code> can be used
 	 * to receive notifications about source variable changes and to
 	 * evaluate core expressions against source providers.
 	 * </p>
-	 * 
+	 *
 	 * @return The source providers registered with this service. This value is
 	 *         never <code>null</code>, but may be empty.
 	 */

@@ -96,10 +96,10 @@ public class ActionPresentation {
     public void setActionSets(IActionSetDescriptor[] newArray) {
         // Convert array to list.
         HashSet newList = new HashSet();
-        
+
         for (int i = 0; i < newArray.length; i++) {
             IActionSetDescriptor descriptor = newArray[i];
-            
+
             newList.add(descriptor);
         }
         List oldList = new ArrayList(mapDescToRec.keySet());
@@ -125,7 +125,7 @@ public class ActionPresentation {
 
         // Add new actions.
         ArrayList sets = new ArrayList();
-        
+
         for (int i = 0; i < newArray.length; i++) {
             IActionSetDescriptor desc = newArray[i];
 
@@ -192,7 +192,7 @@ public class ActionPresentation {
 
     /**
      * Return whether the array contains the given action set.
-     * 
+     *
      * @param existingRegistrations the array to check
      * @param set the set to look for
      * @return whether the set is in the array

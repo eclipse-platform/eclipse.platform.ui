@@ -24,10 +24,10 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * @since 3.4
  * @author Jan Diederich
  */
-public class WorkbenchPreferenceExpressionNode extends PreferenceNode 
+public class WorkbenchPreferenceExpressionNode extends PreferenceNode
 	implements IPluginContribution {
-	
-	
+
+
 	/**
 	 * @param id The id.
 	 * @see PreferenceNode#PreferenceNode(String)
@@ -35,10 +35,10 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
 	public WorkbenchPreferenceExpressionNode(String id) {
 		super(id);
 	}
-	
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.preference.PreferenceNode#findSubNode(java.lang.String)
      */
     @Override
@@ -48,7 +48,7 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.preference.PreferenceNode#getSubNodes()
      */
     @Override
@@ -68,7 +68,7 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
     /**
      * Returns the given <code>prefNode</code>, but only if it's no
      * WorkbenchPreferenceExtensionNode which fails the Expression check.
-     * 
+     *
      * @param prefNode
      *            The preference node which will be checked. Can be <code>null
      *            </code>.
@@ -80,7 +80,7 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
     	if (prefNode == null)
     		return null;
         if (prefNode instanceof WorkbenchPreferenceExtensionNode) {
-        	WorkbenchPreferenceExpressionNode node = 
+        	WorkbenchPreferenceExpressionNode node =
         		(WorkbenchPreferenceExtensionNode)prefNode;
             if (WorkbenchActivityHelper.restrictUseOf(node)) {
                 return null;

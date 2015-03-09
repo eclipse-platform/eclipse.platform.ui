@@ -30,11 +30,11 @@ import org.eclipse.ui.services.IServiceLocator;
  * It currently supports placement in menus.
  * </p>
  * <p>
- * 
+ *
  * @author Prakash G.R.
- * 
+ *
  * @since 3.6
- * 
+ *
  */
 public class DynamicToolBarContributionItem extends WorkbenchWindowControlContribution {
 
@@ -45,14 +45,14 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/**
 	 * Creates a DynamicToolBarContributionItem
-	 * 
+	 *
 	 * @param id
 	 *            - Id of the menu item
 	 * @param locator
 	 *            - The Service Locator
 	 * @param dynamicAddition
 	 *            - The Configuration Element defined in the plugin.xml
-	 * 
+	 *
 	 */
 	public DynamicToolBarContributionItem(String id, IServiceLocator locator,
 			IConfigurationElement dynamicAddition) {
@@ -64,7 +64,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isDynamic()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isDirty()
 	 */
 	@Override
@@ -90,7 +90,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isEnabled()
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isGroupMarker()
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isSeparator()
 	 */
 	@Override
@@ -129,7 +129,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#saveWidgetState()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#setVisible(boolean)
 	 */
 	@Override
@@ -155,7 +155,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isVisible()
 	 */
 	@Override
@@ -168,7 +168,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
 	 * .CoolBar, int)
@@ -210,7 +210,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	@Override
@@ -224,7 +224,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#update()
 	 */
 	@Override
@@ -243,7 +243,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface
 	 * .action.IContributionManager)
@@ -258,7 +258,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.menus.InternalControlContribution#setWorkbenchWindow
 	 * (org.eclipse.ui.IWorkbenchWindow)
@@ -273,7 +273,7 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.menus.InternalControlContribution#setCurSide(int)
 	 */
@@ -284,13 +284,13 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 			loadedDynamicContribution.setCurSide(curSide);
 		}
 	}
-	/* 
+	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.ControlContribution#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public Control createControl(Composite parent) {
-		
+
 		WorkbenchWindowControlContribution contributionItem = getContributionItem();
 		if (contributionItem != null)
 			return contributionItem.delegateCreateControl(parent);

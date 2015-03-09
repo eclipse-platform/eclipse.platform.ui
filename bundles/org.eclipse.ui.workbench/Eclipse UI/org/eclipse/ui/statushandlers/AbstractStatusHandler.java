@@ -22,7 +22,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * applications. The handlers are responsible for presenting this errors by
  * logging or showing error dialogs.
  * </p>
- * 
+ *
  * <p>
  * All status handlers extends
  * <code>org.eclipse.ui.statushandlers.AbstractStatusHandler</code>. Each
@@ -30,11 +30,11 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * This method handles statuses due to handling style. The style indicates how
  * status handler should handle a status.
  * </p>
- * 
+ *
  * <p>
  * For acceptable styles check {@link StatusManager}.
  * </p>
- * 
+ *
  * <p>
  * Handlers shoudn't be used directly but through the {@link StatusManager}. It
  * chooses which handler should be used for handling. There are two ways for
@@ -44,14 +44,14 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * If a handler is associated with a product, it is used instead of this defined
  * in advisor.
  * </p>
- * 
+ *
  * <p>
  * A status handler has the id and a set of parameters. The handler can use them
  * during handling. If the handler is added as an extension, both are set during
  * initialization of the handler using elements and attributes of
  * <code>statusHandler</code> element.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractStatusHandler {
@@ -61,14 +61,14 @@ public abstract class AbstractStatusHandler {
 	private String id;
 
 	/**
-	 * Handles {@link StatusAdapter} objects based on the set style. 
-	 * 
+	 * Handles {@link StatusAdapter} objects based on the set style.
+	 *
 	 * @param statusAdapter
 	 *            the status adapter. May not be <code>null</code>.
 	 * @param style
 	 *            style constant. Acceptable values are defined in
 	 *            {@link StatusManager} and can be combined with logical OR.
-	 * 
+	 *
 	 * @see StatusManager#BLOCK
 	 * @see StatusManager#NONE
 	 * @see StatusManager#SHOW
@@ -78,7 +78,7 @@ public abstract class AbstractStatusHandler {
 
 	/**
 	 * Returns all parameters of the handler.
-	 * 
+	 *
 	 * @return the parameters
 	 */
 	public Map getParams() {
@@ -88,7 +88,7 @@ public abstract class AbstractStatusHandler {
 	/**
 	 * Returns the value of the handler's parameter identified by the given key,
 	 * or <code>null</code> if this handler has no such parameter.
-	 * 
+	 *
 	 * @param key
 	 *            the name of the property
 	 * @return the value of the parameter, or <code>null</code> if this
@@ -104,11 +104,11 @@ public abstract class AbstractStatusHandler {
 
 	/**
 	 * Sets the parameters for the handler. If the handler is added via the
-	 * <code> org.eclipse.ui.statushandlers extension</code>, the parameters are set 
-	 * during initialization of the handler using <code>parameter</code> 
+	 * <code> org.eclipse.ui.statushandlers extension</code>, the parameters are set
+	 * during initialization of the handler using <code>parameter</code>
 	 * elements from <code>statusHandler</code>
 	 * element.
-	 * 
+	 *
 	 * @param params
 	 *            the parameters to set
 	 */
@@ -118,7 +118,7 @@ public abstract class AbstractStatusHandler {
 
 	/**
 	 * Returns the id of the handler.
-	 * 
+	 *
 	 * @return the id
 	 */
 	public String getId() {
@@ -129,7 +129,7 @@ public abstract class AbstractStatusHandler {
 	 * Sets the id for the handler. If the handler is added as an extension, the
 	 * id is set during initialization of the handler using <code>id</code>
 	 * attribute of <code>statusHandler</code> element.
-	 * 
+	 *
 	 * @param id
 	 *            the id to set
 	 */
@@ -142,7 +142,7 @@ public abstract class AbstractStatusHandler {
 	 * if {@link StatusManager#fireNotification(int, StatusAdapter[])} will be
 	 * called after the event occurs. Only known notification types should be
 	 * accepted, whereas unknown types should be always rejected.
-	 * 
+	 *
 	 * @param type
 	 *            - a notification type that should be checked.
 	 * @return true if particular event notification is supported, false

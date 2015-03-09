@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * Abstract base class with basic implementations of the IWorkbenchAdapter
  * interface. Intended to be subclassed.
- * 
+ *
  * @since 3.0
  */
 public abstract class WorkbenchAdapter implements IWorkbenchAdapter,
@@ -97,10 +97,10 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter,
 	 * The default implementation of this <code>IWorkbenchAdapter3</code> method
 	 * returns the {@link StyledString} which wraps the label of the element.
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @return Return the {@link StyledString} which wraps the label of the
 	 *         element.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	@Override

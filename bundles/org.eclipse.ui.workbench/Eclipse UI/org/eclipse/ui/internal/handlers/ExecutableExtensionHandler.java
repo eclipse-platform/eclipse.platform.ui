@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
  * subclasses to never be used as executable extension. This default
  * implementation of <code>setInitializationData</code> is only intended as a
  * convenience for developers.
- * 
+ *
  * @since 3.1
  */
 public abstract class ExecutableExtensionHandler extends AbstractHandler
@@ -33,7 +33,7 @@ public abstract class ExecutableExtensionHandler extends AbstractHandler
      * <code>ExecutableExtensionHandler</code> will do nothing with this
      * information. Subclasses should override if they expect parameters from
      * XML.
-     * 
+     *
      * @param config
      *            the configuration element used to trigger this execution. It
      *            can be queried by the executable extension for specific
@@ -49,7 +49,7 @@ public abstract class ExecutableExtensionHandler extends AbstractHandler
      *            <code>Hashtable</code>, or <code>null</code>.
      * @throws CoreException
      *             if error(s) detected during initialization processing
-     * 
+     *
      * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
      *      java.lang.String, java.lang.Object)
      */

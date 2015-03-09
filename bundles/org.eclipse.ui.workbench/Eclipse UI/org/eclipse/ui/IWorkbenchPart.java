@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * A workbench part is a visual component within a workbench page.  There
  * are two subtypes: view and editor, as defined by <code>IViewPart</code> and
- * <code>IEditorPart</code>.  
+ * <code>IEditorPart</code>.
  * <p>
- * A view is typically used to navigate a hierarchy of information (like the 
- * workspace), open an editor, or display properties for the active editor.  
- * Modifications made in a view are saved immediately.  
+ * A view is typically used to navigate a hierarchy of information (like the
+ * workspace), open an editor, or display properties for the active editor.
+ * Modifications made in a view are saved immediately.
  * </p><p>
- * An editor is typically used to edit or browse a document or input object. 
- * The input is identified using an <code>IEditorInput</code>.  Modifications made 
+ * An editor is typically used to edit or browse a document or input object.
+ * The input is identified using an <code>IEditorInput</code>.  Modifications made
  * in an editor part follow an open-save-close lifecycle model.
  * </p><p>
  * This interface may be implemented directly.  For convenience, a base
@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Composite;
  *		<li>call <code>part.init(site)</code></li>
  * 	  </ul>
  *  <li>When a part becomes visible in the workbench:
- * 	  <ul> 
- *		<li>add part to presentation by calling 
+ * 	  <ul>
+ *		<li>add part to presentation by calling
  *        <code>part.createPartControl(parent)</code> to create actual widgets</li>
  *		<li>fire <code>partOpened</code> event to all listeners</li>
  *	  </ul>
@@ -64,21 +64,21 @@ import org.eclipse.swt.widgets.Composite;
  * </ul>
  * </p>
  * <p>
- * After <code>createPartControl</code> has been called, the implementor may 
- * safely reference the controls created.  When the part is closed 
+ * After <code>createPartControl</code> has been called, the implementor may
+ * safely reference the controls created.  When the part is closed
  * these controls will be disposed as part of an SWT composite.  This
  * occurs before the <code>IWorkbenchPart.dispose</code> method is called.
- * If there is a need to free SWT resources the part should define a dispose 
+ * If there is a need to free SWT resources the part should define a dispose
  * listener for its own control and free those resources from the dispose
- * listener.  If the part invokes any method on the disposed SWT controls 
- * after this point an <code>SWTError</code> will be thrown.  
+ * listener.  If the part invokes any method on the disposed SWT controls
+ * after this point an <code>SWTError</code> will be thrown.
  * </p>
  * <p>
- * The last method called on <code>IWorkbenchPart</code> is <code>dispose</code>.  
+ * The last method called on <code>IWorkbenchPart</code> is <code>dispose</code>.
  * This signals the end of the part lifecycle.
  * </p>
  * <p>
- * An important point to note about this lifecycle is that following 
+ * An important point to note about this lifecycle is that following
  * a call to init, createPartControl may never be called. Thus in the dispose
  * method, implementors must not assume controls were created.
  * </p>
@@ -122,7 +122,7 @@ public interface IWorkbenchPart extends IAdaptable {
      *   <li>Set the parent layout as needed.</li>
      *   <li>Register any global actions with the site's <code>IActionBars</code>.</li>
      *   <li>Register any context menus with the site.</li>
-     *   <li>Register a selection provider with the site, to make it available to 
+     *   <li>Register a selection provider with the site, to make it available to
      *     the workbench's <code>ISelectionService</code> (optional). </li>
      * </ol>
      * </p>
@@ -135,12 +135,12 @@ public interface IWorkbenchPart extends IAdaptable {
      * Disposes of this workbench part.
      * <p>
      * This is the last method called on the <code>IWorkbenchPart</code>.  At this
-     * point the part controls (if they were ever created) have been disposed as part 
-     * of an SWT composite.  There is no guarantee that createPartControl() has been 
+     * point the part controls (if they were ever created) have been disposed as part
+     * of an SWT composite.  There is no guarantee that createPartControl() has been
      * called, so the part controls may never have been created.
      * </p>
      * <p>
-     * Within this method a part may release any resources, fonts, images, etc.&nbsp; 
+     * Within this method a part may release any resources, fonts, images, etc.&nbsp;
      * held by this part.  It is also very important to deregister all listeners
      * from the workbench.
      * </p>
@@ -156,19 +156,19 @@ public interface IWorkbenchPart extends IAdaptable {
      * <code>null</code> while the workbench part is being initialized. After
      * the initialization is complete, this value must be non-<code>null</code>
      * for the remainder of the part's life cycle.
-     * 
+     *
      * @return The part site; this value may be <code>null</code> if the part
      *         has not yet been initialized
      */
     public IWorkbenchPartSite getSite();
 
     /**
-     * Returns the title of this workbench part. If this value changes 
-     * the part must fire a property listener event with 
+     * Returns the title of this workbench part. If this value changes
+     * the part must fire a property listener event with
      * <code>PROP_TITLE</code>.
      * <p>
      * The title is used to populate the title bar of this part's visual
-     * container.  
+     * container.
      * </p>
      *
      * @return the workbench part title (not <code>null</code>)
@@ -176,8 +176,8 @@ public interface IWorkbenchPart extends IAdaptable {
     public String getTitle();
 
     /**
-     * Returns the title image of this workbench part.  If this value changes 
-     * the part must fire a property listener event with 
+     * Returns the title image of this workbench part.  If this value changes
+     * the part must fire a property listener event with
      * <code>PROP_TITLE</code>.
      * <p>
      * The title image is usually used to populate the title bar of this part's
@@ -190,13 +190,13 @@ public interface IWorkbenchPart extends IAdaptable {
     public Image getTitleImage();
 
     /**
-     * Returns the title tool tip text of this workbench part. 
+     * Returns the title tool tip text of this workbench part.
      * An empty string result indicates no tool tip.
-     * If this value changes the part must fire a property listener event with 
+     * If this value changes the part must fire a property listener event with
      * <code>PROP_TITLE</code>.
      * <p>
-     * The tool tip text is used to populate the title bar of this part's 
-     * visual container.  
+     * The tool tip text is used to populate the title bar of this part's
+     * visual container.
      * </p>
      *
      * @return the workbench part title tool tip (not <code>null</code>)
@@ -206,7 +206,7 @@ public interface IWorkbenchPart extends IAdaptable {
     /**
 	 * Removes the given property listener from this workbench part. Has no
 	 * effect if an identical listener is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a property listener
 	 */

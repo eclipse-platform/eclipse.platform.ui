@@ -32,16 +32,16 @@ import com.ibm.icu.text.DateFormat;
 /**
  * This class contains utility methods that clients may use to obtain
  * information about the system configuration.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public final class ConfigurationInfo {
 
 	/**
 	 * Return the build id for this instance. This may be <code>null</code> in
 	 * the event that this property is undefined.
-	 * 
+	 *
 	 * @return the build id or <code>null</code>
 	 */
 	public static String getBuildId() {
@@ -53,13 +53,13 @@ public final class ConfigurationInfo {
 	 * may include but is not limited to system properties, installed bundles,
 	 * and installed features. The specific format of this message is undefined
 	 * and may change at any time.
-	 * 
+	 *
 	 * <p>
 	 * The contents of this String are in part constructed via
 	 * {@link ISystemSummarySection} that are registered with this running
 	 * instance of the workbench.
 	 * </p>
-	 * 
+	 *
 	 * @return the configuration info
 	 */
 	public static String getSystemSummary() {
@@ -128,7 +128,7 @@ public final class ConfigurationInfo {
 					return collator.compare(id1, id2);
 				}
 
-				String title1 = element1.getAttribute("sectionTitle"); //$NON-NLS-1$ 
+				String title1 = element1.getAttribute("sectionTitle"); //$NON-NLS-1$
 				String title2 = element2.getAttribute("sectionTitle"); //$NON-NLS-1$
 
 				if (title1 == null) {

@@ -29,7 +29,7 @@ public class ThemesExtension implements IThemesExtension {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension#
 	 * addFontDefinition(java.lang.String)
 	 */
@@ -43,7 +43,7 @@ public class ThemesExtension implements IThemesExtension {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension#
 	 * addColorDefinition(java.lang.String)
 	 */

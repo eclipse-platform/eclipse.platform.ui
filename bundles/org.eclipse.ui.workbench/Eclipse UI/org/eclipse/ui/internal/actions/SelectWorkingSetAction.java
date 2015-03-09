@@ -24,9 +24,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Displays an IWorkingSetSelectionDialog and sets the selected 
+ * Displays an IWorkingSetSelectionDialog and sets the selected
  * working set in the action group.
- * 
+ *
  * @since 2.1
  */
 public class SelectWorkingSetAction extends Action {
@@ -36,15 +36,15 @@ public class SelectWorkingSetAction extends Action {
 
     /**
      * Creates a new instance of the receiver.
-     * 
+     *
      * @param actionGroup the action group this action is created in
      * @param shell shell to use for opening working set selection dialog.
      */
     public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup,
             Shell shell) {
-        super(WorkbenchMessages.SelectWorkingSetAction_text); 
+        super(WorkbenchMessages.SelectWorkingSetAction_text);
         Assert.isNotNull(actionGroup);
-        setToolTipText(WorkbenchMessages.SelectWorkingSetAction_toolTip); 
+        setToolTipText(WorkbenchMessages.SelectWorkingSetAction_toolTip);
 
         this.shell = shell;
         this.actionGroup = actionGroup;
@@ -54,7 +54,7 @@ public class SelectWorkingSetAction extends Action {
 
     /**
      * Overrides method from Action
-     * 
+     *
      * @see Action#run()
      */
     @Override

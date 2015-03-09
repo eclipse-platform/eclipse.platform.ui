@@ -14,7 +14,7 @@ package org.eclipse.ui;
  * Interface for import wizards.
  * <p>
  * Clients should implement this interface and include the name of their class
- * in a wizard contributed to the workbench's import wizard extension point 
+ * in a wizard contributed to the workbench's import wizard extension point
  * (named <code>"org.eclipse.ui.importWizards"</code>).
  * For example, the plug-in's XML markup might contain:
  * <pre>
@@ -25,7 +25,7 @@ package org.eclipse.ui;
  *       class="com.example.myplugin.BlobFileImporter"
  *       icon="icons/import_blob_wiz.gif"&GT;
  *     &LT;description&GT;Import resources from a BLOB file&LT;/description&GT;
- *     &LT;selection class="org.eclipse.core.resources.IResource" /&GT; 
+ *     &LT;selection class="org.eclipse.core.resources.IResource" /&GT;
  *   &LT;/wizard&GT;
  * &LT;/extension&GT;
  * </pre>

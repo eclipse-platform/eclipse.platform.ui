@@ -19,17 +19,17 @@ public interface WorkbenchTriggerPoints {
      * New wizard trigger point identifier.  Value <code>org.eclipse.ui.newWizards</code>.
      */
     public static final String NEW_WIZARDS = "org.eclipse.ui.newWizards"; //$NON-NLS-1$
-    
+
     /**
      * Perspective opening trigger point identifier.  Value <code>org.eclipse.ui.openPerspectiveDialog</code>.
      */
     public static final String OPEN_PERSPECITVE_DIALOG = "org.eclipse.ui.openPerspectiveDialog"; //$NON-NLS-1$
-    
+
     /**
      * Import wizards trigger point identifier.  Value <code>org.eclipse.ui.importWizards</code>.
      */
     public static final String IMPORT_WIZARDS = "org.eclipse.ui.importWizards"; //$NON-NLS-1$
-    
+
     /**
      * Export wizards trigger point identifier.  Value <code>org.eclipse.ui.exportWizards</code>.
      */

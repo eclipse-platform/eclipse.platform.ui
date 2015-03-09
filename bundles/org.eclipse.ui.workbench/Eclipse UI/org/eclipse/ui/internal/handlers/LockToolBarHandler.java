@@ -18,17 +18,17 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
- * 
+ *
  * @author Prakash G.R.
- * 
+ *
  * @since 3.7
- * 
+ *
  */
 public class LockToolBarHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)

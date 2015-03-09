@@ -40,7 +40,7 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 class ExtensionEventHandler implements IRegistryChangeListener {
-    
+
     private Workbench workbench;
 
     private List changeList = new ArrayList(10);
@@ -71,9 +71,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             int numPerspectives = 0;
             int numActionSetPartAssoc = 0;
 
-            // push action sets and perspectives to the top because incoming 
-            // actionSetPartAssociations and perspectiveExtensions may depend upon 
-            // them for their bindings.		
+            // push action sets and perspectives to the top because incoming
+            // actionSetPartAssociations and perspectiveExtensions may depend upon
+            // them for their bindings.
             for (int i = 0; i < delta.length; i++) {
                 id = delta[i].getExtensionPoint().getSimpleIdentifier();
                 if (delta[i].getKind() == IExtensionDelta.ADDED) {
@@ -135,7 +135,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         };
         display.syncExec(run);
     }
-    
+
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
         if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_FONT_DEFINITIONS)) {

@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
- *     
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
+ *
  *******************************************************************************/
 
 package org.eclipse.ui.internal.preferences;
@@ -30,14 +30,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * The WorkbenchPreferenceExtensionNode is the abstract class for all property
  * and page nodes in the workbench.
- * 
+ *
  * @since 3.1
  */
-public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferenceExpressionNode 
+public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferenceExpressionNode
     implements IComparableContribution {
-	
+
 	private Collection keywordReferences;
-	
+
 	private IConfigurationElement configurationElement;
 
 	private ImageDescriptor imageDescriptor;
@@ -45,16 +45,16 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	private Image image;
 
 	private Collection keywordLabelCache;
-	
+
 	private int priority;
 
 	private String pluginId;
 
 	/**
 	 * Create a new instance of the reciever.
-	 * 
+	 *
 	 * @param id
-	 * @param configurationElement 
+	 * @param configurationElement
 	 */
 	public WorkbenchPreferenceExtensionNode(String id, IConfigurationElement configurationElement) {
 		super(id);
@@ -64,7 +64,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
 	/**
 	 * Get the ids of the keywords the receiver is bound to.
-	 * 
+	 *
 	 * @return Collection of <code>String</code>.  Never <code>null</code>.
 	 */
 	public Collection getKeywordReferences() {
@@ -85,28 +85,28 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 			} else {
 				keywordReferences = Collections.EMPTY_SET;
 			}
-			
+
 		}
 		return keywordReferences;
 	}
 
 	/**
 	 * Get the labels of all of the keywords of the receiver.
-	 * 
+	 *
 	 * @return Collection of <code>String</code>.  Never <code>null</code>.
 	 */
 	public Collection getKeywordLabels() {
 		if (keywordLabelCache != null) {
 			return keywordLabelCache;
 		}
-		
+
 		Collection refs = getKeywordReferences();
-		
+
 		if(refs == Collections.EMPTY_SET) {
-			keywordLabelCache = Collections.EMPTY_SET; 
+			keywordLabelCache = Collections.EMPTY_SET;
 			return keywordLabelCache;
 		}
-		
+
 		keywordLabelCache = new ArrayList(refs.size());
 		Iterator referenceIterator = refs.iterator();
 		while(referenceIterator.hasNext()){
@@ -116,10 +116,10 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 				keywordLabelCache.add(label);
 			}
 		}
-		
+
 		return keywordLabelCache;
 	}
-	
+
 	/**
 	 * Clear the keyword cache, if any.
 	 */
@@ -143,7 +143,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelImage()
 	 */
 	@Override
-	public Image getLabelImage() {		
+	public Image getLabelImage() {
         if (image == null) {
         	ImageDescriptor desc = getImageDescriptor();
         	if (desc != null) {
@@ -164,7 +164,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
     /**
      * Returns the image descriptor for this node.
-     * 
+     *
      * @return the image descriptor
      */
     @Override
@@ -172,7 +172,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
     	if (imageDescriptor != null) {
 			return imageDescriptor;
 		}
-    	
+
     	String imageName = getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (imageName != null) {
 			String contributingPluginId = pluginId;
@@ -180,16 +180,16 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 		}
 		return imageDescriptor;
     }
-    
+
     /**
      * Return the configuration element.
-     * 
+     *
      * @return the configuration element
      */
 	public IConfigurationElement getConfigurationElement() {
 		return configurationElement;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */

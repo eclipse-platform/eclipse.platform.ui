@@ -25,7 +25,7 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider impleme
 	private FilteredTree filterTree;
 
 	private PatternFilter filterForBoldElements;
-	
+
 	PreferenceBoldLabelProvider(FilteredTree filterTree) {
 		this.filterTree = filterTree;
 		this.filterForBoldElements= filterTree.getPatternFilter();

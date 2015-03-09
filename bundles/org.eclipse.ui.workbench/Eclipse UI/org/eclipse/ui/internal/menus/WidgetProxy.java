@@ -30,17 +30,17 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
  * loading until the widget is really asked to fill a menu collection. Asking
  * the widget for anything will instantiate the class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 final class WidgetProxy implements IWorkbenchWidget {
 
 	/**
-	 * Used to determine whether the load has been tried to 
+	 * Used to determine whether the load has been tried to
 	 * prevent multiple retries at a failed load.
 	 */
 	private boolean firstLoad = true;
-	
+
 	/**
 	 * The configuration element from which the widget can be created. This
 	 * value will exist until the element is converted into a real class -- at
@@ -64,7 +64,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	/**
 	 * Constructs a new instance of <code>WidgetProxy</code> with all the
 	 * information it needs to try to load the class at a later point in time.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            The configuration element from which the real class can be
 	 *            loaded at run-time; must not be <code>null</code>.
@@ -138,7 +138,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * inform widgets if they have changed locations. If the IWidget
 	 * implementation does not support the method then we default
 	 * to using the simpler <code>fill(final Composite parent)</code>.
-	 * 
+	 *
 	 * @param parent The composite to create the controls in
 	 * @param oldSide The side the trim was previously displayed on
 	 * @param newSide The new side that the trim will be displayed on
@@ -156,7 +156,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	/**
 	 * Loads the widget, if possible. If the widget is loaded, then the member
 	 * variables are updated accordingly.
-	 * 
+	 *
 	 * @return <code>true</code> if the widget is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
@@ -166,7 +166,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 			try {
 				widget = (IWorkbenchWidget) configurationElement
 						.createExecutableExtension(widgetAttributeName);
-				configurationElement = null;				
+				configurationElement = null;
 			} catch (final ClassCastException e) {
 				final String message = "The proxied widget was the wrong class"; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.ERROR,
@@ -184,7 +184,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 
 		// We're througth the first load
 		firstLoad = false;
-		
+
 		// the load only succeeded if there's a widget..
 		return widget != null;
 	}
@@ -192,18 +192,18 @@ final class WidgetProxy implements IWorkbenchWidget {
 	/**
 	 * Determine if the widget knows how to respond to changes in the
 	 * workbench 'side' that it is being displayed on.
-	 * 
+	 *
 	 * @return <code>true</code> iff the <code>IWidget</code> implementation
-	 * is actually based on <code>AbstractTrimWidget</code> 
+	 * is actually based on <code>AbstractTrimWidget</code>
 	 */
 	private final boolean isMoveableTrimWidget() {
 		if (loadWidget()) {
 			return widget instanceof AbstractWorkbenchTrimWidget;
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public final String toString() {
 		if (widget == null) {

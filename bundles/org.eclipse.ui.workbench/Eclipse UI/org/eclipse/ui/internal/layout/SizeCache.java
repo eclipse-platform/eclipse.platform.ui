@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Tree;
 
 /**
  * Caches the preferred size of an SWT control
- * 
+ *
  * @since 3.0
  */
 public class SizeCache {
@@ -76,9 +76,9 @@ public class SizeCache {
 
     /**
      * Creates a cache for size computations on the given control
-     * 
-     * @param control the control for which sizes will be calculated, 
-     * or null to always return (0,0) 
+     *
+     * @param control the control for which sizes will be calculated,
+     * or null to always return (0,0)
      */
     public SizeCache(Control control) {
         setControl(control);
@@ -86,8 +86,8 @@ public class SizeCache {
 
     /**
      * Sets the control whose size is being cached. Does nothing (will not
-     * even flush the cache) if this is the same control as last time. 
-     * 
+     * even flush the cache) if this is the same control as last time.
+     *
      * @param newControl the control whose size is being cached, or null to always return (0,0)
      */
     public void setControl(Control newControl) {
@@ -109,7 +109,7 @@ public class SizeCache {
 
     /**
      * Returns the control whose size is being cached
-     * 
+     *
      * @return the control whose size is being cached, or null if this cache always returns (0,0)
      */
     public Control getControl() {
@@ -141,7 +141,7 @@ public class SizeCache {
 
     /**
      * Computes the preferred size of the control.
-     *  
+     *
      * @param widthHint the known width of the control (pixels) or SWT.DEFAULT if unknown
      * @param heightHint the known height of the control (pixels) or SWT.DEFAULT if unknown
      * @return the preferred size of the control
@@ -248,7 +248,7 @@ public class SizeCache {
      * Compute the control's size, and ensure that non-default hints are returned verbatim
      * (this tries to compensate for SWT's hints, which aren't really the outer width of the
      * control).
-     * 
+     *
      * @param control
      * @param widthHint
      * @param heightHint
@@ -279,18 +279,18 @@ public class SizeCache {
     }
 
     /**
-     * Returns true if the preferred length of the given control is 
+     * Returns true if the preferred length of the given control is
      * independent of the width and visa-versa. If this returns true,
      * then changing the widthHint argument to control.computeSize will
      * never change the resulting height and changing the heightHint
      * will never change the resulting width. Returns false if unknown.
      * <p>
      * This information can be used to improve caching. Incorrectly returning
-     * a value of false may decrease performance, but incorrectly returning 
+     * a value of false may decrease performance, but incorrectly returning
      * a value of true will generate incorrect layouts... so always return
      * false if unsure.
      * </p>
-     * 
+     *
      * @param control
      * @return
      */
@@ -322,7 +322,7 @@ public class SizeCache {
      * compensate for bug 46112. To be removed once SWT provides an "official"
      * way to compute one dimension of a control's size given the other known
      * dimension.
-     * 
+     *
      * @param control
      */
     private void computeHintOffset(Control control) {
@@ -344,14 +344,14 @@ public class SizeCache {
      * Returns true only if the control will return a constant height for any
      * width hint larger than the preferred width. Returns false if there is
      * any situation in which the control does not have this property.
-     * 
+     *
      * <p>
      * Note: this method is only important for wrapping controls, and it can
      * safely return false for anything else. AFAIK, all SWT controls have this
      * property, but to be safe they will only be added to the list once the
      * property has been confirmed.
-     * </p> 
-     * 
+     * </p>
+     *
      * @param control
      * @return
      */

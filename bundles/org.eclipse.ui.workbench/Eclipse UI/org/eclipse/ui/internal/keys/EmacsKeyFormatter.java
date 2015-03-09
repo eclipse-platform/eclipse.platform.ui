@@ -23,7 +23,7 @@ import org.eclipse.ui.keys.ModifierKey;
 /**
  * A key formatter providing the Emacs-style accelerators using single letters
  * to represent the modifier keys.
- * 
+ *
  * @since 3.0
  */
 public class EmacsKeyFormatter extends AbstractKeyFormatter {
@@ -44,7 +44,7 @@ public class EmacsKeyFormatter extends AbstractKeyFormatter {
     /**
      * Formats an individual key into a human readable format. This converts
      * the key into a format similar to Xemacs.
-     * 
+     *
      * @param key
      *            The key to format; must not be <code>null</code>.
      * @return The key formatted as a string; should not be <code>null</code>.

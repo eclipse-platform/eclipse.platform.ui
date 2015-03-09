@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 223808 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 223808
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -26,7 +26,7 @@ public interface IPropertyPageContributor extends IObjectContributor {
      * property page manager.
      * @param manager the contributor manager onto which to contribute the
      * property page.
-     * @param object the type for which page should be contributed. 
+     * @param object the type for which page should be contributed.
      * @return true the page that was added, <code>null</code> if no page was added.
      */
     public PreferenceNode contributePropertyPage(PropertyPageManager manager,

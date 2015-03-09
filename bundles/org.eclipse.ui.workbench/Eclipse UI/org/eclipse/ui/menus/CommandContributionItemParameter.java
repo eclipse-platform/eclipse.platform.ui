@@ -22,7 +22,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * A help class for the various parameters that can be used with command
  * contributions. Mandatory parameters are in the constructor, and public fields
  * can be set to fill in other parameters.
- * 
+ *
  * @since 3.4
  */
 public class CommandContributionItemParameter {
@@ -98,7 +98,7 @@ public class CommandContributionItemParameter {
 
 	/**
 	 * The icon style to use. May be <code>null</code> for default style.
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandImageService
 	 */
 	public String iconStyle;
@@ -116,7 +116,7 @@ public class CommandContributionItemParameter {
 
 	/**
 	 * Create the parameter object. Nullable attributes can be set directly.
-	 * 
+	 *
 	 * @param serviceLocator
 	 *            a service locator that is most appropriate for this
 	 *            contribution. Typically the local {@link IWorkbenchWindow} or
@@ -144,7 +144,7 @@ public class CommandContributionItemParameter {
 	 * <p>
 	 * <b>Note:</b> This constructor should not be called outside the framework.
 	 * </p>
-	 * 
+	 *
 	 * @param serviceLocator
 	 *            a service locator that is most appropriate for this
 	 *            contribution. Typically the local {@link IWorkbenchWindow} or

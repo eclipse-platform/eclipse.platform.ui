@@ -31,7 +31,7 @@ import org.eclipse.ui.ISources;
  * This class is only intended for internal use within
  * <code>org.eclipse.ui.workbench</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class MenuSourceProvider extends AbstractSourceProvider {
@@ -51,7 +51,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 
 	/**
 	 * Adds all of the given menu identifiers as being shown.
-	 * 
+	 *
 	 * @param menuIds
 	 *            The ids of the menu that is now showing; must not be
 	 *            <code>null</code>.
@@ -106,7 +106,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 
 	/**
 	 * Removes all of the given menu identifiers as being shown.
-	 * 
+	 *
 	 * @param menuIds
 	 *            The ids of the menu that is no longer shown; must not be
 	 *            <code>null</code>.

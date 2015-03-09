@@ -16,7 +16,7 @@ import org.eclipse.jface.preference.IPreferencePage;
  * Interface for workbench preference pages.
  * <p>
  * Clients should implement this interface and include the name of their class
- * in an extension contributed to the workbench's preference extension point 
+ * in an extension contributed to the workbench's preference extension point
  * (named <code>"org.eclipse.ui.preferencePages"</code>).
  * For example, the plug-in's XML markup might contain:
  * <pre>

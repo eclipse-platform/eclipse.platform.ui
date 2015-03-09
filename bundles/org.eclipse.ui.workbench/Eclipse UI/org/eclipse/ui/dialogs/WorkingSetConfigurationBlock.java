@@ -55,14 +55,14 @@ import com.ibm.icu.text.Collator;
  * them into particular working sets.
  *
  * @since 3.4
- * 
+ *
  */
 public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Filters the given working sets such that the following is true: for each
 	 * IWorkingSet s in result: s.getId() is element of workingSetIds
-	 * 
+	 *
 	 * @param workingSets
 	 *            the array to filter
 	 * @param workingSetIds
@@ -71,7 +71,7 @@ public class WorkingSetConfigurationBlock {
 	 */
 	public static IWorkingSet[] filter(IWorkingSet[] workingSets,
 			String[] workingSetIds) {
-		
+
 		// create a copy so we can sort the array without mucking it up for clients.
 		String[] workingSetIdsCopy = new String[workingSetIds.length];
 		System.arraycopy(workingSetIds, 0, workingSetIdsCopy, 0,
@@ -100,7 +100,7 @@ public class WorkingSetConfigurationBlock {
 	private Combo workingSetCombo;
 	private Button selectButton;
 	private Button enableButton;
-	
+
 	private IWorkingSet[] selectedWorkingSets;
 	private ArrayList selectionHistory;
 	private final IDialogSettings dialogSettings;
@@ -114,7 +114,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Create a new instance of this working set block using default labels.
-	 * 
+	 *
 	 * @param workingSetIds
 	 *            working set ids from which the user can choose
 	 * @param settings
@@ -124,10 +124,10 @@ public class WorkingSetConfigurationBlock {
 			IDialogSettings settings) {
 		this(workingSetIds, settings, null, null, null);
 	}
-	
+
 	/**
 	 * Create a new instance of this working set block using custom labels.
-	 * 
+	 *
 	 * @param workingSetIds
 	 *            working set ids from which the user can choose
 	 * @param settings
@@ -152,7 +152,7 @@ public class WorkingSetConfigurationBlock {
 		selectedWorkingSets = EMPTY_WORKING_SET_ARRAY;
 		dialogSettings = settings;
 		selectionHistory = loadSelectionHistory(settings, workingSetIds);
-		
+
 		this.addButtonLabel = addButtonLabel == null ? WorkbenchMessages.WorkingSetGroup_EnableWorkingSet_button
 				: addButtonLabel;
 		this.comboLabel = comboLabel == null ? WorkbenchMessages.WorkingSetConfigurationBlock_WorkingSetText_name
@@ -160,11 +160,11 @@ public class WorkingSetConfigurationBlock {
 		this.selectLabel = selectLabel == null ? WorkbenchMessages.WorkingSetConfigurationBlock_SelectWorkingSet_button
 				: selectLabel;
 	}
-	
+
 
 	/**
 	 * Set the current selection in the workbench.
-	 * 
+	 *
 	 * @param selection
 	 *            the selection to present in the UI or <b>null</b>
 	 * @deprecated use
@@ -174,15 +174,15 @@ public class WorkingSetConfigurationBlock {
 	@Deprecated
 	public void setSelection(IStructuredSelection selection) {
 		selectedWorkingSets = findApplicableWorkingSets(selection);
-		
+
 		if (workingSetCombo != null)
 			updateSelectedWorkingSets();
 	}
-	
+
 	/**
 	 * Set the current selection of working sets. This array will be filtered to
 	 * contain only working sets that are applicable to this instance.
-	 * 
+	 *
 	 * @param workingSets
 	 *            the working sets
 	 */
@@ -196,7 +196,7 @@ public class WorkingSetConfigurationBlock {
 	 * Retrieves a working set from the given <code>selection</code> or an
 	 * empty array if no working set could be retrieved. This selection is
 	 * filtered based on the criteria used to construct this instance.
-	 * 
+	 *
 	 * @param selection
 	 *            the selection to retrieve the working set from
 	 * @return the selected working set or an empty array
@@ -205,14 +205,14 @@ public class WorkingSetConfigurationBlock {
 			IStructuredSelection selection) {
 		if (selection == null)
 			return EMPTY_WORKING_SET_ARRAY;
-		
+
 		return filterWorkingSets(selection.toList());
 	}
 
 	/**
 	 * Prune a list of working sets such that they all match the criteria set
 	 * out by this block.
-	 * 
+	 *
 	 * @param elements
 	 *            the elements to filter
 	 * @return the filtered elements
@@ -232,7 +232,7 @@ public class WorkingSetConfigurationBlock {
 	/**
 	 * Verifies that the given working set is suitable for selection in this
 	 * block.
-	 * 
+	 *
 	 * @param workingSetCandidate
 	 *            the candidate to test
 	 * @return whether it is suitable
@@ -242,12 +242,12 @@ public class WorkingSetConfigurationBlock {
 				&& Arrays.binarySearch(workingSetTypeIds, workingSetCandidate
 						.getId()) >= 0 ;
 	}
-	
+
 	/**
 	 * Return the currently selected working sets. If the controls representing
 	 * this block are disabled this array will be empty regardless of the
 	 * currently selected values.
-	 * 
+	 *
 	 * @return the selected working sets
 	 */
 	public IWorkingSet[] getSelectedWorkingSets() {
@@ -259,7 +259,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Add this block to the <code>parent</parent>
-	 * 
+	 *
 	 * @param parent the parent to add the block to
 	 */
 	public void createContent(final Composite parent) {
@@ -401,7 +401,7 @@ public class WorkingSetConfigurationBlock {
 
 		return -1;
 	}
-	
+
 	// copied from org.eclipse.jdt.internal.ui.text.JavaCommentScanner
 	private String[] split(String value, String delimiters) {
 		StringTokenizer tokenizer= new StringTokenizer(value, delimiters);
@@ -473,7 +473,7 @@ public class WorkingSetConfigurationBlock {
 
 		return result;
 	}
-	
+
 	/*
 	 * Copy from DialogPage with changes to accomodate the lack of a Dialog context.
 	 */
@@ -484,7 +484,7 @@ public class WorkingSetConfigurationBlock {
 		gc.setFont(button.getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
-		
+
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
         Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);

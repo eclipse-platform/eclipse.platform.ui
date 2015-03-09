@@ -28,7 +28,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  *	projects to be retrieved from an available server.  This page
  *	contains two visual tabs that allow the user to perform these tasks.
  *
- *  Temporarily has two inner pages.  The new format page is used if the system 
+ *  Temporarily has two inner pages.  The new format page is used if the system
  *  is currently aware of activity categories.
  */
 class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
@@ -40,9 +40,9 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
     private IWizardDescriptor [] primaryWizards;
 
 	private boolean projectsOnly;
-	
+
 	private boolean canFinishEarly = false, hasPages = true;
-    
+
     /**
      * Create an instance of this class.
      *
@@ -56,8 +56,8 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 			IStructuredSelection selection, IWizardCategory root,
 			IWizardDescriptor[] primary, boolean projectsOnly) {
         super("newWizardSelectionPage", workbench, selection, null, WorkbenchTriggerPoints.NEW_WIZARDS);//$NON-NLS-1$
-        
-        setTitle(WorkbenchMessages.NewWizardSelectionPage_description); 
+
+        setTitle(WorkbenchMessages.NewWizardSelectionPage_description);
         wizardCategories = root;
         primaryWizards = primary;
         this.projectsOnly = projectsOnly;
@@ -99,7 +99,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
     protected void saveWidgetValues() {
         newResourcePage.saveWidgetValues();
     }
-        
+
     @Override
 	public boolean canFlipToNextPage() {
         // if the current page advertises that it does have pages then ask it via the super call
@@ -111,7 +111,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 
     /**
      * Sets whether the selected wizard advertises that it does provide pages.
-     * 
+     *
      * @param newValue whether the selected wizard has pages
      * @since 3.1
      */
@@ -121,7 +121,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 
 	/**
 	 * Sets whether the selected wizard advertises that it can finish early.
-	 * 
+	 *
 	 * @param newValue whether the selected wizard can finish early
 	 * @since 3.1
 	 */
@@ -131,7 +131,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 
 	/**
 	 * Answers whether the currently selected page, if any, advertises that it may finish early.
-	 * 
+	 *
 	 * @return whether the page can finish early
 	 * @since 3.1
 	 */

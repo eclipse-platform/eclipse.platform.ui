@@ -39,7 +39,7 @@ import org.eclipse.jface.commands.RadioState;
  * <p>
  * Clients may instantiate this class, but must not extend.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class RegistryRadioState extends RadioState implements
@@ -49,7 +49,7 @@ public final class RegistryRadioState extends RadioState implements
 	 * Reads the <code>default</code> parameter from the given string. This
 	 * converts the string to a boolean, using <code>true</code> as the
 	 * default.
-	 * 
+	 *
 	 * @param defaultString
 	 *            The string to parse; may be <code>null</code>.
 	 */
@@ -63,7 +63,7 @@ public final class RegistryRadioState extends RadioState implements
 	 * Reads the <code>persisted</code> parameter from the given string. This
 	 * converts the string to a boolean, using <code>true</code> as the
 	 * default.
-	 * 
+	 *
 	 * @param persistedString
 	 *            The string to parse; may be <code>null</code>.
 	 */
@@ -105,7 +105,7 @@ public final class RegistryRadioState extends RadioState implements
 
 		} else {
 			setShouldPersist(true);
-			
+
 		}
 	}
 }

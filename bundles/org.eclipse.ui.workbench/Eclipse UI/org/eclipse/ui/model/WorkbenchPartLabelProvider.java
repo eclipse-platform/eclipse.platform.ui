@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Clients may instantiate this class. It is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class WorkbenchPartLabelProvider extends LabelProvider implements
@@ -39,7 +39,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
 
 	private ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 	private HashMap images = new HashMap();
-	
+
     /**
      * Creates a new label provider for workbench parts.
      */
@@ -97,7 +97,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
                 return model.getName();
             }
             return model.getName() + "  [" + path + "]";  //$NON-NLS-1$ //$NON-NLS-2$
-        	
+
         }
         return null;
     }
@@ -117,10 +117,10 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
 	public final String getColumnText(Object element, int columnIndex) {
         return getText(element);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.LabelProvider#dispose()
-     * 
+     *
      * @since 3.2
      */
     @Override

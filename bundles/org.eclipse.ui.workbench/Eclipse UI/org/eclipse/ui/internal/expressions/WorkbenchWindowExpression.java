@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * An expression that evaluates to {@link EvaluationResult#TRUE} when the active
  * workbench window matches the window held by this expression.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class WorkbenchWindowExpression extends Expression {
@@ -44,7 +44,7 @@ public class WorkbenchWindowExpression extends Expression {
 
 	/**
 	 * Constructs a new instance.
-	 * 
+	 *
 	 * @param window
 	 *            The workbench window which must be active for this expression
 	 *            to evaluate to <code>true</code>; may be <code>null</code>
@@ -92,7 +92,7 @@ public class WorkbenchWindowExpression extends Expression {
 
 	/**
 	 * Returns the workbench window to which this expression applies.
-	 * 
+	 *
 	 * @return The workbench window to which this expression applies; may be
 	 *         <code>null</code>.
 	 */

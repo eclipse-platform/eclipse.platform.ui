@@ -44,7 +44,7 @@ public class ReopenEditorMenu extends ContributionItem {
     // the maximum length for a file name; must be >= 4
     private static final int MAX_TEXT_LENGTH = 40;
 
-    // only assign mnemonic to the first nine items 
+    // only assign mnemonic to the first nine items
     private static final int MAX_MNEMONIC_SIZE = 9;
 
     /**
@@ -76,11 +76,11 @@ public class ReopenEditorMenu extends ContributionItem {
 		return calcText(index, item.getName(), item.getToolTipText(), Window
 				.getDefaultOrientation() == SWT.RIGHT_TO_LEFT);
 	}
-    
+
     /**
      * Return a string suitable for a file MRU list.  This should not be called
      * outside the framework.
-     * 
+     *
      * @param index the index in the MRU list
      * @param name the file name
      * @param toolTip potentially the path
@@ -106,7 +106,7 @@ public class ReopenEditorMenu extends ContributionItem {
             pathName = ""; //$NON-NLS-1$
         }
         IPath path = new Path(pathName);
-        // if last segment in path is the fileName, remove it 
+        // if last segment in path is the fileName, remove it
         if (path.segmentCount() > 1
                 && path.segment(path.segmentCount() - 1).equals(fileName)) {
             path = path.removeLastSegments(1);
@@ -270,7 +270,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 IEditorDescriptor desc = item.getDescriptor();
 				if (input == null || !input.exists() || desc == null) {
                     String title = WorkbenchMessages.OpenRecent_errorTitle;
-                    String msg = NLS.bind(WorkbenchMessages.OpenRecent_unableToOpen,  itemName ); 
+                    String msg = NLS.bind(WorkbenchMessages.OpenRecent_unableToOpen,  itemName );
                     MessageDialog.openWarning(window.getShell(), title, msg);
                     history.remove(item);
                 } else {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *		IBM Corporation - initial API and implementation 
+ *		IBM Corporation - initial API and implementation
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 		font should be activated and used by other components.
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.about.ProductInfoDialog;
 
 /**
  * Displays information about the product plugins.
- * 
+ *
  * PRIVATE this class is internal to the ide
  */
 public class AboutPluginsDialog extends ProductInfoDialog {

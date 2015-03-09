@@ -43,21 +43,21 @@ import org.osgi.framework.Bundle;
  * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class CommandImagePersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the image elements in the indexed array.
-	 * 
+	 *
 	 * @see CommandImagePersistence#read()
 	 */
 	private static final int INDEX_IMAGES = 0;
 
 	/**
 	 * Reads all of the images from the command images extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the command images extension
 	 *            point; must not be <code>null</code>, but may be empty.
@@ -153,7 +153,7 @@ public final class CommandImagePersistence extends RegistryPersistence {
 
 	/**
 	 * Constructs a new instance of <code>CommandImagePersistence</code>.
-	 * 
+	 *
 	 * @param commandImageManager
 	 *            The command image manager which should be populated with the
 	 *            values from the registry; must not be <code>null</code>.

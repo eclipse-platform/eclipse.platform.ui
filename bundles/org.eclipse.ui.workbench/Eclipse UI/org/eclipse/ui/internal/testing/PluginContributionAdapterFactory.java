@@ -32,7 +32,7 @@ import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.6
- * 
+ *
  */
 public class PluginContributionAdapterFactory implements IAdapterFactory {
 

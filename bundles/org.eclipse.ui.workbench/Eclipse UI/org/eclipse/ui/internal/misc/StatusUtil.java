@@ -73,7 +73,7 @@ public class StatusUtil {
         return new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
                 stati, message, exception);
     }
-    
+
     public static IStatus newStatus(String pluginId, Throwable exception) {
         return newStatus(pluginId, getLocalizedMessage(exception), exception);
     }
@@ -87,21 +87,21 @@ public class StatusUtil {
      */
     public static String getLocalizedMessage(Throwable exception) {
         String message = exception.getLocalizedMessage();
-        
+
         if (message != null) {
             return message;
         }
-        
+
         // Workaround for the fact that CoreException does not implement a getLocalizedMessage() method.
-        // Remove this branch when and if CoreException implements getLocalizedMessage() 
+        // Remove this branch when and if CoreException implements getLocalizedMessage()
         if (exception instanceof CoreException) {
             CoreException ce = (CoreException)exception;
             return ce.getStatus().getMessage();
         }
-        
+
         return WorkbenchMessages.StatusUtil_errorOccurred;
     }
-    
+
     /**
      * Creates a new Status based on the original status, but with a different message
      *
@@ -110,22 +110,22 @@ public class StatusUtil {
      * @return
      */
     public static IStatus newStatus(IStatus originalStatus, String newMessage) {
-        return new Status(originalStatus.getSeverity(), 
+        return new Status(originalStatus.getSeverity(),
                 originalStatus.getPlugin(), originalStatus.getCode(), newMessage, originalStatus.getException());
     }
-    
-    public static IStatus newStatus(String pluginId, String message, Throwable exception) {        
-        return new Status(IStatus.ERROR, pluginId, IStatus.OK, 
+
+    public static IStatus newStatus(String pluginId, String message, Throwable exception) {
+        return new Status(IStatus.ERROR, pluginId, IStatus.OK,
                 message, getCause(exception));
-    }    
-    
+    }
+
     public static Throwable getCause(Throwable exception) {
         // Figure out which exception should actually be logged -- if the given exception is
         // a wrapper, unwrap it
         Throwable cause = null;
         if (exception != null) {
             if (exception instanceof CoreException) {
-                // Workaround: CoreException contains a cause, but does not actually implement getCause(). 
+                // Workaround: CoreException contains a cause, but does not actually implement getCause().
                 // If we get a CoreException, we need to manually unpack the cause. Otherwise, use
                 // the general-purpose mechanism. Remove this branch if CoreException ever implements
                 // a correct getCause() method.
@@ -136,7 +136,7 @@ public class StatusUtil {
             	try {
             		Method causeMethod = exception.getClass().getMethod("getCause", new Class[0]); //$NON-NLS-1$
             		Object o = causeMethod.invoke(exception, new Object[0]);
-            		if (o instanceof Throwable) { 
+            		if (o instanceof Throwable) {
             			cause = (Throwable) o;
             		}
             	}
@@ -150,7 +150,7 @@ public class StatusUtil {
             		// ignore
 				}
             }
-            
+
             if (cause == null) {
                 cause = exception;
             }
@@ -158,7 +158,7 @@ public class StatusUtil {
 
         return cause;
     }
-        
+
     /**
      * This method must not be called outside the workbench.
      *
@@ -202,7 +202,7 @@ public class StatusUtil {
         flatStatusCollection.toArray(stati);
         return newStatus(stati, message, exception);
     }
-    
+
     /**
      * This method must not be called outside the workbench.
      *
@@ -211,7 +211,7 @@ public class StatusUtil {
     public static void handleStatus(IStatus status, int hint, Shell shell) {
     	StatusManager.getManager().handle(status, hint);
 	}
-    
+
     /**
      * This method must not be called outside the workbench.
      *
@@ -221,7 +221,7 @@ public class StatusUtil {
 		StatusManager.getManager().handle(
 				newStatus(WorkbenchPlugin.PI_WORKBENCH, e), hint);
 	}
-    
+
     /**
      * This method must not be called outside the workbench.
      *
@@ -231,7 +231,7 @@ public class StatusUtil {
 		StatusManager.getManager().handle(
 				newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e), hint);
 	}
-	
+
 	/**
      * This method must not be called outside the workbench.
      *
@@ -242,7 +242,7 @@ public class StatusUtil {
 		StatusManager.getManager().handle(
 				newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e), hint);
 	}
-	
+
 	/**
      * This method must not be called outside the workbench.
      *
@@ -251,7 +251,7 @@ public class StatusUtil {
 	public static void handleStatus(IStatus status, String message, int hint) {
 		StatusManager.getManager().handle(newStatus(status, message), hint);
 	}
-	
+
 	/**
      * This method must not be called outside the workbench.
      *
@@ -270,7 +270,7 @@ public class StatusUtil {
 	public static void handleStatus(String message, int hint) {
 		handleStatus(message, null, hint);
 	}
-	
+
 	/**
      * This method must not be called outside the workbench.
      *

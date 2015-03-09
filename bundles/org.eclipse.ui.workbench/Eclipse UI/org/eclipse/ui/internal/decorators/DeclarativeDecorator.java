@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.util.BundleUtility;
  * specification.
  */
 public class DeclarativeDecorator implements ILightweightLabelDecorator {
- 
+
 	private String iconLocation;
 
     private IConfigurationElement configElement;

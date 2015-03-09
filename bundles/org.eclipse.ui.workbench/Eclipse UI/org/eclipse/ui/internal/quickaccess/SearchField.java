@@ -232,7 +232,7 @@ public class SearchField {
 
 				previousFocusControl = (Control) e.getSource();
 			}
-			
+
 		});
 		table.addFocusListener(new FocusAdapter() {
 			@Override
@@ -413,14 +413,14 @@ public class SearchField {
 		int preferredWidth = dialogWidth == -1 ? 350 : dialogWidth;
 		int width = Math.max(preferredWidth, compBounds.width);
 		int height = dialogHeight == -1 ? 250 : dialogHeight;
-		
+
 		// If size would extend past the right edge of the shell, try to move it
 		// to the left of the text
 		Rectangle shellBounds = text.getShell().getBounds();
 		if (compBounds.x + width > shellBounds.x + shellBounds.width){
 			compBounds.x = Math.max(shellBounds.x, (compBounds.x + compBounds.width - width));
 		}
-		
+
 		shell.setBounds(getConstrainedShellBounds(display, new Rectangle(compBounds.x, compBounds.y
 				+ compBounds.height, width, height)));
 		shell.layout();
@@ -441,7 +441,7 @@ public class SearchField {
 
 	/**
 	 * Checks if the text or shell has focus. If not, closes the shell.
-	 * 
+	 *
 	 * @param table
 	 *            the shell's table
 	 * @param text
@@ -658,7 +658,7 @@ public class SearchField {
 	/**
 	 * Returns the quick access shell for testing. Should not be referenced
 	 * outside of the tests.
-	 * 
+	 *
 	 * @return the current quick access shell or <code>null</code>
 	 */
 	public Shell getQuickAccessShell() {
@@ -668,7 +668,7 @@ public class SearchField {
 	/**
 	 * Returns the quick access search text for testing. Should not be
 	 * referenced outside of the tests.
-	 * 
+	 *
 	 * @return the search text in the workbench window or <code>null</code>
 	 */
 	public Text getQuickAccessSearchText() {
@@ -678,7 +678,7 @@ public class SearchField {
 	/**
 	 * Returns the table in the shell for testing. Should not be referenced
 	 * outside of the tests.
-	 * 
+	 *
 	 * @return the table created in the shell or <code>null</code>
 	 */
 	public Table getQuickAccessTable(){

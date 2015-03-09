@@ -21,7 +21,7 @@ import org.eclipse.ui.commands.ICommandService;
  * Provides services related to the command architecture within the workbench.
  * This service can be used to access the set of commands and handlers.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class CommandImageService implements ICommandImageService {
@@ -40,7 +40,7 @@ public final class CommandImageService implements ICommandImageService {
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command image manager.
-	 * 
+	 *
 	 * @param commandImageManager
 	 *            The command image manager to use; must not be
 	 *            <code>null</code>.
@@ -67,7 +67,7 @@ public final class CommandImageService implements ICommandImageService {
 	/**
 	 * Binds a particular image descriptor to a command id, type and style
 	 * triple
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to which the image should be
 	 *            bound; must not be <code>null</code>.
@@ -86,7 +86,7 @@ public final class CommandImageService implements ICommandImageService {
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to which the image should be
 	 *            bound; must not be <code>null</code>.
@@ -112,7 +112,7 @@ public final class CommandImageService implements ICommandImageService {
 	 * Generates a style tag that is not currently used for the given command.
 	 * This can be used by applications trying to create a unique style for a
 	 * new set of images.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command for which a unique style is
 	 *            required; must not be <code>null</code>.

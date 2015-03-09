@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class EditorProvider extends QuickAccessProvider {
 

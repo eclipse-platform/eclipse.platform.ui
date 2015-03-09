@@ -27,12 +27,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 3.1
  */
 public class ImageBindingRegistry implements IExtensionChangeHandler {
-	private String tag; 
+	private String tag;
 	private ImageRegistry registry = new ImageRegistry();
-	
+
 	/**
-	 * @param tag 
-	 * 
+	 * @param tag
+	 *
 	 */
 	public ImageBindingRegistry(String tag) {
 		super();
@@ -67,12 +67,12 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 				}
 			}
 		}
-		
+
 	}
-    
+
     /**
      * Return the activity support extension point that this registry is interested in.
-     * 
+     *
      * @return the extension point
      */
 	public IExtensionPoint getExtensionPointFilter() {
@@ -91,17 +91,17 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the ImageDescriptor for the given id.
-	 * 
+	 *
 	 * @param id the id
 	 * @return the descriptor
 	 */
 	public ImageDescriptor getImageDescriptor(String id) {
 		return registry.getDescriptor(id);
 	}
-	
+
 	/**
 	 * Dispose of this registry.
 	 */

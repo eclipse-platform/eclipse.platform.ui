@@ -31,7 +31,7 @@ import org.eclipse.ui.IWorkbenchPage;
  *   <li><code>contributeToMenu</code> - reimplement to contribute to menu</li>
  *   <li><code>contributeToToolBar</code> - reimplement to contribute to tool
  *     bar</li>
- *   <li><code>contributeToStatusLine</code> - reimplement to contribute to 
+ *   <li><code>contributeToStatusLine</code> - reimplement to contribute to
  *     status line</li>
  *   <li><code>setActiveEditor</code> - reimplement to react to editor changes</li>
  * </ul>
@@ -103,7 +103,7 @@ public class EditorActionBarContributor implements IEditorActionBarContributor {
      * </p>
      *
      * @param coolBarManager the manager that controls the workbench cool bar.
-     * 
+     *
      * @since 3.0
      */
     public void contributeToCoolBar(ICoolBarManager coolBarManager) {
@@ -128,7 +128,7 @@ public class EditorActionBarContributor implements IEditorActionBarContributor {
     }
 
     /**
-     * The <code>EditorActionBarContributor</code> implementation of this 
+     * The <code>EditorActionBarContributor</code> implementation of this
      * <code>IEditorActionBarContributor</code> method does nothing,
      * subclasses may override.
      */
@@ -137,7 +137,7 @@ public class EditorActionBarContributor implements IEditorActionBarContributor {
     }
 
     /**
-     * The <code>EditorActionBarContributor</code> implementation of this 
+     * The <code>EditorActionBarContributor</code> implementation of this
      * <code>IEditorActionBarContributor</code> method remembers the page
      * then forwards the call to <code>init(IActionBars)</code> for
      * backward compatibility
@@ -159,9 +159,9 @@ public class EditorActionBarContributor implements IEditorActionBarContributor {
      *  <li><code>contributeToStatusLine</code> with <code>bars</code>' status line
      *    manager</li>
      * </ul>
-     * The given action bars are also remembered and made accessible via 
+     * The given action bars are also remembered and made accessible via
      * <code>getActionBars</code>.
-     * 
+     *
      * @param bars the action bars
      */
     public void init(IActionBars bars) {
@@ -183,7 +183,7 @@ public class EditorActionBarContributor implements IEditorActionBarContributor {
      * from the old editor, connecting to the new editor, and updating the actions
      * to reflect the new editor.
      * </p>
-     * 
+     *
      * @param targetEditor the new target editor
      */
     @Override

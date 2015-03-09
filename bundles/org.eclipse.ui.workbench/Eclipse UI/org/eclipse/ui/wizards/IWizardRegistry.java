@@ -16,7 +16,7 @@ package org.eclipse.ui.wizards;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,30 +24,30 @@ public interface IWizardRegistry {
 
 	/**
 	 * Find a wizard with the given id.
-	 * 
+	 *
 	 * @param id the id to search for
 	 * @return the wizard descriptor matching the given id or <code>null</code>
 	 */
 	IWizardDescriptor findWizard(String id);
-	
+
 	/**
 	 * Return the wizards that have been designated as "primary".
-	 * 
+	 *
 	 * @return the primary wizard descriptors.  Never <code>null</code>.
 	 */
 	IWizardDescriptor [] getPrimaryWizards();
 
 	/**
 	 * Find the category with the given id.
-	 * 
+	 *
 	 * @param id the id of the category to search for
 	 * @return the category matching the given id or <code>null</code>
 	 */
 	IWizardCategory findCategory(String id);
-	
+
 	/**
 	 * Return the root category.
-	 * 
+	 *
 	 * @return the root category.  Never <code>null</code>.
 	 */
 	IWizardCategory getRootCategory();

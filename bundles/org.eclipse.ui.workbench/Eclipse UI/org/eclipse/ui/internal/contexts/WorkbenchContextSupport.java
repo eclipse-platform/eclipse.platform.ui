@@ -28,7 +28,7 @@ import org.eclipse.ui.keys.IBindingService;
 /**
  * Provides support for contexts within the workbench -- including key bindings,
  * and some default contexts for shell types.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
@@ -67,7 +67,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	 * Constructs a new instance of <code>WorkbenchCommandSupport</code>.
 	 * This attaches the key binding support, and adds a global shell activation
 	 * filter.
-	 * 
+	 *
 	 * @param workbenchToSupport
 	 *            The workbench that needs to be supported by this instance;
 	 *            must not be <code>null</code>.

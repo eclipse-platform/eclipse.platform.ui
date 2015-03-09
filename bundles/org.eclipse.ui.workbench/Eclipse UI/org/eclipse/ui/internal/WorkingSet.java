@@ -32,18 +32,18 @@ import org.eclipse.ui.internal.util.Util;
  * A working set holds a number of IAdaptable elements. A working set is
  * intended to group elements for presentation to the user or for operations on
  * a set of elements.
- * 
+ *
  * @see org.eclipse.ui.IWorkingSet
  * @since 2.0
  */
 public class WorkingSet extends AbstractWorkingSet {
 	private static final String DEFAULT_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
-	
+
 	private String editPageId;
 
 	/**
 	 * Creates a new working set.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the new working set. Should not have leading or
 	 *            trailing whitespace.
@@ -60,7 +60,7 @@ public class WorkingSet extends AbstractWorkingSet {
 
 	/**
 	 * Creates a new working set from a memento.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the new working set. Should not have leading or
 	 *            trailing whitespace.
@@ -82,7 +82,7 @@ public class WorkingSet extends AbstractWorkingSet {
 
 	/**
 	 * Tests the receiver and the object for equality
-	 * 
+	 *
 	 * @param object
 	 *            object to compare the receiver to
 	 * @return true=the object equals the receiver, the name is the same. false
@@ -128,7 +128,7 @@ public class WorkingSet extends AbstractWorkingSet {
 
 	/**
 	 * Returns the hash code.
-	 * 
+	 *
 	 * @return the hash code.
 	 */
 	@Override
@@ -192,7 +192,7 @@ public class WorkingSet extends AbstractWorkingSet {
 	 * Implements IPersistableElement. Persist the working set name and working
 	 * set contents. The contents has to be either IPersistableElements or
 	 * provide adapters for it to be persistent.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPersistableElement#saveState(IMemento)
 	 */
 	@Override
@@ -261,7 +261,7 @@ public class WorkingSet extends AbstractWorkingSet {
 
 	/**
 	 * Return the working set descriptor for this working set.
-	 * 
+	 *
 	 * @param defaultId
 	 *            the default working set type ID to use if this set has no
 	 *            defined type
@@ -280,13 +280,13 @@ public class WorkingSet extends AbstractWorkingSet {
 
 		return registry.getWorkingSetDescriptor(id);
 	}
-	
+
 	@Override
 	public IAdaptable[] adaptElements(IAdaptable[] objects) {
 		IWorkingSetManager manager = getManager();
 		if (manager instanceof WorkingSetManager) {
 			WorkingSetDescriptor descriptor = getDescriptor(null);
-			if (descriptor == null || !descriptor.isElementAdapterClassLoaded()) 
+			if (descriptor == null || !descriptor.isElementAdapterClassLoaded())
 				return objects;
 			return ((WorkingSetManager) manager).getElementAdapter(
 						descriptor).adaptElements(this, objects);

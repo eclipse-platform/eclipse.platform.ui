@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.util.Util;
  * <code>KeyStroke</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke
  * @since 3.0
  * @see org.eclipse.ui.keys.ModifierKey
@@ -80,7 +80,7 @@ public final class KeyStroke implements Comparable {
     /**
      * Gets an instance of <code>KeyStroke</code> given a single modifier key
      * and a natural key.
-     * 
+     *
      * @param modifierKey
      *            a modifier key. Must not be <code>null</code>.
      * @param naturalKey
@@ -100,7 +100,7 @@ public final class KeyStroke implements Comparable {
     /**
      * Gets an instance of <code>KeyStroke</code> given an array of modifier
      * keys and a natural key.
-     * 
+     *
      * @param modifierKeys
      *            the array of modifier keys. This array may be empty, but it
      *            must not be <code>null</code>. If this array is not empty,
@@ -118,7 +118,7 @@ public final class KeyStroke implements Comparable {
 
     /**
      * Gets an instance of <code>KeyStroke</code> given a natural key.
-     * 
+     *
      * @param naturalKey
      *            the natural key. May be <code>null</code>.
      * @return a key stroke. This key stroke will have no modifier keys.
@@ -131,7 +131,7 @@ public final class KeyStroke implements Comparable {
     /**
      * Gets an instance of <code>KeyStroke</code> given a set of modifier
      * keys and a natural key.
-     * 
+     *
      * @param modifierKeys
      *            the set of modifier keys. This set may be empty, but it must
      *            not be <code>null</code>. If this set is not empty, it
@@ -148,7 +148,7 @@ public final class KeyStroke implements Comparable {
     /**
      * Gets an instance of <code>KeyStroke</code> by parsing a given a formal
      * string representation.
-     * 
+     *
      * @param string
      *            the formal string representation to parse.
      * @return a key stroke. Guaranteed not to be <code>null</code>.
@@ -246,7 +246,7 @@ public final class KeyStroke implements Comparable {
     /**
      * Constructs an instance of <code>KeyStroke</code> given a set of
      * modifier keys and a natural key.
-     * 
+     *
      * @param modifierKeys
      *            the set of modifier keys. This set may be empty, but it must
      *            not be <code>null</code>. If this set is not empty, it
@@ -287,7 +287,7 @@ public final class KeyStroke implements Comparable {
 		}
 
         KeyStroke castedObject = (KeyStroke) object;
-        
+
         if (!modifierKeys.equals(castedObject.modifierKeys)) {
 			return false;
 		}
@@ -296,7 +296,7 @@ public final class KeyStroke implements Comparable {
 
     /**
      * Formats this key stroke into the current default look.
-     * 
+     *
      * @return A string representation for this key stroke using the default
      *         look; never <code>null</code>.
      */
@@ -306,7 +306,7 @@ public final class KeyStroke implements Comparable {
 
     /**
      * Returns the set of modifier keys for this key stroke.
-     * 
+     *
      * @return the set of modifier keys. This set may be empty, but is
      *         guaranteed not to be <code>null</code>. If this set is not
      *         empty, it is guaranteed to only contain instances of <code>ModifierKey</code>.
@@ -317,7 +317,7 @@ public final class KeyStroke implements Comparable {
 
     /**
      * Returns the natural key for this key stroke.
-     * 
+     *
      * @return the natural key. May be <code>null</code>.
      */
     public NaturalKey getNaturalKey() {
@@ -342,7 +342,7 @@ public final class KeyStroke implements Comparable {
     /**
      * Returns whether or not this key stroke is complete. Key strokes are
      * complete iff they have a natural key which is not <code>null</code>.
-     * 
+     *
      * @return <code>true</code>, iff the key stroke is complete.
      */
     public boolean isComplete() {
@@ -351,7 +351,7 @@ public final class KeyStroke implements Comparable {
 
     /**
      * Returns the formal string representation for this key stroke.
-     * 
+     *
      * @return The formal string representation for this key stroke. Guaranteed
      *         not to be <code>null</code>.
      * @see java.lang.Object#toString()

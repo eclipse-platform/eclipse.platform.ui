@@ -56,7 +56,7 @@ public final class XMLMemento implements IMemento {
      * <p>
      * Same as calling createReadRoot(reader, null)
      * </p>
-     * 
+     *
      * @param reader the <code>Reader</code> used to create the memento's document
      * @return a memento on the first <code>Element</code> for reading the document
      * @throws WorkbenchException if IO problems, invalid format, or no element.
@@ -70,7 +70,7 @@ public final class XMLMemento implements IMemento {
      * Creates a <code>Document</code> from the <code>Reader</code>
      * and returns a memento on the first <code>Element</code> for reading
      * the document.
-     * 
+     *
      * @param reader the <code>Reader</code> used to create the memento's document
      * @param baseDir the directory used to resolve relative file names
      * 		in the XML document. This directory must exist and include the
@@ -130,10 +130,10 @@ public final class XMLMemento implements IMemento {
             errorMessage = WorkbenchMessages.XMLMemento_parserConfigError;
         } catch (IOException e) {
             exception = e;
-            errorMessage = WorkbenchMessages.XMLMemento_ioError; 
+            errorMessage = WorkbenchMessages.XMLMemento_ioError;
         } catch (SAXException e) {
             exception = e;
-            errorMessage = WorkbenchMessages.XMLMemento_formatError; 
+            errorMessage = WorkbenchMessages.XMLMemento_formatError;
         }
 
         String problemText = null;
@@ -143,13 +143,13 @@ public final class XMLMemento implements IMemento {
         if (problemText == null || problemText.length() == 0) {
 			problemText = errorMessage != null ? errorMessage
                     : WorkbenchMessages.XMLMemento_noElement;
-		} 
+		}
         throw new WorkbenchException(problemText, exception);
     }
 
     /**
 	 * Returns a root memento for writing a document.
-	 * 
+	 *
 	 * @param type
 	 *            the element node type to create on the document
 	 * @return the root memento for writing a document
@@ -176,7 +176,7 @@ public final class XMLMemento implements IMemento {
      * <code>createWriteRoot</code> to create the initial
      * memento on a document.
      * </p>
-     * 
+     *
      * @param document the document for the memento
      * @param element the element node for the memento
      */
@@ -192,7 +192,7 @@ public final class XMLMemento implements IMemento {
 	 * The <code>getChild</code> and <code>getChildren</code> methods are used
 	 * to retrieve children of a given type.
 	 * </p>
-	 * 
+	 *
 	 * @param type
 	 *            the type
 	 * @return a new child memento
@@ -216,7 +216,7 @@ public final class XMLMemento implements IMemento {
 	 * The <code>getChild</code> and <code>getChildren</code> methods are used
 	 * to retrieve children of a given type.
 	 * </p>
-	 * 
+	 *
 	 * @param type
 	 *            the type
 	 * @param id
@@ -236,7 +236,7 @@ public final class XMLMemento implements IMemento {
 
 	/**
 	 * Create a copy of the child node and append it to this node.
-	 * 
+	 *
 	 * @param child
 	 * @return An IMenento for the new child node.
 	 * @throws DOMException
@@ -402,7 +402,7 @@ public final class XMLMemento implements IMemento {
 	/**
 	 * Returns the data of the Text node of the memento. Each memento is allowed
 	 * only one Text node.
-	 * 
+	 *
 	 * @return the data of the Text node of the memento, or <code>null</code> if
 	 *         the memento has no Text node.
 	 * @since 2.0
@@ -434,9 +434,9 @@ public final class XMLMemento implements IMemento {
 	}
 
     /**
-     * Returns the Text node of the memento. Each memento is allowed only 
+     * Returns the Text node of the memento. Each memento is allowed only
      * one Text node.
-     * 
+     *
      * @return the Text node of the memento, or <code>null</code> if
      * the memento has no Text node.
      */
@@ -459,7 +459,7 @@ public final class XMLMemento implements IMemento {
 
     /**
 	 * Places the element's attributes into the document.
-	 * 
+	 *
 	 * @param copyText
 	 *            true if the first text node should be copied
 	 * @throws DOMException
@@ -492,7 +492,7 @@ public final class XMLMemento implements IMemento {
 
 	/**
 	 * Sets the value of the given key to the given floating point number.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param f
@@ -507,7 +507,7 @@ public final class XMLMemento implements IMemento {
 
 	/**
 	 * Sets the value of the given key to the given integer.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param n
@@ -523,7 +523,7 @@ public final class XMLMemento implements IMemento {
 	/**
 	 * Copy the attributes and children from <code>memento</code> to the
 	 * receiver.
-	 * 
+	 *
 	 * @param memento
 	 *            the IMemento to be copied.
 	 * @throws DOMException
@@ -538,7 +538,7 @@ public final class XMLMemento implements IMemento {
 
 	/**
 	 * Sets the value of the given key to the given string.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -556,7 +556,7 @@ public final class XMLMemento implements IMemento {
 
 	/**
 	 * Sets the value of the given key to the given boolean value.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -574,7 +574,7 @@ public final class XMLMemento implements IMemento {
 	 * Sets the memento's Text node to contain the given data. Creates the Text
 	 * node if none exists. If a Text node does exist, it's current contents are
 	 * replaced. Each memento is allowed only one text node.
-	 * 
+	 *
 	 * @param data
 	 *            the data to be placed on the Text node
 	 * @since 2.0
@@ -586,7 +586,7 @@ public final class XMLMemento implements IMemento {
         Text textNode = getTextNode();
         if (textNode == null) {
             textNode = factory.createTextNode(data);
-			// Always add the text node as the first child (fixes bug 93718) 
+			// Always add the text node as the first child (fixes bug 93718)
 			element.insertBefore(textNode, element.getFirstChild());
         } else {
             textNode.setData(data);
@@ -595,8 +595,8 @@ public final class XMLMemento implements IMemento {
 
     /**
      * Saves this memento's document current values to the
-     * specified writer. 
-     * 
+     * specified writer.
+     *
      * @param writer the writer used to save the memento's document
      * @throws IOException if there is a problem serializing the document to the stream.
      */
@@ -622,16 +622,16 @@ public final class XMLMemento implements IMemento {
 
 	/**
      * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
-     * compilation against JCL Foundation (bug 80053). 
+     * compilation against JCL Foundation (bug 80053).
      */
     private static final class DOMWriter extends PrintWriter {
-    	
+
     	/* constants */
     	private static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
     	/**
     	 * Creates a new DOM writer on the given output writer.
-    	 * 
+    	 *
     	 * @param output the output writer
     	 */
     	public DOMWriter(Writer output) {
@@ -641,7 +641,7 @@ public final class XMLMemento implements IMemento {
 
     	/**
     	 * Prints the given element.
-    	 * 
+    	 *
     	 * @param element the element to print
     	 */
         public void print(Element element) {
@@ -698,7 +698,7 @@ public final class XMLMemento implements IMemento {
     		sb.append(">"); //$NON-NLS-1$
    			print(sb.toString());
     	}
-    	
+
     	private static void appendEscapedChar(StringBuffer buffer, char c) {
     		String replacement = getReplacement(c);
     		if (replacement != null) {

@@ -59,7 +59,7 @@ import org.eclipse.ui.ISources;
  * <li>This service is available globally.</li>
  * </ul>
  * </p>
- * 
+ *
  * @since 3.4
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -85,7 +85,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * not, they will be removed when the IServiceLocator used to acquire this
 	 * service is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be notified. Must not be <code>null</code>.
 	 *            Has no effect if the listener has already been added.
@@ -94,7 +94,7 @@ public interface IEvaluationService extends IServiceWithSources {
 
 	/**
 	 * Remove the listener for {@link #PROP_NOTIFYING} property changes.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to remove. Must not be <code>null</code>. Has
 	 *            no effect if the listener is not currently registered.
@@ -109,7 +109,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * not, they will be removed when the IServiceLocator used to acquire this
 	 * service is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param expression
 	 *            the core expression to evaluate.
 	 * @param listener
@@ -136,7 +136,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * not, they will be removed when the IServiceLocator used to acquire this
 	 * service is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param ref
 	 *            The listener to re-add.
 	 * @see #removeEvaluationListener(IEvaluationReference)
@@ -145,7 +145,7 @@ public interface IEvaluationService extends IServiceWithSources {
 
 	/**
 	 * Remove the listener represented by the evaluation reference.
-	 * 
+	 *
 	 * @param ref
 	 *            the reference to be removed.
 	 */
@@ -158,7 +158,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * <p>
 	 * Note: This context should not be modified.
 	 * </p>
-	 * 
+	 *
 	 * @return the latest context.
 	 * @see ISources#ACTIVE_CURRENT_SELECTION_NAME
 	 */
@@ -179,7 +179,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * not fire a property change event</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param propertyName
 	 *            The fully qualified property name, like
 	 *            <code>org.eclipse.core.resources.name</code>. Must not be

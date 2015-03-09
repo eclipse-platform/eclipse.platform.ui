@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * A proxy for a parameter value converter that has been defined in the regisry.
  * This delays the class loading until the converter is really asked to do
  * string/object conversions.
- * 
+ *
  * @since 3.2
  */
 public final class ParameterValueConverterProxy extends
@@ -42,7 +42,7 @@ public final class ParameterValueConverterProxy extends
 	/**
 	 * Constructs a <code>ParameterValueConverterProxy</code> to represent the
 	 * real converter until it is needed.
-	 * 
+	 *
 	 * @param converterConfigurationElement
 	 *            The configuration element from which the real converter can be
 	 *            loaded.
@@ -72,7 +72,7 @@ public final class ParameterValueConverterProxy extends
 	/**
 	 * Returns the real parameter value converter for this proxy or throws an
 	 * exception indicating the converter could not be obtained.
-	 * 
+	 *
 	 * @return the real converter for this proxy; never <code>null</code>.
 	 * @throws ParameterValueConversionException
 	 *             if the converter could not be obtained

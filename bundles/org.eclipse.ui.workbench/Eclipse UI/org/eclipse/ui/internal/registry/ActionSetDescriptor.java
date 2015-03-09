@@ -45,7 +45,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
 
     /**
      * Create a descriptor from a configuration element.
-     * 
+     *
      * @param configElement the configuration element
      * @throws CoreException thrown if there is an issue creating the descriptor
      */
@@ -114,7 +114,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     }
 
     /**
-     * Returns this action set's description. 
+     * Returns this action set's description.
      * This is the value of its <code>"description"</code> attribute.
      *
      * @return the description
@@ -125,7 +125,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     }
 
     /**
-     * Returns this action set's id. 
+     * Returns this action set's id.
      * This is the value of its <code>"id"</code> attribute.
      * <p>
      *
@@ -137,7 +137,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     }
 
     /**
-     * Returns this action set's label. 
+     * Returns this action set's label.
      * This is the value of its <code>"label"</code> attribute.
      *
      * @return the label
@@ -177,7 +177,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     /**
      * Sets whether this action set is initially visible.
      * If the action set identifier is undefined, then this is ignored.
-     * 
+     *
      * @since 3.0
      */
     @Override
@@ -221,18 +221,18 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
 	public String getPluginId() {
         return pluginId;
     }
-    
+
     @Override
 	public boolean equals(Object arg0) {
         if (!(arg0 instanceof ActionSetDescriptor)) {
             return false;
         }
-        
+
         ActionSetDescriptor descr = (ActionSetDescriptor) arg0;
-        
+
         return id.equals(descr.id) && descr.pluginId.equals(pluginId);
     }
-    
+
     @Override
 	public int hashCode() {
         return id.hashCode() + pluginId.hashCode();

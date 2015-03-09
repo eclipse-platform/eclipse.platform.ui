@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
  * be used by product developers to provide basic ability to tweak the enabled
  * activity set. You may provide the certain strings to this class via method #2
  * of {@link org.eclipse.core.runtime.IExecutableExtension}.
- * 
+ *
  * @see #ACTIVITY_NAME
  * @see #ACTIVITY_PROMPT_BUTTON
  * @see #ACTIVITY_PROMPT_BUTTON_TOOLTIP
@@ -49,35 +49,35 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 	 * The name to use for the activities.  Ie: "Capabilities".
 	 */
     public static final String ACTIVITY_NAME = "activityName"; //$NON-NLS-1$
-    
+
 	/**
 	 * The label to be used for the prompt button. Ie: "&Prompt when enabling capabilities".
-	 */    
+	 */
     public static final String ACTIVITY_PROMPT_BUTTON = "activityPromptButton"; //$NON-NLS-1$
-    
+
 	/**
 	 * The tooltip to be used for the prompt button. Ie: "Prompt when a feature is first used that requires enablement of capabilities".
-	 */    
+	 */
     public static final String ACTIVITY_PROMPT_BUTTON_TOOLTIP = "activityPromptButtonTooltip"; //$NON-NLS-1$
-    
+
 	private Button activityPromptButton;
 
     private IWorkbench workbench;
 
     private ActivityEnabler enabler;
-    
+
     private Properties strings = new Properties();
 
     private IMutableActivityManager workingCopy;
-    
+
     /**
      * Create the prompt for activity enablement.
-     * 
+     *
      * @param composite the parent
      */
     protected void createActivityPromptPref(Composite composite) {
         activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton)); 
+        activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton));
         activityPromptButton.setToolTipText(strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
 
         setActivityButtonState();
@@ -94,7 +94,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
     @Override
 	protected Control createContents(Composite parent) {
     	initializeDialogUnits(parent);
-    	
+
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
@@ -111,7 +111,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
         workingCopy = workbench.getActivitySupport().createWorkingCopy();
         enabler = new ActivityEnabler(workingCopy, strings);
         enabler.createControl(composite).setLayoutData(data);
-        
+
         Dialog.applyDialogFont(composite);
 
         return composite;
@@ -127,7 +127,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 	public boolean performOk() {
         enabler.updateActivityStates();
         workbench.getActivitySupport().setEnabledActivityIds(workingCopy.getEnabledActivityIds());
-        
+
         getPreferenceStore().setValue(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
                 activityPromptButton.getSelection());
@@ -148,6 +148,6 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
 			strings.putAll((Hashtable)data);
-		}		
+		}
 	}
 }

@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
 /**
  * Page 1 of the base preference export Wizard
- * 
+ *
  * @since 3.1
  */
 public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
@@ -55,10 +55,10 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	protected String getOutputSuffix() {
     	return ".epf"; //$NON-NLS-1$
     }
-	
+
 	/**
 	 * Answer the contents of self's destination specification widget
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	@Override
@@ -66,9 +66,9 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 		String idealSuffix = getOutputSuffix();
         String destinationText = super.getDestinationValue();
 
-        // only append a suffix if the destination doesn't already have a . in 
-        // its last path segment.  
-        // Also prevent the user from selecting a directory.  Allowing this will 
+        // only append a suffix if the destination doesn't already have a . in
+        // its last path segment.
+        // Also prevent the user from selecting a directory.  Allowing this will
         // create a ".epf" file in the directory
         if (destinationText.length() != 0
                 && !destinationText.endsWith(File.separator)) {
@@ -87,7 +87,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
         return destinationText;
     }
 
-		
+
 	@Override
 	protected String getAllButtonText() {
 		return PreferencesMessages.WizardPreferencesExportPage1_all;
@@ -110,7 +110,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 
 	/**
 	 * Answer the string to display in self as the destination type
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	@Override
@@ -196,7 +196,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	protected int getFileDialogStyle() {
 		return SWT.SAVE | SWT.SHEET;
 	}
-	
+
 	@Override
 	protected String getInvalidDestinationMessage() {
 		return PreferencesMessages.WizardPreferencesExportPage1_noPrefFile;

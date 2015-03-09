@@ -19,7 +19,7 @@ import org.eclipse.ui.commands.KeyConfigurationEvent;
 
 /**
  * A wrapper for old-style listeners to be hooked on to new style schemes.
- * 
+ *
  * @since 3.1
  */
 final class LegacySchemeListenerWrapper implements ISchemeListener {
@@ -37,7 +37,7 @@ final class LegacySchemeListenerWrapper implements ISchemeListener {
 	/**
 	 * Constructs a new instance of <code>SchemeListenerWrapper</code> with
 	 * the given listener.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be wrapped; must mot be <code>null</code>.
 	 */

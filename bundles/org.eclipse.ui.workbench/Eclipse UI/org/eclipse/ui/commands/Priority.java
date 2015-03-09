@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see HandlerSubmission
  * @see org.eclipse.ui.ISources
@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.util.Util;
  *      org.eclipse.core.commands.IHandler, Expression)
  * @deprecated This concept is now captured in the <code>ISources</code> integer
  *             constants.
- * 
+ *
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
@@ -77,7 +77,7 @@ public final class Priority implements Comparable {
 	 * Constructs a new instance of <code>Priority</code> using a value. This
 	 * constructor should only be used internally. Priority instances should be
 	 * retrieved from the static members defined above.
-	 * 
+	 *
 	 * @param value
 	 *            The priority value; a lesser integer is consider to have a
 	 *            higher priority value.
@@ -100,7 +100,7 @@ public final class Priority implements Comparable {
 	/**
 	 * The value for this priority. The lesser the value, the higher priority
 	 * this represents.
-	 * 
+	 *
 	 * @return The integer priority value.
 	 */
 	@Deprecated

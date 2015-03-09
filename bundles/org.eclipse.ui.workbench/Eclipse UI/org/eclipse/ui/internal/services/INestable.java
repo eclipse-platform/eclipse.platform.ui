@@ -38,7 +38,7 @@ package org.eclipse.ui.internal.services;
  * <p>
  * This class should eventually move to <code>org.eclipse.ui.services</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface INestable {
@@ -46,7 +46,7 @@ public interface INestable {
 	/**
 	 * Notifies this service that the component within which it exists has
 	 * become active. The service should modify its state as appropriate.
-	 * 
+	 *
 	 */
 	public void activate();
 

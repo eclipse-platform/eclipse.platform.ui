@@ -19,11 +19,11 @@ import org.eclipse.ui.PlatformUI;
  * This class is used for monitoring performance events.  Each performance
  * event has an associated option in the org.eclipse.ui plugin's .options file
  * that specifies an maximum acceptable duration for that event.
- * 
+ *
  * @see org.eclipse.core.runtime.PerformanceStats
  */
 public class UIStats {
-	
+
 	 private static HashMap operations = new HashMap();
 
     public static final int CREATE_PART = 0;
@@ -47,13 +47,13 @@ public class UIStats {
     public static final int NOTIFY_PART_LISTENERS = 9;
 
     public static final int SWITCH_PERSPECTIVE = 10;
-    
+
     public static final int NOTIFY_PAGE_LISTENERS = 11;
 
     public static final int NOTIFY_PERSPECTIVE_LISTENERS = 12;
 
     public static final int UI_JOB = 13;
-	
+
 	public static final int CONTENT_TYPE_LOOKUP = 14;
 
 	public static final int EARLY_STARTUP = 15;
@@ -95,7 +95,7 @@ public class UIStats {
 
     /**
      * Returns whether tracing of the given debug event is turned on.
-     * 
+     *
      * @param event The event id
      * @return <code>true</code> if tracing of this event is turned on,
      * and <code>false</code> otherwise.
@@ -103,10 +103,10 @@ public class UIStats {
     public static boolean isDebugging(int event) {
         return debug[event];
     }
-    
+
     /**
      * Indicates the start of a performance event
-     * 
+     *
      * @param event The event id
      * @param label The event label
      */
@@ -118,7 +118,7 @@ public class UIStats {
 
     /**
      * Indicates the end of a performance operation
-     * 
+     *
      * @param event The event id
      * @param blame An object that is responsible for the event that occurred,
      * or that uniquely describes the event that occurred
@@ -136,7 +136,7 @@ public class UIStats {
             PerformanceStats.getStats(events[event], blame).addRun(elapsed, label);
         }
     }
-   	
+
    	/**
    	 * Special hook to signal that application startup is complete and the event
    	 * loop has started running.

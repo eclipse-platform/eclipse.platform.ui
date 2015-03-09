@@ -24,12 +24,12 @@ import org.eclipse.jface.viewers.ViewerComparator;
  * {@link IComparableContribution} instances, either as a
  * {@link ViewerComparator} (for {@link StructuredViewer}s) or as a traditional
  * {@link Comparator}.
- * 
+ *
  * This class orders contributions by first grouping by priority ({@link IComparableContribution#getPriority()})
  * and then by utilizing the JFace policy comparator to order by label ({@link IComparableContribution#getLabel()}).
- * 
+ *
  * @see IComparableContribution
- * 
+ *
  * @since 3.4
  */
 public class ContributionComparator extends ViewerComparator implements
@@ -42,22 +42,22 @@ public class ContributionComparator extends ViewerComparator implements
 	@Override
 	public int compare(Object o1, Object o2) {
 		IComparableContribution c1 = null, c2 = null;
-		
+
 		if (o1 instanceof IComparableContribution)
 			c1 = (IComparableContribution) o1;
-		
+
 		if (o2 instanceof IComparableContribution)
 			c2 = (IComparableContribution) o2;
-		
+
 		// neither are comparable contributions, we need to be consistent
 		if (c1 == null && c2 == null) {
-			String s1 = getComparisonString(o1); 
+			String s1 = getComparisonString(o1);
 			String s2 = getComparisonString(o2);
-			
+
 			return Policy.getComparator().compare(s1, s2);
 		}
-		
-		// if we're in a mixed scenario the comparable contribution wins. 
+
+		// if we're in a mixed scenario the comparable contribution wins.
 		if (c1 == null)
 			return 1;
 		if (c2 == null)
@@ -69,7 +69,7 @@ public class ContributionComparator extends ViewerComparator implements
 	 * Tries to extract a useful string for comparison from the provided object.
 	 * This method is a workaround for bug 226547. Looking forward we need a
 	 * more sensible answer to this problem.
-	 * 
+	 *
 	 * @param o
 	 * 		the object to test
 	 * @return the comparison string
@@ -91,7 +91,7 @@ public class ContributionComparator extends ViewerComparator implements
 	 * method. Elements within the same category are further subjected to a case
 	 * insensitive compare of their label strings. Subclasses may override.
 	 * </p>
-	 * 
+	 *
 	 * @param c1
 	 *            the first element
 	 * @param c2
@@ -125,7 +125,7 @@ public class ContributionComparator extends ViewerComparator implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
@@ -144,7 +144,7 @@ public class ContributionComparator extends ViewerComparator implements
 	 * {@link IComparableContribution#getPriority()}. Subclasses may
 	 * re-implement this method to provide non-trivial categorization.
 	 * </p>
-	 * 
+	 *
 	 * @param c
 	 *            the element
 	 * @return the category
@@ -155,7 +155,7 @@ public class ContributionComparator extends ViewerComparator implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 	 */
 	@Override

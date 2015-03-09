@@ -98,7 +98,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	protected int getCurrentItemIndex() {
 		return 0;
 	}
-	
+
 	/**
 	 * Get the backward command.
 	 */
@@ -244,7 +244,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 	/**
 	 * Sets the dialog's location on the screen.
-	 * 
+	 *
 	 * @param dialog
 	 */
 	protected void setDialogLocation(final Shell dialog, IWorkbenchPart activePart) {
@@ -269,9 +269,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 			// Place it in the center of the monitor if it is not visible
 			// when placed in the center of its parent.
 			// Ensure the origin is visible on the screen.
-			dialogBounds.x = Math.max(0, 
+			dialogBounds.x = Math.max(0,
 					monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2);
-			dialogBounds.y =  Math.max(0, 
+			dialogBounds.y =  Math.max(0,
 					monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2);
 		}
 
@@ -407,7 +407,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 	/**
 	 * Adds a listener to the given table that blocks all traversal operations.
-	 * 
+	 *
 	 * @param table
 	 *            The table to which the traversal suppression should be added;
 	 *            must not be <code>null</code>.
@@ -416,7 +416,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		table.addTraverseListener(new TraverseListener() {
 			/**
 			 * Blocks all key traversal events.
-			 * 
+			 *
 			 * @param event
 			 *            The trigger event; must not be <code>null</code>.
 			 */

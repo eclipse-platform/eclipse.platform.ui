@@ -14,9 +14,9 @@ package org.eclipse.ui.internal.menus;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * 
+ *
  * @since 3.5
- * 
+ *
  */
 public class CommandMessages extends NLS {
 

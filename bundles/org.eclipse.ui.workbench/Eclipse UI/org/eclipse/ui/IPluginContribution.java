@@ -15,7 +15,7 @@ package org.eclipse.ui;
  * descriptor interface. This indicates that they may or may not originate from
  * a plugin contribution. This is useful in various activity filtering
  * scenarios.
- * 
+ *
  * @since 3.0
  */
 public interface IPluginContribution {

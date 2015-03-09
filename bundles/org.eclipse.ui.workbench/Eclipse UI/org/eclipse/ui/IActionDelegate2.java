@@ -41,7 +41,7 @@ public interface IActionDelegate2 extends IActionDelegate {
      * the proxy action. This lifecycle method is called after the
      * action delegate has been created and before any other method of the
      * action delegate is called.
-     * 
+     *
      * @param action the proxy action that handles the presentation portion of
      * the action.
      */

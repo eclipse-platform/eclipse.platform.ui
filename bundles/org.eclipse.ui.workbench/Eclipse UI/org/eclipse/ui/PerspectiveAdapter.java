@@ -19,7 +19,7 @@ package org.eclipse.ui;
  * removed, activated and changed, can extend this class and override only the
  * methods which they are interested in.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.IPerspectiveListener
  * @see org.eclipse.ui.IPerspectiveListener2
  * @see org.eclipse.ui.IPerspectiveListener3

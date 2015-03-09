@@ -41,7 +41,7 @@ import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
  * This class will be visible only if it is enabled in
  * {@link WorkbenchStatusDialogManager} and no support provider is passed by
  * {@link Policy}
- * 
+ *
  * @see Policy#setErrorSupportProvider
  * @see Policy#getErrorSupportProvider()
  * @see WorkbenchStatusDialogManager#enableDefaultSupportArea
@@ -57,7 +57,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.statushandlers.AbstractStatusAreaProvider#createSupportArea(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
@@ -77,7 +77,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 		list.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -126,7 +126,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 		copyAction.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)

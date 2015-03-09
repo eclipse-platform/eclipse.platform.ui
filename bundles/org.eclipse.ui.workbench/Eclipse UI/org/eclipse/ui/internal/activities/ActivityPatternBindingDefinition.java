@@ -67,7 +67,7 @@ public final class ActivityPatternBindingDefinition {
     private String sourceId;
 
     private transient String string;
-    
+
     /**
      * If the string is taken "as is", without interpreting it as a regular
      * expression.
@@ -78,7 +78,7 @@ public final class ActivityPatternBindingDefinition {
             String sourceId) {
     	this(activityId, pattern, sourceId, false);
     }
-    
+
     public ActivityPatternBindingDefinition(String activityId, String pattern,
 			String sourceId, boolean isEqualityPattern) {
 		this.activityId = activityId;
@@ -96,7 +96,7 @@ public final class ActivityPatternBindingDefinition {
 
             if (compareTo == 0) {
             	compareTo = Util.compare(isEqualityPattern, castedObject.isEqualityPattern);
-            	
+
             	if (compareTo == 0)
             		compareTo = Util.compare(sourceId, castedObject.sourceId);
 			}
@@ -119,11 +119,11 @@ public final class ActivityPatternBindingDefinition {
         if (!Util.equals(pattern, castedObject.pattern)) {
             return false;
         }
-        
+
         if (!Util.equals(isEqualityPattern, castedObject.isEqualityPattern)) {
             return false;
         }
-        
+
         return Util.equals(sourceId, castedObject.sourceId);
     }
 
@@ -138,7 +138,7 @@ public final class ActivityPatternBindingDefinition {
     public String getSourceId() {
         return sourceId;
     }
-    
+
     public boolean isEqualityPattern() {
     	return isEqualityPattern;
     }

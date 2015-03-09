@@ -35,7 +35,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      * Returns the editor id.
      * <p>
      * For internal editors, this is the extension id as defined in the workbench
-     * registry; for external editors, it is path and file name of the external 
+     * registry; for external editors, it is path and file name of the external
      * program.
      * </p>
      *
@@ -63,7 +63,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
     /**
      * Returns whether this editor descriptor will open a regular editor
      * part inside the editor area.
-     * 
+     *
      * @return <code>true</code> if editor is inside editor area, and
      * <code>false</code> otherwise
      * @since 3.0
@@ -73,7 +73,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
     /**
      * Returns whether this editor descriptor will open an external
      * editor in-place inside the editor area.
-     * 
+     *
      * @return <code>true</code> if editor is in-place, and <code>false</code>
      * otherwise
      * @since 3.0
@@ -83,7 +83,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
     /**
      * Returns whether this editor descriptor will open an external editor
      * in a new window outside the workbench.
-     * 
+     *
      * @return <code>true</code> if editor is external, and <code>false</code>
      * otherwise
      * @since 3.0
@@ -94,7 +94,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      * Returns the editor matching strategy object for editors
      * represented by this editor descriptor, or <code>null</code>
      * if there is no explicit matching strategy specified.
-     * 
+     *
      * @return the editor matching strategy, or <code>null</code> if none
      * @since 3.1
      */

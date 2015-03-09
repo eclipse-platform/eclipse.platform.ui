@@ -133,7 +133,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
     /**
      * Returns the id for the given part, taking into account
      * multi-view instances which may have a secondary id.
-     * 
+     *
      * @since 3.0
      */
     private Object getPartId(IWorkbenchPart part) {
@@ -151,7 +151,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
     /**
      * The selection has changed in the part being tracked.
      * Forward it to the listeners.
-     * 
+     *
      * @see ISelectionChangedListener#selectionChanged
      */
     @Override
@@ -161,7 +161,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
 
     /**
      * Sets the page this selection provider works for
-     * 
+     *
      * @param page workbench page
      */
     private void setPage(IWorkbenchPage page) {
@@ -170,7 +170,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
 
     /**
      * Returns the page this selection provider works for
-     * 
+     *
      * @return workbench page
      */
     protected IWorkbenchPage getPage() {
@@ -178,9 +178,9 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
     }
 
     /**
-     * Returns the part this is tracking, 
+     * Returns the part this is tracking,
      * or <code>null</code> if it is not open
-     * 
+     *
      * @return part., or <code>null</code>
      */
     protected IWorkbenchPart getPart() {
@@ -215,7 +215,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
 
     /**
      * Sets the part for this selection tracker.
-     * 
+     *
      * @param part the part
      * @param notify whether to send notification that the selection has changed.
      */

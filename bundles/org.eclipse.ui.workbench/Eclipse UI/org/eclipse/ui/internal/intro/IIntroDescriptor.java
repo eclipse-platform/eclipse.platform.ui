@@ -16,7 +16,7 @@ import org.eclipse.ui.intro.IIntroPart;
 
 /**
  * Describes an introduction extension.
- *  
+ *
  * @since 3.0
  */
 public interface IIntroDescriptor {
@@ -39,10 +39,10 @@ public interface IIntroDescriptor {
      * @return the descriptor of the image to display next to this part
      */
     public ImageDescriptor getImageDescriptor();
-    
+
     /**
 	 * Return the label override string for this part.
-	 * 
+	 *
 	 * @return the label override string or <code>null</code> if one has not
 	 *         been specified
      * @since 3.2

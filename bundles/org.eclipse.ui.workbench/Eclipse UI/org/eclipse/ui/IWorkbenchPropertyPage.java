@@ -19,7 +19,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
  * the workbench's Property Pages dialog.
  * <p>
  * Clients should implement this interface and include the name of their class
- * in an extension contributed to the workbench's property page extension point 
+ * in an extension contributed to the workbench's property page extension point
  * (named <code>"org.eclipse.ui.propertyPages"</code>).
  * For example, the plug-in's XML markup might contain:
  * <pre>
@@ -51,8 +51,8 @@ public interface IWorkbenchPropertyPage extends IPreferencePage {
      * <code>getElement</code> is called.
      * <p> As of Eclipse 3.2 the org.eclipse.ui.propertyPages extension
      * point now supports non IAdaptable inputs. An input
-     * that is not an IAdaptable will be wrapped in an 
-     * IAdaptable by the workbench before it is forwarded 
+     * that is not an IAdaptable will be wrapped in an
+     * IAdaptable by the workbench before it is forwarded
      * to this method.
      * </p>
      * @see PropertyDialogAction

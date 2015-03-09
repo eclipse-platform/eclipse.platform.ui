@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.util.Util;
  * Abstract base implementation of all workbench views.
  * <p>
  * This class should be subclassed by clients wishing to define new views.
- * The name of the subclass should be given as the <code>"class"</code> 
+ * The name of the subclass should be given as the <code>"class"</code>
  * attribute in a <code>view</code> extension contributed to the workbench's
  * view extension point (named <code>"org.eclipse.ui.views"</code>).
  * For example, the plug-in's XML markup might contain:
@@ -51,7 +51,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
  * <ul>
- *   <li><code>setInitializationData</code> - extend to provide additional 
+ *   <li><code>setInitializationData</code> - extend to provide additional
  *       initialization when view extension is instantiated</li>
  *   <li><code>init(IWorkbenchPartSite)</code> - extend to provide additional
  *       initialization when view is assigned its site</li>
@@ -65,7 +65,7 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
     /**
      * Listens to PROP_TITLE property changes in this object until the first call to
      * setContentDescription. Used for compatibility with old parts that call setTitle
-     * or overload getTitle instead of using setContentDescription. 
+     * or overload getTitle instead of using setContentDescription.
      */
     private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
         @Override
@@ -90,7 +90,7 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
         return (IViewSite) getSite();
     }
 
-    
+
     @Override
 	public void init(IViewSite site) throws PartInitException {
         setSite(site);
@@ -113,7 +113,7 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
         init(site);
     }
 
-  
+
     @Override
 	public void saveState(IMemento memento) {
         // do nothing
@@ -166,5 +166,5 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
 	protected final void checkSite(IWorkbenchPartSite site) {
         super.checkSite(site);
         Assert.isTrue(site instanceof IViewSite, "The site for a view must be an IViewSite"); //$NON-NLS-1$
-    }    
+    }
 }

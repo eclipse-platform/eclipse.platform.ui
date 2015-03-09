@@ -48,7 +48,7 @@ import org.osgi.service.event.EventHandler;
 
 /**
  * Theme manager for the Workbench.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchThemeManager extends EventManager implements
@@ -73,7 +73,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	/**
 	 * Returns the singelton instance of the WorkbenchThemeManager
-	 * 
+	 *
 	 * @return singleton instance
 	 */
 	public static synchronized WorkbenchThemeManager getInstance() {
@@ -181,15 +181,15 @@ public class WorkbenchThemeManager extends EventManager implements
 	/*
 	 * Update existing theme contents, descriptors, and registries.
 	 * Reread the themes and recompute the registries.
-	 */	
+	 */
 	private void updateThemes() {
 		//reread the themes since their descriptors have changed in value
         ThemeRegistryReader reader = new ThemeRegistryReader();
-        reader.readThemes(Platform.getExtensionRegistry(),(ThemeRegistry) getThemeRegistry());   
+        reader.readThemes(Platform.getExtensionRegistry(),(ThemeRegistry) getThemeRegistry());
 
         //DEFAULT_THEME is not in getThemes() list so must be handled special
-        ThemeElementHelper.populateRegistry(getTheme(IThemeManager.DEFAULT_THEME), getThemeRegistry().getColors(), PrefUtil.getInternalPreferenceStore());			
-        
+        ThemeElementHelper.populateRegistry(getTheme(IThemeManager.DEFAULT_THEME), getThemeRegistry().getColors(), PrefUtil.getInternalPreferenceStore());
+
         IThemeDescriptor[] themeDescriptors = getThemeRegistry().getThemes();
 
        	for (int i=0; i < themeDescriptors.length; i++) {
@@ -198,7 +198,7 @@ public class WorkbenchThemeManager extends EventManager implements
     		//If theme is in our themes table then its already been populated
     		if (theme != null) {
                 ColorDefinition[] colorDefinitions = themeDescriptor.getColors();
-              
+
                if (colorDefinitions.length > 0) {
                 	ThemeElementHelper.populateRegistry(theme, colorDefinitions,PrefUtil.getInternalPreferenceStore());
                 }
@@ -207,7 +207,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.themes.IThemeManager#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	@Override
@@ -261,7 +261,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.themes.IThemeManager#getCurrentTheme()
 	 */
 	@Override
@@ -286,14 +286,14 @@ public class WorkbenchThemeManager extends EventManager implements
 													PlatformUI.PLUGIN_ID,
 													"Could not restore current theme: " + themeId, null)); //$NON-NLS-1$
 				}
-			}			
+			}
 		}
 		return currentTheme;
 	}
 
 	/**
 	 * Return the default color registry.
-	 * 
+	 *
 	 * @return the default color registry
 	 */
 	public ColorRegistry getDefaultThemeColorRegistry() {
@@ -303,7 +303,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	/**
 	 * Return the default font registry.
-	 * 
+	 *
 	 * @return the default font registry
 	 */
 	public FontRegistry getDefaultThemeFontRegistry() {
@@ -322,7 +322,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.themes.IThemeManager#getTheme(java.lang.String)
 	 */
 	@Override
@@ -351,7 +351,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.themes.IThemeManager#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	@Override
@@ -361,7 +361,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.themes.IThemeManager#setCurrentTheme(java.lang.String)
 	 */
 	@Override
@@ -412,7 +412,7 @@ public class WorkbenchThemeManager extends EventManager implements
 			}
 		}
 	}
-	
+
 	public static class WorkbenchThemeChangedHandler implements EventHandler {
 		@Override
 		public void handleEvent(org.osgi.service.event.Event event) {

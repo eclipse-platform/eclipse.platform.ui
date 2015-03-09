@@ -34,7 +34,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private List nodes;
 
 	private IWorkbench workbench;
-	
+
 
 	class PreferencesCategoryNode extends CategoryNode {
 
@@ -78,7 +78,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	/**
 	 * Create a new instance configured with the workbench
-	 * 
+	 *
 	 * @param newWorkbench the workbench
 	 */
 	public PreferencePageRegistryReader(IWorkbench newWorkbench) {
@@ -140,7 +140,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#
 	 * invalidCategoryNodeMessage
 	 * (org.eclipse.ui.internal.registry.CategorizedPageRegistryReader
@@ -168,7 +168,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * If no category has been specified or category information
 	 * is incorrect, page will appear at the root level. workbench
 	 * log entry will be created for incorrect category information.
-	 * 
+	 *
 	 * @param registry the extension registry
 	 */
 	public void loadFromRegistry(IExtensionRegistry registry) {
@@ -207,7 +207,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	public static WorkbenchPreferenceNode createNode(IConfigurationElement element) {
 		boolean nameMissing = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null;
-		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);		
+		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		boolean classMissing = getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) == null;
 
 		if (nameMissing) {
@@ -219,7 +219,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		if (classMissing) {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
 		}
-		
+
 		if (nameMissing || id == null || classMissing) {
 			return null;
 		}

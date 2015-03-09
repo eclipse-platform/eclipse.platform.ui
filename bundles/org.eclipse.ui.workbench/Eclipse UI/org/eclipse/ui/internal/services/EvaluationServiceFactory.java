@@ -17,13 +17,13 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class EvaluationServiceFactory extends AbstractServiceFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.AbstractServiceFactory#create(java.lang.Class,
 	 *      org.eclipse.ui.services.IServiceLocator,
 	 *      org.eclipse.ui.services.IServiceLocator)

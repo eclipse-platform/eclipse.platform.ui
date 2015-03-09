@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
+ *   IBM Corporation - initial API and implementation
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *     font should be activated and used by other components.
- *   Carsten Pfeiffer <carsten.pfeiffer@gebit.de> - Fix for bug 182354 - 
- *     [Dialogs] API - make ElementTreeSelectionDialog usable with a 
+ *   Carsten Pfeiffer <carsten.pfeiffer@gebit.de> - Fix for bug 182354 -
+ *     [Dialogs] API - make ElementTreeSelectionDialog usable with a
  *     FilteredTree
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * A class to select elements out of a tree structure.
- * 
+ *
  * @since 2.0
  */
 public class ElementTreeSelectionDialog extends SelectionStatusDialog {
@@ -96,7 +96,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent shell for the dialog
 	 * @param labelProvider
@@ -160,7 +160,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	public void setSorter(ViewerSorter sorter) {
         fComparator = sorter;
     }
-    
+
     /**
      * Sets the comparator used by the tree viewer.
      * @param comparator

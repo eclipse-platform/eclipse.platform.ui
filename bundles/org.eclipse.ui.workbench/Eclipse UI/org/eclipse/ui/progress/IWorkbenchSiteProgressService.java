@@ -18,13 +18,13 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * that change the state in a IWorkbenchPartSite while they are being run.
  * <p>
  * This service can be acquired from your service locator (IWorkbenchPartSite):
- * 
+ *
  * <pre>
  * <code>
  * 	IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getSite().getService(IWorkbenchSiteProgressService.class);
  * </code>
  * </pre>
- * 
+ *
  * <ul>
  * <li>This service is not available globally, only at the part site level.</li>
  * </ul>
@@ -36,7 +36,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * although getSite().getService(IWorkbenchSiteProgressService.class) is
  * preferred.
  * </p>
- * 
+ *
  * @see IWorkbenchPartSite#getAdapter(Class)
  * @see org.eclipse.ui.services.IServiceLocator#getService(Class)
  * @since 3.0
@@ -58,7 +58,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * overriding <code>WorkbenchPart.showBusy()</code>. If useHalfBusyCursor is
 	 * true then the cursor will change to the half busy cursor for the duration
 	 * of the job.
-	 * 
+	 *
 	 * @param job
 	 *            The job to schedule
 	 * @param delay
@@ -75,7 +75,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * changed to indicate that the part is busy and in a transient state until
 	 * the job completes. Parts can also add customized busy indication by
 	 * overriding <code>WorkbenchPart.showBusy</code>.
-	 * 
+	 *
 	 * @param job
 	 *            The job to schedule
 	 * @param delay
@@ -89,7 +89,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * changed to indicate that the part is busy and in a transient state until
 	 * the job completes. Parts can also add customized busy indication by
 	 * overriding <code>WorkbenchPart.showBusy</code>.
-	 * 
+	 *
 	 * @param job
 	 *            The job to schedule
 	 * @see Job#schedule()
@@ -108,7 +108,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * displayed to the end user is left up to the workbench renderer.
 	 */
     public void warnOfContentChange();
-    
+
     /**
 	 * Increments the busy counter for this workbench site. This API should only
 	 * be used for background work that does not use jobs. As long as there have
@@ -122,7 +122,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * jobs have been scheduled through this service, and the internal busy
 	 * counter is not positive.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void incrementBusy();
@@ -131,9 +131,9 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * Decrements the busy counter for this workbench site. This API should only
 	 * be used for background work that does not use jobs. It is an error to call
 	 * this method without first making a matching call to {@link #incrementBusy()}.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void decrementBusy();
-	
+
 }

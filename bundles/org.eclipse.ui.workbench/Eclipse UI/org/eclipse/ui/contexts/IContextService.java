@@ -32,7 +32,7 @@ import org.eclipse.ui.services.IServiceWithSources;
  * <li>This service is available globally.</li>
  * </ul>
  * </p>
- * 
+ *
  * @since 3.1
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -41,7 +41,7 @@ public interface IContextService extends IServiceWithSources {
 
 	/**
 	 * The identifier for the context that is active when a workbench is active.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String CONTEXT_ID_WORKBENCH_MENU = "org.eclipse.ui.contexts.workbenchMenu"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public interface IContextService extends IServiceWithSources {
 	 * receive any key bindings be default. When the given shell is active, we
 	 * should not provide any <code>EnabledSubmission</code> instances for the
 	 * "In Dialogs" or "In Windows" contexts.
-	 * 
+	 *
 	 */
 	public static final int TYPE_NONE = 1;
 
@@ -100,7 +100,7 @@ public interface IContextService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its contexts when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier for the context which should be activated; must
 	 *            not be <code>null</code>.
@@ -124,7 +124,7 @@ public interface IContextService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier for the context which should be activated; must
 	 *            not be <code>null</code>.
@@ -136,7 +136,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
@@ -156,7 +156,7 @@ public interface IContextService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier for the context which should be activated; must
 	 *            not be <code>null</code>.
@@ -172,7 +172,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
@@ -191,7 +191,7 @@ public interface IContextService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier for the context which should be activated; must
 	 *            not be <code>null</code>.
@@ -205,7 +205,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @deprecated Use
 	 *             {@link IContextService#activateContext(String, Expression)}
@@ -224,7 +224,7 @@ public interface IContextService extends IServiceWithSources {
 	 * not, they will be removed when the IServiceLocator used to acquire this
 	 * service is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 * @since 3.2
@@ -238,7 +238,7 @@ public interface IContextService extends IServiceWithSources {
 	 * from that service instead. It is only possible to retract a context
 	 * activation with this method. That is, you must have the same
 	 * <code>IContextActivation</code> used to activate the context.
-	 * 
+	 *
 	 * @param activation
 	 *            The token that was returned from a call to
 	 *            <code>activateContext</code>; must not be <code>null</code>.
@@ -252,7 +252,7 @@ public interface IContextService extends IServiceWithSources {
 	 * context activations with this method. That is, you must have the same
 	 * <code>IContextActivation</code> instances used to activate the
 	 * contexts.
-	 * 
+	 *
 	 * @param activations
 	 *            The tokens that were returned from a call to
 	 *            <code>activateContext</code>. This collection must only
@@ -263,7 +263,7 @@ public interface IContextService extends IServiceWithSources {
 
 	/**
 	 * Returns the set of active context identifiers.
-	 * 
+	 *
 	 * @return The set of active context identifiers; this value may be
 	 *         <code>null</code> if no active contexts have been set yet. If
 	 *         the set is not <code>null</code>, then it contains only
@@ -275,7 +275,7 @@ public interface IContextService extends IServiceWithSources {
 	/**
 	 * Retrieves the context with the given identifier. If no such context
 	 * exists, then an undefined context with the given id is created.
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return A context with the given identifier, either defined or undefined.
@@ -284,7 +284,7 @@ public interface IContextService extends IServiceWithSources {
 
 	/**
 	 * Returns the collection of all of the defined contexts in the workbench.
-	 * 
+	 *
 	 * @return The collection of contexts (<code>Context</code>) that are
 	 *         defined; never <code>null</code>, but may be empty.
 	 * @since 3.2
@@ -294,7 +294,7 @@ public interface IContextService extends IServiceWithSources {
 	/**
 	 * Returns the collection of the identifiers for all of the defined contexts
 	 * in the workbench.
-	 * 
+	 *
 	 * @return The collection of context identifiers (<code>String</code>)
 	 *         that are defined; never <code>null</code>, but may be empty.
 	 */
@@ -302,7 +302,7 @@ public interface IContextService extends IServiceWithSources {
 
 	/**
 	 * Returns the shell type for the given shell.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell for which the type should be determined. If this
 	 *            value is <code>null</code>, then
@@ -344,14 +344,14 @@ public interface IContextService extends IServiceWithSources {
 	 * If the provided shell has already been registered, then this method will
 	 * change the registration.
 	 * </p>
-	 * 
+	 *
 	 * @param shell
 	 *            The shell to register for key bindings; must not be
 	 *            <code>null</code>.
 	 * @param type
 	 *            The type of shell being registered. This value must be one of
 	 *            the constants given in this interface.
-	 * 
+	 *
 	 * @return <code>true</code> if the shell had already been registered
 	 *         (i.e., the registration has changed); <code>false</code>
 	 *         otherwise.
@@ -360,7 +360,7 @@ public interface IContextService extends IServiceWithSources {
 
 	/**
 	 * Removes a listener from this context service.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
 	 * @since 3.2
@@ -378,11 +378,11 @@ public interface IContextService extends IServiceWithSources {
 	 * <p>
 	 * If the shell was never registered, or if the shell is <code>null</code>,
 	 * then this method returns <code>false</code> and does nothing.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell to be unregistered; does nothing if this value is
 	 *            <code>null</code>.
-	 * 
+	 *
 	 * @return <code>true</code> if the shell had been registered;
 	 *         <code>false</code> otherwise.
 	 */
@@ -395,13 +395,13 @@ public interface IContextService extends IServiceWithSources {
 	 * <code>deferUpdates(true)</code> that nothing in your batched operation
 	 * will prevent the matching call to <code>deferUpdates(false)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param defer
 	 *            true when starting a batch operation false when ending the
 	 *            operation
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void deferUpdates(boolean defer);
-	
+
 }

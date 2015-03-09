@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * Note: this class has a natural ordering that is inconsistent with equals.
  * </p>
- * 
+ *
  * @since 3.0
  * @see org.eclipse.ui.commands.IWorkbenchCommandSupport
  * @deprecated Please use <code>IHandlerService.activateHandler</code>
@@ -72,7 +72,7 @@ public final class HandlerSubmission implements Comparable {
     private final String commandId;
 
     /**
-     * The handler being submitted.  This value cannot be <code>null</code>.  
+     * The handler being submitted.  This value cannot be <code>null</code>.
      */
     private final IHandler handler;
 
@@ -92,7 +92,7 @@ public final class HandlerSubmission implements Comparable {
 
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param activePartId
      *            the identifier of the part that must be active for this
      *            request to be considered. May be <code>null</code>.
@@ -164,7 +164,7 @@ public final class HandlerSubmission implements Comparable {
     /**
      * Returns the identifier of the part that must be active for this request
      * to be considered.
-     * 
+     *
      * @return the identifier of the part that must be active for this request
      *         to be considered. May be <code>null</code>.
      */
@@ -175,7 +175,7 @@ public final class HandlerSubmission implements Comparable {
 
     /**
      * Returns the shell that must be active for this request to be considered.
-     * 
+     *
      * @return the shell that must be active for this request to be considered.
      *         May be <code>null</code>.
      */
@@ -187,7 +187,7 @@ public final class HandlerSubmission implements Comparable {
     /**
      * Returns the workbench part site of the part that must be active for this
      * request to be considered.
-     * 
+     *
      * @return the workbench part site of the part that must be active for this
      *         request to be considered. May be <code>null</code>.
      */
@@ -198,7 +198,7 @@ public final class HandlerSubmission implements Comparable {
 
     /**
      * Returns the identifier of the command to be handled.
-     * 
+     *
      * @return the identifier of the command to be handled. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -209,7 +209,7 @@ public final class HandlerSubmission implements Comparable {
 
     /**
      * Returns the handler.
-     * 
+     *
      * @return the handler. Guaranteed not to be <code>null</code>.
      */
 	@Deprecated
@@ -219,7 +219,7 @@ public final class HandlerSubmission implements Comparable {
 
     /**
      * Returns the priority.
-     * 
+     *
      * @return the priority. Guaranteed not to be <code>null</code>.
      */
 	@Deprecated

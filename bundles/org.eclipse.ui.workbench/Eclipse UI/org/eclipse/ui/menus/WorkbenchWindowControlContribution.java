@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.menus.InternalControlContribution;
  * control is being displayed on</li>
  * </ul>
  * </p>
- * 
+ *
  * @since 3.3
  *
  * @see ControlContribution
@@ -45,7 +45,7 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 	 * the basis for XML contributions and will be used by the
 	 * workbench implementation. This is public only by necessity
 	 * and should not be used outside of the workbench implemenation
-	 * code. 
+	 * code.
 	 */
 	public WorkbenchWindowControlContribution() {
 		this("unknown ID"); //$NON-NLS-1$
@@ -54,7 +54,7 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 	/**
 	 * Constructor for use by clients programmatically creating
 	 * control contributions in the workbench.
-	 * 
+	 *
 	 * @param id The id of this contribution
 	 */
 	public WorkbenchWindowControlContribution(String id) {
@@ -79,24 +79,24 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 	public final int getCurSide() {
 		return super.getCurSide();
 	}
-	
+
 	@Override
 	public final int getOrientation() {
 		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT)
 			return SWT.VERTICAL;
-		
+
 		return SWT.HORIZONTAL;
 	}
 
 	/**
 	 * Important: This method is *NOT* to be used/extended by clients. This is
 	 * for the internal use inside Workbench
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return newly created Control
 	 * @since 3.6
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.

@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * <p>
  * This class may be instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class LinearUndoViolationUserApprover extends
@@ -48,7 +48,7 @@ public final class LinearUndoViolationUserApprover extends
 	/**
 	 * Create a LinearUndoViolationUserApprover associated with the specified
 	 * workbench part.
-	 * 
+	 *
 	 * @param context
 	 *            the undo context with the linear undo violation
 	 * @param part
@@ -63,7 +63,7 @@ public final class LinearUndoViolationUserApprover extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.LinearUndoViolationDetector#allowLinearRedoViolation(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IUndoContext,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
@@ -116,7 +116,7 @@ public final class LinearUndoViolationUserApprover extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.LinearUndoViolationDetector#allowLinearUndoViolation(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IUndoContext,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,

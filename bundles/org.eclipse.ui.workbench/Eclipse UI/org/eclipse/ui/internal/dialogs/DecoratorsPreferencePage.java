@@ -87,7 +87,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         return mainComposite;
     }
 
-    /** 
+    /**
      * Creates the widgets for the list of decorators.
      */
     private void createDecoratorsArea(Composite mainComposite) {
@@ -180,7 +180,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         });
     }
 
-    /** 
+    /**
      * Creates the widgets for the description.
      */
     private void createDescriptionArea(Composite mainComposite) {
@@ -195,7 +195,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         textComposite.setFont(mainFont);
 
         Label descriptionLabel = new Label(textComposite, SWT.NONE);
-        descriptionLabel.setText(WorkbenchMessages.DecoratorsPreferencePage_description); 
+        descriptionLabel.setText(WorkbenchMessages.DecoratorsPreferencePage_description);
         descriptionLabel.setFont(mainFont);
 
         descriptionText = new Text(textComposite, SWT.MULTI | SWT.WRAP
@@ -298,7 +298,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
 
     /**
      * Get the DecoratorManager being used for this page.
-     * 
+     *
      * @return the decorator manager
      */
     private DecoratorManager getDecoratorManager() {

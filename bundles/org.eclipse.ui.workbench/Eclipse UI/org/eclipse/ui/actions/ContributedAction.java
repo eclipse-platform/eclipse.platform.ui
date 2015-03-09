@@ -53,7 +53,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * <b>Note:</b> Clients may instantiate.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public final class ContributedAction extends CommandAction {
@@ -67,7 +67,7 @@ public final class ContributedAction extends CommandAction {
 
 	/**
 	 * Create an action that can call a command.
-	 * 
+	 *
 	 * @param locator
 	 *            The appropriate service locator to use. If you use a part site
 	 *            as your locator, this action will be tied to your part.

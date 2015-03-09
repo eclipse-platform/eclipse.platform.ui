@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * This interface is typically implemented by the workbench itself although
  * extension developers may wish to implement it as well for their own
  * extensions.
- * 
+ *
  * @since 3.4
  */
 public interface IComparableContribution extends IAdaptable {
@@ -31,7 +31,7 @@ public interface IComparableContribution extends IAdaptable {
 	/**
 	 * Return the priority of this contribution. Lower values constitute higher
 	 * priorities.
-	 * 
+	 *
 	 * @return the priority
 	 */
 	int getPriority();
@@ -39,7 +39,7 @@ public interface IComparableContribution extends IAdaptable {
 	/**
 	 * Return the human readable label for this contribution. Must not be
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @return the label for this contribution
 	 */
 	String getLabel();

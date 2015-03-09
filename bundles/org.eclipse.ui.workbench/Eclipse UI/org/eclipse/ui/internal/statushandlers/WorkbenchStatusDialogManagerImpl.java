@@ -49,7 +49,7 @@ import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
  * <p>
  * Dialog state variables are defined in {@link IStatusDialogConstants}.
  * </p>
- * 
+ *
  * @since 3.6
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -81,7 +81,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Returns whether the given StatusAdapter object should be displayed.
-	 * 
+	 *
 	 * @param statusAdapter
 	 *            a status object
 	 * @return <code>true</code> if the given status should be displayed, and
@@ -111,7 +111,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Creates workbench status dialog.
-	 * 
+	 *
 	 * @param displayMask
 	 *            the mask used to filter the handled <code>StatusAdapter</code>
 	 *            objects, the mask is a logical sum of status severities
@@ -129,7 +129,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * This method creates the initial state of the dialog.
-	 * 
+	 *
 	 * @param dialogState
 	 *            - the map to fill in.
 	 * @param displayMask
@@ -182,7 +182,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * All not shown status adapters will be displayed as soon as the dialog
 	 * shows up.
 	 * </p>
-	 * 
+	 *
 	 * @param modal
 	 *            <code>true</code> if the dialog should be modal,
 	 *            <code>false</code> otherwise
@@ -234,7 +234,7 @@ public class WorkbenchStatusDialogManagerImpl {
 			WorkbenchPlugin.log(statusAdapter.getStatus());
 			return;
 		}
-		
+
 		// if statusAdapter does not match the mask, ignore it
 		if (!shouldAccept(statusAdapter)) {
 			return;
@@ -254,7 +254,7 @@ public class WorkbenchStatusDialogManagerImpl {
 						INotificationTypes.HANDLED,
 						(StatusAdapter[]) getErrors()
 								.toArray(new StatusAdapter[] {}));
-				
+
 				if (dialog == null) {
 					setSelectedStatusAdapter(statusAdapter);
 					dialog = new InternalDialog(dialogState, shouldBeModal());
@@ -290,7 +290,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Gets a collection of status adapters that were passed to the dialog.
-	 * 
+	 *
 	 * @return collection of {@link StatusAdapter} objects
 	 */
 	public Collection getStatusAdapters() {
@@ -299,7 +299,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Opens status dialog with particular statusAdapter selected.
-	 * 
+	 *
 	 * @param modal
 	 *            decides if window is modal or not.
 	 * @param statusAdapter
@@ -324,7 +324,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Sets current status adapter.
-	 * 
+	 *
 	 * @param statusAdapter
 	 *            The statusAdapter to set.
 	 */
@@ -337,14 +337,14 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * Sets new label provider for the status list. This label provider is used
 	 * also to display the second message on the dialog if only one status is
 	 * available.
-	 * 
+	 *
 	 * <p>
 	 * This method is no longer recommended to use as it is impossible to
 	 * achieve consistent behavior after changing only one label provider.
 	 * </p>
-	 * 
-	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended. 
-	 * 
+	 *
+	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended.
+	 *
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
 	 */
@@ -359,7 +359,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * Decides if dialog should be modal. Dialog will be modal if any of the
 	 * statuses contained by StatusAdapters had been reported with
 	 * {@link StatusManager#BLOCK} flag.
-	 * 
+	 *
 	 * @return true if any StatusHandler should be displayed in modal window
 	 */
 	public boolean shouldBeModal() {
@@ -381,7 +381,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	/**
 	 * Checks if the user should be prompted immediately about
 	 * {@link StatusAdapter}
-	 * 
+	 *
 	 * @param statusAdapter
 	 *            to be checked.
 	 * @return true if the statusAdapter should be prompted, false otherwise.
@@ -399,9 +399,9 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Gets the shell of the managed dialog.
-	 * 
+	 *
 	 * @return Shell or null
-	 * 
+	 *
 	 */
 	public Shell getShell() {
 		if (this.dialog == null)
@@ -427,7 +427,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * This method should not be used together with
 	 * {@link #setStatusListLabelProvider(ITableLabelProvider)}.
 	 * </p>
-	 * 
+	 *
 	 * @param decorator
 	 *            - the decorator to be set. Only
 	 *            {@link ILabelDecorator#decorateText(String, Object)} method
@@ -444,7 +444,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * This method sets various properties on the manager.
-	 * 
+	 *
 	 * @param key
 	 *            a key of the property to be set.
 	 * @param value
@@ -459,7 +459,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * This method gets various dialog properties.
-	 * 
+	 *
 	 * @param key
 	 *            a key of the property to be get.
 	 * @return a value of the property. The value will be of type specified by
@@ -481,7 +481,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with
 	 * severity {@link IStatus#OK}, does not display the link to the error log,
 	 * does not display the link to the support area but always opens it.
-	 * 
+	 *
 	 * @see ErrorDialog
 	 * @since 3.6
 	 */
@@ -494,7 +494,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * This method is public for testing purposes only.
-	 * 
+	 *
 	 * @return Returns the dialog.
 	 */
 	public InternalDialog getDialog() {
@@ -503,7 +503,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * This method is public for testing purposes only.
-	 * 
+	 *
 	 * @param dialog
 	 *            The dialog to set.
 	 */
@@ -513,7 +513,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * This method is public for testing purposes only.
-	 * 
+	 *
 	 * @return dialog state.
 	 */
 	public Map getDialogState() {
@@ -522,7 +522,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Utility method to access StatusAdapters
-	 * 
+	 *
 	 * @return Collection of StatusAdapters
 	 */
 	private Collection getErrors() {
@@ -532,7 +532,7 @@ public class WorkbenchStatusDialogManagerImpl {
 
 	/**
 	 * Utility method to access StatusAdapter modal flag.
-	 * 
+	 *
 	 * @return Collection of StatusAdapter modal flag.
 	 */
 	private Map getModals() {

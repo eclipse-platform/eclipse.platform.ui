@@ -20,7 +20,7 @@ package org.eclipse.ui.commands;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see CategoryEvent
  * @see org.eclipse.ui.commands.ICategory#addCategoryListener(ICategoryListener)
@@ -36,7 +36,7 @@ public interface ICategoryListener {
      * Notifies that one or more attributes of an instance of
      * <code>ICategory</code> have changed. Specific details are described in
      * the <code>CategoryEvent</code>.
-     * 
+     *
      * @param categoryEvent
      *            the category event. Guaranteed not to be <code>null</code>.
      */

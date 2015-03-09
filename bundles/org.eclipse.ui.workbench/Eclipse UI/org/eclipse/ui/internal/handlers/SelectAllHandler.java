@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ExceptionHandler;
  * all to work even in some cases where the "selectAll" method does not exist.
  * This handler attempts to use "getTextLimit" and "setSelection" to do select
  * all. If this doesn't work, then it finally fails.
- * 
+ *
  * @since 3.0
  */
 public class SelectAllHandler extends WidgetMethodHandler {
@@ -47,12 +47,12 @@ public class SelectAllHandler extends WidgetMethodHandler {
 			try {
 				final Control focusControl = Display.getCurrent()
 						.getFocusControl();
-				
+
 				final int numParams = methodToExecute.getParameterTypes().length;
 
 				if ((focusControl instanceof Composite)
                         && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
-					
+
 					// we only support selectAll for swing components
 					if (numParams != 0) {
 						return null;
@@ -179,7 +179,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 
 	/**
 	 * Looks up the select all method on the given focus control.
-	 * 
+	 *
 	 * @return The method on the focus control; <code>null</code> if none.
 	 */
 	@Override

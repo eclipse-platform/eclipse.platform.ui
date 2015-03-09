@@ -18,14 +18,14 @@ import org.eclipse.ui.internal.dialogs.AboutDialog;
 
 /**
  * Creates an About dialog and opens it.
- * 
+ *
  * @since 3.3
  */
 public class AboutHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override

@@ -41,7 +41,7 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Create a new instance of <code>LightweightActionDescriptor</code>.
-     * 
+     *
      * @param actionElement the configuration element
      */
     public LightweightActionDescriptor(IConfigurationElement actionElement) {
@@ -75,7 +75,7 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's description.
-     * 
+     *
      * @return the description
      */
     public String getDescription() {
@@ -84,7 +84,7 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's id.
-     * 
+     *
      * @return the id
      */
     public String getId() {
@@ -93,7 +93,7 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's image descriptor.
-     * 
+     *
      * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptor() {
@@ -113,7 +113,7 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's label.
-     * 
+     *
      * @return the label
      */
     public String getLabel() {

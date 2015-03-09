@@ -23,7 +23,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
  * An implementation of <code>WorkbenchWindowAdvisor</code> that
  * calls back to the 3.0 legacy methods on <code>WorkbenchAdvisor</code>
  * for backwards compatibility.
- * 
+ *
  * @since 3.1
  */
 public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
@@ -32,7 +32,7 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
 
     /**
      * Creates a new compatibility workbench window advisor.
-     * 
+     *
      * @param wbAdvisor the workbench advisor
      * @param windowConfigurer the window configurer
      */
@@ -50,7 +50,7 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
 	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
         return new CompatibilityActionBarAdvisor(wbAdvisor, configurer);
     }
-    
+
     @Override
 	public void postWindowRestore() throws WorkbenchException {
         wbAdvisor.postWindowRestore(getWindowConfigurer());
@@ -94,5 +94,5 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
         wbAdvisor.createWindowContents(getWindowConfigurer(), shell);
     }
 
- 
+
 }

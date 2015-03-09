@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  * <p>
  * This class is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDecoratorManager extends IDelayedLabelDecorator{
@@ -34,7 +34,7 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
     /**
      * Returns the label decorator which applies the decorations from all
      * enabled decorators.
-     * Views which allow decoration of their elements should use this 
+     * Views which allow decoration of their elements should use this
      * label decorator.
      * This decorator should be disposed when it is no longer referenced
      * by the caller or the images created within it may be kept until
@@ -50,7 +50,7 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
      * Return the IBaseLabelProvider that corresponds to the
      * decoratorId. This can handle both lightweight and full
      * decorators.
-     * 
+     *
      * @param decoratorId the decorator id
      * @return the label provider
      */
@@ -62,19 +62,19 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
      * <code>null</code> for lightweight decorators. It is recommended that
      * getBaseLabelProvider is used instead so that lightweight decorators are
      * also checked.
-     * 
+     *
      * @param decoratorId the decorator id
      * @return the label decorator
      */
     ILabelDecorator getLabelDecorator(String decoratorId);
 
     /**
-     * Returns the lightweight label decorator instance for the specified 
+     * Returns the lightweight label decorator instance for the specified
      * decorator id if it is enabled. Otherwise returns <code>null</code>.
      * Returns <code>null</code> for heavyweight decorators.
-     * Use <code>getLabelDecorator</code> instead for heavyweight 
+     * Use <code>getLabelDecorator</code> instead for heavyweight
      * decorators.
-     * 
+     *
      * @param decoratorId the decorator id
      * @return the lightweight label decorator
      * @deprecated use getBaseLabelProvider(String) instead.
@@ -84,7 +84,7 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
 
     /**
      * Returns whether the specified decorator is enabled.
-     * 
+     *
      * @param decoratorId the decorator id
      * @return <code>true</code> if the decorator is enabled, or
      *   <code>false</code> if not
@@ -93,7 +93,7 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
 
     /**
      * Sets whether the specified decorator is enabled.
-     * 
+     *
      * @param decoratorId the decorator id
      * @param enabled <code>true</code> to enable the decorator, or
      * <code>false</code> to disable it
@@ -107,7 +107,7 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
      * as the argument to the event. Otherwise do nothing.
      * <p> This method must be called from the user interface thread as widget
      * updates may result. </p>
-     * 
+     *
      * @param decoratorId the decorator id
      */
     void update(String decoratorId);

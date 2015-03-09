@@ -38,7 +38,7 @@ import org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard;
  * This allows the extensions to be made available for use by RCP applications
  * without exposing their concrete implementation classes.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class ExtensionFactory implements IExecutableExtensionFactory,
@@ -76,7 +76,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
 
 	/**
 	 * Factory ID for the new (and improved) keys preference page.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String NEW_KEYS_PREFERENCE_PAGE = "newKeysPreferencePage"; //$NON-NLS-1$
@@ -113,7 +113,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
 
 	/**
 	 * Factory ID for the show in contribution.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String SHOW_IN_CONTRIBUTION = "showInContribution"; //$NON-NLS-1$

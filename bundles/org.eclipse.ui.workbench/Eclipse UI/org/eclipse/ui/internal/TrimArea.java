@@ -30,13 +30,13 @@ import org.eclipse.swt.graphics.Rectangle;
  * stability of the API (except that the javadoc will get better...;-).
  * </p>
  * <p>
- * 
+ *
  * @see WorkbenchLayout
  * @see TrimLayoutData
  *      </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class TrimArea {
 

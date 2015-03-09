@@ -37,7 +37,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * This class is eventually intended to exist in
  * <code>org.eclipse.jface.commands</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class CommandImageManager extends EventManager {
@@ -70,7 +70,7 @@ public final class CommandImageManager extends EventManager {
 	 * Adds a listener to this command image manager. The listener will be
 	 * notified when the set of image bindings changes. This can be used to
 	 * track the global appearance and disappearance of image bindings.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 */
@@ -81,7 +81,7 @@ public final class CommandImageManager extends EventManager {
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to which the image should be
 	 *            bound; must not be <code>null</code>.
@@ -101,7 +101,7 @@ public final class CommandImageManager extends EventManager {
 
 	/**
 	 * Binds a particular image path to a command id, type and style triple
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to which the image should be
 	 *            bound; must not be <code>null</code>.
@@ -167,7 +167,7 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Notifies all of the listeners to this manager that the image bindings
 	 * have changed.
-	 * 
+	 *
 	 * @param event
 	 *            The event to send to all of the listeners; must not be
 	 *            <code>null</code>.
@@ -188,7 +188,7 @@ public final class CommandImageManager extends EventManager {
 	 * Generates a style tag that is not currently used for the given command.
 	 * This can be used by applications trying to create a unique style for a
 	 * new set of images.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command for which a unique style is
 	 *            required; must not be <code>null</code>.
@@ -227,7 +227,7 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Retrieves the default image associated with the given command in the
 	 * default style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return An image appropriate for the given command; never
@@ -240,7 +240,7 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Retrieves the image of the given type associated with the given command
 	 * in the default style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @param type
@@ -257,7 +257,7 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Retrieves the image of the given type associated with the given command
 	 * in the given style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @param type
@@ -315,7 +315,7 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Retrieves the default image associated with the given command in the
 	 * given style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @param style
@@ -330,7 +330,7 @@ public final class CommandImageManager extends EventManager {
 
 	/**
 	 * Removes a listener from this command image manager.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
 	 */

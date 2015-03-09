@@ -16,7 +16,7 @@ package org.eclipse.ui.views;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.views.IViewRegistry
  * @see org.eclipse.ui.views.IViewDescriptor
  * @since 3.1
@@ -25,30 +25,30 @@ package org.eclipse.ui.views;
 public interface IStickyViewDescriptor {
     /**
      * Return the id of the view to be made sticky.
-     * 
+     *
      * @return the id of the view to be made sticky
      */
     public String getId();
 
     /**
-     * Return the location of this sticky view.  Must be one of 
-     * <code>IPageLayout.LEFT</code>, <code>IPageLayout.RIGHT</code>, 
+     * Return the location of this sticky view.  Must be one of
+     * <code>IPageLayout.LEFT</code>, <code>IPageLayout.RIGHT</code>,
      * <code>IPageLayout.TOP</code>, or <code>IPageLayout.BOTTOM</code>.
-     * 
+     *
      * @return the location constant
      */
     public int getLocation();
 
     /**
      * Return whether this view should be closeable.
-     * 
+     *
      * @return whether this view should be closeeable
      */
     public boolean isCloseable();
 
     /**
      * Return whether this view should be moveable.
-     * 
+     *
      * @return whether this view should be moveable
      */
     public boolean isMoveable();

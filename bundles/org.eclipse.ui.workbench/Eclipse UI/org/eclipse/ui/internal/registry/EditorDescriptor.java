@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     James Blackburn - Bug 256316 getImageDescriptor() is not thread safe 
+ *     James Blackburn - Bug 256316 getImageDescriptor() is not thread safe
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -104,7 +104,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         setConfigurationElement(element);
     }
 
-    
+
 
 	/**
 	 * Create a new instance of an editor descriptor. Limited
@@ -118,7 +118,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
 	/**
      * Creates a descriptor for an external program.
-     * 
+     *
      * @param filename the external editor full path and filename
      * @return the editor descriptor
      */
@@ -172,7 +172,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Create the editor action bar contributor for editors of this type.
-     * 
+     *
      * @return the action bar contributor, or <code>null</code>
      */
     public IEditorActionBarContributor createActionBarContributor() {
@@ -205,7 +205,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Return the editor class name.
-     * 
+     *
      * @return the class name
      */
     public String getClassName() {
@@ -218,27 +218,27 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Return the configuration element used to define this editor, or <code>null</code>.
-     * 
+     *
      * @return the element or null
      */
     public IConfigurationElement getConfigurationElement() {
         return configurationElement;
     }
-    
+
     /**
      * Create an editor part based on this descriptor.
-     * 
+     *
      * @return the editor part
      * @throws CoreException thrown if there is an issue creating the editor
      */
-    public IEditorPart createEditor() throws CoreException {        
+    public IEditorPart createEditor() throws CoreException {
         Object extension = WorkbenchPlugin.createExtension(getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
         return ((InterceptContributions)Tweaklets.get(InterceptContributions.KEY)).tweakEditor(extension);
     }
 
     /**
      * Return the file name of the command to execute for this editor.
-     * 
+     *
      * @return the file name to execute
      */
     public String getFileName() {
@@ -253,24 +253,24 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Return the id for this editor.
-     * 
+     *
      * @return the id
      */
     @Override
-	public String getId() {        
+	public String getId() {
         if (program == null) {
         	if (configurationElement == null) {
         		return Util.safeString(id);
         	}
         	return Util.safeString(configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
-        	
+
         }
         return Util.safeString(program.getName());
     }
 
     /**
      * Return the image descriptor describing this editor.
-     * 
+     *
      * @return the image descriptor
      */
     @Override
@@ -280,7 +280,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     	synchronized (imageDescLock) {
 	    	if (!testImage)
 	            return imageDesc;
-	    	
+
 			if (imageDesc == null) {
 				String imageFileName = getImageFilename();
 				String command = getFileName();
@@ -297,8 +297,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 		        return imageDesc;
 			}
     	}
-    	
-		// Verifies that the image descriptor generates an image.  If not, the descriptor is 
+
+		// Verifies that the image descriptor generates an image.  If not, the descriptor is
     	// replaced with the default image.
     	// We must create the image without holding any locks, since there is a potential for deadlock
     	// on Linux due to SWT's implementation of Image. See bugs 265028 and 256316 for details.
@@ -308,7 +308,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 		else
 		    img.dispose();
 		// <----- End of must-not-lock part
-		
+
 		// reenter synchronized block
 		synchronized (imageDescLock) {
 			// if another thread has set the image description, use it
@@ -333,7 +333,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * The name of the image describing this editor.
-     * 
+     *
      * @return the image file name
      */
     public String getImageFilename() {
@@ -345,14 +345,14 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Return the user printable label for this editor.
-     * 
+     *
      * @return the label
      */
     @Override
 	public String getLabel() {
         if (program == null) {
         	if (configurationElement == null) {
-        		return editorName;        		
+        		return editorName;
         	}
         	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
         }
@@ -361,7 +361,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Returns the class name of the launcher.
-     * 
+     *
      * @return the launcher class name
      */
     public String getLauncher() {
@@ -373,7 +373,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Return the contributing plugin id.
-     * 
+     *
      * @return the contributing plugin id
      */
     public String getPluginID() {
@@ -417,7 +417,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Load the object properties from a memento.
-     * 
+     *
      * @return <code>true</code> if the values are valid, <code>false</code> otherwise
      */
     protected boolean loadValues(IMemento memento) {
@@ -434,7 +434,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         if (openModeInt != null) {
             openMode = openModeInt.intValue();
         } else {
-            // legacy: handle the older attribute names, needed to allow reading of pre-3.0-RCP workspaces 
+            // legacy: handle the older attribute names, needed to allow reading of pre-3.0-RCP workspaces
             boolean internal = new Boolean(memento
                     .getString(IWorkbenchConstants.TAG_INTERNAL))
                     .booleanValue();
@@ -505,7 +505,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
             // open using a launcer
         	return EditorDescriptor.OPEN_EXTERNAL;
         } else if (getFileName() != null) {
-            // open using an external editor 	
+            // open using an external editor
             return EditorDescriptor.OPEN_EXTERNAL;
         } else if (getPluginId() != null) {
         	// open using an internal editor
@@ -573,9 +573,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     /**
      * Sets the open mode of this editor descriptor.
-     * 
+     *
      * @param mode the open mode
-     * 
+     *
      * @issue this method is public as a temporary fix for bug 47600
      */
     public void setOpenMode(int mode) {
@@ -644,6 +644,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         }
         return matchingStrategy;
     }
-    
-    
+
+
 }

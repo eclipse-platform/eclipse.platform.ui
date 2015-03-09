@@ -13,7 +13,7 @@ package org.eclipse.ui.internal;
 
 /**
  * Preference constants for the heap status.
- * 
+ *
  * @since 3.1
  */
 public interface IHeapStatusConstants {

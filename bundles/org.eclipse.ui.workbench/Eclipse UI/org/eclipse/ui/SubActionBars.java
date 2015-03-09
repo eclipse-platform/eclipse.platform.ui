@@ -105,7 +105,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Construct a new <code>SubActionBars</code> object. The service locator
 	 * will simply be the service locator of the parent.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent of this action bar; must not be <code>null</code>.
 	 */
@@ -115,13 +115,13 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Constructs a new instance of <code>SubActionBars</code>.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent of this action bar; must not be <code>null</code>.
 	 * @param serviceLocator
 	 *            The service locator for this action bar; should not be
 	 *            <code>null</code>.
-	 *            
+	 *
 	 * @since 3.2
 	 */
 	public SubActionBars(final IActionBars parent,
@@ -157,7 +157,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Adds a property change listener. Has no effect if an identical listener
 	 * is already registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a property change listener
 	 */
@@ -209,7 +209,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Returns a new sub menu manager.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent menu manager
 	 * @return the menu manager
@@ -220,7 +220,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Returns a new sub toolbar manager.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent toolbar manager
 	 * @return the tool bar manager
@@ -283,10 +283,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Notifies any property change listeners that a property has changed. Only
 	 * listeners registered at the time this method is called are notified.
-	 * 
+	 *
 	 * @param event
 	 *            the property change event
-	 * 
+	 *
 	 * @see IPropertyChangeListener#propertyChange
 	 */
 	protected void firePropertyChange(PropertyChangeEvent event) {
@@ -305,7 +305,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Get the handler for a window action.
-	 * 
+	 *
 	 * @param actionID
 	 *            an action ID declared in the registry
 	 * @return an action handler which implements the action ID, or
@@ -330,7 +330,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Returns the abstract menu manager. If items are added or removed from the
 	 * manager be sure to call <code>updateActionBars</code>.
-	 * 
+	 *
 	 * @return the menu manager
 	 */
 	@Override
@@ -351,10 +351,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Answer the service locator for this action bar.
-	 * 
-	 * @return an <code>IServiceLocater</code> or the parents if 
+	 *
+	 * @return an <code>IServiceLocater</code> or the parents if
 	 *     the receiver does not have one
-	 *     
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -369,7 +369,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Returns the status line manager. If items are added or removed from the
 	 * manager be sure to call <code>updateActionBars</code>.
-	 * 
+	 *
 	 * @return the status line manager
 	 */
 	@Override
@@ -385,7 +385,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Returns the tool bar manager. If items are added or removed from the
 	 * manager be sure to call <code>updateActionBars</code>.
-	 * 
+	 *
 	 * @return the tool bar manager
 	 */
 	@Override
@@ -427,7 +427,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Removes the given property change listener. Has no effect if an identical
 	 * listener is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a property change listener
 	 */
@@ -455,7 +455,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Add a handler for a window action.
-	 * 
+	 *
 	 * @param actionID
 	 *            an action ID declared in the registry
 	 * @param handler
@@ -474,7 +474,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 					.log("Cannot set the global action handler for a null action id"); //$NON-NLS-1$
 			return;
 		}
-		
+
 		if (handler instanceof CommandLegacyActionWrapper) {
         	// this is a registration of a fake action for an already
 			// registered handler
@@ -482,13 +482,13 @@ public class SubActionBars extends EventManager implements IActionBars {
 					.log("Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
 			return;
 		}
-		
+
 		if (handler instanceof CommandAction) {
 			// we unfortunately had to allow these out into the wild, but they
 			// still must not feed back into the system
 			return;
 		}
-		
+
 		if (handler != null) {
 			// Update the action handlers.
 			if (actionHandlers == null) {
@@ -600,10 +600,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	/**
 	 * Sets the service locator for this action bar.
-	 * 
+	 *
 	 * @param locator
 	 *            The new locator; must not be <code>null</code>.
-	 *            
+	 *
 	 * @since 3.2
 	 */
 	protected final void setServiceLocator(final IServiceLocator locator) {

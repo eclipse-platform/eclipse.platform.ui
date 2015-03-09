@@ -20,7 +20,7 @@ import java.util.Map;
  * this interface, and register themselves as listeners to the
  * <code>ISourceProvider</code> instances that are registered with them.
  * </p>
- * 
+ *
  * @since 3.1
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.ISourceProvider
@@ -31,7 +31,7 @@ public interface ISourceProviderListener {
 	 * Handles a change to multiple sources. The source priority should be a bit
 	 * mask indicating the sources. The map will be used to construct the
 	 * variables on an <code>IEvaluationContext</code>
-	 * 
+	 *
 	 * @param sourcePriority
 	 *            A bit mask of all the source priorities that have changed.
 	 * @param sourceValuesByName
@@ -50,7 +50,7 @@ public interface ISourceProviderListener {
 	 * Handles a change to one source. The source priority should indicate the
 	 * source, and the name-value pair will be used to create an
 	 * <code>IEvaluationContext</code> with a single variable.
-	 * 
+	 *
 	 * @param sourcePriority
 	 *            A bit mask of all the source priorities that have changed.
 	 * @param sourceName

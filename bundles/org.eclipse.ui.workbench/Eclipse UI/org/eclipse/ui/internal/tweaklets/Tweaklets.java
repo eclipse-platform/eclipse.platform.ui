@@ -23,10 +23,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class Tweaklets {
-	
+
 	public static class TweakKey {
 		Class tweakClass;
 
@@ -76,7 +76,7 @@ public class Tweaklets {
 	public static void setDefault(TweakKey definition, Object implementation) {
 		defaults.put(definition, implementation);
 	}
-	
+
 	public static Object get(TweakKey definition) {
 		Object result = tweaklets.get(definition);
 		if (result == null) {

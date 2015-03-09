@@ -25,55 +25,55 @@ import org.eclipse.jface.action.IStatusLineManager;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.application.WorkbenchAdvisor#fillActionBars
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IActionBarConfigurer {
-    
+
     /**
      * Returns the workbench window configurer for the window
-     * containing this configurer's action bars. 
-     * 
+     * containing this configurer's action bars.
+     *
      * @return the workbench window configurer
      * @since 3.1
      */
     public IWorkbenchWindowConfigurer getWindowConfigurer();
-    
-    
+
+
     /**
      * Returns the menu manager for the main menu bar of a workbench window.
-     * 
+     *
      * @return the menu manager
      */
     public IMenuManager getMenuManager();
 
     /**
      * Returns the status line manager of a workbench window.
-     * 
+     *
      * @return the status line manager
      */
     public IStatusLineManager getStatusLineManager();
 
     /**
      * Returns the cool bar manager of the workbench window.
-     * 
+     *
      * @return the cool bar manager
      */
     public ICoolBarManager getCoolBarManager();
-    
+
     /**
      * Register the action as a global action with a workbench
      * window.
      * <p>
-     * For a workbench retarget action 
+     * For a workbench retarget action
      * ({@link org.eclipse.ui.actions.RetargetAction RetargetAction})
      * to work, it must be registered.
      * You should also register actions that will participate
      * in custom key bindings.
      * </p>
-     *  
+     *
      * @param action the global action
      * @see org.eclipse.ui.actions.RetargetAction
      */

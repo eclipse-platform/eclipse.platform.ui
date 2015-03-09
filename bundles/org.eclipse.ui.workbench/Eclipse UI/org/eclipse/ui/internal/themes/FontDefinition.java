@@ -36,7 +36,7 @@ public class FontDefinition extends ThemeElementDefinition implements
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param fontName The name display
      * ed in the preference page.
      * @param uniqueId The id used to refer to this definition.
@@ -54,9 +54,9 @@ public class FontDefinition extends ThemeElementDefinition implements
 
     /**
      * Create a new instance of the receiver.
-     * 
-     * @param originalFont the original definition.  This will be used to populate 
-     * all fields except defaultsTo and value.  defaultsTo will always be 
+     *
+     * @param originalFont the original definition.  This will be used to populate
+     * all fields except defaultsTo and value.  defaultsTo will always be
      * <code>null</code>.
      * @param datas the FontData[] value
      */
@@ -79,7 +79,7 @@ public class FontDefinition extends ThemeElementDefinition implements
 
     /**
      * Returns the value.
-     * 
+     *
      * @return FontData []
      */
     @Override
@@ -110,7 +110,7 @@ public class FontDefinition extends ThemeElementDefinition implements
 	public boolean isEditable() {
         return isEditable;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -121,7 +121,7 @@ public class FontDefinition extends ThemeElementDefinition implements
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -132,7 +132,7 @@ public class FontDefinition extends ThemeElementDefinition implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#setData(java
 	 * .lang.Object)

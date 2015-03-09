@@ -36,7 +36,7 @@ import org.eclipse.ui.ISources;
  * <p>
  * TODO Move to "org.eclipse.ui" and resolve the above issue.
  * </p>
- * 
+ *
  * @since 3.2
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.contexts.IContextService
@@ -52,7 +52,7 @@ public final class SourcePriorityNameMapping implements ISources {
 
 	/**
 	 * The value returned if there is source priority for the given name
-	 * 
+	 *
 	 * @see SourcePriorityNameMapping#getMapping(String)
 	 */
 	public static final int NO_SOURCE_PRIORITY = 0;
@@ -96,7 +96,7 @@ public final class SourcePriorityNameMapping implements ISources {
 	 * Adds a mapping between a source name and a source priority. This method
 	 * also cleans up any existing mappings using the same name or priority.
 	 * There is a one-to-one relationship between name and priority.
-	 * 
+	 *
 	 * @param sourceName
 	 *            The name of the variable as it would appear in an XML
 	 *            expression; must not be <code>null</code>.
@@ -127,7 +127,7 @@ public final class SourcePriorityNameMapping implements ISources {
 	 * {@link ISources#ACTIVE_CURRENT_SELECTION}. The source priority is used
 	 * to minimize recomputations of the expression, and it can also be used for
 	 * conflict resolution.
-	 * 
+	 *
 	 * @param expression
 	 *            The expression for which the source priority should be
 	 *            computed; may be <code>null</code>.
@@ -160,7 +160,7 @@ public final class SourcePriorityNameMapping implements ISources {
 
 	/**
 	 * Gets the priority for the source with the given name.
-	 * 
+	 *
 	 * @param sourceName
 	 *            The name of the variable as it would appear in an XML
 	 *            expression; should not be <code>null</code>.

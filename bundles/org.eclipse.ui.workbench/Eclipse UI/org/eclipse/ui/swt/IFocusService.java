@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Control;
  * control contributed to the trim. For example:
  * </p>
  * <p>
- * 
+ *
  * <pre>
  * &lt;handler
  *      class=&quot;org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste&quot;
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Control;
  *   &lt;/activeWhen&gt;
  * &lt;/handler&gt;
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * This service can be acquired from your service locator:
@@ -50,9 +50,9 @@ import org.eclipse.swt.widgets.Control;
  * <li>This service is available globally.</li>
  * </ul>
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @see org.eclipse.ui.ISources
  * @since 3.3
  */
@@ -95,7 +95,7 @@ public interface IFocusService {
 	 * <p>
 	 * We will remove ourselves as a listener when the Control is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param control
 	 *            the control. Must not be <code>null</code>. If the control
 	 *            is already registered with this service this call is a no-op.
@@ -107,7 +107,7 @@ public interface IFocusService {
 	/**
 	 * No longer track focus events for this control. Use this method when the
 	 * control should no longer be tracked, but is not disposed.
-	 * 
+	 *
 	 * @param control
 	 *            the control registered with the service. Must not be
 	 *            <code>null</code>.

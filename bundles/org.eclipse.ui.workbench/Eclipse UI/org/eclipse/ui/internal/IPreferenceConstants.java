@@ -126,18 +126,18 @@ public interface IPreferenceConstants {
      */
     public static final String EDITORLIST_DISPLAY_FULL_NAME = "EDITORLIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
 
-    
+
     /**
-     * Workbench preference id for determining whether the user has chosen to 
+     * Workbench preference id for determining whether the user has chosen to
      * override some of the settings in the current presentation.
      * <p>
      * The default value for this preference is: <code>false</code> (prompt)
      * </p>
-     * 
+     *
      * @since 3.2
      */
     public static final String OVERRIDE_PRESENTATION = "overridepresentation"; //$//$NON-NLS-1$
-    
+
     /**
      * <p>
      * The key for the preference indicating which tab is selected in the keys
@@ -148,7 +148,7 @@ public interface IPreferenceConstants {
      * This preference is an <code>int</code> value. The default value is
      * <code>0</code>.
      * </p>
-     * 
+     *
      * @since 3.1
      */
     public static final String KEYS_PREFERENCE_SELECTED_TAB = "KEYS_PREFERENCE_SELECTED_TAB"; //$NON-NLS-1$
@@ -164,7 +164,7 @@ public interface IPreferenceConstants {
      * This preference is a <code>boolean</code> value. The default value is
      * <code>false</code>.
      * </p>
-     * 
+     *
      * @since 3.0
      */
     public static final String MULTI_KEY_ASSIST = "MULTI_KEY_ASSIST"; //$NON-NLS-1$
@@ -180,7 +180,7 @@ public interface IPreferenceConstants {
      * This preference is an <code>int</code> value. The default value is
      * <code>1000</code>.
      * </p>
-     * 
+     *
      * @since 3.0
      */
     public static final String MULTI_KEY_ASSIST_TIME = "MULTI_KEY_ASSIST_TIME"; //$NON-NLS-1$
@@ -188,11 +188,11 @@ public interface IPreferenceConstants {
     /**
      * Workbench preference to use the new IPersistableEditor interface
      * throughout the workbench new editor/open editor calls.
-     * 
+     *
      * @since 3.3
      */
     public static String USE_IPERSISTABLE_EDITORS = "USE_IPERSISTABLE_EDITORS"; //$NON-NLS-1$
-    
+
     /**
      * Preference to show user jobs in a dialog.
      */
@@ -207,21 +207,21 @@ public interface IPreferenceConstants {
      * <p>
      * The default value for this preference is: <code>true</code> (prompt)
      * </p>
-     * 
+     *
      * @since 3.0
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
 
 	/**
 	 * Preference to show/hide the CoolBar.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String COOLBAR_VISIBLE = "coolBarVisible"; //$NON-NLS-1$
 
 	/**
 	 * Preference to show/hide the PerspectiveBar.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String PERSPECTIVEBAR_VISIBLE = "perspectiveBarVisible"; //$NON-NLS-1$
@@ -229,13 +229,13 @@ public interface IPreferenceConstants {
     /**
 	 * Preference that restores the 3.2 startup threading behavior. This
 	 * essentially means that there will be no restrictions on what runnables
-	 * will be processed via the UI synchronizer.  
-	 * 
+	 * will be processed via the UI synchronizer.
+	 *
 	 * <p>
 	 * This preference will likely disappear in 3.5 in favor of a proper
 	 * solution to bug 219913.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String USE_32_THREADING = "use32Threading"; //$NON-NLS-1$
@@ -244,7 +244,7 @@ public interface IPreferenceConstants {
 	 * Preference value that specifies the time interval in minutes between
 	 * workbench auto-saves. If the value is zero it disables workbench
 	 * auto-save.
-	 * 
+	 *
 	 * @since 3.105
 	 */
 	public static final String WORKBENCH_SAVE_INTERVAL = "WORKBENCH_SAVE_INTERVAL"; //$NON-NLS-1$

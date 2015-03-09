@@ -35,28 +35,28 @@ import org.eclipse.ui.services.IEvaluationService;
  * <p>
  * A static class for accessing the registry.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the command elements in the indexed array.
-	 * 
+	 *
 	 * @see HandlerPersistence#read()
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 0;
 
 	/**
 	 * The index of the command elements in the indexed array.
-	 * 
+	 *
 	 * @see HandlerPersistence#read()
 	 */
 	private static final int INDEX_HANDLER_DEFINITIONS = 1;
 
 	/**
 	 * The index of the handler submissions in the indexed array.
-	 * 
+	 *
 	 * @see HandlerPersistence#read()
 	 */
 	private static final int INDEX_HANDLER_SUBMISSIONS = 2;
@@ -78,7 +78,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * Constructs a new instance of <code>HandlerPersistence</code>.
-	 * 
+	 *
 	 * @param handlerService
 	 *            The handler service with which the handlers should be
 	 *            registered; must not be <code>null</code>.
@@ -95,7 +95,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	/**
 	 * Deactivates all of the activations made by this class, and then clears
 	 * the collection. This should be called before every read.
-	 * 
+	 *
 	 * @param handlerService
 	 *            The service handling the activations; must not be
 	 *            <code>null</code>.
@@ -156,10 +156,10 @@ public final class HandlerPersistence extends RegistryPersistence {
 
 		return true;
 	}
-	
+
 	/**
 	 * Reads all of the handlers from the registry
-	 * 
+	 *
 	 * @param handlerService
 	 *            The handler service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
@@ -223,11 +223,11 @@ public final class HandlerPersistence extends RegistryPersistence {
 				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
 				handlerDefinitionCount);
 	}
-	
+
 	/**
 	 * Reads the default handlers from an array of command elements from the
 	 * commands extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.
@@ -265,7 +265,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the handlers from the handlers extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.
@@ -329,7 +329,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the handler submissions from the commands extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.

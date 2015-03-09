@@ -54,7 +54,7 @@ class DecorationReference {
     }
 
     /**
-     * Return true if an update should occur whether or 
+     * Return true if an update should occur whether or
      * not there is a result.
      * @return boolean
      */
@@ -63,7 +63,7 @@ class DecorationReference {
     }
 
     /**
-     * Sets the forceUpdate flag. If true an update 
+     * Sets the forceUpdate flag. If true an update
      * occurs whether or not a decoration has resulted.
      * @param forceUpdate The forceUpdate to set
      */

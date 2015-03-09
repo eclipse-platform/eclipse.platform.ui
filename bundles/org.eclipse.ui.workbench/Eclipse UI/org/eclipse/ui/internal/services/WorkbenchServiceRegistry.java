@@ -43,12 +43,12 @@ import org.eclipse.ui.statushandlers.StatusManager;
 /**
  * This class will create a service from the matching factory. If the factory
  * doesn't exist, it will try and load it from the registry.
- * 
+ *
  * @since 3.4
  */
 public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	/**
-	 * 
+	 *
 	 */
 	private static final String WORKBENCH_LEVEL = "workbench"; //$NON-NLS-1$
 
@@ -62,7 +62,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 		}
 		return registry;
 	}
-	
+
 	private WorkbenchServiceRegistry() {
 		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(
 				this,
@@ -86,7 +86,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	};
 
 	private Map factories = new HashMap();
-	
+
 	static class ServiceFactoryHandle {
 		AbstractServiceFactory factory;
 		WeakHashMap serviceLocators = new WeakHashMap();
@@ -199,10 +199,10 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	}
 
 	private static final String[] supportedLevels = { ISources.ACTIVE_CONTEXT_NAME,
-			ISources.ACTIVE_SHELL_NAME, 
-			ISources.ACTIVE_WORKBENCH_WINDOW_NAME, 
+			ISources.ACTIVE_SHELL_NAME,
+			ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
 			ISources.ACTIVE_EDITOR_ID_NAME,
-			ISources.ACTIVE_PART_ID_NAME, 
+			ISources.ACTIVE_PART_ID_NAME,
 			ISources.ACTIVE_SITE_NAME
 	};
 
@@ -256,10 +256,10 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 						ServiceLocator loc2 = (ServiceLocator) o2;
 						int l1 = ((IWorkbenchLocationService) loc1
 								.getService(IWorkbenchLocationService.class))
-								.getServiceLevel();						
+								.getServiceLevel();
 						int l2 = ((IWorkbenchLocationService) loc2
 								.getService(IWorkbenchLocationService.class))
-								.getServiceLevel();						
+								.getServiceLevel();
 						return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 					}
 				});

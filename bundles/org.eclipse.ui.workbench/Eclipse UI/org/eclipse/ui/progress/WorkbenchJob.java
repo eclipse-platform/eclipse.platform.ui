@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * WorkbenchJob is a type of job that implements a done listener
- * and does the shutdown checks before scheduling. This is used if 
+ * and does the shutdown checks before scheduling. This is used if
  * a job is not meant to run when the Workbench is shutdown.
  * @since 3.0
  */
@@ -40,7 +40,7 @@ public abstract class WorkbenchJob extends UIJob {
     }
 
     /**
-     * Add a new instance of the reciever with the 
+     * Add a new instance of the reciever with the
      * supplied name.
      * @param name String
      */

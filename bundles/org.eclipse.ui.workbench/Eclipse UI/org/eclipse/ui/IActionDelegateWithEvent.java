@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Event;
  * If an action delegate implements this interface, then <code>runWithEvent(IAction, Event)</code>
  * is called instead of <code>run(IAction)</code>.
  * <p>
- * Clients should implement this interface, in addition to <code>IActionDelegate</code> 
+ * Clients should implement this interface, in addition to <code>IActionDelegate</code>
  * (or subinterface), if they need to examine the triggering event.
  * Otherwise, they should simply implement <code>IActionDelegate</code> (or subinterface).
  * <p>
@@ -40,7 +40,7 @@ public interface IActionDelegateWithEvent {
      * <p>
      *
      * @param action the action proxy that handles the presentation portion of the action
-     * @param event the SWT event which triggered this action being run 
+     * @param event the SWT event which triggered this action being run
      * @since  2.0
      * @deprecated Use org.eclipse.ui.IActionDelegate2 instead.
      */

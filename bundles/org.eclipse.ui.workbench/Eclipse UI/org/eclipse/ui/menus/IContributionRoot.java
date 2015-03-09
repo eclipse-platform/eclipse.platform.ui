@@ -20,8 +20,8 @@ import org.eclipse.jface.action.IContributionManager;
  * hierarchy into which {@link AbstractContributionFactory} instances may insert
  * elements. Instances of this interface are provided by the platform and this
  * interface should <b>NOT</b> be implemented by clients.
- * 
- * 
+ *
+ *
  * @since 3.3
  */
 public interface IContributionRoot {
@@ -30,7 +30,7 @@ public interface IContributionRoot {
 	 * kill-switch filtering as a direct child of this container. This should be
 	 * called for all top-level elements created in
 	 * {@link AbstractContributionFactory#createContributionItems(org.eclipse.ui.services.IServiceLocator, IContributionRoot)}
-	 * 
+	 *
 	 * @param item
 	 *            the item to add
 	 * @param visibleWhen
@@ -44,7 +44,7 @@ public interface IContributionRoot {
 	 * that are <b>NOT</b> direct children of this container. Ie: children of a
 	 * {@link IContributionManager} that has been previously registered with a
 	 * call to {{@link #addContributionItem(IContributionItem, Expression)}.
-	 * 
+	 *
 	 * @param item
 	 *            the item for which to register a visibility clause
 	 * @param visibleWhen

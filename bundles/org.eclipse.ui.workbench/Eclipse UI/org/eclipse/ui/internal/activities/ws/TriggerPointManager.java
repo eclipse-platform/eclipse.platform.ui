@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Workbench implementation of the trigger point manager.
- * 
+ *
  * @since 3.1
  */
 public class TriggerPointManager implements ITriggerPointManager, IExtensionChangeHandler {
@@ -36,7 +36,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
     private HashMap triggerMap = new HashMap();
 
     /**
-     * 
+     *
      */
     public TriggerPointManager() {
         super();
@@ -45,7 +45,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see org.eclipse.ui.activities.ITriggerPoint#getId()
                      */
                     @Override
@@ -55,7 +55,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see org.eclipse.ui.activities.ITriggerPoint#getStringHint(java.lang.String)
                      */
                     @Override
@@ -70,7 +70,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see org.eclipse.ui.activities.ITriggerPoint#getBooleanHint(java.lang.String)
                      */
                     @Override
@@ -96,7 +96,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.activities.ITriggerPointManager#getTriggerPoint(java.lang.String)
      */
     @Override
@@ -106,7 +106,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.activities.ITriggerPointManager#getDefinedTriggerPointIds()
      */
     @Override
@@ -116,7 +116,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
      *      java.lang.Object[])
      */
@@ -132,7 +132,7 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
      *      org.eclipse.core.runtime.IExtension)
      */

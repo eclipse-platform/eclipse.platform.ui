@@ -54,7 +54,7 @@ public class WWinPluginAction extends PluginAction implements
 
     /**
      * Constructs a new <code>WWinPluginAction</code> object.
-     * 
+     *
      * @param actionElement the configuration element
      * @param window the window to contribute to
      * @param id the identifier
@@ -176,7 +176,7 @@ public class WWinPluginAction extends PluginAction implements
         if (obj instanceof IWorkbenchWindowActionDelegate) {
 			return (IWorkbenchWindowActionDelegate) obj;
 		}
-        
+
         throw new WorkbenchException(
                 "Action must implement IWorkbenchWindowActionDelegate"); //$NON-NLS-1$
     }
@@ -211,7 +211,7 @@ public class WWinPluginAction extends PluginAction implements
     }
 
     /**
-     * Returns true if the window has been set.  
+     * Returns true if the window has been set.
      * The window may be null after the constructor is called and
      * before the window is stored.  We cannot create the delegate
      * at that time.
@@ -244,7 +244,7 @@ public class WWinPluginAction extends PluginAction implements
         actionSetId = newActionSetId;
     }
 
-    /** 
+    /**
      * The <code>WWinPluginAction</code> implementation of this method
      * declared on <code>IAction</code> stores the help listener in
      * a local field. The supplied listener is only used if there is

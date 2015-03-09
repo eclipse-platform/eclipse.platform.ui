@@ -22,7 +22,7 @@ import org.eclipse.ui.XMLMemento;
 /**
  * Keeps the info to save, restore or identify and editor.
  * Instances of this class are shared between history entries and there should be
- * only one instance making reference to the same editor. 
+ * only one instance making reference to the same editor.
  */
 public class NavigationHistoryEditorInfo {
     String editorID;

@@ -94,7 +94,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.statushandlers.AbstractStatusAreaProvider#createSupportArea
 	 * (org.eclipse.swt.widgets.Composite,
@@ -281,7 +281,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
 			 * .swt.events.SelectionEvent)
@@ -356,7 +356,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	/**
 	 * This method checks if status dialog holds more than one status.
-	 * 
+	 *
 	 * @return true if the dialog has one more than one status.
 	 */
 	private boolean isMulti() {

@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.dnd;
  * This interface allows a particular drop target to be informed that
  * the drag operation was cancelled. This allows the target to clean
  * up any extended drag feedback.
- * 
+ *
  * @since 3.2
  *
  */

@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 /**
  * YesNoCancelListSelectionDialog is a list selection dialog that also allows
  * the user to select no as a result.
- * 
+ *
  * @deprecated Providing Cancel in addition to Yes/No is confusing. It is better
  *             to subclass the regular ListSelectionDialog, which uses
  *             OK/Cancel, and provide a separate checkbox if necessary.
@@ -27,9 +27,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 @Deprecated
 public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
     /**
-     * 
-     * Create a list selection dialog with a possible Yes/No or Cancel result. 
-     * 
+     *
+     * Create a list selection dialog with a possible Yes/No or Cancel result.
+     *
      * @param parentShell
      * @param input
      * @param contentProvider

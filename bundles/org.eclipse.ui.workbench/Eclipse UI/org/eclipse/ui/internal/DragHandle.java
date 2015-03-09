@@ -25,24 +25,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class DragHandle extends Composite implements PaintListener {
-    
+
     Cursor dragCursor;
     Image handleImage;
     ImageDescriptor descriptor;
     private boolean isHorizontal;
 
     private static int margin = 2;
-    
+
 public DragHandle(Composite parent) {
     super(parent, SWT.NONE);
-    
+
     dragCursor = new Cursor(parent.getDisplay(),
             SWT.CURSOR_SIZEALL);
-    
+
     addPaintListener(this);
-    
+
     descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(WorkbenchPlugin.PI_WORKBENCH, "icons/misc/handle.png");  //$NON-NLS-1$
-    
+
     handleImage = new Image(parent.getDisplay(), 4, 4);
     GC context = new GC(handleImage);
     context.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -56,32 +56,32 @@ public DragHandle(Composite parent) {
     context.drawPoint(1,3);
     context.drawPoint(2,3);
     context.drawPoint(3,3);
-    
+
     context.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
     context.drawPoint(1,0);
     context.drawPoint(0,1);
-    
+
     context.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
     context.drawPoint(1,1);
-    
+
     context.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
     context.drawPoint(1,2);
     context.drawPoint(2,1);
     context.drawPoint(2,2);
-    
+
     context.dispose();
-    
+
     setCursor(dragCursor);
 }
 
 @Override
 public void paintControl(PaintEvent e) {
     Point size = getSize();
-    
+
     if (handleImage != null) {
         Rectangle ibounds = handleImage.getBounds();
-        
-        
+
+
         int x = ((size.x - 2 * margin) % ibounds.width) / 2 + margin;
         int y = ((size.y - 2 * margin) % ibounds.height) / 2 + margin;
 
@@ -104,17 +104,17 @@ public void paintControl(PaintEvent e) {
 @Override
 public Point computeSize(int wHint, int hHint, boolean changed) {
     Point result = new Point(wHint, hHint);
-    
+
     Rectangle ibounds = handleImage.getBounds();
-    
+
     if (wHint == SWT.DEFAULT) {
         result.x = ibounds.width + 2 * margin;
     }
-    
+
     if (hHint == SWT.DEFAULT) {
         result.y = ibounds.height + 2 * margin;
     }
-    
+
     return result;
 }
 

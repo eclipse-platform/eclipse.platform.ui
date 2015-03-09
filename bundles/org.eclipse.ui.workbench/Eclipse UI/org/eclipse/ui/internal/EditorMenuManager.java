@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * An <code>EditorMenuManager</code> is used to sort the contributions
- * made by an editor so that they always appear after the action sets.  
+ * made by an editor so that they always appear after the action sets.
  */
 public class EditorMenuManager extends SubMenuManager {
     private ArrayList wrappers;
@@ -85,7 +85,7 @@ public class EditorMenuManager extends SubMenuManager {
 		public String getText(IContributionItem item) {
             return getParentMenuManager().getOverrides().getText(item);
         }
-        
+
         @Override
 		public Boolean getVisible(IContributionItem item) {
         	return getParentMenuManager().getOverrides().getVisible(item);
@@ -147,7 +147,7 @@ public class EditorMenuManager extends SubMenuManager {
     public void setVisible(boolean visible, boolean forceVisibility) {
         if (visible) {
             if (forceVisibility) {
-                // Make the items visible 
+                // Make the items visible
                 if (!enabledAllowed) {
 					setEnabledAllowed(true);
 				}

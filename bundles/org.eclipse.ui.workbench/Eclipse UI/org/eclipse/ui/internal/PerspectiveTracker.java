@@ -35,7 +35,7 @@ public class PerspectiveTracker extends PerspectiveAdapter implements
      * Creates a perspective tracker for the given window.
      * Subclasses should override <code>update(IPerspectiveDescriptor)</code>
      * to get notified of perspective changes.
-     * 
+     *
      * @param window the window to track
      */
     protected PerspectiveTracker(IWorkbenchWindow window) {
@@ -46,9 +46,9 @@ public class PerspectiveTracker extends PerspectiveAdapter implements
     }
 
     /**
-     * Creates a perspective tracker for the given window which will 
+     * Creates a perspective tracker for the given window which will
      * enable the given action only when there is an active perspective.
-     * 
+     *
      * @param window the window to track
      * @param action the action to enable or disable
      */
@@ -90,7 +90,7 @@ public class PerspectiveTracker extends PerspectiveAdapter implements
     }
 
     /**
-     * Determines the active perspective in the window 
+     * Determines the active perspective in the window
      * and calls <code>update(IPerspectiveDescriptor)</code>.
      */
     private void update() {
@@ -110,10 +110,10 @@ public class PerspectiveTracker extends PerspectiveAdapter implements
      * The default implementation enables the action (if given) if there
      * is an active perspective, otherwise it disables it.
      * </p>
-     * <p> 
+     * <p>
      * Subclasses may override or extend.
      * </p>
-     * 
+     *
      * @param persp the active perspective in the window, or <code>null</code> if none
      */
     protected void update(IPerspectiveDescriptor persp) {

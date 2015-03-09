@@ -17,7 +17,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * This adapter interface provides support for lazy initialization of UI workbench elements
  * that are displayed visually. This adapter is used with an associated deferred content provider.
- * 
+ *
  * @see DeferredTreeContentManager
  * @since 3.0
  */
@@ -28,10 +28,10 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
      * The adapter should in return notify of new children via the collector.
      * This is generally used when a content provider is getting elements.
      * <p>
-     * It is good practice to check the passed in monitor for cancellation. This will 
+     * It is good practice to check the passed in monitor for cancellation. This will
      * provide good responsiveness for cancellation requests made by the user.
      * </p>
-     * 
+     *
      * @param object the object to fetch the children for
      * @param collector the collector to notify about new children. Should not
      * 		be <code>null</code>.
@@ -47,10 +47,10 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
      * yet fetched the children for the element.
      * <p>
      * If <code>false</code> is returned, then the content provider may assume
-     * that this adapter has no children. If <code>true</code> is returned, 
+     * that this adapter has no children. If <code>true</code> is returned,
      * then the job manager may assume that this adapter may have children.
      * <p>
-     * 
+     *
      * @return <code>true</code>if the adapter may have childen, and <code>false</code>
      * 	otherwise.
      */
@@ -58,7 +58,7 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 
     /**
      * Returns the rule used to schedule the deferred fetching of children for this adapter.
-     * 
+     *
      * @param object the object whose children are being fetched
      * @return the scheduling rule. May be <code>null</code>.
      * @see org.eclipse.core.runtime.jobs.Job#setRule(ISchedulingRule)

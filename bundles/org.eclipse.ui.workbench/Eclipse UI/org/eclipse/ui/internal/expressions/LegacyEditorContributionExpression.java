@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class LegacyEditorContributionExpression extends
@@ -48,7 +48,7 @@ public final class LegacyEditorContributionExpression extends
 	/**
 	 * Constructs a new instance of
 	 * <code>LegacyEditorContributionExpression</code>
-	 * 
+	 *
 	 * @param activeEditorId
 	 *            The identifier of the editor to match with the active editor;
 	 *            may be <code>null</code>

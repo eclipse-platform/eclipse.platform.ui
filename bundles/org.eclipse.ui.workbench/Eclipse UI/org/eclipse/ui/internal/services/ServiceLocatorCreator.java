@@ -19,7 +19,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A simple service locator creator.
- * 
+ *
  * @since 3.4
  */
 public class ServiceLocatorCreator implements IServiceLocatorCreator {

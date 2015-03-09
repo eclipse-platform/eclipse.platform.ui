@@ -32,7 +32,7 @@ import org.eclipse.ui.keys.IBindingService;
  * specified command.
  * <p>
  * This class is not intended to be subclassed.
- * 
+ *
  * @since 3.2
  * @deprecated As of 3.3, clients should use
  *             {@link org.eclipse.jface.fieldassist.ControlDecoration} and
@@ -48,7 +48,7 @@ public class ContentAssistField extends DecoratedField {
 	/**
 	 * Construct a content assist field that shows a content assist cue and can
 	 * assist the user with choosing content for the field.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the decorated field.
 	 * @param style
@@ -92,12 +92,12 @@ public class ContentAssistField extends DecoratedField {
 	/**
 	 * Set the boolean flag that determines whether the content assist is
 	 * enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            <code>true</code> if content assist is enabled and
 	 *            responding to user input, <code>false</code> if it is
 	 *            ignoring user input.
-	 * 
+	 *
 	 */
 	public void setEnabled(boolean enabled) {
 		adapter.setEnabled(enabled);
@@ -111,7 +111,7 @@ public class ContentAssistField extends DecoratedField {
 	/*
 	 * Get a field decoration appropriate for cueing the user, including a
 	 * description of the active key binding.
-	 * 
+	 *
 	 */
 	private FieldDecoration getFieldDecoration() {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
@@ -145,7 +145,7 @@ public class ContentAssistField extends DecoratedField {
 	 * Return the ContentAssistCommandAdapter installed on the receiver. This
 	 * adapter is provided so that clients can configure the adapter if the
 	 * default values are not appropriate.
-	 * 
+	 *
 	 * @return the ContentAssistCommandAdapter installed on the field.
 	 */
 	public ContentAssistCommandAdapter getContentAssistCommandAdapter() {

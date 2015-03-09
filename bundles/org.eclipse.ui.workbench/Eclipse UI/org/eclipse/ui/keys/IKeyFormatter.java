@@ -16,7 +16,7 @@ package org.eclipse.ui.keys;
  * it into a string. These formatters are used to produce the strings that the
  * user sees in the keys preference page and the menus, as well as the strings
  * that are used for persistent storage.
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.IKeyFormatter
  * @since 3.0
  */
@@ -27,7 +27,7 @@ public interface IKeyFormatter {
      * Formats an individual key into a human readable format. This uses an
      * internationalization resource bundle to look up the key. This does not
      * do any platform-specific formatting (e.g., Carbon's command character).
-     * 
+     *
      * @param key
      *            The key to format; must not be <code>null</code>.
      * @return The key formatted as a string; should not be <code>null</code>.
@@ -38,7 +38,7 @@ public interface IKeyFormatter {
      * Format the given key sequence into a string. The manner of the
      * conversion is dependent on the formatter. It is required that unequal
      * key seqeunces return unequal strings.
-     * 
+     *
      * @param keySequence
      *            The key sequence to convert; must not be <code>null</code>.
      * @return A string representation of the key sequence; must not be <code>null</code>.
@@ -49,7 +49,7 @@ public interface IKeyFormatter {
      * Format the given key strokes into a string. The manner of the conversion
      * is dependent on the formatter. It is required that unequal key strokes
      * return unequal strings.
-     * 
+     *
      * @param keyStroke
      *            The key stroke to convert; must not be <Code>null</code>.
      * @return A string representation of the key stroke; must not be <code>

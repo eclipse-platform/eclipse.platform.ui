@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564     
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564
  *******************************************************************************/
 
 package org.eclipse.ui.internal.registry;
@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 /**
  * Preference Transfer registry reader to read extenders of the
  * preferenceTransfer schema.
- * 
+ *
  * @since 3.1
  */
 public class PreferenceTransferRegistryReader extends RegistryReader {
@@ -39,7 +39,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 	/**
 	 * Create an instance of this class.
-	 * 
+	 *
 	 * @param pluginPointId
 	 *            java.lang.String
 	 */
@@ -50,7 +50,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	/**
 	 * Returns a new PreferenceTransferElement configured according to the
 	 * parameters contained in the passed element.
-	 * 
+	 *
 	 * @param element
 	 *            the configuration element
 	 * @return the preference transfer element or <code>null</code> if there was
@@ -75,7 +75,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 	/**
 	 * Returns a sorted list of preference transfers.
-	 * 
+	 *
 	 * @return an array of <code>IPreferenceTransfer</code> objects
 	 */
 	public PreferenceTransferElement[] getPreferenceTransfers() {
@@ -97,7 +97,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 	/**
 	 * Get the preference mappings.
-	 * 
+	 *
 	 * @param configElement
 	 * @return the child configuration elements
 	 */

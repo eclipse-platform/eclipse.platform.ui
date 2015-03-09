@@ -22,7 +22,7 @@ import org.eclipse.ui.services.IEvaluationService;
 /**
  * This internal class serves as a foundation for any handler that would like
  * its enabled state controlled by core expressions and the IEvaluationService.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractEvaluationHandler extends AbstractEnabledHandler {

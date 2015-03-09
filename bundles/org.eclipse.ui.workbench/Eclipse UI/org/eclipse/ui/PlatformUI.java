@@ -20,10 +20,10 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.testing.TestableObject;
 
 /**
- * The central class for access to the Eclipse Platform User Interface. 
- * This class cannot be instantiated; all functionality is provided by 
+ * The central class for access to the Eclipse Platform User Interface.
+ * This class cannot be instantiated; all functionality is provided by
  * static methods.
- * 
+ *
  * Features provided:
  * <ul>
  * <li>creation of the workbench.</li>
@@ -41,7 +41,7 @@ public final class PlatformUI {
 
     /**
      * Return code (value 0) indicating that the workbench terminated normally.
-     * 
+     *
      * @see #createAndRunWorkbench
      * @since 3.0
      */
@@ -50,7 +50,7 @@ public final class PlatformUI {
     /**
      * Return code (value 1) indicating that the workbench was terminated with
      * a call to <code>IWorkbench.restart</code>.
-     * 
+     *
      * @see #createAndRunWorkbench
      * @see IWorkbench#restart
      * @since 3.0
@@ -59,7 +59,7 @@ public final class PlatformUI {
 
     /**
      * Return code (value 2) indicating that the workbench failed to start.
-     * 
+     *
      * @see #createAndRunWorkbench
      * @see IWorkbench#restart
      * @since 3.0
@@ -69,7 +69,7 @@ public final class PlatformUI {
     /**
      * Return code (value 3) indicating that the workbench was terminated with
      * a call to IWorkbenchConfigurer#emergencyClose.
-     * 
+     *
      * @see #createAndRunWorkbench
      * @since 3.0
      */
@@ -84,13 +84,13 @@ public final class PlatformUI {
 
     /**
      * Returns the workbench. Fails if the workbench has not been created yet.
-     * 
+     *
      * @return the workbench
      */
     public static IWorkbench getWorkbench() {
         if (Workbench.getInstance() == null) {
             // app forgot to call createAndRunWorkbench beforehand
-            throw new IllegalStateException(WorkbenchMessages.PlatformUI_NoWorkbench); 
+            throw new IllegalStateException(WorkbenchMessages.PlatformUI_NoWorkbench);
         }
         return Workbench.getInstance();
     }
@@ -104,7 +104,7 @@ public final class PlatformUI {
 	 * is still being initialized, so it may not be safe to call workbench API
 	 * methods even if this method returns true. See bug 49316 for details.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the workbench has been created and is
 	 *         still running, and <code>false</code> if the workbench has not
 	 *         yet been created or has completed
@@ -132,15 +132,15 @@ public final class PlatformUI {
      * called exactly once, and early on before anyone else asks
      * <code>getWorkbench()</code> for the workbench.
      * </p>
-     * 
+     *
      * @param display the display to be used for all UI interactions with the workbench
      * @param advisor the application-specific advisor that configures and
      * specializes the workbench
-     * @return return code {@link #RETURN_OK RETURN_OK} for normal exit; 
+     * @return return code {@link #RETURN_OK RETURN_OK} for normal exit;
      * {@link #RETURN_RESTART RETURN_RESTART} if the workbench was terminated
-     * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
+     * with a call to {@link IWorkbench#restart IWorkbench.restart};
      * {@link #RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
-     * not be started; 
+     * not be started;
      * {@link #RETURN_EMERGENCY_CLOSE RETURN_EMERGENCY_CLOSE} if the UI quit
      * because of an emergency; other values reserved for future use
      * @since 3.0
@@ -152,9 +152,9 @@ public final class PlatformUI {
 
     /**
      * Creates the <code>Display</code> to be used by the workbench.
-     * It is the caller's responsibility to dispose the resulting <code>Display</code>, 
+     * It is the caller's responsibility to dispose the resulting <code>Display</code>,
      * not the workbench's.
-     * 
+     *
      * @return the display
      * @since 3.0
      */
@@ -171,7 +171,7 @@ public final class PlatformUI {
      * To avoid depending on the the Workbench a {@link TestableObject}
      * can be obtained via OSGi service.
      * </p>
-     * 
+     *
      * @return the testable object facade
      * @since 3.0
      */
@@ -186,9 +186,9 @@ public final class PlatformUI {
 
     /**
      * Returns the preference store used for publicly settable workbench preferences.
-     * Constants for these preferences are defined on 
+     * Constants for these preferences are defined on
      * {@link org.eclipse.ui.IWorkbenchPreferenceConstants}.
-     * 
+     *
      * @return the workbench public preference store
      * @since 3.0
      */

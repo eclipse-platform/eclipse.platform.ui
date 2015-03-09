@@ -19,7 +19,7 @@ import org.eclipse.ui.model.AdaptableList;
 /**
  * Viewer filter designed to work with the new wizard page (and its input/content provider).
  * This will filter all non-primary wizards that are not enabled by activity.
- * 
+ *
  * @since 3.0
  */
 public class WizardActivityFilter extends ViewerFilter {

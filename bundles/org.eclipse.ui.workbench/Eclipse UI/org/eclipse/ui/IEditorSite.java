@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 /**
  * The primary interface between an editor part and the workbench.
  * <p>
- * The workbench exposes its implemention of editor part sites via this 
+ * The workbench exposes its implemention of editor part sites via this
  * interface, which is not intended to be implemented or extended by clients.
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
@@ -40,7 +40,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
 	 * Returns the action bars for this part site. Editors of the same type (and
 	 * in the same window) share the same action bars. Contributions to the
 	 * action bars are done by the <code>IEditorActionBarContributor</code>.
-	 * 
+	 *
 	 * @return the action bars
 	 * @since 2.1
 	 */
@@ -63,7 +63,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
      * For a detailed description of context menu registration see
      * {@link IWorkbenchPartSite#registerContextMenu(MenuManager, ISelectionProvider)}
      * </p>
-     * 
+     *
      * @param menuManager
      *            the menu manager; must not be <code>null</code>.
      * @param selectionProvider
@@ -96,7 +96,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
      * For a detailed description of context menu registration see
      * {@link IWorkbenchPartSite#registerContextMenu(MenuManager, ISelectionProvider)}
      * </p>
-     * 
+     *
      * @param menuId
      *            the menu id; must not be <code>null</code>.
      * @param menuManager

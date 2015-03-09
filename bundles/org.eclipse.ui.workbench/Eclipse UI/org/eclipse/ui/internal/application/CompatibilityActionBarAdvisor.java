@@ -18,7 +18,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * An implementation of <code>ActionBarAdvisor</code> that
  * calls back to the 3.0 legacy methods on <code>WorkbenchAdvisor</code>
  * for backwards compatibility.
- * 
+ *
  * @since 3.1
  */
 public class CompatibilityActionBarAdvisor extends ActionBarAdvisor {
@@ -27,7 +27,7 @@ public class CompatibilityActionBarAdvisor extends ActionBarAdvisor {
 
     /**
      * Creates a new compatibility action bar advisor.
-     * 
+     *
      * @param wbAdvisor the workbench advisor
      * @param configurer the action bar configurer
      */
@@ -41,7 +41,7 @@ public class CompatibilityActionBarAdvisor extends ActionBarAdvisor {
         IActionBarConfigurer abc = getActionBarConfigurer();
         wbAdvisor.fillActionBars(abc.getWindowConfigurer().getWindow(), abc, flags);
     }
-    
+
     @Override
 	public boolean isApplicationMenu(String menuId) {
         IActionBarConfigurer abc = getActionBarConfigurer();

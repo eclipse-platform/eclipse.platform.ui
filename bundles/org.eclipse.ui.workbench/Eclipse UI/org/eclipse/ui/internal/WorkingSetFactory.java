@@ -15,7 +15,7 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 
 /**
- * A WorkingSetFactory is used to recreate a persisted WorkingSet 
+ * A WorkingSetFactory is used to recreate a persisted WorkingSet
  * object.
  */
 public class WorkingSetFactory implements IElementFactory {
@@ -39,13 +39,13 @@ public class WorkingSetFactory implements IElementFactory {
 		}
 
         AbstractWorkingSet workingSet = null;
-        
+
         if (isAggregate) {
 			workingSet = new AggregateWorkingSet(workingSetName, label, memento);
 		} else {
 			workingSet = new WorkingSet(workingSetName, label, memento);
 		}
-        
+
         if (workingSetEditPageId != null) {
             workingSet.setId(workingSetEditPageId);
         } else if (!isAggregate) {

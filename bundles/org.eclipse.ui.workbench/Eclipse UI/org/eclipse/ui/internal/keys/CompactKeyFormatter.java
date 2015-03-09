@@ -27,7 +27,7 @@ import org.eclipse.ui.keys.NaturalKey;
 /**
  * A key formatter providing a special compact format for displaying key
  * bindings.
- * 
+ *
  * @since 3.0
  */
 public class CompactKeyFormatter extends NativeKeyFormatter {

@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Represents an object with state that will notifies a set of listeners
- * whenever its state changes 
+ * whenever its state changes
  */
 public class Model {
 
@@ -32,7 +32,7 @@ public class Model {
 
     /**
      * Creates a new model with the given initial state.
-     * 
+     *
      * @param initialState
      */
     public Model(Object initialState) {
@@ -41,7 +41,7 @@ public class Model {
 
     /**
      * Returns the current state of the model.
-     * 
+     *
      * @return the current model state
      */
     public Object getState() {
@@ -50,10 +50,10 @@ public class Model {
 
     /**
      * Sets the current state of the model.
-     * 
+     *
      * @param newState the new state of the model
      * @param toOmit change listener that should be omitted from change notifications (or null if all
-     * listeners should be notified). 
+     * listeners should be notified).
      */
     public void setState(Object newState, IChangeListener toOmit) {
         if (areEqual(newState, state)) {
@@ -85,8 +85,8 @@ public class Model {
 
     /**
      * Adds the given listener to the set of listeners that will be
-     * notified when the state changes. 
-     * 
+     * notified when the state changes.
+     *
      * @param toAdd
      */
     public void addChangeListener(IChangeListener changeListener) {
@@ -96,7 +96,7 @@ public class Model {
 
     /**
      * Stops this model from sending change events from the given listener.
-     * 
+     *
      * @param toRemove
      */
     public void removeChangeListener(IChangeListener changeListener) {

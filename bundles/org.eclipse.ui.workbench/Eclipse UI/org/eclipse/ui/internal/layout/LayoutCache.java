@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Caches the preferred sizes of an array of controls
- * 
+ *
  * @since 3.0
  */
 public class LayoutCache {
@@ -29,7 +29,7 @@ public class LayoutCache {
 
     /**
      * Creates a cache for the given array of controls
-     * 
+     *
      * @param controls
      */
     public LayoutCache(Control[] controls) {
@@ -38,7 +38,7 @@ public class LayoutCache {
 
     /**
      * Returns the size cache for the given control
-     * 
+     *
      * @param idx
      * @return
      */
@@ -50,7 +50,7 @@ public class LayoutCache {
      * Sets the controls that are being cached here. If these are the same
      * controls that were used last time, this method does nothing. Otherwise,
      * the cache is flushed and a new cache is created for the new controls.
-     * 
+     *
      * @param controls
      */
     public void setControls(Control[] controls) {
@@ -68,7 +68,7 @@ public class LayoutCache {
     /**
      * Creates a new size cache for the given set of controls, discarding any
      * existing cache.
-     * 
+     *
      * @param controls the controls whose size is being cached
      */
     private void rebuildCache(Control[] controls) {
@@ -89,7 +89,7 @@ public class LayoutCache {
 
     /**
      * Computes the preferred size of the nth control
-     * 
+     *
      * @param controlIndex index of the control whose size will be computed
      * @param widthHint width of the control (or SWT.DEFAULT if unknown)
      * @param heightHint height of the control (or SWT.DEFAULT if unknown)
@@ -102,7 +102,7 @@ public class LayoutCache {
     /**
      * Flushes the cache for the given control. This should be called if exactly
      * one of the controls has changed but the remaining controls remain unmodified
-     * 
+     *
      * @param controlIndex
      */
     public void flush(int controlIndex) {

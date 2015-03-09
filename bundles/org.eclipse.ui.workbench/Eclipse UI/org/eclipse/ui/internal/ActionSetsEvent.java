@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
  * This class is eventually intended to exist in
  * <code>org.eclipse.jface.menus</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class ActionSetsEvent {
@@ -45,7 +45,7 @@ public final class ActionSetsEvent {
 
 	/**
 	 * Constructs a new instance of {@link ActionSetsEvent}.
-	 * 
+	 *
 	 * @param newActionSets
 	 *            The action sets that are now active; may be <code>null</code>.
 	 */
@@ -55,7 +55,7 @@ public final class ActionSetsEvent {
 
 	/**
 	 * Returns the currently active action sets.
-	 * 
+	 *
 	 * @return The action sets that are now active; may be <code>null</code>.
 	 */
 	public final IActionSetDescriptor[] getNewActionSets() {

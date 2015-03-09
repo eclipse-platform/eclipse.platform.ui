@@ -27,7 +27,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Instances represent registered preference transfers.
- * 
+ *
  * @since 3.1
  */
 public class PreferenceTransferElement extends WorkbenchAdapter implements
@@ -42,9 +42,9 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/**
 	 * Create a new instance of this class
-	 * 
+	 *
 	 * @param configurationElement
-	 * 
+	 *
 	 */
 	public PreferenceTransferElement(IConfigurationElement configurationElement) {
 		this.configurationElement = configurationElement;
@@ -61,7 +61,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/**
 	 * Answer the preference filter of this element.
-	 * 
+	 *
 	 * @return a preference filter
 	 * @throws CoreException
 	 */
@@ -104,7 +104,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/**
 	 * Answer the description parameter of this element
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	public String getDescription() {
@@ -113,7 +113,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/**
 	 * Answer the id as specified in the extension.
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	public String getID() {
@@ -122,7 +122,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/**
 	 * Returns the name of this preference transfer element.
-	 * 
+	 *
 	 * @return the name of the element
 	 */
 	public String getName() {
@@ -132,7 +132,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	@Override
@@ -175,7 +175,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.model.WorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	@Override
@@ -185,7 +185,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.model.WorkbenchAdapter#getImageDescriptor(java.lang.Object
 	 * )

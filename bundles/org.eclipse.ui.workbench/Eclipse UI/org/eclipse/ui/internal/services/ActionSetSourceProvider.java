@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.util.Util;
  * This class is only intended for internal use within
  * <code>org.eclipse.ui.workbench</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class ActionSetSourceProvider extends AbstractSourceProvider

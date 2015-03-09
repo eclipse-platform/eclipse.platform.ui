@@ -26,7 +26,7 @@ import org.eclipse.ui.themes.ColorUtil;
 /**
  * Utility class that wraps a given control with a black 'border'. Moving the
  * border control will cause the given control to move to stay within its bounds.
- *  
+ *
  * @since 3.2
  *
  */
@@ -43,7 +43,7 @@ public class DragBorder {
 
 	/**
 	 * Construct a new DragBorder.
-	 * 
+	 *
 	 * @param client The client window that the border must stay within
 	 * @param toDrag The control to be placed 'inside' the border
 	 */
@@ -51,22 +51,22 @@ public class DragBorder {
 		clientControl = client;
 		dragControl = toDrag;
 		Point dragSize = toDrag.getSize();
-		
+
 		// Create a control large enough to 'contain' the dragged control
 		border = new Canvas(dragControl.getParent(), SWT.NONE);
 		border.setSize(dragSize.x+2, dragSize.y+2);
-		
+
 		// Use the SWT 'title' colors since they should always have a proper contrast
 		// and are 'related' (i.e. should look good together)
 		baseColor = border.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		RGB background  = border.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
 		RGB blended = ColorUtil.blend(baseColor.getRGB(), background);
 		hilightColor = new Color(border.getDisplay(), blended);
-		
+
 		// Ensure the border is visible and the control is 'above' it...
 		border.moveAbove(null);
 		dragControl.moveAbove(null);
-		
+
 		if (provideFrame) {
 			border.addPaintListener(new PaintListener() {
 				@Override
@@ -77,7 +77,7 @@ public class DragBorder {
 					else {
 						e.gc.setForeground(baseColor);
 					}
-					
+
 					// Draw a rectangle as our 'border'
 					Rectangle bb = border.getBounds();
 					e.gc.drawRectangle(0,0,bb.width-1, bb.height-1);
@@ -85,13 +85,13 @@ public class DragBorder {
 			});
 		}
 	}
-	
-    
+
+
     /**
      * Move the border (and its 'contained' control to a new position. The new
      * position will be adjusted to lie entirely within the client area of the
      * <code>clientControl</code>.
-     * 
+     *
      * @param newPos The new position for the border
      * @param alignment The location of the cursor relative to the border being dragged.
      * Current implementation only recognizes SWT.TOP & SWT.BOTTOM (which implies SWT.LEFT)
@@ -108,16 +108,16 @@ public class DragBorder {
     	} else {
 			border.setLocation(newPos.x, newPos.y - border.getSize().y);
 		}
-    	
+
     	// Force the control to remain inside the shell
 		Rectangle bb = border.getBounds();
 		Rectangle cr = clientControl.getClientArea();
 		Geometry.moveInside(bb,cr);
-		
+
 		// Ensure that the controls are the 'topmost' controls
 		border.moveAbove(null);
 		dragControl.moveAbove(null);
-		
+
 		// OK, now move the drag control and the border to their new locations
 		dragControl.setLocation(bb.x+1, bb.y+1);
 		border.setBounds(bb);

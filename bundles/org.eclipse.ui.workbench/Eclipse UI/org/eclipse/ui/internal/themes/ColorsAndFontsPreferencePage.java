@@ -100,12 +100,12 @@ import org.osgi.service.event.EventHandler;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
- * 
+ *
  * @since 3.0
  */
 public final class ColorsAndFontsPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
-	
+
 	private static final String SELECTED_ELEMENT_PREF = "ColorsAndFontsPreferencePage.selectedElement"; //$NON-NLS-1$
 	/**
 	 * The preference that stores the expanded state.
@@ -115,24 +115,24 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 * The token that separates expanded elements in EXPANDED_ELEMENTS_PREF.
 	 */
 	private static final String EXPANDED_ELEMENTS_TOKEN = "\t"; //$NON-NLS-1$
-	
+
 	/**
      * Marks category tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
      */
 	private static final char MARKER_CATEGORY = 'T';
-	
+
 	/**
 	 * Marks color tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
 	 */
 	private static final char MARKER_COLOR = 'C';
-	
+
 	/**
 	 * Marks font tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
 	 */
 	private static final char MARKER_FONT = 'F';
 
 	private static final int DEFINITION_NOT_AVAIL_COLOR = SWT.COLOR_WIDGET_LIGHT_SHADOW;
-			
+
     private class ThemeContentProvider implements ITreeContentProvider {
 
         private IThemeRegistry registry;
@@ -325,7 +325,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         /*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
         @Override
@@ -437,7 +437,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             }
             fonts.clear();
         }
-        
+
         /**
          * Clears and disposes all fonts and fires a label update.
          */
@@ -556,7 +556,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         /**
          * Return whether the element is set to default.
-         * 
+         *
          * @param def the definition
          * @return whether the element is set to default
          * @since 3.2
@@ -584,7 +584,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		/**
 		 * Returns the DEFINITION_NOT_AVAIL_COLOR color when definition is not
 		 * present in the current theme or null when it is available
-		 * 
+		 *
 		 * @param def
 		 *            the definition
 		 * @return the DEFINITION_NOT_AVAIL_COLOR color or null
@@ -599,7 +599,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.
 		 * Object)
@@ -642,29 +642,29 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * The default color preview composite.
      */
     private Composite defaultColorPreview;
-    
+
     /**
      * The default font preview composite.
      */
     private Composite defaultFontPreview;
-    
+
     /**
      * The composite to use when no preview is available.
      */
     private Composite defaultNoPreview;
-    
+
 	/**
 	 * Currently selected font for preview; might be null.
 	 */
 	private Font currentFont;
-	
+
 	/**
-	 * Currently selected color for preview; might be null. 
+	 * Currently selected color for preview; might be null.
 	 */
 	private Color currentColor;
-	
+
 	/**
-	 * Canvas used to draw default color preview 
+	 * Canvas used to draw default color preview
 	 */
 	private Canvas colorSampler;
 
@@ -681,14 +681,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 	/**
 	 * The button to edit the default of the selected element.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private Button editDefaultButton;
 
 	/**
 	 * The button to go to the default of the selected element.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private Button goToDefaultButton;
@@ -746,7 +746,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private Workbench workbench;
 
     private FilteredTree tree;
-    
+
 	private Text descriptionText;
 
 	private IEventBroker eventBroker;
@@ -795,7 +795,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 * <li><strong>selectColor:</strong>ID - selects the color with the given ID
 	 * </li>
 	 * </p>
-	 * 
+	 *
 	 * @param data
 	 *            the data to be applied
 	 */
@@ -830,7 +830,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 	/**
 	 * Selects and reveals the given element.
-	 * 
+	 *
 	 * @param selection
 	 *            the object to select and reveal
 	 * @since 3.7
@@ -854,7 +854,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 	/**
 	 * Get the active theme.
-	 * 
+	 *
 	 * @return the active theme if there is one; <code>null</code> if there
 	 *         isn't or {@link #themeEngine} is <code>null</code>.
 	 */
@@ -897,7 +897,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     @Override
 	protected Control createContents(Composite parent) {
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.FONTS_PREFERENCE_PAGE);
-    	
+
         parent.addDisposeListener(new DisposeListener() {
             @Override
 			public void widgetDisposed(DisposeEvent e) {
@@ -905,11 +905,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 					appliedDialogFont.dispose();
             }
         });
-        
+
 		final SashForm advancedComposite = new SashForm(parent, SWT.VERTICAL);
 		GridData sashData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		advancedComposite.setLayoutData(sashData);
-        
+
         Composite mainColumn = new Composite(advancedComposite, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
@@ -926,7 +926,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         label.setLayoutData(data);
 
         createTree(mainColumn);
-        
+
         // --- buttons
         Composite controlColumn = new Composite(mainColumn, SWT.NONE);
         data = new GridData(GridData.FILL_VERTICAL);
@@ -935,7 +935,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         controlColumn.setLayout(layout);
-        
+
         // we need placeholder to offset the filter control of the table
         Label placeholder = new Label(controlColumn, SWT.NONE);
         GridData placeholderData = new GridData(SWT.TOP);
@@ -959,7 +959,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		previewLayout.marginHeight = 0;
         previewColumn.setFont(parent.getFont());
         previewColumn.setLayout(previewLayout);
-        
+
         // --- create preview control
 		Composite composite = new Composite(previewColumn, SWT.NONE);
 
@@ -969,11 +969,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		layout2.marginHeight = 0;
 		layout2.marginWidth = 0;
 		composite.setLayout(layout2);
-        
+
 		Label label2 = new Label(composite, SWT.LEFT);
 		label2.setText(RESOURCE_BUNDLE.getString("preview")); //$NON-NLS-1$
 		myApplyDialogFont(label2);
-        
+
         previewComposite = new Composite(composite, SWT.NONE);
         previewComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
         stackLayout = new StackLayout();
@@ -981,14 +981,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         stackLayout.marginWidth = 0;
         previewComposite.setLayout(stackLayout);
         // -- end of preview control
-         
-        
+
+
 		defaultFontPreview = createFontPreviewControl();
 		defaultColorPreview = createColorPreviewControl();
 		defaultNoPreview = createNoPreviewControl();
-        
+
         hookListeners();
-        
+
         updateTreeSelection(tree.getViewer().getSelection());
 
 		advancedComposite.setWeights(new int[] { 75, 25 });
@@ -998,7 +998,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	/**
 	 * Create the <code>ListViewer</code> that will contain all color
 	 * definitions as defined in the extension point.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent <code>Composite</code>.
 	 */
@@ -1011,11 +1011,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		PatternFilter filter = new PatternFilter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.ui.dialogs.PatternFilter#isLeafMatch(org.eclipse.
 			 * jface.viewers.Viewer, java.lang.Object)
-			 * 
+			 *
 			 * @since 3.7
 			 */
 			@Override
@@ -1066,7 +1066,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 				if (element instanceof ThemeElementDefinition) {
 					ThemeElementDefinition definition = (ThemeElementDefinition) element;
-					
+
 					if (element instanceof FontDefinition) {
 						editFont(tree.getDisplay());
 					} else if (element instanceof ColorDefinition
@@ -1107,7 +1107,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             try {
                 preview.dispose();
             } catch (RuntimeException e) {
-                WorkbenchPlugin.log(RESOURCE_BUNDLE.getString("errorDisposePreviewLog"), //$NON-NLS-1$ 
+                WorkbenchPlugin.log(RESOURCE_BUNDLE.getString("errorDisposePreviewLog"), //$NON-NLS-1$
                 		StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
             }
         }
@@ -1116,7 +1116,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     /**
      * Get the ancestor of the given color, if any.
-     * 
+     *
      * @param definition the descendant <code>ColorDefinition</code>.
      * @return the ancestor <code>ColorDefinition</code>, or <code>null</code>
      * 		if none.
@@ -1130,7 +1130,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     /**
      * Get the RGB value of the given colors ancestor, if any.
-     * 
+     *
      * @param definition the descendant <code>ColorDefinition</code>.
      * @return the ancestor <code>RGB</code>, or <code>null</code> if none.
      */
@@ -1144,7 +1144,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     /**
      * Get the RGB value for the specified definition.  Cascades through
      * preferenceToSet, valuesToSet and finally the registry.
-     * 
+     *
      * @param definition the <code>ColorDefinition</code>.
      * @return the <code>RGB</code> value.
      */
@@ -1161,7 +1161,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     /**
      * Get colors that descend from the provided color.
-     * 
+     *
      * @param definition the ancestor <code>ColorDefinition</code>.
      * @return the ColorDefinitions that have the provided definition as their
      * 		defaultsTo attribute.
@@ -1243,7 +1243,7 @@ getPreferenceStore(),
 		}
         return null;
     }
-    
+
     protected boolean isFontSelected() {
     	Object o = ((IStructuredSelection) tree.getViewer().getSelection()).getFirstElement();
     	return (o instanceof FontDefinition);
@@ -1253,7 +1253,7 @@ getPreferenceStore(),
     	Object o = ((IStructuredSelection) tree.getViewer().getSelection()).getFirstElement();
     	return (o instanceof ColorDefinition);
     }
-    
+
     /**
      * Hook all control listeners.
      */
@@ -1265,7 +1265,7 @@ getPreferenceStore(),
                     updateTreeSelection(event.getSelection());
                 }
 		});
-		
+
         fontChangeButton.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent event) {
@@ -1371,7 +1371,7 @@ getPreferenceStore(),
         themeManager.addPropertyChangeListener(themeChangeListener);
 
         updateThemeInfo(themeManager);
-        
+
         eventBroker = (IEventBroker) workbench.getService(IEventBroker.class);
 		eventBroker.subscribe(WorkbenchThemeManager.Events.THEME_REGISTRY_RESTYLED,
 				themeRegistryRestyledHandler);
@@ -1413,7 +1413,7 @@ getPreferenceStore(),
 
     /**
      * Answers whether the definition is currently set to the default value.
-     * 
+     *
      * @param definition the <code>ColorDefinition</code> to check.
      * @return Return whether the definition is currently mapped to the default
      * 		value, either in the preference store or in the local change record
@@ -1632,7 +1632,7 @@ getPreferenceStore(),
 
     /**
      * Resets the supplied definition to its default value.
-     * 
+     *
      * @param definition the <code>ColorDefinition</code> to reset.
      * @return whether any change was made.
      */
@@ -1676,7 +1676,7 @@ getPreferenceStore(),
 
     /**
      * Set the value (in preferences) for the given color.
-     * 
+     *
      * @param definition the <code>ColorDefinition</code> to set.
      * @param newRGB the new <code>RGB</code> value for the definitions
      * 		identifier.
@@ -1689,7 +1689,7 @@ getPreferenceStore(),
 
     /**
      * Set the value (in registry) for the given colors children.
-     * 
+     *
      * @param definition the <code>ColorDefinition</code> whose children should
      * 		be set.
      * @param newRGB the new <code>RGB</code> value for the definitions
@@ -1779,7 +1779,7 @@ getPreferenceStore(),
         //recalculate the fonts for the tree
         labelProvider.clearFontCacheAndUpdate();
     }
-    
+
     private void updateTreeSelection(ISelection selection) {
     	ThemeElementCategory category = null;
 	    Object element = ((IStructuredSelection) selection).getFirstElement();
@@ -1812,12 +1812,12 @@ getPreferenceStore(),
                     myApplyDialogFont(previewControl);
                     Text error = new Text(previewControl, SWT.WRAP | SWT.READ_ONLY);
                     error.setText(RESOURCE_BUNDLE.getString("errorCreatingPreview")); //$NON-NLS-1$
-                    WorkbenchPlugin.log(RESOURCE_BUNDLE.getString("errorCreatePreviewLog"), //$NON-NLS-1$ 
+                    WorkbenchPlugin.log(RESOURCE_BUNDLE.getString("errorCreatePreviewLog"), //$NON-NLS-1$
                     		StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
                 }
 	        }
 		}
-    	
+
         if (previewControl == null) { // there is no preview for this theme, use default preview
         	if (element instanceof ColorDefinition)
         		previewControl = defaultColorPreview;
@@ -1886,7 +1886,7 @@ getPreferenceStore(),
 	 * character against the known constants and then call the appropriate
 	 * method on the theme registry. If the element does not exist or the string
 	 * is invalid <code>null</code> is returned.
-	 * 
+	 *
 	 * @param string the string to parse
 	 * @return the element, or <code>null</code>
 	 */
@@ -1954,7 +1954,7 @@ getPreferenceStore(),
 
 	/**
 	 * Edit the currently selected font.
-	 * 
+	 *
 	 * @param display
 	 *            the display to open the dialog on
 	 * @since 3.2
@@ -1965,7 +1965,7 @@ getPreferenceStore(),
 
 	/**
 	 * Edit the given font.
-	 * 
+	 *
 	 * @param definition
 	 *            the font definition
 	 * @param display
@@ -1984,16 +1984,16 @@ getPreferenceStore(),
 			}
 		}
 	}
-	
+
 	private void editColor(Display display) {
 		editColor(getSelectedColorDefinition(), display);
 	}
 
 	private void editColor(ColorDefinition definition, Display display) {
 		if (definition == null)
-			return; 
+			return;
 		RGB currentColor = colorRegistry.getRGB(definition.getId());
-		
+
 		ColorDialog colorDialog = new ColorDialog(display.getActiveShell());
 		colorDialog.setRGB(currentColor);
 		RGB selectedColor =  colorDialog.open();
@@ -2003,8 +2003,8 @@ getPreferenceStore(),
 			refreshElement(definition);
 		}
 	}
-	
-	
+
+
 	protected void updateControls() {
 		FontDefinition fontDefinition = getSelectedFontDefinition();
 		if (fontDefinition != null) {
@@ -2038,7 +2038,7 @@ getPreferenceStore(),
 		goToDefaultButton.setEnabled(false);
 		descriptionText.setText(""); //$NON-NLS-1$
 	}
-	
+
     /**
      * @return Return the default "No preview available." preview.
      */
@@ -2050,7 +2050,7 @@ getPreferenceStore(),
 		myApplyDialogFont(l);
 		return noPreviewControl;
 	}
-	
+
 	private void setCurrentFont(FontDefinition fontDefinition) {
 		currentFont = fontRegistry.get(fontDefinition.getId());
 		FontData[] fontData = currentFont != null ? currentFont.getFontData() : new FontData[0];
@@ -2076,13 +2076,13 @@ getPreferenceStore(),
 		descriptionText.setText(fomatDescription(fontDefinition));
 		fontSampler.redraw();
 	}
-	
+
 	public void setCurrentColor(ColorDefinition colorDefinition) {
 		currentColor = colorRegistry.get(colorDefinition.getId());
 		colorSampler.redraw();
 		descriptionText.setText(fomatDescription(colorDefinition));
 	}
-	
+
 	private Composite createFontPreviewControl() {
 		fontSampler = new Canvas(previewComposite, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
@@ -2134,7 +2134,7 @@ getPreferenceStore(),
         gridLayout.marginHeight = 0;
 		colorSampler.setLayout(gridLayout);
 		colorSampler.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		colorSampler.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -2155,7 +2155,7 @@ getPreferenceStore(),
 		int maxHeight = lineHeight * 4;
 		if (clientArea.height > maxHeight)
 			clientArea = new Rectangle(clientArea.x, clientArea.y, clientArea.width, maxHeight);
-		
+
 		String messageTop = RESOURCE_BUNDLE.getString("fontColorSample"); //$NON-NLS-1$
 		String fontColorString = RESOURCE_BUNDLE.getString("fontColorString"); //$NON-NLS-1$
 		RGB rgb = currentColor.getRGB();
@@ -2280,9 +2280,9 @@ getPreferenceStore(),
 
 	private void refreshElement(ThemeElementDefinition definition) {
 		tree.getViewer().refresh(definition);
-		updateTreeSelection(tree.getViewer().getSelection());		
-		
-		Object newValue = definition instanceof ColorDefinition ? 
+		updateTreeSelection(tree.getViewer().getSelection());
+
+		Object newValue = definition instanceof ColorDefinition ?
 			((ColorDefinition) definition).getValue(): ((FontDefinition) definition).getValue();
 		getCascadingTheme().fire(new PropertyChangeEvent(this, definition.getId(), null, newValue));
 	}

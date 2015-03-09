@@ -84,7 +84,7 @@ public class NewWizardAction extends Action implements
      * enabled state.
      */
     private PerspectiveTracker tracker;
-    
+
     /**
      * Create a new instance of this class.
      * @param window
@@ -102,14 +102,14 @@ public class NewWizardAction extends Action implements
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
         setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
-        setToolTipText(WorkbenchMessages.NewWizardAction_toolTip); 
+        setToolTipText(WorkbenchMessages.NewWizardAction_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.NEW_ACTION);
     }
 
     /**
      * Create a new instance of this class
-     * 
+     *
      * @deprecated use the constructor <code>NewWizardAction(IWorkbenchWindow)</code>
      */
     @Deprecated
@@ -139,16 +139,16 @@ public class NewWizardAction extends Action implements
 	 * <p>
 	 * Sets the title of the wizard window
 	 * <p>
-	 * 
+	 *
 	 * <p>
 	 * If the title of the wizard window is <code>null</code>, the default
 	 * wizard window title will be used.
 	 * </p>
-	 * 
+	 *
 	 * @param windowTitle
 	 *            The title of the wizard window, otherwise <code>null</code>
 	 *            (default wizard window title).
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public void setWizardWindowTitle(String windowTitle) {

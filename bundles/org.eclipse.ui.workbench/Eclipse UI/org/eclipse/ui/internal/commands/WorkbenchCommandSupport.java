@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 
 /**
  * Provides command support in terms of the workbench.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
@@ -53,7 +53,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
 	/**
 	 * Constructs a new instance of <code>WorkbenchCommandSupport</code>
-	 * 
+	 *
 	 * @param bindingManager
 	 *            The binding manager providing support for the command manager;
 	 *            must not be <code>null</code>.

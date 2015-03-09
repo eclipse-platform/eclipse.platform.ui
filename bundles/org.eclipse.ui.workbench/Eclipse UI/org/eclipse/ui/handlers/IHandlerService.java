@@ -44,7 +44,7 @@ import org.eclipse.ui.services.IServiceWithSources;
 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @since 3.1
  */
 public interface IHandlerService extends IServiceWithSources {
@@ -56,7 +56,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * using this method, it is possible for handlers coming from a more nested
 	 * component to override the nested component.
 	 * </p>
-	 * 
+	 *
 	 * @param activation
 	 *            The activation that is local to the child service; must not be
 	 *            <code>null</code>.
@@ -83,7 +83,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier for the command which this handler handles;
 	 *            must not be <code>null</code>.
@@ -110,7 +110,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier for the command which this handler handles;
 	 *            must not be <code>null</code>.
@@ -124,7 +124,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
@@ -146,7 +146,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier for the command which this handler handles;
 	 *            must not be <code>null</code>.
@@ -164,7 +164,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
@@ -183,7 +183,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier for the command which this handler handles;
 	 *            must not be <code>null</code>.
@@ -199,7 +199,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *         someone with access to this token can cancel the activation. The
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @deprecated Use
 	 *             {@link IHandlerService#activateHandler(String, IHandler, Expression)}
@@ -212,7 +212,7 @@ public interface IHandlerService extends IServiceWithSources {
 	/**
 	 * Creates an execution event based on an SWT event. This execution event
 	 * can then be passed to a command for execution.
-	 * 
+	 *
 	 * @param command
 	 *            The command for which an execution event should be created;
 	 *            must not be <code>null</code>.
@@ -230,7 +230,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * Creates a parameterized execution event based on an SWT event and a
 	 * parameterized command. This execution event can then be passed to a
 	 * command for execution.
-	 * 
+	 *
 	 * @param command
 	 *            The parameterized command for which an execution event should
 	 *            be created; must not be <code>null</code>.
@@ -252,7 +252,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * deactivated from that service instead. It is only possible to retract a
 	 * handler activation with this method. That is, you must have the same
 	 * <code>IHandlerActivation</code> used to activate the handler.
-	 * 
+	 *
 	 * @param activation
 	 *            The token that was returned from a call to
 	 *            <code>activateHandler</code>; must not be <code>null</code>.
@@ -265,7 +265,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * deactivated from that service instead. It is only possible to retract a
 	 * handler activation with this method. That is, you must have the same
 	 * <code>IHandlerActivation</code> used to activate the handler.
-	 * 
+	 *
 	 * @param activations
 	 *            The tokens that were returned from a call to
 	 *            <code>activateHandler</code>. This collection must only
@@ -276,7 +276,7 @@ public interface IHandlerService extends IServiceWithSources {
 
 	/**
 	 * Executes the command with the given identifier and no parameters.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to execute; must not be
 	 *            <code>null</code>.
@@ -301,7 +301,7 @@ public interface IHandlerService extends IServiceWithSources {
 
 	/**
 	 * Executes the given parameterized command.
-	 * 
+	 *
 	 * @param command
 	 *            The parameterized command to be executed; must not be
 	 *            <code>null</code>.
@@ -329,7 +329,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * takes care of finding the correct active handler given the context, calls
 	 * {@link IHandler2#setEnabled(Object)} to update the enabled state if
 	 * supported, and executes with that handler.
-	 * 
+	 *
 	 * @param command
 	 *            The parameterized command to be executed; must not be
 	 *            <code>null</code>.
@@ -359,7 +359,7 @@ public interface IHandlerService extends IServiceWithSources {
 	/**
 	 * This method creates a copy of the application context returned by
 	 * {@link #getCurrentState()}.
-	 * 
+	 *
 	 * @param includeSelection
 	 *            if <code>true</code>, include the default variable and
 	 *            selection variables
@@ -373,7 +373,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * Returns an evaluation context representing the current state of the
 	 * world. This is equivalent to the application context required by
 	 * {@link ExecutionEvent}.
-	 * 
+	 *
 	 * @return the current state of the application; never <code>null</code>.
 	 * @see ParameterizedCommand#executeWithChecks(Object, Object)
 	 * @see ExecutionEvent#ExecutionEvent(Command, java.util.Map, Object,
@@ -394,7 +394,7 @@ public interface IHandlerService extends IServiceWithSources {
 
 	/**
 	 * Sets the help context identifier to associate with a particular handler.
-	 * 
+	 *
 	 * @param handler
 	 *            The handler with which to register a help context identifier;
 	 *            must not be <code>null</code>.

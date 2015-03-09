@@ -22,7 +22,7 @@ import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 
 /**
  * The status handler descriptor.
- * 
+ *
  * @since 3.3
  */
 public class StatusHandlerDescriptor implements IPluginContribution {
@@ -51,7 +51,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	/**
 	 * Gets an instance of the status handler defined in the descriptor.
-	 * 
+	 *
 	 * @return the status handler
 	 * @throws CoreException
 	 *             thrown if there is a problem creating the handler
@@ -86,7 +86,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	/**
 	 * Gets prefix parameter for the status handler defined in the descriptor.
-	 * 
+	 *
 	 * @return prefix parameter
 	 */
 	public String getPrefix() {
@@ -106,7 +106,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	/**
 	 * Returns the id of the status handler.
-	 * 
+	 *
 	 * @return the id
 	 */
 	public String getId() {
@@ -115,7 +115,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	@Override

@@ -45,7 +45,7 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class EvaluationService implements IEvaluationService {
 	public static final String DEFAULT_VAR = "org.eclipse.ui.internal.services.EvaluationService.default_var"; //$NON-NLS-1$
@@ -151,7 +151,7 @@ public final class EvaluationService implements IEvaluationService {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse
 	 * .ui.ISourceProvider)
@@ -182,7 +182,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.
 	 * eclipse.ui.ISourceProvider)
@@ -204,7 +204,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override
@@ -218,7 +218,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IEvaluationService#addServiceListener(org.eclipse
 	 * .jface.util.IPropertyChangeListener)
@@ -230,7 +230,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IEvaluationService#removeServiceListener(org.
 	 * eclipse.jface.util.IPropertyChangeListener)
@@ -242,7 +242,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IEvaluationService#addEvaluationListener(org.
 	 * eclipse.core.expressions.Expression,
@@ -259,7 +259,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IEvaluationService#addEvaluationReference(org
 	 * .eclipse.ui.services.IEvaluationReference)
@@ -303,7 +303,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IEvaluationService#removeEvaluationListener(org
 	 * .eclipse.ui.services.IEvaluationReference)
@@ -315,7 +315,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IEvaluationService#getCurrentState()
 	 */
 	@Override

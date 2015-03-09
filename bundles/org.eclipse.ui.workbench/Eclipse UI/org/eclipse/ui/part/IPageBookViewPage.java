@@ -16,7 +16,7 @@ import org.eclipse.ui.PartInitException;
  * Interface for a page in a pagebook view.
  * <p>
  * Pages should implement this interface.
- * </p>	
+ * </p>
  * @see PageBookView
  * @see Page
  */
@@ -30,10 +30,10 @@ public interface IPageBookViewPage extends IPage {
     public IPageSite getSite();
 
     /**
-     * Initializes this page with the given page site.  
+     * Initializes this page with the given page site.
      * <p>
-     * This method is automatically called by the workbench shortly after page 
-     * construction.  It marks the start of the pages's lifecycle. Clients must 
+     * This method is automatically called by the workbench shortly after page
+     * construction.  It marks the start of the pages's lifecycle. Clients must
      * not call this method.
      * </p>
      *

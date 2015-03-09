@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ViewElement extends QuickAccessElement {
 

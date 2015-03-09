@@ -23,9 +23,9 @@ import org.eclipse.ui.internal.WorkbenchPage;
  * <p>
  * Replacement for SaveAsAction
  * </p>
- * 
+ *
  * @since 3.7
- * 
+ *
  */
 public class SaveAsHandler extends AbstractSaveHandler {
 
@@ -40,7 +40,7 @@ public class SaveAsHandler extends AbstractSaveHandler {
 
 		if (saveablePart != null)
 			saveablePart.doSaveAs();
-		
+
 		return null;
 	}
 

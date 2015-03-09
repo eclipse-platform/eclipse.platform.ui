@@ -24,7 +24,7 @@ import org.eclipse.ui.contexts.IContext;
  * This wraps an old context listener so it supports the new API. This is used
  * to support attaching old-style listens to the new context objects.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class LegacyContextListenerWrapper implements IContextListener,
@@ -49,7 +49,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 
 	/**
 	 * Constructs a new instance of <code>ContextListenerWrapper</code>.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be wrapped. Must not be <code>null</code>.
 	 * @param contextManager
@@ -84,7 +84,7 @@ public class LegacyContextListenerWrapper implements IContextListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.contexts.IContextListener#contextChanged(org.eclipse.core.commands.contexts.ContextEvent)
 	 */
 	@Override

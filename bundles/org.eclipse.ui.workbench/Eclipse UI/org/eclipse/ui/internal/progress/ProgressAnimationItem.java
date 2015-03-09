@@ -78,7 +78,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 	/**
 	 * Create an instance of the receiver in the supplied region.
-	 * 
+	 *
 	 * @param region
 	 *            The ProgressRegion that contains the receiver.
 	 * @param flags
@@ -114,7 +114,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 						StatusAdapter statusAdapter = StatusAdapterHelper
 								.getInstance().getStatusAdapter(ji);
 
-						if (statusAdapter == null) 
+						if (statusAdapter == null)
 							statusAdapter = new StatusAdapter(status);
 
 						StatusManager.getManager().handle(statusAdapter,
@@ -263,7 +263,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 		toolButton.setToolTipText(tt);
     	toolbar.setVisible(true);
 		toolbar.getParent().layout(); // must layout
-		
+
     	toolbar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
         	@Override
 			public void getName(AccessibleEvent e) {
@@ -274,7 +274,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#createAnimationItem(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -361,7 +361,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#getControl()
 	 */
 	@Override
@@ -371,7 +371,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#animationDone()
 	 */
 	@Override
@@ -394,7 +394,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#animationStart()
 	 */
 	@Override

@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * CheckboxTreeViewer with special behaviour of the checked / gray state on 
+ * CheckboxTreeViewer with special behaviour of the checked / gray state on
  * container (non-leaf) nodes:
  * The grayed state is used to visualize the checked state of its children.
  * Containers are checked and non-gray if all contained leafs are checked. The
@@ -98,7 +98,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
     }
 
     /**
-     * The item has expanded. Updates the checked state of its children. 
+     * The item has expanded. Updates the checked state of its children.
      */
     private void initializeItem(TreeItem item) {
         if (item.getChecked() && !item.getGrayed()) {
@@ -142,7 +142,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
-    
+
     @Override
 	public boolean setChecked(Object element, boolean state) {
         if (super.setChecked(element, state)) {
@@ -152,7 +152,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         return false;
     }
 
- 
+
     @Override
 	public void setCheckedElements(Object[] elements) {
         super.setCheckedElements(elements);
@@ -170,7 +170,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
-   
+
     @Override
 	public Object[] getCheckedElements() {
         Object[] checked = super.getCheckedElements();

@@ -27,9 +27,9 @@ import org.eclipse.ui.themes.ITheme;
 
 /**
  * A MultiEditor is a composite of editors.
- * 
+ *
  * This class is intended to be subclassed.
- * 		
+ *
  */
 public abstract class MultiEditor extends AbstractMultiEditor {
 
@@ -46,16 +46,16 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 
 	/**
 	 * Updates the gradient in the title bar.
-	 * @param editor 
+	 * @param editor
 	 */
 	public void updateGradient(IEditorPart editor) {
 	    boolean activeEditor = editor == getSite().getPage().getActiveEditor();
 	    boolean activePart = editor == getSite().getPage().getActivePart();
-	
+
 	    ITheme theme = editor.getEditorSite().getWorkbenchWindow()
 	            .getWorkbench().getThemeManager().getCurrentTheme();
 	    Gradient g = new Gradient();
-	
+
 	    ColorRegistry colorRegistry = theme.getColorRegistry();
 	    if (activePart) {
 	        g.fgColor = colorRegistry
@@ -86,7 +86,7 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 	    }
 	    g.bgPercents = new int[] { theme
 	            .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) };
-	
+
 	    drawGradient(editor, g);
 	}
 
@@ -94,10 +94,10 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 	 * Draw the gradient in the title bar.
 	 */
 	protected abstract void drawGradient(IEditorPart innerEditor, Gradient g);
-    
+
     /**
      * Create the control of the inner editor.
-     * 
+     *
      * Must be called by subclass.
      */
     public Composite createInnerPartControl(Composite parent,
@@ -127,7 +127,7 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 
     /**
      * Activates the given nested editor.
-     * 
+     *
      * @param part the nested editor
      * @since 3.5
      */

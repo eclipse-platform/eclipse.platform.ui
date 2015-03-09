@@ -22,12 +22,12 @@ public class DirtyPerspectiveMarker {
 	}
 
 	public String perspectiveId;
-	
+
 	@Override
 	public int hashCode() {
 		return perspectiveId.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof DirtyPerspectiveMarker) {

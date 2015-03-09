@@ -56,7 +56,7 @@ public class DecorationResult {
 
 	/**
 	 * Return whether or not any of the imageDescriptors are non-null.
-	 * 
+	 *
 	 * @param imageDescriptors
 	 * @return <code>true</code> if there are some non-null overlays
 	 */
@@ -71,7 +71,7 @@ public class DecorationResult {
 
 	/**
 	 * Decorate the Image supplied with the overlays.
-	 * 
+	 *
 	 * @param image
 	 * @param manager
 	 * @return Image
@@ -82,7 +82,7 @@ public class DecorationResult {
 		if (image == null || descriptors == null) {
 			return image;
 		}
-		
+
 		Rectangle bounds = image.getBounds();
 		Point size = new Point(bounds.width, bounds.height);
 		DecorationOverlayIcon icon = new DecorationOverlayIcon(image, descriptors, size);
@@ -93,7 +93,7 @@ public class DecorationResult {
 	 * Decorate the String supplied with the prefixes and suffixes. This method
 	 * is public for use by the test suites and is not intended to be referenced
 	 * by other workbench internals.
-	 * 
+	 *
 	 * @param text
 	 * @return String
 	 */
@@ -124,7 +124,7 @@ public class DecorationResult {
 
 	/**
 	 * Get the descriptor array for the receiver.
-	 * 
+	 *
 	 * @return ImageDescriptor[] or <code>null</code>
 	 */
 	ImageDescriptor[] getDescriptors() {
@@ -133,7 +133,7 @@ public class DecorationResult {
 
 	/**
 	 * Get the prefixes for the receiver.
-	 * 
+	 *
 	 * @return List
 	 */
 	List getPrefixes() {
@@ -142,7 +142,7 @@ public class DecorationResult {
 
 	/**
 	 * Get the suffixes for the receiver.
-	 * 
+	 *
 	 * @return List
 	 */
 	List getSuffixes() {
@@ -151,7 +151,7 @@ public class DecorationResult {
 
 	/**
 	 * Return the background Color for the result.
-	 * 
+	 *
 	 * @return Color
 	 */
 	Color getBackgroundColor() {
@@ -160,7 +160,7 @@ public class DecorationResult {
 
 	/**
 	 * Return the font for the result.
-	 * 
+	 *
 	 * @return Font
 	 */
 	Font getFont() {
@@ -169,7 +169,7 @@ public class DecorationResult {
 
 	/**
 	 * Return the foreground color for the result.
-	 * 
+	 *
 	 * @return Color
 	 */
 	Color getForegroundColor() {

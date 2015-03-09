@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Yves YANG <yves.yang@soyatec.com> - 
+ *     Yves YANG <yves.yang@soyatec.com> -
  *     		Initial Fix for Bug 138078 [Preferences] Preferences Store for i18n support
  *******************************************************************************/
 package org.eclipse.ui.preferences;
@@ -45,7 +45,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * The default scope is always included in the search scopes when searching for
  * preference values.
  * </p>
- * 
+ *
  * @see org.eclipse.core.runtime.preferences
  * @since 3.1
  */
@@ -102,7 +102,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 * Create a new instance of the receiver. Store the values in context in the
 	 * node looked up by qualifier. <strong>NOTE:</strong> Any instance of
 	 * ScopedPreferenceStore should call
-	 * 
+	 *
 	 * @param context
 	 *            the scope to store to
 	 * @param qualifier
@@ -119,7 +119,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
 	 * node looked up by qualifier.
-	 * 
+	 *
 	 * @param context
 	 *            the scope to store to
 	 * @param qualifier
@@ -137,7 +137,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	/**
 	 * Return a node change listener that adds a removes the receiver when nodes
 	 * change.
-	 * 
+	 *
 	 * @return INodeChangeListener
 	 */
 	private INodeChangeListener getNodeChangeListener() {
@@ -193,7 +193,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 * the given object's type and then looks in the list of defaults to see if
 	 * a value exists. If not or if there is a problem converting the value, the
 	 * default default value for that type is returned.
-	 * 
+	 *
 	 * @param key
 	 *            the key to search
 	 * @param obj
@@ -222,7 +222,7 @@ public class ScopedPreferenceStore extends EventManager implements
 
 	/**
 	 * Return the IEclipsePreferences node associated with this store.
-	 * 
+	 *
 	 * @return the preference node for this store
 	 */
 	IEclipsePreferences getStorePreferences() {
@@ -231,7 +231,7 @@ public class ScopedPreferenceStore extends EventManager implements
 
 	/**
 	 * Return the default IEclipsePreferences for this store.
-	 * 
+	 *
 	 * @return this store's default preference node
 	 */
 	private IEclipsePreferences getDefaultPreferences() {
@@ -253,7 +253,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 * Whether or not the default context should be included in the resulting
 	 * list is specified by the <code>includeDefault</code> parameter.
 	 * </p>
-	 * 
+	 *
 	 * @param includeDefault
 	 *            <code>true</code> if the default context should be included
 	 *            and <code>false</code> otherwise
@@ -299,7 +299,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 * The defaultContext will be added to the end of this list automatically
 	 * and <em>MUST NOT</em> be included by the user.
 	 * </p>
-	 * 
+	 *
 	 * @param scopes
 	 *            a list of scope contexts to use when searching, or
 	 *            <code>null</code>
@@ -409,7 +409,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 * Return the string value for the specified key. Look in the nodes which
 	 * are specified by this object's list of search scopes. If the value does
 	 * not exist then return <code>null</code>.
-	 * 
+	 *
 	 * @param key
 	 *            the key to search with
 	 * @return String or <code>null</code> if the value does not exist.
@@ -543,7 +543,7 @@ public class ScopedPreferenceStore extends EventManager implements
 				dirty = true;
 				firePropertyChangeEvent(name, oldValue, defaultValue);
 			}
-				
+
 		} finally {
 			silentRunning = false;// Restart listening to preferences
 		}

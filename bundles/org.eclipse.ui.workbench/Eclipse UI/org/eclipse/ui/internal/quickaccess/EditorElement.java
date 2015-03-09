@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class EditorElement extends QuickAccessElement {
 

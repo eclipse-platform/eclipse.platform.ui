@@ -41,11 +41,11 @@ import org.eclipse.ui.internal.util.Util;
  *
  * At startup we read the registry and create a PluginAction for each action extension.
  * This plugin action looks like the real action ( label, icon, etc ) and acts as
- * a proxy for the action until invoked.  At that point the proxy will instantiate 
+ * a proxy for the action until invoked.  At that point the proxy will instantiate
  * the real action and delegate the run method to the real action.
  * This makes it possible to load the action extension lazily.
  *
- * Occasionally the class will ask if it is OK to 
+ * Occasionally the class will ask if it is OK to
  * load the delegate (on selection changes).  If the plugin containing
  * the action extension has been loaded then the action extension itself
  * will be instantiated.
@@ -70,7 +70,7 @@ public abstract class PluginAction extends Action implements
 
     /**
      * PluginAction constructor.
-     * 
+     *
      * @param actionElement the element
      * @param id the identifier
      * @param style the style bits
@@ -160,12 +160,12 @@ public abstract class PluginAction extends Action implements
         if (obj instanceof IActionDelegate) {
 			return (IActionDelegate) obj;
 		}
-        
+
         throw new WorkbenchException(
                 "Action must implement IActionDelegate"); //$NON-NLS-1$
     }
 
-    /** 
+    /**
      * Initialize the action delegate by calling its lifecycle method.
      * Subclasses may override but must call this implementation first.
      */
@@ -221,13 +221,13 @@ public abstract class PluginAction extends Action implements
                 MessageDialog
                         .openInformation(
                                 Util.getShellToParentOn(),
-                                WorkbenchMessages.Information, 
-                                WorkbenchMessages.PluginAction_operationNotAvailableMessage); 
+                                WorkbenchMessages.Information,
+                                WorkbenchMessages.PluginAction_operationNotAvailableMessage);
                 return;
             }
             if (!isEnabled()) {
-                MessageDialog.openInformation(Util.getShellToParentOn(), WorkbenchMessages.Information, 
-                        WorkbenchMessages.PluginAction_disabledMessage); 
+                MessageDialog.openInformation(Util.getShellToParentOn(), WorkbenchMessages.Information,
+                        WorkbenchMessages.PluginAction_disabledMessage);
                 return;
             }
         }
@@ -251,7 +251,7 @@ public abstract class PluginAction extends Action implements
      * Handles selection change. If rule-based enabled is
      * defined, it will be first to call it. If the delegate
      * is loaded, it will also be given a chance.
-     * 
+     *
      * @param newSelection the new selection
      */
     public void selectionChanged(ISelection newSelection) {
@@ -264,7 +264,7 @@ public abstract class PluginAction extends Action implements
         // The selection is passed to the delegate as-is without
         // modification. If the selection needs to be modified
         // the action contributors should do so.
-        
+
         // If the delegate can be loaded, do so.
         // Otherwise, just update the enablement.
         if (delegate == null && isOkToCreateDelegate()) {
@@ -275,8 +275,8 @@ public abstract class PluginAction extends Action implements
     }
 
     /**
-     * The <code>SelectionChangedEventAction</code> implementation of this 
-     * <code>ISelectionChangedListener</code> method calls 
+     * The <code>SelectionChangedEventAction</code> implementation of this
+     * <code>ISelectionChangedListener</code> method calls
      * <code>selectionChanged(IStructuredSelection)</code> when the selection is
      * a structured one.
      */
@@ -287,8 +287,8 @@ public abstract class PluginAction extends Action implements
     }
 
     /**
-     * The <code>SelectionChangedEventAction</code> implementation of this 
-     * <code>ISelectionListener</code> method calls 
+     * The <code>SelectionChangedEventAction</code> implementation of this
+     * <code>ISelectionListener</code> method calls
      * <code>selectionChanged(IStructuredSelection)</code> when the selection is
      * a structured one. Subclasses may extend this method to react to the change.
      */
@@ -299,8 +299,8 @@ public abstract class PluginAction extends Action implements
 
     /**
      * For testing purposes only.
-     * 
-     * @return the selection 
+     *
+     * @return the selection
      * @since 3.1
      */
     public ISelection getSelection() {
@@ -310,7 +310,7 @@ public abstract class PluginAction extends Action implements
     /**
      * Returns the action identifier this action overrides.
      * Default implementation returns <code>null</code>.
-     * 
+     *
      * @return the action identifier to override or <code>null</code>
      */
     public String getOverrideActionId() {
@@ -319,7 +319,7 @@ public abstract class PluginAction extends Action implements
 
     /**
      * @return the IConfigurationElement used to create this PluginAction.
-     * 
+     *
      * @since 3.0
      */
     protected IConfigurationElement getConfigElement() {
@@ -338,7 +338,7 @@ public abstract class PluginAction extends Action implements
 
     /**
      * Disposes the delegate, if created.
-     * 
+     *
      * @since 3.1
      */
     public void disposeDelegate() {
@@ -355,14 +355,14 @@ public abstract class PluginAction extends Action implements
 
     /**
      * Disposes this plugin action.
-     * 
+     *
      * @since 3.1
      */
     public void dispose() {
         disposeDelegate();
         selection = null;
     }
-    
+
     @Override
 	public IMenuCreator getMenuCreator() {
     	// now that action contribution item defers asking for the menu

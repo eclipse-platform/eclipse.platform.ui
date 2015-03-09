@@ -19,9 +19,9 @@ package org.eclipse.ui.internal;
  * without consulting the Platform UI group. No guarantees are made as to the
  * stability of the API (except that the javadoc will get better...;-).
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public interface ITrimAreaChangeListener {
 	/**
@@ -34,7 +34,7 @@ public interface ITrimAreaChangeListener {
 	 * from horizontal to vertical if it's been redocked to an area on the left
 	 * or right side)
 	 * </p>
-	 * 
+	 *
 	 * @param oldOrientation
 	 *            The SWT side that the trim was previously on.
 	 * @param newOrientation

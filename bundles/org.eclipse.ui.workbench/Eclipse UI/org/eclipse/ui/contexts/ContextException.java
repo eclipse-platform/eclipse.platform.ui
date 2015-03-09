@@ -15,7 +15,7 @@ package org.eclipse.ui.contexts;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.common.CommandException
@@ -23,20 +23,20 @@ package org.eclipse.ui.contexts;
  */
 @Deprecated
 public abstract class ContextException extends Exception {
-	
+
 	/**
 	 * Generated serial version UID for this class.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final long serialVersionUID= -5143404124388080211L;
-	
-	
+
+
 	private Throwable cause;
 
     /**
      * Creates a new instance of this class with the specified detail message.
-     * 
+     *
      * @param message
      *            the detail message.
      */
@@ -47,7 +47,7 @@ public abstract class ContextException extends Exception {
     /**
      * Creates a new instance of this class with the specified detail message
      * and cause.
-     * 
+     *
      * @param message
      *            the detail message.
      * @param cause
@@ -58,10 +58,10 @@ public abstract class ContextException extends Exception {
         // don't pass the cause to super, to allow compilation against JCL Foundation
         this.cause = cause;
     }
-    
+
     /**
      * Returns the cause of this throwable or <code>null</code> if the
-     * cause is nonexistent or unknown. 
+     * cause is nonexistent or unknown.
      *
      * @return the cause or <code>null</code>
      * @since 3.1

@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * An <code>ActionContext</code> represents the context used to determine
- * which actions are added by an <code>ActionGroup</code>, and what their 
+ * which actions are added by an <code>ActionGroup</code>, and what their
  * enabled state should be.
  * <p>
  * This class encapsulates a selection and an input element.
@@ -63,7 +63,7 @@ public class ActionContext {
 
     /**
      * Sets the input element.
-     * 
+     *
      * @param input
      */
     public void setInput(Object input) {

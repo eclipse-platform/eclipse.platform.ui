@@ -28,12 +28,12 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class AbstractSelectionService implements ISelectionService {
 
-    /** 
+    /**
      * The list of selection listeners (not per-part).
      */
     private ListenerList listeners = new ListenerList();
 
-    /** 
+    /**
      * The list of post selection listeners (not per-part).
      */
     private ListenerList postListeners = new ListenerList();
@@ -44,7 +44,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
     private IWorkbenchPart activePart;
 
     /**
-     * The active part's selection provider, remembered in case the part 
+     * The active part's selection provider, remembered in case the part
      * replaces its selection provider after we hooked a listener.
      */
     private ISelectionProvider activeProvider;
@@ -125,7 +125,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
 
     /**
      * Fires a selection event to the given listeners.
-     * 
+     *
      * @param part the part or <code>null</code> if no active part
      * @param sel the selection or <code>null</code> if no active selection
      */
@@ -135,7 +135,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
             final ISelectionListener l = (ISelectionListener) array[i];
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
-                
+
                 try {
                     l.selectionChanged(part, sel);
                 } catch (Exception e) {
@@ -147,7 +147,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
 
     /**
      * Fires a selection event to the given listeners.
-     * 
+     *
      * @param part the part or <code>null</code> if no active part
      * @param sel the selection or <code>null</code> if no active selection
      */
@@ -158,7 +158,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
             final ISelectionListener l = (ISelectionListener) array[i];
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
-                
+
                 try {
                     l.selectionChanged(part, sel);
                 } catch (Exception e) {
@@ -170,7 +170,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
 
     /**
      * Returns the per-part selection tracker for the given part id.
-     * 
+     *
      * @param partId part identifier
      * @return per-part selection tracker
      */
@@ -189,7 +189,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
 
     /**
      * Creates a new per-part selection tracker for the given part id.
-     * 
+     *
      * @param partId part identifier
      * @return per-part selection tracker
      */
@@ -218,8 +218,8 @@ public abstract class AbstractSelectionService implements ISelectionService {
 
     /**
      * Sets the current-active part (or null if none)
-     * 
-     * @since 3.1 
+     *
+     * @since 3.1
      *
      * @param newPart the new active part (or null if none)
      */
@@ -228,21 +228,21 @@ public abstract class AbstractSelectionService implements ISelectionService {
         if (newPart == activePart) {
 			return;
 		}
-        
+
         ISelectionProvider selectionProvider = null;
-        
+
         if (newPart != null) {
             selectionProvider = newPart.getSite().getSelectionProvider();
-            
+
             if (selectionProvider == null) {
                 newPart = null;
             }
         }
-        
+
         if (newPart == activePart) {
 			return;
 		}
-        
+
         if (activePart != null) {
             if (activeProvider != null) {
                 activeProvider.removeSelectionChangedListener(selListener);
@@ -259,7 +259,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
         }
 
         activePart = newPart;
-        
+
         if (newPart != null) {
             activeProvider = selectionProvider;
             // Fire an event if there's an active provider
@@ -278,7 +278,7 @@ public abstract class AbstractSelectionService implements ISelectionService {
             firePostSelection(null, null);
         }
     }
-    
+
 //    /**
 //     * Notifies the listener that a part has been activated.
 //     */

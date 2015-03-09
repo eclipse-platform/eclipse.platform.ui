@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.services.INestable;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class NestableContextService extends SlaveContextService implements
@@ -40,7 +40,7 @@ public class NestableContextService extends SlaveContextService implements
 
 	/**
 	 * Construct the new nested slave context.
-	 * 
+	 *
 	 * @param parentService
 	 *            the parent context service; must not be <code>null</code>.
 	 * @param defaultExpression
@@ -56,7 +56,7 @@ public class NestableContextService extends SlaveContextService implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.contexts.SlaveContextService#doActivateContext(org.eclipse.ui.contexts.IContextActivation)
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class NestableContextService extends SlaveContextService implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.services.INestable#activate()
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class NestableContextService extends SlaveContextService implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.services.INestable#deactivate()
 	 */
 	@Override

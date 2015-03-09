@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ActionProvider extends QuickAccessProvider {
 

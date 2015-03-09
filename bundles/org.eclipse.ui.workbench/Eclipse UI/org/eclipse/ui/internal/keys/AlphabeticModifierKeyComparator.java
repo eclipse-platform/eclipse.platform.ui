@@ -17,7 +17,7 @@ import org.eclipse.ui.keys.ModifierKey;
 
 /**
  * Compares modifier keys lexicographically by the name of the key.
- * 
+ *
  * @since 3.0
  */
 public class AlphabeticModifierKeyComparator implements Comparator {

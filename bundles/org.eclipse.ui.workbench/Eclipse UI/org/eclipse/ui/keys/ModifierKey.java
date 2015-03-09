@@ -29,7 +29,7 @@ import org.eclipse.jface.util.Util;
  * <code>ModifierKey</code> objects are immutable. Clients are not permitted
  * to extend this class.
  * </p>
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
@@ -65,7 +65,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'M1' key.
 	 */
-	private final static String M1_NAME = "M1"; //$NON-NLS-1$	
+	private final static String M1_NAME = "M1"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'M2' key.
@@ -80,7 +80,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'M4' key.
 	 */
-	private final static String M4_NAME = "M4"; //$NON-NLS-1$	
+	private final static String M4_NAME = "M4"; //$NON-NLS-1$
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents
@@ -94,7 +94,7 @@ public final class ModifierKey extends Key {
 		COMMAND = new ModifierKey(lookup.getCommand());
 		CTRL = new ModifierKey(lookup.getCtrl());
 		SHIFT = new ModifierKey(lookup.getShift());
-		
+
 		modifierKeysByName.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
 		modifierKeysByName.put(ModifierKey.COMMAND.toString(),
 				ModifierKey.COMMAND);
@@ -114,7 +114,7 @@ public final class ModifierKey extends Key {
 
 	/**
 	 * Constructs an instance of <code>ModifierKey</code> given a name.
-	 * 
+	 *
 	 * @param key
 	 *            The key which this key wraps.
 	 */

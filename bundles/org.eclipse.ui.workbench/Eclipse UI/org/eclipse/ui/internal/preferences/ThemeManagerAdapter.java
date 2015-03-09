@@ -22,18 +22,18 @@ import org.eclipse.ui.themes.IThemeManager;
 public class ThemeManagerAdapter extends PropertyMapAdapter {
 
     private IThemeManager manager;
-    
+
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         @Override
 		public void propertyChange(PropertyChangeEvent event) {
             firePropertyChange(event.getProperty());
         }
     };
-    
+
     public ThemeManagerAdapter(IThemeManager manager) {
         this.manager = manager;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#attachListener()
      */
@@ -56,7 +56,7 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
     @Override
 	public Set keySet() {
         Set result = ThemeAdapter.getKeySet(manager.getCurrentTheme());
-        
+
         return result;
     }
 

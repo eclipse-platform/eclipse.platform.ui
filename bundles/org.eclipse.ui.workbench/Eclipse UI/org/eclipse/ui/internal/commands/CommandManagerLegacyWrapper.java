@@ -43,7 +43,7 @@ import org.eclipse.ui.keys.KeySequence;
 
 /**
  * Provides support for the old <code>ICommandManager</code> interface.
- * 
+ *
  * @since 3.1
  */
 public final class CommandManagerLegacyWrapper implements ICommandManager,
@@ -87,7 +87,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 * The JFace binding machine that provides binding support for this
 	 * workbench mutable command manager. This value will never be
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private final BindingManager bindingManager;
@@ -95,7 +95,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	/**
 	 * The command manager that provides functionality for this workbench
 	 * command manager. This value will never be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private final CommandManager commandManager;
@@ -105,7 +105,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	/**
 	 * The context manager that provides functionality for this workbench
 	 * command manager. This value will never be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private final ContextManager contextManager;
@@ -114,7 +114,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 * Constructs a new instance of <code>MutableCommandManager</code>. The
 	 * binding manager and command manager providing support for this manager
 	 * are constructed at this time.
-	 * 
+	 *
 	 * @param bindingManager
 	 *            The binding manager providing support for the command manager;
 	 *            must not be <code>null</code>.
@@ -124,7 +124,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 * @param contextManager
 	 *            The context manager to provide context support to this
 	 *            manager. This value must not be <code>null</code>.
-	 * 
+	 *
 	 */
 	public CommandManagerLegacyWrapper(final BindingManager bindingManager,
 			final CommandManager commandManager,
@@ -159,7 +159,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 	 */
 	@Override
@@ -194,7 +194,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.commands.ICommandManagerListener#commandManagerChanged(org.eclipse.commands.CommandManagerEvent)
 	 */
 	@Override
@@ -304,7 +304,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandManager#getDefinedCategoryIds()
 	 */
 	@Override
@@ -419,7 +419,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 	/**
 	 * Updates the handlers for a block of commands all at once.
-	 * 
+	 *
 	 * @param handlersByCommandId
 	 *            The map of command identifier (<code>String</code>) to
 	 *            handler (<code>IHandler</code>).

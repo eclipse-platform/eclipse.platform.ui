@@ -25,7 +25,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * This class is only intended to be extended by the three inner classes (<code>Export</code>,
  * <code>Import</code> and <code>New</code>) defined here.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class WizardParameterValues implements IParameterValues {
@@ -70,7 +70,7 @@ public abstract class WizardParameterValues implements IParameterValues {
 			// Note: using description instead of label for the name
 			// to reduce possibilities of key collision in the map
 			// final String name = wizardDescriptor.getDescription();
-			
+
 			// by request
 			String name = wizardDescriptor.getLabel();
 			final String id = wizardDescriptor.getId();
@@ -102,7 +102,7 @@ public abstract class WizardParameterValues implements IParameterValues {
 	/**
 	 * Returns the wizard registry for the concrete
 	 * <code>WizardParameterValues</code> implementation class.
-	 * 
+	 *
 	 * @return The wizard registry for the concrete
 	 *         <code>WizardParameterValues</code> implementation class.
 	 */

@@ -27,9 +27,9 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 /**
  * A AbstractMultiEditor is a composite of editors.
- * 
+ *
  * This class is intended to be subclassed.
- * 		
+ *
  * @since 3.5
  */
 public abstract class AbstractMultiEditor extends EditorPart {
@@ -58,7 +58,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 	 * <p>
 	 * Subclasses may extend or reimplement this method.
 	 * </p>
-	 * 
+	 *
 	 * @param propId
 	 *            the id of the property that changed
 	 * @since 3.6
@@ -96,9 +96,9 @@ public abstract class AbstractMultiEditor extends EditorPart {
     }
 
     /**
-     * @param site 
-     * @param input 
-     * @throws PartInitException  
+     * @param site
+     * @param input
+     * @throws PartInitException
 	 *
 	 * @see IEditorPart#init(IEditorSite, IEditorInput)
      */
@@ -159,9 +159,9 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
 	/**
 	 * Set the inner editors.
-	 * 
+	 *
 	 * Should not be called by clients.
-	 * 
+	 *
 	 * @param children
 	 *            the inner editors of this multi editor
 	 * @noreference This method is not intended to be referenced by clients.
@@ -189,7 +189,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
     /**
      * Activates the given nested editor.
-     * 
+     *
      * @param part the nested editor
      * @since 3.0
      */
@@ -203,7 +203,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
     /**
      * Returns the index of the given nested editor.
-     * 
+     *
      * @return the index of the nested editor
      * @since 3.0
      */
@@ -278,7 +278,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
     /**
      * Release the added listener.
-     * 
+     *
      * @since 3.2
      */
 	@Override
@@ -290,7 +290,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 	/**
 	 * This method is called after createPartControl has been executed and
 	 * should return the container for the given inner editor.
-	 * 
+	 *
 	 * @param innerEditorReference
 	 *            a reference to the inner editor that is being created.
 	 * @return the container in which the inner editor's pane and part controls

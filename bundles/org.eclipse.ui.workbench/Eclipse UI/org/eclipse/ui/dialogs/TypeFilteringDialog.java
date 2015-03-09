@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation 
+ *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  *       activated and used by other components.
- *     Markus Schorn <markus.schorn@windriver.com> - Fix for bug 136591 - 
+ *     Markus Schorn <markus.schorn@windriver.com> - Fix for bug 136591 -
  *       [Dialogs] TypeFilteringDialog appends unnecessary comma
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
@@ -59,10 +59,10 @@ public class TypeFilteringDialog extends SelectionDialog {
 
     private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
-    private final static String TYPE_DELIMITER = WorkbenchMessages.TypesFiltering_typeDelimiter; 
+    private final static String TYPE_DELIMITER = WorkbenchMessages.TypesFiltering_typeDelimiter;
 
     //Define a title for the filter entry field.
-    private String filterTitle = WorkbenchMessages.TypesFiltering_otherExtensions; 
+    private String filterTitle = WorkbenchMessages.TypesFiltering_otherExtensions;
 
     Text userDefinedText;
 
@@ -78,16 +78,16 @@ public class TypeFilteringDialog extends SelectionDialog {
      */
     public TypeFilteringDialog(Shell parentShell, Collection preselections) {
         super(parentShell);
-        setTitle(WorkbenchMessages.TypesFiltering_title); 
+        setTitle(WorkbenchMessages.TypesFiltering_title);
         this.initialSelections = preselections;
-        setMessage(WorkbenchMessages.TypesFiltering_message); 
+        setMessage(WorkbenchMessages.TypesFiltering_message);
 		setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /**
      * Creates a type filtering dialog using the supplied entries. Set the
      * initial selections to those whose extensions match the preselections.
-     * 
+     *
      * @param parentShell The shell to parent the dialog from.
      * @param preselections
      *            of String - a Collection of String to define the preselected
@@ -103,7 +103,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
     /**
      * Add the selection and deselection buttons to the dialog.
-     * 
+     *
      * @param composite
      *            org.eclipse.swt.widgets.Composite
      */
@@ -126,7 +126,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         };
         selectButton.addSelectionListener(listener);
         Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.WizardTransferPage_deselectAll, false); 
+                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.WizardTransferPage_deselectAll, false);
         listener = new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
@@ -189,7 +189,7 @@ public class TypeFilteringDialog extends SelectionDialog {
             if (!selectedMappings.contains(nextExtension)) {
             	if (entries.length() != 0) {
 					entries.append(',');
-            	}            		
+            	}
                 entries.append(nextExtension);
             }
         }
@@ -229,7 +229,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
     /**
      * Create the group that shows the user defined entries for the dialog.
-     * 
+     *
      * @param parent
      *            the parent this is being created in.
      */

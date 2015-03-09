@@ -23,7 +23,7 @@ package org.eclipse.ui.keys;
  * <code>NaturalKey</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
@@ -34,7 +34,7 @@ public abstract class NaturalKey extends Key {
 
 	/**
 	 * Constructs an instance of <code>NaturalKey</code> given a name.
-	 * 
+	 *
 	 * @param key
 	 *            The key to be wrapped.
 	 */

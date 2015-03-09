@@ -34,9 +34,9 @@ import org.eclipse.ui.internal.expressions.AndExpression;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class SlaveContextService implements IContextService {
 
@@ -88,7 +88,7 @@ public class SlaveContextService implements IContextService {
 
 	/**
 	 * Construct the new slave.
-	 * 
+	 *
 	 * @param parentService
 	 *            the parent context service; must not be <code>null</code>.
 	 * @param defaultExpression
@@ -115,15 +115,15 @@ public class SlaveContextService implements IContextService {
 	public void deferUpdates(boolean defer) {
 		fParentService.deferUpdates(defer);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String)
 	 */
 	@Override
 	public IContextActivation activateContext(String contextId) {
-		
+
 		ContextActivation activation = new ContextActivation(contextId,
 				fDefaultExpression, this);
 		return doActivateContext(activation);
@@ -131,7 +131,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
 	 *      org.eclipse.core.expressions.Expression)
 	 */
@@ -143,7 +143,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
 	 *      org.eclipse.core.expressions.Expression, boolean)
 	 */
@@ -174,7 +174,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
 	 *      org.eclipse.core.expressions.Expression, int)
 	 */
@@ -186,7 +186,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#addContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
 	 */
 	@Override
@@ -199,7 +199,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	@Override
@@ -212,7 +212,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContext(org.eclipse.ui.contexts.IContextActivation)
 	 */
 	@Override
@@ -232,7 +232,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContexts(java.util.Collection)
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override
@@ -254,7 +254,7 @@ public class SlaveContextService implements IContextService {
 		fParentService.deactivateContexts(fParentActivations);
 		fParentActivations.clear();
 		fLocalActivations.clear();
-		
+
 		// Remove any "resource", like listeners, that were associated
 		// with this service.
 		if (!fContextManagerListeners.isEmpty()) {
@@ -282,7 +282,7 @@ public class SlaveContextService implements IContextService {
 
 	/**
 	 * Activate the context with respect to this slave service.
-	 * 
+	 *
 	 * @param contextId
 	 *            the context id
 	 * @param expression
@@ -299,7 +299,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getActiveContextIds()
 	 */
 	@Override
@@ -309,7 +309,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getContext(java.lang.String)
 	 */
 	@Override
@@ -319,7 +319,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContextIds()
 	 */
 	@Override
@@ -329,7 +329,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContexts()
 	 */
 	@Override
@@ -339,7 +339,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getShellType(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -349,7 +349,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#readRegistry()
 	 */
 	@Override
@@ -359,7 +359,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#registerShell(org.eclipse.swt.widgets.Shell,
 	 *      int)
 	 */
@@ -373,7 +373,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#removeContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
 	 */
 	@Override
@@ -384,7 +384,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	@Override
@@ -395,7 +395,7 @@ public class SlaveContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#unregisterShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override

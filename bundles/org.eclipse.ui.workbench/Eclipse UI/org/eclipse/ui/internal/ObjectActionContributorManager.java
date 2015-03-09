@@ -42,7 +42,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
     /**
 	 * Contributes submenus and/or actions applicable to the selection in the
 	 * provided viewer into the provided popup menu.
-	 * 
+	 *
 	 * @param part
 	 *            the part being contributed to
 	 * @param popupMenu
@@ -55,7 +55,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 	 */
 	public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMenu,
 			ISelectionProvider selProv, Set<IObjectActionContributor> alreadyContributed) {
-        // Get a selection.	
+        // Get a selection.
         ISelection selection = selProv.getSelection();
         if (selection == null) {
 			return false;
@@ -63,7 +63,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
         // Convert the selection into an element vector.
         // According to the dictionary, a selection is "one that
-        // is selected", or "a collection of selected things".  
+        // is selected", or "a collection of selected things".
         // In reflection of this, we deal with one or a collection.
         List elements = null;
         if (selection instanceof IStructuredSelection) {
@@ -75,7 +75,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
 		List<IObjectActionContributor> contributors = getContributors(elements);
 		contributors.removeAll(alreadyContributed);
-       
+
         if (contributors.isEmpty()) {
 			return false;
 		}
@@ -87,7 +87,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 		for (Iterator<IObjectActionContributor> it = contributors.iterator(); it.hasNext();) {
 			IObjectActionContributor contributor = it.next();
             if (!isApplicableTo(elements, contributor)) {
-            	it.remove();            
+            	it.remove();
                 continue;
             }
             if (contributor.contributeObjectMenus(popupMenu, selProv)) {
@@ -96,7 +96,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 			}
             contributor.contributeObjectActionIdOverrides(overrides);
         }
-        
+
         // Second pass, add the contributions that are applicable to
         // the selection.
 		for (Iterator<IObjectActionContributor> it = contributors.iterator(); it.hasNext();) {
@@ -128,7 +128,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         ObjectActionContributorReader reader = new ObjectActionContributorReader();
         reader.readPopupContributors(this);
     }
-    
+
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension addedExtension) {
         IConfigurationElement[] addedElements = addedExtension.getConfigurationElements();

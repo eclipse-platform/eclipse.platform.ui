@@ -27,7 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * Internal preferences are defined in {@link org.eclipse.ui.internal.IPreferenceConstants}
  * and are obtained from the <code>org.eclipse.ui.workbench</code> plug-in's preference store.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class PrefUtil {
@@ -51,7 +51,7 @@ public class PrefUtil {
 
     /**
 	 * Sets the callback used to obtain and save the UI preference store.
-	 * 
+	 *
 	 * @param callback
 	 *            the callback
 	 */
@@ -62,7 +62,7 @@ public class PrefUtil {
 
     /**
      * Returns the API preference store.
-     * 
+     *
      * @return the API preference store
      */
     public static IPreferenceStore getAPIPreferenceStore() {
@@ -75,7 +75,7 @@ public class PrefUtil {
 
     /**
      * Returns the internal preference store.
-     * 
+     *
      * @return the internal preference store
      */
     public static IPreferenceStore getInternalPreferenceStore() {

@@ -17,11 +17,11 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 /**
  * A proxy handler which passes all statuses to handler assigned to current
  * application workbench advisor.
- * 
+ *
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
  * use this API without consulting with the Platform/UI team.
- * 
+ *
  * @since 3.3
  */
 public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
@@ -37,5 +37,5 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler()
 				.supportsNotification(type);
 	}
-	
+
 }

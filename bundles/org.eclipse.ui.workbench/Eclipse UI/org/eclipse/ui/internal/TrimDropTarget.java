@@ -34,18 +34,18 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 /**
  */
 /*package*/class TrimDropTarget implements IDragOverListener {
-	
+
     private final class ActualTrimDropTarget implements IDropTarget2 {
         public IWindowTrim draggedTrim;
-        
+
         // tracking parameters
     	private DragBorder border = null;
     	private int dockedArea;
-        
+
         // Holder for the position of trim that is 'floating' with the cursor
     	private int cursorAreaId;
         private int initialAreaId;
-        private IWindowTrim initialInsertBefore;        
+        private IWindowTrim initialInsertBefore;
 		private Rectangle initialLocation;
 
         /**
@@ -56,17 +56,17 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
             draggedTrim = null;
             dockedArea = SWT.NONE;
-            
+
             initialAreaId = SWT.NONE;
             initialInsertBefore = null;
         }
-        
+
         /**
          * This method is used to delineate separate trims dragging events. The -first- drag
          * event will set this and then it will remain constant until the drag gesture is done;
          * either by dropping or escaping. Once the gesture is finished the trim value is set
          * back to 'null'.
-         * 
+         *
          * @param trim The trim item currently being dragged.
          */
         public void startDrag(IWindowTrim trim) {
@@ -74,51 +74,51 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
         	if (draggedTrim != trim) {
             	// remember the dragged trim
             	draggedTrim = trim;
-            	
+
             	// Remember the location that we were in initially so we
             	// can go back there on an cancel...
             	initialAreaId = layout.getTrimAreaId(draggedTrim.getControl());
-            	
+
             	// Determine who we were placed 'before' in the trim
             	initialInsertBefore = getInsertBefore(initialAreaId, draggedTrim);
-            	
+
             	// Remember the location that the control used to be at for animation purposes
             	initialLocation = DragUtil.getDisplayBounds(draggedTrim.getControl());
-            	            	
+
             	// The dragged trim is always initially docked
             	dockedArea = initialAreaId;
         	}
         }
-                
+
         /**
          * Determine the trim area from the point. To avoid clashing at the 'corners' due to extending the trim area's
          * rectangles we first ensure that the point is not actually -within- a trim area before we check the extended
          * rectangles.
-         * 
+         *
          * @param pos The current cursor pos
          * @return the Trim area that the cursor is in or SWT.NONE if the point is not in an area
          */
         private int getTrimArea(Point pos) {
         	// First, check if we're actually -within- a trim area (i.e. no boundary extensions)
         	int areaId = getTrimArea(pos, 0);
-        	
+
         	// If we are not inside a trim area...are we 'close' to one?
         	if (areaId == SWT.NONE) {
 				areaId = getTrimArea(pos, TrimDragPreferences.getThreshold());
 			}
-        	
+
         	// not inside any trim area
         	return areaId;
         }
-        
+
         /**
          * Checks the trims areas against the given position. Each trim area is 'extended' into
          * the workbench page by the value of <code>extendedBoundaryWidth</code> before the checking
          * takes place.
-         * 
+         *
          * @param pos The point to check against
          * @param extendedBoundaryWidth The amount to extend the trim area's 'inner' edge by
-         * 
+         *
          * @return The trim area or SWT.NONE if the point is not within any extended trim area's rect.
          */
         private int getTrimArea(Point pos, int extendedBoundaryWidth) {
@@ -133,7 +133,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 		        	switch (areaIds[i]) {
 					case SWT.LEFT:
 						trimRect.width += extendedBoundaryWidth;
-						
+
 						if (pos.y >= trimRect.y &&
 							pos.y <= (trimRect.y+trimRect.height) &&
 							pos.x <= (trimRect.x+trimRect.width)) {
@@ -143,7 +143,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 					case SWT.RIGHT:
 						trimRect.x -= extendedBoundaryWidth;
 						trimRect.width += extendedBoundaryWidth;
-						
+
 						if (pos.y >= trimRect.y &&
 							pos.y <= (trimRect.y+trimRect.height) &&
 							pos.x >= trimRect.x) {
@@ -152,7 +152,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 						break;
 					case SWT.TOP:
 						trimRect.height += extendedBoundaryWidth;
-						
+
 						if (pos.x >= trimRect.x &&
 							pos.x <= (trimRect.x+trimRect.width) &&
 							pos.y <= (trimRect.y+trimRect.height)) {
@@ -162,7 +162,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 					case SWT.BOTTOM:
 						trimRect.y -= extendedBoundaryWidth;
 						trimRect.height += extendedBoundaryWidth;
-						
+
 						if (pos.x >= trimRect.x &&
 							pos.x <= (trimRect.x+trimRect.width) &&
 							pos.y >= trimRect.y) {
@@ -172,11 +172,11 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 		        	}
 				}
 			}
-        	
+
         	// not inside any trim area
         	return SWT.NONE;
         }
-        
+
         /**
          * Determine the window trim that the currently dragged trim should be inserted
          * before.
@@ -186,18 +186,18 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
          */
         private IWindowTrim getInsertBefore(int areaId, Point pos) {
         	boolean isHorizontal = (areaId == SWT.TOP) || (areaId == SWT.BOTTOM);
-        	
+
         	// Walk the trim area and return the first one that the positon
         	// is 'after'.
         	List tDescs = layout.getTrimArea(areaId).getDescriptors();
         	for (Iterator iter = tDescs.iterator(); iter.hasNext();) {
 				TrimDescriptor desc = (TrimDescriptor) iter.next();
-				
+
 				// Skip ourselves
 				if (desc.getTrim() == draggedTrim) {
 					continue;
 				}
-				
+
 				// Now, check
 				Rectangle bb = desc.getCache().getControl().getBounds();
 				Point center = Geometry.centerPoint(bb);
@@ -212,16 +212,16 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 					}
 				}
 			}
-        	
+
         	return null;
         }
-        
+
         /**
          * Returns the trim that is 'before' the given trim in the given area
-         * 
+         *
          * @param areaId The areaId of the trim
          * @param trim The trim to find the element after
-         * 
+         *
          * @return The trim that the given trim is 'before'
          */
         private IWindowTrim getInsertBefore(int areaId, IWindowTrim trim) {
@@ -236,13 +236,13 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 					return null;
 				}
 			}
-        	
+
         	return null;
         }
-        
+
         /**
          * Recalculates the drop information based on the current cursor pos.
-         * 
+         *
          * @param pos The cursor position
          */
         public void track(Point pos) {
@@ -251,7 +251,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
         	r = Geometry.toControl(windowComposite, r);
         	pos.x = r.x;
         	pos.y = r.y;
-        	        	
+
         	// Are we 'inside' a trim area ?
         	cursorAreaId = getTrimArea(pos);
 
@@ -262,12 +262,12 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 				trackOutsideTrimArea(pos);
 			}
         }
-       
+
         /**
          * Perform the feedback used when the cursor is 'inside' a particular trim area.
          * The current implementation will place the dragged trim into the trim area at
          * the location determined by the supplied point.
-         * 
+         *
          * @param pos The point to use to determine where in the trim area the dragged trim
          * should be located.
          */
@@ -278,41 +278,41 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
         	// if we're currently undocked then we should dock
         	boolean shouldDock = dockedArea == SWT.NONE;
-        	
+
         	// If we're already docked then only update if there's a change in area or position
         	if (dockedArea != SWT.NONE) {
 	        	// Where are we now?
 	        	IWindowTrim curInsertBefore = getInsertBefore(dockedArea, draggedTrim);
-	        	
+
 	        	// If we're already docked we should only update if there's a change
 	        	shouldDock = dockedArea != newArea || curInsertBefore != newInsertBefore;
         	}
-        	
+
         	// Do we have to do anything?
         	if (shouldDock) {
         		// (Re)dock the trim in the new location
         		dock(newArea, newInsertBefore);
         	}
         }
-        
+
         /**
          * Provide the dragging feedback when the cursor is -not- explicitly inside
          * a particular trim area.
-         * 
+         *
          */
         private void trackOutsideTrimArea(Point pos) {
         	// If we -were- docked then undock
         	if (dockedArea != SWT.NONE) {
 				undock();
 			}
-    		
+
     		border.setLocation(pos, SWT.BOTTOM);
         }
-                
+
         /**
          * Return the set of valid sides that a piece of trim can be docked on. We
          * arbitrarily extend this to include any areas that won't cause a change in orientation
-         * 
+         *
          * @return The extended drop 'side' set
          */
         private int getValidSides() {
@@ -336,7 +336,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
             dock(initialAreaId, initialInsertBefore);
         }
-        
+
         @Override
 		public void drop() {
         	// If we aren't docked then restore the initial location
@@ -353,11 +353,11 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
         	// Remove the trim from the layout
         	layout.removeTrim(draggedTrim);
            	LayoutUtil.resize(draggedTrim.getControl());
-           	
+
            	// Re-orient the widget to its -original- side and size
         	draggedTrim.dock(initialAreaId);
         	draggedTrim.getControl().setSize(initialLocation.width, initialLocation.height);
-           	
+
            	// Create a new dragging border onto the dragged trim
         	// Special check for TrimPart...should be generalized
         	boolean wantsFrame = !(draggedTrim instanceof TrimToolBarBase);
@@ -365,7 +365,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
            	dockedArea = SWT.NONE;
         }
-        
+
         /**
          * Return the 'undocked' trim to its previous location in the layout
          */
@@ -375,25 +375,25 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 				border.dispose();
 				border = null;
         	}
-			
+
 			// Update the trim's orientation if necessary
 			draggedTrim.dock(areaId);
 
 			// Add the trim into the layout
             layout.addTrim(areaId, draggedTrim, insertBefore);
            	LayoutUtil.resize(draggedTrim.getControl());
-           	
+
            	// Remember the area that we're currently docked in
            	dockedArea = areaId;
         }
-        	
+
         @Override
 		public Cursor getCursor() {
         	// If the trim isn't docked then show the 'no smoking' sign
         	if (cursorAreaId == SWT.NONE) {
 				return windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_NO);
 			}
-        	
+
         	// It's docked; show the four-way arrow cursor
         	return windowComposite.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
         }
@@ -409,25 +409,25 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 		public void dragFinished(boolean dropPerformed) {
 			// If we didn't perform a drop then restore the original position
 			if (!dropPerformed && dockedArea == SWT.NONE) {
-				// Force the dragged trim back into its original position...				
+				// Force the dragged trim back into its original position...
 				redock();
 			}
-			
+
 			// Set the draggedTrim to null. This indicates that we're no longer
 			// dragging the trim. The first call to the TrimDropTarget's 'drag' method
 			// will reset this the next time a drag starts.
 			draggedTrim = null;
 		}
     }
-    
+
     private ActualTrimDropTarget dropTarget;
-    
+
     private TrimLayout layout;
     private Composite windowComposite;
 
     /**
      * Create a new drop target capable of accepting IWindowTrim items
-     * 
+     *
      * @param someComposite The control owning the TrimLayout
      * @param theWindow the workbenchWindow
      */
@@ -442,18 +442,18 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
     @Override
 	public IDropTarget drag(Control currentControl, Object draggedObject,
             Point position, final Rectangle dragRectangle) {
-    	
+
     	// Have to be dragging trim
     	if (!(draggedObject instanceof IWindowTrim)) {
 			return null;
 		}
-    	
+
     	// OK, we're dragging trim. is it from -this- shell?
     	IWindowTrim trim = (IWindowTrim) draggedObject;
     	if (trim.getControl().getShell() != windowComposite.getShell()) {
 			return null;
 		}
-    	
+
     	// If this is the -first- drag then inform the drop target
     	if (dropTarget.draggedTrim == null) {
     		dropTarget.startDrag(trim);
@@ -461,10 +461,10 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
     	// Forward on to the 'actual' drop target for feedback
     	dropTarget.track(position);
-    	
+
     	// Spin the paint loop after every track
     	windowComposite.getDisplay().update();
-    	
+
 		return dropTarget;
     }
 }

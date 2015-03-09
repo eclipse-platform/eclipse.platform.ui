@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * Adds working set filter actions (set / clear / edit)
- * 
+ *
  * @since 2.1
  */
 public class WorkingSetFilterActionGroup extends ActionGroup {
@@ -51,7 +51,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      * Indicates if working set was changed
      */
     public static final String CHANGE_WORKING_SET = "changeWorkingSet"; //$NON-NLS-1$
-    
+
     private static final String START_SEPARATOR_ID = "workingSetGroupStartSeparator"; //$NON-NLS-1$
 
     private static final String SEPARATOR_ID = "workingSetGroupSeparator"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
     /**
 	 * Creates a new instance of the receiver.
-	 * 
+	 *
 	 * @param shell
 	 *            shell to open dialogs and wizards on
 	 * @param workingSetUpdater
@@ -124,7 +124,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 						.toArray(new IContributionItem[items.size()]);
 			}
         };
-        
+
         workbenchWindow = Util.getWorkbenchWindowForShell(shell);
         allowWindowWorkingSetByDefault = false;
 		// set the default working set to be that of the window.
@@ -136,16 +136,16 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 			}
 		}
     }
-    
+
     @Override
 	public void fillActionBars(IActionBars actionBars) {
         menuManager = actionBars.getMenuManager();
-        
+
         if(menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null)
         	menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));
         else
         	menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
-        
+
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, selectWorkingSetAction);
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, clearWorkingSetAction);
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, editWorkingSetAction);
@@ -153,8 +153,8 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, mruList);
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(SEPARATOR_ID));
     }
-    
-    
+
+
 	@Override
 	public void fillContextMenu(IMenuManager menuManager) {
 		menuManager.add(selectWorkingSetAction);
@@ -167,7 +167,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
     /**
      * Returns the working set which is currently selected.
-     * 
+     *
      * @return the working set which is currently selected.
      */
     public IWorkingSet getWorkingSet() {
@@ -176,7 +176,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
     /**
      * Sets the current working set.
-     * 
+     *
      * @param newWorkingSet the new working set
      */
     public void setWorkingSet(IWorkingSet newWorkingSet) {
@@ -192,7 +192,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
     /**
      * Fire the property change to the updater if there is one available.
-     * 
+     *
      * @param newWorkingSet the new working set
      * @param oldWorkingSet the previous working set
      * @since 3.2
@@ -208,7 +208,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
 	/**
 	 * Saves the state of the filter actions in a memento.
-	 * 
+	 *
 	 * @param memento
 	 *            the memento
 	 * @since 3.3
@@ -226,7 +226,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * <p>
 	 * Note: This method does not refresh the viewer.
 	 * </p>
-	 * 
+	 *
 	 * @param memento
 	 * @since 3.3
 	 */

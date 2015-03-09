@@ -46,7 +46,7 @@ public class OpenInNewWindowAction extends Action implements
      * Creates a new <code>OpenInNewWindowAction</code>. Sets
      * the new window page's input to be an application-specific
      * default.
-     * 
+     *
      * @param window the workbench window containing this action
      */
     public OpenInNewWindowAction(IWorkbenchWindow window) {
@@ -56,7 +56,7 @@ public class OpenInNewWindowAction extends Action implements
 
     /**
      * Creates a new <code>OpenInNewWindowAction</code>.
-     * 
+     *
      * @param window the workbench window containing this action
      * @param input the input for the new window's page
      */
@@ -75,7 +75,7 @@ public class OpenInNewWindowAction extends Action implements
 
     /**
      * Set the input to use for the new window's page.
-     * 
+     *
      * @param input the input
      */
     public void setPageInput(IAdaptable input) {

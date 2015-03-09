@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class CommandStateProxy extends PersistentState {
@@ -75,7 +75,7 @@ public final class CommandStateProxy extends PersistentState {
 	/**
 	 * Constructs a new instance of <code>HandlerState</code> with all the
 	 * information it needs to create the real state later.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            The configuration element from which the real class can be
 	 *            loaded at run-time; must not be <code>null</code>.
@@ -158,7 +158,7 @@ public final class CommandStateProxy extends PersistentState {
 	 * Loads the state, if possible. If the state is loaded, then the member
 	 * variables are updated accordingly and the state is told to load its value
 	 * from the preference store.
-	 * 
+	 *
 	 * @return <code>true</code> if the state is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
@@ -170,7 +170,7 @@ public final class CommandStateProxy extends PersistentState {
 	 * Loads the state, if possible. If the state is loaded, then the member
 	 * variables are updated accordingly and the state is told to load its value
 	 * from the preference store.
-	 * 
+	 *
 	 * @param readPersistence
 	 *            Whether the persistent state for this object should be read.
 	 * @return <code>true</code> if the state is now non-null;

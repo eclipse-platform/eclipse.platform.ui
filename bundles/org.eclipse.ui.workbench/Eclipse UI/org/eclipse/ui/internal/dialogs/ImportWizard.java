@@ -61,8 +61,8 @@ public class ImportWizard extends Wizard {
                 }
             };
         }
-        
-        
+
+
     }
 
     private IStructuredSelection selection;
@@ -75,7 +75,7 @@ public class ImportWizard extends Wizard {
     @Override
 	public void addPages() {
         addPage(new SelectionPage(this.workbench, this.selection,
-                getAvailableImportWizards(), WorkbenchMessages.ImportWizard_selectSource)); 
+                getAvailableImportWizards(), WorkbenchMessages.ImportWizard_selectSource));
     }
 
     /**
@@ -97,7 +97,7 @@ public class ImportWizard extends Wizard {
 
     /**
      * Initializes the wizard.
-     * 
+     *
      * @param aWorkbench the workbench
      * @param currentSelection the current selection
      */
@@ -106,7 +106,7 @@ public class ImportWizard extends Wizard {
         this.workbench = aWorkbench;
         this.selection = currentSelection;
 
-        setWindowTitle(WorkbenchMessages.ImportWizard_title); 
+        setWindowTitle(WorkbenchMessages.ImportWizard_title);
         setDefaultPageImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
         setNeedsProgressMonitor(true);

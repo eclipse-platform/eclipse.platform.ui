@@ -57,7 +57,7 @@ public class AnimationEngine extends Job {
 
 	/**
 	 * Creates an Animation that will run for the given number of milliseconds.
-	 * 
+	 *
 	 * @param animationFeedback provides renderStep(), initialize() and jobInit() methods
 	 * @param durationIn number of milliseconds over which the animation will run
 	 * @param sleepAmountIn number of milliseconds to slow/delay the animation
@@ -68,7 +68,7 @@ public class AnimationEngine extends Job {
 		sleepAmount = sleepAmountIn;
 		feedbackRenderer = animationFeedback;
 		duration = durationIn;
-		
+
 		// if animations aren't on this is a NO-OP
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
 		enableAnimations = preferenceStore
@@ -81,14 +81,14 @@ public class AnimationEngine extends Job {
 
 		// Capture parameters
 		display = feedbackRenderer.getAnimationShell().getDisplay();
-		
+
 		animationFeedback.getAnimationShell().addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				cancelAnimation();
-			}			
+			}
 		});
-		
+
 		// Don't show the job in monitors
 		setSystem(true);
 
@@ -113,7 +113,7 @@ public class AnimationEngine extends Job {
 		public void run() {
 			if (animationCanceled)
 				return;
-			
+
 			// Capture time
 			prevTime = curTime;
 			curTime = System.currentTimeMillis();
@@ -129,7 +129,7 @@ public class AnimationEngine extends Job {
 	protected void updateDisplay() {
 		if (animationCanceled)
 			return;
-		
+
 		feedbackRenderer.renderStep(this);
 	}
 
@@ -155,7 +155,7 @@ public class AnimationEngine extends Job {
 			case TICK_TIMER:
 				amount = (double) (curTime - startTime) / (double) duration;
 				break;
-	
+
 			// For testing purposes
 			case FRAME_COUNT:
 				amount = (double) frameCount / (double) duration;
@@ -186,7 +186,7 @@ public class AnimationEngine extends Job {
 
 		if (animationCanceled)
 			return Status.CANCEL_STATUS;
-		
+
 		// Only start the animation timer -after- we've initialized
 		curTime = startTime = System.currentTimeMillis();
 
@@ -223,13 +223,13 @@ public class AnimationEngine extends Job {
 	public long getFrameCount() {
 		return frameCount;
 	}
-	
+
 	public static void createTweakedAnimation(Shell shell, int duration, Rectangle start, Rectangle end) {
 		RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
 				.get(Animations.KEY)).createFeedback(shell);
 		feedback.addStartRect(start);
 		feedback.addEndRect(end);
-		
+
 		AnimationEngine animation = new AnimationEngine(feedback, 400);
 		animation.schedule();
 	}

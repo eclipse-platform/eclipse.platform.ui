@@ -51,7 +51,7 @@ import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
  * <p>
  * This class is not intended to be instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class WorkbenchWindowConfigurer implements
@@ -122,7 +122,7 @@ public final class WorkbenchWindowConfigurer implements
     private DropTargetListener dropTargetListener = null;
 
     /**
-     * Object for configuring this workbench window's action bars. 
+     * Object for configuring this workbench window's action bars.
      * Lazily initialized to an instance unique to this window.
      */
     private WindowActionBarConfigurer actionBarConfigurer = null;
@@ -142,7 +142,7 @@ public final class WorkbenchWindowConfigurer implements
 
         /**
          * Sets the proxy to use, or <code>null</code> for none.
-         * 
+         *
          * @param proxy the proxy
          */
         public void setProxy(IActionBarConfigurer2 proxy) {
@@ -227,10 +227,10 @@ public final class WorkbenchWindowConfigurer implements
      * Creates a new workbench window configurer.
      * <p>
      * This method is declared package-private. Clients obtain instances
-     * via {@link WorkbenchAdvisor#getWindowConfigurer 
+     * via {@link WorkbenchAdvisor#getWindowConfigurer
      * WorkbenchAdvisor.getWindowConfigurer}
      * </p>
-     * 
+     *
      * @param window the workbench window that this object configures
      * @see WorkbenchAdvisor#getWindowConfigurer
      */
@@ -425,7 +425,7 @@ public final class WorkbenchWindowConfigurer implements
 
     /**
      * Returns whether the given id is for a cool item.
-     * 
+     *
      * @param the item id
      * @return <code>true</code> if it is a cool item,
      * and <code>false</code> otherwise

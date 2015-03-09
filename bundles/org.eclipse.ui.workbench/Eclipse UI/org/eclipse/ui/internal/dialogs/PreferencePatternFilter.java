@@ -29,9 +29,9 @@ import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 /**
  * A class that handles filtering preference node items based on a supplied
  * matching string.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class PreferencePatternFilter extends PatternFilter {
 
@@ -44,7 +44,7 @@ public class PreferencePatternFilter extends PatternFilter {
 
 	/**
 	 * Create a new instance of a PreferencePatternFilter
-	 * 
+	 *
 	 * @param isMatchItem
 	 */
 	public PreferencePatternFilter() {
@@ -87,8 +87,8 @@ public class PreferencePatternFilter extends PatternFilter {
 	    if (WorkbenchActivityHelper.restrictUseOf(
 	            element))
 	        return false;
-	    
-		// Preference nodes are not differentiated based on category since 
+
+		// Preference nodes are not differentiated based on category since
 		// categories are selectable nodes.
 		if (isLeafMatch(viewer, element)) {
 			return true;
@@ -101,7 +101,7 @@ public class PreferencePatternFilter extends PatternFilter {
 		// Will return true if any subnode of the element matches the search
 		if (filter(viewer, element, children).length > 0) {
 			return true;
-		}		
+		}
 		return false;
 	}
 

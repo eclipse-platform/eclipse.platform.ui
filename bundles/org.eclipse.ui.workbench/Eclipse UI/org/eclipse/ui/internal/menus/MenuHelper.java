@@ -108,14 +108,14 @@ public class MenuHelper {
 
 	/**
 	 * The private 'location' field that is defined in the FileImageDescriptor.
-	 * 
+	 *
 	 * @see #getLocation(ImageDescriptor)
 	 */
 	private static Field locationField;
 
 	/**
 	 * The private 'name' field that is defined in the FileImageDescriptor.
-	 * 
+	 *
 	 * @see #getName(ImageDescriptor)
 	 */
 	private static Field nameField;
@@ -282,7 +282,7 @@ public class MenuHelper {
 
 	/**
 	 * Do a type-safe extraction of an object from the evalation context
-	 * 
+	 *
 	 * @param context
 	 *            the evaluation context
 	 * @param expectedType
@@ -659,7 +659,7 @@ public class MenuHelper {
 			RenderedElementUtil.setContributionManager(menu, generator);
 			item.setMenu(menu);
 		}
-		
+
 		item.setElementId(id);
 		item.setCommand(cmd);
 		if (iconUri == null) {
@@ -1168,7 +1168,7 @@ public class MenuHelper {
 	/**
 	 * Rewrite certain types of URLs to more durable forms, as these URLs may
 	 * may be persisted in the model.
-	 * 
+	 *
 	 * @param url
 	 *            the url
 	 * @return the rewritten URL

@@ -27,15 +27,15 @@ import org.eclipse.ui.internal.WorkingSetManager;
 /**
  * The WorkingSetSettingsTransfer is the settings transfer for the workbench
  * working sets.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class WorkingSetSettingsTransfer extends WorkbenchSettingsTransfer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.preferences.SettingsTransfer#getName()
 	 */
 	@Override
@@ -45,7 +45,7 @@ public class WorkingSetSettingsTransfer extends WorkbenchSettingsTransfer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.preferences.SettingsTransfer#transferSettings(org.eclipse.core.runtime.IPath)
 	 */
 	@Override

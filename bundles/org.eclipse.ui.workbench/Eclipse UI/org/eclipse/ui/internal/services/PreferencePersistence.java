@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.util.Util;
  * This class is only intended for internal use within the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class PreferencePersistence extends RegistryPersistence {
@@ -49,7 +49,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the
 	 * array at the index. The array is grown as necessary.
-	 * 
+	 *
 	 * @param elementToAdd
 	 *            The element to add to the indexed array; may be
 	 *            <code>null</code>
@@ -84,7 +84,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 
 	/**
 	 * Adds a warning to be logged at some later point in time.
-	 * 
+	 *
 	 * @param warningsToLog
 	 *            The collection of warnings to be logged; must not be
 	 *            <code>null</code>.
@@ -99,7 +99,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	/**
 	 * Adds a warning to be logged at some later point in time. This logs the
 	 * identifier of the item.
-	 * 
+	 *
 	 * @param warningsToLog
 	 *            The collection of warnings to be logged; must not be
 	 *            <code>null</code>.
@@ -117,7 +117,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	/**
 	 * Adds a warning to be logged at some later point in time. This logs the
 	 * identifier of the item, as well as an extra attribute.
-	 * 
+	 *
 	 * @param warningsToLog
 	 *            The collection of warnings to be logged; must not be
 	 *            <code>null</code>.
@@ -157,7 +157,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 
 	/**
 	 * Reads a boolean attribute from a memnto.
-	 * 
+	 *
 	 * @param memento
 	 *            The memento from which to read the attribute; must not be
 	 *            <code>null</code>.
@@ -184,7 +184,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	/**
 	 * Reads an optional attribute from a memento. This converts zero-length
 	 * strings into <code>null</code>.
-	 * 
+	 *
 	 * @param memento
 	 *            The memento from which to read the attribute; must not be
 	 *            <code>null</code>.
@@ -209,7 +209,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 * parameters are found, then a warning status will be appended to the
 	 * <code>warningsToLog</code> list. The command id is required, or a
 	 * warning will be logged.
-	 * 
+	 *
 	 * @param memento
 	 *            The memento from which the parameters should be read; must not
 	 *            be <code>null</code>.
@@ -247,7 +247,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 * parameter sub-elements from a key element. Each parameter is guaranteed
 	 * to be valid. If invalid parameters are found, then a warning status will
 	 * be appended to the <code>warningsToLog</code> list.
-	 * 
+	 *
 	 * @param memento
 	 *            The memento from which the parameters should be read; must not
 	 *            be <code>null</code>.
@@ -328,7 +328,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 
 	/**
 	 * Reads a required attribute from the memento.
-	 * 
+	 *
 	 * @param memento
 	 *            The memento from which to read; must not be <code>null</code>.
 	 * @param attribute
@@ -349,7 +349,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	/**
 	 * Reads a required attribute from the memento. This logs the identifier of
 	 * the item if this required element cannot be found.
-	 * 
+	 *
 	 * @param memento
 	 *            The memento from which to read; must not be <code>null</code>.
 	 * @param attribute
@@ -401,7 +401,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 
 	/**
 	 * Checks whether the preference change could affect this persistence class.
-	 * 
+	 *
 	 * @param event
 	 *            The event indicating the preference change; must not be
 	 *            <code>null</code>.

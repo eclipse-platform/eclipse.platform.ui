@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * The four constants define property keys that are used to associate
  * UI related information with Jobs (<code>org.eclipse.core.runtime.jobs.Job</code>).
- * 
+ *
  * @see org.eclipse.core.runtime.jobs.Job#setProperty
  * @since 3.0
  */
@@ -31,7 +31,7 @@ public interface IProgressConstants {
             + ".workbench.progress"; //$NON-NLS-1$
 
     /**
-     * This property provides a hint to the progress UI to keep Jobs 
+     * This property provides a hint to the progress UI to keep Jobs
      * in the UI after they have finished. This can be used to communicate results of a Job
      * back to the user.
      * <p>
@@ -42,7 +42,7 @@ public interface IProgressConstants {
     public static final QualifiedName KEEP_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "keep"); //$NON-NLS-1$
 
-    /** 
+    /**
      * The KEEPONE_PROPERTY is an extension to the KEEP_PROPERTY, that provides a hint
      * to the progress UI to ensure that only a single Job of a Job family is kept in the
      * set of kept Jobs. That is, whenever a Job that has the KEEPONE_PROPERTY starts or finishes,
@@ -81,7 +81,7 @@ public interface IProgressConstants {
 	 * Note: Only one of <code>ACTION_PROPERTY</code> or
 	 * <code>COMMAND_PROPERTY</code> should be used
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction
 	 **/
@@ -109,9 +109,9 @@ public interface IProgressConstants {
 
     /**
      * This is a property set on a user job if the user has not decided to
-     * run the job in the background. 
-     * The value is set to <code>true</code> when the job starts and set to 
-     * <code>false</code> if the user subsequently decides to complete the job in the 
+     * run the job in the background.
+     * The value is set to <code>true</code> when the job starts and set to
+     * <code>false</code> if the user subsequently decides to complete the job in the
      * background.
      * <p>
      * This property is not intended to be set by clients.
@@ -120,7 +120,7 @@ public interface IProgressConstants {
      */
     public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
             IProgressConstants.PROPERTY_PREFIX, "inDialog"); //$NON-NLS-1$
-    
+
     /**
      * This property provides a hint to the progress UI to not prompt on errors
      * immediately but instead make the errors available through the progress UI.

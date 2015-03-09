@@ -19,7 +19,7 @@ import org.eclipse.jface.bindings.Scheme;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class SchemeModel extends CommonModel {
 

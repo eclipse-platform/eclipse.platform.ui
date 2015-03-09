@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *      IBM Corporation - initial API and implementation 
+ *      IBM Corporation - initial API and implementation
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font
  *   	should be activated and used by other components.
  *******************************************************************************/
@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
 /**
  * Abstract baseclass for various working set dialogs.
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractWorkingSetDialog extends SelectionDialog
@@ -56,15 +56,15 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	private static final int ID_REMOVE = ID_DETAILS + 1;
 	private static final int ID_SELECTALL = ID_REMOVE + 1;
 	private static final int ID_DESELECTALL = ID_SELECTALL + 1;
-	
+
 	private Button newButton;
 
 	private Button detailsButton;
 
 	private Button removeButton;
-	
+
 	private Button selectAllButton;
-	
+
 	private Button deselectAllButton;
 
 	private IWorkingSet[] result;
@@ -78,7 +78,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	private List removedMRUWorkingSets;
 
 	private Set workingSetIds;
-	
+
 	private boolean canEdit;
 
 	protected AbstractWorkingSetDialog(Shell parentShell, String[] workingSetIds, boolean canEdit) {
@@ -94,7 +94,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 
 	/**
 	 * Return the set of supported working set types.
-	 * 
+	 *
 	 * @return the supported working set types
 	 */
 	protected Set getSupportedWorkingSetIds() {
@@ -103,7 +103,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 
 	/**
 	 * Adds the modify buttons to the dialog.
-	 * 
+	 *
 	 * @param composite
 	 *            Composite to add the buttons to
 	 */
@@ -153,13 +153,13 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				}
 			});
 		}
-		
+
 		layout.numColumns = 1; // must manually reset the number of columns because createButton increments it - we want these buttons to be laid out vertically.
 	}
 
 	/**
 	 * Add the select/deselect buttons.
-	 * 
+	 *
 	 * @param composite Composite to add the buttons to
 	 */
 	protected void addSelectionButtons(Composite composite) {
@@ -170,7 +170,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 		buttonComposite.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		buttonComposite.setLayoutData(data);
-		
+
 		selectAllButton = createButton(
 				buttonComposite,
 				ID_SELECTALL,
@@ -182,7 +182,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				selectAllSets();
 			}
 		});
-		
+
 		deselectAllButton = createButton(
 				buttonComposite,
 				ID_DESELECTALL,
@@ -195,12 +195,12 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 			}
 		});
 	}
-	
+
 	/**
 	 * Select all working sets.
 	 */
 	protected abstract void selectAllSets();
-	
+
 	/**
 	 * Deselect all working sets.
 	 */
@@ -209,7 +209,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/**
 	 * Opens a working set wizard for editing the currently selected working
 	 * set.
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
 	 */
 	void editSelectedWorkingSet() {
@@ -316,7 +316,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/**
 	 * Return the list of working sets that were added during the life of this
 	 * dialog.
-	 * 
+	 *
 	 * @return the working sets
 	 */
 	protected final List getAddedWorkingSets() {
@@ -326,7 +326,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/**
 	 * Return the map of working sets that were edited during the life of this
 	 * dialog.
-	 * 
+	 *
 	 * @return the working sets
 	 */
 	protected final Map getEditedWorkingSets() {
@@ -336,7 +336,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/**
 	 * Return the list of working sets that were removed from the MRU list
 	 * during the life of this dialog.
-	 * 
+	 *
 	 * @return the working sets
 	 */
 	protected final List getRemovedMRUWorkingSets() {
@@ -346,7 +346,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/**
 	 * Return the list of working sets that were removed during the life of this
 	 * dialog.
-	 * 
+	 *
 	 * @return the working sets
 	 */
 	protected final List getRemovedWorkingSets() {
@@ -394,7 +394,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	/**
 	 * Remove the working sets contained in the provided selection from the
 	 * working set manager.
-	 * 
+	 *
 	 * @param selection
 	 *            the sets
 	 */

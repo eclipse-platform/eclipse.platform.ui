@@ -29,11 +29,11 @@ import org.eclipse.ui.PartInitException;
  * to reuse browser instances restored after workbench is restarted.
  * <p>
  * The simplest way to open a URL is:
- * 
+ *
  * <pre>
  * IWorkbenchSupport.createBrowser(&quot;myId&quot;).openURL(url);
  * </pre>
- * 
+ *
  * <p>
  * The call above will show the provided URL by reusing the browser instance
  * with the matching id, or creating a new one if one does not exist already.
@@ -43,7 +43,7 @@ import org.eclipse.ui.PartInitException;
  * needed.
  * <p>
  * This interface is not intended to be implemented by clients.
- * 
+ *
  * @see IWebBrowser
  * @since 3.1
  * @noimplement This interface is not intended to be implemented by clients.
@@ -114,7 +114,7 @@ public interface IWorkbenchBrowserSupport {
 	 * available on the current platform, an external browser will be used and
 	 * all style parameters will be ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param style
 	 *            the style display constants. Style constants should be
 	 *            bitwise-ORed together.
@@ -143,7 +143,7 @@ public interface IWorkbenchBrowserSupport {
 	 * parameters. The method can be used to quickly open the URL by calling
 	 * <code>createBrowser(id).openURL(url)</code>.
 	 * <p>
-	 * 
+	 *
 	 * @param browserId
 	 *            if an instance of a browser with the same id is already
 	 *            opened, it will be returned instead of creating a new one.
@@ -166,7 +166,7 @@ public interface IWorkbenchBrowserSupport {
 	 * users a choice of the web browser should honour the users choice of
 	 * external browser, with the initial selection being the system default
 	 * browser.
-	 * 
+	 *
 	 * @return the shared instance of the external browser
 	 * @exception PartInitException
 	 *                if the operation failed for some reason
@@ -179,7 +179,7 @@ public interface IWorkbenchBrowserSupport {
 	 * <code>createBrowser</code> would ignore browser styles
 	 * <code>AS_EDITOR</code> and <code>AS_VIEW</code> and always create an
 	 * external browser.
-	 * 
+	 *
 	 * @return <code>true</code> if internal web browser can be created on
 	 *         this platform, <code>false</code> otherwise.
 	 */

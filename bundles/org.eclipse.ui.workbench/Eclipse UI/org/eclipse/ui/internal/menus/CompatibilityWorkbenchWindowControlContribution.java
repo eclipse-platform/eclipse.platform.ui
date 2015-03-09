@@ -38,7 +38,7 @@ public class CompatibilityWorkbenchWindowControlContribution {
 
 	/**
 	 * Constructs the control contribution that this proxy represents.
-	 * 
+	 *
 	 * @param window
 	 *            the window that this control contribution is under
 	 * @param toolControl

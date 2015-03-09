@@ -23,7 +23,7 @@ import org.eclipse.ui.testing.TestableObject;
 
 /**
  * The Workbench's testable object facade to a test harness.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchTestable extends TestableObject {
@@ -46,7 +46,7 @@ public class WorkbenchTestable extends TestableObject {
     /**
      * Initializes the workbench testable with the display and workbench,
      * and notifies all listeners that the tests can be run.
-     * 
+     *
      * @param display the display
      * @param workbench the workbench
      */
@@ -92,7 +92,7 @@ public class WorkbenchTestable extends TestableObject {
 			// ignore
 		}
     }
-    
+
     /**
      * The <code>WorkbenchTestable</code> implementation of this
      * <code>TestableObject</code> method ensures that the workbench

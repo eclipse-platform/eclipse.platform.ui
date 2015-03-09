@@ -23,16 +23,16 @@ import org.eclipse.swt.widgets.Layout;
 
 /**
  * <p>Instance of this class lay out the control children of a <code>Composite</code>
- * in a grid, using a simple set of rules and a simple API. This class is 
+ * in a grid, using a simple set of rules and a simple API. This class is
  * intended to be more predictable than <code>GridLayout</code> and easier to use than
  * <code>FormLayout</code>, while retaining most of the power of both.</p>
- * 
+ *
  * <p>The power of a <code>CellLayout</code> lies in the ability to control
  * the size and resizing properties of each row and column. Unlike other layout
  * classes, complex layouts can be created without attaching any layout data to
  * individual controls in the layout. </p>
- * 
- * <p>The various subclasses of <code>IColumnInfo</code> 
+ *
+ * <p>The various subclasses of <code>IColumnInfo</code>
  * can be used to create columns with fixed width, columns whose width is computed
  * from child controls, or width that grows in proportion to the size of other
  * columns. Layouts can be given a default <code>IColumnInfo</code> that will
@@ -40,29 +40,29 @@ import org.eclipse.swt.widgets.Layout;
  * set. This is useful for creating layouts where most or all columns have the
  * same properties. Similarly, the subclasses of <code>IRowInfo</code> can be used to
  * control the height of individual rows.</p>
- * 
+ *
  * <p>For a finer grain of control, <code>CellData</code> objects can be attached
  * to individual controls in the layout. These objects serve a similar function as
  * <code>GridData</code> objects serve for <code>GridLayout</code>. They allow
  * controls to span multiple rows or columns, set the justification of the control
  * within its cell, and allow the user to override the preferred size of the control.
- * </p> 
- * 
+ * </p>
+ *
  * <p>In many cases, it is not necessary to attach any layout data to controls in
  * the layout, since the controls can be arranged based on the properties of rows
  * and columns. However, layout data may be attached to individual controls to
  * allow them to span multiple columns or to control their justification within
- * their cell. 
+ * their cell.
  * </p>
- * 
+ *
  * <p>All the <code>set</code> methods in this class return <code>this</code>, allowing
  * a layout to be created and initialized in a single line of code. For example: </p>
- * 
+ *
  * <code>
  * Composite myControl = new Composite(parent, SWT.NONE);
  * myControl.setLayout(new CellLayout(2).setMargins(10,10).setSpacing(5,5));
  * </code>
- * 
+ *
  * @since 3.0
  */
 public class CellLayout extends Layout {
@@ -130,7 +130,7 @@ public class CellLayout extends Layout {
      */
     private List rows = new ArrayList(16);
 
-    // Cached information 
+    // Cached information
     private GridInfo gridInfo = new GridInfo();
 
     private int[] cachedRowMin = null;
@@ -147,8 +147,8 @@ public class CellLayout extends Layout {
 
     /**
      * Creates the layout
-     * 
-     * @param numCols the number of columns in this layout, 
+     *
+     * @param numCols the number of columns in this layout,
      * or 0 indicating that the whole layout should be on one row.
      */
     public CellLayout(int numCols) {
@@ -159,7 +159,7 @@ public class CellLayout extends Layout {
 
     /**
      * Sets the amount empty space between cells
-     * 
+     *
      * @param newSpacing a point (x,y) corresponding to the number of pixels of
      * empty space between adjacent columns and rows respectively
      */
@@ -172,7 +172,7 @@ public class CellLayout extends Layout {
 
     /**
      * Sets the amount empty space between cells
-     * 
+     *
      * @param newSpacing a point (x,y) corresponding to the number of pixels of
      * empty space between adjacent columns and rows respectively
      */
@@ -184,7 +184,7 @@ public class CellLayout extends Layout {
 
     /**
      * Returns the amount of empty space between adjacent cells
-     * 
+     *
      * @return a point (x,y) corresponding to the number of pixels of empty
      * space between adjacent columns and rows respectively
      */
@@ -193,9 +193,9 @@ public class CellLayout extends Layout {
     }
 
     /**
-     * Sets the size of the margin around the outside of the layout. 
-     * 
-     * @param marginWidth the size of the margin around the top and 
+     * Sets the size of the margin around the outside of the layout.
+     *
+     * @param marginWidth the size of the margin around the top and
      * bottom of the layout
      * @param marginHeight the size of the margin on the left and right
      * of the layout.
@@ -208,7 +208,7 @@ public class CellLayout extends Layout {
 
     /**
      * Sets the size of the margin around the outside of the layout.
-     * 
+     *
      * @param newMargins point indicating the size of the horizontal and vertical
      * margins, in pixels.
      */
@@ -220,7 +220,7 @@ public class CellLayout extends Layout {
 
     /**
      * Returns the size of the margins around the outside of the layout.
-     * 
+     *
      * @return the size of the outer margins, in pixels.
      */
     public Point getMargins() {
@@ -230,7 +230,7 @@ public class CellLayout extends Layout {
     /**
      * Sets the default column settings. All columns will use these settings unless
      * they have been explicitly assigned custom settings by setColumn.
-     * 
+     *
      * @param info the properties of all default columns
      * @see setColumn
      */
@@ -243,10 +243,10 @@ public class CellLayout extends Layout {
      * Sets the column info for the given column number (the leftmost column is column 0).
      * This replaces any existing info for the column. Note that more than one column
      * are allowed to share the same IColumnInfo instance if they have identical properties.
-     * 
+     *
      * @param colNum the column number to modify
      * @param info the properties of the column, or null if this column should use the
-     * default properties 
+     * default properties
      */
     public CellLayout setColumn(int colNum, Row info) {
         while (cols.size() <= colNum) {
@@ -261,7 +261,7 @@ public class CellLayout extends Layout {
     /**
      * Sets the default row settings for this layout. Unless this is overridden
      * for an individual row, all rows will use the default settings.
-     * 
+     *
      * @param info the row info object that should be used to set the size
      * of rows, by default.
      */
@@ -274,7 +274,7 @@ public class CellLayout extends Layout {
     /**
      * Sets the row info for the given rows. The topmost row is row 0. Multiple
      * rows are allowed to share the same RowInfo instance.
-     * 
+     *
      * @param rowNum the row number to set
      * @param info the row info that will control the sizing of the given row,
      * or null if the row should use the default settings for this layout.
@@ -293,7 +293,7 @@ public class CellLayout extends Layout {
      * Returns the row info that controls the size of the given row. Will return
      * the default row settings for this layout if no custom row info has been
      * assigned to the row.
-     * 
+     *
      * @param rowNum
      * @return
      */
@@ -327,7 +327,7 @@ public class CellLayout extends Layout {
 
     /**
      * Initializes the gridInfo object.
-     * 
+     *
      * @param children controls that are being layed out
      */
     private void initGrid(Control[] children) {
@@ -442,7 +442,7 @@ public class CellLayout extends Layout {
 
     /**
      * Computes one dimension of the preferred size of the layout.
-     * 
+     *
      * @param hint contains the result if already known, or SWT.DEFAULT if it needs to be computed
      * @param constraints contains constraints along the other dimension, or SWT.DEFAULT if none. For
      * example, if we are computing the preferred row sizes, this would be an array of known column sizes.
@@ -458,7 +458,7 @@ public class CellLayout extends Layout {
 
     /**
      * Computes the sum of all integers in the given array. If any of the entries are SWT.DEFAULT,
-     * the result is SWT.DEFAULT. 
+     * the result is SWT.DEFAULT.
      */
     static int sumOfSizes(int[] input) {
         return sumOfSizes(input, 0, input.length);
@@ -480,8 +480,8 @@ public class CellLayout extends Layout {
     }
 
     /**
-     * Returns the preferred dynamic width of the layout 
-     * 
+     * Returns the preferred dynamic width of the layout
+     *
      * @param constraints
      * @param fixedSizes
      * @param computingRows
@@ -539,7 +539,7 @@ public class CellLayout extends Layout {
 
     /**
      * Computes one dimension of a control's size
-     * 
+     *
      * @param control the index of the control being computed
      * @param constraint the other dimension of the control's size, or SWT.DEFAULT if unknown
      * @param computingHeight if true, this method returns a height. Else it returns a width
@@ -572,8 +572,8 @@ public class CellLayout extends Layout {
 
     /**
      * Returns the relative amount that a control starting on the given row and spanning
-     * the given length will contribute 
-     * 
+     * the given length will contribute
+     *
      * @param start
      * @param length
      * @param computingRows
@@ -698,8 +698,8 @@ public class CellLayout extends Layout {
     /**
      * Returns the height constraints that should be used when computing column widths. Requires initGrid
      * to have been called first.
-     * 
-     * @param result Will contain the height constraint for row i in the ith position of the array, 
+     *
+     * @param result Will contain the height constraint for row i in the ith position of the array,
      * or SWT.DEFAULT if there is no constraint on that row.
      */
     private int[] computeConstraints(boolean horizontal) {
@@ -723,7 +723,7 @@ public class CellLayout extends Layout {
 
     /**
      * Computes the total greediness of all rows
-     * 
+     *
      * @return the total greediness of all rows
      */
     private int getResizeDenominator(boolean horizontal) {
@@ -743,21 +743,21 @@ public class CellLayout extends Layout {
 
     //	/**
     //	 * Computes the total fixed height of all rows
-    //	 * 
+    //	 *
     //	 * @param widthConstraints array where the nth entry indicates the known width of the
     //	 * nth column, or SWT.DEFAULT if the width is still unknown
-    //	 * 
+    //	 *
     //	 * @return the total fixed height for all rows
     //	 */
     //	private int getMinimumSize(int[] constraints, boolean horizontal) {
     //		Control[] controls = new Control[gridInfo.getRows()];
     //		int result = 0;
     //		int numRows = gridInfo.getRows();
-    //		
+    //
     //		for (int idx = 0; idx < numRows; idx++) {
     //			result += getRow(idx).getFixedHeight(gridInfo, widthConstraints, idx);
-    //		}		
-    //		
+    //		}
+    //
     //		return result;
     //	}
 
@@ -773,7 +773,7 @@ public class CellLayout extends Layout {
     /**
      * Returns the total space that will be required for margins and spacing between and
      * around cells. initGrid(...) must have been called first.
-     * 
+     *
      * @return
      */
     private Point totalEmptySpace() {
@@ -785,9 +785,9 @@ public class CellLayout extends Layout {
     }
 
     /**
-     * Returns the absolute positions of each row, given the start position, row sizes, 
-     * and row spacing 
-     * 
+     * Returns the absolute positions of each row, given the start position, row sizes,
+     * and row spacing
+     *
      * @param startPos position of the initial row
      * @param sizes array of row sizes (pixels)
      * @param spacing space between each row (pixels)
@@ -812,11 +812,11 @@ public class CellLayout extends Layout {
     @Override
 	protected void layout(Composite composite, boolean flushCache) {
         Control[] children = composite.getChildren();
-        
+
         // If there are no children then this is a NO-OP
         if (children.length == 0)
         	return;
-        	
+
         initGrid(children);
 
         if (flushCache) {

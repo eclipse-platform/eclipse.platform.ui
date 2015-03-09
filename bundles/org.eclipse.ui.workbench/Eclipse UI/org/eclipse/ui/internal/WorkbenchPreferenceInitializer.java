@@ -34,13 +34,13 @@ import org.osgi.service.prefs.BackingStoreException;
  * plugin's preferences to be initialized properly when running without
  * org.eclipse.core.runtime.compatibility. For more details, see bug 58975 - New
  * preference mechanism does not properly initialize defaults.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchPreferenceInitializer extends
 		AbstractPreferenceInitializer {
-	
-	
+
+
 
 	@Override
 	public void initializeDefaultPreferences() {
@@ -97,7 +97,7 @@ public class WorkbenchPreferenceInitializer extends
 		// Temporary option to enable cool bars
 		node.putBoolean("ENABLE_COOL_BARS", true); //$NON-NLS-1$
 		// Temporary option to enable new menu organization
-		node.putBoolean("ENABLE_NEW_MENUS", true); //$NON-NLS-1$   
+		node.putBoolean("ENABLE_NEW_MENUS", true); //$NON-NLS-1$
 		//Temporary option to turn off the dialog font
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
@@ -108,7 +108,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
-		
+
 		// Globalization preferences
 		node.put(IPreferenceConstants.NL_EXTENSIONS, ""); //$NON-NLS-1$
 		node.putInt(IPreferenceConstants.LAYOUT_DIRECTION, SWT.NONE);
@@ -133,7 +133,7 @@ public class WorkbenchPreferenceInitializer extends
 					e.getLocalizedMessage(), e);
 			WorkbenchPlugin.getDefault().getLog().log(status);
 		}
-	
+
 	}
 
 }

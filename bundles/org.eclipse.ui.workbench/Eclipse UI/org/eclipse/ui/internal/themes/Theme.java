@@ -69,7 +69,7 @@ public class Theme extends EventManager implements ITheme {
         if (descriptor != null) {
         	ITheme defaultTheme = workbench.getThemeManager().getTheme(
                     IThemeManager.DEFAULT_THEME);
-        	
+
             ColorDefinition[] colorDefinitions = this.descriptor.getColors();
             themeColorRegistry = new CascadingColorRegistry(defaultTheme
                     .getColorRegistry());
@@ -99,7 +99,7 @@ public class Theme extends EventManager implements ITheme {
 
     /**
      * Listener that is responsible for responding to preference changes.
-     * 
+     *
      * @return the property change listener
      */
     private IPropertyChangeListener getPropertyListener() {
@@ -120,13 +120,13 @@ public class Theme extends EventManager implements ITheme {
 					}
                     try {
                     	String thisTheme = getId();
-                                          
+
                         if (Util.equals(thisTheme, theme)) {
 							if (getFontRegistry().hasValueFor(key)) {
 								FontData[] data = PreferenceConverter
 										.basicGetFontData((String) event
 												.getNewValue());
-								
+
 								getFontRegistry().put(key, data);
 								processDefaultsTo(key, data);
 								return;
@@ -138,7 +138,7 @@ public class Theme extends EventManager implements ITheme {
 								processDefaultsTo(key, rgb);
 								return;
 							}
-						}                        
+						}
                     } catch (DataFormatException e) {
                         //no-op
                     }
@@ -146,7 +146,7 @@ public class Theme extends EventManager implements ITheme {
 
                 /**
                  * Process all fonts that default to the given ID.
-                 * 
+                 *
                  * @param key the font ID
                  * @param fd the new FontData for defaulted fonts
                  */
@@ -170,7 +170,7 @@ public class Theme extends EventManager implements ITheme {
 
                 /**
                  * Process all colors that default to the given ID.
-                 * 
+                 *
                  * @param key the color ID
                  * @param rgb the new RGB value for defaulted colors
                  */
@@ -287,7 +287,7 @@ public class Theme extends EventManager implements ITheme {
     @Override
 	public String getLabel() {
         return descriptor == null ? RESOURCE_BUNDLE
-                .getString("DefaultTheme.label") : descriptor.getName(); //$NON-NLS-1$ 
+                .getString("DefaultTheme.label") : descriptor.getName(); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

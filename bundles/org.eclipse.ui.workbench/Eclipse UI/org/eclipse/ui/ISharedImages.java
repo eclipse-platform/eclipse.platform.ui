@@ -17,12 +17,12 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Device;
 
 /**
- * A registry for common images used by the workbench which may be useful 
+ * A registry for common images used by the workbench which may be useful
  * to other plug-ins.
  * <p>
  * This class provides <code>Image</code> and <code>ImageDescriptor</code>s
- * for each named image in the interface.  All <code>Image</code> objects provided 
- * by this class are managed by this class and must never be disposed 
+ * for each named image in the interface.  All <code>Image</code> objects provided
+ * by this class are managed by this class and must never be disposed
  * by other clients.
  * </p>
  * <p>
@@ -228,9 +228,9 @@ public interface ISharedImages {
 
     /**
      * Identifies a project image.
-     * 
+     *
      * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-     * only in IDE configurations. IDE-specific tools should use 
+     * only in IDE configurations. IDE-specific tools should use
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT</code> instead.
      */
     @Deprecated
@@ -238,9 +238,9 @@ public interface ISharedImages {
 
     /**
      * Identifies a closed project image.
-     * 
+     *
      * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-     * only in IDE configurations. IDE-specific tools should use 
+     * only in IDE configurations. IDE-specific tools should use
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED</code> instead.
      */
     @Deprecated
@@ -248,9 +248,9 @@ public interface ISharedImages {
 
     /**
      * Identifies the default image used to indicate a bookmark.
-     * 
+     *
      * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-     * only in IDE configurations. IDE-specific tools should use 
+     * only in IDE configurations. IDE-specific tools should use
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK</code> instead.
      */
     @Deprecated
@@ -268,9 +268,9 @@ public interface ISharedImages {
 
     /**
      * Identifies the default image used to indicate a task.
-     * 
+     *
      * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-     * only in IDE configurations. IDE-specific tools should use 
+     * only in IDE configurations. IDE-specific tools should use
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_TASK_TSK</code> instead.
      */
     @Deprecated
@@ -283,9 +283,9 @@ public interface ISharedImages {
 
     /**
      * Identifies the image used for "open marker".
-     * 
+     *
      * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-     * only in IDE configurations. IDE-specific tools should use 
+     * only in IDE configurations. IDE-specific tools should use
      * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OPEN_MARKER</code> instead.
      */
     @Deprecated
@@ -295,7 +295,7 @@ public interface ISharedImages {
      * Identifies the back image in the enabled state.
      */
     public final static String IMG_TOOL_BACK = "IMG_TOOL_BACK"; //$NON-NLS-1$
-    
+
     /**
      * Identifies the back image in the disabled state.
      */
@@ -303,7 +303,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the back image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_BACK</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -322,7 +322,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the copy image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_COPY</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -341,7 +341,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the cut image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_CUT</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -362,7 +362,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the delete image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_DELETE</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -381,7 +381,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the forward image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_FORWARD</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -400,7 +400,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the new wizard image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_NEW_WIZARD</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -419,7 +419,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the paste image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_PASTE</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -438,7 +438,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the redo image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_REDO</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -457,7 +457,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the undo image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_UNDO</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -476,7 +476,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the up image in the hover (colored) state.
-     * 
+     *
      * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_UP</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
@@ -593,8 +593,8 @@ public interface ISharedImages {
      * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
      * @since 3.5
      */
-    public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$    
-    
+    public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$
+
     /**
      * Retrieves the specified image from the workbench plugin's image registry.
      * Note: The returned <code>Image</code> is managed by the workbench; clients

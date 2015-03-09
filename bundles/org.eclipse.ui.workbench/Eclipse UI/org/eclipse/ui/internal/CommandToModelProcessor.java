@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.commands.CommandPersistence;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class CommandToModelProcessor {
 

@@ -44,7 +44,7 @@ public class PreferenceNodeFilter extends ViewerFilter {
 	}
 
 	/**
-	 * Check to see if the node or any of its children 
+	 * Check to see if the node or any of its children
 	 * have an id in the ids.
 	 * @param node WorkbenchPreferenceNode
 	 * @return boolean <code>true</code> if node or oe of its children
@@ -54,13 +54,13 @@ public class PreferenceNodeFilter extends ViewerFilter {
 		if(ids.contains(node.getId())) {
 			return true;
 		}
-		
+
 		IPreferenceNode[] subNodes = node.getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
 			if(checkNodeAndChildren(subNodes[i])) {
 				return true;
 			}
-			
+
 		}
 		return false;
 	}

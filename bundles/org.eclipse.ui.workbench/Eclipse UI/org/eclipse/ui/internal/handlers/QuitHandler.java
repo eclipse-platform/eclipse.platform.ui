@@ -19,15 +19,15 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * Quit (close the workbench).
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class QuitHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override

@@ -14,15 +14,15 @@ package org.eclipse.ui;
  * Extends {@link IWorkbenchPart}, adding the name and status text properties.
  * Prior to 3.0, a view's title was often modified to show both the part
  * name and extra status text.  With this interface, the distinction is
- * made more explicit. 
- * 
- * @since 3.0 
+ * made more explicit.
+ *
+ * @since 3.0
  */
 public interface IWorkbenchPart2 extends IWorkbenchPart {
     /**
      * Returns the name of this part. If this value changes the part must fire a
      * property listener event with {@link IWorkbenchPartConstants#PROP_PART_NAME}.
-     * 
+     *
      * @return the name of this view, or the empty string if the name is being managed
      * by the workbench (not <code>null</code>)
      */
@@ -30,13 +30,13 @@ public interface IWorkbenchPart2 extends IWorkbenchPart {
 
     /**
      * Returns the content description of this part. The content description is an optional
-     * user-readable string that describes what is currently being displayed in the part. 
+     * user-readable string that describes what is currently being displayed in the part.
      * By default, the workbench will display the content description in a line
      * near the top of the view or editor.
      * An empty string indicates no content description
      * text. If this value changes the part must fire a property listener event
      * with {@link IWorkbenchPartConstants#PROP_CONTENT_DESCRIPTION}.
-     * 
+     *
      * @return the content description of this part (not <code>null</code>)
      */
     public String getContentDescription();

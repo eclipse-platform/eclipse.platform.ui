@@ -37,7 +37,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * <b>Note:</b> Clients my instantiate, but they must not subclass.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class CommandAction extends Action {
@@ -55,7 +55,7 @@ public class CommandAction extends Action {
 	/**
 	 * Creates the action backed by a command. For commands that don't take
 	 * parameters.
-	 * 
+	 *
 	 * @param serviceLocator
 	 *            The service locator that is closest in lifecycle to this
 	 *            action.
@@ -70,7 +70,7 @@ public class CommandAction extends Action {
 	 * Creates the action backed by a parameterized command. The parameterMap
 	 * must contain only all required parameters, and may contain the optional
 	 * parameters.
-	 * 
+	 *
 	 * @param serviceLocator
 	 *            The service locator that is closest in lifecycle to this
 	 *            action.
@@ -106,7 +106,7 @@ public class CommandAction extends Action {
 
 	/**
 	 * Build a command from the executable extension information.
-	 * 
+	 *
 	 * @param commandService
 	 *            to get the Command object
 	 * @param commandId
@@ -143,7 +143,7 @@ public class CommandAction extends Action {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
 	@Override
@@ -166,7 +166,7 @@ public class CommandAction extends Action {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	@Override

@@ -44,10 +44,10 @@ import org.osgi.util.tracker.ServiceTracker;
  * {@link org.eclipse.core.runtime.IAdaptable} interface should be consulted.</dd>
  * </dl>
  * </p>
- * 
+ *
  * Please see the {@link #adaptElements(IWorkingSet, IAdaptable[])} method for
  * details on behavior of this implementation.
- * 
+ *
  * @since 3.3
  */
 public final class BasicWorkingSetElementAdapter implements
@@ -80,7 +80,7 @@ public final class BasicWorkingSetElementAdapter implements
 	 * return differing results based on the state of bundles loaded within the
 	 * system.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet,
 	 *      org.eclipse.core.runtime.IAdaptable[])
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(Object, String)
@@ -102,7 +102,7 @@ public final class BasicWorkingSetElementAdapter implements
 	/**
 	 * Adapt the given adaptable. Compares the given adaptable against the list
 	 * of desired types and returns the first type that generates a match.
-	 * 
+	 *
 	 * @param adaptable
 	 *            the adaptable to adapt
 	 * @return the resultant adaptable. May be the same adaptable, a new
@@ -119,7 +119,7 @@ public final class BasicWorkingSetElementAdapter implements
 
 	/**
 	 * Adapt the given adaptable given the reference type.
-	 * 
+	 *
 	 * @param type
 	 *            the reference type
 	 * @param adaptable
@@ -202,7 +202,7 @@ public final class BasicWorkingSetElementAdapter implements
 	/**
 	 * Parse classname/option strings in the form:<br/>
 	 * <code>some.package.Class[:option1=value1][:option2=value2]...
-	 * 
+	 *
 	 * @param classNameAndOptions the class name and possibly options to parse
 	 * @param record the record to fill
 	 */
@@ -229,7 +229,7 @@ public final class BasicWorkingSetElementAdapter implements
 	/**
 	 * Prime the PackageAdmin service tracker and return the service (if
 	 * available).
-	 * 
+	 *
 	 * @return the PackageAdmin service or null if it is not available
 	 */
 	private PackageAdmin getPackageAdmin() {

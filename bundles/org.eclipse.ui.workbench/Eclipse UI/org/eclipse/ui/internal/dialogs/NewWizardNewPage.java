@@ -77,9 +77,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
             + "STORE_SELECTED_ID"; //$NON-NLS-1$
 
     private NewWizardSelectionPage page;
-    
+
     private FilteredTree filteredTree;
-    
+
     private WizardPatternFilter filteredTreeFilter;
 
     //Keep track of the wizards we have previously selected
@@ -109,10 +109,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     /**
      * Create an instance of this class
-     * @param mainPage 
-     * @param wizardCategories 
-     * @param primaryWizards 
-     * @param projectsOnly 
+     * @param mainPage
+     * @param wizardCategories
+     * @param primaryWizards
+     * @param projectsOnly
      */
     public NewWizardNewPage(NewWizardSelectionPage mainPage,
 			IWizardCategory wizardCategories,
@@ -233,7 +233,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     /**
      * Create this tab's visual components
-     * 
+     *
      * @param parent Composite
      * @return Control
      */
@@ -249,7 +249,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
         GridData data = new GridData(SWT.BEGINNING, SWT.FILL, false, true);
         outerContainer.setLayoutData(data);
         wizardLabel.setFont(wizardFont);
-        wizardLabel.setText(WorkbenchMessages.NewWizardNewPage_wizardsLabel);    
+        wizardLabel.setText(WorkbenchMessages.NewWizardNewPage_wizardsLabel);
 
         Composite innerContainer = new Composite(outerContainer, SWT.NONE);
         layout = new GridLayout(2, false);
@@ -257,12 +257,12 @@ class NewWizardNewPage implements ISelectionChangedListener {
         layout.marginWidth = 0;
         innerContainer.setLayout(layout);
         innerContainer.setFont(wizardFont);
-        data = new GridData(SWT.FILL, SWT.FILL, true, true);	
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         innerContainer.setLayoutData(data);
 
         filteredTree = createFilteredTree(innerContainer);
         createOptionsButtons(innerContainer);
-        
+
         createImage(innerContainer);
 
         updateDescription(null);
@@ -276,7 +276,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     /**
      * Create a new FilteredTree in the parent.
-     * 
+     *
      * @param parent the parent <code>Composite</code>.
      * @since 3.0
      */
@@ -286,10 +286,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint = SIZING_VIEWER_WIDTH;
-        data.horizontalSpan = 2;	 
+        data.horizontalSpan = 2;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = true;
 
@@ -302,10 +302,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
         composite.setLayoutData(data);
 
         filteredTreeFilter = new WizardPatternFilter();
-    	FilteredTree filterTree = new FilteredTree(composite, 
+    	FilteredTree filterTree = new FilteredTree(composite,
     			SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter, true);
 		filterTree.setQuickSelectionMode(true);
-  	
+
 		final TreeViewer treeViewer = filterTree.getViewer();
 		treeViewer.setContentProvider(new WizardContentProvider());
 		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
@@ -352,7 +352,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
             	    IStructuredSelection s = (IStructuredSelection) event
 						.getSelection();
 				selectionChanged(new SelectionChangedEvent(event.getViewer(), s));
-				
+
 				Object element = s.getFirstElement();
                 if (treeViewer.isExpandable(element)) {
                 	treeViewer.setExpandedState(element, !treeViewer
@@ -362,9 +362,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
                 }
             }
         });
-        
+
         treeViewer.addFilter(filter);
-        
+
         if (projectsOnly) {
 			treeViewer.addFilter(projectFilter);
 		}
@@ -372,10 +372,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
 		Dialog.applyDialogFont(filterTree);
 		return filterTree;
     }
-    
+
     /**
      * Create the Show All and help buttons at the bottom of the page.
-     * 
+     *
      * @param parent the parent composite on which to create the widgets
      */
     private void createOptionsButtons(Composite parent){
@@ -384,7 +384,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
             GridData data = new GridData();
             showAllCheck.setLayoutData(data);
             showAllCheck.setFont(parent.getFont());
-            showAllCheck.setText(WorkbenchMessages.NewWizardNewPage_showAll); 
+            showAllCheck.setText(WorkbenchMessages.NewWizardNewPage_showAll);
             showAllCheck.setSelection(false);
 
             // flipping tabs updates the selected node
@@ -454,10 +454,10 @@ class NewWizardNewPage implements ISelectionChangedListener {
             });
         }
     }
-    
+
     /**
      * Create the image controls.
-     * 
+     *
      * @param parent the parent <code>Composite</code>.
      * @since 3.0
      */
@@ -524,7 +524,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
     /**
      * Set self's widgets to the values that they held last time this page was
      * open
-     *  
+     *
      */
     protected void restoreWidgetValues() {
         expandPreviouslyExpandedCategories();
@@ -534,7 +534,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
     /**
      * Store the current values of self's widgets so that they can be restored
      * in the next instance of self
-     *  
+     *
      */
     public void saveWidgetValues() {
         storeExpandedCategories();
@@ -544,7 +544,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
     /**
      * The user selected either new wizard category(s) or wizard element(s).
      * Proceed accordingly.
-     * 
+     *
      * @param selectionEvent ISelection
      */
     @Override
@@ -608,7 +608,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     /**
      * Set the dialog store to use for widget value storage and retrieval
-     * 
+     *
      * @param settings IDialogSettings
      */
     public void setDialogSettings(IDialogSettings settings) {
@@ -658,7 +658,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     /**
      * Update the current description controls.
-     * 
+     *
      * @param selectedObject the new wizard
      * @since 3.0
      */
@@ -705,7 +705,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
     /**
      * Tests whether the given wizard has an associated image.
-     * 
+     *
      * @param selectedObject the wizard to test
      * @return whether the given wizard has an associated image
      */

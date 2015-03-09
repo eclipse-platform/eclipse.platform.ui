@@ -28,9 +28,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * A working set descriptor stores the plugin registry data for 
+ * A working set descriptor stores the plugin registry data for
  * a working set page extension.
- * 
+ *
  * @since 2.0
  */
 public class WorkingSetDescriptor implements IPluginContribution {
@@ -41,11 +41,11 @@ public class WorkingSetDescriptor implements IPluginContribution {
     private String icon;
 
     private String pageClassName;
-    
+
     private String updaterClassName;
 
     private IConfigurationElement configElement;
-    
+
     private String[] classTypes;
 
 	private String[] adapterTypes;
@@ -54,19 +54,19 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
     private static final String ATT_NAME = "name"; //$NON-NLS-1$
 
-    private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
+    private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 
     private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$
-    
+
     private static final String ATT_UPDATER_CLASS = "updaterClass";  //$NON-NLS-1$
-    
+
     private static final String ATT_ELEMENT_ADAPTER_CLASS = "elementAdapterClass";  //$NON-NLS-1$
 
     private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1$
-    
+
     /**
      * Creates a descriptor from a configuration element.
-     * 
+     *
      * @param configElement configuration element to create a descriptor from
      */
     public WorkingSetDescriptor(IConfigurationElement configElement)
@@ -85,7 +85,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
                     "Invalid extension (missing class name): " + id, //$NON-NLS-1$
                     null));
         }
-        
+
         IConfigurationElement[] containsChildren = configElement
 				.getChildren(TAG_APPLICABLE_TYPE);
 		if (containsChildren.length > 0) {
@@ -105,7 +105,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 						.size()]);
 				Arrays.sort(classTypes);
 			}
-			
+
 			if (!byAdapterList.isEmpty()) {
 				adapterTypes = (String[]) byAdapterList.toArray(new String[byAdapterList
 						.size()]);
@@ -113,21 +113,21 @@ public class WorkingSetDescriptor implements IPluginContribution {
 			}
 		}
     }
-    
+
     /**
      * Returns the name space that declares this working set.
-     * 
+     *
      * @return the name space declaring this working set
      */
     public String getDeclaringNamespace() {
     	return configElement.getNamespace();
     }
-    
+
     /**
 	 * Return the namespace that contains the class referenced by the
 	 * updaterClass. May be the bundle that declared this extension or another
 	 * bundle that contains the referenced class.
-	 * 
+	 *
 	 * @return the namespace
 	 * @since 3.3
 	 */
@@ -135,12 +135,12 @@ public class WorkingSetDescriptor implements IPluginContribution {
 		return WorkbenchPlugin.getBundleForExecutableExtension(configElement,
 				ATT_UPDATER_CLASS).getSymbolicName();
 	}
-    
+
     /**
 	 * Return the namespace that contains the class referenced by the
 	 * elementAdapterClass. May be the bundle that declared this extension or
 	 * another bundle that contains the referenced class.
-	 * 
+	 *
 	 * @return the namespace
 	 * @since 3.3
 	 */
@@ -151,7 +151,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
     /**
 	 * Creates a working set page from this extension descriptor.
-	 * 
+	 *
 	 * @return a working set page created from this extension descriptor.
 	 */
     public IWorkingSetPage createWorkingSetPage() {
@@ -171,7 +171,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
     /**
      * Returns the page's icon
-     * 
+     *
      * @return the page's icon
      */
     public ImageDescriptor getIcon() {
@@ -187,7 +187,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
     /**
      * Returns the working set page id.
-     * 
+     *
      * @return the working set page id.
      */
     public String getId() {
@@ -196,7 +196,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
     /**
      * Returns the working set page class name
-     * 
+     *
      * @return the working set page class name or <code>null</code> if
      *  no page class name has been provided by the extension
      */
@@ -205,28 +205,28 @@ public class WorkingSetDescriptor implements IPluginContribution {
     }
 
     /**
-     * Returns the name of the working set element type the 
+     * Returns the name of the working set element type the
      * page works with.
-     * 
+     *
      * @return the working set element type name
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Returns the working set updater class name
-     * 
+     *
      * @return the working set updater class name or <code>null</code> if
      *  no updater class name has been provided by the extension
      */
     public String getUpdaterClassName() {
     	return updaterClassName;
     }
-    
+
     /**
 	 * Creates a working set element adapter.
-	 * 
+	 *
 	 * @return the element adapter or <code>null</code> if no adapter has been
 	 *         declared
 	 */
@@ -243,10 +243,10 @@ public class WorkingSetDescriptor implements IPluginContribution {
 		}
 		return result;
 	}
-    
+
     /**
 	 * Creates a working set updater.
-	 * 
+	 *
 	 * @return the working set updater or <code>null</code> if no updater has
 	 *         been declared
 	 */
@@ -261,23 +261,23 @@ public class WorkingSetDescriptor implements IPluginContribution {
             WorkbenchPlugin.log("Unable to create working set updater: " + //$NON-NLS-1$
             	updaterClassName, exception.getStatus());
         }
-        return result;   	
+        return result;
     }
-    
+
     public boolean isUpdaterClassLoaded() {
     	return WorkbenchPlugin.isBundleLoadedForExecutableExtension(configElement, ATT_UPDATER_CLASS);
     }
-    
+
     public boolean isElementAdapterClassLoaded() {
     	return WorkbenchPlugin.isBundleLoadedForExecutableExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS);
     }
-    
+
     /**
      * Returns whether working sets based on this descriptor are editable.
-     * 
+     *
      * @return <code>true</code> if working sets based on this descriptor are editable; otherwise
      *  <code>false</code>
-     * 
+     *
      * @since 3.1
      */
     public boolean isEditable() {
@@ -293,20 +293,20 @@ public class WorkingSetDescriptor implements IPluginContribution {
 	public String getPluginId() {
 		return getDeclaringNamespace();
 	}
-	
+
 	/**
 	 * Return the config element for this descriptor.
-	 * 
+	 *
 	 * @return the config element
 	 * @since 3.3
 	 */
 	public IConfigurationElement getConfigurationElement() {
 		return configElement;
 	}
-	
+
 	/**
 	 * Return the description for this working set type.
-	 * 
+	 *
 	 * @return the description for this type. May be an empty string.
 	 * @since 3.4
 	 */

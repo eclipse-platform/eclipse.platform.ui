@@ -21,9 +21,9 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroSite;
 
 /**
- * Simple <code>IIntroSite</code> that wraps a <code>IViewSite</code>.  For use in conjunction with 
+ * Simple <code>IIntroSite</code> that wraps a <code>IViewSite</code>.  For use in conjunction with
  * <code>ViewIntroAdapterPart</code>.
- * 
+ *
  * @since 3.0
  */
 final class ViewIntroAdapterSite implements IIntroSite {
@@ -70,7 +70,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
 	public ISelectionProvider getSelectionProvider() {
         return viewSite.getSelectionProvider();
     }
-    
+
     @Override
 	public final Object getService(final Class key) {
     		return viewSite.getService(key);

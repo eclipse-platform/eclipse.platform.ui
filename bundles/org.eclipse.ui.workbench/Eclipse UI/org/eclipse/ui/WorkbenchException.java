@@ -32,7 +32,7 @@ public class WorkbenchException extends CoreException {
 
     /**
      * Creates a new exception with the given message.
-     * 
+     *
      * @param message the message
      */
     public WorkbenchException(String message) {

@@ -31,14 +31,14 @@ package org.eclipse.ui;
  * On workbench shutdown, the editor state will be persisted when the editor
  * references are saved.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public interface IPersistableEditor extends IPersistable {
 	/**
 	 * Called with a memento for this editor. The editor can parse the data or
 	 * save the memento. This method may not be called.
-	 * 
+	 *
 	 * @param memento
 	 *            the saved state for this editor. May be <code>null</code>.
 	 */

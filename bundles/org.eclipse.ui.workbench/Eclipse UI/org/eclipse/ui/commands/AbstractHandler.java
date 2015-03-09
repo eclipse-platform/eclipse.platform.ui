@@ -29,7 +29,7 @@ import org.eclipse.core.commands.IHandlerAttributes;
  * changes. Subclasses should also override
  * {@link AbstractHandler#getAttributeValuesByName()}if they have any
  * attributes.
- * 
+ *
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.AbstractHandler
@@ -67,7 +67,7 @@ public abstract class AbstractHandler extends
     /**
      * The default implementation does nothing. Subclasses who attach listeners
      * to other objects are encouraged to detach them in this method.
-     * 
+     *
      * @see org.eclipse.ui.commands.IHandler#dispose()
      */
 	@Override
@@ -89,7 +89,7 @@ public abstract class AbstractHandler extends
     /**
      * Fires an event to all registered listeners describing changes to this
      * instance.
-     * 
+     *
      * @param handlerEvent
      *            the event describing changes to this instance. Must not be
      *            <code>null</code>.
@@ -98,7 +98,7 @@ public abstract class AbstractHandler extends
 	@Deprecated
     protected void fireHandlerChanged(HandlerEvent handlerEvent) {
         super.fireHandlerChanged(handlerEvent);
-        
+
         if (handlerListeners != null) {
             final boolean attributesChanged = handlerEvent.isEnabledChanged()
                     || handlerEvent.isHandledChanged();
@@ -177,7 +177,7 @@ public abstract class AbstractHandler extends
     /**
      * This simply return an empty map. The default implementation has no
      * attributes.
-     * 
+     *
      * @see IHandler#getAttributeValuesByName()
      */
 	@Override
@@ -185,11 +185,11 @@ public abstract class AbstractHandler extends
     public Map getAttributeValuesByName() {
         return Collections.EMPTY_MAP;
     }
-    
+
     /**
      * Returns true iff there is one or more IHandlerListeners attached to this
      * AbstractHandler.
-     * 
+     *
      * @return true iff there is one or more IHandlerListeners attached to this
      *         AbstractHandler
      * @since 3.1
@@ -235,7 +235,7 @@ public abstract class AbstractHandler extends
         if (handlerListeners == null) {
             return;
         }
-        
+
         if (handlerListeners != null) {
 			handlerListeners.remove(handlerListener);
 		}

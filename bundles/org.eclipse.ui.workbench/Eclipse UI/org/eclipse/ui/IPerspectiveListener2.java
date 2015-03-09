@@ -11,7 +11,7 @@
 package org.eclipse.ui;
 
 /**
- * Extension interface to <code>IPerspectiveListener</code> which 
+ * Extension interface to <code>IPerspectiveListener</code> which
  * adds support for listening to part-specific perspective lifecycle events.
  * For example, this allows a perspective listener to determine which view
  * is being hidden during a <code>CHANGE_VIEW_HIDE</code> event.

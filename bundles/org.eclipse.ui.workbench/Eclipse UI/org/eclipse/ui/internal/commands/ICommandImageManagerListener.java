@@ -28,7 +28,7 @@ package org.eclipse.ui.internal.commands;
  * This class is eventually intended to exist in
  * <code>org.eclipse.jface.commands</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface ICommandImageManagerListener {
@@ -37,7 +37,7 @@ public interface ICommandImageManagerListener {
 	 * Notifies that one or more properties of an instance of
 	 * <code>CommandImageManager</code> have changed. Specific details are
 	 * described in the <code>CommandImageManagerEvent</code>.
-	 * 
+	 *
 	 * @param event
 	 *            The event; never <code>null</code>.
 	 */

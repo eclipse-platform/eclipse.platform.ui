@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 /**
  * A named set of actions which is defined as an extension to the workbench
  * via the standard workbench actions extension point
- * (<code>"org.eclipse.ui.workbenchActions"</code>). 
+ * (<code>"org.eclipse.ui.workbenchActions"</code>).
  * <p>
  * [Issue: This interface is not exposed in API, but time may
  * demonstrate that it should be.  For the short term leave it be.
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @see ActionSetRegistry
  */
 public interface IActionSetDescriptor {
-    
+
     /**
      * Creates a new action set from this descriptor.
      * <p>
@@ -49,7 +49,7 @@ public interface IActionSetDescriptor {
     public String getDescription();
 
     /**
-     * Returns the id of this action set. 
+     * Returns the id of this action set.
      * This is the value of its <code>"id"</code> attribute.
      *
      * @return the action set id
@@ -57,7 +57,7 @@ public interface IActionSetDescriptor {
     public String getId();
 
     /**
-     * Returns the label of this action set. 
+     * Returns the label of this action set.
      * This is the value of its <code>"label"</code> attribute.
      *
      * @return the label
@@ -66,22 +66,22 @@ public interface IActionSetDescriptor {
 
     /**
      * Returns whether this action set is initially visible.
-     * 
+     *
      * @return whether this action set is initially visible
      */
     public boolean isInitiallyVisible();
 
     /**
      * Sets whether this action set is initially visible.
-     * 
+     *
      * @param visible whether the action set should be visible initially.
      * @since 3.0
      */
     public void setInitiallyVisible(boolean visible);
-    
+
     /**
      * Returns the conconfigurationfig element.
-     * 
+     *
      * @return the configuration element
      * @since 3.1
      */

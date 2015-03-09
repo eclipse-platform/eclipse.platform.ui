@@ -64,7 +64,7 @@ public class ExternalEditor {
                             IStatus.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
-                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, path), 
+                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, path),
                             null));
         }
     }
@@ -116,14 +116,14 @@ public class ExternalEditor {
                             IStatus.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
-                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName), 
+                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName),
                             null));
         }
         String path = filePath.toOSString();
 
         // Open the file
 
-        // ShellCommand was removed in response to PR 23888.  If an exception was 
+        // ShellCommand was removed in response to PR 23888.  If an exception was
         // thrown, it was not caught in time, and no feedback was given to user
 
         try {

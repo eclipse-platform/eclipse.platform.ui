@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * An abstract parent that describes data that can be displayed in a table in one of
  * the about dialogs.
- * @since 3.0 
+ * @since 3.0
  */
 public abstract class AboutData {
     private String providerName;
@@ -69,7 +69,7 @@ public abstract class AboutData {
     }
 
     /**
-     * Modify the argument array to reverse the sort order. 
+     * Modify the argument array to reverse the sort order.
      * @param infos
      */
     private static void reverse(AboutData[] infos) {
@@ -85,7 +85,7 @@ public abstract class AboutData {
      * boolean is true, the array is assumed to already be sorted and the
      * direction of sort (ascending vs. descending) is reversed.  Entries
      * with the same name are sorted by name.
-     * 
+     *
      * @param reverse
      *            if true then the order of the argument is reversed without
      *            examining the value of the fields
@@ -120,7 +120,7 @@ public abstract class AboutData {
      * Modify the argument array to be sorted by name. If the reverse
      * boolean is true, the array is assumed to already be sorted and the
      * direction of sort (ascending vs. descending) is reversed.
-     * 
+     *
      * @param reverse
      *            if true then the order of the argument is reversed without
      *            examining the value of the fields
@@ -148,7 +148,7 @@ public abstract class AboutData {
      * boolean is true, the array is assumed to already be sorted and the
      * direction of sort (ascending vs. descending) is reversed.  Entries
      * with the same name are sorted by name.
-     * 
+     *
      * @param reverse
      *            if true then the order of the argument is reversed without
      *            examining the value of the fields
@@ -184,7 +184,7 @@ public abstract class AboutData {
      * boolean is true, the array is assumed to already be sorted and the
      * direction of sort (ascending vs. descending) is reversed.  Entries
      * with the same name are sorted by name.
-     * 
+     *
      * @param reverse
      *            if true then the order of the argument is reversed without
      *            examining the value of the fields

@@ -58,7 +58,7 @@ import org.eclipse.ui.keys.IBindingService;
  * currently active bindings, as well as the current state of the binding
  * architecture.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class BindingService implements IBindingService {
@@ -90,7 +90,7 @@ public final class BindingService implements IBindingService {
 	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
 
 	private String[] activeSchemeIds;
-	
+
 	/**
 	 * Key assist dialog for workbench key bindings, lazily created and cached
 	 */
@@ -318,7 +318,7 @@ public final class BindingService implements IBindingService {
 				}
 			}
 		}
-		
+
 		// go through each of the active bindings (from the binding manager) to
 		// see if there are any bindings that we should add to the runtime
 		for (Binding binding : activeBindings) {
@@ -396,7 +396,7 @@ public final class BindingService implements IBindingService {
 	/*
 	 * Copied from
 	 * org.eclipse.jface.bindings.BindingManager.compareSchemes(String, String)
-	 * 
+	 *
 	 * Returns an in based on scheme 1 < scheme 2
 	 */
 	private final int compareSchemes(final String schemeId1, final String schemeId2) {
@@ -418,7 +418,7 @@ public final class BindingService implements IBindingService {
 
 	/**
 	 * Compare 2 bindings, taking into account Scheme and type.
-	 * 
+	 *
 	 * @param current
 	 *            the existing binding
 	 * @param addition
@@ -514,7 +514,7 @@ public final class BindingService implements IBindingService {
 	 * <p>
 	 * This method completes in amortized <code>O(1)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param binding
 	 *            The binding to be added; must not be <code>null</code>.
 	 */
@@ -722,7 +722,7 @@ public final class BindingService implements IBindingService {
 	/**
 	 * Remove the specific binding by identity. Does nothing if the binding is
 	 * not in the manager.
-	 * 
+	 *
 	 * @param binding
 	 *            The binding to be removed; must not be <code>null</code>.
 	 */

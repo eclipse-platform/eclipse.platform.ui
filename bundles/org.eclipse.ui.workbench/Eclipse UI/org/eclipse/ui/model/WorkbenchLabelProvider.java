@@ -50,7 +50,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
     /**
      * Returns a workbench label provider that is hooked up to the decorator
      * mechanism.
-     * 
+     *
      * @return a new <code>DecoratingLabelProvider</code> which wraps a <code>
      *   new <code>WorkbenchLabelProvider</code>
      */
@@ -59,7 +59,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
                 PlatformUI.getWorkbench().getDecoratorManager()
                         .getLabelDecorator());
     }
-    
+
     /**
      * Listener that tracks changes to the editor registry and does a full update
      * when it changes, since many workbench adapters derive their icon from the file
@@ -72,7 +72,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 				fireLabelProviderChanged(new LabelProviderChangedEvent(WorkbenchLabelProvider.this));
 			}
 		}
-	};		
+	};
 	private ResourceManager resourceManager;
 
     /**
@@ -89,7 +89,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      *
      * Subclasses may reimplement this method to decorate an object's
      * image.
-     * 
+     *
      * @param input The base image to decorate.
      * @param element The element used to look up decorations.
      * @return the resuling ImageDescriptor.
@@ -123,13 +123,13 @@ public class WorkbenchLabelProvider extends LabelProvider implements
     	resourceManager = null;
     	super.dispose();
     }
-    
+
     /**
      * Returns the implementation of IWorkbenchAdapter for the given
-     * object.  
+     * object.
      * @param o the object to look up.
      * @return IWorkbenchAdapter or<code>null</code> if the adapter is not defined or the
-     * object is not adaptable. 
+     * object is not adaptable.
      */
     protected final IWorkbenchAdapter getAdapter(Object o) {
         return (IWorkbenchAdapter)Util.getAdapter(o, IWorkbenchAdapter.class);
@@ -137,10 +137,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 
     /**
      * Returns the implementation of IWorkbenchAdapter2 for the given
-     * object.  
+     * object.
      * @param o the object to look up.
      * @return IWorkbenchAdapter2 or<code>null</code> if the adapter is not defined or the
-     * object is not adaptable. 
+     * object is not adaptable.
      */
     protected final IWorkbenchAdapter2 getAdapter2(Object o) {
         return (IWorkbenchAdapter2)Util.getAdapter(o, IWorkbenchAdapter2.class);
@@ -148,7 +148,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 
 	/**
 	 * Returns the implementation of IWorkbenchAdapter3 for the given object.
-	 * 
+	 *
 	 * @param o
 	 *            the object to look up.
 	 * @return IWorkbenchAdapter3 or<code>null</code> if the adapter is not
@@ -161,7 +161,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 
 	/**
 	 * Lazy load the resource manager
-	 * 
+	 *
 	 * @return The resource manager, create one if necessary
 	 */
 	private ResourceManager getResourceManager() {
@@ -194,12 +194,12 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 	/**
 	 * The default implementation of this returns the styled text label for the
 	 * given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element to evaluate the styled string for
-	 * 
+	 *
 	 * @return the styled string.
-	 * 
+	 *
 	 * @since 3.7
 	 */
     @Override
@@ -224,12 +224,12 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 	 * Sets the {@link Styler} to be used for string decorations. By default the
 	 * {@link StyledString#DECORATIONS_STYLER decoration style}. Clients can
 	 * override.
-	 * 
+	 *
 	 * @param element
 	 *            the element that has been decorated
-	 * 
+	 *
 	 * @return return the decoration style
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	protected Styler getDecorationStyle(Object element) {

@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
@@ -47,7 +47,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 	/**
 	 * Constructs a new instance of {@link LegacyActionSetExpression}.
-	 * 
+	 *
 	 * @param actionSetId
 	 *            The identifier of the action set that must be active for this
 	 *            expression to evaluate to <code>true</code>; must not be

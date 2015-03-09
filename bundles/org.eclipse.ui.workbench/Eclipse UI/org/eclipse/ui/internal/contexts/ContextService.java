@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * Provides services related to contexts in the Eclipse workbench. This provides
  * access to contexts.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ContextService implements IContextService {
@@ -68,7 +68,7 @@ public final class ContextService implements IContextService {
 	/**
 	 * Constructs a new instance of <code>ContextService</code> using a
 	 * context manager.
-	 * 
+	 *
 	 * @param contextManager
 	 *            The context manager to use; must not be <code>null</code>.
 	 */
@@ -94,7 +94,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String)
 	 */
 	@Override
@@ -155,7 +155,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
 	 *      org.eclipse.core.expressions.Expression)
 	 */
@@ -178,7 +178,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
 	 *      org.eclipse.core.expressions.Expression, boolean)
 	 */
@@ -190,7 +190,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
 	 *      org.eclipse.core.expressions.Expression, int)
 	 */
@@ -202,7 +202,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#addContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
 	 */
 	@Override
@@ -213,7 +213,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	@Override
@@ -223,7 +223,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContext(org.eclipse.ui.contexts.IContextActivation)
 	 */
 	@Override
@@ -244,7 +244,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContexts(java.util.Collection)
 	 */
 	@Override
@@ -259,7 +259,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override
@@ -270,7 +270,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getActiveContextIds()
 	 */
 	@Override
@@ -280,7 +280,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getContext(java.lang.String)
 	 */
 	@Override
@@ -290,7 +290,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContextIds()
 	 */
 	@Override
@@ -300,7 +300,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContexts()
 	 */
 	@Override
@@ -310,7 +310,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#getShellType(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -320,7 +320,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#readRegistry()
 	 */
 	@Override
@@ -330,7 +330,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#registerShell(org.eclipse.swt.widgets.Shell,
 	 *      int)
 	 */
@@ -341,7 +341,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#removeContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
 	 */
 	@Override
@@ -352,7 +352,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	@Override
@@ -362,7 +362,7 @@ public final class ContextService implements IContextService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.contexts.IContextService#unregisterShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -393,7 +393,7 @@ public final class ContextService implements IContextService {
 	 * <p>
 	 * DO NOT CALL THIS METHOD.
 	 * </p>
-	 * 
+	 *
 	 * @param shell
 	 *            The shell that should be considered active; must not be
 	 *            <code>null</code>.

@@ -62,7 +62,7 @@ public class ThemeElementDefinition {
 
 	/**
 	 * Returns the label.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getName() {
@@ -76,13 +76,13 @@ public class ThemeElementDefinition {
 
 	/**
 	 * Returns the description.
-	 * 
+	 *
 	 * @return String or
-	 * 
+	 *
 	 *         <pre>
 	 * null
 	 * </pre>
-	 * 
+	 *
 	 *         .
 	 */
 	public String getDescription() {
@@ -125,7 +125,7 @@ public class ThemeElementDefinition {
 
 	/**
 	 * Returns the categoryId.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getCategoryId() {
@@ -150,7 +150,7 @@ public class ThemeElementDefinition {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#isOverriden()
 	 */

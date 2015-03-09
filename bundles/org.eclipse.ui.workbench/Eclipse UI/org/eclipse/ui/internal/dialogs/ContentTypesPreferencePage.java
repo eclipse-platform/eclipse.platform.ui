@@ -67,7 +67,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * preference pages, it does not work on the preference store itself but rather
  * the content type manager. As such, there are no apply/default buttons and all
  * changes made take effect immediately.
- * 
+ *
  * @since 3.1
  */
 public class ContentTypesPreferencePage extends PreferencePage implements
@@ -80,7 +80,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	private TreeViewer contentTypesViewer;
 
 	private Button addButton;
-	
+
 	private Button editButton;
 
 	private Text charsetField;

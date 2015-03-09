@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CommandProvider extends QuickAccessProvider {
 
@@ -46,7 +46,7 @@ public class CommandProvider extends QuickAccessProvider {
 	private IHandlerService handlerService;
 	private ICommandService commandService;
 	private EHandlerService ehandlerService;
-	
+
 	public CommandProvider() {
 	}
 
@@ -105,7 +105,7 @@ public class CommandProvider extends QuickAccessProvider {
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Commands;
 	}
-	
+
 	EHandlerService getEHandlerService() {
 		if (ehandlerService == null) {
 			if (currentSnapshot instanceof ExpressionContext) {
@@ -144,7 +144,7 @@ public class CommandProvider extends QuickAccessProvider {
 		}
 		return handlerService;
 	}
-	
+
 	IEvaluationContext getContextSnapshot() {
 		return currentSnapshot;
 	}

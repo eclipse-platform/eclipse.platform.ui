@@ -479,7 +479,7 @@ public class ModeledPageLayout implements IPageLayout {
 	 * containers underneath the current perspective. If this element's parent
 	 * is the perspective itself, the element will be returned. The perspective
 	 * will only be returned if the perspective itself has no children.
-	 * 
+	 *
 	 * @return the parent of the final element in the recursion chain of
 	 *         children, or the element itself if its parent is the perspective,
 	 *         or the perspective if the perspective itself has no children

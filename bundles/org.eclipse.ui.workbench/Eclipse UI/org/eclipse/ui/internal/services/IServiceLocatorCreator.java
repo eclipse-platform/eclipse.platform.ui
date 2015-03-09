@@ -28,8 +28,8 @@ import org.eclipse.ui.services.IServiceLocator;
  * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.  This might disappear in 3.4 M5.
  * </p>
- * 
- * 
+ *
+ *
  * @since 3.4
  */
 public interface IServiceLocatorCreator {
@@ -39,7 +39,7 @@ public interface IServiceLocatorCreator {
 	 * and can be used with the Dependency Injection framework to reuse
 	 * components (by simply providing your own implementation for certain
 	 * services).
-	 * 
+	 *
 	 * @param parent
 	 *            the parent locator
 	 * @param factory

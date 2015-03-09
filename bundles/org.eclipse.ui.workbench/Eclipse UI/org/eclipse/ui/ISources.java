@@ -54,7 +54,7 @@ import org.eclipse.ui.part.IShowInSource;
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @see org.eclipse.ui.ISourceProvider
  * @since 3.1
  */
@@ -146,40 +146,40 @@ public interface ISources {
 	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_NAME = "activeWorkbenchWindow"; //$NON-NLS-1$
-	
+
 	/**
 	 * The priority given when the source includes subordinate properties of the currently active
 	 * workbench window.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final int ACTIVE_WORKBENCH_WINDOW_SUBORDINATE = 1 << 15;
-	
+
 	/**
 	 * The variable name for the coolbar visibility state of the active
 	 * workbench window. This is for use with the <code>ISourceProvider</code>
 	 * and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 			+ ".isCoolbarVisible"; //$NON-NLS-1$
-	
+
 	/**
 	 * The variable name for the perspective bar visibility state of the active
 	 * workbench window. This is for use with the <code>ISourceProvider</code>
 	 * and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 			+ ".isPerspectiveBarVisible"; //$NON-NLS-1$
-	
+
 	/**
 	 * The variable name for the current perspective of the active workbench
 	 * window. This is for use with the <code>ISourceProvider</code> and
 	 * <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
@@ -202,10 +202,10 @@ public interface ISources {
 	 * @since 3.5
 	 */
 	public static final String ACTIVE_EDITOR_INPUT_NAME = "activeEditorInput"; //$NON-NLS-1$
-	
+
 	/**
 	 * The priority given when the source includes the active editor identifier.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int ACTIVE_EDITOR_ID = 1 << 18;
@@ -213,7 +213,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active editor identifier. This is for use with
 	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String ACTIVE_EDITOR_ID_NAME = "activeEditorId"; //$NON-NLS-1$
@@ -231,7 +231,7 @@ public interface ISources {
 
 	/**
 	 * The priority given when the source includes the active part id.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int ACTIVE_PART_ID = 1 << 22;
@@ -239,7 +239,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active part id. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String ACTIVE_PART_ID_NAME = "activePartId"; //$NON-NLS-1$
@@ -256,7 +256,7 @@ public interface ISources {
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	public static final String ACTIVE_SITE_NAME = "activeSite"; //$NON-NLS-1$
-	
+
 	/**
 	 * The variable for the showIn selection.  This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
@@ -264,7 +264,7 @@ public interface ISources {
 	 * @see IShowInSource
 	 */
 	public static final String SHOW_IN_SELECTION = "showInSelection"; //$NON-NLS-1$
-	
+
 	/**
 	 * The variable for the showIn input.  This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
@@ -297,19 +297,19 @@ public interface ISources {
 	 * @since 3.2
 	 */
 	public static final String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
-	
+
 	/**
 	 * The variable name for the <b>local</b> selection, available while a
 	 * context menu is visible.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_MENU_SELECTION_NAME = "activeMenuSelection";  //$NON-NLS-1$
-	
+
 	/**
 	 * The variable name for the <b>local</b> editor input which is sometimes
 	 * available while a context menu is visible.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_MENU_EDITOR_INPUT_NAME = "activeMenuEditorInput";  //$NON-NLS-1$
@@ -317,7 +317,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active focus Control, when provided by the
 	 * IFocusService.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_FOCUS_CONTROL_NAME = "activeFocusControl"; //$NON-NLS-1$
@@ -325,7 +325,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active focus Control id, when provided by the
 	 * IFocusService.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_FOCUS_CONTROL_ID_NAME = "activeFocusControlId"; //$NON-NLS-1$

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * For example, the plug-in's XML markup might contain:
  * <pre>
  * &LT;extension point="org.eclipse.ui.elementFactories"&GT;
- *    &LT;factory id="com.example.myplugin.MyFactory" class="com.example.myplugin.MyFactory" /&GT; 
+ *    &LT;factory id="com.example.myplugin.MyFactory" class="com.example.myplugin.MyFactory" /&GT;
  * &LT;/extension&GT;
  * </pre>
  * </p>
@@ -41,7 +41,7 @@ public interface IElementFactory {
 	 * </pre>
 	 * should not return <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param memento
 	 *            a memento containing the state for the object
 	 * @return an object, or <code>null</code> if the element could not be

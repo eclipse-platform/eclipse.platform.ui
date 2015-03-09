@@ -38,7 +38,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 		/**
 		 * A wrapper for loading the menu that defends against possible
 		 * exceptions triggered outside of the workbench.
-		 * 
+		 *
 		 * @since 3.0
 		 */
 		private class MenuLoader implements ISafeRunnable {
@@ -68,7 +68,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 
 			/**
 			 * Constructs a new instance of <code>MenuLoader</code>
-			 * 
+			 *
 			 * @param delegate
 			 *            The delegate from which the menu will be loaded; this
 			 *            value must not be <code>null</code>.
@@ -86,7 +86,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 
 			/**
 			 * Constructs a new instance of <code>MenuLoader</code>
-			 * 
+			 *
 			 * @param delegate
 			 *            The delegate from which the menu will be loaded; this
 			 *            value must not be <code>null</code>.
@@ -103,7 +103,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 
 			/**
 			 * Returns the menu loaded, if any.
-			 * 
+			 *
 			 * @return the loaded menu, or <code>null</code> if none.
 			 */
 			private Menu getMenu() {
@@ -175,7 +175,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 
 	/**
 	 * Constructs a new instance of <code>WWinPluginPulldown</code>.
-	 * 
+	 *
 	 * @param actionElement
 	 *            The registry element from which the pulldown delegate should
 	 *            be created; must not be <code>null</code>.

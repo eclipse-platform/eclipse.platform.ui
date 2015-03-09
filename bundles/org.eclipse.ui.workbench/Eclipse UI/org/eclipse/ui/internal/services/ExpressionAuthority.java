@@ -36,7 +36,7 @@ import org.eclipse.ui.ISources;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  * @see ISourceProvider
  * @see ISources
@@ -81,7 +81,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Adds a source provider to a list of providers to check when updating.
 	 * This also attaches this authority as a listener to the provider.
-	 * 
+	 *
 	 * @param provider
 	 *            The provider to add; must not be <code>null</code>.
 	 */
@@ -129,7 +129,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Returns whether at least one of the <code>IEvaluationResultCache</code>
 	 * instances in <code>collection</code> evaluates to <code>true</code>.
-	 * 
+	 *
 	 * @param collection
 	 *            The evaluation result caches to check; must not be
 	 *            <code>null</code>, but may be empty.
@@ -153,7 +153,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Returns whether the <code>IEvaluationResultCache</code> evaluates to
 	 * <code>true</code>.
-	 * 
+	 *
 	 * @param expression
 	 *            The evaluation result cache to check; must not be
 	 *            <code>null</code>.
@@ -169,7 +169,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * Creates a new evaluation context based on the current evaluation context
 	 * (i.e., the current state), and places the current selection as the
 	 * default variable.
-	 * 
+	 *
 	 * @return An evaluation context that can be used for evaluating
 	 *         expressions; never <code>null</code>.
 	 */
@@ -198,7 +198,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 
 	/**
 	 * Returns the variable of the given name.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the variable to get; must not be <code>null</code>.
 	 * @return The variable of the given name; <code>null</code> if none.
@@ -210,7 +210,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Removes this source provider from the list, and detaches this authority
 	 * as a listener.
-	 * 
+	 *
 	 * @param provider
 	 *            The provider to remove; must not be <code>null</code>.
 	 */
@@ -230,7 +230,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	/**
 	 * Changes the variable of the given name. If the <code>value</code> is
 	 * <code>null</code>, then the variable is removed.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the variable to change; must not be
 	 *            <code>null</code>.
@@ -250,7 +250,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * Carries out the actual source change notification. It assumed that by the
 	 * time this method is called, <code>getEvaluationContext()</code> is
 	 * up-to-date with the current state of the application.
-	 * 
+	 *
 	 * @param sourcePriority
 	 *            A bit mask of all the source priorities that have changed.
 	 */
@@ -263,7 +263,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * <p>
 	 * Clients may override this method.
 	 * </p>
-	 * 
+	 *
 	 * @param sourceNames
 	 *            The array of names that changed.
 	 * @since 3.3
@@ -344,7 +344,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 
 	/**
 	 * Updates this authority's evaluation context.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the variable to update; must not be
 	 *            <code>null</code>.

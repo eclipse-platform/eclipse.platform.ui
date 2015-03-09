@@ -50,7 +50,7 @@ import org.eclipse.ui.part.EditorPart;
  * <p>
  * These conditions may be relaxed in future releases.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface ISaveablesSource {
@@ -83,9 +83,9 @@ public interface ISaveablesSource {
 	 * implement {@link IReusableEditor} must notify when their input is changed
 	 * through {@link IReusableEditor#setInput(IEditorInput)}.
 	 * </p>
-	 * 
+	 *
 	 * @return the saveables presented by the workbench part
-	 * 
+	 *
 	 * @see ISaveablesLifecycleListener
 	 */
 	Saveable[] getSaveables();
@@ -97,7 +97,7 @@ public interface ISaveablesSource {
 	 * in the active part. For example, the active saveables could be determined
 	 * based on the current selection in the part.
 	 * </p>
-	 * 
+	 *
 	 * @return the saveables currently active in the workbench part
 	 */
 	Saveable[] getActiveSaveables();

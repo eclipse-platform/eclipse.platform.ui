@@ -49,8 +49,8 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * This class may be instantiated by clients.
  * </p>
- * 
- * 
+ *
+ *
  * @since 3.1
  */
 public final class NonLocalUndoUserApprover implements IOperationApprover {
@@ -68,7 +68,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	/**
 	 * Create a NonLocalUndoUserApprover associated with the specified editor
 	 * and undo context
-	 * 
+	 *
 	 * @param context
 	 *            the undo context of operations in question.
 	 * @param part
@@ -102,7 +102,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -124,7 +124,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -188,7 +188,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 					// preferred
 					// comparison class has been provided.
 					if (affectedObjectsClass != null) {
-						Object adapter = Util.getAdapter(modifiedElement, 
+						Object adapter = Util.getAdapter(modifiedElement,
 								affectedObjectsClass);
 						if (adapter != null && elementsContains(adapter)) {
 							local = true;
@@ -252,7 +252,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// not originate
 		// in our context.
 		if (uiInfo != null) {
-			IUndoContext originatingContext = (IUndoContext) Util.getAdapter(uiInfo, 
+			IUndoContext originatingContext = (IUndoContext) Util.getAdapter(uiInfo,
 					IUndoContext.class);
 			if (originatingContext != null
 					&& !(originatingContext.matches(context))) {

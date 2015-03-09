@@ -23,7 +23,7 @@ import org.eclipse.ui.ISources;
  * element. This caches the evaluation result so that it is only re-computed as
  * necessary.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class EvaluationResultCache implements IEvaluationResultCache {
@@ -47,7 +47,7 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 
 	/**
 	 * Constructs a new instance of <code>EvaluationResultCache</code>.
-	 * 
+	 *
 	 * @param expression
 	 *            The expression that must evaluate to <code>true</code>
 	 *            before this handler is active. This value may be

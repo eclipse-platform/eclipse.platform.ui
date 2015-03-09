@@ -243,7 +243,7 @@ public class EditorActionBars extends SubActionBars2 {
 	 * Returns the tool bar manager. If items are added or removed from the
 	 * manager be sure to call <code>updateActionBars</code>. Overridden to
 	 * support CoolBars.
-	 * 
+	 *
 	 * @return the tool bar manager
 	 */
 	@Override
@@ -316,7 +316,7 @@ public class EditorActionBars extends SubActionBars2 {
 	 * Returns whether the contribution list is visible. If the visibility is
 	 * <code>true</code> then each item within the manager appears within the
 	 * parent manager. Otherwise, the items are not visible.
-	 * 
+	 *
 	 * @return <code>true</code> if the manager is visible
 	 */
 	private boolean isVisible() {
@@ -355,7 +355,7 @@ public class EditorActionBars extends SubActionBars2 {
 
 	/**
 	 * Activate / Deactivate the contributions.
-	 * 
+	 *
 	 * Workaround for flashing when editor contributes many menu/tool
 	 * contributions. In this case, the force visibility flag determines if the
 	 * contributions should be actually made visible/hidden or just change the
@@ -383,7 +383,7 @@ public class EditorActionBars extends SubActionBars2 {
 
 	/**
 	 * Sets the enablement ability of all the items contributed by the editor.
-	 * 
+	 *
 	 * @param enabledAllowed
 	 *            <code>true</code> if the items may enable
 	 * @since 2.0
@@ -415,7 +415,7 @@ public class EditorActionBars extends SubActionBars2 {
 	 * Sets the visibility of the manager. If the visibility is
 	 * <code>true</code> then each item within the manager appears within the
 	 * parent manager. Otherwise, the items are not visible.
-	 * 
+	 *
 	 * @param visible
 	 *            the new visibility
 	 */
@@ -438,7 +438,7 @@ public class EditorActionBars extends SubActionBars2 {
 	 * This is a workaround for the layout flashing when editors contribute
 	 * large amounts of items.
 	 * </p>
-	 * 
+	 *
 	 * @param visible
 	 *            the new visibility
 	 * @param forceVisibility
@@ -488,7 +488,7 @@ public class EditorActionBars extends SubActionBars2 {
 
 	/**
 	 * Returns the expression used for action handler activation.
-	 * 
+	 *
 	 * @return the expression used for action handler activation.
 	 */
 	public Expression getHandlerExpression() {

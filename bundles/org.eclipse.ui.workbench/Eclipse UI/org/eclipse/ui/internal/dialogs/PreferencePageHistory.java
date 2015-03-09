@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * History for navigating preference pages.
- * 
+ *
  * @since 3.1
  */
 class PreferencePageHistory {
@@ -78,7 +78,7 @@ class PreferencePageHistory {
 
 	/**
 	 * Creates a new history for the given dialog.
-	 * 
+	 *
 	 * @param dialog
 	 *            the preference dialog to create a history for
 	 */
@@ -89,7 +89,7 @@ class PreferencePageHistory {
 	/**
 	 * Returns the preference page path (for now: its id) for the history at
 	 * <code>index</code>.
-	 * 
+	 *
 	 * @param index
 	 *            the index into the history
 	 * @return the preference page path at <code>index</code> or
@@ -105,7 +105,7 @@ class PreferencePageHistory {
 
 	/**
 	 * Adds the preference page path and its label to the page history.
-	 * 
+	 *
 	 * @param entry
 	 *            the preference page history entry
 	 */
@@ -121,7 +121,7 @@ class PreferencePageHistory {
 	/**
 	 * Sets the current page to be the one corresponding to the given index in
 	 * the page history.
-	 * 
+	 *
 	 * @param index
 	 *            the index into the page history
 	 */
@@ -135,7 +135,7 @@ class PreferencePageHistory {
 
 	/**
 	 * Updates the history controls.
-	 * 
+	 *
 	 */
 	private void updateHistoryControls() {
 		historyToolbar.update(false);
@@ -148,7 +148,7 @@ class PreferencePageHistory {
 
 	/**
 	 * Creates the history toolbar and initializes <code>historyToolbar</code>.
-	 * 
+	 *
 	 * @param historyBar
 	 * @param manager
 	 * @return the control of the history toolbar
@@ -305,7 +305,7 @@ class PreferencePageHistory {
 
 	/**
 	 * Registers the given action with the workbench command support.
-	 * 
+	 *
 	 * @param action
 	 *            the action to register.
 	 */
@@ -330,7 +330,7 @@ class PreferencePageHistory {
 					.next());
 		}
 		activations.clear();
-		
+
 	}
 
 }

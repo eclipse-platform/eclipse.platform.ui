@@ -30,7 +30,7 @@ import org.eclipse.ui.contexts.IContextManagerListener;
 /**
  * A wrapper around the new API that supports the old API. This manager also
  * adds support for reading from the registry.
- * 
+ *
  * @since 3.1
  */
 public final class ContextManagerLegacyWrapper implements
@@ -42,7 +42,7 @@ public final class ContextManagerLegacyWrapper implements
 	 * within the tree. Context identifiers representing deeper items (i.e.,
 	 * items with more ancestors), have lesser values (i.e., would appear
 	 * earlier in a set).
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class ContextIdDepthComparator implements Comparator {
@@ -100,14 +100,14 @@ public final class ContextManagerLegacyWrapper implements
 	 * based on how many ancestors the corresponding contexts have. Contexts
 	 * with no parents appear last, while contexts with the most ancestors
 	 * appear first.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class DepthSortedContextIdSet extends TreeSet {
 
 		/**
 		 * Generated serial version UID for this class.
-		 * 
+		 *
 		 * @since 3.1
 		 */
 		private static final long serialVersionUID = 3257291326872892465L;
@@ -115,7 +115,7 @@ public final class ContextManagerLegacyWrapper implements
 		/**
 		 * Constructs a new instance of <code>DepthSortedContextIdSet</code>
 		 * with the set to be sorted.
-		 * 
+		 *
 		 * @param contextIds
 		 *            A set of context identifiers (strings); this may contain
 		 *            <code>null</code> values. The set may not be
@@ -134,7 +134,7 @@ public final class ContextManagerLegacyWrapper implements
 	/**
 	 * Constructs a new instance of <code>MutableContextManager</code>. The
 	 * registry is created on the platform's extension registry.
-	 * 
+	 *
 	 * @param contextManager
 	 *            The manager which will provided the real support; must not be
 	 *            <code>null</code>.
@@ -167,7 +167,7 @@ public final class ContextManagerLegacyWrapper implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.core.commands.contexts.ContextManagerEvent)
 	 */
 	@Override

@@ -30,7 +30,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
     /**
      * Create a new instance of the receiver and listen to the animation
      * manager.
-     * 
+     *
      * @param animationManager
      */
     ProgressAnimationProcessor(AnimationManager animationManager) {
@@ -41,7 +41,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#startAnimation(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void startAnimationLoop(IProgressMonitor monitor) {
@@ -68,7 +68,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#addItem(org.eclipse.ui.internal.progress.AnimationItem)
      */
     @Override
@@ -79,7 +79,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#removeItem(org.eclipse.ui.internal.progress.AnimationItem)
      */
     @Override
@@ -90,7 +90,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#hasItems()
      */
     @Override
@@ -100,7 +100,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#itemsInactiveRedraw()
      */
     public void itemsInactiveRedraw() {
@@ -110,7 +110,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#animationStarted(org.eclipse.core.runtime.IProgressMonitor)
      */
     @Override
@@ -124,7 +124,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IAnimationProcessor#getPreferredWidth()
      */
     @Override
@@ -134,7 +134,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 
     /**
      * Get the animation items currently registered for the receiver.
-     * 
+     *
      * @return ProgressAnimationItem[]
      */
     private ProgressAnimationItem[] getAnimationItems() {

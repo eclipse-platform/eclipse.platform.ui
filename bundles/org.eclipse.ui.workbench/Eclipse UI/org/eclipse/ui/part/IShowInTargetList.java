@@ -16,10 +16,10 @@ package org.eclipse.ui.part;
  * can provide this interface.
  * The part can either directly implement this interface, or provide it
  * via <code>IAdaptable.getAdapter(IShowInTargetList)</code>.
- * 
+ *
  * @see IShowInSource
  * @see IShowInTarget
- * 
+ *
  * @since 2.1
  */
 public interface IShowInTargetList {
@@ -27,9 +27,9 @@ public interface IShowInTargetList {
     /**
      * Returns the identifiers for the target parts to show.
      * The target parts must be Show In targets.
-     * 
+     *
      * @return the identifiers for the target parts to show
-     * 
+     *
      * @see IShowInTarget
      */
     public String[] getShowInTargetIds();

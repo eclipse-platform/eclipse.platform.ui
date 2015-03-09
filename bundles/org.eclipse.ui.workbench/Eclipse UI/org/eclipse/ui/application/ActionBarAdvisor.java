@@ -44,9 +44,9 @@ import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
  * to configure a window's action bars</li>
  * </ul>
  * </p>
- * 
+ *
  * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
- * 
+ *
  * @since 3.1
  */
 public class ActionBarAdvisor {
@@ -79,25 +79,25 @@ public class ActionBarAdvisor {
      */
     public static final int FILL_STATUS_LINE = 0x08;
 
-    
+
     private IActionBarConfigurer actionBarConfigurer;
-    
+
     private Map actions = new HashMap();
-    
+
     /**
      * Creates a new action bar advisor to configure a workbench
      * window's action bars via the given action bar configurer.
-     * 
+     *
      * @param configurer the action bar configurer
      */
     public ActionBarAdvisor(IActionBarConfigurer configurer) {
         Assert.isNotNull(configurer);
         actionBarConfigurer = configurer;
     }
-    
+
     /**
      * Returns the action bar configurer.
-     * 
+     *
      * @return the action bar configurer
      */
     protected IActionBarConfigurer getActionBarConfigurer() {
@@ -129,15 +129,15 @@ public class ActionBarAdvisor {
      * This method is called just after {@link WorkbenchWindowAdvisor#preWindowOpen()}.
      * Clients must not call this method directly (although super calls are okay).
      * The default implementation calls <code>makeActions</code> if
-     * <code>FILL_PROXY</code> is specified, then calls <code>fillMenuBar</code>, 
+     * <code>FILL_PROXY</code> is specified, then calls <code>fillMenuBar</code>,
      * <code>fillCoolBar</code>, and <code>fillStatusLine</code>
      * if the corresponding flags are specified.
      * </p>
-     * <p> 
+     * <p>
      * Subclasses may override, but it is recommended that they override the
      * methods mentioned above instead.
      * </p>
-     * 
+     *
      * @param flags bit mask composed from the constants
      * {@link #FILL_MENU_BAR FILL_MENU_BAR},
      * {@link #FILL_COOL_BAR FILL_COOL_BAR},
@@ -158,12 +158,12 @@ public class ActionBarAdvisor {
             fillStatusLine(actionBarConfigurer.getStatusLineManager());
         }
     }
-        
+
     /**
      * Instantiates the actions used in the fill methods.
      * Use {@link #register(IAction)} to register the action with the key binding service
      * and add it to the list of actions to be disposed when the window is closed.
-     * 
+     *
      * @param window the window containing the action bars
      */
     protected void makeActions(IWorkbenchWindow window) {
@@ -171,18 +171,18 @@ public class ActionBarAdvisor {
     }
 
     /**
-     * Registers the given action with the key binding service 
+     * Registers the given action with the key binding service
      * (by calling {@link IActionBarConfigurer#registerGlobalAction(IAction)}),
      * and adds it to the list of actions to be disposed when the window is closed.
      * <p>
      * In order to participate in key bindings, the action must have an action
      * definition id (aka command id), and a corresponding command extension.
      * See the <code>org.eclipse.ui.commands</code> extension point documentation
-     * for more details. 
+     * for more details.
      * </p>
-     * 
+     *
      * @param action the action to register, this cannot be <code>null</code>
-     * 
+     *
      * @see IAction#setActionDefinitionId(String)
      * @see #disposeAction(IAction)
      */
@@ -205,10 +205,10 @@ public class ActionBarAdvisor {
 		}
 		actions.put(id, action);
     }
-    
+
     /**
      * Returns the action with the given id, or <code>null</code> if not found.
-     * 
+     *
      * @param id the action id
      * @return the action with the given id, or <code>null</code> if not found
      * @see IAction#getId()
@@ -216,46 +216,46 @@ public class ActionBarAdvisor {
     protected IAction getAction(String id) {
         return (IAction) actions.get(id);
     }
-    
+
     /**
      * Fills the menu bar with the main menus for the window.
      * <p>
      * The default implementation does nothing.
      * Subclasses may override.
      * </p>
-     * 
+     *
      * @param menuBar the menu manager for the menu bar
      */
     protected void fillMenuBar(IMenuManager menuBar) {
         // do nothing
     }
-    
+
     /**
      * Fills the cool bar with the main toolbars for the window.
      * <p>
      * The default implementation does nothing.
      * Subclasses may override.
      * </p>
-     * 
+     *
      * @param coolBar the cool bar manager
      */
     protected void fillCoolBar(ICoolBarManager coolBar) {
         // do nothing
     }
-    
+
     /**
-     * Fills the status line with the main status line contributions 
+     * Fills the status line with the main status line contributions
      * for the window.
      * <p>
      * The default implementation does nothing.
      * Subclasses may override.
      * </p>
-     * 
+     *
      * @param statusLine the status line manager
      */
     protected void fillStatusLine(IStatusLineManager statusLine) {
         // do nothing
-    }    
+    }
 
     /**
      * Returns whether the menu with the given id is an application menu of the
@@ -265,7 +265,7 @@ public class ActionBarAdvisor {
      * <p>
      * The default implementation returns false. Subclasses may override.
      * </p>
-     * 
+     *
      * @param menuId the menu id
      * @return <code>true</code> for application menus, and <code>false</code>
      * for part-specific menus
@@ -287,7 +287,7 @@ public class ActionBarAdvisor {
     public void dispose() {
         disposeActions();
     }
-    
+
     /**
      * Disposes all actions added via <code>register(IAction)</code>
      * using <code>disposeAction(IAction)</code>.
@@ -299,16 +299,16 @@ public class ActionBarAdvisor {
         }
         actions.clear();
     }
-    
+
     /**
      * Disposes the given action.
      * <p>
      * The default implementation checks whether the action is an instance
-     * of <code>ActionFactory.IWorkbenchAction</code> and calls its 
+     * of <code>ActionFactory.IWorkbenchAction</code> and calls its
      * <code>dispose()</code> method if so.
      * Subclasses may extend.
      * </p>
-     * 
+     *
      * @param action the action to dispose
      */
     protected void disposeAction(IAction action) {
@@ -316,7 +316,7 @@ public class ActionBarAdvisor {
             ((ActionFactory.IWorkbenchAction) action).dispose();
         }
     }
-	
+
 	/**
 	 * Saves arbitrary application-specific state information
      * for this action bar advisor.
@@ -324,7 +324,7 @@ public class ActionBarAdvisor {
      * The default implementation simply returns an OK status.
      * Subclasses may extend or override.
      * </p>
-	 * 
+	 *
 	 * @param memento the memento in which to save the advisor's state
 	 * @return a status object indicating whether the save was successful
 	 * @since 3.1
@@ -332,7 +332,7 @@ public class ActionBarAdvisor {
 	public IStatus saveState(IMemento memento) {
 		return Status.OK_STATUS;
 	}
-	
+
 	/**
 	 * Restores arbitrary application-specific state information
      * for this action bar advisor.
@@ -340,7 +340,7 @@ public class ActionBarAdvisor {
      * The default implementation simply returns an OK status.
      * Subclasses may extend or override.
      * </p>
-	 * 
+	 *
      * @param memento the memento from which to restore the advisor's state
 	 * @return a status object indicating whether the restore was successful
 	 * @since 3.1

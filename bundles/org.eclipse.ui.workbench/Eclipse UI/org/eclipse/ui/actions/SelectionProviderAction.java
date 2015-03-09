@@ -32,8 +32,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * <p>
  * Subclasses may reimplement either of the following methods:
  * <ul>
- *   <li><code>selectionChanged(IStructuredSelection)</code></li> 
- *   <li><code>selectionChanged(ISelection)</code></li> 
+ *   <li><code>selectionChanged(IStructuredSelection)</code></li>
+ *   <li><code>selectionChanged(ISelection)</code></li>
  * </ul>
  * </p>
  */
@@ -51,7 +51,7 @@ public abstract class SelectionProviderAction extends Action implements
      * The resulting action is added as a listener on the selection provider.
      *
      * @param provider the selection provider that will provide selection notification
-     * @param text the string used as the text for the action, 
+     * @param text the string used as the text for the action,
      *   or <code>null</code> if there is no text
      */
     protected SelectionProviderAction(ISelectionProvider provider, String text) {
@@ -130,8 +130,8 @@ public abstract class SelectionProviderAction extends Action implements
     }
 
     /**
-     * The <code>SelectionProviderAction</code> implementation of this 
-     * <code>ISelectionChangedListener</code> method calls 
+     * The <code>SelectionProviderAction</code> implementation of this
+     * <code>ISelectionChangedListener</code> method calls
      * <code>selectionChanged(IStructuredSelection)</code> if the selection is
      * a structured selection but <code>selectionChanged(ISelection)</code> if it is
      * not. Subclasses should override either of those methods method to react to

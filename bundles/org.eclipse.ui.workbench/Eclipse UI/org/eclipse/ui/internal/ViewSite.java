@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.e4.compatibility.ActionBars;
  * A view container manages the services for a view.
  */
 public class ViewSite extends PartSite implements IViewSite {
-    
+
 	public ViewSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
 			IConfigurationElement element) {
 		super(model, part, ref, element);

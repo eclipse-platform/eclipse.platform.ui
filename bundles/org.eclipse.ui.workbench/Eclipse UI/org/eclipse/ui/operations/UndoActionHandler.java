@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * well as labelling and enabling the undo menu item.  This class may be
  * instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class UndoActionHandler extends OperationHistoryActionHandler {
@@ -36,10 +36,10 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
 	 * the undo action for the specified undo context.
-	 * 
-	 * @param site 
+	 *
+	 * @param site
 	 *            the workbench part site that created the action.
-	 * @param context 
+	 * @param context
 	 *            the undo context to be used for the undo
 	 */
 	public UndoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
@@ -60,20 +60,20 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	String getCommandString() {
 		return WorkbenchMessages.Operations_undoCommand;
 	}
-	
+
 	@Override
 	String getTooltipString() {
 		return WorkbenchMessages.Operations_undoTooltipCommand;
 	}
-	
+
 	@Override
 	String getSimpleCommandString() {
 		return WorkbenchMessages.Workbench_undo;
 	}
-	
+
 	@Override
 	String getSimpleTooltipString() {
-		return WorkbenchMessages.Workbench_undoToolTip;		
+		return WorkbenchMessages.Workbench_undoToolTip;
 	}
 
 	@Override

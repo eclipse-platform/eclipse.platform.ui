@@ -89,7 +89,7 @@ public/*final*/class WorkbenchImages {
     private final static String PATH_POINTER = ICONS_PATH + "pointer/"; //Pointer icons//$NON-NLS-1$
 
     private final static String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
-	
+
 	// private final static String PATH_PROD = ICONS_PATH+"prod/"; //Product
 	// images
 	// private final static String PATH_STAT = ICONS_PATH+"stat/";
@@ -99,7 +99,7 @@ public/*final*/class WorkbenchImages {
      * Declares a workbench image given the path of the image file (relative to
      * the workbench plug-in). This is a helper method that creates the image
      * descriptor and passes it to the main <code>declareImage</code> method.
-     * 
+     *
      * @param key the symbolic name of the image
      * @param path the path of the image file relative to the base of the workbench
      * plug-ins install directory
@@ -115,26 +115,26 @@ public/*final*/class WorkbenchImages {
 
     private static void drawViewMenu(GC gc, GC maskgc) {
     	Display display = Display.getCurrent();
-    	
+
     	gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
     	gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-    	
+
 	    int[] shapeArray = new int[] {1, 1, 10, 1, 6, 5, 5, 5};
 	    gc.fillPolygon(shapeArray);
 	    gc.drawPolygon(shapeArray);
-	    
+
 	    Color black = display.getSystemColor(SWT.COLOR_BLACK);
 	    Color white = display.getSystemColor(SWT.COLOR_WHITE);
-	    
+
 	    maskgc.setBackground(black);
 	    maskgc.fillRectangle(0,0,12,16);
-	    
+
 	    maskgc.setBackground(white);
 	    maskgc.setForeground(white);
 	    maskgc.fillPolygon(shapeArray);
 	    maskgc.drawPolygon(shapeArray);
     }
-    
+
     /**
      * Declares all the workbench's images, including both "shared" ones and
      * internal ones.
@@ -156,12 +156,12 @@ public/*final*/class WorkbenchImages {
  + "save_edit.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, PATH_DTOOL
  + "save_edit.png", true); //$NON-NLS-1$
-        
+
 		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, PATH_ETOOL
  + "saveas_edit.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL
  + "saveas_edit.png", true); //$NON-NLS-1$
-        
+
 		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT, PATH_ETOOL
  + "saveall_edit.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL
@@ -231,7 +231,7 @@ public/*final*/class WorkbenchImages {
                 PATH_ETOOL + "fastview_restore.png", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EDITOR_TRIMPART,
                 PATH_ETOOL + "editor_area.png", true); //$NON-NLS-1$
-        
+
         declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL
                 + "forward_nav.png", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL
@@ -322,17 +322,17 @@ public/*final*/class WorkbenchImages {
                 + "activity.png", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY,
                 PATH_OBJECT + "activity_category.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS, 
+        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS,
      		   PATH_OBJECT + "workingsets.png", true); //$NON-NLS-1$
-        
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR, 
+
+        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR,
       		   PATH_OBJECT + "separator.png", true); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_NODE,
         		PATH_OBJECT + "generic_elements.png", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT,
         		PATH_OBJECT + "generic_element.png", true); //$NON-NLS-1$
-        
+
         declareImage(ISharedImages.IMG_OBJ_ADD,
                 PATH_OBJECT + "add_obj.png", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_OBJ_FILE,
@@ -372,7 +372,7 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN,
                 PATH_ELOCALTOOL + "thin_view_menu.png", true); //$NON-NLS-1$
 
-        
+
         declareImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT
                 + "error_tsk.png", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT
@@ -412,7 +412,7 @@ public/*final*/class WorkbenchImages {
                 PATH_POINTER + "tofastview_source.bmp", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK,
                 PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
-        
+
         // signed jar images
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT
 				+ "signed_yes_tbl.png", true); //$NON-NLS-1$
@@ -420,37 +420,37 @@ public/*final*/class WorkbenchImages {
 				+ "signed_no_tbl.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN,
 				PATH_OBJECT + "signed_unkn_tbl.png", true); //$NON-NLS-1$
-        
+
 		declareHoverImages();
-		
+
         // Manually create the view menu
-        
+
         Display d = Display.getCurrent();
-        
+
         Image viewMenu = new Image(d, 11, 16);
         Image viewMenuMask = new Image(d, 11, 16);
-        
+
         GC gc = new GC(viewMenu);
         GC maskgc = new GC(viewMenuMask);
         drawViewMenu(gc, maskgc);
         gc.dispose();
         maskgc.dispose();
-        
+
         ImageData data = viewMenu.getImageData();
         data.transparentPixel = data.getPixel(0,0);
-        
+
         Image vm2 = new Image(d, viewMenu.getImageData(), viewMenuMask.getImageData());
         viewMenu.dispose();
         viewMenuMask.dispose();
-                
+
         getImageRegistry().put(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, vm2);
-        
+
     }
-    
+
     /**
      * Declares all the workbench's deprecated hover images, including both "shared" ones and
      * internal ones.
-     * 
+     *
      * @deprecated As of 3.0, since the workbench itself no longer uses the hover image variants
      */
     @Deprecated
@@ -495,7 +495,7 @@ public/*final*/class WorkbenchImages {
      * (This is made confusing by the historical fact that the API interface
      *  is called "ISharedImages".)
      * </p>
-     * 
+     *
      * @param symbolicName the symbolic name of the image
      * @param descriptor the image descriptor
      * @param shared <code>true</code> if this is a shared image, and
@@ -522,7 +522,7 @@ public/*final*/class WorkbenchImages {
 
     /**
      * Returns the map from symbolic name to ImageDescriptor.
-     * 
+     *
      * @return the map from symbolic name to ImageDescriptor.
      */
     public static Map getDescriptors() {
@@ -531,20 +531,20 @@ public/*final*/class WorkbenchImages {
         }
         return descriptors;
     }
-    
+
     /**
-     * Returns the image stored in the workbench plugin's image registry 
-     * under the given symbolic name.  If there isn't any value associated 
-     * with the name then <code>null</code> is returned.  
+     * Returns the image stored in the workbench plugin's image registry
+     * under the given symbolic name.  If there isn't any value associated
+     * with the name then <code>null</code> is returned.
      *
-     * The returned Image is managed by the workbench plugin's image registry.  
+     * The returned Image is managed by the workbench plugin's image registry.
      * Callers of this method must not dispose the returned image.
      *
      * This method is essentially a convenient short form of
      * WorkbenchImages.getImageRegistry.get(symbolicName).
-     * 
+     *
      * @param symbolicName the symbolic name
-     * @return the image 
+     * @return the image
      */
     public static Image getImage(String symbolicName) {
         return getImageRegistry().get(symbolicName);
@@ -556,11 +556,11 @@ public/*final*/class WorkbenchImages {
      * </code> is returned.
      *
      * The class also "caches" commonly used images in the image registry.
-     * If you are looking for one of these common images it is recommended you use 
+     * If you are looking for one of these common images it is recommended you use
      * the getImage() method instead.
-     * 
+     *
      * @param symbolicName the symbolic name
-     * @return the image descriptor 
+     * @return the image descriptor
      */
     public static ImageDescriptor getImageDescriptor(String symbolicName) {
         return (ImageDescriptor) getDescriptors().get(symbolicName);
@@ -573,17 +573,17 @@ public/*final*/class WorkbenchImages {
      *
      * This method is convenience and only intended for use by the workbench because it
      * explicitly uses the workbench's registry for caching/retrieving images from other
-     * extensions -- other plugins must user their own registry. 
+     * extensions -- other plugins must user their own registry.
      * This convenience method is subject to removal.
      *
      * Note:
      * This consults the plugin for extension and obtains its installation location.
      * all requested images are assumed to be in a directory below and relative to that
      * plugins installation directory.
-     * 
+     *
      * @param filename the file name
      * @param offset the offset
-     * @return the image descriptor 
+     * @return the image descriptor
      */
 
     public static ImageDescriptor getImageDescriptorFromProgram(
@@ -600,7 +600,7 @@ public/*final*/class WorkbenchImages {
 
     /**
      * Returns the ImageRegistry.
-     * 
+     *
      * @return the image registry
      */
     public static ImageRegistry getImageRegistry() {
@@ -626,7 +626,7 @@ public/*final*/class WorkbenchImages {
 	 * same location as this plugin class. This may mean the same package
 	 * directory as the package holding this class. The images are declared
 	 * using this.getClass() to ensure they are looked up via this plugin class.
-	 * 
+	 *
 	 * @see ImageRegistry
 	 */
     private static void initializeImageRegistry() {
@@ -634,7 +634,7 @@ public/*final*/class WorkbenchImages {
         descriptors = new HashMap();
         declareImages();
     }
-    
+
     /**
      * Disposes and clears the workbench images.
      * Called when the workbench is shutting down.
@@ -648,7 +648,7 @@ public/*final*/class WorkbenchImages {
             descriptors = null;
         }
     }
-	
+
 	/**
 	 * Get the workbench image with the given path relative to
 	 * ICON_PATH.

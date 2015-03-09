@@ -66,7 +66,7 @@ import org.eclipse.ui.internal.util.BundleUtility;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class ActionDelegateHandlerProxy implements ISelectionListener,
@@ -109,7 +109,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private IViewActionDelegate viewDelegate = null;
 	private IObjectActionDelegate objectDelegate = null;
 	private IWorkbenchWindowActionDelegate windowDelegate = null;
-	
+
 	private IWorkbenchPart currentPart = null;
 
 	/**
@@ -162,7 +162,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * Constructs a new instance of <code>ActionDelegateHandlerProxy</code>
 	 * with all the information it needs to try to avoid loading until it is
 	 * needed.
-	 * 
+	 *
 	 * @param element
 	 *            The configuration element from which the real class can be
 	 *            loaded at run-time; must not be <code>null</code>.
@@ -238,14 +238,14 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	}
 
-	
+
 	@Override
 	public final void dispose() {
 		disposeDelegate();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void disposeDelegate() {
 		final IActionDelegate actDel = getDelegate();
@@ -391,7 +391,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	/**
 	 * Retrieves the action corresponding to the currently active workbench
 	 * window, if any.
-	 * 
+	 *
 	 * @return The current action; <code>null</code> if there is no currently
 	 *         active workbench window.
 	 */
@@ -412,7 +412,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	/**
 	 * Retrieves the delegate corresponding to the currently active workbench
 	 * window, if any. This does not trigger loading of the delegate.
-	 * 
+	 *
 	 * @return The current delegate; or <code>null</code> if none.
 	 */
 	public final IActionDelegate getDelegate() {
@@ -494,7 +494,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		SafeRunner.run(runnable);
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler2#setEnabled(java.lang.Object)
 	 */
@@ -545,7 +545,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	/**
 	 * Checks if the declaring plugin has been loaded. This means that there
 	 * will be no need to delay creating the delegate.
-	 * 
+	 *
 	 * @return <code>true</code> if the bundle containing the delegate is
 	 *         already loaded -- making it safe to load the delegate.
 	 */
@@ -560,7 +560,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	/**
 	 * Loads the delegate, if possible. If the delegate is loaded, then the
 	 * member variables are updated accordingly.
-	 * 
+	 *
 	 * @return <code>true</code> if the delegate is now non-null;
 	 *         <code>false</code> otherwise.
 	 */

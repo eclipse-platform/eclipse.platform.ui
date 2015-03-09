@@ -25,18 +25,18 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 /**
  * A utility class that contains helpful methods for interacting with the
  * activities API.
- * 
+ *
  * @since 3.0
  */
 public final class WorkbenchActivityHelper {
 	/**
 	 * The ID of the trigger point that only returns activities with core
 	 * expressions.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String TRIGGER_PRE_UI_POINT = "org.eclipse.ui.workbenchModel"; //$NON-NLS-1$
-	
+
 	private static ITriggerPoint getTriggerPoint(String id) {
 		return PlatformUI.getWorkbench().getActivitySupport()
 				.getTriggerPointManager().getTriggerPoint(id);
@@ -44,7 +44,7 @@ public final class WorkbenchActivityHelper {
 
 	/**
 	 * Return the identifier that maps to the given contribution.
-	 * 
+	 *
 	 * @param contribution
 	 *            the contribution
 	 * @return the identifier
@@ -64,7 +64,7 @@ public final class WorkbenchActivityHelper {
 	 * and the user is prompted to activate the requried activities. If the user
 	 * declines their activation then false is returned. In all other cases
 	 * <code>true</code> is returned.
-	 * 
+	 *
 	 * @param object
 	 *            the contribution to test.
 	 * @return whether the contribution is allowed to be used based on activity
@@ -85,7 +85,7 @@ public final class WorkbenchActivityHelper {
 	 * and the user is prompted to activate the required activities. If the user
 	 * declines their activation then false is returned. In all other cases
 	 * <code>true</code> is returned.
-	 * 
+	 *
 	 * @param triggerPoint
 	 *            the trigger point being hit
 	 * @param object
@@ -107,12 +107,12 @@ public final class WorkbenchActivityHelper {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Restrict the use of the object only if it is matched by an activity with
 	 * a core expression. A normal disabled activity will not restrict the use
 	 * of this object.
-	 * 
+	 *
 	 * @param object
 	 *            the object to restrict
 	 * @return <code>true</code> if this object is matched by a disabled
@@ -127,7 +127,7 @@ public final class WorkbenchActivityHelper {
 	 * Answers whether a given identifier is enabled. If it is not enabled, then
 	 * a dialog is opened and the user is prompted to enable the associated
 	 * activities.
-	 * 
+	 *
 	 * @param triggerPoint
 	 *            the trigger point to test
 	 * @param identifier
@@ -143,11 +143,11 @@ public final class WorkbenchActivityHelper {
 		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI
 				.getWorkbench().getActivitySupport()).getTriggerPointAdvisor();
 		Set<?> activitiesToEnable = advisor.allow(triggerPoint, identifier);
-		
+
 		if (activitiesToEnable == null) {
 			return false;
 		}
-		
+
 		if (activitiesToEnable.isEmpty()) {
 			// no activities required to be enabled for this trigger point -
 			// allow use unconditionally.
@@ -167,12 +167,12 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Utility method to create a <code>String</code> containing the plugin
 	 * and extension ids of a contribution. This will have the form
-	 * 
+	 *
 	 * <pre>
 	 * pluginId / extensionId
 	 * </pre>. If the IPluginContribution does not define a plugin id then the
 	 * extension id alone is returned.
-	 * 
+	 *
 	 * @param contribution
 	 *            the contribution to use
 	 * @return the unified id
@@ -187,7 +187,7 @@ public final class WorkbenchActivityHelper {
 
 	/**
 	 * Enables the set of activities.
-	 * 
+	 *
 	 * @param activities
 	 *            the activities to enable
 	 */
@@ -204,7 +204,7 @@ public final class WorkbenchActivityHelper {
 	 * on activity state. Returns <code>false</code> except when the object is
 	 * an instance of <code>IPluginContribution</code> whos unified id matches
 	 * an <code>IIdentifier</code> that is currently disabled.
-	 * 
+	 *
 	 * @param object
 	 *            the object to test
 	 * @return whether the object should be filtered
@@ -228,7 +228,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Returns whether the UI is set up to filter contributions. This is the
 	 * case if there are defined activities.
-	 * 
+	 *
 	 * @return whether the UI is set up to filter contributions
 	 */
 	public static final boolean isFiltering() {
@@ -241,7 +241,7 @@ public final class WorkbenchActivityHelper {
 	 * given category becomes enabled Note that the set returned by this set
 	 * represents the delta of categories that would be enabled - if the
 	 * category is already enabled then it is omitted.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @param categoryId
@@ -283,7 +283,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return the expanded activities for the given activity set. This will
 	 * resolve all activity requirement bindings.
-	 * 
+	 *
 	 * @param baseActivities
 	 *            the set of activities to expand
 	 * @return the expanded activities
@@ -302,7 +302,7 @@ public final class WorkbenchActivityHelper {
 
 	/**
 	 * Return the activities required for this activity.
-	 * 
+	 *
 	 * @param activityId
 	 *            the activity id
 	 * @return the activities required for this activity
@@ -332,7 +332,7 @@ public final class WorkbenchActivityHelper {
 
 	/**
 	 * Return the activities directly required by a given category.
-	 * 
+	 *
 	 * @param category
 	 *            the category
 	 * @return the activities directly required by a given category
@@ -354,7 +354,7 @@ public final class WorkbenchActivityHelper {
 	 * given category becomes disabled Note that the set returned by this set
 	 * represents the delta of categories that would be enabled - if the
 	 * category is already enabled then it is omitted.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @param categoryId
@@ -402,7 +402,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return a list of category ids that are implicitly contained within the
 	 * given category.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test agaisnt
 	 * @param categoryId
@@ -446,7 +446,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Return the set of enabled categories. An enabled category is one in which
 	 * all contained activities are enabled.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @return the set of enabled categories.
@@ -464,10 +464,10 @@ public final class WorkbenchActivityHelper {
 		}
 		return enabledCategories;
 	}
-	
+
 	/**
 	 * Return the set of partially enabled categories.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @return the set of partially enabled categories
@@ -491,7 +491,7 @@ public final class WorkbenchActivityHelper {
 	 * Returns whether the given category is partially enabled. A partially
 	 * enabled category is one in which the number of enabled activites is both
 	 * non-zero and less than the total number of activities in the category.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @param categoryId
@@ -515,7 +515,7 @@ public final class WorkbenchActivityHelper {
 
 	/**
 	 * Return the number of enabled categories that this activity belongs to.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against *
 	 * @param activityId
@@ -541,7 +541,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Returns whether the given category is enabled. A category is enabled if
 	 * all of its activities are enabled.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @param categoryId
@@ -566,7 +566,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Resolve the collection of category ids to an array of
 	 * <code>ICategory</code> objects.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager to test against
 	 * @param categoryIds
@@ -584,15 +584,15 @@ public final class WorkbenchActivityHelper {
 		}
 		return categories;
 	}
-	
+
 	/**
 	 * Fills and returns the second argument with those objects of the first
 	 * argument that pass the {@link #restrictUseOf(Object)} test.
-	 * 
+	 *
 	 * @param toBeFiltered the input collection
 	 * @param result the collection to which objects passing the test should be added
 	 * @return the <code>result</code> collection for convenience
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static Collection restrictCollection(Collection toBeFiltered, Collection result) {
@@ -604,16 +604,16 @@ public final class WorkbenchActivityHelper {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns an array with those objects of the argument array that pass the
 	 * {@link #restrictUseOf(Object)} test.
-	 * 
+	 *
 	 * @param array
 	 *            the input array
 	 * @return a new array of the same type as the argument array, containing
 	 *         objects that pass the test
-	 *         
+	 *
 	 * @since 3.4
 	 */
 	public static Object[] restrictArray(Object[] array) {
@@ -626,15 +626,15 @@ public final class WorkbenchActivityHelper {
 		return list.toArray((Object[]) Array.newInstance(array.getClass()
 				.getComponentType(), list.size()));
 	}
-	
+
 	/**
 	 * Fills and returns the second argument with those objects of the first
 	 * argument that pass the {@link #filterItem(Object)} test.
-	 * 
+	 *
 	 * @param toBeFiltered the input collection
 	 * @param result the collection to which objects passing the test should be added
 	 * @return the <code>result</code> collection for convenience
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static Collection filterCollection(Collection toBeFiltered, Collection result) {
@@ -646,16 +646,16 @@ public final class WorkbenchActivityHelper {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns an array with those objects of the argument array that pass the
 	 * {@link #filterItem(Object)} test.
-	 * 
+	 *
 	 * @param array
 	 *            the input array
 	 * @return a new array of the same type as the argument array, containing
 	 *         objects that pass the test
-	 *         
+	 *
 	 * @since 3.4
 	 */
 	public static Object[] filterArray(Object[] array) {

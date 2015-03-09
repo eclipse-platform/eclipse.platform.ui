@@ -14,7 +14,7 @@ package org.eclipse.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * An association between a file name/extension and a list of known editors for 
+ * An association between a file name/extension and a list of known editors for
  * files of that type.
  * <p>
  * The name and extension can never empty or null. The name may contain

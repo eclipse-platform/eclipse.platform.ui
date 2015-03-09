@@ -29,7 +29,7 @@ import org.eclipse.ui.activities.NotDefinedException;
 
 /**
  * Utility class that manages the persistance of enabled activities.
- * 
+ *
  * @since 3.0
  */
 final class ActivityPersistanceHelper {
@@ -37,7 +37,7 @@ final class ActivityPersistanceHelper {
     /**
      * Prefix for all activity preferences
      */
-    protected final static String PREFIX = "UIActivities."; //$NON-NLS-1$    
+    protected final static String PREFIX = "UIActivities."; //$NON-NLS-1$
 
     /**
      * Singleton instance.
@@ -68,7 +68,7 @@ final class ActivityPersistanceHelper {
 			}
         }
     };
-    
+
     /**
      * The listener that responds to preference changes
      */
@@ -82,7 +82,7 @@ final class ActivityPersistanceHelper {
                 String activityId = event.getProperty().substring(PREFIX.length());
                 IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
                 IActivityManager activityManager = support.getActivityManager();
-                
+
                 boolean enabled = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
                 // if we're turning an activity off we'll need to create its dependency tree to ensuure that all dependencies are also disabled.
                 Set set = new HashSet(activityManager.getEnabledActivityIds());
@@ -106,7 +106,7 @@ final class ActivityPersistanceHelper {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class.
      */
     public static ActivityPersistanceHelper getInstance() {
@@ -118,7 +118,7 @@ final class ActivityPersistanceHelper {
 
     /**
      * Returns a set of activity IDs that depend on the provided ID in order to be enabled.
-     * 
+     *
      * @param activityManager the activity manager to query
      * @param activityId the activity whos dependencies should be added
      * @return a set of activity IDs
@@ -160,8 +160,8 @@ final class ActivityPersistanceHelper {
 
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
-        
-        store.addPropertyChangeListener(propertyChangeListener);        
+
+        store.addPropertyChangeListener(propertyChangeListener);
     }
 
     /**
@@ -173,17 +173,17 @@ final class ActivityPersistanceHelper {
 
         IActivityManager activityManager = support.getActivityManager();
 
-        activityManager.removeActivityManagerListener(activityManagerListener); 
-        
+        activityManager.removeActivityManagerListener(activityManagerListener);
+
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
-        
-        store.removePropertyChangeListener(propertyChangeListener);                
+
+        store.removePropertyChangeListener(propertyChangeListener);
     }
-    
+
     /**
      * Create the preference key for the activity.
-     * 
+     *
      * @param activityId the activity id.
      * @return String a preference key representing the activity.
      */
@@ -202,7 +202,7 @@ final class ActivityPersistanceHelper {
 
     /**
      * Load the enabled states for the given activity IDs.
-     * 
+     *
      * @param previouslyEnabledActivities the activity states to maintain.  This set must be writabe.
      * @param activityIdsToProcess the activity ids to process
      */
@@ -210,7 +210,7 @@ final class ActivityPersistanceHelper {
         if (activityIdsToProcess.isEmpty()) {
 			return;
 		}
-        
+
         Set enabledActivities = new HashSet(previouslyEnabledActivities);
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
@@ -233,8 +233,8 @@ final class ActivityPersistanceHelper {
                 	store // the default should be whatever the XML specifies
 					.setDefault(preferenceKey, activity
 							.isDefaultEnabled());
-                	
-                }				
+
+                }
 
             } catch (NotDefinedException e) {
                 // can't happen - we're iterating over defined activities
@@ -256,10 +256,10 @@ final class ActivityPersistanceHelper {
     protected void saveEnabledStates() {
         try {
             saving = true;
-	        
+
 	        IPreferenceStore store = WorkbenchPlugin.getDefault()
 	                .getPreferenceStore();
-	
+
 	        IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
 	                .getActivitySupport();
 	        IActivityManager activityManager = support.getActivityManager();
@@ -270,7 +270,7 @@ final class ActivityPersistanceHelper {
 	            if (activity.getExpression() != null) {
 	            	continue;
 	            }
-	
+
 	            store.setValue(createPreferenceKey(activity.getId()), activity
 	                    .isEnabled());
 	        }
@@ -286,6 +286,6 @@ final class ActivityPersistanceHelper {
      */
     public void shutdown() {
         unhookListeners();
-        saveEnabledStates();        
+        saveEnabledStates();
     }
 }

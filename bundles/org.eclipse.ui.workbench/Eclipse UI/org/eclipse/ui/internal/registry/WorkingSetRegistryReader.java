@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read working set extensions from the registry.
  */
 public class WorkingSetRegistryReader extends RegistryReader {
-    
+
 
     private WorkingSetRegistry registry;
 
@@ -33,7 +33,7 @@ public class WorkingSetRegistryReader extends RegistryReader {
 
     /**
      * Create a new instance of this reader.
-     * 
+     *
      * @param registry the registry to populate
      */
     public WorkingSetRegistryReader(WorkingSetRegistry registry) {
@@ -43,7 +43,7 @@ public class WorkingSetRegistryReader extends RegistryReader {
 
     /**
      * Overrides method in RegistryReader.
-     * 
+     *
      * @see RegistryReader#readElement(IConfigurationElement)
      */
     @Override
@@ -66,7 +66,7 @@ public class WorkingSetRegistryReader extends RegistryReader {
 
     /**
      * Reads the working set extensions within a registry.
-     * 
+     *
      * @param in the plugin registry to read from
      * @param out the working set registry to store read entries in.
      */

@@ -44,7 +44,7 @@ import org.w3c.dom.DOMException;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * 
+ *
  * @see IPersistableElement
  * @see IElementFactory
  * @see XMLMemento
@@ -52,7 +52,7 @@ import org.w3c.dom.DOMException;
  */
 public interface IMemento {
     /**
-     * Special reserved key used to store the memento id 
+     * Special reserved key used to store the memento id
      * (value <code>"IMemento.internal.id"</code>).
      *
      * @see #getID()
@@ -91,7 +91,7 @@ public interface IMemento {
 
     /**
 	 * Returns the first child with the given type id.
-	 * 
+	 *
 	 * @param type
 	 *            the type id
 	 * @return the first child with the given type. May return <code>null</code>
@@ -101,7 +101,7 @@ public interface IMemento {
 
 	/**
 	 * Returns all children of this node.
-	 * 
+	 *
 	 * @return an array of children of this node. This will not be
 	 *         <code>null</code>. If there are no children, an array of length
 	 *         zero will be returned.
@@ -111,7 +111,7 @@ public interface IMemento {
 
     /**
 	 * Returns all children with the given type id.
-	 * 
+	 *
 	 * @param type
 	 *            the type id
 	 * @return an array of children with the given type. This will not be
@@ -131,7 +131,7 @@ public interface IMemento {
 
     /**
 	 * Returns the type for this memento.
-	 * 
+	 *
 	 * @return the memento type
 	 * @see #createChild(java.lang.String)
 	 * @see #createChild(java.lang.String,java.lang.String)
@@ -166,7 +166,7 @@ public interface IMemento {
 
     /**
 	 * Returns the boolean value of the given key.
-	 * 
+	 *
 	 * @param key the key
 	 * @return the value, or <code>null</code> if the key was not found
      * @since 3.4
@@ -176,17 +176,17 @@ public interface IMemento {
 	/**
      * Returns the data of the Text node of the memento. Each memento is allowed
      * only one Text node.
-     * 
+     *
      * @return the data of the Text node of the memento, or <code>null</code>
      * if the memento has no Text node.
      * @since 2.0
      */
     public String getTextData();
-	
+
     /**
      * Returns an array of all the attribute keys of the memento. This will not
      * be <code>null</code>. If there are no keys, an array of length zero will
-     * be returned. 
+     * be returned.
      * @return an array with all the attribute keys of the memento
      * @since 3.4
      */
@@ -226,7 +226,7 @@ public interface IMemento {
 
     /**
 	 * Sets the value of the given key to the given boolean value.
-	 * 
+	 *
 	 * @param key the key
 	 * @param value the value
      * @since 3.4
@@ -235,9 +235,9 @@ public interface IMemento {
 
     /**
      * Sets the memento's Text node to contain the given data. Creates the Text node if
-     * none exists. If a Text node does exist, it's current contents are replaced. 
+     * none exists. If a Text node does exist, it's current contents are replaced.
      * Each memento is allowed only one text node.
-     * 
+     *
      * @param data the data to be placed on the Text node
      * @since 2.0
      */

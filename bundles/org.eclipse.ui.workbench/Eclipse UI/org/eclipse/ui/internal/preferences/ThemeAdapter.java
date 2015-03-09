@@ -26,18 +26,18 @@ import org.eclipse.ui.themes.ITheme;
 public class ThemeAdapter extends PropertyMapAdapter {
 
     private ITheme targetTheme;
-    
+
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         @Override
 		public void propertyChange(PropertyChangeEvent event) {
             firePropertyChange(event.getProperty());
         }
     };
-    
+
     public ThemeAdapter(ITheme targetTheme) {
         this.targetTheme = targetTheme;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#attachListener()
      */
@@ -72,35 +72,35 @@ public class ThemeAdapter extends PropertyMapAdapter {
 
     public static Set getKeySet(ITheme targetTheme) {
         Set result = new HashSet();
-        
+
         result.addAll(targetTheme.keySet());
         result.addAll(targetTheme.getColorRegistry().getKeySet());
         result.addAll(targetTheme.getFontRegistry().getKeySet());
-        
-        return result;        
+
+        return result;
     }
-    
+
     public static Object getValue(ITheme targetTheme, String propertyId, Class propertyType) {
 
         if (propertyType.isAssignableFrom(String.class)) {
             return targetTheme.getString(propertyId);
         }
-        
+
         if (propertyType.isAssignableFrom(Color.class)) {
             Color result = targetTheme.getColorRegistry().get(propertyId);
             if (result != null) {
                 return result;
             }
         }
-        
+
         if (propertyType.isAssignableFrom(Font.class)) {
             FontRegistry fonts = targetTheme.getFontRegistry();
-            
+
             if (fonts.hasValueFor(propertyId)) {
                 return fonts.get(propertyId);
             }
         }
-        
+
         if (propertyType == Integer.class) {
             return new Integer(targetTheme.getInt(propertyId));
         }
@@ -108,10 +108,10 @@ public class ThemeAdapter extends PropertyMapAdapter {
         if (propertyType == Boolean.class) {
             return targetTheme.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
         }
-        
+
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#propertyExists(java.lang.String)
      */
@@ -125,7 +125,7 @@ public class ThemeAdapter extends PropertyMapAdapter {
      */
     @Override
 	public void setValue(String propertyId, Object newValue) {
-        throw new UnsupportedOperationException();        
+        throw new UnsupportedOperationException();
     }
 
 }

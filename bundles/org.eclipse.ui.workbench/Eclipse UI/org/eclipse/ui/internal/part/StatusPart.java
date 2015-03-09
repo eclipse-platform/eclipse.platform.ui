@@ -41,26 +41,26 @@ import org.eclipse.ui.views.IViewDescriptor;
  * @since 3.1
  */
 public class StatusPart {
-    
+
 	private static final String LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView"; //$NON-NLS-1$
     boolean showingDetails = false;
     private Button detailsButton;
     private Composite detailsArea;
     private Control details = null;
     private IStatus reason;
-    
+
     public StatusPart(final Composite parent, IStatus reason_) {
     	Color bgColor= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		Color fgColor= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-    	
+
 		parent.setBackground(bgColor);
 		parent.setForeground(fgColor);
 
         this.reason = reason_;
         GridLayout layout = new GridLayout();
-        
+
         layout.numColumns = 3;
-        
+
         int spacing = 8;
         int margins = 8;
         layout.marginBottom = margins;
@@ -70,7 +70,7 @@ public class StatusPart {
         layout.horizontalSpacing = spacing;
         layout.verticalSpacing = spacing;
         parent.setLayout(layout);
-        
+
         Label imageLabel = new Label(parent, SWT.NONE);
         imageLabel.setBackground(bgColor);
         Image image = getImage();
@@ -81,7 +81,7 @@ public class StatusPart {
                     GridData.HORIZONTAL_ALIGN_CENTER
                             | GridData.VERTICAL_ALIGN_BEGINNING));
         }
-        
+
         Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
         text.setBackground(bgColor);
         text.setForeground(fgColor);
@@ -89,7 +89,7 @@ public class StatusPart {
         //text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.setText(reason.getMessage());
-        
+
         Composite buttonParent = new Composite(parent, SWT.NONE);
         buttonParent.setBackground(parent.getBackground());
         GridLayout buttonsLayout = new GridLayout();
@@ -98,8 +98,8 @@ public class StatusPart {
         buttonsLayout.marginWidth  = 0;
         buttonsLayout.horizontalSpacing = 0;
 		buttonParent.setLayout(buttonsLayout);
-        
-        
+
+
         detailsButton = new Button(buttonParent, SWT.PUSH);
         detailsButton.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -107,14 +107,14 @@ public class StatusPart {
                 showDetails(!showingDetails);
             }
         });
-        
+
         detailsButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, false, false));
         detailsButton.setVisible(reason.getException() != null);
-        
+
         createShowLogButton(buttonParent);
-        
+
         updateDetailsText();
-        
+
         detailsArea = new Composite(parent, SWT.NONE);
         detailsArea.setBackground(bgColor);
         detailsArea.setForeground(fgColor);
@@ -125,7 +125,7 @@ public class StatusPart {
         detailsArea.setLayout(new FillLayout());
         parent.layout(true);
     }
-    
+
     /**
      * Return the image for the upper-left corner of this part
      *
@@ -133,7 +133,7 @@ public class StatusPart {
      */
     private Image getImage() {
         Display d = Display.getCurrent();
-        
+
         switch(reason.getSeverity()) {
         case IStatus.ERROR:
             return d.getSystemImage(SWT.ICON_ERROR);
@@ -143,7 +143,7 @@ public class StatusPart {
             return d.getSystemImage(SWT.ICON_INFORMATION);
         }
     }
-    
+
     private void showDetails(boolean shouldShow) {
         if (shouldShow == showingDetails) {
             return;
@@ -151,13 +151,13 @@ public class StatusPart {
         this.showingDetails = shouldShow;
         updateDetailsText();
     }
-    
+
     private void updateDetailsText() {
         if (details != null) {
             details.dispose();
             details = null;
         }
-        
+
         if (showingDetails) {
             detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
             Text detailsText = new Text(detailsArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL
@@ -172,12 +172,12 @@ public class StatusPart {
         }
     }
 
-    
+
     private String getDetails(IStatus status) {
         if (status.getException() != null) {
             return getStackTrace(status.getException());
         }
-        
+
         return ""; //$NON-NLS-1$
     }
 
@@ -189,7 +189,7 @@ public class StatusPart {
         pwriter.close();
         return swriter.toString();
     }
-    
+
     private void createShowLogButton(Composite parent){
 		IViewDescriptor descriptor = PlatformUI.getWorkbench().getViewRegistry()
 				.find(LOG_VIEW_ID);

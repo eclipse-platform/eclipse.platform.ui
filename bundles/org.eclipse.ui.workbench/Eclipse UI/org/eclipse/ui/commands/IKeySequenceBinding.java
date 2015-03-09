@@ -22,7 +22,7 @@ import org.eclipse.ui.keys.KeySequence;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see org.eclipse.ui.commands.ICommand
  * @deprecated Please use the bindings support in the "org.eclipse.jface"
@@ -36,7 +36,7 @@ public interface IKeySequenceBinding extends Comparable {
 
     /**
      * Returns the key sequence represented in this binding.
-     * 
+     *
      * @return the key sequence. Guaranteed not to be <code>null</code>.
      */
 	@Deprecated

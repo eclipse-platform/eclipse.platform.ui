@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class ActivePartExpression extends Expression {
@@ -45,7 +45,7 @@ public final class ActivePartExpression extends Expression {
 
 	/**
 	 * Constructs a new instance of <code>ActivePartExpression</code>
-	 * 
+	 *
 	 * @param activePart
 	 *            The part to match with the active part; may be
 	 *            <code>null</code>

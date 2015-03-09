@@ -12,13 +12,13 @@ package org.eclipse.ui;
 
 /**
  * A local working set manager can be used to manage a set of
- * working sets independently from the working sets managed by 
- * the global working set manager.  A local working set manager 
- * can be saved and restored using the methods <code>saveState</code>  
- * and <code>restoreState</code>.  A new local working set manager can be created  
+ * working sets independently from the working sets managed by
+ * the global working set manager.  A local working set manager
+ * can be saved and restored using the methods <code>saveState</code>
+ * and <code>restoreState</code>.  A new local working set manager can be created
  * using {@link org.eclipse.ui.IWorkbench#createLocalWorkingSetManager()}.
- * Clients of local working set managers are responsible for calling 
- * {@link IWorkingSetManager#dispose()} when the working sets it manages 
+ * Clients of local working set managers are responsible for calling
+ * {@link IWorkingSetManager#dispose()} when the working sets it manages
  * are no longer needed.
  * <p>
  * This interface is not intended to be implemented or extended by clients.
@@ -32,17 +32,17 @@ public interface ILocalWorkingSetManager extends IWorkingSetManager {
 
 	/**
 	 * Saves the state of the working set manager to the given
-	 * memento. 
-	 * 
+	 * memento.
+	 *
 	 * @param memento the memento to save the state to
 	 */
 	public void saveState(IMemento memento);
-	
+
 	/**
 	 * Restores the state of the working set manager from the given
 	 * memento. The method can only be called as long as the working
 	 * set manager is still empty.
-	 * 
+	 *
 	 * @param memento the memento to restore the state from
 	 */
 	public void restoreState(IMemento memento);

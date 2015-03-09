@@ -25,7 +25,7 @@ public class ContributionService implements IContributionService {
 	public ContributionService(WorkbenchAdvisor advisor) {
 		this.advisor = advisor;
 	}
-	
+
 	@Override
 	public ContributionComparator getComparatorFor(String contributionType) {
 		return advisor.getComparatorFor(contributionType);

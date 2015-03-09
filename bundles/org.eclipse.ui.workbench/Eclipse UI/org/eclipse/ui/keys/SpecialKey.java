@@ -30,7 +30,7 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
  * <code>SpecialKey</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
@@ -481,7 +481,7 @@ public final class SpecialKey extends NaturalKey {
 
 	/**
 	 * Constructs an instance of <code>SpecialKey</code> given a name.
-	 * 
+	 *
 	 * @param key
 	 *            The key to be wrapped.
 	 */

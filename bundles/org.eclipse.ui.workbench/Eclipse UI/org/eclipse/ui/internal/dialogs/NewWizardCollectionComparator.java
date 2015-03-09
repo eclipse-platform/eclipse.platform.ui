@@ -58,11 +58,11 @@ class NewWizardCollectionComparator extends ViewerComparator {
 			}
     		return 2;
     	}
-    	return super.category(element);	
+    	return super.category(element);
 	}
 
 	/**
-     *	Return true if this sorter is affected by a property 
+     *	Return true if this sorter is affected by a property
      *	change of propertyName on the specified element.
      */
     @Override

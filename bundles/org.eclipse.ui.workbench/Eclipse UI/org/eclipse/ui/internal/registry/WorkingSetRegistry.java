@@ -38,7 +38,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
     private HashMap/*<String, WorkingSetDescriptor>*/ workingSetDescriptors = new HashMap();
 
     /**
-	 * 
+	 *
 	 */
 	public WorkingSetRegistry() {
 		IExtensionTracker tracker = PlatformUI.getWorkbench()
@@ -49,7 +49,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @since 3.3
 	 */
@@ -58,11 +58,11 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 				PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_WORKINGSETS);
 	}
-	
+
     /**
      * Adds a working set descriptor.
-     * 
-     * @param descriptor working set descriptor to add. Must not 
+     *
+     * @param descriptor working set descriptor to add. Must not
      * 	exist in the registry yet.
      */
     public void addWorkingSetDescriptor(WorkingSetDescriptor descriptor) {
@@ -78,7 +78,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 
     /**
 	 * Returns the default, resource based, working set page
-	 * 
+	 *
 	 * @return the default working set page.
 	 */
     public IWorkingSetPage getDefaultWorkingSetPage() {
@@ -94,7 +94,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 
     /**
      * Returns the working set descriptor with the given id.
-     * 
+     *
      * @param pageId working set page id
      * @return the working set descriptor with the given id.
      */
@@ -104,19 +104,19 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 
     /**
      * Returns an array of all working set descriptors.
-     * 
+     *
      * @return an array of all working set descriptors.
      */
     public WorkingSetDescriptor[] getWorkingSetDescriptors() {
         return (WorkingSetDescriptor[]) workingSetDescriptors.values().toArray(
                 new WorkingSetDescriptor[workingSetDescriptors.size()]);
     }
-    
+
     /**
      * Returns an array of all working set descriptors having
      * a page class attribute
-     * 
-     * @return an array of all working set descriptors having a 
+     *
+     * @return an array of all working set descriptors having a
      * page class attribute
      */
     public WorkingSetDescriptor[] getNewPageWorkingSetDescriptors() {
@@ -130,11 +130,11 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 		}
         return (WorkingSetDescriptor[])result.toArray(new WorkingSetDescriptor[result.size()]);
     }
-    
+
     /**
      * Returns <code>true</code> if there is a working set descriptor with
      * a page class attribute. Otherwise <code>false</code> is returned.
-     * 
+     *
      * @return whether a descriptor with a page class attribute exists
      */
     public boolean hasNewPageWorkingSetDescriptor() {
@@ -147,7 +147,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 		}
     	return false;
     }
-    
+
     public WorkingSetDescriptor[] getUpdaterDescriptorsForNamespace(
 			String namespace) {
     	if (namespace == null) // fix for Bug 84225
@@ -164,7 +164,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 		return (WorkingSetDescriptor[]) result
 				.toArray(new WorkingSetDescriptor[result.size()]);
 	}
-    
+
     public WorkingSetDescriptor[] getElementAdapterDescriptorsForNamespace(
 			String namespace) {
     	if (namespace == null) // fix for Bug 84225
@@ -184,7 +184,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 
     /**
      * Returns the working set page with the given id.
-     * 
+     *
      * @param pageId working set page id
      * @return the working set page with the given id.
      */

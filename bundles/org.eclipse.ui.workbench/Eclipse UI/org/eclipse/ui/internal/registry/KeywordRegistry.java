@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Contains extensions defined on the <code>keywords</code> extension point.
- * 
+ *
  * @since 3.1
  */
 public final class KeywordRegistry implements IExtensionChangeHandler {
@@ -39,7 +39,7 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return the singleton instance of the <code>KeywordRegistry</code>.
-	 * 
+	 *
 	 * @return the singleton registry
 	 */
 	public static KeywordRegistry getInstance() {
@@ -54,7 +54,7 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 	 * Map of id->labels.
 	 */
 	private Map internalKeywordMap = new HashMap();
-	
+
 	/**
 	 * Private constructor.
 	 */
@@ -89,10 +89,10 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 		return Platform.getExtensionRegistry().getExtensionPoint(
 				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_KEYWORDS);
 	}
-	
+
 	/**
 	 * Return the label associated with the given keyword.
-	 * 
+	 *
 	 * @param id the keyword id
 	 * @return the label or <code>null</code>
 	 */

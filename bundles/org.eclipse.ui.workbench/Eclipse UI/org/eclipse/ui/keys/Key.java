@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
  * <code>Key</code> objects are immutable. Clients are not permitted to extend
  * this class.
  * </p>
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
@@ -51,7 +51,7 @@ public abstract class Key implements Comparable {
 	/**
 	 * Constructs an instance of <code>Key</code> given its formal string
 	 * representation.
-	 * 
+	 *
 	 * @param key
 	 *            the integer representation of this key, as defined by
 	 *            <code>KeyLookupFactory.getDefault()</code>.
@@ -90,7 +90,7 @@ public abstract class Key implements Comparable {
 
 	/**
 	 * Returns the formal string representation for this key.
-	 * 
+	 *
 	 * @return The formal string representation for this key. Guaranteed not to
 	 *         be <code>null</code>.
 	 * @see java.lang.Object#toString()

@@ -40,7 +40,7 @@ import org.eclipse.ui.IWorkbenchPropertyPageMulti;
  * before the page's control has been created to suppress the standard Apply and
  * Defaults buttons.
  * </p>
- * 
+ *
  * @see IWorkbenchPropertyPage
  * @see IWorkbenchPropertyPageMulti
  */
@@ -63,7 +63,7 @@ public abstract class PropertyPage extends PreferencePage implements IWorkbenchP
 
     /**
      * Sets the element that owns properties shown on this page.
-     * 
+     *
      * @param element
      *            the element
      */

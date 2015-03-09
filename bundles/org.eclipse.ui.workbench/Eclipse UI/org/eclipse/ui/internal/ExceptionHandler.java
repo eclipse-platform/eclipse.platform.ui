@@ -15,7 +15,7 @@ import org.eclipse.jface.window.Window;
 /**
  * This handler will pass along to the workbench advisor exceptions
  * and errors thrown while running the event loop. However, the
- * <code>ThreadDeath</code> error is simply thrown again, and is not 
+ * <code>ThreadDeath</code> error is simply thrown again, and is not
  * passed along.
  */
 public final class ExceptionHandler implements Window.IExceptionHandler {
@@ -24,7 +24,7 @@ public final class ExceptionHandler implements Window.IExceptionHandler {
 
     /**
      * Returns the singleton exception handler.
-     * 
+     *
      * @return the singleton exception handler
      */
     public static ExceptionHandler getInstance() {

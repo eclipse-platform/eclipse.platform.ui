@@ -43,7 +43,7 @@ public class PluginDropAdapter extends ViewerDropAdapter {
      */
     private TransferData currentTransfer;
 
-    /** 
+    /**
      * Creates a plug-in drop adapter for the given viewer.
      *
      * @param viewer the viewer
@@ -106,7 +106,7 @@ public class PluginDropAdapter extends ViewerDropAdapter {
         }
         return null;
     }
-    
+
     /**
      * @see ViewerDropAdapter#performDrop
      */

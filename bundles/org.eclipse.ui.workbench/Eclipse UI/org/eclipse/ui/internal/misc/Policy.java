@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A common facility for parsing the <code>org.eclipse.ui/.options</code>
  * file.
- * 
+ *
  * @since 2.1
  */
 public class Policy {
@@ -27,7 +27,7 @@ public class Policy {
     public static boolean DEBUG_SWT_GRAPHICS = DEFAULT;
 
     public static boolean DEBUG_SWT_DEBUG = DEFAULT;
-    
+
     public static boolean DEBUG_SWT_DEBUG_GLOBAL = DEFAULT;
 
     public static boolean DEBUG_DRAG_DROP = DEFAULT;
@@ -40,7 +40,7 @@ public class Policy {
     /**
 	 * Whether to report all events entering through the common event framework
 	 * used by the commands architecture.
-	 * 
+	 *
 	 * @see ISourceProvider
 	 * @since 3.2
 	 */
@@ -69,7 +69,7 @@ public class Policy {
     public static boolean DEBUG_COMMANDS = DEFAULT;
 
     /**
-     * Whether to print debugging information about the internal state of the 
+     * Whether to print debugging information about the internal state of the
      * context support within the workbench.
      */
     public static boolean DEBUG_CONTEXTS = DEFAULT;
@@ -103,7 +103,7 @@ public class Policy {
      * workbench.
      */
     public static boolean DEBUG_HANDLERS_VERBOSE = DEFAULT;
-	
+
     /**
      * Whether to print debugging information about unexpected occurrences and
      * important state changes in the operation history.
@@ -121,17 +121,17 @@ public class Policy {
      * Whether or not to show system jobs at all times.
      */
     public static boolean DEBUG_SHOW_ALL_JOBS = DEFAULT;
-    
+
     /**
      * Whether or not to resolve images as they are declared.
-     * 
+     *
      * @since 3.1
      */
     public static boolean DEBUG_DECLARED_IMAGES = DEFAULT;
-    
+
     /**
      * Whether or not to print contribution-related issues.
-     * 
+     *
      * @since 3.1
      */
     public static boolean DEBUG_CONTRIBUTIONS = DEFAULT;
@@ -142,19 +142,19 @@ public class Policy {
      * at a time.
      */
     public static String DEBUG_HANDLERS_VERBOSE_COMMAND_ID = null;
-    
+
     /**
      * Whether experimental features in the rendering of commands into menus
      * and toolbars should be enabled.  This is not guaranteed to provide a
      * working workbench.
      */
     public static boolean EXPERIMENTAL_MENU = DEFAULT;
-    
+
     public static boolean DEBUG_MPE = DEFAULT;
-    
+
     /**
      * Whether or not additional working set logging will occur.
-     * 
+     *
      * @since 3.4
      */
     public static boolean DEBUG_WORKING_SETS = DEFAULT;
@@ -191,7 +191,7 @@ public class Policy {
             EXPERIMENTAL_MENU = getDebugOption("/experimental/menus"); //$NON-NLS-1$
             DEBUG_MPE = getDebugOption("/trace/multipageeditor"); //$NON-NLS-1$
             DEBUG_WORKING_SETS = getDebugOption("/debug/workingSets"); //$NON-NLS-1$
-            
+
             if(DEBUG_SWT_DEBUG_GLOBAL)
             	Device.DEBUG = true;
         }

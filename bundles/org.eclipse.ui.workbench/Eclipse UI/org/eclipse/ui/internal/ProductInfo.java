@@ -58,7 +58,7 @@ public class ProductInfo {
      * </p>
      *
      * @return the application name, or <code>null</code>
-     * 
+     *
      * @see org.eclipse.swt.widgets.Display#setAppName
      */
     public String getAppName() {
@@ -69,10 +69,10 @@ public class ProductInfo {
     }
 
     /**
-     * Returns the descriptor for an image which can be shown in an "about" dialog 
-     * for this product. Products designed to run "headless" typically would not 
+     * Returns the descriptor for an image which can be shown in an "about" dialog
+     * for this product. Products designed to run "headless" typically would not
      * have such an image.
-     * 
+     *
      * @return the descriptor for an about image, or <code>null</code> if none
      */
     public ImageDescriptor getAboutImage() {
@@ -87,7 +87,7 @@ public class ProductInfo {
      * this product. The expectations is that the elements will be the same
      * image rendered at different sizes. Products designed to run "headless"
      * typically would not have such images.
-     * 
+     *
      * @return an array of the image descriptors for the window images, or
      *         <code>null</code> if none
      */
@@ -101,7 +101,7 @@ public class ProductInfo {
     /**
      * Returns the text to show in an "about" dialog for this product.
      * Products designed to run "headless" typically would not have such text.
-     * 
+     *
      * @return the about text, or <code>null</code> if none
      */
     public String getAboutText() {

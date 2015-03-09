@@ -34,7 +34,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * (i.e., using the class name followed by a colon), then it is assumed to be
  * the <code>default</code> parameter.
  * </p>
- * 
+ *
  * @see HandlerUtil#updateRadioState(org.eclipse.core.commands.Command, String)
  * @see HandlerUtil#matchesRadioState(org.eclipse.core.commands.ExecutionEvent)
  * @since 3.5
@@ -81,7 +81,7 @@ public final class RadioState extends PersistentState implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.commands.PersistentState#load(org.eclipse.jface.preference
 	 * .IPreferenceStore, java.lang.String)
@@ -97,7 +97,7 @@ public final class RadioState extends PersistentState implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.commands.PersistentState#save(org.eclipse.jface.preference
 	 * .IPreferenceStore, java.lang.String)
@@ -114,7 +114,7 @@ public final class RadioState extends PersistentState implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.State#setValue(java.lang.Object)
 	 */
 	@Override

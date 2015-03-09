@@ -13,7 +13,7 @@ package org.eclipse.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Description of a workbench part. The part descriptor contains 
+ * Description of a workbench part. The part descriptor contains
  * the information needed to create part instances.
  * <p>
  * This interface is not intended to be implemented by clients.

@@ -94,8 +94,8 @@ public class NavigationHistoryEntry {
         if (location != null) {
             // location exists or has been restored, use its text.
             // Also update the historyText so that this value will
-            // be saved.  Doing so handles cases where getText() value 
-            // may be dynamic. 
+            // be saved.  Doing so handles cases where getText() value
+            // may be dynamic.
             String text = location.getText();
             if ((text == null) || text.equals("")) { //$NON-NLS-1$
                 text = historyText;
@@ -108,7 +108,7 @@ public class NavigationHistoryEntry {
         }
     }
 
-    /** 
+    /**
      * Saves the state of this entry and its location.
      * Returns true if possible otherwise returns false.
      */

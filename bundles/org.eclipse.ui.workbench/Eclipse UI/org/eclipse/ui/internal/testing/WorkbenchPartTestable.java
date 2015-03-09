@@ -17,16 +17,16 @@ import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
 /**
  * Implementation of {@link IWorkbenchPartTestable}.
- * 
+ *
  * @since 3.3
  */
 public class WorkbenchPartTestable implements IWorkbenchPartTestable {
 
 	private Composite composite;
-	
+
 	/**
 	 * Create a new instance of this class based on the provided part.
-	 * 
+	 *
 	 * @param partSite the part to test
 	 */
 	public WorkbenchPartTestable(PartSite partSite) {

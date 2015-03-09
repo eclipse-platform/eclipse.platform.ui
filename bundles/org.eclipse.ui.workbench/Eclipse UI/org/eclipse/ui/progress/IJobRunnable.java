@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Interface for runnables that can be run as jobs.
- * 
+ *
  * @since 3.3
  */
 public interface IJobRunnable {
@@ -30,7 +30,7 @@ public interface IJobRunnable {
 	 * status of severity <code>IStatus.CANCEL</code>. The singleton cancel
 	 * status <code>Status.CANCEL_STATUS</code> can be used for this purpose.
 	 * <p>
-	 * 
+	 *
 	 * @param monitor
 	 *            the monitor to be used for reporting progress and responding
 	 *            to cancelation. The monitor is never <code>null</code>

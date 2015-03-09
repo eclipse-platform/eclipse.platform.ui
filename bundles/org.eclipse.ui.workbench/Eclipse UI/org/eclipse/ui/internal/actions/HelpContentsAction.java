@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Action to open the help contents.
- * 
+ *
  * @since 3.0
  */
 public class HelpContentsAction extends Action implements IWorkbenchAction {
@@ -44,7 +44,7 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
 
     /**
      * Constructor for use by ActionFactory.
-     * 
+     *
      * @param window the window
      */
     public HelpContentsAction(IWorkbenchWindow window) {

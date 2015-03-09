@@ -27,14 +27,14 @@ import org.eclipse.ui.menus.UIElement;
 
 /**
  * Replacement for the PinEditorAction.
- * 
+ *
  */
 public class PinEditorHandler extends AbstractHandler implements
 		IElementUpdater {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)
@@ -64,7 +64,7 @@ public class PinEditorHandler extends AbstractHandler implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.
 	 * menus.UIElement, java.util.Map)

@@ -27,9 +27,9 @@ import org.eclipse.ui.services.IDisposable;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class SlavePartService implements IPartService, IDisposable {
 
@@ -43,7 +43,7 @@ public class SlavePartService implements IPartService, IDisposable {
 
 	/**
 	 * Constructs a new instance.
-	 * 
+	 *
 	 * @param parentPartService
 	 *            The parent part service for this slave. Never
 	 *            <code>null</code>.

@@ -29,7 +29,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * through the <code>ISourceProvider</code> framework (a common language in
  * which events are communicated to services).
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class ActiveContextSourceProvider extends AbstractSourceProvider
@@ -81,7 +81,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.AbstractSourceProvider#initialize(org.eclipse.ui.services.IServiceLocator)
 	 */
 	@Override

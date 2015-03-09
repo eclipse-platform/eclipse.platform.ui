@@ -24,11 +24,11 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * A menu for window creation in the workbench.  
+ * A menu for window creation in the workbench.
  * <p>
  * An <code>OpenPerspectiveMenu</code> is used to populate a menu with
- * actions that will open a new perspective. If the user selects one of 
- * these items either a new page is added to the workbench, a new 
+ * actions that will open a new perspective. If the user selects one of
+ * these items either a new page is added to the workbench, a new
  * workbench window is created with the chosen perspective or the current
  * perspective will be replaced with the new onw.
  * </p><p>
@@ -52,7 +52,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 
     private boolean replaceEnabled = true;
 
-    private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.OpenPerspectiveMenu_pageProblemsTitle; 
+    private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.OpenPerspectiveMenu_pageProblemsTitle;
 
     private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages.OpenPerspectiveMenu_errorUnknownInput;
 
@@ -65,7 +65,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
     }
 
     /**
-     * Constructs a new instance of <code>OpenNewPageMenu</code>. 
+     * Constructs a new instance of <code>OpenNewPageMenu</code>.
      * <p>
      * If this method is used be sure to set the page input by invoking
      * <code>setPageInput</code>.  The page input is required when the user
@@ -83,7 +83,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
     }
 
     /**
-     * Constructs a new instance of <code>OpenNewPageMenu</code>.  
+     * Constructs a new instance of <code>OpenNewPageMenu</code>.
      *
      * @param window the window where a new page is created if an item within
      *		the menu is selected
@@ -142,7 +142,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
      */
     private void openPage(IPerspectiveDescriptor desc, int keyStateMask) {
         // Verify page input.
-        if (pageInput == null) {			
+        if (pageInput == null) {
 			StatusUtil.handleStatus(PAGE_PROBLEMS_TITLE
 					+ ": " + PAGE_PROBLEMS_MESSAGE, StatusManager.SHOW); //$NON-NLS-1$
 			return;
@@ -160,7 +160,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
     }
 
     /**
-     * Sets the page input.  
+     * Sets the page input.
      *
      * @param input the page input
      */

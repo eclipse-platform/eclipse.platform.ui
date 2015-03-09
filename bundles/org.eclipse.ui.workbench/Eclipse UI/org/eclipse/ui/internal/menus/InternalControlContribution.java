@@ -20,14 +20,14 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Allows the client derivatives to access the IWorkbenchWindow hosting
  * the control as well as the side of the workbench that the control is
  * currently being displayed on.
- * 
+ *
  * @since 3.3
  *
  */
 public abstract class InternalControlContribution extends ControlContribution {
 	private IWorkbenchWindow wbw;
 	private int curSide;
-	
+
 	/**
 	 * @param id
 	 */
@@ -38,7 +38,7 @@ public abstract class InternalControlContribution extends ControlContribution {
 	public InternalControlContribution() {
 		this("unknown ID"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return Returns the wbw.
 	 */
@@ -66,11 +66,11 @@ public abstract class InternalControlContribution extends ControlContribution {
 	public void setCurSide(int curSide) {
 		this.curSide = curSide;
 	}
-	
+
 	public int getOrientation() {
 		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT)
 			return SWT.VERTICAL;
-		
+
 		return SWT.HORIZONTAL;
 	}
 }

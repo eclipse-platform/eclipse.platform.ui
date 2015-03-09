@@ -37,18 +37,18 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 	}
 
 	/**
-	 * Create a new <code>OpenPreferenceAction</code> and initialize it 
+	 * Create a new <code>OpenPreferenceAction</code> and initialize it
 	 * from the given resource bundle.
 	 * @param window
 	 */
 	public OpenPreferencesAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.OpenPreferences_text); 
+		super(WorkbenchMessages.OpenPreferences_text);
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
 		// @issue action id not set
-		setToolTipText(WorkbenchMessages.OpenPreferences_toolTip); 
+		setToolTipText(WorkbenchMessages.OpenPreferences_toolTip);
 		window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 	}

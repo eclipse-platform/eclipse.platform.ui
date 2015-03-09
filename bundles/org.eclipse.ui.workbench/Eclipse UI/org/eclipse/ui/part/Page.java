@@ -50,7 +50,7 @@ public abstract class Page implements IPageBookViewPage {
      */
     private IPageSite site;
 
-    /* 
+    /*
      * Creates a new page for a pagebook view.
      */
     protected Page() {
@@ -60,7 +60,7 @@ public abstract class Page implements IPageBookViewPage {
 	public abstract void createControl(Composite parent);
 
     /**
-     * The <code>Page</code> implementation of this <code>IPage</code> method 
+     * The <code>Page</code> implementation of this <code>IPage</code> method
      * disposes of this page's control (if it has one and it has not already
      * been disposed). Subclasses may extend.
      */
@@ -100,12 +100,12 @@ public abstract class Page implements IPageBookViewPage {
 
     /**
      * The <code>Page</code> implementation of this <code>IPageBookViewPage</code> method
-     * stores a reference to the supplied site (the site which contains this 
-     * page). 
+     * stores a reference to the supplied site (the site which contains this
+     * page).
      * <p>
      * Subclasses may extend.
      * </p>
-     * 
+     *
      * @since 2.0
      */
     @Override
@@ -115,7 +115,7 @@ public abstract class Page implements IPageBookViewPage {
 
     /**
      * Returns the site which contains this page.
-     * 
+     *
      * @return the site which contains this page
      */
     @Override

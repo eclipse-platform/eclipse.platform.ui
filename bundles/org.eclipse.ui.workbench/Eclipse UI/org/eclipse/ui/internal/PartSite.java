@@ -67,9 +67,9 @@ import org.eclipse.ui.testing.IWorkbenchPartTestable;
  * including the part, its pane, active contributions, selection provider, etc.
  * Together, these components make up the complete behavior for a part as if it
  * was implemented by one person.
- * 
+ *
  * The <code>PartSite</code> lifecycle is as follows ..
- * 
+ *
  * <ol>
  * <li>a site is constructed </li>
  * <li>a part is constructed and stored in the part </li>
@@ -88,7 +88,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * is provided so that different implementations of the
 	 * <code>IWorkbenchPartSite</code> interface don't have to worry about how
 	 * context menus should work.
-	 * 
+	 *
 	 * @param menuId
 	 *            the menu id
 	 * @param menuManager
@@ -170,7 +170,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Build the part site.
-	 * 
+	 *
 	 * @param ref
 	 *            the part reference
 	 * @param part
@@ -401,7 +401,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Returns the page containing this workbench site's part.
-	 * 
+	 *
 	 * @return the page containing this part
 	 */
 	@Override
@@ -435,7 +435,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Returns the shell containing this part.
-	 * 
+	 *
 	 * @return the shell containing this part
 	 */
 	@Override
@@ -482,7 +482,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Returns the workbench window containing this part.
-	 * 
+	 *
 	 * @return the workbench window containing this part
 	 */
 	@Override
@@ -566,7 +566,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Get an adapter for this type.
-	 * 
+	 *
 	 * @param adapter
 	 * @return
 	 */
@@ -576,7 +576,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		if (IWorkbenchSiteProgressService.class == adapter) {
 			return getService(adapter);
 		}
-		
+
 		if (IWorkbenchPartTestable.class == adapter) {
 			return new WorkbenchPartTestable(this);
 		}
@@ -605,7 +605,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Get a progress service for the receiver.
-	 * 
+	 *
 	 * @return WorkbenchSiteProgressService
 	 */
 	WorkbenchSiteProgressService getSiteProgressService() {
@@ -626,7 +626,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	/**
 	 * Prints out the identifier, the plug-in identifier and the registered
 	 * name. This is for debugging purposes only.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override

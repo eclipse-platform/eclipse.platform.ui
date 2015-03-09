@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ActionElement extends QuickAccessElement {
 

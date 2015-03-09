@@ -54,21 +54,21 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite top = (Composite) super.createDialogArea(parent);
-		
+
 		Composite editArea = new Composite(top, SWT.NONE);
 		editArea.setLayout(new GridLayout());
 		editArea.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
-		
-		verboseEditor = new BooleanFieldEditor("verbose", ProgressMessages.JobsViewPreferenceDialog_Note, editArea);//$NON-NLS-1$ 
+
+		verboseEditor = new BooleanFieldEditor("verbose", ProgressMessages.JobsViewPreferenceDialog_Note, editArea);//$NON-NLS-1$
 		verboseEditor.setPreferenceName(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS);
 		verboseEditor.setPreferenceStore(PrefUtil.getAPIPreferenceStore());
 		verboseEditor.load();
-		
+
 		Dialog.applyDialogFont(top);
-		
+
 		return top;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -77,7 +77,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 		verboseEditor.store();
 		super.okPressed();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.preferences.ViewSettingsDialog#performDefaults()
 	 */

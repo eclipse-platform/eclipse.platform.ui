@@ -83,7 +83,7 @@ public class SupportTray extends DialogTray implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.DialogTray#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -148,7 +148,7 @@ public class SupportTray extends DialogTray implements
 		Point shellSize = supportArea.getShell().getSize();
 		Point desiredSize = supportArea.getShell().computeSize(SWT.DEFAULT,
 				SWT.DEFAULT);
-		
+
 		if(desiredSize.y > shellSize.y){
 			supportArea.getShell().setSize(shellSize.x,
 					Math.min(desiredSize.y, 500));
@@ -201,7 +201,7 @@ public class SupportTray extends DialogTray implements
 
 		backgroundHot.dispose();
 	}
-	
+
 	/**
 	 * Creates any actions needed by the tray.
 	 */
@@ -226,7 +226,7 @@ public class SupportTray extends DialogTray implements
 
 	/**
 	 * Create the area for extra error support information.
-	 * 
+	 *
 	 * @param parent
 	 *            A composite on which should be the support area created.
 	 * @param statusAdapter
@@ -299,7 +299,7 @@ public class SupportTray extends DialogTray implements
 
 	/**
 	 * Checks if the support dialog has any support areas.
-	 * 
+	 *
 	 * @param adapter
 	 *            - a parameter for which we area checking the status adapter
 	 * @return true if support dialog has any support areas to display, false
@@ -319,7 +319,7 @@ public class SupportTray extends DialogTray implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override

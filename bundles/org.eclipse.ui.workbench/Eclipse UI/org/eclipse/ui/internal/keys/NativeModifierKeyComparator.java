@@ -20,7 +20,7 @@ import org.eclipse.ui.keys.ModifierKey;
  * A comparator that sorts the modifier keys based on the native environment.
  * Currently, this is only the windowing toolkit, but in the future it might
  * expand to include the window manager.
- * 
+ *
  * @since 3.0
  */
 class NativeModifierKeyComparator implements Comparator {
@@ -46,7 +46,7 @@ class NativeModifierKeyComparator implements Comparator {
 
     /**
      * Calculates a rank for a given modifier key.
-     * 
+     *
      * @param modifierKey
      *            The modifier key to rank; may be <code>null</code>.
      * @return The rank of this modifier key. This is a non-negative number
@@ -78,7 +78,7 @@ class NativeModifierKeyComparator implements Comparator {
     /**
      * Provides a ranking for the modifier key based on the modifier key
      * ordering used in the GNOME window manager.
-     * 
+     *
      * @param modifierKey
      *            The modifier key to rank; may be <code>null</code>.
      * @return The rank of this modifier key. This is a non-negative number
@@ -104,7 +104,7 @@ class NativeModifierKeyComparator implements Comparator {
     /**
      * Provides a ranking for the modifier key based on the modifier key
      * ordering used in the KDE window manager.
-     * 
+     *
      * @param modifierKey
      *            The modifier key to rank; may be <code>null</code>.
      * @return The rank of this modifier key. This is a non-negative number
@@ -129,7 +129,7 @@ class NativeModifierKeyComparator implements Comparator {
     /**
      * Provides a ranking for the modifier key based on the modifier key
      * ordering used in the MacOS X operating system.
-     * 
+     *
      * @param modifierKey
      *            The modifier key to rank; may be <code>null</code>.
      * @return The rank of this modifier key. This is a non-negative number
@@ -158,7 +158,7 @@ class NativeModifierKeyComparator implements Comparator {
     /**
      * Provides a ranking for the modifier key based on the modifier key
      * ordering used in the Windows operating system.
-     * 
+     *
      * @param modifierKey
      *            The modifier key to rank; may be <code>null</code>.
      * @return The rank of this modifier key. This is a non-negative number

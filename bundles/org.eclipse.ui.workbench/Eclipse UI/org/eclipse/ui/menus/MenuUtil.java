@@ -13,7 +13,7 @@ package org.eclipse.ui.menus;
 
 /**
  * Provides utilities and constants for use with the new menus API.
- * 
+ *
  * @since 3.3
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -22,7 +22,7 @@ public class MenuUtil {
 	/**
 	 * Workbench Menu. On supported platforms, this menu is shown when no
 	 * workbench windows are active
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public final static String WORKBENCH_MENU = "menu:org.eclipse.ui.workbench.menu"; //$NON-NLS-1$
@@ -47,14 +47,14 @@ public class MenuUtil {
 
 	/**
 	 * Valid query attribute. Usage <b>menu:menu.id?before=contribution.id</b>.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public final static String QUERY_BEFORE = "before"; //$NON-NLS-1$
 
 	/**
 	 * Valid query attribute. Usage <b>menu:menu.id?after=contribution.id</b>.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public final static String QUERY_AFTER = "after"; //$NON-NLS-1$
@@ -67,7 +67,7 @@ public class MenuUtil {
 	 * or separator). Further contribution processing can still place other
 	 * contributions after this one.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public final static String QUERY_ENDOF = "endof"; //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class MenuUtil {
 	/**
 	 * Contributions of targets to this location will be included with the show
 	 * in menu.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public final static String SHOW_IN_MENU_ID = "popup:org.eclipse.ui.menus.showInMenu"; //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class MenuUtil {
 	/**
 	 * Convenience method to create a standard menu addition The resulting
 	 * string has the format: "menu:[id]?after=additions"
-	 * 
+	 *
 	 * @param id
 	 *            The id of the root element to contribute to
 	 * @return The formatted string
@@ -140,7 +140,7 @@ public class MenuUtil {
 	/**
 	 * Convenience method to create a standard toolbar addition The resulting
 	 * string has the format: "toolbar:[id]?after=additions"
-	 * 
+	 *
 	 * @param id
 	 *            The id of the root element to contribute to
 	 * @return The formatted string

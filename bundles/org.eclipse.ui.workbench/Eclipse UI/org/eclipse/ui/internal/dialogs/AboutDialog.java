@@ -80,7 +80,7 @@ public class AboutDialog extends TrayDialog {
     private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
 
     private StyledText text;
-    
+
     private AboutTextManager aboutTextManager;
 
     /**
@@ -123,7 +123,7 @@ public class AboutDialog extends TrayDialog {
 					IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 					InstallationDialog dialog = new InstallationDialog(getShell(), workbenchWindow);
 					dialog.setModalParent(AboutDialog.this);
-					dialog.open();	
+					dialog.open();
 				}
 			});
             break;
@@ -154,9 +154,9 @@ public class AboutDialog extends TrayDialog {
 
     /**
      * Add buttons to the dialog's button bar.
-     * 
+     *
      * Subclasses should override.
-     * 
+     *
      * @param parent
      *            the button bar composite
      */
@@ -164,7 +164,7 @@ public class AboutDialog extends TrayDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createButton(parent, DETAILS_ID, WorkbenchMessages.AboutDialog_DetailsButton, false); 
+        createButton(parent, DETAILS_ID, WorkbenchMessages.AboutDialog_DetailsButton, false);
 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -204,7 +204,7 @@ public class AboutDialog extends TrayDialog {
         }
 
         // create a composite which is the parent of the top area and the bottom
-        // button bar, this allows there to be a second child of this composite with 
+        // button bar, this allows there to be a second child of this composite with
         // a banner background on top but not have on the bottom
         Composite workArea = new Composite(parent, SWT.NONE);
         GridLayout workLayout = new GridLayout();
@@ -220,7 +220,7 @@ public class AboutDialog extends TrayDialog {
         Color foreground = JFaceColors.getBannerForeground(parent.getDisplay());
         Composite top = (Composite) super.createDialogArea(workArea);
 
-        // override any layout inherited from createDialogArea 
+        // override any layout inherited from createDialogArea
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -231,7 +231,7 @@ public class AboutDialog extends TrayDialog {
         top.setBackground(background);
         top.setForeground(foreground);
 
-        // the image & text	
+        // the image & text
         final Composite topContainer = new Composite(top, SWT.NONE);
         topContainer.setBackground(background);
         topContainer.setForeground(foreground);
@@ -243,7 +243,7 @@ public class AboutDialog extends TrayDialog {
         layout.verticalSpacing = 0;
         layout.horizontalSpacing = 0;
         topContainer.setLayout(layout);
-        
+
 
         GC gc = new GC(parent);
         // arbitrary default
@@ -256,7 +256,7 @@ public class AboutDialog extends TrayDialog {
         finally {
         	gc.dispose();
         }
-        
+
         //image on left side of dialog
         if (aboutImage != null) {
             Label imageLabel = new Label(topContainer, SWT.NONE);
@@ -271,7 +271,7 @@ public class AboutDialog extends TrayDialog {
             imageLabel.setImage(aboutImage);
             topContainerHeightHint = Math.max(topContainerHeightHint, aboutImage.getBounds().height);
         }
-        
+
         GridData data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.verticalAlignment = GridData.FILL;
@@ -279,7 +279,7 @@ public class AboutDialog extends TrayDialog {
         data.grabExcessVerticalSpace = true;
         data.heightHint = topContainerHeightHint;
         topContainer.setLayoutData(data);
-        
+
         if (item != null) {
 			final int minWidth = 400; // This value should really be calculated
         	// from the computeSize(SWT.DEFAULT,
@@ -295,7 +295,7 @@ public class AboutDialog extends TrayDialog {
 
     		final Composite textComposite = new Composite(scroller, SWT.NONE);
     		textComposite.setBackground(background);
-    		
+
     		layout = new GridLayout();
     		textComposite.setLayout(layout);
 
@@ -309,12 +309,12 @@ public class AboutDialog extends TrayDialog {
             text.setCursor(null);
             text.setBackground(background);
             text.setForeground(foreground);
-            
+
             aboutTextManager = new AboutTextManager(text);
             aboutTextManager.setItem(item);
-            
+
             createTextMenu();
-            
+
     		GridData gd = new GridData();
     		gd.verticalAlignment = GridData.BEGINNING;
     		gd.horizontalAlignment = GridData.FILL;
@@ -363,14 +363,14 @@ public class AboutDialog extends TrayDialog {
 
         // add image buttons for bundle groups that have them
         Composite bottom = (Composite) super.createDialogArea(workArea);
-        // override any layout inherited from createDialogArea 
+        // override any layout inherited from createDialogArea
         layout = new GridLayout();
         bottom.setLayout(layout);
         data = new GridData();
         data.horizontalAlignment = SWT.FILL;
         data.verticalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = true;
-        
+
         bottom.setLayoutData(data);
 
         createFeatureImageButtonRow(bottom);
@@ -386,7 +386,7 @@ public class AboutDialog extends TrayDialog {
 
     /**
 	 * Create the context menu for the text widget.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private void createTextMenu() {
@@ -407,7 +407,7 @@ public class AboutDialog extends TrayDialog {
 				textManager.dispose();
 			}
 		});
-		
+
 	}
 
 	private void createFeatureImageButtonRow(Composite parent) {
@@ -439,7 +439,7 @@ public class AboutDialog extends TrayDialog {
         images.add(featureImage);
         button.setImage(featureImage);
         button.setToolTipText(info.getProviderName());
-        
+
         button.getAccessible().addAccessibleListener(new AccessibleAdapter(){
 			@Override
 			public void getName(AccessibleEvent e) {

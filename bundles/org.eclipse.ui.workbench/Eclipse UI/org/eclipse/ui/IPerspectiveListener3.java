@@ -11,7 +11,7 @@
 package org.eclipse.ui;
 
 /**
- * Extension interface to <code>IPerspectiveListener</code> which 
+ * Extension interface to <code>IPerspectiveListener</code> which
  * adds support for listening to perspective open and close events.
  * <p>
  * This interface may be implemented by clients.
@@ -26,7 +26,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
     /**
      * Notifies this listener that a perspective in the given page has been
      * opened.
-     * 
+     *
      * @param page
      *            the page containing the opened perspective
      * @param perspective
@@ -39,7 +39,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
     /**
      * Notifies this listener that a perspective in the given page has been
      * closed.
-     * 
+     *
      * @param page
      *            the page containing the closed perspective
      * @param perspective
@@ -53,7 +53,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
     /**
      * Notifies this listener that a perspective in the given page has been
      * deactivated.
-     * 
+     *
      * @param page
      *            the page containing the deactivated perspective
      * @param perspective
@@ -66,7 +66,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
     /**
      * Notifies this listener that a perspective in the given page has been
      * saved as a new perspective with a different perspective descriptor.
-     * 
+     *
      * @param page
      *            the page containing the saved perspective
      * @param oldPerspective

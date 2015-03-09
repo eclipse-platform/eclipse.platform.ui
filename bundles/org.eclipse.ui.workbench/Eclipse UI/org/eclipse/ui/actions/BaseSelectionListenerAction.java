@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Event;
 
 /**
  * The abstract superclass for actions that listen to selection change events.
- * This implementation tracks the current selection (see 
- * <code>getStructuredSelection</code>) and provides a convenient place to 
+ * This implementation tracks the current selection (see
+ * <code>getStructuredSelection</code>) and provides a convenient place to
  * monitor selection changes that could affect the availability of the action.
  * <p>
  * Subclasses must implement the following <code>IAction</code> method:
@@ -54,7 +54,7 @@ public abstract class BaseSelectionListenerAction extends Action implements
     private IStructuredSelection selection = new StructuredSelection();
 
     /**
-     * Running flag:  <code>true</code> iff the action is running.  
+     * Running flag:  <code>true</code> iff the action is running.
      */
     private boolean running = false;
 
@@ -67,7 +67,7 @@ public abstract class BaseSelectionListenerAction extends Action implements
     /**
      * Creates a new action with the given text.
      *
-     * @param text the string used as the text for the action, 
+     * @param text the string used as the text for the action,
      *   or <code>null</code> if there is no text
      */
     protected BaseSelectionListenerAction(String text) {
@@ -125,8 +125,8 @@ public abstract class BaseSelectionListenerAction extends Action implements
     }
 
     /**
-     * The <code>BaseSelectionListenerAction</code> implementation of this 
-     * <code>ISelectionChangedListener</code> method calls 
+     * The <code>BaseSelectionListenerAction</code> implementation of this
+     * <code>ISelectionChangedListener</code> method calls
      * <code>selectionChanged(IStructuredSelection)</code> assuming the selection is
      * a structured one. Subclasses should override the <code>updateSelection</code>
      * method to react to selection changes.

@@ -28,11 +28,11 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 /**
  * The PreferencesUtil class is the class that opens a properties or preference
  * dialog on a set of ids.
- * 
+ *
  * @since 3.1
  */
 public final class PreferencesUtil {
-	
+
 	/**
 	 * Constant denoting no option.
 	 * @since 3.5
@@ -49,17 +49,17 @@ public final class PreferencesUtil {
 	 * @since 3.5
 	 */
 	public final static int OPTION_FILTER_LOCKED = 1;
-	
+
 	/**
 	 * Apply the data to the first page if there is any.
-	 * 
+	 *
 	 * @param data
 	 *            The data to be applied
 	 * @param displayedIds
 	 *            The ids to filter to.
 	 * @param dialog
 	 *            The dialog to apply to.
-	 * @param options 
+	 * @param options
 	 */
 	private static void applyOptions(Object data, String[] displayedIds,
 			FilteredPreferenceDialog dialog, int options) {
@@ -74,7 +74,7 @@ public final class PreferencesUtil {
 		if (displayedIds != null) {
 			dialog.showOnly(displayedIds);
 		}
-		
+
 		if ((options & OPTION_FILTER_LOCKED) != 0) {
 			dialog.setLocked(true);
 		}
@@ -89,7 +89,7 @@ public final class PreferencesUtil {
 	 * <code>open()</code>. The call to <code>open()</code> will not return
 	 * until the dialog closes, so this is the last chance to manipulate the
 	 * dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            The Shell to parent the dialog off of if it is not already
 	 *            created. May be <code>null</code> in which case the active
@@ -106,7 +106,7 @@ public final class PreferencesUtil {
 	 *            Data that will be passed to all of the preference pages to be
 	 *            applied as specified within the page as they are created. If
 	 *            the data is <code>null</code> nothing will be called.
-	 * 
+	 *
 	 * @return a preference dialog.
 	 * @since 3.1
 	 * @see PreferenceDialog#PreferenceDialog(Shell, PreferenceManager)
@@ -124,7 +124,7 @@ public final class PreferencesUtil {
 	 * call <code>open()</code>. The call to <code>open()</code> will not
 	 * return until the dialog closes, so this is the last chance to manipulate
 	 * the dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell to use to parent the dialog if required.
 	 * @param propertyPageId
@@ -141,7 +141,7 @@ public final class PreferencesUtil {
 	 *            Data that will be passed to all of the preference pages to be
 	 *            applied as specified within the page as they are created. If
 	 *            the data is <code>null</code> nothing will be called.
-	 * 
+	 *
 	 * @return A preference dialog showing properties for the selection or
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.1
@@ -162,7 +162,7 @@ public final class PreferencesUtil {
 	 * <code>open()</code>. The call to <code>open()</code> will not return
 	 * until the dialog closes, so this is the last chance to manipulate the
 	 * dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            The Shell to parent the dialog off of if it is not already
 	 *            created. May be <code>null</code> in which case the active
@@ -181,7 +181,7 @@ public final class PreferencesUtil {
 	 *            the data is <code>null</code> nothing will be called.
 	 * @param options
 	 *            a bitwise OR of option constants
-	 * 
+	 *
 	 * @return a preference dialog.
 	 * @since 3.5
 	 * @see PreferenceDialog#PreferenceDialog(Shell, PreferenceManager)
@@ -190,9 +190,9 @@ public final class PreferencesUtil {
 			String preferencePageId, String[] displayedIds, Object data, int options) {
 		FilteredPreferenceDialog dialog = WorkbenchPreferenceDialog
 		.createDialogOn(shell, preferencePageId);
-		
+
 		applyOptions(data, displayedIds, dialog, options);
-		
+
 		return dialog;
 	}
 
@@ -203,7 +203,7 @@ public final class PreferencesUtil {
 	 * call <code>open()</code>. The call to <code>open()</code> will not return
 	 * until the dialog closes, so this is the last chance to manipulate the
 	 * dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell to use to parent the dialog if required.
 	 * @param propertyPageId
@@ -222,7 +222,7 @@ public final class PreferencesUtil {
 	 *            the data is <code>null</code> nothing will be called.
 	 * @param options
 	 *            a bitwise OR of option constants
-	 * 
+	 *
 	 * @return A preference dialog showing properties for the selection or
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.5
@@ -230,18 +230,18 @@ public final class PreferencesUtil {
 	public static final PreferenceDialog createPropertyDialogOn(Shell shell,
 			final IAdaptable element, String propertyPageId,
 			String[] displayedIds, Object data, int options) {
-		
+
 		FilteredPreferenceDialog dialog = PropertyDialog.createDialogOn(shell,
 				propertyPageId, element);
-		
+
 		if (dialog == null) {
 			return null;
 		}
-		
+
 		applyOptions(data, displayedIds, dialog, options);
-		
+
 		return dialog;
-		
+
 	}
 
 	/**
@@ -251,7 +251,7 @@ public final class PreferencesUtil {
 	 * call <code>open()</code>. The call to <code>open()</code> will not return
 	 * until the dialog closes, so this is the last chance to manipulate the
 	 * dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            The shell to use to parent the dialog if required.
 	 * @param propertyPageId
@@ -270,7 +270,7 @@ public final class PreferencesUtil {
 	 *            the data is <code>null</code> nothing will be called.
 	 * @param options
 	 *            a bitwise OR of option constants
-	 * 
+	 *
 	 * @return A preference dialog showing properties for the selection or
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.6
@@ -289,7 +289,7 @@ public final class PreferencesUtil {
 	/**
 	 * Indicates whether the specified element has at least one property page
 	 * contributor.
-	 * 
+	 *
 	 * @param element
 	 *            an adapter element of a property page
 	 * @return true for having at least one contributor; false otherwise

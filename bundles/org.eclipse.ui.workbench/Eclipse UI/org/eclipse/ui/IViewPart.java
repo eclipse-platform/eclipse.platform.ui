@@ -47,31 +47,31 @@ package org.eclipse.ui;
  * border trim. Note that this is considered to be a hint to the presentation,
  * and not all presentations may honor size constraints.
  * </p>
- * 
+ *
  * @see IWorkbenchPage#showView
  * @see org.eclipse.ui.part.ViewPart
  * @see ISizeProvider
  */
 public interface IViewPart extends IWorkbenchPart, IPersistable {
     /**
-     * Returns the site for this view. 
+     * Returns the site for this view.
      * This method is equivalent to <code>(IViewSite) getSite()</code>.
-     * <p>  
-     * The site can be <code>null</code> while the view is being initialized. 
+     * <p>
+     * The site can be <code>null</code> while the view is being initialized.
      * After the initialization is complete, this value must be non-<code>null</code>
      * for the remainder of the view's life cycle.
      * </p>
-     * 
+     *
      * @return the view site; this value may be <code>null</code> if the view
      *         has not yet been initialized
      */
     public IViewSite getViewSite();
 
     /**
-     * Initializes this view with the given view site.  
+     * Initializes this view with the given view site.
      * <p>
      * This method is automatically called by the workbench shortly after the
-     * part is instantiated.  It marks the start of the views's lifecycle. Clients must 
+     * part is instantiated.  It marks the start of the views's lifecycle. Clients must
      * not call this method.
      * </p>
      *
@@ -86,8 +86,8 @@ public interface IViewPart extends IWorkbenchPart, IPersistable {
      * session.  Where possible, the view should try to recreate that state
      * within the part controls.
      * <p>
-     * This method is automatically called by the workbench shortly after the part 
-     * is instantiated.  It marks the start of the views's lifecycle. Clients must 
+     * This method is automatically called by the workbench shortly after the part
+     * is instantiated.  It marks the start of the views's lifecycle. Clients must
      * not call this method.
      * </p>
      *

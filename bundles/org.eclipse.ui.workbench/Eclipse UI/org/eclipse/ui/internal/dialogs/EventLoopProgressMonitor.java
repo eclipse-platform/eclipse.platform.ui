@@ -21,8 +21,8 @@ import org.eclipse.ui.internal.ExceptionHandler;
 /**
  * Used to run an event loop whenever progress monitor methods
  * are invoked.  <p>
- * This is needed since editor save operations are done in the UI thread.  
- * Although save operations should be written to do the work in the non-UI thread, 
+ * This is needed since editor save operations are done in the UI thread.
+ * Although save operations should be written to do the work in the non-UI thread,
  * this was not done for 1.0, so this was added to keep the UI live
  * (including allowing the cancel button to work).
  */
@@ -57,7 +57,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements
         super(monitor);
     }
 
-    /** 
+    /**
      * @see IProgressMonitor#beginTask
      */
     @Override
@@ -131,7 +131,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements
             }
 
             // Only run the event loop for so long.
-            // Otherwise, this would never return if some other thread was 
+            // Otherwise, this would never return if some other thread was
             // constantly generating events.
             if (System.currentTimeMillis() - t > T_MAX) {
                 break;

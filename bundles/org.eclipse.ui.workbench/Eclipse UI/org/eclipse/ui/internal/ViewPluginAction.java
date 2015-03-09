@@ -65,7 +65,7 @@ public final class ViewPluginAction extends PartPluginAction {
 	public boolean isOkToCreateDelegate() {
         return super.isOkToCreateDelegate() && viewPart != null;
     }
-	
+
 	@Override
 	public void dispose() {
 		unregisterSelectionListener(viewPart);

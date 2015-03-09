@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
  * This allows for much more efficient layouts, since most of the cache
  * can be reused when a child control changes.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface ICachingLayout {

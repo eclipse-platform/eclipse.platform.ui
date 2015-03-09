@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * elements.
  */
 public class ViewerActionBuilder extends PluginActionBuilder {
-    
+
 
     private ISelectionProvider provider;
 
@@ -90,7 +90,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
      * @param id the menu id
      * @param prov the selection provider for the control containing the menu
      * @param part the part containing the menu.
-     * @return <code>true</code> if 1 or more items were read.  
+     * @return <code>true</code> if 1 or more items were read.
      */
     public boolean readViewerContributions(String id, ISelectionProvider prov,
             IWorkbenchPart part) {
@@ -113,7 +113,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 
         /**
          * Create a new ViewerContribution.
-         * 
+         *
          * @param selProvider the selection provider
          */
         public ViewerContribution(ISelectionProvider selProvider) {
@@ -126,7 +126,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 
         /**
          * Set the visibility test.
-         * 
+         *
          * @param element the element
          */
         public void setVisibilityTest(IConfigurationElement element) {
@@ -153,7 +153,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
                         toolAppendIfMissing);
 			}
         }
-		
+
 		@Override
 		public void dispose() {
 			if (selProvider != null) {
@@ -168,7 +168,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		 * the contribution itself is added, and propagates
 		 * the selection changed notification to all actions.
 		 * This simplifies cleanup, in addition to potentially reducing the number of listeners.
-		 * 
+		 *
 		 * @see ISelectionChangedListener
 		 * @since 3.1
 		 */

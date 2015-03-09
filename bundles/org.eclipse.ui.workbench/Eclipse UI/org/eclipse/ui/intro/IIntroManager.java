@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.IWorkbench#getIntroManager()
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -36,10 +36,10 @@ public interface IIntroManager {
 
     /**
      * Closes the given intro part.
-     * 
+     *
      * @param part the intro part
-     * @return <code>true</code> if the intro part was closed, and 
-     * <code>false</code> otherwise.  <code>false</code> is returned 
+     * @return <code>true</code> if the intro part was closed, and
+     * <code>false</code> otherwise.  <code>false</code> is returned
      * if part is <code>null</code> or it is not the intro part returned
      * by {@link #getIntro()}.
      */
@@ -48,9 +48,9 @@ public interface IIntroManager {
     /**
      * Returns the intro part. Returns <code>null</code> if there is no intro
      * part, if it has been previously closed via {@link #closeIntro(IIntroPart)}
-     * or if there is an intro part but {@link #showIntro(IWorkbenchWindow, boolean)} 
+     * or if there is an intro part but {@link #showIntro(IWorkbenchWindow, boolean)}
      * has not yet been called to create it.
-     * 
+     *
      * @return the intro part, or <code>null</code> if none is available
      */
     public IIntroPart getIntro();
@@ -58,10 +58,10 @@ public interface IIntroManager {
     /**
      * Return whether an intro is available. Note that this checks whether
      * there is an applicable intro part that could be instantiated and shown
-     * to the user. 
+     * to the user.
      * Use {@link #getIntro()} to discover whether an intro part has already
      * been created.
-     * 
+     *
      * @return <code>true</code> if there is an intro that could be shown, and
      * <code>false</code> if there is no intro
      */
@@ -69,12 +69,12 @@ public interface IIntroManager {
 
     /**
      * Return the standby state of the given intro part.
-     * 
+     *
      * @param part the intro part
      * @return <code>true</code> if the part in its partially
      * visible standy mode, and <code>false</code> if in its fully visible state.
-     * <code>false</code> is returned if part is <code>null</code> or it is not 
-     * the intro part returned by {@link #getIntro()}.    
+     * <code>false</code> is returned if part is <code>null</code> or it is not
+     * the intro part returned by {@link #getIntro()}.
      */
     boolean isIntroStandby(IIntroPart part);
 
@@ -85,13 +85,13 @@ public interface IIntroManager {
      * allow them to work. In full mode, the part should be fully visible and
      * be the center of the user's attention.
      * <p>
-     * This method does nothing if the part is <code>null</code> or is not 
+     * This method does nothing if the part is <code>null</code> or is not
      * the intro part returned by {@link #getIntro()}.
      * </p>
-     * 
+     *
      * @param part the intro part, or <code>null</code>
      * @param standby <code>true</code> to put the part in its partially
-     * visible standy mode, and <code>false</code> to make it fully visible.  
+     * visible standy mode, and <code>false</code> to make it fully visible.
      */
     public void setIntroStandby(IIntroPart part, boolean standby);
 
@@ -99,8 +99,8 @@ public interface IIntroManager {
      * Shows the intro part in the given workbench window. If the intro part has
      * not been created yet, one will be created. If the intro part is currently
      * being shown in some workbench window, that other window is made active.
-     * 
-     * @param preferredWindow the preferred workbench window, or 
+     *
+     * @param preferredWindow the preferred workbench window, or
      * <code>null</code> to indicate the currently active workbench window
      * @param standby <code>true</code> to put the intro part in its partially
      * visible standy mode, and <code>false</code> to make it fully visible
@@ -110,13 +110,13 @@ public interface IIntroManager {
      */
     public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
             boolean standby);
-    
+
     /**
 	 * Returns <code>true</code> if there is an intro content detector and it
 	 * reports that new intro content is available.
-	 * 
+	 *
 	 * @return <code>true</code> if new intro content is available
-	 * 
+	 *
 	 * @since 3.3
 	 */
     public boolean isNewContentAvailable();

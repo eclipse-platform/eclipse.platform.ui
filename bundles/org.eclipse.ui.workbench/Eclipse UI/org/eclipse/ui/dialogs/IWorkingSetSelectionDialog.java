@@ -28,19 +28,19 @@ import org.eclipse.ui.IWorkingSet;
  */
 public interface IWorkingSetSelectionDialog {
     /**
-     * Returns the working sets selected in the dialog or 
+     * Returns the working sets selected in the dialog or
      * <code>null</code> if the dialog was canceled.
-     * 
+     *
      * @return the working sets selected in the dialog.
      */
     public IWorkingSet[] getSelection();
 
     /**
      * Displays the working set selection dialog.
-     * 
-     * @return Window.OK if the dialog closes with the working 
+     *
+     * @return Window.OK if the dialog closes with the working
      * 	set selection confirmed.
-     * 	Window.CANCEL if the dialog closes with the working set 
+     * 	Window.CANCEL if the dialog closes with the working set
      * 	selection dismissed.
      * @see org.eclipse.jface.window.Window
      */
@@ -48,7 +48,7 @@ public interface IWorkingSetSelectionDialog {
 
     /**
      * Sets the working sets that are initially selected in the dialog.
-     * 
+     *
      * @param workingSets the working sets to select in the dialog.
      */
     public void setSelection(IWorkingSet[] workingSets);

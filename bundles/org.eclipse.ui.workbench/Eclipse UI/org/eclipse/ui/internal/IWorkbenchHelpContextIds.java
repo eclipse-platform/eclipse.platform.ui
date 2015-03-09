@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 95292 - [Intro] 
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 95292 - [Intro]
  *     		Help > Welcome missing F1 context
  *******************************************************************************/
 
@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
+ *
  * @issue this class has been xcloned to org.eclipse.ui.internal.ide package;
  *        remove all IDE-specific constants from here
  */
@@ -293,7 +293,7 @@ public interface IWorkbenchHelpContextIds {
 
 	public static final String WORKSPACES_PREFERENCE_PAGE = PREFIX
 	+ "workspaces_preference_page_context"; //$NON-NLS-1$
-	
+
 	public static final String RESPONSIVE_UI = PREFIX + "responsive_ui_context"; //$NON-NLS-1$
 
 	// // Windows
@@ -315,7 +315,7 @@ public interface IWorkbenchHelpContextIds {
 			+ "import_wizard_selection_wizard_page_context"; //$NON-NLS-1$
 
 	public static final String WORKING_SET_TYPE_PAGE = PREFIX
-			+ "working_set_type_page"; //$NON-NLS-1$	
+			+ "working_set_type_page"; //$NON-NLS-1$
 
 	// Wizards
 	public static final String NEW_WIZARD = PREFIX + "new_wizard_context"; //$NON-NLS-1$
@@ -328,10 +328,10 @@ public interface IWorkbenchHelpContextIds {
 	public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context"; //$NON-NLS-1$
 
 	public static final String WORKING_SET_NEW_WIZARD = PREFIX
-			+ "working_set_new_wizard_context"; //$NON-NLS-1$	
+			+ "working_set_new_wizard_context"; //$NON-NLS-1$
 
 	public static final String WORKING_SET_EDIT_WIZARD = PREFIX
-			+ "working_set_edit_wizard_context"; //$NON-NLS-1$	
+			+ "working_set_edit_wizard_context"; //$NON-NLS-1$
 
 	public static final String CAPABILITY_PREFERENCE_PAGE = PREFIX
 			+ "capabilities_preference_page_context"; //$NON-NLS-1$

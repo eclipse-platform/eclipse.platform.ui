@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * shell doesn't match, then it will be allowed to match the active workbench
  * window.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ActiveShellExpression extends Expression {
@@ -51,7 +51,7 @@ public final class ActiveShellExpression extends Expression {
 
 	/**
 	 * Constructs a new instance of <code>ActiveShellExpression</code>
-	 * 
+	 *
 	 * @param activeShell
 	 *            The shell to match with the active shell; <code>null</code>
 	 *            if it will match any active shell.
@@ -61,9 +61,9 @@ public final class ActiveShellExpression extends Expression {
 	}
 
 	/**
-	 * Expression information for this expression.  Namely active shell and 
+	 * Expression information for this expression.  Namely active shell and
 	 * active workbench window name.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -93,7 +93,7 @@ public final class ActiveShellExpression extends Expression {
 	 * <code>EvaluationResult.TRUE</code>. Similarly, if the active workbench
 	 * window shell defined by the context matches the shell from this
 	 * expression, then this evaluates to <code>EvaluationResult.TRUE</code>.
-	 * 
+	 *
 	 * @param context
 	 *            The context from which the current state is determined; must
 	 *            not be <code>null</code>.

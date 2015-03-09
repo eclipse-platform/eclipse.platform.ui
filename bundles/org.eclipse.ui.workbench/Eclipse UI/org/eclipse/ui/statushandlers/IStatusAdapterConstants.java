@@ -17,11 +17,11 @@ import org.eclipse.ui.PlatformUI;
 /**
  * This interface contains common constants important for
  * <code>StatusAdapter</code>.
- * 
+ *
  * <p>
  * This interface should not be implemented or extended by clients.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public interface IStatusAdapterConstants {
@@ -35,7 +35,7 @@ public interface IStatusAdapterConstants {
 	/**
 	 * This property is used to add title to the adapter. If the adapter is
 	 * shown in a dialog, this property is used to create title of the dialog.
-	 * 
+	 *
 	 * <p>
 	 * The property must be of type <code>String</code>.
 	 * </p>
@@ -47,7 +47,7 @@ public interface IStatusAdapterConstants {
 	 * This property is used to add a timestamp to the adapter. If the adapter
 	 * is shown in the UI, this property can be used for sorting and showing
 	 * information about the status creation time.
-	 * 
+	 *
 	 * <p>
 	 * The property must be of type <code>Long</code>.
 	 * </p>
@@ -59,7 +59,7 @@ public interface IStatusAdapterConstants {
 	 * This property is used to add an explanation to the adapter. If the
 	 * adapter is shown in the UI, this property should be used to present
 	 * additional explanation for the status.
-	 * 
+	 *
 	 * <p>
 	 * The property must be of type <code>String</code>.
 	 * </p>
@@ -71,7 +71,7 @@ public interface IStatusAdapterConstants {
 	 * This property is used to add a hint to the adapter. If the adapter is
 	 * shown in the UI, this property should be used to present suggested
 	 * actions that have to be performed by the user.
-	 * 
+	 *
 	 * <p>
 	 * The property must be of type <code>String</code>.
 	 * </p>

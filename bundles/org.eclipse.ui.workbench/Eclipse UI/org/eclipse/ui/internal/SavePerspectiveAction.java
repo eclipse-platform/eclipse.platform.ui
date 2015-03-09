@@ -31,7 +31,7 @@ public class SavePerspectiveAction extends PerspectiveAction {
         setText(WorkbenchMessages.SavePerspective_text);
         setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS);
         // @issue missing action id
-        setToolTipText(WorkbenchMessages.SavePerspective_toolTip); 
+        setToolTipText(WorkbenchMessages.SavePerspective_toolTip);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
     }

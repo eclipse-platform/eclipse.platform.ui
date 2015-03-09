@@ -38,7 +38,7 @@ public final class LegacyResourceSupport {
         "org.eclipse.core.resources.IProject", //$NON-NLS-1$
         "org.eclipse.core.resources.IFile", //$NON-NLS-1$
 	};
-	
+
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.core.resources.IResource")</code>;
@@ -54,7 +54,7 @@ public final class LegacyResourceSupport {
      * @since 3.1
      */
     private static Class ifileClass;
-    
+
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.ui.IContributorResourceAdapter")</code>;
@@ -66,19 +66,19 @@ public final class LegacyResourceSupport {
     /**
      * Cached value of </code> org.eclipse.ui.IContributorResourceAdapter.getAdaptedResource(IAdaptable) </code>
      * <code>null</code> if not initialized or not present.
-     * 
+     *
      * @since 3.3
      */
     private static Method getAdaptedResourceMethod = null;
-    
+
     /**
      * Cached value of </code> org.eclipse.ui.IContributorResourceAdapter2.getAdaptedResourceMapping(IAdaptable) </code>
      * <code>null</code> if not initialized or not present.
-     * 
+     *
      * @since 3.3
      */
     private static Method getAdaptedResourceMappingMethod = null;
-    
+
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.ui.ide.IContributorResourceAdapter2")</code>;
@@ -86,7 +86,7 @@ public final class LegacyResourceSupport {
      * @since 3.1
      */
     private static Class icontributorResourceAdapter2Class = null;
-    
+
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter")</code>;
@@ -98,11 +98,11 @@ public final class LegacyResourceSupport {
     /**
      * Cached value for reflective result of <code>DefaultContributorRessourceAdapter.getDefault()</code>.
      * <code>null</code> if not initialized or not present.
-     * 
+     *
      * @since 3.3
      */
     private static Object defaultContributorResourceAdapter = null;
-    
+
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.core.resources.mapping.ResourceMappingr")</code>;
@@ -125,7 +125,7 @@ public final class LegacyResourceSupport {
      * This method exists to avoid explicit references from the generic
      * workbench to the resources plug-in.
      * </p>
-     * 
+     *
      * @return <code>IFile.class</code> or <code>null</code> if class
      * not available
      * @since 3.1
@@ -150,7 +150,7 @@ public final class LegacyResourceSupport {
      * This method exists to avoid explicit references from the generic
      * workbench to the resources plug-in.
      * </p>
-     * 
+     *
      * @return <code>IResource.class</code> or <code>null</code> if class
      * not available
      * @since 3.0
@@ -175,7 +175,7 @@ public final class LegacyResourceSupport {
      * This method exists to avoid explicit references from the generic
      * workbench to the resources plug-in.
      * </p>
-     * 
+     *
      * @return <code>ResourceMapping.class</code> or <code>null</code> if class
      * not available
      * @since 3.1
@@ -192,7 +192,7 @@ public final class LegacyResourceSupport {
         }
         return c;
     }
-    
+
     /**
      * Returns <code>IContributorResourceAdapter.class</code> or
      * <code>null</code> if the class is not available.
@@ -200,7 +200,7 @@ public final class LegacyResourceSupport {
      * This method exists to avoid explicit references from the generic
      * workbench to the IDE plug-in.
      * </p>
-     * 
+     *
      * @return <code>IContributorResourceAdapter.class</code> or
      * <code>null</code> if class not available
      * @since 3.0
@@ -225,7 +225,7 @@ public final class LegacyResourceSupport {
      * This method exists to avoid explicit references from the generic
      * workbench to the IDE plug-in.
      * </p>
-     * 
+     *
      * @return <code>IContributorResourceAdapter.class</code> or
      * <code>null</code> if class not available
      * @since 3.1
@@ -242,7 +242,7 @@ public final class LegacyResourceSupport {
         }
         return c;
     }
-    
+
     private static Class loadClass(String bundleName, String className) {
         if (!resourceAdapterPossible) {
             // tried before and failed
@@ -271,7 +271,7 @@ public final class LegacyResourceSupport {
             return null;
         }
     }
-    
+
     /**
      * Returns <code>DefaultContributorResourceAdapter.class</code> or
      * <code>null</code> if the class is not available.
@@ -279,7 +279,7 @@ public final class LegacyResourceSupport {
      * This method exists to avoid explicit references from the generic
      * workbench to the IDE plug-in.
      * </p>
-     * 
+     *
      * @return <code>DefaultContributorResourceAdapter.class</code> or
      * <code>null</code> if class not available
      * @since 3.0
@@ -296,17 +296,17 @@ public final class LegacyResourceSupport {
         }
         return c;
     }
-    
+
     private static Object getDefaultContributorResourceAdapter() {
         if (defaultContributorResourceAdapter != null) {
             return defaultContributorResourceAdapter;
         }
-        
+
 		// reflective equivalent of
 		//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
-		
+
 			Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
-			if (c != null) {    			
+			if (c != null) {
 				try {
 					Method m  = c.getDeclaredMethod("getDefault", new Class[0]);//$NON-NLS-1$
 					defaultContributorResourceAdapter = m.invoke(null, new Object[0]);
@@ -321,22 +321,22 @@ public final class LegacyResourceSupport {
 					// shouldn't happen - but play it safe
 				} catch (InvocationTargetException e) {
 					// shouldn't happen - but play it safe
-				} 
-    			
-    			
+				}
+
+
 			}
-		
+
 		return null;
 
     }
-    
+
     /**
      * Returns <code>true</code> if the provided type name is an
      * <code>IResource</code>, and <code>false</code> otherwise.
      * @param objectClassName
      * @return <code>true</code> if the provided type name is an
      * <code>IResource</code>, and <code>false</code> otherwise.
-     * 
+     *
      * @since 3.1
      */
     public static boolean isResourceType(String objectClassName) {
@@ -347,24 +347,24 @@ public final class LegacyResourceSupport {
         }
         return false;
     }
-    
+
     /**
      * Returns <code>true</code> if the provided type name is an
      * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
      * @param objectClassName
      * @return <code>true</code> if the provided type name is an
      * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
-     * 
+     *
      * @since 3.1
      */
     public static boolean isResourceMappingType(String objectClassName) {
         return objectClassName.equals("org.eclipse.core.resources.mapping.ResourceMapping"); //$NON-NLS-1$
     }
-    
+
     /**
      * Returns the class search order starting with <code>extensibleClass</code>.
      * The search order is defined in this class' comment.
-     * 
+     *
      * @since 3.1
      */
     private static boolean isInstanceOf(Class clazz, String type) {
@@ -380,19 +380,19 @@ public final class LegacyResourceSupport {
 			if (isInstanceOf(interfaces[i], type)) {
 				return true;
 			}
-		} 
+		}
 		return false;
 	}
-    
+
     /**
      * Returns the adapted resource using the <code>IContributorResourceAdapter</code>
      * registered for the given object. If the Resources plug-in is not loaded
      * the object can not be adapted.
-     * 
+     *
      * @param object the object to adapt to <code>IResource</code>.
      * @return returns the adapted resource using the <code>IContributorResourceAdapter</code>
      * or <code>null</code> if the Resources plug-in is not loaded.
-     * 
+     *
      * @since 3.1
      */
     public static Object getAdaptedContributorResource(Object object) {
@@ -418,7 +418,7 @@ public final class LegacyResourceSupport {
 			}
 			// reflective equivalent of
 			//    result = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
-			
+
 				Method m = getContributorResourceAdapterGetAdaptedResourceMethod();
 				if (m != null) {
 					try {
@@ -431,16 +431,16 @@ public final class LegacyResourceSupport {
 						// shouldn't happen - but play it safe
 					}
 				}
-			
+
 		}
 		return null;
 	}
-    
+
     private static Method getContributorResourceAdapterGetAdaptedResourceMethod() {
         if (getAdaptedResourceMethod != null) {
             return getAdaptedResourceMethod;
         }
-      
+
         Class c = getIContributorResourceAdapterClass();
         if (c != null) {
             try {
@@ -450,10 +450,10 @@ public final class LegacyResourceSupport {
 				// shouldn't happen - but play it safe
 			} catch (NoSuchMethodException e) {
 				// shouldn't happen - but play it safe
-			} 
-            	
+			}
+
         }
-    	
+
     	return null;
 	}
 
@@ -462,7 +462,7 @@ public final class LegacyResourceSupport {
         if (getAdaptedResourceMappingMethod != null) {
             return getAdaptedResourceMappingMethod;
         }
-       
+
         Class c = getIContributorResourceAdapter2Class();
         if (c != null) {
             try {
@@ -472,10 +472,10 @@ public final class LegacyResourceSupport {
 				// do nothing - play it safe
 			} catch (NoSuchMethodException e) {
 				// do nothing - play it safe
-			} 
-            	
+			}
+
         }
-    	
+
     	return null;
 	}
 
@@ -483,11 +483,11 @@ public final class LegacyResourceSupport {
      * Returns the adapted resource mapping using the <code>IContributorResourceAdapter2</code>
      * registered for the given object. If the Resources plug-in is not loaded
      * the object can not be adapted.
-     * 
+     *
      * @param object the object to adapt to <code>ResourceMapping</code>.
      * @return returns the adapted resource using the <code>IContributorResourceAdapter2</code>
      * or <code>null</code> if the Resources plug-in is not loaded.
-     * 
+     *
      * @since 3.1
      */
     public static Object getAdaptedContributorResourceMapping(Object object) {
@@ -521,14 +521,14 @@ public final class LegacyResourceSupport {
                     return null;
                 }
             }
-            
-           
+
+
 	            // reflective equivalent of
 	            //    result = ((IContributorResourceAdapter2) resourceAdapter).getAdaptedResource(adaptable);
 
 	         Method m = getContributorResourceAdapter2GetAdaptedResourceMappingMethod();
 	         if (m != null) {
-	            	
+
 				try {
 					Object result  = m.invoke(resourceMappingAdapter, new Object[]{adaptable});
 					if (result != null) {
@@ -541,10 +541,10 @@ public final class LegacyResourceSupport {
 				} catch (InvocationTargetException e) {
 					 // shouldn't happen - but play it safe
 				}
-	            	
+
 	         }
-            
-            
+
+
             // If we get here, that means that the object in question doesn't adapt to resource mapping
             // and it's contributed adapter doesn't do the adaptation either.
             // Before we fail, we will attempt to adapt the object to IResource and then to ResourceMapping
@@ -552,16 +552,16 @@ public final class LegacyResourceSupport {
             if (r != null) {
             	return Platform.getAdapterManager().getAdapter(r, resourceMappingClass);
             }
-            
+
             // we've exhausted every avenue so just return null
             return null;
         }
         // Fallback to querying the adapter manager directly when the object isn't an IAdaptable
         return Platform.getAdapterManager().getAdapter(object, resourceMappingClass);
     }
-    
+
     /**
-     * Adapts a selection to the given objectClass considering the Legacy resource 
+     * Adapts a selection to the given objectClass considering the Legacy resource
      * support. Non resource objectClasses are adapted using the <code>IAdapterManager</code>
      * and this may load the plug-in that contributes the adapter factory.
      * <p>
@@ -570,23 +570,23 @@ public final class LegacyResourceSupport {
      * @param selection the selection to adapt
      * @param objectClass the class name to adapt the selection to
      * @return an adapted selection
-     * 
+     *
      * @since 3.1
      */
     public static IStructuredSelection adaptSelection(IStructuredSelection selection, String objectClass) {
 		List newSelection = new ArrayList(10);
 		for (Iterator it = selection.iterator(); it.hasNext();) {
 			Object element = it.next();
-			Object adaptedElement = getAdapter(element, objectClass);		
+			Object adaptedElement = getAdapter(element, objectClass);
 			if (adaptedElement != null) {
 				newSelection.add(adaptedElement);
 			}
 		}
 		return new StructuredSelection(newSelection);
 	}
-    
+
     /**
-     * Adapts an object to a specified objectClass considering the Legacy resource 
+     * Adapts an object to a specified objectClass considering the Legacy resource
      * support. Non resource objectClasses are adapted using the <code>IAdapterManager</code>
      * and this may load the plug-in that contributes the adapter factory.
      * <p>
@@ -595,16 +595,16 @@ public final class LegacyResourceSupport {
      * </p>
      * @param element the element to adapt
      * @param objectClass the class name to adapt the selection to
-     * @return an adapted element or <code>null</code> if the 
+     * @return an adapted element or <code>null</code> if the
      * element could not be adapted.
-     * 
+     *
      * @since 3.1
-     */    
+     */
     public static Object getAdapter(Object element, String objectClass) {
 		Object adaptedElement = null;
 		if (isInstanceOf(element.getClass(), objectClass)) {
 			adaptedElement = element;
-		} else {		
+		} else {
 			// Handle IResource
 			if (LegacyResourceSupport.isResourceType(objectClass)) {
 				adaptedElement = getAdaptedResource(element);
@@ -626,13 +626,13 @@ public final class LegacyResourceSupport {
 	}
 
 	/**
-     * Adapt the given element to an <code>IResource</code> using the following 
+     * Adapt the given element to an <code>IResource</code> using the following
      * search order:
      * <ol>
      * <li> using the IContributorResourceAdapter registered for the given element, or
      * <li> directly asking the element if it adapts.
      * </ol>
-     * 
+     *
      * @param element the element to adapt
      * @return an <code>IResource</code> instance if the element could be adapted or <code>null</code>
      * otherwise.
@@ -652,13 +652,13 @@ public final class LegacyResourceSupport {
 	}
 
     /**
-     * Adapt the given element to an <code>ResourceMapping</code> using the following 
+     * Adapt the given element to an <code>ResourceMapping</code> using the following
      * search order:
      * <ol>
      * <li> using the IContributorResourceAdapter2 registered for the given element, or
      * <li> directly asking the element if it adapts.
      * </ol>
-     * 
+     *
      * @param element the element to adapt
      * @return an <code>ResourceMapping</code> instance if the element could be adapted or <code>null</code>
      * otherwise.
@@ -676,7 +676,7 @@ public final class LegacyResourceSupport {
         }
         return adaptedValue;
     }
-    
+
     /**
      * Prevents construction
      */

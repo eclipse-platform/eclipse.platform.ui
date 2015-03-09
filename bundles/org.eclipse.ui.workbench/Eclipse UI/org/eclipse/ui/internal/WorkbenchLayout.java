@@ -36,9 +36,9 @@ import org.eclipse.ui.internal.layout.TrimCommonUIHandle;
  * without consulting the Platform UI group. No guarantees are made as to the
  * stability of the API.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class WorkbenchLayout extends Layout {
 	private static int defaultMargin = 5;
@@ -46,9 +46,9 @@ public class WorkbenchLayout extends Layout {
 	/**
 	 * This is a convenience class that caches information for a single 'tiled'
 	 * line of trim.
-	 * 
+	 *
 	 * @since 3.2
-	 * 
+	 *
 	 */
 	private class TrimLine {
 		/**
@@ -82,9 +82,9 @@ public class WorkbenchLayout extends Layout {
 	 * <p>
 	 * NOTE: This class is expected to be removed once the CBanner mods are in.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.2
-	 * 
+	 *
 	 */
 	private class LeftBannerLayout extends Layout {
 
@@ -172,7 +172,7 @@ public class WorkbenchLayout extends Layout {
 	/**
 	 * Create the CBanner control used to control the horizontal span of the
 	 * primary and secondary command areas.
-	 * 
+	 *
 	 * @param workbenchComposite
 	 *            The workbench acting as the parent of the CBanner
 	 */
@@ -336,7 +336,7 @@ public class WorkbenchLayout extends Layout {
 	/**
 	 * Indicates whether or not the layout should use the CBanner or tile the
 	 * primary and secondary trim areas one above the other.
-	 * 
+	 *
 	 * @return <code>true</code> iff the layout should use the CBanner.
 	 */
 	private boolean useCBanner() {
@@ -426,12 +426,12 @@ public class WorkbenchLayout extends Layout {
 	 * the trim area's controls into multiple lines based on the length of the
 	 * major dimension.
 	 * </p>
-	 * 
+	 *
 	 * @param areaId
 	 *            The area id to compute the size for
 	 * @param majorHint
 	 *            The length of the major dimension
-	 * 
+	 *
 	 * @return The computed size
 	 */
 	private Point computeSize(String areaId, int majorHint) {
@@ -477,10 +477,10 @@ public class WorkbenchLayout extends Layout {
 	 * dimension. The result is a complete cache of the information needed to
 	 * lay the controls in the trim area out.
 	 * </p>
-	 * 
+	 *
 	 * @param trimArea The trim area to create the cache info for
 	 * @param majorHint The length of the major dimension
-	 * 
+	 *
 	 * @return A List of <code>TrimLine</code> elements
 	 */
 	private List computeWrappedTrim(TrimArea trimArea, int majorHint) {
@@ -707,9 +707,9 @@ public class WorkbenchLayout extends Layout {
 
 	/**
 	 * Return the SWT side that the trim area is on
-	 * 
+	 *
 	 * @param areaId The id of the area to get the orientation of
-	 * 
+	 *
 	 * @return The SWT  side corresponding that the given area
 	 */
 	public static int getOrientation(String areaId) {
@@ -735,7 +735,7 @@ public class WorkbenchLayout extends Layout {
 	/**
 	 * Calculate a size for the handle that will be large enough to show the
 	 * CoolBar's drag affordance.
-	 * 
+	 *
 	 * @return The size that the handle has to be, based on the orientation
 	 */
 	private int getHandleSize(boolean horizontal) {

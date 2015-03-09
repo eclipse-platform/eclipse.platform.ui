@@ -35,14 +35,14 @@ public class FinishedJobs extends EventManager {
 
 		/**
 		 * A job to be kept has finished
-		 * 
+		 *
 		 * @param jte
 		 */
 		void finished(JobTreeElement jte);
 
 		/**
 		 * A kept job has been removed.
-		 * 
+		 *
 		 * @param jte
 		 */
 		void removed(JobTreeElement jte);
@@ -364,13 +364,13 @@ public class FinishedJobs extends EventManager {
 			all = (JobTreeElement[]) keptjobinfos
 					.toArray(new JobTreeElement[keptjobinfos.size()]);
 		}
-		
+
 		return all;
 	}
 
 	/**
 	 * Get the date that indicates the finish time.
-	 * 
+	 *
 	 * @param jte
 	 * @return Date
 	 */
@@ -384,7 +384,7 @@ public class FinishedJobs extends EventManager {
 
 	/**
 	 * Return whether or not the kept infos have the element.
-	 * 
+	 *
 	 * @param element
 	 * @return boolean
 	 */

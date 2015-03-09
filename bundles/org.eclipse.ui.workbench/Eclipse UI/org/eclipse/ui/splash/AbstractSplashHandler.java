@@ -24,7 +24,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * resource provided by the workbench plug-in cannot be guaranteed to be
  * available to this class while executing. No attempt should be made to access
  * {@link IWorkbench} or any subordinate interfaces or resources.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractSplashHandler {
@@ -38,11 +38,11 @@ public abstract class AbstractSplashHandler {
 	 * customize the shell in whatever way they see fit. Subclasses should
 	 * ensure that they call the base implementation of this method at some
 	 * point after their own method is invoked.
-	 * 
+	 *
 	 * <p>
 	 * Calls to this method will be made from the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param splash
 	 *            the splash shell
 	 */
@@ -54,7 +54,7 @@ public abstract class AbstractSplashHandler {
 	 * Signal the handler to end the splash and dispose of any resources.
 	 * Subclasses should ensure that they call the base implementation of this
 	 * method at some point after their own method is invoked.
-	 * 
+	 *
 	 * <p>
 	 * Calls to this method will be made from the UI thread.
 	 * </p>
@@ -67,13 +67,13 @@ public abstract class AbstractSplashHandler {
 	/**
 	 * Return the progress monitor responsible for showing bundle loading.
 	 * Default implementation returns a null progress monitor.
-	 * 
+	 *
 	 * <p>
 	 * Calls made to methods on this progress monitor may be made from non-UI
 	 * threads so implementors must take care to ensure proper synchronization
 	 * with the UI thread if necessary.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Please note that progress will only be shown if the
 	 * "org.eclipse.ui/SHOW_PROGRESS_ON_STARTUP" property has been set to
@@ -84,7 +84,7 @@ public abstract class AbstractSplashHandler {
 	 * {@link WorkbenchAdvisor#initialize(org.eclipse.ui.application.IWorkbenchConfigurer)}
 	 * method if they wish to have progress reported on startup.
 	 * </p>
-	 * 
+	 *
 	 * @return the progress monitor
 	 * @see NullProgressMonitor
 	 * @see PlatformUI#getPreferenceStore()
@@ -102,12 +102,12 @@ public abstract class AbstractSplashHandler {
 	 * splash shell and it will subsequently be passed to the
 	 * {@link #init(Shell)} method. In this way a splash handler may participate
 	 * in splash processes prior to the workbench startup.
-	 * 
+	 *
 	 * <p>
 	 * Calls to this method may be made from any thread. Implementors must take
 	 * care to ensure proper synchronization with the UI thread if necessary.
 	 * </p>
-	 * 
+	 *
 	 * @return the splash shell
 	 */
 	public Shell getSplash() {

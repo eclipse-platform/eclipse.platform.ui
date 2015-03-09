@@ -21,7 +21,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param parentJob
 	 * @param name
 	 */
@@ -32,7 +32,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
 	 */
 	@Override
@@ -42,7 +42,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	@Override
@@ -55,7 +55,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
 	@Override
@@ -65,7 +65,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/**
 	 * Set the taskName of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	void setTaskName(String name) {
@@ -84,7 +84,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
 	@Override
@@ -94,7 +94,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
 	@Override
@@ -104,7 +104,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
 	@Override

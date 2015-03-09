@@ -29,9 +29,9 @@ import org.eclipse.ui.internal.WorkbenchPage;
  * <p>
  * Replacement for SaveAllAction
  * </p>
- * 
+ *
  * @since 3.7
- * 
+ *
  */
 public class SaveAllHandler extends AbstractSaveHandler {
 

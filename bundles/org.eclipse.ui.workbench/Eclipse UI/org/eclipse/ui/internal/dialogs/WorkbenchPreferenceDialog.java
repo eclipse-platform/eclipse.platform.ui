@@ -34,30 +34,30 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * There can only ever be one instance of the workbench's preference dialog.
 	 * This keeps a handle on this instance, so that attempts to create a second
 	 * dialog should just fail (or return the original instance).
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static WorkbenchPreferenceDialog instance = null;
-	
+
 	/**
 	 * The bounds of this dialog will be persisted in the dialog settings.
 	 * This is defined at the most concrete level of the hierarchy so that
-	 * different concrete implementations don't necessarily store their bounds 
+	 * different concrete implementations don't necessarily store their bounds
 	 * in the same settings.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String DIALOG_SETTINGS_SECTION = "WorkbenchPreferenceDialogSettings"; //$NON-NLS-1$
-	
+
 	private String initialPageId;
 
-	
+
 	/**
 	 * Creates a workbench preference dialog to a particular preference page. It
 	 * is the responsibility of the caller to then call <code>open()</code>.
 	 * The call to <code>open()</code> will not return until the dialog
 	 * closes, so this is the last chance to manipulate the dialog.
-	 * 
+	 *
 	 * @param shell
 	 * 			The Shell to parent the dialog off of if it is not
 	 * 			already created. May be <code>null</code>
@@ -124,7 +124,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	/**
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 * @param manager
@@ -135,7 +135,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		Assert.isTrue((instance == null),
 				"There cannot be two preference dialogs at once in the workbench."); //$NON-NLS-1$
 		instance = this;
-		
+
 	}
 
 
@@ -151,7 +151,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * be filtered based on a call to
 	 * <code>WorkbenchActivityHelper.filterItem()</code> then
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
 	 */
 	@Override
@@ -162,22 +162,22 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 		return node;
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		super.okPressed();
 	}
-	
+
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
         if (section == null) {
             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        } 
+        }
         return section;
 	}
-	
+
 	/**
 	 * Overridden to persist only the location, not the size, since the current
 	 * page dictates the most appropriate size for the dialog.
@@ -188,7 +188,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTLOCATION;
 	}
-	
+
 	/**
 	 *
 	 * Overrides to set focus to the specific page if it a specific page was
@@ -210,7 +210,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 		return super.open();
 	}
-	
+
 	/**
 	 * Remembers the initial page ID
 	 * @param pageId ID of the initial page to display

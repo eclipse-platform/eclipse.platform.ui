@@ -17,7 +17,7 @@ import org.eclipse.ui.activities.ITriggerPoint;
  */
 public abstract class AbstractTriggerPoint implements ITriggerPoint {
 
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -26,10 +26,10 @@ public abstract class AbstractTriggerPoint implements ITriggerPoint {
 		if (obj instanceof ITriggerPoint) {
 			return getId().equals(((ITriggerPoint)obj).getId());
 		}
-		
+
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

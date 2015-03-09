@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see ICommandManagerListener#commandManagerChanged(CommandManagerEvent)
  * @see org.eclipse.core.commands.CommandManagerEvent
@@ -59,7 +59,7 @@ public final class CommandManagerEvent {
      */
     private final boolean definedCategoryIdsChanged;
 
-    /** 
+    /**
      * Whether the list of defined commands has changed.
      */
     private final boolean definedCommandIdsChanged;
@@ -89,7 +89,7 @@ public final class CommandManagerEvent {
 
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param commandManager
      *            the instance of the interface that changed.
      * @param activeContextIdsChanged
@@ -190,7 +190,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns the instance of the interface that changed.
-     * 
+     *
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -201,7 +201,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns the set of identifiers to previously defined categories.
-     * 
+     *
      * @return the set of identifiers to previously defined categories. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
@@ -217,7 +217,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns the set of identifiers to previously defined commands.
-     * 
+     *
      * @return the set of identifiers to previously defined commands. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
@@ -233,7 +233,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns the set of identifiers to previously defined key conigurations.
-     * 
+     *
      * @return the set of identifiers to previously defined key configurations.
      *         This set may be empty. If this set is not empty, it is guaranteed
      *         to only contain instances of <code>String</code>. This set is
@@ -249,7 +249,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the activeKeyConfigurationId property changed.
-     * 
+     *
      * @return true, iff the activeKeyConfigurationId property changed.
      */
 	@Deprecated
@@ -259,7 +259,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the activeLocale property changed.
-     * 
+     *
      * @return true, iff the activeLocale property changed.
      */
 	@Deprecated
@@ -269,7 +269,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the activePlatform property changed.
-     * 
+     *
      * @return true, iff the activePlatform property changed.
      */
 	@Deprecated
@@ -279,7 +279,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the activeContextIds property changed.
-     * 
+     *
      * @return true, iff the activeContextIds property changed.
      */
 	@Deprecated
@@ -289,7 +289,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the definedCategoryIds property changed.
-     * 
+     *
      * @return true, iff the definedCategoryIds property changed.
      */
 	@Deprecated
@@ -299,7 +299,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the definedCommandIds property changed.
-     * 
+     *
      * @return true, iff the definedCommandIds property changed.
      */
 	@Deprecated
@@ -309,7 +309,7 @@ public final class CommandManagerEvent {
 
     /**
      * Returns whether or not the definedKeyConfigurationIds property changed.
-     * 
+     *
      * @return true, iff the definedKeyConfigurationIds property changed.
      */
 	@Deprecated

@@ -17,7 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class QuickAccessProvider {
 
@@ -25,28 +25,28 @@ public abstract class QuickAccessProvider {
 
 	/**
 	 * Returns the unique ID of this provider.
-	 * 
+	 *
 	 * @return the unique ID
 	 */
 	public abstract String getId();
 
 	/**
 	 * Returns the name of this provider to be displayed to the user.
-	 * 
+	 *
 	 * @return the name
 	 */
 	public abstract String getName();
 
 	/**
 	 * Returns the image descriptor for this provider.
-	 * 
+	 *
 	 * @return the image descriptor, or null if not defined
 	 */
 	public abstract ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Returns the elements provided by this provider.
-	 * 
+	 *
 	 * @return this provider's elements
 	 */
 	public abstract QuickAccessElement[] getElements();
@@ -63,11 +63,11 @@ public abstract class QuickAccessProvider {
 		}
 		return sortedElements;
 	}
-	
+
 	/**
 	 * Returns the element for the given ID if available, or null if no matching
 	 * element is available.
-	 * 
+	 *
 	 * @param id
 	 *            the ID of an element
 	 * @return the element with the given ID, or null if not found.

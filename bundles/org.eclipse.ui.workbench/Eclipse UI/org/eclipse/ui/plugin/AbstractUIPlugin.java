@@ -51,8 +51,8 @@ import org.osgi.framework.BundleListener;
  * Preferences
  * <ul>
  * <li> The platform core runtime contains general support for plug-in
- *      preferences (<code>org.eclipse.core.runtime.Preferences</code>). 
- *      This class provides appropriate conversion to the older JFace preference 
+ *      preferences (<code>org.eclipse.core.runtime.Preferences</code>).
+ *      This class provides appropriate conversion to the older JFace preference
  *      API (<code>org.eclipse.jface.preference.IPreferenceStore</code>).</li>
  * <li> The method <code>getPreferenceStore</code> returns the JFace preference
  *      store (cf. <code>Plugin.getPluginPreferences</code> which returns
@@ -73,7 +73,7 @@ import org.osgi.framework.BundleListener;
  * </ul>
  * Dialogs
  * <ul>
- * <li> The dialog store is read the first time <code>getDialogSettings</code> 
+ * <li> The dialog store is read the first time <code>getDialogSettings</code>
  *      is called.</li>
  * <li> The dialog store allows the plug-in to "record" important choices made
  *      by the user in a wizard or dialog, so that the next time the
@@ -88,15 +88,15 @@ import org.osgi.framework.BundleListener;
  *      file containing initial values for certain settings.</li>
  * <li> Plug-in code can call <code>saveDialogSettings</code> to cause settings to
  *      be saved in the plug-in's read/write state area. A plug-in may opt to do
- *      this each time a wizard or dialog is closed to ensure the latest 
+ *      this each time a wizard or dialog is closed to ensure the latest
  *      information is always safe on disk. </li>
  * <li> Dialog settings are also saved automatically on plug-in shutdown.</li>
  * </ul>
  * Images
  * <ul>
  * <li> A typical UI plug-in will have some images that are used very frequently
- *      and so need to be cached and shared.  The plug-in's image registry 
- *      provides a central place for a plug-in to store its common images. 
+ *      and so need to be cached and shared.  The plug-in's image registry
+ *      provides a central place for a plug-in to store its common images.
  *      Images managed by the registry are created lazily as needed, and will be
  *      automatically disposed of when the plug-in shuts down. Note that the
  *      number of registry images should be kept to a minimum since many OSs
@@ -116,7 +116,7 @@ import org.osgi.framework.BundleListener;
 public abstract class AbstractUIPlugin extends Plugin {
 
     /**
-     * The name of the dialog settings file (value 
+     * The name of the dialog settings file (value
      * <code>"dialog_settings.xml"</code>).
      */
     private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml"; //$NON-NLS-1$
@@ -140,11 +140,11 @@ public abstract class AbstractUIPlugin extends Plugin {
 
     /**
      * The bundle listener used for kicking off refreshPluginActions().
-     * 
+     *
      * @since 3.0.1
      */
     private BundleListener bundleListener;
-    
+
     /**
      * Creates an abstract UI plug-in runtime object for the given plug-in
      * descriptor.
@@ -152,13 +152,13 @@ public abstract class AbstractUIPlugin extends Plugin {
      * Note that instances of plug-in runtime classes are automatically created
      * by the platform in the course of plug-in activation.
      * <p>
-     * 
+     *
      * @param descriptor the plug-in descriptor
      * @see Plugin#Plugin(org.eclipse.core.runtime.IPluginDescriptor descriptor)
      * @deprecated
      * In Eclipse 3.0 this constructor has been replaced by
      * {@link #AbstractUIPlugin()}. Implementations of
-     * <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to 
+     * <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to
      * <code>MyPlugin()</code> and call <code>super()</code> instead of
      * <code>super(descriptor)</code>.
      * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is
@@ -175,8 +175,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * Creates an abstract UI plug-in runtime object.
      * <p>
      * Plug-in runtime classes are <code>BundleActivators</code> and so must
-     * have an default constructor.  This method is called by the runtime when 
-     * the associated bundle is being activated.  
+     * have an default constructor.  This method is called by the runtime when
+     * the associated bundle is being activated.
      * <p>
      * For more details, see <code>Plugin</code>'s default constructor.
      *
@@ -187,7 +187,7 @@ public abstract class AbstractUIPlugin extends Plugin {
         super();
     }
 
-    /** 
+    /**
      * Returns a new image registry for this plugin-in.  The registry will be
      * used to manage images which are frequently used by the plugin-in.
      * <p>
@@ -199,25 +199,25 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @see #getImageRegistry
      */
     protected ImageRegistry createImageRegistry() {
-    	
+
     	//If we are in the UI Thread use that
     	if(Display.getCurrent() != null) {
 			return new ImageRegistry(Display.getCurrent());
 		}
-    	
+
     	if(PlatformUI.isWorkbenchRunning()) {
 			return new ImageRegistry(PlatformUI.getWorkbench().getDisplay());
 		}
-    	
-    	//Invalid thread access if it is not the UI Thread 
+
+    	//Invalid thread access if it is not the UI Thread
     	//and the workbench is not created.
     	throw new SWTError(SWT.ERROR_THREAD_INVALID_ACCESS);
     }
-    
+
     /**
      * Returns the dialog settings for this UI plug-in.
      * The dialog settings is used to hold persistent state data for the various
-     * wizards and dialogs of this plug-in in the context of a workbench. 
+     * wizards and dialogs of this plug-in in the context of a workbench.
      * <p>
      * If an error occurs reading the dialog store, an empty one is quietly created
      * and returned.
@@ -236,12 +236,12 @@ public abstract class AbstractUIPlugin extends Plugin {
     }
 
     /**
-     * Returns the image registry for this UI plug-in. 
+     * Returns the image registry for this UI plug-in.
      * <p>
-     * The image registry contains the images used by this plug-in that are very 
-     * frequently used and so need to be globally shared within the plug-in. Since 
-     * many OSs have a severe limit on the number of images that can be in memory at 
-     * any given time, a plug-in should only keep a small number of images in their 
+     * The image registry contains the images used by this plug-in that are very
+     * frequently used and so need to be globally shared within the plug-in. Since
+     * many OSs have a severe limit on the number of images that can be in memory at
+     * any given time, a plug-in should only keep a small number of images in their
      * registry.
      * <p>
      * Subclasses should reimplement <code>initializeImageRegistry</code> if they have
@@ -264,7 +264,7 @@ public abstract class AbstractUIPlugin extends Plugin {
     /**
      * Returns the preference store for this UI plug-in.
      * This preference store is used to hold persistent settings for this plug-in in
-     * the context of a workbench. Some of these settings will be user controlled, 
+     * the context of a workbench. Some of these settings will be user controlled,
      * whereas others may be internal setting that are never exposed to the user.
      * <p>
      * If an error occurs reading the preference store, an empty preference store is
@@ -277,7 +277,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * will have to access the compatibility layer themselves.
      * </p>
      *
-     * @return the preference store 
+     * @return the preference store
      */
     public IPreferenceStore getPreferenceStore() {
         // Create the preference store lazily.
@@ -289,8 +289,8 @@ public abstract class AbstractUIPlugin extends Plugin {
     }
 
     /**
-     * Returns the Platform UI workbench.  
-     * <p> 
+     * Returns the Platform UI workbench.
+     * <p>
      * This method exists as a convenience for plugin implementors.  The
      * workbench can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
      * </p>
@@ -300,8 +300,8 @@ public abstract class AbstractUIPlugin extends Plugin {
         return PlatformUI.getWorkbench();
     }
 
-    /** 
-     * Initializes a preference store with default preference values 
+    /**
+     * Initializes a preference store with default preference values
      * for this plug-in.
      * <p>
      * This method is called after the preference store is initially loaded
@@ -312,14 +312,14 @@ public abstract class AbstractUIPlugin extends Plugin {
      * Subclasses should reimplement this method if the plug-in has any preferences.
      * </p>
      * <p>
-     * A subclass may reimplement this method to set default values for the 
-     * preference store using JFace API. This is the older way of initializing 
+     * A subclass may reimplement this method to set default values for the
+     * preference store using JFace API. This is the older way of initializing
      * default values. If this method is reimplemented, do not override
      * <code>initializeDefaultPluginPreferences()</code>.
      * </p>
-     * 
+     *
      * @param store the preference store to fill
-     * 
+     *
      * @deprecated this is only called if the runtime compatibility layer is
      *             present. See {@link #initializeDefaultPluginPreferences}.
      */
@@ -341,40 +341,40 @@ public abstract class AbstractUIPlugin extends Plugin {
      * super, and do not override
      * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
      * </p>
-     * 
+     *
      * @deprecated this is only called if the runtime compatibility layer is
      *             present. See the deprecated comment in
      *             {@link Plugin#initializeDefaultPluginPreferences}.
-     * 
+     *
      * @see #initializeDefaultPreferences
      * @since 2.0
      */
     @Deprecated
 	@Override
 	protected void initializeDefaultPluginPreferences() {
-        // N.B. by the time this method is called, the plug-in has a 
+        // N.B. by the time this method is called, the plug-in has a
         // core runtime preference store (no default values)
 
         // call loadPreferenceStore (only) for backwards compatibility with Eclipse 1.0
         loadPreferenceStore();
-        // call initializeDefaultPreferences (only) for backwards compatibility 
+        // call initializeDefaultPreferences (only) for backwards compatibility
         // with Eclipse 1.0
         initializeDefaultPreferences(getPreferenceStore());
     }
 
-    /** 
-     * Initializes an image registry with images which are frequently used by the 
+    /**
+     * Initializes an image registry with images which are frequently used by the
      * plugin.
      * <p>
      * The image registry contains the images used by this plug-in that are very
      * frequently used and so need to be globally shared within the plug-in. Since
      * many OSs have a severe limit on the number of images that can be in memory
-     * at any given time, each plug-in should only keep a small number of images in 
+     * at any given time, each plug-in should only keep a small number of images in
      * its registry.
      * </p><p>
      * Implementors should create a JFace image descriptor for each frequently used
-     * image.  The descriptors describe how to create/find the image should it be needed. 
-     * The image described by the descriptor is not actually allocated until someone 
+     * image.  The descriptors describe how to create/find the image should it be needed.
+     * The image described by the descriptor is not actually allocated until someone
      * retrieves it.
      * </p><p>
      * Subclasses may override this method to fill the image registry.
@@ -389,7 +389,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 
     /**
      * Loads the dialog settings for this plug-in.
-     * The default implementation first looks for a standard named file in the 
+     * The default implementation first looks for a standard named file in the
      * plug-in's read/write state area; if no such file exists, the plug-in's
      * install directory is checked to see if one was installed with some default
      * settings; if no file is found in either place, a new empty dialog settings
@@ -417,7 +417,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	                // load failed so ensure we have an empty settings
 	                dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
 	            }
-	            
+
 	            return;
 	        }
         }
@@ -450,14 +450,14 @@ public abstract class AbstractUIPlugin extends Plugin {
 
     /**
      * Loads the preference store for this plug-in.
-     * The default implementation looks for a standard named file in the 
+     * The default implementation looks for a standard named file in the
      * plug-in's read/write state area. If no file is found or a problem
-     * occurs, a new empty preference store is silently created. 
+     * occurs, a new empty preference store is silently created.
      * <p>
-     * This framework method may be overridden, although this is typically 
+     * This framework method may be overridden, although this is typically
      * unnecessary.
      * </p>
-     * 
+     *
      * @deprecated As of Eclipse 2.0, a basic preference store exists for all
      * plug-ins. This method now exists only for backwards compatibility.
      * It is called as the plug-in's preference store is being initialized.
@@ -466,14 +466,14 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     @Deprecated
 	protected void loadPreferenceStore() {
-        // do nothing by default 
+        // do nothing by default
     }
 
     /**
      * Refreshes the actions for the plugin.
      * This method is called from <code>startup</code>.
      * <p>
-     * This framework method may be overridden, although this is typically 
+     * This framework method may be overridden, although this is typically
      * unnecessary.
      * </p>
      */
@@ -484,7 +484,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 		}
 
         // startup() is not guaranteed to be called in the UI thread,
-        // but refreshPluginActions must run in the UI thread, 
+        // but refreshPluginActions must run in the UI thread,
         // so use asyncExec.  See bug 6623 for more details.
         Display.getDefault().asyncExec(new Runnable() {
             @Override
@@ -521,10 +521,10 @@ public abstract class AbstractUIPlugin extends Plugin {
     /**
      * Saves this plug-in's preference store.
      * Any problems which arise are silently ignored.
-     * 
+     *
      * @see Plugin#savePluginPreferences()
-     * @deprecated As of Eclipse 2.0, preferences exist for all plug-ins. The 
-     * equivalent of this method is <code>Plugin.savePluginPreferences</code>. 
+     * @deprecated As of Eclipse 2.0, preferences exist for all plug-ins. The
+     * equivalent of this method is <code>Plugin.savePluginPreferences</code>.
      * This method now calls <code>savePluginPreferences</code>, and exists only for
      * backwards compatibility.
      */
@@ -541,13 +541,13 @@ public abstract class AbstractUIPlugin extends Plugin {
      * WARNING: Plug-ins may not be started in the UI thread.
      * The <code>startup()</code> method should not assume that its code runs in
      * the UI thread, otherwise SWT thread exceptions may occur on startup.'
-     * @deprecated 
+     * @deprecated
      * In Eclipse 3.0, <code>startup</code> has been replaced by {@link Plugin#start(BundleContext context)}.
      * Implementations of <code>startup</code> should be changed to extend
      * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>
      * instead of <code>super.startup()</code>. Like <code>super.startup()</code>,
      * <code>super.stop(context)</code> must be called as the very first thing.
-     * The <code>startup</code> method is called only for plug-ins which explicitly require the 
+     * The <code>startup</code> method is called only for plug-ins which explicitly require the
      * org.eclipse.core.runtime.compatibility plug-in; in contrast,
      * the <code>start</code> method is always called.
      */
@@ -563,15 +563,15 @@ public abstract class AbstractUIPlugin extends Plugin {
      * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
      * method does nothing. Subclasses may extend this method, but must send
      * super first.
-     * @deprecated 
+     * @deprecated
      * In Eclipse 3.0, <code>shutdown</code> has been replaced by {@link Plugin#stop(BundleContext context)}.
-     * Implementations of <code>shutdown</code> should be changed to extend 
-     * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code> 
-     * instead of <code>super.shutdown()</code>. Unlike <code>super.shutdown()</code>, 
+     * Implementations of <code>shutdown</code> should be changed to extend
+     * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code>
+     * instead of <code>super.shutdown()</code>. Unlike <code>super.shutdown()</code>,
      * <code>super.stop(context)</code> must be called as the very <b>last</b> thing rather
      * than as the very first thing. The <code>shutdown</code> method is called
-     * only for plug-ins which explicitly require the 
-     * org.eclipse.core.runtime.compatibility plug-in; 
+     * only for plug-ins which explicitly require the
+     * org.eclipse.core.runtime.compatibility plug-in;
      * in contrast, the <code>stop</code> method is always called.
      */
     @Deprecated
@@ -589,7 +589,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * method refreshes the plug-in actions.  Subclasses may extend this method,
      * but must send super <b>first</b>.
      * {@inheritDoc}
-     * 
+     *
      * @since 3.0
      */
     @Override
@@ -598,9 +598,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 		final BundleContext fc = context;
         // Should only attempt refreshPluginActions() once the bundle
         // has been fully started.  Otherwise, action delegates
-        // can be created while in the process of creating 
-        // a triggering action delegate (if UI events are processed during startup).  
-        // Also, if the start throws an exception, the bundle will be shut down.  
+        // can be created while in the process of creating
+        // a triggering action delegate (if UI events are processed during startup).
+        // Also, if the start throws an exception, the bundle will be shut down.
         // We don't want to have created any delegates if this happens.
         // See bug 63324 for more details.
         bundleListener = new BundleListener() {
@@ -625,13 +625,13 @@ public abstract class AbstractUIPlugin extends Plugin {
 
     /**
      * The <code>AbstractUIPlugin</code> implementation of this {@link Plugin}
-     * method saves this plug-in's preference and dialog stores and shuts down 
+     * method saves this plug-in's preference and dialog stores and shuts down
      * its image registry (if they are in use). Subclasses may extend this
      * method, but must send super <b>last</b>. A try-finally statement should
      * be used where necessary to ensure that <code>super.stop()</code> is
      * always done.
      * {@inheritDoc}
-     * 
+     *
      * @since 3.0
      */
     @Override
@@ -663,7 +663,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * should use a path like "icons/mysample.gif" rather than
 	 * "./icons/mysample.gif" or "/icons/mysample.gif".
 	 * </p>
-	 * 
+	 *
 	 * @param pluginId
 	 *            the id of the plug-in containing the image file;
 	 *            <code>null</code> is returned if the plug-in does not exist
@@ -708,15 +708,15 @@ public abstract class AbstractUIPlugin extends Plugin {
 
         return ImageDescriptor.createFromURL(fullPathString);
     }
-    
+
     /**
-     * FOR INTERNAL WORKBENCH USE ONLY. 
-     * 
-     * Returns the path to a location in the file system that can be used 
+     * FOR INTERNAL WORKBENCH USE ONLY.
+     *
+     * Returns the path to a location in the file system that can be used
      * to persist/restore state between workbench invocations.
      * If the location did not exist prior to this call it will  be created.
      * Returns <code>null</code> if no such location is available.
-     * 
+     *
      * @return path to a location in the file system where this plug-in can
      * persist data between sessions, or <code>null</code> if no such
      * location is available.
@@ -730,6 +730,6 @@ public abstract class AbstractUIPlugin extends Plugin {
             // Is this OK? See bug 85071.
             return null;
         }
-    }    
-    
+    }
+
 }

@@ -34,13 +34,13 @@ import org.eclipse.ui.IWorkbenchWindow;
  * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class InternalHandlerUtil {
 	/**
 	 * Extract the variable.
-	 * 
+	 *
 	 * @param appContext
 	 *            The application context
 	 * @param name
@@ -57,7 +57,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the active contexts.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return a collection of String contextIds, or <code>null</code>.
@@ -73,7 +73,7 @@ public class InternalHandlerUtil {
 	/**
 	 * Return the active shell. Is not necessarily the active workbench window
 	 * shell.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the active shell, or <code>null</code>.
@@ -88,7 +88,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the active workbench window.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the active workbench window, or <code>null</code>.
@@ -104,7 +104,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the active editor.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the active editor, or <code>null</code>.
@@ -119,7 +119,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the part id of the active editor.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the part id of the active editor, or <code>null</code>.
@@ -134,7 +134,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the active part.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the active part, or <code>null</code>.
@@ -149,7 +149,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the part id of the active part.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the part id of the active part, or <code>null</code>.
@@ -164,7 +164,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the active part site.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the active part site, or <code>null</code>.
@@ -179,7 +179,7 @@ public class InternalHandlerUtil {
 
 	/**
 	 * Return the current selection.
-	 * 
+	 *
 	 * @param appContext
 	 *            The execution appContext that contains the application context
 	 * @return the current selection, or <code>null</code>.

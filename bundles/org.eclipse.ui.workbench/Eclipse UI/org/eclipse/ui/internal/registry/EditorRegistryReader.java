@@ -58,9 +58,9 @@ public class EditorRegistryReader extends RegistryReader {
             logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
             return true;
         }
-        
+
         EditorDescriptor editor = new EditorDescriptor(id, element);
-        
+
         List extensionsVector = new ArrayList();
         List filenamesVector = new ArrayList();
 		List contentTypeVector = new ArrayList();
@@ -71,7 +71,7 @@ public class EditorRegistryReader extends RegistryReader {
             logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
             return true;
         }
-        
+
         // Get target extensions (optional field)
         String extensionsString = element.getAttribute(IWorkbenchRegistryConstants.ATT_EXTENSIONS);
         if (extensionsString != null) {
@@ -89,7 +89,7 @@ public class EditorRegistryReader extends RegistryReader {
                 filenamesVector.add(tokenizer.nextToken().trim());
             }
         }
-        
+
 		IConfigurationElement [] bindings = element.getChildren(IWorkbenchRegistryConstants.TAG_CONTENT_TYPE_BINDING);
 		for (int i = 0; i < bindings.length; i++) {
 			String contentTypeId = bindings[i].getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_TYPE_ID);
@@ -98,14 +98,14 @@ public class EditorRegistryReader extends RegistryReader {
 			}
 			contentTypeVector.add(contentTypeId);
 		}
-		
+
         // Is this the default editor?
         String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
         if (def != null) {
 			defaultEditor = Boolean.valueOf(def).booleanValue();
 		}
 
-        // Add the editor to the manager.	
+        // Add the editor to the manager.
         editorRegistry.addEditorFromPlugin(editor, extensionsVector,
                 filenamesVector, contentTypeVector, defaultEditor);
         return true;

@@ -33,17 +33,17 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Factory methods for creating properties for the Workbench.
- * 
+ *
  * <p>
  * Examples:
- * 
+ *
  * <pre>
  * WorkbenchProperties.singleSelection().observe(
  * 		getSite().getService(ISelectionService.class))
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  * @since 3.5
  */
 public class WorkbenchProperties {
@@ -52,7 +52,7 @@ public class WorkbenchProperties {
 	 * type, using the platform adapter manager. If the source is of the target
 	 * type, or can be adapted to the target type, this is used as the value of
 	 * property, otherwise <code>null</code>.
-	 * 
+	 *
 	 * @param adapter
 	 *            the adapter class
 	 * @return a value property which observes the source object as the adapted
@@ -67,7 +67,7 @@ public class WorkbenchProperties {
 	 * type. If the source object is of the target type, or can be adapted to
 	 * the target type, this is used as the value of property, otherwise
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param adapter
 	 *            the adapter class
 	 * @param adapterManager
@@ -83,7 +83,7 @@ public class WorkbenchProperties {
 	/**
 	 * Returns a property for observing the first element of a structured
 	 * selection as exposed by {@link ISelectionService}.
-	 * 
+	 *
 	 * @return an observable value
 	 */
 	public static IValueProperty singleSelection() {
@@ -93,14 +93,14 @@ public class WorkbenchProperties {
 	/**
 	 * Returns a property for observing the first element of a structured
 	 * selection as exposed by {@link ISelectionService}.
-	 * 
+	 *
 	 * @param partId
 	 *            the part id, or <code>null</code> if the selection can be from
 	 *            any part
 	 * @param postSelection
 	 *            <code>true</code> if the selection should be delayed for
 	 *            keyboard-triggered selections
-	 * 
+	 *
 	 * @return an observable value
 	 */
 	public static IValueProperty singleSelection(String partId,
@@ -111,7 +111,7 @@ public class WorkbenchProperties {
 	/**
 	 * Returns a property for observing the elements of a structured selection
 	 * as exposed by {@link ISelectionService}.
-	 * 
+	 *
 	 * @return an observable value
 	 */
 	public static IListProperty multipleSelection() {
@@ -121,14 +121,14 @@ public class WorkbenchProperties {
 	/**
 	 * Returns a property for observing the elements of a structured selection
 	 * as exposed by {@link ISelectionService}.
-	 * 
+	 *
 	 * @param partId
 	 *            the part id, or <code>null</code> if the selection can be from
 	 *            any part
 	 * @param postSelection
 	 *            <code>true</code> if the selection should be delayed for
 	 *            keyboard-triggered selections
-	 * 
+	 *
 	 * @return an observable value
 	 */
 	public static IListProperty multipleSelection(String partId,

@@ -27,7 +27,7 @@ import org.eclipse.ui.services.IServiceLocator;
 /**
  * Create singleton services to make the Workbench singletons available. This is
  * a "hack" to provide access to the Workbench singletons.
- * 
+ *
  * @since 3.4
  */
 public class WorkbenchSupportFactory extends AbstractServiceFactory {

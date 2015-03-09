@@ -17,14 +17,14 @@ import org.eclipse.ui.internal.RectangleAnimationImageFeedback;
 
 /**
  * Return an animation feedback that uses images.
- * 
+ *
  * @since 3.3
  *
  */
 public class ImageAnimationTweak extends Animations {
 	/** Default c'tor */
 	public ImageAnimationTweak() {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.tweaklets.Animations#getFeedback()
 	 */

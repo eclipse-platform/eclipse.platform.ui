@@ -75,7 +75,7 @@ public final class EditorPluginAction extends PartPluginAction {
 			registerSelectionListener(part);
 		}
     }
-	
+
 	@Override
 	public void dispose() {
         if (currentEditor != null) {

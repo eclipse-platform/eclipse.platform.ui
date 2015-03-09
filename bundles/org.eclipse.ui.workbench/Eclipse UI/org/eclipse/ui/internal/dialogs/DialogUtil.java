@@ -48,7 +48,7 @@ public class DialogUtil {
         if (status != null && status.getException() instanceof CoreException) {
 			nestedException = (CoreException) status.getException();
 		}
-        
+
         IStatus errorStatus = null;
 
 		if (nestedException != null) {

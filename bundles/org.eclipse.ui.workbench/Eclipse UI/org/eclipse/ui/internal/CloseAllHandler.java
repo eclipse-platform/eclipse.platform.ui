@@ -30,9 +30,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * <p>
  * Replacement for CloseAllAction
  * </p>
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class CloseAllHandler extends AbstractEvaluationHandler {
 	private Expression enabledWhen;

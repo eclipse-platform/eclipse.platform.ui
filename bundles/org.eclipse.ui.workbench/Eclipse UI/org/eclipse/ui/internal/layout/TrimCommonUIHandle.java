@@ -54,7 +54,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  * <p>
  * Context Menu:
  * <ol>
- * <li>A "Dock on" menu item is provided to allow changing the side, depending on the values returned by 
+ * <li>A "Dock on" menu item is provided to allow changing the side, depending on the values returned by
  * <code>IWindowTrim.getValidSides</code></li>
  * <li>A "Close" menu item is provided to allow the User to close (hide) the trim element,
  * based on the value returned by <code>IWindowTrim.isCloseable</code>
@@ -78,7 +78,7 @@ public class TrimCommonUIHandle extends Composite {
 	private CoolItem ci = null;
 	private static int horizontalHandleSize = -1;
 	private static int verticalHandleSize = -1;
-	
+
     /*
      * Context Menu
      */
@@ -90,11 +90,11 @@ public class TrimCommonUIHandle extends Composite {
     private IntModel radioVal = new IntModel(0);
 //	private Menu showMenu;
 //	private MenuItem showCascade;
-	
+
 	/*
 	 * Listeners...
 	 */
-    
+
 
     /**
      * This listener brings up the context menu
@@ -135,17 +135,17 @@ public class TrimCommonUIHandle extends Composite {
 
     /**
      * Create a new trim UI handle for a particular IWindowTrim item
-     * 
+     *
      * @param layout the TrimLayout we're being used in
      * @param trim the IWindowTrim we're acting on behalf of
      * @param curSide  the SWT side that the trim is currently on
      */
     public TrimCommonUIHandle(TrimLayout layout, IWindowTrim trim, int curSide) {
     	super(trim.getControl().getParent(), SWT.NONE);
-    	
+
     	// Set the control up with all its various hooks, cursor...
     	setup(layout, trim, curSide);
-		
+
         // Listen to size changes to keep the CoolBar synched
         addControlListener(controlListener);
     }
@@ -155,34 +155,34 @@ public class TrimCommonUIHandle extends Composite {
 	 * This method can also be used to 'recycle' a trim handle as long as the new handle
 	 * is for trim under the same parent as it was originally used for.
 	 */
-	public void setup(TrimLayout layout, IWindowTrim trim, int curSide) {    	
+	public void setup(TrimLayout layout, IWindowTrim trim, int curSide) {
     	this.layout = layout;
     	this.trim = trim;
     	this.toDrag = trim.getControl();
     	this.radioVal.set(curSide);
-    	
+
     	// remember the orientation to use
     	orientation = (curSide == SWT.LEFT || curSide == SWT.RIGHT) ? SWT.VERTICAL  : SWT.HORIZONTAL;
-    	
+
         // Insert a CoolBar and extras in order to provide the drag affordance
         insertCoolBar(orientation);
-        
+
 		// Create a window trim proxy for the handle
 		createWindowTrimProxy();
-       	
+
     	// Set the cursor affordance
     	setDragCursor();
-    	
+
         // Set up the dragging behaviour
 		// PresentationUtil.addDragListener(cb, dragListener);
-    	
+
     	// Create the docking context menu
     	dockMenuManager = new MenuManager();
     	dockContributionItem = getDockingContribution();
         dockMenuManager.add(dockContributionItem);
 
         cb.addListener(SWT.MenuDetect, menuListener);
-        
+
         setVisible(true);
     }
 
@@ -194,7 +194,7 @@ public class TrimCommonUIHandle extends Composite {
     	layout.removeTrim(trim);
     	trim.dock(radioVal.get());
     	layout.addTrim(radioVal.get(), trim, null);
-    	
+
     	// perform an optimized layout to show the trim in its new location
     	LayoutUtil.resize(trim.getControl());
 	}
@@ -220,14 +220,14 @@ public class TrimCommonUIHandle extends Composite {
 			proxy.setWidthHint(0);
 			proxy.setHeightHint(getHandleSize());
 		}
-		
+
 		setLayoutData(proxy);
 	}
-	
+
 	/**
 	 * Calculate a size for the handle that will be large enough to show
 	 * the CoolBar's drag affordance.
-	 * 
+	 *
 	 * @return The size that the handle has to be, based on the orientation
 	 */
 	private int getHandleSize() {
@@ -235,20 +235,20 @@ public class TrimCommonUIHandle extends Composite {
 		if (orientation == SWT.HORIZONTAL && horizontalHandleSize != -1) {
 			return horizontalHandleSize;
 		}
-				
+
 		if (orientation == SWT.VERTICAL && verticalHandleSize != -1) {
 			return verticalHandleSize;
 		}
-				
+
 		// Must be the first time, calculate the value
 		CoolBar bar = new CoolBar (trim.getControl().getParent(), orientation);
-		
+
 		CoolItem item = new CoolItem (bar, SWT.NONE);
-		
+
 		Label ctrl = new Label (bar, SWT.PUSH);
 		ctrl.setText ("Button 1"); //$NON-NLS-1$
 	    Point size = ctrl.computeSize (SWT.DEFAULT, SWT.DEFAULT);
-		
+
 	    Point ps = item.computeSize (size.x, size.y);
 		item.setPreferredSize (ps);
 		item.setControl (ctrl);
@@ -256,7 +256,7 @@ public class TrimCommonUIHandle extends Composite {
 		bar.pack ();
 
 		// OK, now the difference between the location of the CB and the
-		// location of the 
+		// location of the
 		Point bl = ctrl.getLocation();
 		Point cl = bar.getLocation();
 
@@ -264,7 +264,7 @@ public class TrimCommonUIHandle extends Composite {
 		ctrl.dispose();
 		item.dispose();
 		bar.dispose();
-	
+
 		// The 'size' is the difference between the start of teh CoolBar and
 		// start of its first control
 		int length;
@@ -276,16 +276,16 @@ public class TrimCommonUIHandle extends Composite {
 			length = bl.y - cl.y;
 			verticalHandleSize = length;
 		}
-		
+
 		return length;
 	}
-	
+
 	/**
 	 * Place a CoolBar / CoolItem / Control inside the current
 	 * UI handle. These elements will maintain thier size based on
 	 * the size of their 'parent' (this).
-	 * 
-	 * @param parent 
+	 *
+	 * @param parent
 	 * @param orientation
 	 */
 	public void insertCoolBar(int orientation) {
@@ -295,17 +295,17 @@ public class TrimCommonUIHandle extends Composite {
 			// PresentationUtil.removeDragListener(cb, dragListener);
 			cb.dispose();
 		}
-		
+
 		// Create the necessary parts...
 		cb = new CoolBar(this, orientation | SWT.FLAT);
 		cb.setLocation(0,0);
 		ci = new CoolItem(cb, SWT.FLAT);
-		
+
 		// Create a composite in order to get the handles to appear
 		Composite comp = new Composite(cb, SWT.NONE);
 		ci.setControl(comp);
 	}
-	
+
 	/**
 	 * Set the cursor to the four-way arrow to indicate that the
 	 * trim can be dragged
@@ -314,7 +314,7 @@ public class TrimCommonUIHandle extends Composite {
     	Cursor dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
     	setCursor(dragCursor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
 	 */
@@ -324,17 +324,17 @@ public class TrimCommonUIHandle extends Composite {
 		if (orientation == SWT.HORIZONTAL) {
 			return new Point(getHandleSize(), ctrlPrefSize.y);
 		}
-		
+
 		// Must be vertical....
 		return new Point(ctrlPrefSize.x, getHandleSize());
 	}
-	
+
 	/**
 	 * Construct (if necessary) a context menu contribution item and return it. This
 	 * is explicitly <code>public</code> so that trim elements can retrieve the item
 	 * and add it into their own context menus if desired.
-	 * 
-	 * @return The contribution item for the handle's context menu. 
+	 *
+	 * @return The contribution item for the handle's context menu.
 	 */
 	public ContributionItem getDockingContribution() {
     	if (dockContributionItem == null) {
@@ -343,12 +343,12 @@ public class TrimCommonUIHandle extends Composite {
 				public void fill(Menu menu, int index) {
     				// populate from superclass
     				super.fill(menu, index);
-    				
+
     				// Add a 'Close' menu entry if the trim supports the operation
     				if (trim.isCloseable()) {
 	    				MenuItem closeItem = new MenuItem(menu, SWT.PUSH, index++);
 	    				closeItem.setText(WorkbenchMessages.TrimCommon_Close);
-	    				
+
 	    				closeItem.addSelectionListener(new SelectionListener() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
@@ -362,12 +362,12 @@ public class TrimCommonUIHandle extends Composite {
 
 	    				new MenuItem(menu, SWT.SEPARATOR, index++);
     				}
-    				
+
     				// Test Hook: add a menu entry that brings up a dialog to allow
     				// testing with various GUI prefs.
 //    				MenuItem closeItem = new MenuItem(menu, SWT.PUSH, index++);
 //    				closeItem.setText("Change Preferences"); //$NON-NLS-1$
-//    				
+//
 //    				closeItem.addSelectionListener(new SelectionListener() {
 //						public void widgetSelected(SelectionEvent e) {
 //							handleChangePreferences();
@@ -378,20 +378,20 @@ public class TrimCommonUIHandle extends Composite {
 //    				});
 //
 //    				new MenuItem(menu, SWT.SEPARATOR, index++);
-    				
+
     				// Create a cascading menu to allow the user to dock the trim
     				dockCascade = new MenuItem(menu, SWT.CASCADE, index++);
     				{
-    					dockCascade.setText(WorkbenchMessages.TrimCommon_DockOn); 
-    					
+    					dockCascade.setText(WorkbenchMessages.TrimCommon_DockOn);
+
     					sidesMenu = new Menu(dockCascade);
     					radioButtons = new RadioMenu(sidesMenu, radioVal);
-    					
+
 						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Top, new Integer(SWT.TOP));
 						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Bottom, new Integer(SWT.BOTTOM));
 						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Left, new Integer(SWT.LEFT));
 						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Right, new Integer(SWT.RIGHT));
-    					
+
     					dockCascade.setMenu(sidesMenu);
     				}
 
@@ -404,14 +404,14 @@ public class TrimCommonUIHandle extends Composite {
 							}
     					}
     		    	});
-    				
+
     				// Provide Show / Hide trim capabilities
 //    				showCascade = new MenuItem(menu, SWT.CASCADE, index++);
 //    				{
-//    					showCascade.setText(WorkbenchMessages.TrimCommon_ShowTrim); 
-//    					
+//    					showCascade.setText(WorkbenchMessages.TrimCommon_ShowTrim);
+//
 //    					showMenu = new Menu(dockCascade);
-//    					
+//
 //    					// Construct a 'hide/show' cascade from -all- the existing trim...
 //    					List trimItems = layout.getAllTrim();
 //    					Iterator d = trimItems.iterator();
@@ -421,10 +421,10 @@ public class TrimCommonUIHandle extends Composite {
 //							item.setText(trimItem.getDisplayName());
 //							item.setSelection(trimItem.getControl().getVisible());
 //							item.setData(trimItem);
-//							
+//
 //							// TODO: Make this work...wire it off for now
 //							item.setEnabled(false);
-//							
+//
 //							item.addSelectionListener(new SelectionListener() {
 //
 //								public void widgetSelected(SelectionEvent e) {
@@ -434,10 +434,10 @@ public class TrimCommonUIHandle extends Composite {
 //
 //								public void widgetDefaultSelected(SelectionEvent e) {
 //								}
-//								
+//
 //							});
 //						}
-//    					
+//
 //    					showCascade.setMenu(showMenu);
 //    				}
     			}
@@ -454,7 +454,7 @@ public class TrimCommonUIHandle extends Composite {
 //		TrimDragPreferenceDialog dlg = new TrimDragPreferenceDialog(getShell());
 //		dlg.open();
 //	}
-   
+
 	/**
 	 * Handle the event generated when the "Close" item is
 	 * selected on the context menu. This removes the associated
@@ -465,7 +465,7 @@ public class TrimCommonUIHandle extends Composite {
 		layout.removeTrim(trim);
 		trim.handleClose();
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.swt.widgets.Widget#dispose()
      */
@@ -478,13 +478,13 @@ public class TrimCommonUIHandle extends Composite {
         // tidy up...
         removeControlListener(controlListener);
         removeListener(SWT.MenuDetect, menuListener);
-        
+
         super.dispose();
     }
 
     /**
      * Begins dragging the trim
-     * 
+     *
      * @param position initial mouse position
      */
     protected void startDraggingTrim(Point position) {
@@ -499,5 +499,5 @@ public class TrimCommonUIHandle extends Composite {
         Menu menu = dockMenuManager.createContextMenu(toDrag);
         menu.setLocation(pt.x, pt.y);
         menu.setVisible(true);
-    }	    
+    }
 }

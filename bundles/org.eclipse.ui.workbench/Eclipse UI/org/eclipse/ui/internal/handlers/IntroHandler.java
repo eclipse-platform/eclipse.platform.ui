@@ -21,11 +21,11 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
 
 /**
- * 
+ *
  * @author Prakash G.R.
- * 
+ *
  * @since 3.7
- * 
+ *
  */
 public class IntroHandler extends AbstractHandler {
 
@@ -36,10 +36,10 @@ public class IntroHandler extends AbstractHandler {
 		workbench = (Workbench) PlatformUI.getWorkbench();
 		introDescriptor = workbench.getIntroDescriptor();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)
@@ -60,7 +60,7 @@ public class IntroHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
 	 */
 	@Override

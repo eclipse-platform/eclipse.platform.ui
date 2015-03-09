@@ -17,7 +17,7 @@ import org.eclipse.jface.action.SubMenuManager;
 
 /**
  * An <code>EditorMenuManager</code> is used to sort the contributions
- * made by an editor so that they always appear after the action sets.  
+ * made by an editor so that they always appear after the action sets.
  */
 public class ActionSetMenuManager extends SubMenuManager {
     private String actionSetId;
@@ -46,7 +46,7 @@ public class ActionSetMenuManager extends SubMenuManager {
             // if it is a menu manager wrap it before returning
             IMenuManager menu = (IMenuManager) item;
             if (menu instanceof SubMenuManager) {
-				// it it is already wrapped then remover the wrapper and 
+				// it it is already wrapped then remover the wrapper and
                 // rewrap. We have a table of wrappers so we reuse wrappers
                 // we create.
                 menu = (IMenuManager) ((SubMenuManager) menu).getParent();

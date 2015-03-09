@@ -27,7 +27,7 @@ import org.eclipse.ui.services.IEvaluationReference;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class EvaluationReference extends RunAndTrack implements IEvaluationReference {
 	final IEclipseContext context;
@@ -51,7 +51,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
 	 */
@@ -61,7 +61,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression()
 	 */
@@ -72,7 +72,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
 	 * ()
@@ -84,7 +84,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(org.
 	 * eclipse.core.expressions.IEvaluationContext)
@@ -105,7 +105,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult(boolean
 	 * )
@@ -117,7 +117,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.core.services.context.IRunAndTrack#notify(org.eclipse.
 	 * e4.core.services.context.ContextChangeEvent)
@@ -155,7 +155,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IEvaluationReference#getListener()
 	 */
 	@Override
@@ -165,7 +165,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IEvaluationReference#getProperty()
 	 */
 	@Override

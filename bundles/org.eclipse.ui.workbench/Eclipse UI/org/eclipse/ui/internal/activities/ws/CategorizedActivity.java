@@ -19,11 +19,11 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
 
 /**
- * IActivity proxy that is used by the 
- * <code>IActivityCategoryContentProvider</code>.  Each 
- * proxy keeps a pointer to the <code>ICategory</code> under which it is being 
+ * IActivity proxy that is used by the
+ * <code>IActivityCategoryContentProvider</code>.  Each
+ * proxy keeps a pointer to the <code>ICategory</code> under which it is being
  * provided.
- * 
+ *
  * @since 3.0
  */
 public class CategorizedActivity implements IActivity {
@@ -40,8 +40,8 @@ public class CategorizedActivity implements IActivity {
 
     /**
      * Create a new instance.
-     * 
-     * @param category the <code>ICategory</code> under which this proxy will be 
+     *
+     * @param category the <code>ICategory</code> under which this proxy will be
      * rendered.
      * @param activity the real <code>IActivity</code>.
      */
@@ -173,7 +173,7 @@ public class CategorizedActivity implements IActivity {
 	public String getDescription() throws NotDefinedException {
         return activity.getDescription();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.IActivity#isDefaultEnabled()
      */
@@ -181,7 +181,7 @@ public class CategorizedActivity implements IActivity {
 	public boolean isDefaultEnabled() throws NotDefinedException {
         return activity.isDefaultEnabled();
     }
-    
+
     @Override
 	public Expression getExpression() {
     	return activity.getExpression();

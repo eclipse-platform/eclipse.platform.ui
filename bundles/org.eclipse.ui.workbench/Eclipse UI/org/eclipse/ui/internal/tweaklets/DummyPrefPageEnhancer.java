@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * @since 3.8
- * 
+ *
  */
 public class DummyPrefPageEnhancer extends PreferencePageEnhancer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#createContents
 	 * (org.eclipse.swt.widgets.Composite)
@@ -32,7 +32,7 @@ public class DummyPrefPageEnhancer extends PreferencePageEnhancer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#setSelection
 	 * (java.lang.Object)
@@ -44,7 +44,7 @@ public class DummyPrefPageEnhancer extends PreferencePageEnhancer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#performOK()
 	 */
 	@Override
@@ -54,7 +54,7 @@ public class DummyPrefPageEnhancer extends PreferencePageEnhancer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#performCancel()
 	 */
@@ -65,7 +65,7 @@ public class DummyPrefPageEnhancer extends PreferencePageEnhancer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#performDefaults
 	 * ()

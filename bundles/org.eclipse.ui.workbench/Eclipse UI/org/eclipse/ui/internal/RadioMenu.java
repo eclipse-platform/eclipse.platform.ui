@@ -45,8 +45,8 @@ public class RadioMenu implements IChangeListener {
     };
 
     /**
-     * Creates a set of radio menu items on the given menu. 
-     * 
+     * Creates a set of radio menu items on the given menu.
+     *
      * @param parent menu that will contain the menu items
      * @param newData the model that will store the value of the currently selected item
      */
@@ -59,7 +59,7 @@ public class RadioMenu implements IChangeListener {
 
     /**
      * Returns true iff the given values are considered equal.
-     * 
+     *
      * @param value1
      * @param value2
      * @return
@@ -75,10 +75,10 @@ public class RadioMenu implements IChangeListener {
     }
 
     /**
-     * Creates a new menu item with the given text and value. When 
+     * Creates a new menu item with the given text and value. When
      * the item is selected, the state of the model will change to
      * match the given value.
-     * 
+     *
      * @param text
      * @param value
      */

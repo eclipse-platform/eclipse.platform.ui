@@ -32,7 +32,7 @@ public abstract class BrandingProperties {
      * Create an url from the argument absolute or relative path. The bundle
      * parameter is used as the base for relative paths and is allowed to be
      * null.
-     * 
+     *
      * @param value
      *            the absolute or relative path
      * @param definingBundle
@@ -57,7 +57,7 @@ public abstract class BrandingProperties {
      * Create a descriptor from the argument absolute or relative path to an
      * image file. bundle parameter is used as the base for relative paths and
      * is allowed to be null.
-     * 
+     *
      * @param value
      *            the absolute or relative path
      * @param definingBundle
@@ -75,7 +75,7 @@ public abstract class BrandingProperties {
      * absolute or relative to the argument bundle). Tokens that do not
      * represent a valid url will be represented with a null entry in the
      * returned array.
-     * 
+     *
      * @param value
      *            value of a property that contains a comma-separated list of
      *            product relative urls
@@ -102,7 +102,7 @@ public abstract class BrandingProperties {
      * <code>null</code>. The property value should be a comma separated list
      * of image paths. Each path should either be absolute or relative to the
      * optional bundle parameter.
-     * 
+     *
      * @param value
      *            value of a property that contains a comma-separated list of
      *            product relative urls describing images

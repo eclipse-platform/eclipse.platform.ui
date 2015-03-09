@@ -36,27 +36,27 @@ import org.eclipse.ui.intro.IntroContentDetector;
 
 /**
  * Workbench implementation of the IIntroManager interface.
- * 
+ *
  * @since 3.0
  */
-public class WorkbenchIntroManager implements IIntroManager {	
-	
+public class WorkbenchIntroManager implements IIntroManager {
+
     private final Workbench workbench;
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param workbench the workbench instance
      */
     WorkbenchIntroManager(Workbench workbench) {
         this.workbench = workbench;
         workbench.getExtensionTracker().registerHandler(new IExtensionChangeHandler(){
-            
+
             @Override
 			public void addExtension(IExtensionTracker tracker,IExtension extension) {
                 //Do nothing
             }
-            
+
 			@Override
 			public void removeExtension(IExtension source, Object[] objects) {
                 for (int i = 0; i < objects.length; i++) {
@@ -64,9 +64,9 @@ public class WorkbenchIntroManager implements IIntroManager {
                         closeIntro((IIntroPart) objects[i]);
                     }
                 }
-				
+
 			}}, null);
-        
+
     }
 
     /**
@@ -89,15 +89,15 @@ public class WorkbenchIntroManager implements IIntroManager {
                     .findViewReference(IIntroConstants.INTRO_VIEW_ID);
             page.hideView(introView);
             if (reference == null || reference.getPart(false) == null) {
-                introPart = null;                
+                introPart = null;
                 return true;
             }
             return false;
         }
-        
+
 		// if there is no part then null our reference
 		introPart = null;
-        
+
         return true;
     }
 
@@ -134,7 +134,7 @@ public class WorkbenchIntroManager implements IIntroManager {
         return introPart;
     }
 
-    /**	 
+    /**
      * @param testWindow the window to test
      * @return whether the intro exists in the given window
      */
@@ -235,8 +235,8 @@ public class WorkbenchIntroManager implements IIntroManager {
         return introPart;
     }
 
-    /** 
-     * @return the <code>ViewIntroAdapterPart</code> for this workbench, <code>null</code> if it 
+    /**
+     * @return the <code>ViewIntroAdapterPart</code> for this workbench, <code>null</code> if it
      * cannot be found.
      */
     /*package*/ViewIntroAdapterPart getViewIntroAdapterPart() {
@@ -281,7 +281,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 	public boolean hasIntro() {
         return workbench.getIntroDescriptor() != null;
     }
-    
+
     @Override
 	public boolean isNewContentAvailable() {
 		IntroDescriptor introDescriptor = workbench.getIntroDescriptor();

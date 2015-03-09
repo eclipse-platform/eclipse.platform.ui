@@ -55,7 +55,7 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class BundleSigningInfo {
 
@@ -118,7 +118,7 @@ public class BundleSigningInfo {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void startJobs() {
 		if (!isOpen())
@@ -254,7 +254,7 @@ public class BundleSigningInfo {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private boolean isOpen() {
 		return certificate != null && !certificate.isDisposed();

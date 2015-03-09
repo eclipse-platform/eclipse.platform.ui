@@ -28,9 +28,9 @@ import org.eclipse.ui.internal.WorkbenchPage;
  * <p>
  * Replacement for SaveAction
  * </p>
- * 
+ *
  * @since 3.7
- * 
+ *
  */
 public class SaveHandler extends AbstractSaveHandler {
 

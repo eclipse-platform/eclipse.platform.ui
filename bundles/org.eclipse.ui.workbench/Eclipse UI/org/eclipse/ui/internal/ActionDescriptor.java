@@ -95,7 +95,7 @@ public class ActionDescriptor implements IPluginContribution {
 
     /**
      * Creates a new descriptor with the specified target.
-     * 
+     *
      * @param actionElement the configuration element
      * @param targetType the type of action
      */
@@ -106,7 +106,7 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Creates a new descriptor with the target and destination workbench part
      * it will go into.
-     * 
+     *
      * @param actionElement the configuration element
      * @param targetType the type of action
      * @param target the target object
@@ -135,7 +135,7 @@ public class ActionDescriptor implements IPluginContribution {
         if (label == null) {
             WorkbenchPlugin
                     .log("Invalid action declaration (label == null): " + id); //$NON-NLS-1$
-            label = WorkbenchMessages.ActionDescriptor_invalidLabel; 
+            label = WorkbenchMessages.ActionDescriptor_invalidLabel;
         }
 
         // Calculate menu and toolbar paths.
@@ -278,7 +278,7 @@ public class ActionDescriptor implements IPluginContribution {
 
     /**
      * Returns the action object held in this descriptor.
-     * 
+     *
      * @return the action
      */
     public PluginAction getAction() {
@@ -287,7 +287,7 @@ public class ActionDescriptor implements IPluginContribution {
 
     /**
      * Returns action's id as defined in the registry.
-     * 
+     *
      * @return the id
      */
     public String getId() {
@@ -297,7 +297,7 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns named slot (group) in the menu where this action
      * should be added.
-     * 
+     *
      * @return the menu group
      */
     public String getMenuGroup() {
@@ -307,7 +307,7 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns menu path where this action should be added. If null,
      * the action will not be added into the menu.
-     * 
+     *
      * @return the menubar path
      */
     public String getMenuPath() {
@@ -317,7 +317,7 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns the named slot (group) in the tool bar where this
      * action should be added.
-     * 
+     *
      * @return the toolbar group id
      */
     public String getToolbarGroupId() {
@@ -327,7 +327,7 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns id of the tool bar where this action should be added.
      * If null, action will not be added to the tool bar.
-     * 
+     *
      * @return the toolbar id
      */
     public String getToolbarId() {
@@ -375,7 +375,7 @@ public class ActionDescriptor implements IPluginContribution {
 	public String getPluginId() {
         return pluginId;
     }
-    
+
     public int getMode() {
     	return mode;
     }

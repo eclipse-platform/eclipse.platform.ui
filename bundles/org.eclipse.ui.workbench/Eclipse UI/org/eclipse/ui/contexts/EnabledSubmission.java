@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * Note: this class has a natural ordering that is inconsistent with equals.
  * </p>
- * 
+ *
  * @since 3.0
  * @see IWorkbenchContextSupport
  * @deprecated Please use <code>IContextService.activateContext</code>
@@ -78,7 +78,7 @@ public final class EnabledSubmission implements Comparable {
 
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param activePartId
      *            the identifier of the part that must be active for this
      *            request to be considered. May be <code>null</code>.
@@ -131,7 +131,7 @@ public final class EnabledSubmission implements Comparable {
     /**
      * Returns the identifier of the part that must be active for this request
      * to be considered.
-     * 
+     *
      * @return the identifier of the part that must be active for this request
      *         to be considered. May be <code>null</code>.
      */
@@ -141,7 +141,7 @@ public final class EnabledSubmission implements Comparable {
 
     /**
      * Returns the shell that must be active for this request to be considered.
-     * 
+     *
      * @return the shell that must be active for this request to be considered.
      *         May be <code>null</code>.
      */
@@ -152,7 +152,7 @@ public final class EnabledSubmission implements Comparable {
     /**
      * Returns the workbench part site of the part that must be active for this
      * request to be considered.
-     * 
+     *
      * @return the workbench part site of the part that must be active for this
      *         request to be considered. May be <code>null</code>.
      */
@@ -162,7 +162,7 @@ public final class EnabledSubmission implements Comparable {
 
     /**
      * Returns the identifier of the context to be enabled.
-     * 
+     *
      * @return the identifier of the context to be enabled. Guaranteed not to be
      *         <code>null</code>.
      */

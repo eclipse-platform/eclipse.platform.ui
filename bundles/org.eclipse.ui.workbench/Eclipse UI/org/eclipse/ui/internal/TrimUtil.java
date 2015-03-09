@@ -49,6 +49,6 @@ public class TrimUtil {
     	gc.dispose();
     	TRIM_DEFAULT_HEIGHT = Math.max(toolItemHeight, fontSize.y);
     	s.dispose();
-    	
+
     }
 }

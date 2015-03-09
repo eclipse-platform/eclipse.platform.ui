@@ -20,7 +20,7 @@ import org.eclipse.ui.menus.IMenuService;
 
 /**
  * @since 3.105
- * 
+ *
  */
 public class SlaveMenuService implements IMenuService {
 	private IMenuService parentService;
@@ -53,7 +53,7 @@ public class SlaveMenuService implements IMenuService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override

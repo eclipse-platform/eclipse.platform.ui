@@ -129,13 +129,13 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
     /**
      * Constructor for WorkbenchEditorsDialog.
-     * 
+     *
      * @param window the window
      */
     public WorkbenchEditorsDialog(IWorkbenchWindow window) {
         super(window.getShell());
         this.window = window;
-        setTitle(WorkbenchMessages.WorkbenchEditorsDialog_title); 
+        setTitle(WorkbenchMessages.WorkbenchEditorsDialog_title);
 
         IDialogSettings s = getDialogSettings();
         if (s.get(ALLPERSP) == null) {
@@ -222,7 +222,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Label over the table
         Label l = new Label(dialogArea, SWT.NONE);
-        l.setText(WorkbenchMessages.WorkbenchEditorsDialog_label); 
+        l.setText(WorkbenchMessages.WorkbenchEditorsDialog_label);
         l.setFont(font);
         l.setLayoutData(new CellData().align(SWT.FILL, SWT.CENTER));
         //Table showing the editors name, full path and perspective
@@ -268,7 +268,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         //Full path column
         tc = new TableColumn(editorsTable, SWT.NONE);
         tc.setResizable(true);
-        tc.setText(WorkbenchMessages.WorkbenchEditorsDialog_path); 
+        tc.setText(WorkbenchMessages.WorkbenchEditorsDialog_path);
         tc.addSelectionListener(headerListener);
 
         // A composite for selection option buttons
@@ -281,7 +281,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Select clean editors button
         selectClean = new Button(selectionButtons, SWT.PUSH);
-        selectClean.setText(WorkbenchMessages.WorkbenchEditorsDialog_selectClean); 
+        selectClean.setText(WorkbenchMessages.WorkbenchEditorsDialog_selectClean);
         selectClean.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
@@ -294,7 +294,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Invert selection button
         invertSelection = new Button(selectionButtons, SWT.PUSH);
-        invertSelection.setText(WorkbenchMessages.WorkbenchEditorsDialog_invertSelection); 
+        invertSelection.setText(WorkbenchMessages.WorkbenchEditorsDialog_invertSelection);
         invertSelection.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
@@ -308,7 +308,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Select all button
         allSelection = new Button(selectionButtons, SWT.PUSH);
-        allSelection.setText(WorkbenchMessages.WorkbenchEditorsDialog_allSelection); 
+        allSelection.setText(WorkbenchMessages.WorkbenchEditorsDialog_allSelection);
         allSelection.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
@@ -328,7 +328,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         actionButtons.setLayout(actLayout);
 
         // Activate selected editor button
-        createButton(actionButtons, IDialogConstants.OK_ID, WorkbenchMessages.WorkbenchEditorsDialog_activate, 
+        createButton(actionButtons, IDialogConstants.OK_ID, WorkbenchMessages.WorkbenchEditorsDialog_activate,
                 true);
 
         //Close selected editors button
@@ -345,7 +345,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Save selected editors button
         saveSelected = new Button(actionButtons, SWT.PUSH);
-        saveSelected.setText(WorkbenchMessages.WorkbenchEditorsDialog_saveSelected); 
+        saveSelected.setText(WorkbenchMessages.WorkbenchEditorsDialog_saveSelected);
         saveSelected.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
@@ -444,7 +444,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         if (items.length == 0) {
 			return;
 		}
-        
+
         // collect all instantiated editors that have been selected
 		List selectedEditors = new ArrayList();
         for (int i = 0; i < items.length; i++) {
@@ -564,7 +564,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		for (int i = 0; i < selectedItems.length; i++) {
 			selectedAdapters[i] = (Adapter) selectedItems[i].getData();
 		}
-		
+
 		// remove all the items
         editorsTable.removeAll();
         elements = new ArrayList();
@@ -765,7 +765,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                             .getEditorRegistry();
                     imageDesc = registry.getImageDescriptor(input.getName());
 					//TODO: how can this honour content types?  Guessing at the content type perhaps?
-					
+
                     if (imageDesc == null) {
                         // @issue what should be the default image?
                         // image = registry.getDefaultEditor().getImageDescriptor();

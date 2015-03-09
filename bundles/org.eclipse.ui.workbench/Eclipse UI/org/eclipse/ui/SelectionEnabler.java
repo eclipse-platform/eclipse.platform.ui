@@ -37,9 +37,9 @@ import org.osgi.framework.Bundle;
  * <p>
  * This class can be instantiated by clients. It is not intended to be extended.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * Note: The dependency on org.eclipse.jface.text for ITextSelection must be
  * severed It may be possible to do with IActionFilter generic workbench
  * registers IActionFilter for "size" property against IStructuredSelection
@@ -112,7 +112,7 @@ public final class SelectionEnabler {
 	/**
 	 * Returns <code>ITextSelection.class</code> or <code>null</code> if the
 	 * class is not available.
-	 * 
+	 *
 	 * @return <code>ITextSelection.class</code> or <code>null</code> if
 	 *         class not available
 	 * @since 3.0
@@ -163,7 +163,7 @@ public final class SelectionEnabler {
 	/**
 	 * Verifies that the given name matches the given wildcard filter. Returns
 	 * true if it does.
-	 * 
+	 *
 	 * @param name
 	 * @param filter
 	 * @return <code>true</code> if there is a match
@@ -186,7 +186,7 @@ public final class SelectionEnabler {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param configElement
 	 */
 	public SelectionEnabler(IConfigurationElement configElement) {
@@ -212,7 +212,7 @@ public final class SelectionEnabler {
 
 	/**
 	 * Computes the hash code for this object based on the id.
-	 * 
+	 *
 	 * @return The hash code for this object.
 	 */
 	@Override
@@ -326,7 +326,7 @@ public final class SelectionEnabler {
 
 	/**
 	 * Check if the receiver is enabled for the given selection.
-	 * 
+	 *
 	 * @param selection
 	 * @return <code>true</code> if the given selection matches the conditions
 	 *         specified in <code>IConfirgurationElement</code>.

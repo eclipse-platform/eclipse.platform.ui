@@ -42,29 +42,29 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Abstract wizard page class from which an import or export wizard can be chosen.
- * 
+ *
  * @since 3.2
  *
  */
 public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
     protected static final String DIALOG_SETTING_SECTION_NAME = "ImportExportPage."; //$NON-NLS-1$
-	
+
     // tree viewer of wizard selections
     private TreeViewer treeViewer;
-    
+
 	/*
 	 * Class to create a control that shows a categorized tree of wizard types.
 	 */
 	protected class CategorizedWizardSelectionTree {
 		private final static int SIZING_LISTS_HEIGHT = 200;
-		
+
 		private IWizardCategory wizardCategories;
 		private String message;
 		private TreeViewer viewer;
 
 		/**
 		 * Constructor for CategorizedWizardSelectionTree
-		 * 
+		 *
 		 * @param categories root wizard category for the wizard type
 		 * @param msg message describing what the user should choose from the tree.
 		 */
@@ -72,11 +72,11 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 			this.wizardCategories = categories;
 			this.message = msg;
 		}
-		
+
 		/**
 		 * Create the tree viewer and a message describing what the user should choose
 		 * from the tree.
-		 * 
+		 *
 		 * @param parent Composite on which the tree viewer is to be created
 		 * @return Comoposite with all widgets
 		 */
@@ -100,13 +100,13 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 
 	        return outerContainer;
 		}
-		
+
 		/**
 		 * Create the categorized tree viewer.
-		 * 
+		 *
 		 * @param parent
 		 */
-		private void createFilteredTree(Composite parent){        
+		private void createFilteredTree(Composite parent){
 			// Create a FilteredTree for the categories and wizards
 			FilteredTree filteredTree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL
 	                | SWT.V_SCROLL | SWT.BORDER, new WizardPatternFilter(), true);
@@ -117,7 +117,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	        viewer.setContentProvider(new WizardContentProvider());
 			viewer.setLabelProvider(new WorkbenchLabelProvider());
 	        viewer.setComparator(DataTransferWizardCollectionComparator.INSTANCE);
-	        
+
 	        ArrayList inputArray = new ArrayList();
 	        boolean expandTop = false;
 
@@ -139,15 +139,15 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 			}
 
 	        AdaptableList input = new AdaptableList(inputArray);
-	        
+
 	        // filter wizard list according to capabilities that are enabled
 	        viewer.addFilter(new WizardActivityFilter());
-	        
+
 	        viewer.setInput(input);
 		}
 
 		/**
-		 * 
+		 *
 		 * @return the categorized tree viewer
 		 */
 		protected TreeViewer getViewer(){
@@ -156,7 +156,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 
 		/**
 		 * Layout for the given control.
-		 * 
+		 *
 		 * @param control
 		 */
 	    private void layoutTopControl(Control control) {
@@ -174,10 +174,10 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	        control.setLayoutData(data);
 	    }
 	}
-	
+
 	/**
 	 * Constructor for import/export wizard page.
-	 * 
+	 *
 	 * @param aWorkbench current workbench
 	 * @param currentSelection current selection
 	 */
@@ -185,11 +185,11 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 		super("importExportPage", aWorkbench, currentSelection, null, null);	//$NON-NLS-1$
 		setTitle(WorkbenchMessages.Select);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 	    Font font = parent.getFont();
-	
+
 	    // create composite for page.
 	    Composite outerContainer = new Composite(parent, SWT.NONE);
 	    outerContainer.setLayout(new GridLayout());
@@ -197,13 +197,13 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	    outerContainer.setFont(font);
 
 	    Composite comp = createTreeViewer(outerContainer);
-	    
+
 		Dialog.applyDialogFont(comp);
-		
+
 	    restoreWidgetValues();
-	
-	    setControl(outerContainer);	
-	    
+
+	    setControl(outerContainer);
+
 	   initialize();
 	}
 
@@ -211,7 +211,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	 * Create the tree viewer from which a wizard is selected.
 	 */
     protected abstract Composite createTreeViewer(Composite parent);
-    
+
     /**
      * Method to call when an item in one of the lists is double-clicked.
      * Shows the first page of the selected wizard or expands a collapsed
@@ -222,7 +222,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
     	ISelection selection = event.getViewer().getSelection();
 	    IStructuredSelection ss = (IStructuredSelection) selection;
     	listSelectionChanged(ss);
-		
+
 		Object element = ss.getFirstElement();
 		TreeViewer v = (TreeViewer)event.getViewer();
 		if (v.isExpandable(element)) {
@@ -232,10 +232,10 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 				getContainer().showPage(getNextPage());
 				return;
 			}
-		}    	
-        getContainer().showPage(getNextPage());   			
+		}
+        getContainer().showPage(getNextPage());
     }
-    
+
     /*
      * Update the wizard's message based on the given (selected) wizard element.
      */
@@ -248,9 +248,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
         }
 
         setSelectedNode(createWizardNode(wizardElement));
-        setMessage(wizardElement.getDescription()); 
+        setMessage(wizardElement.getDescription());
     }
-    
+
     /*
      * Update the wizard's message based on the currently selected tab
      * and the selected wizard on that tab.
@@ -271,10 +271,10 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 			setMessage(null);
 		}
     }
-    
+
     /*
      * Method to call whenever the selection in one of the lists has changed.
-     * Updates the wizard's message to relect the description of the currently 
+     * Updates the wizard's message to relect the description of the currently
      * selected wizard.
      */
     protected void listSelectionChanged(ISelection selection){
@@ -282,7 +282,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
         IStructuredSelection ss = (IStructuredSelection) selection;
         Object sel = ss.getFirstElement();
         if (sel instanceof WorkbenchWizardElement){
-	        WorkbenchWizardElement currentWizardSelection = (WorkbenchWizardElement) sel;        
+	        WorkbenchWizardElement currentWizardSelection = (WorkbenchWizardElement) sel;
 	        updateSelectedNode(currentWizardSelection);
         } else {
 			updateSelectedNode(null);
@@ -300,7 +300,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
             }
         };
     }
-    
+
     /**
      * Uses the dialog store to restore widget values to the values that they
      * held last time this wizard was used to completion.
@@ -368,7 +368,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 
         viewer.setSelection(new StructuredSelection(selected), true);
     }
- 
+
     /**
      * Stores the collection of currently-expanded categories in this page's
      * dialog store, in order to recreate this page's state in the next
@@ -409,7 +409,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 			}
         }
     }
-    
+
     /**
      * When Finish is pressed, write widget values to the dialog store so
      * that they will persist into the next invocation of the wizard page.
@@ -418,46 +418,46 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
     public void saveWidgetValues(){
     	// do nothing by default - subclasses should override
     }
-    
+
     @Override
-	public IWizardPage getNextPage() { 
+	public IWizardPage getNextPage() {
     	ITriggerPoint triggerPoint = getTriggerPoint();
-        
+
         if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode())) {
 			return super.getNextPage();
 		}
         return null;
     }
 
-    /** 
+    /**
      * Get the trigger point for the wizard type, if one exists.
-     * 
+     *
      * @return the wizard's trigger point
      */
     protected ITriggerPoint getTriggerPoint(){
     	return null;	// default implementation
     }
-    
+
     /**
      * Set the tree viewer that is used for this wizard selection page.
-     * 
+     *
      * @param viewer
      */
     protected void setTreeViewer(TreeViewer viewer){
     	treeViewer = viewer;
     }
-    
+
     /**
      * Get the tree viewer that is used for this wizard selection page.
-     * 
+     *
      * @return tree viewer used for this wizard's selection page
      */
     protected TreeViewer getTreeViewer(){
     	return treeViewer;
     }
-    
+
     /**
-     * Perform any initialization of the wizard page that needs to be done 
+     * Perform any initialization of the wizard page that needs to be done
      * after widgets are created and main control is set.
      */
     protected void initialize(){

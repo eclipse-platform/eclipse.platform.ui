@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.services.EvaluationResultCache;
  * <p>
  * Note: this class has a natural ordering that is inconsistent with equals.
  * </p>
- * 
+ *
  * @since 3.1
  */
 final class ContextActivation extends EvaluationResultCache implements
@@ -51,7 +51,7 @@ final class ContextActivation extends EvaluationResultCache implements
 
 	/**
 	 * Constructs a new instance of <code>ContextActivation</code>.
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier for the context which should be activated. This
 	 *            value must not be <code>null</code>.

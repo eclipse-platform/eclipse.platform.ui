@@ -23,16 +23,16 @@ import org.eclipse.ui.internal.preferences.SettingsTransferRegistryReader;
  *
  */
 public abstract class SettingsTransfer {
-	
+
 	/**
-	 * Return the configuration elements for all of the settings 
+	 * Return the configuration elements for all of the settings
 	 * transfers.
 	 * @return IConfigurationElement[]
 	 */
 	public static IConfigurationElement[] getSettingsTransfers(){
 		return (new SettingsTransferRegistryReader()).getSettingTransfers();
 	}
-	
+
 	/**
 	 * Transfer the settings to a workspace rooted at newWorkspacwe
 	 * @param newWorkspaceRoot

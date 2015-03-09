@@ -68,7 +68,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * default, pruning does not occur and it is assumed that clients of the
  * particular undo context are pruning the history when necessary.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class OperationHistoryActionHandler extends Action implements
@@ -129,11 +129,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
 			if (workbenchWindow == null)
 				return;
-			
+
 			Display display = workbenchWindow.getWorkbench().getDisplay();
 			if (display == null)
 				return;
-			
+
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.OPERATION_ADDED:
 			case OperationHistoryEvent.OPERATION_REMOVED:
@@ -203,7 +203,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	/**
 	 * Construct an operation history action for the specified workbench window
 	 * with the specified undo context.
-	 * 
+	 *
 	 * @param site -
 	 *            the workbench part site for the action.
 	 * @param context -
@@ -383,7 +383,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 	/**
 	 * The undo and redo subclasses should implement this.
-	 * 
+	 *
 	 * @return - a boolean indicating enablement state
 	 */
 	abstract boolean shouldBeEnabled();
@@ -392,7 +392,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Set the context shown by the handler. Normally the context is set up when
 	 * the action handler is created, but the context can also be changed
 	 * dynamically.
-	 * 
+	 *
 	 * @param context
 	 *            the context to be used for the undo history
 	 */
@@ -409,11 +409,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Specify whether the action handler should actively prune the operation
 	 * history when invalid operations are encountered. The default value is
 	 * <code>false</code>.
-	 * 
+	 *
 	 * @param prune
 	 *            <code>true</code> if the history should be pruned by the
 	 *            handler, and <code>false</code> if it should not.
-	 * 
+	 *
 	 */
 	public void setPruneHistory(boolean prune) {
 		pruning = prune;

@@ -20,7 +20,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * you fill in the additions List with {@link IContributionItem} to be inserted at this
  * factory's location. For example:
  * <p>
- * 
+ *
  * <pre>
  * AbstractContributionFactory contributions = new AbstractContributionFactory(
  * 		&quot;menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions&quot;) {
@@ -38,7 +38,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * 				&quot;org.eclipse.ui.tests.myview.context&quot;));
  * 		additions.add(item);
  * 	}
- * 
+ *
  * 	public void releaseContributionItems(IMenuService menuService, List items) {
  * 		// we have nothing to do
  * 	}
@@ -47,18 +47,18 @@ import org.eclipse.ui.services.IServiceLocator;
  * 		IMenuService.class);
  * service.addContributionFactory(contributions);
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  * <p>
  * Clients who are providing factories via the <code>org.eclipse.ui.menus</code>
  * extension point should subclass {@link ExtensionContributionFactory} instead.
  * </p>
- * 
+ *
  * <p>
  * Only the abstract methods may be implemented.
  * </p>
- * 
+ *
  * @since 3.3
  * @see org.eclipse.ui.menus.IMenuService
  * @see org.eclipse.jface.action.MenuManager
@@ -71,7 +71,7 @@ public abstract class AbstractContributionFactory {
 	/**
 	 * The contribution factories must be instantiated with their location,
 	 * which which specifies the contributions insertion location.
-	 * 
+	 *
 	 * @param location
 	 *            the addition location in Menu API URI format. It must not be
 	 *            <code>null</code>.
@@ -86,7 +86,7 @@ public abstract class AbstractContributionFactory {
 
 	/**
 	 * Return the location as a String.
-	 * 
+	 *
 	 * @return the location - never <code>null</code>.
 	 */
 	public String getLocation() {
@@ -102,7 +102,7 @@ public abstract class AbstractContributionFactory {
 	 * This method is not meant to be called by clients. It will be called by
 	 * the menu service at the appropriate time.
 	 * </p>
-	 * 
+	 *
 	 * @param serviceLocator
 	 *            a service locator that may be used in the construction of
 	 *            items created by this factory
@@ -118,7 +118,7 @@ public abstract class AbstractContributionFactory {
 	/**
 	 * Return the namespace for this cache. This corresponds to the plug-in that
 	 * is contributing this factory.
-	 * 
+	 *
 	 * @return the namespace the namespace of this factory
 	 */
 	public String getNamespace() {

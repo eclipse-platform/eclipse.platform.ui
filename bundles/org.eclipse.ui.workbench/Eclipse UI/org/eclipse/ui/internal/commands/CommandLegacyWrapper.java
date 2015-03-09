@@ -35,7 +35,7 @@ import org.eclipse.ui.keys.KeySequence;
 /**
  * A wrapper around a core command so that it satisfies the deprecated
  * <code>ICommand</code> interface.
- * 
+ *
  * @since 3.1
  */
 final class CommandLegacyWrapper implements ICommand {
@@ -58,7 +58,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/**
 	 * Constructs a new <code>CommandWrapper</code>
-	 * 
+	 *
 	 * @param command
 	 *            The command to be wrapped; must not be <code>null</code>.
 	 * @param bindingManager
@@ -83,7 +83,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#addCommandListener(org.eclipse.ui.commands.ICommandListener)
 	 */
 
@@ -95,7 +95,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#execute(java.util.Map)
 	 */
 	@Override
@@ -117,7 +117,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#getAttributeValuesByName()
 	 */
 	@Override
@@ -134,7 +134,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#getCategoryId()
 	 */
 	@Override
@@ -148,7 +148,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#getDescription()
 	 */
 	@Override
@@ -162,7 +162,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#getId()
 	 */
 	@Override
@@ -172,7 +172,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#getKeySequenceBindings()
 	 */
 	@Override
@@ -202,7 +202,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#getName()
 	 */
 	@Override
@@ -216,7 +216,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#isDefined()
 	 */
 	@Override
@@ -226,7 +226,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#isHandled()
 	 */
 	@Override
@@ -236,7 +236,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommand#removeCommandListener(org.eclipse.ui.commands.ICommandListener)
 	 */
 	@Override
@@ -248,7 +248,7 @@ final class CommandLegacyWrapper implements ICommand {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override

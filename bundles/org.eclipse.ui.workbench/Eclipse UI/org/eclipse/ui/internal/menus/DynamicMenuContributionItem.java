@@ -30,11 +30,11 @@ import org.eclipse.ui.services.IServiceLocator;
  * It currently supports placement in menus.
  * </p>
  * <p>
- * 
+ *
  * @author Prakash G.R.
- * 
+ *
  * @since 3.5
- * 
+ *
  */
 public class DynamicMenuContributionItem extends ContributionItem {
 
@@ -45,14 +45,14 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/**
 	 * Creates a DynamicMenuContributionItem
-	 * 
+	 *
 	 * @param id
 	 *            - Id of the menu item
 	 * @param locator
 	 *            - The Service Locator
 	 * @param dynamicAddition
 	 *            - The Configuration Element defined in the plugin.xml
-	 * 
+	 *
 	 */
 	public DynamicMenuContributionItem(String id, IServiceLocator locator,
 			IConfigurationElement dynamicAddition) {
@@ -64,7 +64,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isDynamic()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isDirty()
 	 */
 	@Override
@@ -90,7 +90,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isEnabled()
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isGroupMarker()
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isSeparator()
 	 */
 	@Override
@@ -129,7 +129,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#isVisible()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#saveWidgetState()
 	 */
 	@Override
@@ -155,7 +155,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#setVisible(boolean)
 	 */
 	@Override
@@ -168,7 +168,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
 	 * .Composite)
@@ -182,7 +182,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
 	 * .CoolBar, int)
@@ -196,7 +196,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
 	 * .Menu, int)
@@ -210,7 +210,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
 	 * .ToolBar, int)
@@ -250,7 +250,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	@Override
@@ -264,7 +264,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.ContributionItem#update()
 	 */
 	@Override
@@ -283,7 +283,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface
 	 * .action.IContributionManager)

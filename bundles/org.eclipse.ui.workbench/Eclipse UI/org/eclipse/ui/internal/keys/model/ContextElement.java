@@ -19,14 +19,14 @@ import org.eclipse.core.commands.contexts.Context;
  *
  */
 public class ContextElement extends ModelElement {
-	
+
 	/**
 	 * @param kc
 	 */
 	public ContextElement(KeyController kc) {
 		super(kc);
 	}
-	
+
 	public void init(Context context) {
 		setId(context.getId());
 		setModelObject(context);

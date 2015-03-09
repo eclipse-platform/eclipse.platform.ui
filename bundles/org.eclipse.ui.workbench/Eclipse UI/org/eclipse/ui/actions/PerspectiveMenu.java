@@ -110,7 +110,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 
     /**
      * The translatable message to show when there are no perspectives.
-     * 
+     *
      * @since 3.1
      */
     private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoPerspectives;
@@ -119,14 +119,14 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * The map of perspective identifiers (String) to actions
      * (OpenPerspectiveAction). This map may be empty, but it is never
      * <code>null</code>.
-     * 
+     *
      * @since 3.1
      */
     private Map actions = new HashMap();
 
     /**
      * The action for that allows the user to choose any perspective to open.
-     * 
+     *
      * @since 3.1
      */
     private Action openOtherAction = new Action(WorkbenchMessages.PerspectiveMenu_otherItem) {
@@ -180,7 +180,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * Fills the given menu manager with all the open perspective actions
      * appropriate for the currently active perspective. Filtering is applied to
      * the actions based on the activities and capabilities mechanism.
-     * 
+     *
      * @param manager
      *            The menu manager that should receive the menu items; must not
      *            be <code>null</code>.
@@ -232,7 +232,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * Returns the action for the given perspective id. This is a lazy cache. If
      * the action does not already exist, then it is created. If there is no
      * perspective with the given identifier, then the action is not created.
-     * 
+     *
      * @param id
      *            The identifier of the perspective for which the action should
      *            be retrieved.
@@ -255,7 +255,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 
     /*
      * Returns the perspective shortcut items for the active perspective.
-     * 
+     *
      * @return a list of <code>IPerspectiveDescriptor</code> items
      */
     private ArrayList getPerspectiveShortcuts() {
@@ -289,7 +289,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * </p><p>
      * Subclasses can override this method to return a different list.
      * </p>
-     * 
+     *
      * @return an <code>ArrayList<code> of perspective items <code>IPerspectiveDescriptor</code>
      */
     protected ArrayList getPerspectiveItems() {
@@ -350,7 +350,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * Runs an action for a particular perspective. The behavior of the action
      * is defined by the subclass. By default, this just calls
      * <code>run(IPerspectiveDescriptor)</code>.
-     * 
+     *
      * @param desc
      *            the selected perspective
      * @param event
@@ -365,7 +365,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	/**
 	 * Show the "other" dialog, select a perspective, and run it. Pass on the selection event should
 	 * the menu need it.
-	 * 
+	 *
 	 * @param event the selection event
 	 */
     void runOther(SelectionEvent event) {

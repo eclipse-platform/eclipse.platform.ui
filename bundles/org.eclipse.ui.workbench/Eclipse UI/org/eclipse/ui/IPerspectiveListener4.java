@@ -17,11 +17,11 @@ package org.eclipse.ui;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @see IPageService#addPerspectiveListener(IPerspectiveListener)
  * @see PerspectiveAdapter
  * @since 3.2
- * 
+ *
  */
 public interface IPerspectiveListener4 extends IPerspectiveListener3 {
 	/**
@@ -32,7 +32,7 @@ public interface IPerspectiveListener4 extends IPerspectiveListener3 {
 	 * <p>
 	 * Note: This does not have the ability to veto a perspective deactivation.
 	 * </p>
-	 * 
+	 *
 	 * @param page
 	 *            the page containing the deactivated perspective
 	 * @param perspective

@@ -37,7 +37,7 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * PluginActionSet constructor comment.
-     * 
+     *
      * @param desc the descriptor
      */
     public PluginActionSet(ActionSetDescriptor desc) {
@@ -47,7 +47,7 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * Adds one plugin action ref to the list.
-     * 
+     *
      * @param action the action
      */
     public void addPluginAction(WWinPluginAction action) {
@@ -56,7 +56,7 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * Returns the list of plugin actions for the set.
-     * 
+     *
      * @return the actions for the set
      */
     public IAction[] getPluginActions() {
@@ -91,7 +91,7 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * Returns the configuration element.
-     * 
+     *
      * @return the configuration element
      */
     public IConfigurationElement getConfigElement() {
@@ -100,7 +100,7 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * Returns the underlying descriptor.
-     * 
+     *
      * @return the descriptor
      */
     public ActionSetDescriptor getDesc() {

@@ -18,10 +18,10 @@ import java.util.Set;
  * role of the advisor to determine what, if any, activities should be enabled
  * as a consequence of this action. The advisor also has the option of vetoing
  * the operation.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @since 3.1
  * @see org.eclipse.ui.activities.ITriggerPoint
  */
@@ -30,7 +30,7 @@ public interface ITriggerPointAdvisor {
 	/**
 	 * Answer whether the activities bound to the identifier should be enabled
 	 * when triggered by the provided trigger point.
-	 * 
+	 *
 	 * @param triggerPoint
 	 *            the trigger point to test
 	 * @param identifier
@@ -54,12 +54,12 @@ public interface ITriggerPointAdvisor {
 	/**
 	 * Calculate the identifier's enabled state for a combination of activities
 	 * with and without enabled when core expressions.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager
 	 * @param identifier
 	 *            the identifier to update
-	 * 
+	 *
 	 * @return <code>true</code> if this identifier should be enabled,
 	 *         <code>false</code> otherwise
 	 * @since 3.4

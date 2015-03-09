@@ -75,14 +75,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * page may be used by product developers to provide basic ability to tweak the
  * enabled activity set. You may provide certain strings to this class via
  * method #2 of {@link org.eclipse.core.runtime.IExecutableExtension}.
- * 
+ *
  * @see #ACTIVITY_NAME
  * @see #ALLOW_ADVANCED
  * @see #CAPTION_MESSAGE
  * @see #CATEGORY_NAME
  * @see #ACTIVITY_PROMPT_BUTTON
  * @see #ACTIVITY_PROMPT_BUTTON_TOOLTIP
- * 
+ *
  * @since 3.1
  */
 public final class ActivityCategoryPreferencePage extends PreferencePage implements
@@ -98,32 +98,32 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
      * be true or false.
      */
     public static final String ALLOW_ADVANCED = "allowAdvanced"; //$NON-NLS-1$
-    
+
     /**
      * The string to use for the message at the top of the preference page.
      */
     public static final String CAPTION_MESSAGE = "captionMessage"; //$NON-NLS-1$
-    
+
     /**
      * The name to use for the activity categories.  Ie: "Roles".
      */
     public static final String CATEGORY_NAME = "categoryName"; //$NON-NLS-1$
-    
+
     /**
      * The label to be used for the prompt button. Ie: "&Prompt when enabling capabilities".
-     */    
+     */
     public static final String ACTIVITY_PROMPT_BUTTON = "activityPromptButton"; //$NON-NLS-1$
 
     /**
      * The tooltip to be used for the prompt button. Ie: "Prompt when a feature is first used that requires enablement of capabilities".
-     */    
+     */
     public static final String ACTIVITY_PROMPT_BUTTON_TOOLTIP = "activityPromptButtonTooltip"; //$NON-NLS-1$
-    
+
     private class AdvancedDialog extends TrayDialog {
 
     	private static final String DIALOG_SETTINGS_SECTION = "ActivityCategoryPreferencePageAdvancedDialogSettings"; //$NON-NLS-1$
 
-    	
+
         ActivityEnabler enabler;
         /**
          * @param parentShell
@@ -132,15 +132,15 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             super(parentShell);
 			setShellStyle(getShellStyle() | SWT.SHEET);
          }
-        
+
 		@Override
         protected void configureShell(Shell newShell) {
             super.configureShell(newShell);
             String activityName = strings.getProperty(ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities);
             activityName = Util.replaceAll(activityName, "&", ""); //strips possible mnemonic //$NON-NLS-1$ //$NON-NLS-2$
-			newShell.setText(NLS.bind(           		
+			newShell.setText(NLS.bind(
             		ActivityMessages.ActivitiesPreferencePage_advancedDialogTitle,
-            		activityName		
+            		activityName
             ));
         }
 
@@ -155,20 +155,20 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
         @Override
 		protected void okPressed() {
-            enabler.updateActivityStates();            
+            enabler.updateActivityStates();
             super.okPressed();
         }
-        
+
     	@Override
 		protected IDialogSettings getDialogBoundsSettings() {
             IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
             IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
             if (section == null) {
                 section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-            } 
+            }
             return section;
     	}
-    	
+
         @Override
 		protected boolean isResizable() {
         	return true;
@@ -216,10 +216,10 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 } catch (DeviceResourceException e) {
                     WorkbenchPlugin.log(e);
                 }
-            }  
+            }
             return null;
         }
-      
+
         @Override
 		public String getText(Object element) {
             String name = null;
@@ -233,8 +233,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 name = NLS.bind(ActivityMessages.ActivitiesPreferencePage_lockedMessage, name);
             }
             return name;
-        }   
-       
+        }
+
 		@Override
         public String getColumnText(Object element, int columnIndex) {
         	return getText(element);
@@ -305,14 +305,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
     private boolean allowAdvanced = false;
 
     private Button advancedButton;
-    
+
     private Properties strings = new Properties();
 
     @Override
 	protected Control createContents(Composite parent) {
     	initializeDialogUnits(parent);
-    	
-        Composite composite = new Composite(parent, SWT.NONE);  
+
+        Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = 0;
         layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
@@ -323,7 +323,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 .setText(strings.getProperty(CAPTION_MESSAGE, ActivityMessages.ActivitiesPreferencePage_captionMessage));
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = 400;
-        data.horizontalSpan = 2;        
+        data.horizontalSpan = 2;
         label.setLayoutData(data);
         label = new Label(composite, SWT.NONE); //spacer
         data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -333,12 +333,12 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         createCategoryArea(composite);
         createDetailsArea(composite);
         createButtons(composite);
-        
+
         workbench.getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.CAPABILITY_PREFERENCE_PAGE);
-        
+
         Dialog.applyDialogFont(composite);
-        
+
         return composite;
     }
 
@@ -377,7 +377,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                         .getDefinedActivityIds());
             }
         });
-        enableAll.setText(ActivityMessages.ActivityEnabler_selectAll); 
+        enableAll.setText(ActivityMessages.ActivityEnabler_selectAll);
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
@@ -388,9 +388,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 workingCopy.setEnabledActivityIds(Collections.EMPTY_SET);
             }
         });
-        disableAll.setText(ActivityMessages.ActivityEnabler_deselectAll); 
+        disableAll.setText(ActivityMessages.ActivityEnabler_deselectAll);
         setButtonLayoutData(disableAll);
-        
+
         if (allowAdvanced) {
         		Label spacer = new Label(composite, SWT.NONE);
         		data = new GridData(GridData.GRAB_HORIZONTAL);
@@ -401,7 +401,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 @Override
 				public void widgetSelected(SelectionEvent e) {
                     AdvancedDialog dialog = new AdvancedDialog(parent.getShell());
-                    dialog.open(); // logic for updating the working copy is in the dialog class.                    
+                    dialog.open(); // logic for updating the working copy is in the dialog class.
                 }
             });
             advancedButton.setText(ActivityMessages.ActivitiesPreferencePage_advancedButton);
@@ -428,7 +428,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         data.widthHint = 200;
         descriptionText.setLayoutData(data);
 
-        new Label(composite, SWT.NONE).setText(ActivityMessages.ActivitiesPreferencePage_requirements);            
+        new Label(composite, SWT.NONE).setText(ActivityMessages.ActivitiesPreferencePage_requirements);
         dependantViewer = new TableViewer(composite, SWT.BORDER);
         dependantViewer.getControl().setLayoutData(
                 new GridData(GridData.FILL_BOTH));
@@ -446,7 +446,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         GridLayout layout = new GridLayout();
         layout.marginHeight = layout.marginWidth = 0;
         layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);        
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.widthHint = 200;
@@ -509,12 +509,12 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 });
         categoryViewer.setInput(workingCopy.getDefinedCategoryIds());
 
-		updateCategoryCheckState(); 
+		updateCategoryCheckState();
     }
 
 	/**
 	 * Updates the check and grey state of the categories in the category viewer.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void updateCategoryCheckState() {
@@ -581,7 +581,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
     /**
      * Return whether the category is locked.
-     * 
+     *
      * @param category
      *            the category to test
      * @return whether the category is locked
@@ -607,7 +607,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         activityPromptButton.setSelection(getPreferenceStore()
                 .getDefaultBoolean(
                         IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
-        
+
         Set defaultEnabled = new HashSet();
         Set activityIds = workingCopy.getDefinedActivityIds();
         for (Iterator i = activityIds.iterator(); i.hasNext();) {
@@ -621,10 +621,10 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 // this can't happen - we're iterating over defined activities.
             }
         }
-        
+
         workingCopy.setEnabledActivityIds(defaultEnabled);
     }
-    
+
 	@Override
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) {
@@ -634,7 +634,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             strings.putAll(table);
         }
     }
-    
+
     @Override
 	public void dispose() {
     	if (workingCopy != null) {

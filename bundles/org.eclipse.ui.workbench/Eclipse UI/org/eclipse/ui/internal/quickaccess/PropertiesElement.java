@@ -26,13 +26,13 @@ public class PropertiesElement extends QuickAccessElement {
 
 	private Object selectedElement;
 	private IPreferenceNode preferenceNode;
-	
+
 	/* package */PropertiesElement(Object selectedElement, IPreferenceNode preferenceNode, PropertiesProvider propertiesProvider) {
 		super(propertiesProvider);
 		this.selectedElement = selectedElement;
 		this.preferenceNode = preferenceNode;
 	}
-	
+
 	@Override
 	public void execute() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
@@ -63,7 +63,7 @@ public class PropertiesElement extends QuickAccessElement {
 	public String getLabel() {
 		return preferenceNode.getLabelText();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -88,5 +88,5 @@ public class PropertiesElement extends QuickAccessElement {
 		} else if (!preferenceNode.equals(other.preferenceNode))
 			return false;
 		return true;
-	}	
+	}
 }

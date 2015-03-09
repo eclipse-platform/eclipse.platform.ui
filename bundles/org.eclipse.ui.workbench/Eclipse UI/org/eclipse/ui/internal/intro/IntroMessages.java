@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class IntroMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.intro.intro";//$NON-NLS-1$
-	
+
 	public static String Intro_could_not_create_part;
 	public static String Intro_could_not_create_proxy;
 	public static String Intro_could_not_create_descriptor;

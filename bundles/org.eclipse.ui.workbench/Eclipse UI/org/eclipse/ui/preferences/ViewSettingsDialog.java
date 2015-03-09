@@ -22,13 +22,13 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The ViewSettingsDialog is an abstract class that
  * provides some common functionality for view preferences.
- * 
+ *
  * @since 3.1
  */
 public class ViewSettingsDialog extends Dialog {
-	
+
 	private static int DEFAULTS_BUTTON_ID = 25;
-	
+
 	/**
 	 * Create a new instance of the receiver.
 	 * @param parentShell
@@ -55,7 +55,7 @@ public class ViewSettingsDialog extends Dialog {
      */
 	protected void performDefaults() {
 		//Do nothing by default
-		
+
 	}
 
 	@Override

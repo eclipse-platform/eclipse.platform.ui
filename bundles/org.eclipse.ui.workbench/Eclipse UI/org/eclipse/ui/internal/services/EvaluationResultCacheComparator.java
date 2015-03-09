@@ -25,9 +25,9 @@ import org.eclipse.ui.internal.util.Util;
  * This class is only intended for use within the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public final class EvaluationResultCacheComparator implements Comparator {
 

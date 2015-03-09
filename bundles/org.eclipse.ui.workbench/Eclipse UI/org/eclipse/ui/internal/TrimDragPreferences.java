@@ -18,7 +18,7 @@ package org.eclipse.ui.internal;
  * NOTE: this is a test harness at this time. This class may be removed
  * before the release of 3.2.
  * </b></p>
- * 
+ *
  * @since 3.2
  *
  */
@@ -29,7 +29,7 @@ public class TrimDragPreferences {
 	 */
 
 	private static int thresholdPref = 50;
-	
+
 	/**
 	 * 'true' means that each trim element can have a different 'height'
 	 */

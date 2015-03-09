@@ -39,14 +39,14 @@ import org.osgi.framework.Bundle;
 /**
  * This class puts basic platform information into the system summary log.  This
  * includes sections for the java properties, the ids of all installed features
- * and plugins, as well as a the current contents of the preferences service. 
- * 
+ * and plugins, as well as a the current contents of the preferences service.
+ *
  * @since 3.0
  */
 public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
     private static final String ECLIPSE_PROPERTY_PREFIX = "eclipse."; //$NON-NLS-1$
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.about.ISystemSummarySection#write(java.io.PrintWriter)
      */
@@ -130,7 +130,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
             AboutBundleGroupData info = bundleGroupInfos[i];
             String[] args = new String[] { info.getId(), info.getVersion(),
                     info.getName() };
-            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_featureVersion, args)); 
+            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_featureVersion, args));
         }
     }
 
@@ -154,7 +154,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
             AboutBundleData info = bundleInfos[i];
             String[] args = new String[] { info.getId(), info.getVersion(),
                     info.getName(), info.getStateName() };
-            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_descriptorIdVersionState, args)); 
+            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_descriptorIdVersionState, args));
         }
     }
 
@@ -169,12 +169,12 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         try {
             service.exportPreferences(node, stm, null);
         } catch (CoreException e) {
-            writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$		
+            writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
         }
 
         // copy the prefs from the byte array to the writer
         writer.println();
-        writer.println(WorkbenchMessages.SystemSummary_userPreferences); 
+        writer.println(WorkbenchMessages.SystemSummary_userPreferences);
 
         BufferedReader reader = null;
         try {
@@ -191,7 +191,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
                 writer.write(chars, 0, read);
             }
         } catch (IOException e) {
-            writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$		
+            writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
         }
 
         // ByteArray streams don't need to be closed

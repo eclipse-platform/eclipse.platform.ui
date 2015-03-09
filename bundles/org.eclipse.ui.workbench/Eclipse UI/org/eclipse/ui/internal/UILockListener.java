@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Jeremiah Lott (jeremiah.lott@timesys.com) - fix for deadlock bug 76378
- *     
+ *
  *******************************************************************************/
 package org.eclipse.ui.internal;
 

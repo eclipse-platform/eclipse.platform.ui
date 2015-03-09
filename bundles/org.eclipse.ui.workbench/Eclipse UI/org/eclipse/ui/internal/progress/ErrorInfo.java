@@ -31,7 +31,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param status
 	 * @param job
 	 *            The Job to create
@@ -44,7 +44,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
 	@Override
@@ -54,7 +54,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	@Override
@@ -76,7 +76,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/**
 	 * Return the image for the receiver.
-	 * 
+	 *
 	 * @return Image
 	 */
 	Image getImage() {
@@ -85,7 +85,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
 	@Override
@@ -95,7 +95,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/**
 	 * Return the current status of the receiver.
-	 * 
+	 *
 	 * @return IStatus
 	 */
 	IStatus getErrorStatus() {
@@ -104,7 +104,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/**
 	 * Return the job that generated the error.
-	 * 
+	 *
 	 * @return the job that generated the error
 	 */
 	public Job getJob() {
@@ -123,7 +123,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/**
 	 * Return the timestamp for the job.
-	 * 
+	 *
 	 * @return long
 	 */
 	public long getTimestamp() {
@@ -132,7 +132,7 @@ public class ErrorInfo extends JobTreeElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#compareTo(java.lang.Object)
 	 */
 	@Override

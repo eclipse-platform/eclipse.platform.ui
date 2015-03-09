@@ -15,13 +15,13 @@ import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * A search pattern defines how search results are found.
- * 
+ *
  * <p>
  * This class is intended to be subclassed by clients. A default behavior is
  * provided for each of the methods above, that clients can override if they
  * wish.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class SearchPattern {
@@ -69,8 +69,8 @@ public class SearchPattern {
 	 * <li><code>NuPoEx</code> type string pattern will only match
 	 * <code>NullPointerException</code> type.</li>
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * <br>
 	 * Can be combined to {@link #RULE_PREFIX_MATCH} match rule. For example,
 	 * when prefix match rule is combined with Camel Case match rule,
@@ -83,7 +83,7 @@ public class SearchPattern {
 	 * used. For example, with <code>"NPE"</code> string pattern, search will
 	 * only use Camel Case match rule, but with <code>N*P*E*</code> string
 	 * pattern, it will use only Pattern match rule.
-	 * 
+	 *
 	 */
 	public static final int RULE_CAMELCASE_MATCH = 0x0080;
 
@@ -107,7 +107,7 @@ public class SearchPattern {
 	 * Creates new instance of SearchPattern Default allowedRules for it is
 	 * result of belong logic operation: ( RULE_EXACT_MATCH | RULE_PREFIX_MATCH |
 	 * RULE_PATTERN_MATCH | RULE_CAMELCASE_MATCH )
-	 * 
+	 *
 	 */
 	public SearchPattern() {
 		this(RULE_EXACT_MATCH | RULE_PREFIX_MATCH | RULE_PATTERN_MATCH
@@ -118,7 +118,7 @@ public class SearchPattern {
 	 * Creates a search pattern with the rule to apply for matching index keys.
 	 * It can be exact match, prefix match, pattern match or camelCase match.
 	 * Rule can also be combined with a case sensitivity flag.
-	 * 
+	 *
 	 * @param allowedRules
 	 *            one of {@link #RULE_EXACT_MATCH}, {@link #RULE_PREFIX_MATCH},
 	 *            {@link #RULE_PATTERN_MATCH}, {@link #RULE_CASE_SENSITIVE},
@@ -139,7 +139,7 @@ public class SearchPattern {
 
 	/**
 	 * Gets string pattern used by matcher
-	 * 
+	 *
 	 * @return pattern
 	 */
 	public String getPattern() {
@@ -162,7 +162,7 @@ public class SearchPattern {
 
 	/**
 	 * Matches text with pattern. matching is determine by matchKind.
-	 * 
+	 *
 	 * @param text
 	 * @return true if search pattern was matched with text false in other way
 	 */
@@ -214,7 +214,7 @@ public class SearchPattern {
 			stringPattern = pattern;
 			return;
 		}
-		
+
 		if (last == END_SYMBOL || last == BLANK) {
 			matchRule = RULE_EXACT_MATCH;
 			stringPattern = pattern.substring(0, length - 1);
@@ -267,40 +267,40 @@ public class SearchPattern {
 	 * Examples:
 	 * <ol>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;NPE&quot;
 	 *                 name = NullPointerException / NoPermissionException
 	 *                 result =&gt; true
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;NuPoEx&quot;
 	 *                 name = NullPointerException
 	 *                 result =&gt; true
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;npe&quot;
 	 *                 name = NullPointerException
 	 *                 result =&gt; false
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern
 	 *            the given pattern
 	 * @param name
 	 *            the given name
 	 * @return true if the pattern matches the given name, false otherwise
-	 * 
+	 *
 	 */
 	private boolean camelCaseMatch(String pattern, String name) {
 		if (pattern == null)
@@ -337,7 +337,7 @@ public class SearchPattern {
 	 * Examples:
 	 * <ol>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;NPE&quot;
 	 *                 patternStart = 0
@@ -347,10 +347,10 @@ public class SearchPattern {
 	 *                 nameEnd = 20
 	 *                 result =&gt; true
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;NPE&quot;
 	 *                 patternStart = 0
@@ -360,10 +360,10 @@ public class SearchPattern {
 	 *                 nameEnd = 21
 	 *                 result =&gt; true
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;NuPoEx&quot;
 	 *                 patternStart = 0
@@ -373,10 +373,10 @@ public class SearchPattern {
 	 *                 nameEnd = 20
 	 *                 result =&gt; true
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;NuPoEx&quot;
 	 *                 patternStart = 0
@@ -386,10 +386,10 @@ public class SearchPattern {
 	 *                 nameEnd = 21
 	 *                 result =&gt; false
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * <li>
-	 * 
+	 *
 	 * <pre>
 	 *                 pattern = &quot;npe&quot;
 	 *                 patternStart = 0
@@ -399,10 +399,10 @@ public class SearchPattern {
 	 *                 nameEnd = 20
 	 *                 result =&gt; false
 	 * </pre>
-	 * 
+	 *
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern
 	 *            the given pattern
 	 * @param patternStart
@@ -440,7 +440,7 @@ public class SearchPattern {
 		}
 
 		int patternLength = patternEnd;
-		
+
 		if (pattern.charAt(patternEnd - 1) == END_SYMBOL || pattern.charAt(patternEnd - 1) == BLANK )
 			patternLength = patternEnd - 1;
 
@@ -522,7 +522,7 @@ public class SearchPattern {
 	/**
 	 * Checks pattern's character is allowed for specified set. It could be
 	 * override if you want change logic of camelCaseMatch methods.
-	 * 
+	 *
 	 * @param patternChar
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
@@ -534,7 +534,7 @@ public class SearchPattern {
 	/**
 	 * Checks character of element's name is allowed for specified set. It could
 	 * be override if you want change logic of camelCaseMatch methods.
-	 * 
+	 *
 	 * @param nameChar -
 	 *            name of searched element
 	 * @return if nameChar is in set of allowed characters for name of element
@@ -547,7 +547,7 @@ public class SearchPattern {
 	 * Returns the rule to apply for matching keys. Can be exact match, prefix
 	 * match, pattern match or camelcase match. Rule can also be combined with a
 	 * case sensitivity flag.
-	 * 
+	 *
 	 * @return one of RULE_EXACT_MATCH, RULE_PREFIX_MATCH, RULE_PATTERN_MATCH,
 	 *         RULE_CAMELCASE_MATCH, combined with RULE_CASE_SENSITIVE, e.g.
 	 *         RULE_EXACT_MATCH | RULE_CASE_SENSITIVE if an exact and case
@@ -579,7 +579,7 @@ public class SearchPattern {
 	 * <ul>
 	 * <li>{@link #RULE_PATTERN_MATCH} with any other match mode bit set,</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param stringPattern The string pattern
 	 * @param matchRule The match rule
 	 * @return Optimized valid match rule or -1 if an incompatibility was detected.
@@ -634,7 +634,7 @@ public class SearchPattern {
 
 	/**
 	 * Check if character is valid camelCase character
-	 * 
+	 *
 	 * @param ch
 	 *            character to be validated
 	 * @return true if character is valid
@@ -645,7 +645,7 @@ public class SearchPattern {
 
 	/**
 	 * Tells whether the given <code>SearchPattern</code> equals this pattern.
-	 * 
+	 *
 	 * @param pattern
 	 *            pattern to be checked
 	 * @return true if the given pattern equals this search pattern
@@ -664,7 +664,7 @@ public class SearchPattern {
 	 * <code>b</code> is a sub-pattern of <code>a</code>, and not vice-versa.
 	 * </i>
 	 * </p>
-	 * 
+	 *
 	 * @param pattern
 	 *            pattern to be checked
 	 * @return true if the given pattern is a sub pattern of this search pattern
@@ -676,7 +676,7 @@ public class SearchPattern {
 
 	/**
 	 * Trims sequences of '*' characters
-	 * 
+	 *
 	 * @param pattern
 	 *            string to be trimmed
 	 * @return trimmed pattern

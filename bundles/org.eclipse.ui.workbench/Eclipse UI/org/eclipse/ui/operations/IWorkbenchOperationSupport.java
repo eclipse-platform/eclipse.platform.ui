@@ -21,9 +21,9 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
- * 
+ *
  * @see org.eclipse.ui.IWorkbench#getOperationSupport()
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -31,14 +31,14 @@ public interface IWorkbenchOperationSupport {
 
 	/**
 	 * Returns the undo context for workbench-wide operations.
-	 * 
+	 *
 	 * @return the workbench operation context
 	 */
 	public IUndoContext getUndoContext();
 
 	/**
 	 * Returns the operation history for the workbench.
-	 * 
+	 *
 	 * @return the workbench operation history
 	 */
 	public IOperationHistory getOperationHistory();

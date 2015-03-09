@@ -39,7 +39,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	/**
 	 * Prefix for all activity preferences
 	 */
-	private final static String PREFIX = "UIActivities."; //$NON-NLS-1$    
+	private final static String PREFIX = "UIActivities."; //$NON-NLS-1$
 
     private List activityRequirementBindingDefinitions;
 
@@ -99,12 +99,12 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
         return namespace;
     }
-    
+
     /**
      * Returns the activity definition found at this id.
-     * 
+     *
      * @param id <code>ActivityDefinition</code> id.
-     * @return <code>ActivityDefinition</code> with given id or <code>null</code> if not found. 
+     * @return <code>ActivityDefinition</code> with given id or <code>null</code> if not found.
      */
     private ActivityDefinition getActivityDefinitionById(String id) {
 		int size = activityDefinitions.size();
@@ -176,7 +176,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				readDefaultEnablement(configurationElement);
 			}
         }
-                
+
 		// merge enablement overrides from plugin_customization.ini
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		for (Iterator i = activityDefinitions.iterator(); i.hasNext();) {
@@ -243,7 +243,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 										"Expression activity cannot be required (id: " + activityDef.getId() + ")")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		
+
         boolean activityRegistryChanged = false;
 
         if (!activityRequirementBindingDefinitions
@@ -292,7 +292,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 	/**
 	 * Create the preference key for the activity.
-	 * 
+	 *
 	 * @param activityId
 	 *            the activity id.
 	 * @return String a preference key representing the activity.
@@ -332,7 +332,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                 .readActivityDefinition(new ConfigurationElementMemento(
                         configurationElement),
                         getNamespace(configurationElement));
-        
+
         if (activityDefinition != null) {
         	// this is not ideal, but core expressions takes an
         	// IConfigurationElement or a w3c dom Document

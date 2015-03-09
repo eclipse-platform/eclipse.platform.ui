@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * In the current implementation, a partial reset results in only one key
  * stroke being left in the sequence. However, this may change in the future.
  * </p>
- * 
+ *
  * @since 3.0
  */
 class KeyBindingState {
@@ -63,7 +63,7 @@ class KeyBindingState {
     /**
      * Constructs a new instance of <code>KeyBindingState</code> with an
      * empty key sequence, set to reset fully.
-     * 
+     *
      * @param workbenchToNotify
      *            The workbench that this state should keep advised of changes
      *            to the key binding state; must not be <code>null</code>.
@@ -78,7 +78,7 @@ class KeyBindingState {
      * An accessor for the workbench window associated with this state. This
      * should never be <code>null</code>, as the setting follows the last
      * workbench window to have focus.
-     * 
+     *
      * @return The workbench window to which the key binding architecture is
      *         currently attached; should never be <code>null</code>.
      */
@@ -88,7 +88,7 @@ class KeyBindingState {
 
     /**
      * An accessor for the current key sequence waiting for completion.
-     * 
+     *
      * @return The current incomplete key sequence; never <code>null</code>,
      *         but may be empty.
      */
@@ -99,7 +99,7 @@ class KeyBindingState {
     /**
      * Gets the status line contribution item which the key binding
      * architecture uses to keep the user up-to-date as to the current state.
-     * 
+     *
      * @return The status line contribution item, if any; <code>null</code>,
      *         if none.
      */
@@ -139,7 +139,7 @@ class KeyBindingState {
 
     /**
      * A mutator for the workbench window to which this state is associated.
-     * 
+     *
      * @param window
      *            The workbench window to associated; should never be <code>null</code>.
      */
@@ -149,7 +149,7 @@ class KeyBindingState {
 
     /**
      * A mutator for the partial sequence entered by the user.
-     * 
+     *
      * @param sequence
      *            The current key sequence; should not be <code>null</code>,
      *            but may be empty.

@@ -82,7 +82,7 @@ public interface IPartService {
     /**
 	 * Removes the given part listener. Has no effect if an identical listener
 	 * is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a part listener
 	 */
@@ -91,7 +91,7 @@ public interface IPartService {
     /**
 	 * Removes the given part listener. Has no effect if an identical listener
 	 * is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a part listener
 	 */

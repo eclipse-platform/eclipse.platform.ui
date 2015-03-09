@@ -27,14 +27,14 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * 
+ *
  * Workbench implementation prompts the user with a dialog unless they've said
  * that they don't want to be prompted. You may provide the certain strings to
  * this class via method #2 of
  * {@link org.eclipse.core.runtime.IExecutableExtension}. This is provided as
  * API so that non-SDK Eclipse applications can reuse and augment the default
  * SDK trigger point behaviour.
- * 
+ *
  * @see #PROCEED_MULTI
  * @see #PROCEED_SINGLE
  * @see #DONT_ASK
@@ -49,28 +49,28 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 * Ie: "Enable the selected activities?"
 	 */
 	public static String PROCEED_MULTI = "proceedMulti"; //$NON-NLS-1$
-	
+
 	/**
 	 * The string to be used when prompting to proceed with a single activity.
 	 * Ie: "Enable the required activity?"
 	 */
 	public static String PROCEED_SINGLE = "proceedSingle"; //$NON-NLS-1$
-	
+
 	/**
 	 * The string to be used to label the "don't ask" button.
 	 * Ie: "&Always enable activities and don't ask me again"
 	 */
 	public static String DONT_ASK = "dontAsk"; //$NON-NLS-1$
-	
+
 	/**
 	 * The string to be used when no activities are selected and Details are shown.
 	 * Ie: "Select an activity to view its description."
 	 */
 	public static String NO_DETAILS = "noDetails"; //$NON-NLS-1$
 
-	
+
 	private Properties strings = new Properties();
-	
+
 	/**
 	 * Create a new instance of this advisor.
 	 */
@@ -80,7 +80,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 
 	@Override
 	public Set allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
-		
+
 		if (triggerPoint.getBooleanHint(ITriggerPoint.HINT_PRE_UI)) {
 			IActivityManager activityManager = PlatformUI.getWorkbench()
 					.getActivitySupport().getActivityManager();
@@ -92,25 +92,25 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 					if (!activity.isEnabled())
 						// if we have any disabled expression activities we
 						// should disallow immediately
-						return null; 
+						return null;
 				}
 			}
 			// if we have no disabled expression activities just return the
 			// empty set. This will allow the use of the given object but will
 			// not result in any activity activation.
-			return Collections.EMPTY_SET;  
+			return Collections.EMPTY_SET;
 		}
-		
+
         if (!PrefUtil.getInternalPreferenceStore().getBoolean(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
             return identifier.getActivityIds();
-        }		
-		
+        }
+
 		//If it's a non-interactive point activate all activities
 		if (!triggerPoint.getBooleanHint(ITriggerPoint.HINT_INTERACTIVE)) {
 			return identifier.getActivityIds();
 		}
-		
+
         EnablementDialog dialog = new EnablementDialog(Util.getShellToParentOn(), identifier
                 .getActivityIds(), strings);
         if (dialog.open() == Window.OK) {
@@ -124,7 +124,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 
             return activities;
         }
-		
+
 		return null;
 	}
 
@@ -132,7 +132,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
 			strings.putAll((Hashtable)data);
-		}		
+		}
 	}
 
 	/**
@@ -145,18 +145,18 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 * activity should override this method and call
 	 * {@link #doComputeEnablement(IActivityManager, IIdentifier, boolean)} with
 	 * a boolean argument of <code>true</code>.
-	 * 
+	 *
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @param activityManager
 	 *            the activity manager
 	 * @param identifier
 	 *            the identifier to update
-	 * 
+	 *
 	 * @return <code>true</code> if this identifier should be enabled,
 	 *         <code>false</code> otherwise
 	 * @since 3.4
-	 * 
+	 *
 	 * @see WorkbenchTriggerPointAdvisor#doComputeEnablement(IActivityManager,
 	 *      IIdentifier, boolean)
 	 */
@@ -180,7 +180,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 * @param identifier
 	 *            the identifier to update
 	 * @param disabledExpressionActivitiesTakePrecedence
-	 * 
+	 *
 	 * @return <code>true</code> if this identifier should be enabled,
 	 *         <code>false</code> otherwise
 	 * @since 3.4
@@ -197,7 +197,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
 			String activityId = (String) iterator.next();
 			IActivity activity = activityManager.getActivity(activityId);
-			
+
 			if (activity.isEnabled()) {
 				if (!disabledExpressionActivitiesTakePrecedence) {
 					return true;

@@ -14,11 +14,11 @@ package org.eclipse.ui.activities;
 /**
  * An instance of this interface can be used by clients to receive notification
  * of changes to one or more instances of <code>ICategory</code>.
- * 
+ *
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see ICategory#addCategoryListener(ICategoryListener)
  * @see ICategory#removeCategoryListener(ICategoryListener)
@@ -28,7 +28,7 @@ public interface ICategoryListener {
     /**
      * Notifies that one or more properties of an instance of <code>ICategory</code>
      * have changed. Specific details are described in the <code>CategoryEvent</code>.
-     * 
+     *
      * @param categoryEvent
      *            the category event. Guaranteed not to be <code>null</code>.
      */

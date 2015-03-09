@@ -16,13 +16,13 @@ import org.eclipse.ui.IEditorPart;
  * Abstract base class for managing the installation/deinstallation of global
  * actions for multi-page editors.
  * <p>
- * Subclasses must implement <code>setActivePage</code>, and may reimplement 
+ * Subclasses must implement <code>setActivePage</code>, and may reimplement
  * any of the following methods:
  * <ul>
  *   <li><code>contributeToMenu</code> - reimplement to contribute to menu</li>
  *   <li><code>contributeToToolBar</code> - reimplement to contribute to tool
  *     bar</li>
- *   <li><code>contributeToStatusLine</code> - reimplement to contribute to 
+ *   <li><code>contributeToStatusLine</code> - reimplement to contribute to
  *     status line</li>
  * </ul>
  * </p>
@@ -38,7 +38,7 @@ public abstract class MultiPageEditorActionBarContributor extends
 
     /* (non-JavaDoc)
      * Method declared on EditorActionBarContributor
-     * Registers the contributor with the multi-page editor for future 
+     * Registers the contributor with the multi-page editor for future
      * editor action redirection when the active page is changed, and sets
      * the active page.
      */
@@ -55,8 +55,8 @@ public abstract class MultiPageEditorActionBarContributor extends
      * Sets the active page of the the multi-page editor to be the given editor.
      * Redirect actions to the given editor if actions are not already being sent to it.
      * <p>
-     * This method is called whenever the page changes. 
-     * Subclasses must implement this method to redirect actions to the given 
+     * This method is called whenever the page changes.
+     * Subclasses must implement this method to redirect actions to the given
      * editor (if not already directed to it).
      * </p>
      *

@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
- * Opens a specific new wizard. 
+ * Opens a specific new wizard.
  */
 public class NewWizardShortcutAction extends Action implements
         IPluginContribution {
@@ -48,7 +48,7 @@ public class NewWizardShortcutAction extends Action implements
      * The wizard dialog height
      */
     private static final int SIZING_WIZARD_HEIGHT = 500;
-    
+
     private IWorkbenchWindow window;
 
     /**
@@ -69,13 +69,13 @@ public class NewWizardShortcutAction extends Action implements
 
     /**
      * Get the wizard descriptor for this action.
-     * 
-     * @return the wizard descriptor 
+     *
+     * @return the wizard descriptor
      */
     public IWizardDescriptor getWizardDescriptor() {
 		return wizardElement;
 	}
-   
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#run()
      */
@@ -127,7 +127,7 @@ public class NewWizardShortcutAction extends Action implements
                 Math.max(SIZING_WIZARD_HEIGHT, defaultSize.y));
         window.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 				IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
-        
+
         // if the wizard can finish early and doesn't have any pages, just finish it.
         if (wizardElement.canFinishEarly() && !wizardElement.hasPages()) {
 			wizard.performFinish();
@@ -160,10 +160,10 @@ public class NewWizardShortcutAction extends Action implements
 		}
     	return null;
     }
-    
+
     /**
      * Return the plugin contribution associated with the wizard.
-     * 
+     *
      * @return the contribution or <code>null</code>
      * @since 3.1
      */

@@ -45,7 +45,7 @@ import org.eclipse.ui.menus.UIElement;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpdater {
 	public HandlerActivation activation = null;
@@ -111,7 +111,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.
 	 * menus.UIElement, java.util.Map)
@@ -135,7 +135,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core
 	 * .commands.IHandlerListener)
@@ -147,7 +147,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)
@@ -175,7 +175,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#isEnabled()
 	 */
 	@Override
@@ -185,7 +185,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#isHandled()
 	 */
 	@Override
@@ -195,7 +195,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.
 	 * core.commands.IHandlerListener)
@@ -207,7 +207,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler2#setEnabled(java.lang.Object)
 	 */
 	@Override

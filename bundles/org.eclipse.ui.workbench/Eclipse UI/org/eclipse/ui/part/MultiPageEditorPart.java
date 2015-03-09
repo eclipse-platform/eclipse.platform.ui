@@ -96,22 +96,22 @@ import org.eclipse.ui.services.IServiceLocator;
  * to be notified about all page change events within the workbench page or
  * workbench window.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor
  * @see org.eclipse.jface.dialogs.IPageChangeProvider
  * @see org.eclipse.jface.dialogs.IPageChangedListener
  * @see org.eclipse.ui.IPartService
  */
 public abstract class MultiPageEditorPart extends EditorPart implements IPageChangeProvider {
-	
+
 	private static final String COMMAND_NEXT_SUB_TAB = "org.eclipse.ui.navigate.nextSubTab"; //$NON-NLS-1$
 	private static final String COMMAND_PREVIOUS_SUB_TAB = "org.eclipse.ui.navigate.previousSubTab"; //$NON-NLS-1$
-	
+
 	/**
 	 * Subclasses that override {@link #createPageContainer(Composite)} can use
 	 * this constant to get a site for the container that can be active while
 	 * the current page is deactivated.
-	 * 
+	 *
 	 * @since 3.4
 	 * @see #activateSite()
 	 * @see #deactivateSite(boolean, boolean)
@@ -143,11 +143,11 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * point.
 	 */
 	private ArrayList nestedEditors = new ArrayList(3);
-	
+
 	private List pageSites = new ArrayList(3);
 
 	private IServiceLocator pageContainerSite;
-	
+
 	private ListenerList pageChangeListeners = new ListenerList(
 			ListenerList.IDENTITY);
 
@@ -162,11 +162,11 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Creates and adds a new page containing the given control to this
 	 * multi-page editor. The control may be <code>null</code>, allowing it
 	 * to be created and set later using <code>setControl</code>.
-	 * 
+	 *
 	 * @param control
 	 *            the control, or <code>null</code>
 	 * @return the index of the new page
-	 * 
+	 *
 	 * @see MultiPageEditorPart#setControl(int, Control)
 	 */
 	public int addPage(Control control) {
@@ -180,12 +180,12 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * multi-page editor. The page is added at the given index. The control may
 	 * be <code>null</code>, allowing it to be created and set later using
 	 * <code>setControl</code>.
-	 * 
+	 *
 	 * @param index
 	 *            the index at which to add the page (0-based)
 	 * @param control
 	 *            the control, or <code>null</code>
-	 * 
+	 *
 	 * @see MultiPageEditorPart#setControl(int, Control)
 	 */
 	public void addPage(int index, Control control) {
@@ -196,7 +196,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Creates and adds a new page containing the given editor to this
 	 * multi-page editor. This also hooks a property change listener on the
 	 * nested editor.
-	 * 
+	 *
 	 * @param editor
 	 *            the nested editor
 	 * @param input
@@ -204,7 +204,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @return the index of the new page
 	 * @exception PartInitException
 	 *                if a new page could not be created
-	 * 
+	 *
 	 * @see MultiPageEditorPart#handlePropertyChange(int) the handler for
 	 *      property change events from the nested editor
 	 */
@@ -219,7 +219,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Creates and adds a new page containing the given editor to this
 	 * multi-page editor. The page is added at the given index. This also hooks
 	 * a property change listener on the nested editor.
-	 * 
+	 *
 	 * @param index
 	 *            the index at which to add the page (0-based)
 	 * @param editor
@@ -228,7 +228,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 *            the input for the nested editor
 	 * @exception PartInitException
 	 *                if a new page could not be created
-	 * 
+	 *
 	 * @see MultiPageEditorPart#handlePropertyChange(int) the handler for
 	 *      property change events from the nested editor
 	 */
@@ -258,7 +258,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Get the orientation of the editor.
-	 * 
+	 *
 	 * @param editor
 	 * @return int the orientation flag
 	 * @see SWT#RIGHT_TO_LEFT
@@ -276,7 +276,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Creates an empty container. Creates a CTabFolder with no style bits set,
 	 * and hooks a selection listener which calls <code>pageChange()</code>
 	 * whenever the selected tab changes.
-	 * 
+	 *
 	 * @param parent
 	 *            The composite in which the container tab folder should be
 	 *            created; must not be <code>null</code>.
@@ -295,7 +295,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				pageChange(newPageIndex);
 			}
 		});
-		newContainer.addTraverseListener(new TraverseListener() { 
+		newContainer.addTraverseListener(new TraverseListener() {
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=199499 : Switching tabs by Ctrl+PageUp/PageDown must not be caught on the inner tab set
 			@Override
 			public void keyTraversed(TraverseEvent e) {
@@ -324,7 +324,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Creates a tab item at the given index and places the given control in the
 	 * new item. The item is a CTabItem with no style bits set.
-	 * 
+	 *
 	 * @param index
 	 *            the index at which to add the control
 	 * @param control
@@ -351,7 +351,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * multi-page editor by calling <code>createContainer</code>, then
 	 * <code>createPages</code>. Subclasses should implement
 	 * <code>createPages</code> rather than overriding this method.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent in which the editor should be created; must not be
 	 *            <code>null</code>.
@@ -382,7 +382,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Initialize the MultiPageEditorPart to use the page switching command.
 	 * Clients can override this method with an empty body if they wish to
 	 * opt-out.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected void initializePageSwitching() {
@@ -425,7 +425,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Initialize the MultiPageEditorPart to use the sub-tab switching commands.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private void initializeSubTabSwitching() {
@@ -441,7 +441,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				int n= getPageCount();
 				if (n == 0)
 					return null;
-				
+
 				int i= getActivePage() + 1;
 				if (i >= n)
 					i= 0;
@@ -449,7 +449,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				return null;
 			}
 		});
-		
+
 		service.activateHandler(COMMAND_PREVIOUS_SUB_TAB, new AbstractHandler() {
 			/**
 			 * {@inheritDoc}
@@ -461,7 +461,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				int n= getPageCount();
 				if (n == 0)
 					return null;
-				
+
 				int i= getActivePage() - 1;
 				if (i < 0)
 					i= n - 1;
@@ -470,20 +470,20 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			}
 		});
 	}
-	
+
 	/**
 	 * Creates the parent control for the container returned by
 	 * {@link #getContainer() }.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may extend and must call super implementation first.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent for all of the editors contents.
 	 * @return the parent for this editor's container. Must not be
 	 *         <code>null</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	protected Composite createPageContainer(Composite parent) {
@@ -495,7 +495,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <code>MultiPageEditorPart</code> implementation of this method creates
 	 * an instance of <code>MultiPageEditorSite</code>. Subclasses may
 	 * reimplement to create more specialized sites.
-	 * 
+	 *
 	 * @param editor
 	 *            the nested editor
 	 * @return the editor site
@@ -538,7 +538,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses should not override this method
 	 * </p>
-	 * 
+	 *
 	 * @nooverride
 	 * @return the active nested editor, or <code>null</code> if none
 	 */
@@ -556,9 +556,9 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses should not override this method
 	 * </p>
-	 * 
+	 *
 	 * @nooverride
-	 * 
+	 *
 	 * @return the index of the active page, or -1 if there is no active page
 	 * @since 3.5
 	 */
@@ -584,7 +584,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses should not override this method
 	 * </p>
-	 * 
+	 *
 	 * @return the composite, or <code>null</code> if
 	 *         <code>createPartControl</code> has not been called yet
 	 */
@@ -598,7 +598,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses should not override this method
 	 * </p>
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @return the control for the specified page, or <code>null</code> if
@@ -611,7 +611,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Returns the editor for the given page index. The page index must be
 	 * valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @return the editor for the specified page, or <code>null</code> if the
@@ -628,7 +628,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the service locator for the given page index. This method can be
 	 * used to create service locators for pages that are just controls. The
@@ -637,7 +637,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * This will return the editor site service locator for an editor, and
 	 * create one for a page that is just a control.
 	 * </p>
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @return the editor for the specified page, or <code>null</code> if the
@@ -649,7 +649,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		if (pageIndex == PAGE_CONTAINER_SITE) {
 			return getPageContainerSite();
 		}
-		
+
 		Item item = getItem(pageIndex);
 		if (item != null) {
 			Object data = item.getData();
@@ -708,7 +708,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Returns the tab item for the given page index (page index is 0-based).
 	 * The page index must be valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @return the tab item for the given page index
@@ -719,7 +719,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Returns the number of pages in this multi-page editor.
-	 * 
+	 *
 	 * @return the number of pages
 	 */
 	protected int getPageCount() {
@@ -734,7 +734,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Returns the image for the page with the given index, or <code>null</code>
 	 * if no image has been set for the page. The page index must be valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @return the image, or <code>null</code> if none
@@ -747,7 +747,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Returns the text label for the page with the given index. Returns the
 	 * empty string if no text label has been set for the page. The page index
 	 * must be valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @return the text label for the page
@@ -758,7 +758,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Returns the tab folder containing this multi-page editor's pages.
-	 * 
+	 *
 	 * @return the tab folder, or <code>null</code> if
 	 *         <code>createPartControl</code> has not been called yet
 	 */
@@ -778,7 +778,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses may extend or reimplement this method.
 	 * </p>
-	 * 
+	 *
 	 * @param propertyId
 	 *            the id of the property that changed
 	 */
@@ -792,7 +792,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * input to the given input, and the site's selection provider to a
 	 * <code>MultiPageSelectionProvider</code>. Subclasses may extend this
 	 * method.
-	 * 
+	 *
 	 * @param site
 	 *            The site for which this part is being created; must not be
 	 *            <code>null</code>.
@@ -818,7 +818,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses may extend or reimplement this method.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if any of the nested editors are dirty;
 	 *         <code>false</code> otherwise.
 	 */
@@ -848,7 +848,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * Subclasses may extend this method.
 	 * </p>
-	 * 
+	 *
 	 * @param newPageIndex
 	 *            the index of the activated page
 	 */
@@ -901,7 +901,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			firePageChanged(new PageChangedEvent(this, selectedPage));
 		}
 	}
-	
+
 	/**
 	 * This method can be used by implementors of
 	 * {@link MultiPageEditorPart#createPageContainer(Composite)} to deactivate
@@ -916,7 +916,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <b>Note:</b> This API is evolving in 3.4 and this might not be its final
 	 * form.
 	 * </p>
-	 * 
+	 *
 	 * @param immediate
 	 *            immediately deactivate the legacy keybinding service
 	 * @param containerSiteActive
@@ -947,7 +947,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 						.log("MultiPageEditorPart.deactivateSite()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		
+
 		if (containerSiteActive) {
 			IServiceLocator containerSite = getPageContainerSite();
 			if (containerSite instanceof INestable) {
@@ -956,7 +956,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			}
 		}
 	}
-	
+
 	/**
 	 * This method can be used by implementors of
 	 * {@link #createPageContainer(Composite)} to activate the active inner
@@ -969,7 +969,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <b>Note:</b> This API is evolving in 3.4 and this might not be its final
 	 * form.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.4
 	 * @see #deactivateSite(boolean,boolean)
 	 * @see #createPageContainer(Composite)
@@ -1024,7 +1024,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Disposes the given part and its site.
-	 * 
+	 *
 	 * @param part
 	 *            The part to dispose; must not be <code>null</code>.
 	 */
@@ -1050,7 +1050,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Removes the page with the given index from this multi-page editor. The
 	 * controls for the page are disposed of; if the page has an editor, it is
 	 * disposed of too. The page index must be valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @see MultiPageEditorPart#addPage(Control)
@@ -1092,7 +1092,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Sets the currently active page.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page to be activated; the index must be valid
 	 */
@@ -1104,7 +1104,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	/**
 	 * Sets the control for the given page index. The page index must be valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @param control
@@ -1132,7 +1132,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * Sets focus to the control for the given page. If the page has an editor,
 	 * this calls its <code>setFocus()</code> method. Otherwise, this calls
 	 * <code>setFocus</code> on the control for the page.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 */
@@ -1157,7 +1157,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Sets the image for the page with the given index, or <code>null</code>
 	 * to clear the image for the page. The page index must be valid.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @param image
@@ -1170,7 +1170,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	/**
 	 * Sets the text label for the page with the given index. The page index
 	 * must be valid. The text label must not be null.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the page
 	 * @param text
@@ -1184,7 +1184,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * If there is an adapter registered against the subclass of
 	 * MultiPageEditorPart return that. Otherwise, delegate to the internal
 	 * editor.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
 	@Override
@@ -1201,7 +1201,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Find the editors contained in this multi-page editor
 	 * whose editor input match the provided input.
@@ -1215,7 +1215,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		int count = getPageCount();
 		for (int i = 0; i < count; i++) {
 			IEditorPart editor = getEditor(i);
-			if (editor != null 
+			if (editor != null
 					&& editor.getEditorInput() != null
 					&& editor.getEditorInput().equals(input)) {
 				result.add(editor);
@@ -1223,7 +1223,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 		return (IEditorPart[]) result.toArray(new IEditorPart[result.size()]);
 	}
-	
+
 	/**
 	 * Set the active page of this multi-page editor to the
 	 * page that contains the given editor part. This method has
@@ -1250,7 +1250,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <b>Note:</b> clients may override this method to return a page
 	 * appropriate for their editors. Maybe be <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return The IEditorPart or Control representing the current active page,
 	 *         or <code>null</code> if there are no active pages.
 	 * @since 3.5
@@ -1268,7 +1268,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 		return getControl(index);
 	}
-	
+
 	/**
 	 * Add the page change listener to be notified when the page changes. The
 	 * newly selected page will be the Object returned from
@@ -1277,9 +1277,9 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * This method has no effect if the listener has already been added.
 	 * </p>
-	 * 
+	 *
 	 * @nooverride
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	@Override
@@ -1292,9 +1292,9 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * <p>
 	 * This method has no effect if the listener is not in the list.
 	 * </p>
-	 * 
+	 *
 	 * @nooverride
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	@Override

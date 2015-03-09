@@ -20,7 +20,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
     private PropertyListenerList listeners;
     private int ignoreCount = 0;
     private ArrayList queuedEvents = new ArrayList();
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IDynamicPropertyMap#addListener(org.eclipse.ui.internal.preferences.IPropertyMapListener)
      */
@@ -32,7 +32,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
         }
         listeners.add(listener);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IDynamicPropertyMap#removeListener(org.eclipse.ui.internal.preferences.IPropertyMapListener)
      */
@@ -57,7 +57,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 
     /**
      * Detaches all listeners which have been registered with other objects
-     * 
+     *
      * @since 3.1
      */
     public void dispose() {
@@ -66,18 +66,18 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
             listeners = null;
         }
     }
-    
+
     protected final void firePropertyChange(String prefId) {
         if (ignoreCount > 0) {
             queuedEvents.add(prefId);
             return;
         }
-        
+
         if (listeners != null) {
             listeners.firePropertyChange(prefId);
         }
     }
-    
+
     @Override
 	public final void addListener(String[] eventsOfInterest, IPropertyMapListener listener) {
         if (listeners == null) {
@@ -86,7 +86,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
         }
         listeners.add(eventsOfInterest, listener);
     }
-    
+
     protected final void firePropertyChange(String[] prefIds) {
         if (ignoreCount > 0) {
             for (int i = 0; i < prefIds.length; i++) {
@@ -99,11 +99,11 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
             listeners.firePropertyChange(prefIds);
         }
     }
-    
+
     public final void startTransaction() {
         ignoreCount++;
     }
-    
+
     public final void endTransaction() {
         ignoreCount--;
         if (ignoreCount == 0 && !queuedEvents.isEmpty()) {
@@ -113,12 +113,12 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
             queuedEvents.clear();
         }
     }
-    
+
     @Override
 	public boolean equals(Object toCompare) {
         return toCompare instanceof IPropertyMap && PropertyUtil.isEqual(this, (IPropertyMap)toCompare);
     }
-    
+
     protected abstract void attachListener();
     protected abstract void detachListener();
 }

@@ -15,7 +15,7 @@ import org.eclipse.jface.action.IAction;
 /**
  * Interface for an object action that is contributed into a popup menu
  * for a view or editor.  It extends <code>IActionDelegate</code>
- * and adds an initialization method for connecting the delegate to the 
+ * and adds an initialization method for connecting the delegate to the
  * part it should work with.
  */
 public interface IObjectActionDelegate extends IActionDelegate {
@@ -27,7 +27,7 @@ public interface IObjectActionDelegate extends IActionDelegate {
 	 * This method will be called every time the action appears in a popup menu.
 	 * The targetPart may change with each invocation.
 	 * </p>
-	 * 
+	 *
 	 * @param action
 	 *            the action proxy that handles presentation portion of the
 	 *            action; must not be <code>null</code>.

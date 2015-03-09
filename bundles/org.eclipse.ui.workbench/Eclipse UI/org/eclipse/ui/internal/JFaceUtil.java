@@ -30,7 +30,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Utility class for setting up JFace for use by Eclipse.
- * 
+ *
  * @since 3.1
  */
 final class JFaceUtil {
@@ -64,7 +64,7 @@ final class JFaceUtil {
 				}
 			}
 		});
-		
+
 		Policy.setStatusHandler(new StatusHandler() {
 			@Override
 			public void show(IStatus status, String title) {
@@ -92,7 +92,7 @@ final class JFaceUtil {
 	public static void initializeJFacePreferences() {
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE);
 		final String workbenchName = WorkbenchPlugin.getDefault().getBundle().getSymbolicName();
-		
+
 		rootNode.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
 			@Override
 			public void added(NodeChangeEvent event) {
@@ -108,7 +108,7 @@ final class JFaceUtil {
 
 			}
 		});
-		
+
 		JFacePreferences.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 	}
 }

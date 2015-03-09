@@ -32,7 +32,7 @@ import org.eclipse.ui.progress.UIJob;
  * <p>
  * This is experimental and should not be moved.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 {
@@ -56,7 +56,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
@@ -71,7 +71,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
 	 */
 	@Override
@@ -84,7 +84,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IMenuListener2#menuAboutToHide(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
@@ -104,7 +104,7 @@ public class QuickMenuHandler extends AbstractHandler implements IMenuListener2 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override

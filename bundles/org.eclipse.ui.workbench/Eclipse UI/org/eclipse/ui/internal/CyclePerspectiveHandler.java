@@ -28,13 +28,13 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  * <p>
  * Replacement for CyclePerspectiveAction
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class CyclePerspectiveHandler extends CycleBaseHandler {
 	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
             false);
-	
+
 	@Override
 	protected void addItems(Table table, WorkbenchPage page) {
 		IPerspectiveDescriptor perspectives[] = page.getSortedPerspectives();

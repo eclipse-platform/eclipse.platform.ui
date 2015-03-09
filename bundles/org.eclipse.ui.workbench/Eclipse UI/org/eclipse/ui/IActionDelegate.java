@@ -17,18 +17,18 @@ import org.eclipse.jface.viewers.ISelection;
  * Interface for actions contributed via an extension point.
  * <p>
  * This interface should be implemented by clients who need to contribute actions
- * via an extension point. The workbench will generate a <b>proxy action</b> 
- * object on behalf of the plug-in to avoid having to activate the plug-in until 
- * the user needs it. If the action is performed the workbench will load the class 
- * that implements this interface and create what is called an <b>action 
+ * via an extension point. The workbench will generate a <b>proxy action</b>
+ * object on behalf of the plug-in to avoid having to activate the plug-in until
+ * the user needs it. If the action is performed the workbench will load the class
+ * that implements this interface and create what is called an <b>action
  * delegate</b> object. Then the request, and all subsequent ones, are
  * forwarded through the proxy action to the action delegate, which does the
- * real work. 
+ * real work.
  * </p><p>
- * The proxy action is the one that appears in the UI, so the action delegate 
- * will need to talk to the proxy action in order to keep up an appropriate 
+ * The proxy action is the one that appears in the UI, so the action delegate
+ * will need to talk to the proxy action in order to keep up an appropriate
  * appearance. Once the action delegate has been created, it will be
- * notified of all selection changes, allowing it to enable or disable the 
+ * notified of all selection changes, allowing it to enable or disable the
  * proxy action appropriately.
  * </p><p>
  * An action delegate cannot be consulted about selection changes before the
@@ -41,7 +41,7 @@ import org.eclipse.jface.viewers.ISelection;
  * <code>org.eclipse.ui.actions.ActionDelegate</code> or implement the
  * interface directly.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.actions.ActionDelegate
  * @see org.eclipse.ui.IActionDelegate2
  */
@@ -74,7 +74,7 @@ public interface IActionDelegate {
      * plugin.xml file is met.
      * </p>
      *
-     * @param action the action proxy that handles presentation portion of 
+     * @param action the action proxy that handles presentation portion of
      * 		the action
      * @param selection the current selection, or <code>null</code> if there
      * 		is no selection.

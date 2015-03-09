@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Francis Upton <francisu@ieee.org> - 
+ *     Francis Upton <francisu@ieee.org> -
  *     		Fix for Bug 216667 [Decorators] DecorationScheduler hangs onto objects forever sometimes
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
@@ -84,7 +84,7 @@ public class DecorationScheduler {
 	/**
 	 * Return a new instance of the receiver configured for the supplied
 	 * DecoratorManager.
-	 * 
+	 *
 	 * @param manager
 	 */
 	DecorationScheduler(DecoratorManager manager) {
@@ -95,7 +95,7 @@ public class DecorationScheduler {
 	/**
 	 * Decorate the text for the receiver. If it has already been done then
 	 * return the result, otherwise queue it for decoration.
-	 * 
+	 *
 	 * @return String
 	 * @param text
 	 * @param element
@@ -121,7 +121,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Queue the element and its adapted value if it has not been already.
-	 * 
+	 *
 	 * @param element
 	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
@@ -163,7 +163,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Decorate the supplied image, element and its adapted value.
-	 * 
+	 *
 	 * @return Image
 	 * @param image
 	 * @param element
@@ -171,8 +171,8 @@ public class DecorationScheduler {
 	 *            The adapted value of element. May be null.
 	 * @param context
 	 *            the decoration context
-	 * @param manager 
-	 * 
+	 * @param manager
+	 *
 	 */
 	public Image decorateWithOverlays(Image image, Object element,
 			Object adaptedElement, IDecorationContext context, ResourceManager manager) {
@@ -189,7 +189,7 @@ public class DecorationScheduler {
 	/**
 	 * Return the DecorationResult for element. If there isn't one queue for
 	 * decoration and return <code>null</code>.
-	 * 
+	 *
 	 * @param element
 	 *            The element to be decorated. If it is <code>null</code>
 	 *            return <code>null</code>.
@@ -264,7 +264,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Get the next resource to be decorated.
-	 * 
+	 *
 	 * @return IResource
 	 */
 	synchronized DecorationReference nextElement() {
@@ -285,7 +285,7 @@ public class DecorationScheduler {
 				WorkbenchMessages.DecorationScheduler_CalculationJobName) {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			@Override
@@ -347,7 +347,7 @@ public class DecorationScheduler {
 
 			/**
 			 * Ensure that a result is cached for the given element and context
-			 * 
+			 *
 			 * @param element
 			 *            the elements
 			 * @param force
@@ -394,7 +394,7 @@ public class DecorationScheduler {
 						synchronized (pendingKey) {
 							pendingUpdate.add(element);
 						}
-						
+
 
 					}
 				}
@@ -402,7 +402,7 @@ public class DecorationScheduler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 			 */
 			@Override
@@ -412,7 +412,7 @@ public class DecorationScheduler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 			 */
 			@Override
@@ -428,7 +428,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Return whether or not we are waiting on updated
-	 * 
+	 *
 	 * @return <code>true</code> if there are updates waiting to be served
 	 */
 	protected boolean updatesPending() {
@@ -458,7 +458,7 @@ public class DecorationScheduler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			@Override
@@ -469,7 +469,7 @@ public class DecorationScheduler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 			 */
 			@Override
@@ -485,7 +485,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Get the update WorkbenchJob.
-	 * 
+	 *
 	 * @return WorkbenchJob
 	 */
 	private WorkbenchJob getUpdateJob() {
@@ -573,7 +573,7 @@ public class DecorationScheduler {
                     resultCache.clear();
                 }
             }
-            
+
 			private void setUpUpdates() {
 				// Get the elements awaiting update and then
 				// clear the list
@@ -591,7 +591,7 @@ public class DecorationScheduler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 			 */
 			@Override
@@ -601,7 +601,7 @@ public class DecorationScheduler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 			 */
 			@Override
@@ -616,7 +616,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Return whether or not there is a decoration for this element ready.
-	 * 
+	 *
 	 * @param element
 	 * @param context
 	 *            The decoration context
@@ -629,7 +629,7 @@ public class DecorationScheduler {
 	/**
 	 * Return the background Color for element. If there is no result cue for
 	 * decoration and return null, otherwise return the value in the result.
-	 * 
+	 *
 	 * @param element
 	 *            The Object to be decorated
 	 * @param adaptedElement
@@ -649,7 +649,7 @@ public class DecorationScheduler {
 	/**
 	 * Return the font for element. If there is no result cue for decoration and
 	 * return null, otherwise return the value in the result.
-	 * 
+	 *
 	 * @param element
 	 *            The Object to be decorated
 	 * @param adaptedElement
@@ -669,7 +669,7 @@ public class DecorationScheduler {
 	/**
 	 * Return the foreground Color for element. If there is no result cue for
 	 * decoration and return null, otherwise return the value in the result.
-	 * 
+	 *
 	 * @param element
 	 *            The Object to be decorated
 	 * @param adaptedElement
@@ -688,7 +688,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Return whether or not any updates are being processed/
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean processingUpdates() {
@@ -697,7 +697,7 @@ public class DecorationScheduler {
 
 	/**
 	 * A listener has been removed. If we are updating then skip it.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void listenerRemoved(ILabelProviderListener listener) {
@@ -713,7 +713,7 @@ public class DecorationScheduler {
 
 	/**
 	 * Return whether or not there are any updates pending.
-	 * 
+	 *
 	 * @return boolean <code>true</code> if the updates are empty
 	 */
 	boolean hasPendingUpdates() {

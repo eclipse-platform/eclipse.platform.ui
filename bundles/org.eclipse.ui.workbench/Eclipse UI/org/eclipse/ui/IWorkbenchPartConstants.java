@@ -16,7 +16,7 @@ package org.eclipse.ui;
  * <p>
  * <b>Note:</b>This interface should not be implemented or extended.
  * </p>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -53,5 +53,5 @@ public interface IWorkbenchPartConstants {
      * @since 3.4
      */
     int PROP_PREFERRED_SIZE = 0x303;
-    
+
 }

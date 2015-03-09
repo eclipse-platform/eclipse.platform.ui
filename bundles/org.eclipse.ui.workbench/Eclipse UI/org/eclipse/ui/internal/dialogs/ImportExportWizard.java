@@ -19,41 +19,41 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * The import/export wizard allows users to choose whether to 
+ * The import/export wizard allows users to choose whether to
  * show the import wizard or the export wizard.
- * 
+ *
  * @since 3.2
  *
  */
 public class ImportExportWizard extends Wizard {
 	/**
 	 * Constant used to to specify to the import/export wizard
-	 * which page should initially be shown. 
+	 * which page should initially be shown.
 	 */
 	public static final String IMPORT = "import";	//$NON-NLS-1$
 	/**
 	 * Constant used to to specify to the import/export wizard
-	 * which page should initially be shown. 
+	 * which page should initially be shown.
 	 */
 	public static final String EXPORT = "export";	//$NON-NLS-1$
-		
+
     private IWorkbench workbench;
     private IStructuredSelection selection;
     private ImportExportPage importExportPage;
     private String page = null;
-    
+
     /**
-     * Create an import/export wizard and show the page 
+     * Create an import/export wizard and show the page
      * with the given id.
-     * 
+     *
      * @param pageId
      */
     public ImportExportWizard(String pageId){
     	page = pageId;
     }
-    
+
     /**
-     * Subclasses must implement this <code>IWizard</code> method 
+     * Subclasses must implement this <code>IWizard</code> method
      * to perform any special finish processing for their wizard.
      */
     @Override
@@ -79,7 +79,7 @@ public class ImportExportWizard extends Wizard {
 
     /**
      * Initializes the wizard.
-     * 
+     *
      * @param aWorkbench the workbench
      * @param currentSelection the current selectio
      */

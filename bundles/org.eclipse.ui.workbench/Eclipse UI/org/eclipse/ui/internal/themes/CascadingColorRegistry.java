@@ -44,7 +44,7 @@ public class CascadingColorRegistry extends ColorRegistry {
 
     /**
      * Create a new instance of this class.
-     * 
+     *
      * @param parent the parent registry
      */
     public CascadingColorRegistry(ColorRegistry parent) {
@@ -61,7 +61,7 @@ public class CascadingColorRegistry extends ColorRegistry {
         if (super.hasValueFor(symbolicName)) {
 			return super.get(symbolicName);
 		}
-        
+
         return parent.get(symbolicName);
     }
 
@@ -83,7 +83,7 @@ public class CascadingColorRegistry extends ColorRegistry {
         if (super.hasValueFor(symbolicName)) {
 			return super.getRGB(symbolicName);
 		}
-        
+
         return parent.getRGB(symbolicName);
     }
 
@@ -96,9 +96,9 @@ public class CascadingColorRegistry extends ColorRegistry {
     }
 
     /**
-     * Returns whether this cascading registry has an override for the provided 
+     * Returns whether this cascading registry has an override for the provided
      * color key.
-     * 
+     *
      * @param colorKey the provided color key
      * @return hether this cascading registry has an override
      */

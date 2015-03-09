@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * The RunnableDecoratorDefinition is the definition for 
+ * The RunnableDecoratorDefinition is the definition for
  * decorators that have an ILabelDecorator class to instantiate.
  */
 
@@ -57,7 +57,7 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         if (decorator == null) {
             Platform
                     .run(new SafeRunnable(
-                            NLS.bind(WorkbenchMessages.DecoratorManager_ErrorActivatingDecorator, getName() )) { 
+                            NLS.bind(WorkbenchMessages.DecoratorManager_ErrorActivatingDecorator, getName() )) {
                         @Override
 						public void run() {
                             try {
@@ -143,7 +143,7 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 
     /**
      * Returns the decorator, or <code>null</code> if not enabled.
-     * 
+     *
      * @return the decorator, or <code>null</code> if not enabled
      */
     public ILabelDecorator getDecorator() {

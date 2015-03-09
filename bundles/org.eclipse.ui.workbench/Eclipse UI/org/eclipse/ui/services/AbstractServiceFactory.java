@@ -16,7 +16,7 @@ package org.eclipse.ui.services;
  * <code>org.eclipse.ui.services</code> extension point. You are given a
  * service locator to look up other services, and can retrieve your parent
  * service (if one has already been created).
- * 
+ *
  * @since 3.4
  */
 public abstract class AbstractServiceFactory {
@@ -31,7 +31,7 @@ public abstract class AbstractServiceFactory {
 	 * it can be cast to the service interface that is requested. The parent
 	 * service locator will only return the serviceInterface service.
 	 * </p>
-	 * 
+	 *
 	 * @param serviceInterface
 	 *            the service we need to create. Will not be <code>null</code>.
 	 * @param parentLocator

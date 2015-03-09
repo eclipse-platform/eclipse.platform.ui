@@ -23,11 +23,11 @@ import org.eclipse.ui.IWorkbenchPart;
  * <p>
  * If the new-style part wraps an old-style part, it supply an implementation that
  * redirects directly to the old-style part (see <code>OldPartToNewAdapter</code>).
- * When wrapping a new-style part inside an old-style part, the wrapper should supply 
- * an <code>IPartPropertyProvider</code>. Otherwise, the new-style part will use the 
+ * When wrapping a new-style part inside an old-style part, the wrapper should supply
+ * an <code>IPartPropertyProvider</code>. Otherwise, the new-style part will use the
  * default implementation (<code>PartPropertyProvider</code>).
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IPartPropertyProvider {

@@ -35,10 +35,10 @@ import org.eclipse.ui.PartInitException;
  * </p>
  * <p>
  * This interface in not intended to be directly implemented. Rather, clients
- * providing a intro part implementation should subclass 
- * {@link org.eclipse.ui.part.IntroPart}. 
+ * providing a intro part implementation should subclass
+ * {@link org.eclipse.ui.part.IntroPart}.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.intro.IIntroManager#showIntro(org.eclipse.ui.IWorkbenchWindow, boolean)
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -48,7 +48,7 @@ public interface IIntroPart extends IAdaptable {
     /**
 	 * The property id for <code>getTitleImage</code> and
 	 * <code>getTitle</code>.
-	 * 
+	 *
 	 * @since 3.2 this property now covers changes to <code>getTitle</code> in
 	 *        addition to <code>getTitleImage</code>
 	 */
@@ -56,7 +56,7 @@ public interface IIntroPart extends IAdaptable {
 
     /**
 	 * Returns the site for this intro part.
-	 * 
+	 *
 	 * @return the intro site
 	 */
     IIntroSite getIntroSite();
@@ -86,13 +86,13 @@ public interface IIntroPart extends IAdaptable {
      * itself differently in the full and standby modes. In standby mode, the
      * part should be partially visible to the user but otherwise allow them
      * to work. In full mode, the part should be fully visible and be the center
-     * of the user's attention. 
+     * of the user's attention.
      * <p>
      * This method is automatically called by the workbench at appropriate
      * times. Clients must not call this method directly (call
      * {@link IIntroManager#setIntroStandby(IIntroPart, boolean)} instead.
      * </p>
-     * 
+     *
      * @param standby <code>true</code> to put this part in its partially
      * visible standy mode, and <code>false</code> to make it fully visible
      */
@@ -149,12 +149,12 @@ public interface IIntroPart extends IAdaptable {
      * Disposes of this intro part.
      * <p>
      * This is the last method called on the <code>IIntroPart</code>.  At this
-     * point the part controls (if they were ever created) have been disposed as part 
-     * of an SWT composite.  There is no guarantee that createPartControl() has been 
+     * point the part controls (if they were ever created) have been disposed as part
+     * of an SWT composite.  There is no guarantee that createPartControl() has been
      * called, so the part controls may never have been created.
      * </p>
      * <p>
-     * Within this method a part may release any resources, fonts, images, etc.&nbsp; 
+     * Within this method a part may release any resources, fonts, images, etc.&nbsp;
      * held by this part.  It is also very important to deregister all listeners
      * from the workbench.
      * </p>
@@ -166,8 +166,8 @@ public interface IIntroPart extends IAdaptable {
     public void dispose();
 
     /**
-     * Returns the title image of this intro part.  If this value changes 
-     * the part must fire a property listener event with 
+     * Returns the title image of this intro part.  If this value changes
+     * the part must fire a property listener event with
      * {@link IIntroPart#PROP_TITLE}.
      * <p>
      * The title image is usually used to populate the title bar of this part's
@@ -178,14 +178,14 @@ public interface IIntroPart extends IAdaptable {
      * @return the title image
      */
     public Image getTitleImage();
-    
+
     /**
-     * Returns the title of this intro part. If this value changes 
-     * the part must fire a property listener event with 
+     * Returns the title of this intro part. If this value changes
+     * the part must fire a property listener event with
      * {@link IIntroPart#PROP_TITLE}.
      * <p>
      * The title is used to populate the title bar of this part's visual
-     * container.  
+     * container.
      * </p>
      *
      * @return the intro part title (not <code>null</code>)
@@ -196,7 +196,7 @@ public interface IIntroPart extends IAdaptable {
     /**
 	 * Removes the given property listener from this intro part. Has no effect
 	 * if an identical listener is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a property listener
 	 */

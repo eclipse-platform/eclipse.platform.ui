@@ -26,7 +26,7 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
     public Program program;
 
     /**
-     * Creates a new ImageDescriptor. The image is loaded 
+     * Creates a new ImageDescriptor. The image is loaded
      * from a file with the given name <code>name</code>.
      */
     public ExternalProgramImageDescriptor(Program program) {

@@ -27,7 +27,7 @@ package org.eclipse.ui.internal.commands;
  * This class is eventually intended to exist in
  * <code>org.eclipse.jface.commands</code>.
  * </p>
- * 
+ *
  * @since 3.2
  * @see ICommandImageManagerListener#commandImageManagerChanged(CommandImageManagerEvent)
  */
@@ -57,7 +57,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param commandImageManager
 	 *            the instance of the manager that changed; must not be
 	 *            <code>null</code>.
@@ -85,7 +85,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Returns the identifiers of the commands whose bindings have changed.
-	 * 
+	 *
 	 * @return The identifiers of the commands whose bindings have changed;
 	 *         neither <code>null</code> nor empty.
 	 */
@@ -98,7 +98,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -108,7 +108,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Returns whether one of the images of the given command has changed.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to check; must not be
 	 *            <code>null</code>.
@@ -128,7 +128,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Returns whether the image for the command has changed.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to check; must not be
 	 *            <code>null</code>.
@@ -143,7 +143,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Returns whether the image of the given type for the command has changed.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to check; must not be
 	 *            <code>null</code>.
@@ -166,7 +166,7 @@ public final class CommandImageManagerEvent {
 	/**
 	 * Returns whether the image of the given type and style for the command has
 	 * changed.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to check; must not be
 	 *            <code>null</code>.
@@ -190,7 +190,7 @@ public final class CommandImageManagerEvent {
 
 	/**
 	 * Returns whether the image of the given style for the command has changed.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command to check; must not be
 	 *            <code>null</code>.

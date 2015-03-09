@@ -23,9 +23,9 @@ import org.eclipse.ui.preferences.ViewSettingsDialog;
 /**
  * Creates a dialog box for applying filter selection of When combo box in
  * NewKeysPreferencePage
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 
@@ -45,7 +45,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	void setFilterInternal(boolean b) {
 		filterInternal = b;
 	}
-	
+
 	void setFilterUncategorized(boolean b) {
 		filterUncategorized = b;
 	}
@@ -57,7 +57,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	boolean getFilterInternal() {
 		return filterInternal;
 	}
-	
+
 	boolean getFilterUncategorized() {
 		return filterUncategorized;
 	}

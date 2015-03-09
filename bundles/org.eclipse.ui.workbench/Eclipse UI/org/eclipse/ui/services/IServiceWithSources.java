@@ -21,7 +21,7 @@ import org.eclipse.ui.ISourceProvider;
  * <p>
  * Clients must not extend or implement.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IServiceWithSources extends IDisposable {
@@ -31,7 +31,7 @@ public interface IServiceWithSources extends IDisposable {
 	 * service when the source it provides changes. An example of a source might
 	 * be an active editor or the current selection. This amounts to a pluggable
 	 * state tracker for the service.
-	 * 
+	 *
 	 * @param provider
 	 *            The provider to add; must not be <code>null</code>.
 	 */
@@ -41,7 +41,7 @@ public interface IServiceWithSources extends IDisposable {
 	 * Removes a source provider from this service. Most of the time, this
 	 * method call is not required as source providers typically share the same
 	 * life span as the workbench itself.
-	 * 
+	 *
 	 * @param provider
 	 *            The provider to remove; must not be <code>null</code>.
 	 */

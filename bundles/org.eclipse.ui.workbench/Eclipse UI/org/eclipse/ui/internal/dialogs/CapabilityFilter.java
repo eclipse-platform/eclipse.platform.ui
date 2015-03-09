@@ -25,7 +25,7 @@ public class CapabilityFilter extends ViewerFilter {
 	 */
 	public CapabilityFilter() {
 		super();
-		
+
 	}
 
 	@Override

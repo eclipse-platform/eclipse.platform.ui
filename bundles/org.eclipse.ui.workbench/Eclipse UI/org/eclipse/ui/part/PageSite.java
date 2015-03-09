@@ -84,7 +84,7 @@ public class PageSite implements IPageSite, INestable {
 
 	/**
 	 * Creates a new sub view site of the given parent view site.
-	 * 
+	 *
 	 * @param parentViewSite
 	 *            the parent view site
 	 */
@@ -179,7 +179,7 @@ public class PageSite implements IPageSite, INestable {
 	/**
 	 * The PageSite implementation of this <code>IPageSite</code> method
 	 * returns the <code>SubActionBars</code> for this site.
-	 * 
+	 *
 	 * @return the subactionbars for this site
 	 */
 	@Override

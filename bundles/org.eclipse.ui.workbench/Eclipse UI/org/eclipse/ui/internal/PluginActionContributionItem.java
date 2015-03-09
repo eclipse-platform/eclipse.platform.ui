@@ -36,7 +36,7 @@ public class PluginActionContributionItem extends ActionContributionItem
     /**
      * Creates a new contribution item from the given action. The id of the
      * action is used as the id of the item.
-     * 
+     *
      * @param action
      *            the action
      */
@@ -47,7 +47,7 @@ public class PluginActionContributionItem extends ActionContributionItem
 
     /**
      * Hook the activity and identifier listener (if necessary);
-     * 
+     *
      * @since 3.1
      */
     private void hookListeners() {
@@ -59,10 +59,10 @@ public class PluginActionContributionItem extends ActionContributionItem
 			id.addIdentifierListener(this);
 		}
     }
-    
+
     /**
      * Unhook the activity and identifier listener (if necessary);
-     * 
+     *
      * @since 3.1
      */
     private void unhookListeners() {
@@ -74,7 +74,7 @@ public class PluginActionContributionItem extends ActionContributionItem
 			id.removeIdentifierListener(this);
 		}
     }
-    
+
     @Override
 	public void setParent(IContributionManager parent) {
         IContributionManager oldParent = getParent();
@@ -82,14 +82,14 @@ public class PluginActionContributionItem extends ActionContributionItem
         if (oldParent == parent) {
 			return;
 		}
-        
+
         if (parent == null) {
 			unhookListeners();
 		} else {
 			hookListeners();
 		}
     }
-    
+
     /**
      * Create the IIdentifier reference for this item.
      *
@@ -99,7 +99,7 @@ public class PluginActionContributionItem extends ActionContributionItem
         if (!WorkbenchActivityHelper.isFiltering()) {
 			return null;
 		}
-        
+
         if (identifier == null) {
             IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
                     .getWorkbench().getActivitySupport();
@@ -116,7 +116,7 @@ public class PluginActionContributionItem extends ActionContributionItem
 
     /**
      * Dispose of the IIdentifier if necessary.
-     * 
+     *
      * @since 3.0
      */
     private void disposeIdentifier() {
@@ -149,7 +149,7 @@ public class PluginActionContributionItem extends ActionContributionItem
 
     /**
      * Mark the parent dirty if we have a parent.
-     * 
+     *
      * @since 3.1
      */
 	protected void invalidateParent() {
@@ -172,7 +172,7 @@ public class PluginActionContributionItem extends ActionContributionItem
             invalidateParent();
         }
     }
-    
+
     /*
      * For testing purposes only
      */

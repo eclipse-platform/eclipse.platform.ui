@@ -46,12 +46,12 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     private static final String VAL_FAST = "fast";//$NON-NLS-1$
 
-    private static final String VAL_TRUE = "true";//$NON-NLS-1$	
+    private static final String VAL_TRUE = "true";//$NON-NLS-1$
 
-    // VAL_FALSE added by dan_rubel@instantiations.com  
+    // VAL_FALSE added by dan_rubel@instantiations.com
     // TODO: this logic is backwards... we should be checking for true, but
     // technically this is API now...
-    private static final String VAL_FALSE = "false";//$NON-NLS-1$	
+    private static final String VAL_FALSE = "false";//$NON-NLS-1$
 
 	private IExtensionTracker tracker;
 
@@ -64,9 +64,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     /**
      * Read the view extensions within a registry.
-     * 
-     * @param extensionTracker the tracker 
-     * @param id the id 
+     *
+     * @param extensionTracker the tracker
+     * @param id the id
      * @param out the layout
      */
 	public void extendLayout(IExtensionTracker extensionTracker, String id, ModeledPageLayout out) {
@@ -194,7 +194,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
         String moveable = element.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
         String standalone = element.getAttribute(IWorkbenchRegistryConstants.ATT_STANDALONE);
         String showTitle = element.getAttribute(IWorkbenchRegistryConstants.ATT_SHOW_TITLE);
-        
+
         // Default to 'false'
         String minVal = element.getAttribute(IWorkbenchRegistryConstants.ATT_MINIMIZED);
         boolean minimized = minVal != null && VAL_TRUE.equals(minVal);
@@ -257,7 +257,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
         	// See bug 85948 [Perspectives] Adding register & expressions view by default to debug perspective fails
         	pageLayout.removePlaceholder(id);
         }
-        
+
         // If stack ..
         if (stack) {
             if (visible) {
@@ -356,7 +356,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     /**
      * Sets the tags to include.  All others are ignored.
-     * 
+     *
      * @param tags the tags to include
      */
     public void setIncludeOnlyTags(String[] tags) {

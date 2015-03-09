@@ -17,11 +17,11 @@ package org.eclipse.ui;
  * @since 3.3
  */
 public interface ISaveableFilter {
-	
+
 	/**
 	 * Indicate whether the given saveable matches this filter.
 	 * @param saveable the saveable being tested
-	 * @param containingParts the parts that contain the saveable. This list may 
+	 * @param containingParts the parts that contain the saveable. This list may
 	 *    contain zero or more parts.
 	 * @return whether the given saveable matches this filter
 	 */

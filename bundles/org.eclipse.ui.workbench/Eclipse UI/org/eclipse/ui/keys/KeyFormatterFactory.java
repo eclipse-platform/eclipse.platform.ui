@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.keys.FormalKeyFormatter;
  * A cache for formatters. It keeps a few instances of pre-defined instances of
  * <code>IKeyFormatter</code> available for use. It also allows the default
  * formatter to be changed.
- * 
+ *
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyFormatterFactory
  * @since 3.0
  * @see org.eclipse.ui.keys.IKeyFormatter
@@ -36,7 +36,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Provides an instance of <code>CompactKeyFormatter</code>.
-     * 
+     *
      * @return The compact formatter; never <code>null</code>.
      */
     public static final IKeyFormatter getCompactKeyFormatter() {
@@ -45,7 +45,7 @@ public final class KeyFormatterFactory {
 
     /**
      * An accessor for the current default key formatter.
-     * 
+     *
      * @return The default formatter; never <code>null</code>.
      */
     public static IKeyFormatter getDefault() {
@@ -54,7 +54,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Provides an instance of <code>EmacsKeyFormatter</code>.
-     * 
+     *
      * @return The Xemacs formatter; never <code>null</code>.
      */
     public static IKeyFormatter getEmacsKeyFormatter() {
@@ -63,7 +63,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Provides an instance of <code>FormalKeyFormatter</code>.
-     * 
+     *
      * @return The formal formatter; never <code>null</code>.
      */
     public static IKeyFormatter getFormalKeyFormatter() {
@@ -72,7 +72,7 @@ public final class KeyFormatterFactory {
 
     /**
      * Sets the default key formatter.
-     * 
+     *
      * @param defaultKeyFormatter
      *            the default key formatter. Must not be <code>null</code>.
      */

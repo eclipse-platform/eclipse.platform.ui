@@ -85,12 +85,12 @@ public class ExportWizard extends Wizard {
 		if (otherCategory == null) {
 			return new AdaptableList();
 		}
-		return otherCategory.getWizardAdaptableList();    
+		return otherCategory.getWizardAdaptableList();
 	}
 
     /**
      * Initializes the wizard.
-     * 
+     *
      * @param aWorkbench the workbench
      * @param currentSelection the current selectio
      */
@@ -99,14 +99,14 @@ public class ExportWizard extends Wizard {
         this.theWorkbench = aWorkbench;
         this.selection = currentSelection;
 
-        setWindowTitle(WorkbenchMessages.ExportWizard_title); 
+        setWindowTitle(WorkbenchMessages.ExportWizard_title);
         setDefaultPageImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ));
         setNeedsProgressMonitor(true);
     }
 
     /**
-     * Subclasses must implement this <code>IWizard</code> method 
+     * Subclasses must implement this <code>IWizard</code> method
      * to perform any special finish processing for their wizard.
      */
     @Override

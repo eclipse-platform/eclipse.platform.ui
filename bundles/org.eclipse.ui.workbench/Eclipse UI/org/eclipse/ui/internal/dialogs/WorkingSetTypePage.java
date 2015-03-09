@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *        IBM Corporation - initial API and implementation 
+ *        IBM Corporation - initial API and implementation
  * 		  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  *        activated and used by other components.
  *******************************************************************************/
@@ -42,10 +42,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 
 /**
- * The working set type page is used in the new working set 
- * wizard to select from a list of plugin defined working set 
+ * The working set type page is used in the new working set
+ * wizard to select from a list of plugin defined working set
  * types.
- * 
+ *
  * @since 2.0
  */
 public class WorkingSetTypePage extends WizardPage {
@@ -69,13 +69,13 @@ public class WorkingSetTypePage extends WizardPage {
 	 */
 	public WorkingSetTypePage(WorkingSetDescriptor[] descriptors) {
 		super(
-				"workingSetTypeSelectionPage", WorkbenchMessages.WorkingSetTypePage_description, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$ 
+				"workingSetTypeSelectionPage", WorkbenchMessages.WorkingSetTypePage_description, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$
 		this.descriptors = descriptors;
 	}
 
     /**
 	 * Overrides method in WizardPage
-	 * 
+	 *
 	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
 	 */
     @Override
@@ -83,9 +83,9 @@ public class WorkingSetTypePage extends WizardPage {
         return isPageComplete();
     }
 
-    /** 
+    /**
      * Implements IDialogPage
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
      */
     @Override
@@ -131,7 +131,7 @@ public class WorkingSetTypePage extends WizardPage {
 			public String getText(Object element) {
 				return ((WorkingSetDescriptor)element).getName();
 			}
-			
+
 			@Override
 			public void dispose() {
 				images.dispose();
@@ -150,9 +150,9 @@ public class WorkingSetTypePage extends WizardPage {
         setPageComplete(false);
     }
 
-    /** 
+    /**
      * Overrides method in DialogPage
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
      */
     @Override
@@ -162,14 +162,14 @@ public class WorkingSetTypePage extends WizardPage {
 
     /**
      * Returns the page id of the selected working set type.
-     * 
+     *
      * @return the page id of the selected working set type.
      */
     public String getSelection() {
         WorkingSetDescriptor descriptor = getSelectedWorkingSet();
         if (descriptor != null)
         	return descriptor.getId();
-        
+
         return null;
     }
 
@@ -210,7 +210,7 @@ public class WorkingSetTypePage extends WizardPage {
 
         WorkingSetDescriptor descriptor = getSelectedWorkingSet();
 		setDescription(descriptor == null ? "" : descriptor.getDescription()); //$NON-NLS-1$
-        
+
         setPageComplete(hasSelection);
     }
 }

@@ -114,10 +114,10 @@ public abstract class QuickAccessContents {
 
 	/**
 	 * Refreshes the contents of the quick access shell
-	 * 
+	 *
 	 * @param filter
 	 *            The filter text to apply to results
-	 * 
+	 *
 	 */
 	public void refresh(String filter) {
 		if (table != null) {
@@ -148,7 +148,7 @@ public abstract class QuickAccessContents {
 	/**
 	 * Allows the quick access content owner to mark a quick access element as
 	 * being a perfect match, putting it at the start of the table.
-	 * 
+	 *
 	 * @param filter
 	 *            the filter text used to find a match
 	 * @return an element to be put at the top of the table or <code>null</code>
@@ -158,19 +158,19 @@ public abstract class QuickAccessContents {
 	/**
 	 * Notifies the quick access content owner that the contents of the table
 	 * have been changed.
-	 * 
+	 *
 	 * @param filterTextEmpty
 	 *            whether the filter text used to calculate matches was empty
 	 * @param showAllMatches
 	 *            whether the results were constrained by the size of the dialog
-	 * 
+	 *
 	 */
 	protected abstract void updateFeedback(boolean filterTextEmpty, boolean showAllMatches);
 
 	/**
 	 * Sets whether to display all matches to the current filter or limit the
 	 * results. Will refresh the table contents and update the info label.
-	 * 
+	 *
 	 * @param showAll
 	 *            whether to display all matches
 	 */
@@ -181,7 +181,7 @@ public abstract class QuickAccessContents {
 			refresh(filterText.getText().toLowerCase());
 		}
 	}
-	
+
 	private void updateInfoLabel() {
 		if (infoLabel != null) {
 			TriggerSequence sequence = getTriggerSequence();
@@ -205,7 +205,7 @@ public abstract class QuickAccessContents {
 	 * Returns the trigger sequence that can be used to open the quick access
 	 * dialog as well as toggle the show all results feature. Can return
 	 * <code>null</code> if no trigger sequence is known.
-	 * 
+	 *
 	 * @return the trigger sequence used to open the quick access or
 	 *         <code>null</code>
 	 */
@@ -221,7 +221,7 @@ public abstract class QuickAccessContents {
 	/**
 	 * Return whether the shell is currently set to display all matches or limit
 	 * the results.
-	 * 
+	 *
 	 * @return whether all matches will be displayed
 	 */
 	public boolean getShowAllMatches() {
@@ -282,7 +282,7 @@ public abstract class QuickAccessContents {
 	 * match entry that should be given priority. The number of items returned
 	 * is affected by {@link #getShowAllMatches()} and the size of the table's
 	 * composite.
-	 * 
+	 *
 	 * @param filter
 	 *            the string text filter to apply, possibly empty
 	 * @param perfectMatch
@@ -324,7 +324,7 @@ public abstract class QuickAccessContents {
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
 					QuickAccessElement[] sortedElements = provider.getElementsSorted();
 					List<QuickAccessEntry> poorFilterMatches = new ArrayList<QuickAccessEntry>();
-					
+
 					int j = indexPerProvider[i];
 					while (j < sortedElements.length
 							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))) {
@@ -529,7 +529,7 @@ public abstract class QuickAccessContents {
 
 	/**
 	 * Creates the table providing the contents for the quick access dialog
-	 * 
+	 *
 	 * @param composite parent composite with {@link GridLayout}
 	 * @param defaultOrientation the window orientation to use for the table {@link SWT#RIGHT_TO_LEFT} or {@link SWT#LEFT_TO_RIGHT}
 	 * @return the created table
@@ -693,7 +693,7 @@ public abstract class QuickAccessContents {
 	/**
 	 * Creates a label which will display the key binding to expand
 	 * the search results.
-	 * 
+	 *
 	 * @param parent parent composite with {@link GridLayout}
 	 * @return the created label
 	 */

@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class TabBehaviourMRU extends TabBehaviour {
 

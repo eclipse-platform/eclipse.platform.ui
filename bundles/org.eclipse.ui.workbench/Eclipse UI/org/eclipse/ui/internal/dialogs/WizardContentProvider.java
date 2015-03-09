@@ -18,7 +18,7 @@ import org.eclipse.ui.model.AdaptableList;
 
 /**
  * Provider used by the NewWizardNewPage.
- * 
+ *
  * @since 3.0
  */
 public class WizardContentProvider implements ITreeContentProvider {
@@ -65,7 +65,7 @@ public class WizardContentProvider implements ITreeContentProvider {
             		&& list.get(0) instanceof WizardCollectionElement) {
                 return getChildren(list.get(0));
             }
-                
+
             return list.toArray();
         } else {
 			return new Object[0];
@@ -87,13 +87,13 @@ public class WizardContentProvider implements ITreeContentProvider {
 				}
             }
             return ((WizardCollectionElement) element).getParent(element);
-        } 
+        }
         return null;
     }
 
     /**
      * Adds the item to the list, unless it's a collection element without any children.
-     * 
+     *
      * @param element the element to test and add
      * @param list the <code>Collection</code> to add to.
      * @since 3.0

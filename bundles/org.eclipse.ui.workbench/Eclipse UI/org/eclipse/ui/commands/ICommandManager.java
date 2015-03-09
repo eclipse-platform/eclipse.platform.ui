@@ -24,7 +24,7 @@ import org.eclipse.ui.keys.KeySequence;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see org.eclipse.ui.commands.ICommand
  * @see org.eclipse.ui.commands.ICommandManagerListener
@@ -39,7 +39,7 @@ public interface ICommandManager {
     /**
      * Registers an instance of <code>ICommandManagerListener</code> to listen
      * for changes to attributes of this instance.
-     * 
+     *
      * @param commandManagerListener
      *            the instance of <code>ICommandManagerListener</code> to
      *            register. Must not be <code>null</code>. If an attempt is
@@ -57,7 +57,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to active contexts. This set may be
      *         empty, but is guaranteed not to be <code>null</code>. If this
      *         set is not empty, it is guaranteed to only contain instances of
@@ -72,7 +72,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the active key configuration identifier. This set may be empty,
      *         but it is guaranteed to not be <code>null</code>. If this set
      *         is not empty, it is guaranteed to only contains instances of
@@ -89,7 +89,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the active locale. May be <code>null</code>.
      */
 	@Deprecated
@@ -103,7 +103,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the active platform. May be <code>null</code>.
      */
 	@Deprecated
@@ -111,7 +111,7 @@ public interface ICommandManager {
 
     /**
      * Returns a handle to a category given an identifier.
-     * 
+     *
      * @param categoryId
      *            an identifier. Must not be <code>null</code>
      * @return a handle to a category.
@@ -121,7 +121,7 @@ public interface ICommandManager {
 
     /**
      * Returns a handle to a command given an identifier.
-     * 
+     *
      * @param commandId
      *            an identifier. Must not be <code>null</code>
      * @return a handle to a command; never <code>null</code>.
@@ -137,7 +137,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to defined categories. This set may be
      *         empty, but is guaranteed not to be <code>null</code>. If this
      *         set is not empty, it is guaranteed to only contain instances of
@@ -154,7 +154,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to defined commands. This set may be
      *         empty, but is guaranteed not to be <code>null</code>. If this
      *         set is not empty, it is guaranteed to only contain instances of
@@ -171,7 +171,7 @@ public interface ICommandManager {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to defined key configurations. This set
      *         may be empty, but is guaranteed not to be <code>null</code>.
      *         If this set is not empty, it is guaranteed to only contain
@@ -182,7 +182,7 @@ public interface ICommandManager {
 
     /**
      * Returns a handle to a key configuration given an identifier.
-     * 
+     *
      * @param keyConfigurationId
      *            an identifier. Must not be <code>null</code>
      * @return a handle to a key configuration.
@@ -193,7 +193,7 @@ public interface ICommandManager {
     /**
      * Finds all of the commands which have key bindings that start with the
      * given key sequence.
-     * 
+     *
      * @param keySequence
      *            The prefix to look for; must not be <code>null</code>.
      * @return A map of all of the matching key sequences (
@@ -207,7 +207,7 @@ public interface ICommandManager {
     /**
      * Finds the command which has the given key sequence as one of its key
      * bindings.
-     * 
+     *
      * @param keySequence
      *            The key binding to look for; must not be <code>null</code>.
      * @return The command id for the matching command, if any;
@@ -219,7 +219,7 @@ public interface ICommandManager {
     /**
      * Checks to see whether there are any commands which have key bindings that
      * start with the given key sequence.
-     * 
+     *
      * @param keySequence
      *            The prefix to look for; must not be <code>null</code>.
      * @return <code>true</code> if at least one command has a key binding
@@ -232,7 +232,7 @@ public interface ICommandManager {
     /**
      * Checks to see if there is a command with the given key sequence as one of
      * its key bindings.
-     * 
+     *
      * @param keySequence
      *            The key binding to look for; must not be <code>null</code>.
      * @return <code>true</code> if a command has a matching key binding;
@@ -244,7 +244,7 @@ public interface ICommandManager {
     /**
      * Unregisters an instance of <code>ICommandManagerListener</code>
      * listening for changes to attributes of this instance.
-     * 
+     *
      * @param commandManagerListener
      *            the instance of <code>ICommandManagerListener</code> to
      *            unregister. Must not be <code>null</code>. If an attempt is

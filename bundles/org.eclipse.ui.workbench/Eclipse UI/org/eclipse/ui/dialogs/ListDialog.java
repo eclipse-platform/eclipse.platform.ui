@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Table;
  * A dialog that prompts for one element out of a list of elements. Uses
  * <code>IStructuredContentProvider</code> to provide the elements and
  * <code>ILabelProvider</code> to provide their labels.
- * 
+ *
  * @since 2.1
  */
 public class ListDialog extends SelectionDialog {
@@ -155,7 +155,7 @@ public class ListDialog extends SelectionDialog {
 
     /**
      * Returns the initial height of the dialog in number of characters.
-     * 
+     *
      * @return the initial height of the dialog in number of characters
      */
     public int getHeightInChars() {
@@ -164,7 +164,7 @@ public class ListDialog extends SelectionDialog {
 
     /**
      * Returns the initial width of the dialog in number of characters.
-     * 
+     *
      * @return the initial width of the dialog in number of characters
      */
     public int getWidthInChars() {
@@ -173,7 +173,7 @@ public class ListDialog extends SelectionDialog {
 
     /**
      * Sets the initial height of the dialog in number of characters.
-     * 
+     *
      * @param heightInChars
      *            the initialheight of the dialog in number of characters
      */
@@ -183,7 +183,7 @@ public class ListDialog extends SelectionDialog {
 
     /**
      * Sets the initial width of the dialog in number of characters.
-     * 
+     *
      * @param widthInChars
      *            the initial width of the dialog in number of characters
      */

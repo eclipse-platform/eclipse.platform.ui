@@ -53,9 +53,9 @@ import org.eclipse.ui.keys.IBindingService;
 /**
  * This is the quick access popup dialog used in 3.x. The new quick access is
  * done through a shell in {@link SearchField}.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class QuickAccessDialog extends PopupDialog {
 	private TriggerSequence[] invokingCommandKeySequences;
@@ -268,7 +268,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt
 	 * .widgets.Composite)

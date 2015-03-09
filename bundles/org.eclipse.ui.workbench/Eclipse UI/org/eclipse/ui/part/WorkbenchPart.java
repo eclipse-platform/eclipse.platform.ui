@@ -48,7 +48,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * package; clients should instead subclass <code>ViewPart</code> or
  * <code>EditorPart</code>.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.part.ViewPart
  * @see org.eclipse.ui.part.EditorPart
  * @noextend This class is not intended to be subclassed by clients.
@@ -70,7 +70,7 @@ public abstract class WorkbenchPart extends EventManager implements
     private String partName = ""; //$NON-NLS-1$
 
     private String contentDescription = ""; //$NON-NLS-1$
-    
+
     private ListenerList partChangeListeners = new ListenerList();
 
     /**
@@ -99,7 +99,7 @@ public abstract class WorkbenchPart extends EventManager implements
 	public abstract void createPartControl(Composite parent);
 
     /**
-     * The <code>WorkbenchPart</code> implementation of this 
+     * The <code>WorkbenchPart</code> implementation of this
      * <code>IWorkbenchPart</code> method disposes the title image
      * loaded by <code>setInitializationData</code>. Subclasses may extend.
      */
@@ -135,7 +135,7 @@ public abstract class WorkbenchPart extends EventManager implements
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Subclasses may override this method (however, if they do so, they
      * should invoke the method on their superclass to ensure that the
      * Platform's adapter manager is consulted).
@@ -228,7 +228,7 @@ public abstract class WorkbenchPart extends EventManager implements
      * and internal state variable (accessible via <code>getConfigElement</code>).
      * It also loads the title image, if one is specified in the configuration element.
      * Subclasses may extend.
-     * 
+     *
      * Should not be called by clients. It is called by the core plugin when creating
      * this executable extension.
      */
@@ -239,7 +239,7 @@ public abstract class WorkbenchPart extends EventManager implements
         // Save config element.
         configElement = cfig;
 
-        // Part name and title.  
+        // Part name and title.
         partName = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$;
         title = partName;
 
@@ -275,7 +275,7 @@ public abstract class WorkbenchPart extends EventManager implements
     /**
      * Checks that the given site is valid for this type of part.
      * The default implementation does nothing.
-     * 
+     *
      * @param site the site to check
      * @since 3.1
      */
@@ -284,7 +284,7 @@ public abstract class WorkbenchPart extends EventManager implements
     }
 
     /**
-     * Sets or clears the title of this part. Clients should call this method instead 
+     * Sets or clears the title of this part. Clients should call this method instead
      * of overriding getTitle.
      * <p>
      * This may change a title that was previously set using setPartName or setContentDescription.
@@ -342,7 +342,7 @@ public abstract class WorkbenchPart extends EventManager implements
     }
 
     /**
-     * Show that this part is busy due to a Job running that it 
+     * Show that this part is busy due to a Job running that it
      * is listening to.
      * @param busy boolean to indicate that the busy state has started
      *  	or ended.
@@ -357,7 +357,7 @@ public abstract class WorkbenchPart extends EventManager implements
      * {@inheritDoc}
      * <p>
      * It is considered bad practise to overload or extend this method.
-     * Parts should call setPartName to change their part name. 
+     * Parts should call setPartName to change their part name.
      * </p>
      */
     @Override
@@ -366,17 +366,17 @@ public abstract class WorkbenchPart extends EventManager implements
     }
 
     /**
-     * Sets the name of this part. The name will be shown in the tab area for 
+     * Sets the name of this part. The name will be shown in the tab area for
      * the part. Clients should call this method instead of overriding getPartName.
      * Setting this to the empty string will cause a default part name to be used.
-     * 
+     *
      * <p>
      * setPartName and setContentDescription are intended to replace setTitle.
-     * This may change a value that was previously set using setTitle.  
+     * This may change a value that was previously set using setTitle.
      * </p>
      *
      * @param partName the part name, as it should be displayed in tabs.
-     * 
+     *
      * @since 3.0
      */
     protected void setPartName(String partName) {
@@ -404,7 +404,7 @@ public abstract class WorkbenchPart extends EventManager implements
      * {@inheritDoc}
      * <p>
      * It is considered bad practise to overload or extend this method.
-     * Parts should call setContentDescription to change their content description. 
+     * Parts should call setContentDescription to change their content description.
      * </p>
      */
     @Override
@@ -419,15 +419,15 @@ public abstract class WorkbenchPart extends EventManager implements
      * call this method instead of overriding getContentDescription(). For views, the
      * content description is shown (by default) in a line near the top of the view. For
      * editors, the content description is shown beside the part name when showing a
-     * list of editors. If the editor is open on a file, this typically contains the path 
+     * list of editors. If the editor is open on a file, this typically contains the path
      * to the input file, without the filename or trailing slash.
      *
      * <p>
      * This may overwrite a value that was previously set in setTitle
      * </p>
-     * 
+     *
      * @param description the content description
-     * 
+     *
      * @since 3.0
      */
     protected void setContentDescription(String description) {
@@ -466,7 +466,7 @@ public abstract class WorkbenchPart extends EventManager implements
         firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
 
     }
-    
+
     @Override
 	public int getOrientation(){
 		//By default use the orientation in Window
@@ -477,12 +477,12 @@ public abstract class WorkbenchPart extends EventManager implements
 	public void addPartPropertyListener(IPropertyChangeListener listener) {
     	partChangeListeners.add(listener);
     }
-    
+
     @Override
 	public void removePartPropertyListener(IPropertyChangeListener listener) {
     	partChangeListeners.remove(listener);
     }
-    
+
     /**
 	 * @since 3.3
 	 */
@@ -497,9 +497,9 @@ public abstract class WorkbenchPart extends EventManager implements
 			}
 		}
     }
-    
+
 	private Map<String, String> partProperties = new HashMap<String, String>();
-    
+
     @Override
 	public void setPartProperty(String key, String value) {
 		String oldValue = partProperties.get(key);
@@ -510,12 +510,12 @@ public abstract class WorkbenchPart extends EventManager implements
     	}
     	firePartPropertyChanged(key, oldValue, value);
     }
-    
+
     @Override
 	public String getPartProperty(String key) {
 		return partProperties.get(key);
     }
-    
+
     @Override
 	public Map<String, String> getPartProperties() {
     	return Collections.unmodifiableMap(partProperties);

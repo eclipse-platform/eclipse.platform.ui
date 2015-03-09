@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class PropertiesProvider extends QuickAccessProvider {
 

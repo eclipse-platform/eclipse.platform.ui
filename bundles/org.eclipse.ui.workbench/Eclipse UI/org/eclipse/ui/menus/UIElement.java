@@ -24,7 +24,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * This class may be extended by clients.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public abstract class UIElement {
@@ -34,7 +34,7 @@ public abstract class UIElement {
 	/**
 	 * Construct a new instance of this class keyed off of the provided service
 	 * locator.
-	 * 
+	 *
 	 * @param serviceLocator
 	 *            the locator. May not be <code>null</code>.
 	 */
@@ -47,7 +47,7 @@ public abstract class UIElement {
 
 	/**
 	 * Update the label on this UI element.
-	 * 
+	 *
 	 * @param text
 	 *            The new label to display.
 	 */
@@ -56,7 +56,7 @@ public abstract class UIElement {
 	/**
 	 * Update the tooltip on this UI element. Tooltips are currently only valid
 	 * for toolbar contributions.
-	 * 
+	 *
 	 * @param text
 	 *            The new tooltip to display.
 	 */
@@ -64,7 +64,7 @@ public abstract class UIElement {
 
 	/**
 	 * Update the icon on this UI element.
-	 * 
+	 *
 	 * @param desc
 	 *            The descriptor for the new icon to display.
 	 */
@@ -72,7 +72,7 @@ public abstract class UIElement {
 
 	/**
 	 * Update the disabled icon on this UI element.
-	 * 
+	 *
 	 * @param desc
 	 *            The descriptor for the new icon to display.
 	 */
@@ -80,7 +80,7 @@ public abstract class UIElement {
 
 	/**
 	 * Update the hover icon on this UI element.
-	 * 
+	 *
 	 * @param desc
 	 *            The descriptor for the new icon to display.
 	 */
@@ -89,7 +89,7 @@ public abstract class UIElement {
 	/**
 	 * Update the checked state on this UI element. For example, if this was a
 	 * toggle or radio button.
-	 * 
+	 *
 	 * @param checked
 	 *            true to set toggle on
 	 */
@@ -98,7 +98,7 @@ public abstract class UIElement {
 	/**
 	 * Get the service locator scope in which this UI element resides. May not
 	 * be <code>null</code>.
-	 * 
+	 *
 	 * <p>
 	 * The locator may be used to obtain services that are scoped in the same
 	 * way as the {@link UIElement}. Such services include but are not limited
@@ -107,7 +107,7 @@ public abstract class UIElement {
 	 * <code>null</code> requests for any of these particular services may
 	 * return <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the service locator for this element
 	 * @see IServiceLocator#getService(Class)
 	 */
@@ -122,7 +122,7 @@ public abstract class UIElement {
 	 * <p>
 	 * Example: element.setDropdownId("org.eclipse.ui.navigate.back.my.menu");
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            used to populate the dropdown menu. Must not be
 	 *            <code>null</code>.

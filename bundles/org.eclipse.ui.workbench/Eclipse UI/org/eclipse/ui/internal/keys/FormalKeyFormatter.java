@@ -20,7 +20,7 @@ import org.eclipse.ui.keys.KeyStroke;
 /**
  * Formats the keys in the internal key sequence grammar. This is used for
  * persistence, and is not really intended for display to the user.
- * 
+ *
  * @since 3.0
  */
 public class FormalKeyFormatter extends AbstractKeyFormatter {

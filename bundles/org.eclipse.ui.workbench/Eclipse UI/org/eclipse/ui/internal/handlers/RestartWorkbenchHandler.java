@@ -17,18 +17,18 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Provide a Handler for the Restart Workbench command.
- * 
+ *
  */
 public class RestartWorkbenchHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event){
-		
+
 		PlatformUI.getWorkbench().restart(true);
 		return null;
 	}

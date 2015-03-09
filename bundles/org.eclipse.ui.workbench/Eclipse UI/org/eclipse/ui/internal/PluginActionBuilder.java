@@ -51,9 +51,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
     /**
      * Contributes submenus and/or actions into the provided menu and tool bar
      * managers.
-     * 
+     *
      * @param menu the menu to contribute to
-     * @param toolbar the toolbar to contribute to 
+     * @param toolbar the toolbar to contribute to
      * @param appendIfMissing append containers if missing
      */
     public final void contribute(IMenuManager menu, IToolBarManager toolbar,
@@ -92,7 +92,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
         String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
         return value != null ? value : "???"; //$NON-NLS-1$
     }
-    
+
     /**
      * Returns the id of this contributions.
      */
@@ -129,7 +129,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
             return true;
         }
 
-        // Found top level contribution element		
+        // Found top level contribution element
         if (tag.equals(targetContributionTag)) {
             if (targetID != null) {
                 // Ignore contributions not matching target id
@@ -150,7 +150,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
             return true;
         }
 
-        // Found menu contribution sub-element		
+        // Found menu contribution sub-element
         if (tag.equals(IWorkbenchRegistryConstants.TAG_MENU)) {
             currentContribution.addMenu(element);
             return true;
@@ -175,8 +175,8 @@ public abstract class PluginActionBuilder extends RegistryReader {
 		protected ArrayList actions;
 
         /**
-         * Add a menu. 
-         * 
+         * Add a menu.
+         *
          * @param element the element to base the menu on
          */
         public void addMenu(IConfigurationElement element) {
@@ -188,7 +188,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
         /**
          * Add an action.
-         * 
+         *
          * @param desc the descriptor
          */
         public void addAction(ActionDescriptor desc) {
@@ -201,7 +201,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
         /**
          * Contributes submenus and/or actions into the provided menu and tool bar
          * managers.
-         * 
+         *
          * The elements added are filtered based on activity enablement.
          * @param menu the menu to contribute to
          * @param menuAppendIfMissing whether to append missing groups to menus
@@ -498,14 +498,14 @@ public abstract class PluginActionBuilder extends RegistryReader {
         }
 
 		/**
-		 * Disposes this contribution. 
-		 * 
+		 * Disposes this contribution.
+		 *
 		 * @since 3.1
 		 */
 		public void dispose() {
 			// do nothing
 		}
-		
+
 		/**
 		 * Disposes the actions.
 		 *
@@ -522,13 +522,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
             }
 		}
     }
-    
+
     private static boolean allowIdeLogging = false;
-    
+
     /**
 	 * If set to <code>false</code>, some of the logs that can be caused by
 	 * use IDE plugins from an RCP app will be ignored.
-	 * 
+	 *
 	 * @param b
 	 *            Log the errors or not.
 	 * @since 3.3
@@ -536,11 +536,11 @@ public abstract class PluginActionBuilder extends RegistryReader {
     public static void setAllowIdeLogging(boolean b) {
     	allowIdeLogging = b;
     }
-    
+
     /**
 	 * These are log messages that should be ignored by RCP apps when using the
 	 * IDE plugins.
-	 * 
+	 *
 	 * @param msg
 	 * @since 3.3
 	 */

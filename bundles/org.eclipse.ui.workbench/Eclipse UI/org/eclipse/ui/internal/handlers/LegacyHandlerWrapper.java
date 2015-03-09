@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.misc.Policy;
 /**
  * A handler that wraps a legacy handler. This provide backward compatibility
  * with the handlers release in Eclipse 3.0.
- * 
+ *
  * @since 3.1
  */
 public final class LegacyHandlerWrapper implements IHandler {
@@ -40,7 +40,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	/**
 	 * Constructs a new instance of <code>HandlerWrapper</code>.
-	 * 
+	 *
 	 * @param handler
 	 *            The handler that should be wrapped; must not be
 	 *            <code>null</code>.
@@ -56,7 +56,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core.commands.IHandlerListener)
 	 */
 	@Override
@@ -67,7 +67,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
 	@Override
@@ -90,7 +90,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override

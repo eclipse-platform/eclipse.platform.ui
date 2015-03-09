@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     ARTAL Technologies <simon.chemouil@artal.fr> - Bug 293044 added keybindings display 
+ *     ARTAL Technologies <simon.chemouil@artal.fr> - Bug 293044 added keybindings display
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *******************************************************************************/
 
@@ -30,7 +30,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CommandElement extends QuickAccessElement {
 
@@ -61,7 +61,7 @@ public class CommandElement extends QuickAccessElement {
 				return;
 			}
 		}
-		
+
 		// let's try the old fashioned way
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
@@ -89,7 +89,7 @@ public class CommandElement extends QuickAccessElement {
 
 	/**
 	 * Returns a formatted string describes this command.
-	 * 
+	 *
 	 * @return a description of the command of this element
 	 * @since 3.6
 	 */
@@ -123,7 +123,7 @@ public class CommandElement extends QuickAccessElement {
 	/**
 	 * Returns a formatted string that can be used to invoke this element's
 	 * command. <code>null</code> may be returned if a binding cannot be found.
-	 * 
+	 *
 	 * @return the string keybinding for invoking this element's command, may be
 	 *         <code>null</code>
 	 * @since 3.6

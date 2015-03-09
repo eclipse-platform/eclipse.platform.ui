@@ -19,7 +19,7 @@ import org.eclipse.ui.commands.NotDefinedException;
 /**
  * A wrapper around the new {@link Scheme} class, providing supported for the
  * old {@link IKeyConfiguration} interface.
- * 
+ *
  * @since 3.1
  */
 public final class SchemeLegacyWrapper implements IKeyConfiguration {
@@ -37,7 +37,7 @@ public final class SchemeLegacyWrapper implements IKeyConfiguration {
 
 	/**
 	 * Constructs a new instance of <code>SchemeWrapper</code>.
-	 * 
+	 *
 	 * @param scheme
 	 *            The scheme to be wrapped; must not be <code>null</code>.
 	 * @param bindingManager

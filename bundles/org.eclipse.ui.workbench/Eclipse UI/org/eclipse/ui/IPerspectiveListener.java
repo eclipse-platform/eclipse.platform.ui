@@ -32,7 +32,7 @@ public interface IPerspectiveListener {
             IPerspectiveDescriptor perspective);
 
     /**
-     * Notifies this listener that a perspective has changed in some way 
+     * Notifies this listener that a perspective has changed in some way
      * (for example, editor area hidden, perspective reset,
      * view show/hide, editor open/close, etc).
      *

@@ -29,7 +29,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
     /* Theme */
     public static final String ATT_ID = "id";//$NON-NLS-1$
 
-    private static final String ATT_NAME = "name";//$NON-NLS-1$	
+    private static final String ATT_NAME = "name";//$NON-NLS-1$
 
     private Collection colors = new HashSet();
 
@@ -53,7 +53,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
     /**
      * Add a color override to this descriptor.
-     * 
+     *
      * @param definition the definition to add
      */
     void add(ColorDefinition definition) {
@@ -65,7 +65,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
     /**
      * Add a font override to this descriptor.
-     * 
+     *
      * @param definition the definition to add
      */
     void add(FontDefinition definition) {
@@ -77,7 +77,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
     /**
      * Add a data object to this descriptor.
-     * 
+     *
      * @param key the key
      * @param data the data
      */
@@ -85,7 +85,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
         if (dataMap.containsKey(key)) {
 			return;
 		}
-            
+
         dataMap.put(key, data);
     }
 
@@ -148,7 +148,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
     /**
      * Set the description.
-     * 
+     *
      * @param description the description
      */
     void setDescription(String description) {

@@ -24,13 +24,13 @@ import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class CommandServiceFactory extends AbstractServiceFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.AbstractServiceFactory#create(java.lang.Class,
 	 * org.eclipse.ui.services.IServiceLocator,

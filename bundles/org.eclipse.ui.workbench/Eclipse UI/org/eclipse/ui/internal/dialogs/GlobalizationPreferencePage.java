@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Moshe Wajnberg - <wajnberg@il.ibm.com> - 
+ *     Moshe Wajnberg - <wajnberg@il.ibm.com> -
  ******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -76,7 +76,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 	/**
 	 * Creates the composite which will contain all the preference controls for
 	 * this page.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the composite for this page
@@ -221,11 +221,11 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		Label vfiller = new Label(parent, SWT.LEFT);
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gridData.horizontalSpan= 2;
-		
+
 		GC gc = new GC(parent);
 		gridData.heightHint = Dialog.convertHeightInCharsToPixels(gc.getFontMetrics(), 1) / 2;
 		gc.dispose();
-		
+
 		vfiller.setLayoutData(gridData);
 	}
 
@@ -275,7 +275,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		store.setValue(IPreferenceConstants.LAYOUT_DIRECTION, layoutDirection);
 		store.setValue(IPreferenceConstants.BIDI_SUPPORT, bidiSupport);
 		store.setValue(IPreferenceConstants.TEXT_DIRECTION, textDirection);
-		
+
 		Window.setDefaultOrientation(layoutDirection);
 		BidiUtils.setBidiSupport(bidiSupport);
 		BidiUtils.setTextDirection(textDirection.isEmpty() ? null : textDirection);

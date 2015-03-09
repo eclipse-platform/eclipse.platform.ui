@@ -30,21 +30,21 @@ import org.osgi.framework.ServiceReference;
  * @since 3.0
  */
 public class AboutBundleData extends AboutData {
-    
+
 	private Bundle bundle;
-	
-    private boolean isSignedDetermined = false;	
+
+    private boolean isSignedDetermined = false;
 
 	private boolean isSigned;
-    
+
     public AboutBundleData(Bundle bundle) {
         super(getResourceString(bundle, Constants.BUNDLE_VENDOR),
                 getResourceString(bundle, Constants.BUNDLE_NAME),
                 getResourceString(bundle, Constants.BUNDLE_VERSION), bundle
                         .getSymbolicName());
-        
+
         this.bundle = bundle;
-        
+
     }
 
     public int getState() {
@@ -52,7 +52,7 @@ public class AboutBundleData extends AboutData {
     }
 
     /**
-    * @return a string representation of the argument state. 
+    * @return a string representation of the argument state.
     *         Does not return null.
     */
     public String getStateName() {
@@ -64,20 +64,20 @@ public class AboutBundleData extends AboutData {
         case Bundle.STARTING:
             return WorkbenchMessages.AboutPluginsDialog_state_starting;
         case Bundle.STOPPING:
-            return WorkbenchMessages.AboutPluginsDialog_state_stopping; 
+            return WorkbenchMessages.AboutPluginsDialog_state_stopping;
         case Bundle.UNINSTALLED:
             return WorkbenchMessages.AboutPluginsDialog_state_uninstalled;
         case Bundle.ACTIVE:
-            return WorkbenchMessages.AboutPluginsDialog_state_active; 
+            return WorkbenchMessages.AboutPluginsDialog_state_active;
         default:
-            return WorkbenchMessages.AboutPluginsDialog_state_unknown; 
+            return WorkbenchMessages.AboutPluginsDialog_state_unknown;
         }
     }
 
     /**
      * A function to translate the resource tags that may be embedded in a
      * string associated with some bundle.
-     * 
+     *
      * @param headerName
      *            the used to retrieve the correct string
      * @return the string or null if the string cannot be found
@@ -124,27 +124,27 @@ public class AboutBundleData extends AboutData {
 	public Bundle getBundle() {
 		return bundle;
 	}
-    
+
 // private boolean isBundleSigned(Bundle bundle)
-//    {	
+//    {
 //    	isSignedDetermined = true;
-//    	
+//
 //    	boolean bRet = false;
 //    	if ( null != bundle.findEntries("META-INF", "*.SF", false) ) { //$NON-NLS-1$//$NON-NLS-2$
 //    		bRet = true;
 //    	}
 //    	return bRet;
-//    	
-//    	
+//
+//
 //    	/*
 //    	 * The below code features implementations that do more.
 //    	 */
-//   
-//    	
+//
+//
 //    /*	String loc = "";
-//    	
+//
 //        StringTokenizer st = new StringTokenizer(this.location,"@");
-//       
+//
 //        try
 //        {
 //        	st.nextToken();
@@ -158,12 +158,12 @@ public class AboutBundleData extends AboutData {
 //       	{
 //        	return "Not a jar file";
 //        }
-//        	
+//
 //        try
 //        {
 //        	String fileLocation = Platform.getInstallLocation().getURL().getFile() + loc;
 //			JarFile jar = new JarFile( fileLocation );
-//				
+//
 //			Enumeration e = jar.entries();
 //			/*ArrayList list = new ArrayList();
 //			byte[] buffer = new byte[8192];
@@ -177,8 +177,8 @@ public class AboutBundleData extends AboutData {
 //				}
 //			if(is != null ) is.close();
 //			}
-//					
-//					
+//
+//
 //					int checked = 0;
 //					boolean signed =false;
 //					for( int index = 0; index < list.size(); index++ )
@@ -193,18 +193,18 @@ public class AboutBundleData extends AboutData {
 //							infoLine[5] = "Signed by "+certs[0].toString();
 //							break;
 //						}
-//						
+//
 //					}
 //					if( !signed )
 //					{
 //						infoLine[5] = "Not signed";
 //					}
-//        		
+//
 //			boolean isSigned = false;
 //        	while( e.hasMoreElements() )
 //        	{
 //        		JarEntry entry = (JarEntry)e.nextElement();
-//        		
+//
 //        		if( entry.getName().matches("[mM][eE][tT][aA][-][iI][nN][fF]/.*[.][sS][fF]"))
 //        		{
 //        			isSigned = true;

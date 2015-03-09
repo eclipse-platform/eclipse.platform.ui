@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
  * extension contributed to the workbench's installation pages extension point
  * (named <code>"org.eclipse.ui.installationPages"</code>). For example, the
  * plug-in's XML markup might contain:
- * 
+ *
  * <pre>
  * &LT;extension point="org.eclipse.ui.installationPages"&GT;
  *      &LT;page id="com.example.myplugin.installInfo"
@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Composite;
  *         class="com.example.myplugin.MyInstallationPage" /&GT;
  * &LT;/extension&GT;
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  * @since 3.5
  */
 public abstract class InstallationPage extends DialogPage {
@@ -47,7 +47,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * This message has no effect when the receiver is used in an
 	 * IInstallationPageContainer.
 	 * </p>
-	 * 
+	 *
 	 * @param newMessage
 	 *            the message, or <code>null</code> to clear the message
 	 */
@@ -67,7 +67,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * This message has no effect when the receiver is used in an
 	 * IInstallationPageContainer.
 	 * </p>
-	 * 
+	 *
 	 * @param newMessage
 	 *            the message, or <code>null</code> to clear the message
 	 * @param newType
@@ -84,7 +84,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * the container when registering buttons using
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
-	 * 
+	 *
 	 * @param container
 	 *            the container that is hosting the page.
 	 */
@@ -94,10 +94,10 @@ public abstract class InstallationPage extends DialogPage {
 
 	/**
 	 * Create the buttons that belong to this page using the specified parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent to use for the buttons.
-	 * 
+	 *
 	 * @see #createButton(Composite, int, String)
 	 * @see #buttonPressed(int)
 	 */
@@ -113,7 +113,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * should not make any assumptions about the visibility, layout, or
 	 * presentation of this button inside the dialog.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param id
@@ -122,7 +122,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * @param label
 	 *            the label from the button
 	 * @return the new button
-	 * 
+	 *
 	 * @see #createPageButtons(Composite)
 	 * @see #buttonPressed(int)
 	 */
@@ -144,7 +144,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * Notifies that this page's button with the given id has been pressed.
 	 * Subclasses should extend this method to handle the buttons created in
 	 * {@link #createButton(Composite, int, String)}
-	 * 
+	 *
 	 * @param buttonId
 	 *            the id of the button that was pressed (see
 	 *            <code>IDialogConstants.*_ID</code> constants)
@@ -157,7 +157,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * typically used when registering buttons using
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
-	 * 
+	 *
 	 * @return the container that is hosting the page.
 	 */
 	protected IInstallationPageContainer getPageContainer() {

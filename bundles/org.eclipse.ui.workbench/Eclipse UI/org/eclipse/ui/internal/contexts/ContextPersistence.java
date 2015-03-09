@@ -28,21 +28,21 @@ import org.eclipse.ui.internal.services.RegistryPersistence;
  * <p>
  * A static class for accessing the registry.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ContextPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the context elements in the indexed array.
-	 * 
+	 *
 	 * @see ContextPersistence#read()
 	 */
 	private static final int INDEX_CONTEXT_DEFINITIONS = 0;
 
 	/**
 	 * Reads all of the command definitions from the commands extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.
@@ -145,7 +145,7 @@ public final class ContextPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the contexts from the registry,
-	 * 
+	 *
 	 * @param contextManager
 	 *            The context manager which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.

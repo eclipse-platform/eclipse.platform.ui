@@ -18,7 +18,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * A implementation of the extended <code>IActionBars2</code> interface. This
  * sub class provides a sub cool bar manager for plugins to contribute multiple
  * cool items.
- * 
+ *
  * @since 3.0
  */
 public class SubActionBars2 extends SubActionBars implements IActionBars2 {
@@ -26,7 +26,7 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 
 	/**
 	 * Constucts a sub action bars object using an IActionBars2 parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the action bars to virtualize; must not be <code>null</code>.
 	 */
@@ -36,13 +36,13 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 
 	/**
 	 * Constucts a sub action bars object using an IActionBars2 parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the action bars to virtualize; must not be <code>null</code>.
 	 * @param serviceLocator
 	 *            The service locator for this action bar; must not be
 	 *            <code>null</code>.
-	 *            
+	 *
 	 * @since 3.2
 	 */
 	public SubActionBars2(final IActionBars2 parent,
@@ -53,7 +53,7 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	/**
 	 * Returns the casted parent of the sub action bars. This method can return
 	 * an IActionBars2 since it can only accept IActionBars2 in the constructor.
-	 * 
+	 *
 	 * @return the casted parent.
 	 */
 	protected IActionBars2 getCastedParent() {
@@ -62,7 +62,7 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 
 	/**
 	 * Returns a new sub coolbar manager.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent coolbar manager
 	 * @return the cool bar manager

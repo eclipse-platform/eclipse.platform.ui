@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * <p>
  * <b>Note</b>: this class should not be instantiated or extended by clients.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class HandlerUtil {
@@ -54,7 +54,7 @@ public class HandlerUtil {
 
 	/**
 	 * Extract the variable.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @param name
@@ -73,7 +73,7 @@ public class HandlerUtil {
 
 	/**
 	 * Extract the variable.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @param name
@@ -94,7 +94,7 @@ public class HandlerUtil {
 
 	/**
 	 * Extract the variable.
-	 * 
+	 *
 	 * @param context
 	 *            The IEvaluationContext or <code>null</code>
 	 * @param name
@@ -113,7 +113,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active contexts.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return a collection of String contextIds, or <code>null</code>.
@@ -128,7 +128,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active contexts.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return a collection of String contextIds. Will not return
@@ -149,7 +149,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active shell. Is not necessarily the active workbench window
 	 * shell.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active shell, or <code>null</code>.
@@ -165,7 +165,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active shell. Is not necessarily the active workbench window
 	 * shell.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active shell. Will not return <code>null</code>.
@@ -184,7 +184,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active workbench window.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active workbench window, or <code>null</code>.
@@ -199,7 +199,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active workbench window.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active workbench window. Will not return <code>null</code>.
@@ -219,7 +219,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active editor.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active editor, or <code>null</code>.
@@ -234,7 +234,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active editor.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active editor. Will not return <code>null</code>.
@@ -253,7 +253,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the part id of the active editor.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the part id of the active editor, or <code>null</code>.
@@ -268,7 +268,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the part id of the active editor.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the part id of the active editor. Will not return
@@ -288,7 +288,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the input of the active editor.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the input of the active editor, or <code>null</code>.
@@ -304,7 +304,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the input of the active editor.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the input of the active editor. Will not return <code>null</code>
@@ -325,7 +325,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active part.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active part, or <code>null</code>.
@@ -340,7 +340,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active part.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active part. Will not return <code>null</code>.
@@ -359,7 +359,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the part id of the active part.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the part id of the active part, or <code>null</code>.
@@ -374,7 +374,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the part id of the active part.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the part id of the active part. Will not return <code>null</code>.
@@ -393,7 +393,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active part site.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active part site, or <code>null</code>.
@@ -408,7 +408,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the active part site.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active part site. Will not return <code>null</code>.
@@ -427,7 +427,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the current selection.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the current selection, or <code>null</code>.
@@ -442,7 +442,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the current selection.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the current selection. Will not return <code>null</code>.
@@ -463,7 +463,7 @@ public class HandlerUtil {
 	/**
 	 * Return the menu IDs that were applied to the registered context menu. For
 	 * example, #CompilationUnitEditorContext.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the menu IDs, or <code>null</code>.
@@ -479,7 +479,7 @@ public class HandlerUtil {
 	/**
 	 * Return the menu IDs that were applied to the registered context menu. For
 	 * example, #CompilationUnitEditorContext.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the menu IDs. Will not return <code>null</code>.
@@ -499,7 +499,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active menu selection. The active menu is a registered context
 	 * menu.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active menu selection, or <code>null</code>.
@@ -515,7 +515,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active menu selection. The active menu is a registered context
 	 * menu.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active menu selection. Will not return <code>null</code>.
@@ -536,7 +536,7 @@ public class HandlerUtil {
 	/**
 	 * Return the active menu editor input, if available. The active menu is a
 	 * registered context menu.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active menu editor, or <code>null</code>.
@@ -553,7 +553,7 @@ public class HandlerUtil {
 	 * Return the active menu editor input. The active menu is a registered
 	 * context menu. Some context menus do not include the editor input which
 	 * will throw an exception.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the active menu editor input. Will not return <code>null</code>.
@@ -573,7 +573,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the ShowInContext selection.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the show in selection, or <code>null</code>.
@@ -589,7 +589,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the ShowInContext selection. Will not return <code>null</code>.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the show in selection, or <code>null</code>.
@@ -609,7 +609,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the ShowInContext input.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the show in input, or <code>null</code>.
@@ -622,7 +622,7 @@ public class HandlerUtil {
 
 	/**
 	 * Return the ShowInContext input. Will not return <code>null</code>.
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return the show in input, or <code>null</code>.
@@ -638,13 +638,13 @@ public class HandlerUtil {
 
 	/**
 	 * Toggles the command's state.
-	 * 
+	 *
 	 * @param command The command whose state needs to be toggled
 	 * @return the original value before toggling
-	 * 
-	 * @throws ExecutionException 
+	 *
+	 * @throws ExecutionException
 	 * 	When the command doesn't contain the toggle state or when the state doesn't contain a boolean value
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static boolean toggleCommandState(Command command) throws ExecutionException {
@@ -653,21 +653,21 @@ public class HandlerUtil {
 			throw new ExecutionException("The command does not have a toggle state"); //$NON-NLS-1$
 		 if(!(state.getValue() instanceof Boolean))
 			throw new ExecutionException("The command's toggle state doesn't contain a boolean value"); //$NON-NLS-1$
-			 
+
 		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
 		state.setValue(new Boolean(!oldValue));
 		return oldValue;
 	}
-	
+
 	/**
 	 * Checks whether the radio state of the command is same as the radio state
 	 * parameter's value
-	 * 
+	 *
 	 * @param event
 	 *            The execution event that contains the application context
 	 * @return <code>true</code> whe the values are same, <code>false</code>
 	 *         otherwise
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             When the command doesn't have the radio state or the event
 	 *             doesn't have the radio state parameter
@@ -695,12 +695,12 @@ public class HandlerUtil {
 
 	/**
 	 * Updates the radio state of the command to the given value
-	 * 
+	 *
 	 * @param command
 	 *            the command whose state should be updated
 	 * @param newState
 	 *            the new state
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             When the command doesn't have a radio state
 	 * @since 3.5

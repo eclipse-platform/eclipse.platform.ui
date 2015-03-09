@@ -43,7 +43,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class SlaveCommandService implements ICommandService, IUpdateService {
@@ -52,7 +52,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/**
 	 * The collection of ICallbackReferences added through this service.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private Set fCallbackCache = new HashSet();
@@ -62,7 +62,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	/**
 	 * The scoping constant added to callback registrations submitted through
 	 * this service.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private String fScopingName;
@@ -70,7 +70,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	/**
 	 * The object to scope. In theory, the service locator that would find this
 	 * service.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private IServiceLocator fScopingValue;
@@ -79,7 +79,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/**
 	 * Build the slave service.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent service. This must not be <code>null</code>.
 	 */
@@ -102,7 +102,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#addExecutionListener(org.eclipse.core.commands.IExecutionListener)
 	 */
 	@Override
@@ -115,7 +115,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#defineUncategorizedCategory(java.lang.String,
 	 *      java.lang.String)
 	 */
@@ -126,7 +126,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#deserialize(java.lang.String)
 	 */
 	@Override
@@ -138,7 +138,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override
@@ -160,7 +160,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getCategory(java.lang.String)
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getCommand(java.lang.String)
 	 */
 	@Override
@@ -180,7 +180,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getDefinedCategories()
 	 */
 	@Override
@@ -190,7 +190,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getDefinedCategoryIds()
 	 */
 	@Override
@@ -200,7 +200,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getDefinedCommandIds()
 	 */
 	@Override
@@ -210,7 +210,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getDefinedCommands()
 	 */
 	@Override
@@ -220,7 +220,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getDefinedParameterTypeIds()
 	 */
 	@Override
@@ -230,7 +230,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getDefinedParameterTypes()
 	 */
 	@Override
@@ -252,7 +252,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#getParameterType(java.lang.String)
 	 */
 	@Override
@@ -262,7 +262,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#readRegistry()
 	 */
 	@Override
@@ -272,7 +272,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#removeExecutionListener(org.eclipse.core.commands.IExecutionListener)
 	 */
 	@Override
@@ -289,7 +289,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#refreshElements(java.lang.String,
 	 *      java.util.Map)
 	 */
@@ -300,7 +300,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#registerElementForCommand(org.eclipse.core.commands.ParameterizedCommand,
 	 *      org.eclipse.ui.menus.UIElement)
 	 */
@@ -326,7 +326,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#registerElement(org.eclipse.ui.commands.IElementReference)
 	 */
 	@Override
@@ -338,7 +338,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.commands.ICommandService#unregisterElement(org.eclipse.ui.commands.IElementReference)
 	 */
 	@Override
@@ -349,7 +349,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService#
 	 * registerElementForUpdate(org.eclipse.core.commands.ParameterizedCommand,
 	 * org.eclipse.e4.ui.model.application.ui.menu.MItem)

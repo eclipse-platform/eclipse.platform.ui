@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Bruno Haible haible@ilog.fr - bug 228890 
+ *     Bruno Haible haible@ilog.fr - bug 228890
  *******************************************************************************/
 package org.eclipse.ui.internal.handlers;
 
@@ -30,12 +30,12 @@ import org.eclipse.ui.internal.ExceptionHandler;
 /**
  * Handles the cut command in both dialogs and windows. This handler is enabled
  * if the focus control supports the "cut" method.
- * 
+ *
  * @since 3.0
  */
 public class WidgetMethodHandler extends AbstractHandler implements
 		IExecutableExtension {
-	
+
 	/**
 	 * The parameters to pass to the method this handler invokes. This handler
 	 * always passes no parameters.
@@ -54,7 +54,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 			display.addFilter(SWT.FocusIn, focusListener);
 		}
 	}
-	
+
 	void updateEnablement() {
 		boolean rc = isHandled();
 		if (rc != isEnabled()) {
@@ -162,7 +162,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 
 	/**
 	 * Invoke a runnable on the swing EDT.
-	 * 
+	 *
 	 * @param methodRunnable
 	 * @throws ClassNotFoundException
 	 * @throws NoSuchMethodException
@@ -183,7 +183,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 
 	/**
 	 * Find the swing focus component, if it is available.
-	 * 
+	 *
 	 * @return Hopefully, the swing focus component, but it can return
 	 * 	<code>null</code>.
 	 * @throws ClassNotFoundException
@@ -236,7 +236,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		return focusComponent;
 
 	}
-	
+
 	@Override
 	public final boolean isHandled() {
 		return getMethodToExecute() != null;
@@ -244,7 +244,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 
 	/**
 	 * Looks up the method on the focus control.
-	 * 
+	 *
 	 * @return The method on the focus control; <code>null</code> if none.
 	 */
 	protected Method getMethodToExecute() {
@@ -305,7 +305,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org
 	 * .eclipse.core.runtime.IConfigurationElement, java.lang.String,
@@ -317,7 +317,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		// The data is really just a string (i.e., the method name).
 		methodName = data.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
 	 */

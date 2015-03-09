@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * 
+ *
  * @since 3.2
  */
 public class AggregateWorkingSet extends AbstractWorkingSet implements
@@ -41,7 +41,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	private boolean inElementConstruction = false;
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 * @param label
 	 * @param components
@@ -57,7 +57,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 * @param label
 	 * @param memento
@@ -86,7 +86,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	/**
 	 * Takes the elements from all component working sets and sets them to be
 	 * the elements of this working set. Any duplicates are trimmed.
-	 * 
+	 *
 	 * @param fireEvent whether a working set change event should be fired
 	 */
 	private void constructElements(boolean fireEvent) {
@@ -112,7 +112,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 						System.arraycopy(components, i + 1, tmp, i, components.length - i - 1);
 					components = tmp;
 					workingSetMemento = null; // toss cached info
-					fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);						
+					fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
 					continue;
 				}
 			}
@@ -204,7 +204,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 
 	/**
 	 * Return the component working sets.
-	 * 
+	 *
 	 * @return the component working sets
 	 */
 	@Override
@@ -293,7 +293,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		int hashCode = getName().hashCode() & getComponentsInternal().hashCode();
 		return hashCode;
 	}
-	
+
 	@Override
 	public boolean isSelfUpdating() {
 		IWorkingSet[] localComponents = getComponentsInternal();
@@ -307,7 +307,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAggregateWorkingSet() {
 		return true;

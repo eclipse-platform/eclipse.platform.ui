@@ -21,7 +21,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public final class ServiceLocator implements IDisposable, INestable,
 		IServiceLocator {
@@ -38,7 +38,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 		 */
@@ -52,7 +52,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 		 */
@@ -91,7 +91,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 	/**
 	 * Constructs a service locator with the given parent.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent for this service locator; this value may be
 	 *            <code>null</code>.
@@ -198,7 +198,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 * Registers a service with this locator. If there is an existing service
 	 * matching the same <code>api</code> and it implements {@link IDisposable},
 	 * it will be disposed.
-	 * 
+	 *
 	 * @param api
 	 *            This is the interface that the service implements. Must not be
 	 *            <code>null</code>.

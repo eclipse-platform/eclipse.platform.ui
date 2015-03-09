@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
  * An expression encapsulating all of the information from legacy handler
  * submissions.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class LegacyHandlerSubmissionExpression extends Expression {
@@ -57,7 +57,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	/**
 	 * Constructs a new instance of
 	 * <code>LegacyHandlerSubmissionExpression</code>
-	 * 
+	 *
 	 * @param activePartId
 	 *            The part identifier to match with the active part;
 	 *            <code>null</code> if it will match any active part.
@@ -77,10 +77,10 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	}
 
 	/**
-	 * Collect expression info for a legacy handler submission.  Namely 
+	 * Collect expression info for a legacy handler submission.  Namely
 	 * the active part id and name, active shell name, active workbench
 	 * window shell name and the active site name.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -123,7 +123,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	 * current state of the application (as defined by <code>context</code>).
 	 * If a condition is <code>null</code>, then it matches any possible
 	 * value (i.e., it is not tested at all).
-	 * 
+	 *
 	 * @param context
 	 *            The context providing the current workbench state; must not be
 	 *            <code>null</code>.

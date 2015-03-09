@@ -47,7 +47,7 @@ public class LocalWorkingSetManager extends AbstractWorkingSetManager implements
         saveWorkingSetState(memento);
         saveMruList(memento);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

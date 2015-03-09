@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -132,7 +132,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 		topLevelNodes = new ArrayList();
 		//root nodes (which contain subnodes)
 
-		//Add root nodes to the contributions vector	
+		//Add root nodes to the contributions vector
 		StringTokenizer tokenizer;
 		String currentToken;
 
@@ -185,7 +185,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 			nodes = (CategoryNode[]) deferred.toArray(new CategoryNode[deferred
 					.size()]);
 		} while (nodes.length > 0 && workDone); // loop while we still have nodes to work on and the list is shrinking
-		
+
 		// log anything left over.
 		for (int i = 0; i < nodes.length; i++) {
 			CategoryNode categoryNode = nodes[i];
@@ -198,7 +198,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 
 	/**
 	 * Return a warning message for an invalid category path.
-	 * 
+	 *
 	 * @param categoryNode
 	 *            the unknown category node
 	 * @return an english string suitable for logging
@@ -208,7 +208,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	/**
 	 * Get the category for the node if there is one. If there isn't return
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param node
 	 * @return String or <code>null</code>.
 	 */
@@ -246,7 +246,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * Create a node for categorization from the reader 
+	 * Create a node for categorization from the reader
 	 * and the supplied object.
 	 * @param reader
 	 * @param object

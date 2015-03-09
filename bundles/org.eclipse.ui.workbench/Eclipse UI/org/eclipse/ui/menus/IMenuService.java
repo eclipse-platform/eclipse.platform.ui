@@ -29,10 +29,10 @@ import org.eclipse.ui.services.IServiceWithSources;
  * <li>This service is available globally.</li>
  * </ul>
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @since 3.3
  */
 public interface IMenuService extends IServiceWithSources {
@@ -46,7 +46,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * not, they will be removed when the IServiceLocator used to acquire this
 	 * service is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param factory
 	 *            the contribution factory. Must not be <code>null</code>
 	 * @see #removeContributionFactory(AbstractContributionFactory)
@@ -56,7 +56,7 @@ public interface IMenuService extends IServiceWithSources {
 	/**
 	 * Remove the contributed factory from the menu service. If the factory is
 	 * not contained by this service, this call does nothing.
-	 * 
+	 *
 	 * @param factory
 	 *            the contribution factory to remove. Must not be
 	 *            <code>null</code>.
@@ -68,7 +68,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * location with a set of <code>IContributionItems</code>s. It applies
 	 * <code>AbstractContributionFactory</code>s that are stored against the
 	 * provided location.
-	 * 
+	 *
 	 * @param mgr
 	 *            The ContributionManager to populate
 	 * @param location
@@ -89,7 +89,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * simply remove all menu service references to the contents of this
 	 * ContributionManager.
 	 * </p>
-	 * 
+	 *
 	 * @param mgr
 	 *            The manager that was populated by a call to
 	 *            {@link #populateContributionManager(ContributionManager, String)}
@@ -98,9 +98,9 @@ public interface IMenuService extends IServiceWithSources {
 
 	/**
 	 * Get the current state of eclipse as seen by the menu service.
-	 * 
+	 *
 	 * @return an IEvaluationContext containing state variables.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISources
 	 * @see org.eclipse.ui.services.IEvaluationService
 	 */

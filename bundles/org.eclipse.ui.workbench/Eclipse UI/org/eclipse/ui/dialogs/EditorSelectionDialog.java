@@ -112,7 +112,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	/**
 	 * Create an instance of this class.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
@@ -155,9 +155,9 @@ public class EditorSelectionDialog extends Dialog {
 	/**
 	 * Creates and returns the contents of the upper part of the dialog (above
 	 * the button bar).
-	 * 
+	 *
 	 * Subclasses should overide.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite to contain the dialog area
 	 * @return the dialog area control
@@ -322,7 +322,7 @@ public class EditorSelectionDialog extends Dialog {
 	/**
 	 * Returns an array of editors which have been filtered according to the
 	 * array of editors in the editorsToFilter instance variable.
-	 * 
+	 *
 	 * @param editors
 	 *            an array of editors to filter
 	 * @return a filtered array of editors
@@ -368,7 +368,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	/**
 	 * Return the editor the user selected
-	 * 
+	 *
 	 * @return the selected editor
 	 */
 	public IEditorDescriptor getSelectedEditor() {
@@ -439,7 +439,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	/**
 	 * Set the message displayed by this message dialog
-	 * 
+	 *
 	 * @param aMessage
 	 *            the message
 	 */
@@ -449,7 +449,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	/**
 	 * Set the editors which will not appear in the dialog.
-	 * 
+	 *
 	 * @param editors
 	 *            an array of editors
 	 */
@@ -519,7 +519,7 @@ public class EditorSelectionDialog extends Dialog {
 		}
 
 	}
-	
+
 	@Override
 	protected boolean isResizable() {
 		return true;

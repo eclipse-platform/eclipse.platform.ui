@@ -14,7 +14,7 @@ package org.eclipse.ui.browser;
  * Clients that supply implementation of the workbench browser support should
  * extend this class for web browser instances they manage. Clients should not
  * implement the <code>IWebBrowser</code> interface.
- * 
+ *
  * @since 3.1
  */
 public abstract class AbstractWebBrowser implements IWebBrowser {
@@ -22,7 +22,7 @@ public abstract class AbstractWebBrowser implements IWebBrowser {
 
 	/**
 	 * The constructor that accepts the unique browser identifier.
-	 * 
+	 *
 	 * @param id
 	 *            the unique browser identifier
 	 */
@@ -32,7 +32,7 @@ public abstract class AbstractWebBrowser implements IWebBrowser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.browser.IWebBrowser#getId()
 	 */
 	@Override
@@ -42,7 +42,7 @@ public abstract class AbstractWebBrowser implements IWebBrowser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.browser.IWebBrowser#close()
 	 */
 	@Override

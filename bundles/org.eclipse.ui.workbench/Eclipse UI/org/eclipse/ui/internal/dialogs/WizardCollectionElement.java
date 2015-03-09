@@ -70,14 +70,14 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
     /**
      * Creates a new <code>WizardCollectionElement</code>. Parent can be
      * null.
-     * 
+     *
      * @param element
      * @param parent
      * @since 3.1
      */
     public WizardCollectionElement(IConfigurationElement element, WizardCollectionElement parent) {
 		configElement = element;
-		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID); 
+		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		this.parent = parent;
 	}
 
@@ -103,8 +103,8 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
         }
         return this;
     }
-    
-    
+
+
     /**
      * Remove a wizard from this collection.
      */
@@ -114,14 +114,14 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
             wizards.remove(a);
         } else {
             super.remove(a);
-        }		
+        }
 	}
 
 	/**
      * Returns the wizard collection child object corresponding to the passed
      * path (relative to this object), or <code>null</code> if such an object
      * could not be found.
-     * 
+     *
      * @param searchPath
      *            org.eclipse.core.runtime.IPath
      * @return WizardCollectionElement
@@ -148,7 +148,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
      * Returns the wizard category corresponding to the passed
      * id, or <code>null</code> if such an object could not be found.
      * This recurses through child categories.
-     * 
+     *
      * @param id the id for the child category
      * @return the category, or <code>null</code> if not found
      * @since 3.1
@@ -171,7 +171,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
     /**
      * Returns this collection's associated wizard object corresponding to the
      * passed id, or <code>null</code> if such an object could not be found.
-     * 
+     *
      * @param searchId the id to search on
      * @param recursive whether to search recursivly
      * @return the element
@@ -255,7 +255,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
     /**
      * Takes an array of <code>IWizardDescriptor</code> and removes all
      * entries which fail the Expressions check.
-     * 
+     *
      * @param wizardDescriptors Array of <code>IWizardDescriptor</code>.
      * @return The array minus the elements which faled the Expressions check.
      */
@@ -269,24 +269,24 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
         }
         return (IWizardDescriptor[])result
                     .toArray(new IWizardDescriptor[result.size()]);
-    }   
-    
+    }
+
     /**
      * Return the wizards minus the wizards which failed the expressions check.
-     * 
+     *
      * @return the wizards
      * @since 3.1
      */
-    public WorkbenchWizardElement [] getWorkbenchWizardElements() {        
+    public WorkbenchWizardElement [] getWorkbenchWizardElements() {
     	return getWorkbenchWizardElementsExpression(
     	    (WorkbenchWizardElement[]) wizards
 				.getTypedChildren(WorkbenchWizardElement.class));
     }
-    
+
     /**
      * Takes an array of <code>WorkbenchWizardElement</code> and removes all
      * entries which fail the Expressions check.
-     * 
+     *
      * @param workbenchWizardElements Array of <code>WorkbenchWizardElement</code>.
      * @return The array minus the elements which faled the Expressions check.
      */
@@ -305,7 +305,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 
     /**
      * Returns true if this element has no children and no wizards.
-     * 
+     *
      * @return whether it is empty
      */
     public boolean isEmpty() {
@@ -339,46 +339,46 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	public String getPluginId() {
         return configElement != null ? configElement.getNamespace() : pluginId;
     }
-    
-    
+
+
     @Override
 	public IWizardCategory getParent() {
 		return parent;
 	}
-    
+
     @Override
-	public IWizardCategory[] getCategories() {		
+	public IWizardCategory[] getCategories() {
 		return (IWizardCategory []) getTypedChildren(IWizardCategory.class);
 	}
-    
+
     /**
      * Return the collection elements.
-     * 
+     *
      * @return the collection elements
      * @since 3.1
      */
     public WizardCollectionElement [] getCollectionElements() {
     	return (WizardCollectionElement[]) getTypedChildren(WizardCollectionElement.class);
     }
-    
+
     /**
      * Return the raw adapted list of wizards.
-     * 
+     *
      * @return the list of wizards
      * @since 3.1
      */
     public AdaptableList getWizardAdaptableList() {
     	return wizards;
     }
-    
+
     @Override
 	public String getLabel() {
 		return getLabel(this);
 	}
-    
+
     /**
      * Return the configuration element.
-     * 
+     *
      * @return the configuration element
      * @since 3.1
      */
@@ -388,7 +388,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 
     /**
      * Return the parent collection element.
-     * 
+     *
      * @return the parent
      * @since 3.1
      */
@@ -400,7 +400,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	public IWizardDescriptor findWizard(String id) {
 		return findWizard(id, true);
 	}
-	
+
 	@Override
 	public IWizardCategory findCategory(IPath path) {
 		return findChildCollection(path);
@@ -416,7 +416,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * - when all wizards are skipped then null will be returned<br>
 	 * - if none of the wizards is skipped during filtering then the original
 	 * input collection is returned
-	 * 
+	 *
 	 * @param viewer
 	 *            the Viewer used by <code>ViewerFilter.select</code> method
 	 * @param viewerFilter
@@ -424,7 +424,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * @param inputCollection
 	 *            collection to filter
 	 * @return inputCollection, modified copy of inputCollection or null
-	 * 
+	 *
 	 */
 	static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
 			WizardCollectionElement inputCollection) {

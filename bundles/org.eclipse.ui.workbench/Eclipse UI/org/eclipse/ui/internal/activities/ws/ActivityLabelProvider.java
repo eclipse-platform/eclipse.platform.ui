@@ -20,7 +20,7 @@ import org.eclipse.ui.activities.NotDefinedException;
  * Provides labels for <code>IActivity</code> objects. They may be passed
  * directly or as <code>String</code> identifiers that are matched against
  * the activity manager.
- * 
+ *
  * @since 3.0
  */
 public class ActivityLabelProvider extends LabelProvider {
@@ -29,7 +29,7 @@ public class ActivityLabelProvider extends LabelProvider {
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param activityManager
      * @since 3.0
      */
@@ -51,7 +51,7 @@ public class ActivityLabelProvider extends LabelProvider {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
     @Override
@@ -61,7 +61,7 @@ public class ActivityLabelProvider extends LabelProvider {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
     @Override

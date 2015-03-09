@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Contains static methods for manipulating SWT controls
- * 
+ *
  * @since 3.0
  */
 public class SwtUtil {
@@ -31,7 +31,7 @@ public class SwtUtil {
 
     /**
      * Returns true if the given control is null or has been disposed
-     * 
+     *
      * @param toTest the control to test
      * @return false if it is safe to invoke methods on the given control
      */
@@ -41,46 +41,46 @@ public class SwtUtil {
 
     /**
      * Returns the control that is covering the given control, or null if none.
-     * 
+     *
      * @param toTest control to test
      * @return a control that obscures the test control or null if none
      */
     public static Control controlThatCovers(Control toTest) {
         return controlThatCovers(toTest, DragUtil.getDisplayBounds(toTest));
     }
-    
+
     private static Control controlThatCovers(Control toTest, Rectangle testRegion) {
         Composite parent = toTest.getParent();
-        
+
         if (parent == null || toTest instanceof Shell) {
             return null;
         }
-       
+
         Control[] children = parent.getChildren();
         for (int i = 0; i < children.length; i++) {
             Control control = children[i];
-            
+
             if (control == toTest) {
                 break;
             }
-            
+
             if (!control.isVisible()) {
                 continue;
             }
-            
+
             Rectangle nextBounds = DragUtil.getDisplayBounds(control);
-            
+
             if (nextBounds.intersects(testRegion)) {
                 return control;
             }
         }
-        
+
         return controlThatCovers(parent, testRegion);
     }
-    
+
     /**
 	 * Determines if one control is a child of another.
-	 * 
+	 *
 	 * @param potentialParent
 	 * @param childToTest
 	 * @return <code>true</code> if the second argument is a child of the first
@@ -97,7 +97,7 @@ public class SwtUtil {
 
         return isChild(potentialParent, childToTest.getParent());
     }
-    
+
     public static boolean isFocusAncestor(Control potentialParent) {
 		if (potentialParent == null)
 			return false;
@@ -111,7 +111,7 @@ public class SwtUtil {
     /**
 	 * Finds and returns the most specific SWT control at the given location.
 	 * (Note: this does a DFS on the SWT widget hierarchy, which is slow).
-	 * 
+	 *
 	 * @param displayToSearch
 	 * @param locationToFind
 	 * @return the most specific SWT control at the given location
@@ -127,8 +127,8 @@ public class SwtUtil {
      * Searches the given list of controls for a control containing the given point.
      * If the array contains any composites, those composites will be recursively
      * searched to find the most specific child that contains the point.
-     * 
-     * @param toSearch an array of composites 
+     *
+     * @param toSearch an array of composites
      * @param locationToFind a point (in display coordinates)
      * @return the most specific Control that overlaps the given point, or null if none
      */
@@ -161,27 +161,27 @@ public class SwtUtil {
     public static Control[] getAncestors(Control theControl) {
         return getAncestors(theControl, 1);
     }
-    
+
     private static Control[] getAncestors(Control theControl, int children) {
         Control[] result;
-        
+
         if (theControl.getParent() == null) {
-            result = new Control[children]; 
+            result = new Control[children];
         } else {
             result = getAncestors(theControl.getParent(), children + 1);
         }
-        
+
         result[result.length - children] = theControl;
-        
+
         return result;
     }
-    
+
     public static Control findCommonAncestor(Control control1, Control control2) {
         Control[] control1Ancestors = getAncestors(control1);
         Control[] control2Ancestors = getAncestors(control2);
-        
+
         Control mostSpecific = null;
-        
+
         for (int idx = 0; idx < Math.min(control1Ancestors.length, control2Ancestors.length); idx++) {
             Control control1Ancestor = control1Ancestors[idx];
             if (control1Ancestor == control2Ancestors[idx]) {
@@ -190,13 +190,13 @@ public class SwtUtil {
                 break;
             }
         }
-        
+
         return mostSpecific;
     }
-    
+
     /**
 	 * Finds the control at the given location.
-	 * 
+	 *
 	 * @param toSearch
 	 * @param locationToFind
 	 *            location (in display coordinates)
@@ -209,10 +209,10 @@ public class SwtUtil {
     }
 
     /**
-	 * 
+	 *
 	 * Returns true iff the given rectangle is located in the client area of any
 	 * monitor.
-	 * 
+	 *
 	 * @param display
 	 *            the display
 	 * @param someRectangle
@@ -222,15 +222,15 @@ public class SwtUtil {
     public static boolean intersectsAnyMonitor(Display display,
             Rectangle someRectangle) {
         Monitor[] monitors = display.getMonitors();
-    
+
         for (int idx = 0; idx < monitors.length; idx++) {
             Monitor mon = monitors[idx];
-    
+
             if (mon.getClientArea().intersects(someRectangle)) {
                 return true;
             }
         }
-    
+
         return false;
     }
 

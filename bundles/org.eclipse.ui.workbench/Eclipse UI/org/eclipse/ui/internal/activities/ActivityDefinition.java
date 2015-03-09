@@ -181,11 +181,11 @@ public final class ActivityDefinition implements Comparable {
     public String getDescription() {
         return description;
     }
-    
+
     void setEnabledWhen(Expression expression) {
     	enabledWhen = expression;
     }
-    
+
     public Expression getEnabledWhen() {
     	return enabledWhen;
     }

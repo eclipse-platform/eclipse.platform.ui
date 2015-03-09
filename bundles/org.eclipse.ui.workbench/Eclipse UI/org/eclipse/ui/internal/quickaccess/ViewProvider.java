@@ -30,7 +30,7 @@ import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ViewProvider extends QuickAccessProvider {
 

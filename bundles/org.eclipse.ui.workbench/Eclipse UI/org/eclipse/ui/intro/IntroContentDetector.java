@@ -21,15 +21,15 @@ package org.eclipse.ui.intro;
  * this, the intro view part should draw the user's attention to the new content
  * to avoid confusion about why the intro view part was opened again without the
  * user requesting it.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public abstract class IntroContentDetector {
 
 	/**
 	 * Returns <code>true</code> if new intro content is available.
-	 * 
+	 *
 	 * @return <code>true</code> if new intro content is available
 	 */
 	public abstract boolean isNewContentAvailable();

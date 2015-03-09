@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class BindingElement extends ModelElement {
 

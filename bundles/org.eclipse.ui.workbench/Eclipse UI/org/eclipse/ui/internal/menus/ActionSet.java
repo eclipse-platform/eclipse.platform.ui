@@ -50,7 +50,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since e4
- * 
+ *
  */
 public class ActionSet {
 

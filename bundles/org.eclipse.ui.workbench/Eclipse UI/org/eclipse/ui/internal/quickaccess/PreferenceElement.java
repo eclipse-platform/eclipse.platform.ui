@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class PreferenceElement extends QuickAccessElement {
 

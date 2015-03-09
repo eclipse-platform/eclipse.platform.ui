@@ -20,7 +20,7 @@ import org.eclipse.ui.services.IDisposable;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class WorkbenchLocationService implements IWorkbenchLocationService,
 		IDisposable {
@@ -47,7 +47,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.ui.internal.services.IWorkbenchLocationService#
 	 * getMultiPageEditorSite()
 	 */
@@ -58,7 +58,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPageSite()
 	 */
@@ -69,7 +69,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPartSite()
 	 */
@@ -80,7 +80,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceScope
 	 * ()
@@ -92,7 +92,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbench()
 	 */
@@ -103,7 +103,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbenchWindow
 	 * ()
@@ -115,7 +115,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override

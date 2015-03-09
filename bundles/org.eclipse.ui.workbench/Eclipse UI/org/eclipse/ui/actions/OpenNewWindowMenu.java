@@ -19,12 +19,12 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * A menu for window creation in the workbench.  
+ * A menu for window creation in the workbench.
  * <p>
  * An <code>OpenNewWindowMenu</code> is used to populate a menu with
  * "Open Window" actions.  One item is added for each shortcut perspective,
- * as defined by the product ini.  If the user selects one of these items a new window is 
- * created in the workbench with the given perspective.  
+ * as defined by the product ini.  If the user selects one of these items a new window is
+ * created in the workbench with the given perspective.
  * </p><p>
  * The visible perspectives within the menu may also be updated dynamically to
  * reflect user preference.
@@ -43,7 +43,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
     private IAdaptable pageInput;
 
     /**
-     * Constructs a new instance of <code>OpenNewPageMenu</code>. 
+     * Constructs a new instance of <code>OpenNewPageMenu</code>.
      * <p>
      * If this method is used be sure to set the page input by invoking
      * <code>setPageInput</code>.  The page input is required when the user
@@ -60,7 +60,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
     }
 
     /**
-     * Constructs a new instance of <code>OpenNewPageMenu</code>.  
+     * Constructs a new instance of <code>OpenNewPageMenu</code>.
      *
      * @param window the window where a new page is created if an item within
      *		the menu is selected
@@ -97,7 +97,7 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
     }
 
     /**
-     * Sets the page input.  
+     * Sets the page input.
      *
      * @param input the page input
      */

@@ -33,7 +33,7 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	// all working copies - maps absolute path to PreferencesWorkingCopy instance
 	private Map workingCopies = new HashMap();
 
-	
+
 	@Override
 	public IEclipsePreferences getWorkingCopy(IEclipsePreferences original) {
 		if (original instanceof WorkingCopyPreferences) {
@@ -48,14 +48,14 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 		return preferences;
 	}
 
-	
+
 	@Override
 	public void applyChanges() throws BackingStoreException {
 		Collection values = workingCopies.values();
 		WorkingCopyPreferences[] valuesArray = (WorkingCopyPreferences[]) values.toArray(new WorkingCopyPreferences[values.size()]);
 		for (int i = 0; i < valuesArray.length; i++) {
 			WorkingCopyPreferences prefs = valuesArray[i];
-			if (prefs.nodeExists(EMPTY_STRING)) 
+			if (prefs.nodeExists(EMPTY_STRING))
 				prefs.flush();
 		}
 	}

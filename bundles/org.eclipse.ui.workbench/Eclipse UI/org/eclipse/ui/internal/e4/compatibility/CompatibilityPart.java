@@ -261,7 +261,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	 * <p>
 	 * See bug 308492.
 	 * </p>
-	 * 
+	 *
 	 * @return if the part is currently being disposed
 	 */
 	public boolean isBeingDisposed() {
@@ -425,7 +425,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	public MPart getModel() {
 		return part;
 	}
-	
+
 	@Override
 	public void selectionChanged(SelectionChangedEvent e) {
 		ESelectionService selectionService = (ESelectionService) part.getContext().get(

@@ -18,22 +18,22 @@ package org.eclipse.ui.services;
  * be retrieved from this locator using some key -- typically the class
  * representing the interface the service must implement. For example:
  * </p>
- * 
+ *
  * <pre>
  * IHandlerService service = workbenchWindow.getService(IHandlerService.class);
  * </pre>
- * 
+ *
  * <p>
  * This interface is not to be implemented or extended by clients.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IServiceLocator {
 
 	/**
 	 * Retrieves the service corresponding to the given API.
-	 * 
+	 *
 	 * @param api
 	 *            This is the interface that the service implements. Must not be
 	 *            <code>null</code>.
@@ -48,7 +48,7 @@ public interface IServiceLocator {
 	 * This does not include looking for the service within the scope of the
 	 * parents. This method can be used to determine whether a particular
 	 * service supports nesting in this scope.
-	 * 
+	 *
 	 * @param api
 	 *            This is the interface that the service implements. Must not be
 	 *            <code>null</code>.

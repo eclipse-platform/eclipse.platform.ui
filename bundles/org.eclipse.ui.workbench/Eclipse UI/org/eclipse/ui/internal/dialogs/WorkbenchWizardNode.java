@@ -53,7 +53,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
      * Creates a <code>WorkbenchWizardNode</code> that holds onto a wizard
      * element.  The wizard element provides information on how to create
      * the wizard supplied by the ISV's extension.
-     * 
+     *
      * @param aWizardPage the wizard page
      * @param element the wizard descriptor
      */
@@ -67,9 +67,9 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
     /**
      * Returns the wizard represented by this wizard node.  <b>Subclasses</b>
      * must override this method.
-     * 
+     *
      * @return the wizard object
-     * @throws CoreException 
+     * @throws CoreException
      */
     public abstract IWorkbenchWizard createWizard() throws CoreException;
 
@@ -183,7 +183,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
     /**
      * Returns the wizard element.
-     * 
+     *
      * @return the wizard descriptor
      */
     public IWizardDescriptor getWizardElement() {

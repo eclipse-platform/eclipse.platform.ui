@@ -52,15 +52,15 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * Since 3.3, this operation approver also checks the validity of a proposed
  * execute by determining whether the redo is viable.
- * 
+ *
  * @since 3.1
  */
 public class AdvancedValidationUserApprover implements IOperationApprover,
 		IOperationApprover2 {
-	
+
     /**
      * Static to prevent opening of error dialogs for automated testing.
-     * 
+     *
      * @since 3.3
      */
     public static boolean AUTOMATED_MODE = false;
@@ -126,7 +126,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 	 * Create an AdvancedValidationUserApprover that performs advanced
 	 * validations on proposed undo and redo operations for a given undo
 	 * context.
-	 * 
+	 *
 	 * @param context -
 	 *            the undo context of operations in question.
 	 */
@@ -137,7 +137,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -150,7 +150,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -164,7 +164,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationApprover2#proceedExecuting(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -295,7 +295,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 			}
 			return status;
 		}
-		
+
 		// CANCEL status is assumed to be initiated by the user, so there
 		// is nothing to report.
 		if (status.getSeverity() == IStatus.CANCEL) {

@@ -31,7 +31,7 @@ import org.eclipse.help.IContext;
  * platform is not configured with more than one plug-in trying to extend this
  * extension point.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class AbstractHelpUI {
@@ -44,7 +44,7 @@ public abstract class AbstractHelpUI {
 	/**
 	 * Displays the help search facility. For backward compatibility, the
 	 * default implementation does nothing.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void displaySearch() {
@@ -54,7 +54,7 @@ public abstract class AbstractHelpUI {
 	/**
 	 * Displays the dynamic help for the active context. For backward
 	 * compatibility, the default implementation does nothing.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void displayDynamicHelp() {
@@ -64,7 +64,7 @@ public abstract class AbstractHelpUI {
 	/**
 	 * Starts the help search using the help search facility. For backward
 	 * compatibility, the default implementation does nothing.
-	 * 
+	 *
 	 * @param expression
 	 *            the search expression
 	 * @since 3.1
@@ -76,7 +76,7 @@ public abstract class AbstractHelpUI {
 	/**
 	 * Resolves the help resource href according to the help system
 	 * implementation.
-	 * 
+	 *
 	 * @param href
 	 *            the help resource
 	 * @param documentOnly
@@ -88,7 +88,7 @@ public abstract class AbstractHelpUI {
 	 *         if not supported. Help systems that use application servers
 	 *         typically return URLs with http: protocol. Simple help system
 	 *         implementations can return URLs with file: protocol.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public URL resolve(String href, boolean documentOnly) {
@@ -103,7 +103,7 @@ public abstract class AbstractHelpUI {
 	 * the top left-most screen corner). The platform is responsible for calling
 	 * this method and supplying the appropriate location.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context to display
 	 * @param x
@@ -124,7 +124,7 @@ public abstract class AbstractHelpUI {
 	 * The help system makes no guarantee that all the help resources can be
 	 * displayed or how they are displayed.
 	 * </p>
-	 * 
+	 *
 	 * @param href
 	 *            the URL of the help resource.
 	 *            <p>
@@ -137,7 +137,7 @@ public abstract class AbstractHelpUI {
 	/**
 	 * Returns whether the context-sensitive help window is currently being
 	 * displayed.
-	 * 
+	 *
 	 * @return <code>true</code> if the context-sensitive help window is
 	 *         currently being displayed, <code>false</code> if not
 	 */

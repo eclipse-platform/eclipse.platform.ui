@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Workbench parts implement or adapt to this interface to participate
  * in the enablement and execution of the <code>Save</code> and
  * <code>Save As</code> actions.
- * 
+ *
  * @since 2.1
- * @see org.eclipse.ui.IEditorPart  
+ * @see org.eclipse.ui.IEditorPart
  */
 public interface ISaveablePart {
 
@@ -31,7 +31,7 @@ public interface ISaveablePart {
     /**
      * Saves the contents of this part.
      * <p>
-     * If the save is successful, the part should fire a property changed event 
+     * If the save is successful, the part should fire a property changed event
      * reflecting the new dirty state (<code>PROP_DIRTY</code> property).
      * </p>
      * <p>
@@ -41,7 +41,7 @@ public interface ISaveablePart {
      * </p>
      * <p>
      * This method is long-running; progress and cancellation are provided
-     * by the given progress monitor. 
+     * by the given progress monitor.
      * </p>
      *
      * @param monitor the progress monitor
@@ -57,7 +57,7 @@ public interface ISaveablePart {
      * <code>IProgressMonitor</code> should be used to indicate progress.
      * </p>
      * <p>
-     * If the save is successful, the part fires a property changed event 
+     * If the save is successful, the part fires a property changed event
      * reflecting the new dirty state (<code>PROP_DIRTY</code> property).
      * </p>
      */
@@ -65,11 +65,11 @@ public interface ISaveablePart {
 
     /**
      * Returns whether the contents of this part have changed since the last save
-     * operation. If this value changes the part must fire a property listener 
+     * operation. If this value changes the part must fire a property listener
      * event with <code>PROP_DIRTY</code>.
      * <p>
      * <b>Note:</b> this method is called often on a part open or part
-     * activation switch, for example by actions to determine their 
+     * activation switch, for example by actions to determine their
      * enabled status.
      * </p>
      *

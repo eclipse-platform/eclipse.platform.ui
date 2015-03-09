@@ -26,7 +26,7 @@ import org.eclipse.ui.PartInitException;
  * Abstract base implementation of all workbench editors.
  * <p>
  * This class should be subclassed by clients wishing to define new editors.
- * The name of the subclass should be given as the <code>"class"</code> 
+ * The name of the subclass should be given as the <code>"class"</code>
  * attribute in a <code>editor</code> extension contributed to the workbench's
  * view extension point (named <code>"org.eclipse.ui.editors"</code>).
  * For example, the plug-in's XML markup might contain:
@@ -35,9 +35,9 @@ import org.eclipse.ui.PartInitException;
  *      &LT;editor id="com.example.myplugin.ed"
  *         name="My Editor"
  *         icon="./images/cedit.gif"
- * 		   extensions="foo" 
- * 		   class="com.example.myplugin.MyFooEditor" 
- * 		   contributorClass="com.example.myplugin.MyFooEditorContributor" 
+ * 		   extensions="foo"
+ * 		   class="com.example.myplugin.MyFooEditor"
+ * 		   contributorClass="com.example.myplugin.MyFooEditorContributor"
  *      /&GT;
  * &LT;/extension&GT;
  * </pre>
@@ -60,7 +60,7 @@ import org.eclipse.ui.PartInitException;
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
  * <ul>
- *   <li><code>IExecutableExtension.setInitializationData</code> - extend to provide additional 
+ *   <li><code>IExecutableExtension.setInitializationData</code> - extend to provide additional
  *       initialization when editor extension is instantiated</li>
  *   <li><code>IWorkbenchPart.dispose</code> - extend to provide additional cleanup</li>
  *   <li><code>IAdaptable.getAdapter</code> - reimplement to make the editor
@@ -78,7 +78,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     /**
      * Listens to PROP_TITLE property changes in this object until the first call to
      * setContentDescription. Used for compatibility with old parts that call setTitle
-     * or overload getTitle instead of using setContentDescription. 
+     * or overload getTitle instead of using setContentDescription.
      */
     private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
         /* (non-Javadoc)
@@ -201,7 +201,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * Returns whether the contents of this editor should be saved when the editor
      * is closed.
      * <p>
-     * This method returns <code>true</code> if and only if the editor is dirty 
+     * This method returns <code>true</code> if and only if the editor is dirty
      * (<code>isDirty</code>).
      * </p>
      */
@@ -213,37 +213,37 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     /**
      * Sets the input to this editor.  This method simply updates the internal
      * member variable.
-     * 
-     * <p>Unlike most of the other set methods on this class, this method does 
-     * not fire a property change. Clients that call this method from a subclass 
-     * must ensure that they fire an IWorkbenchPartConstants.PROP_INPUT property 
+     *
+     * <p>Unlike most of the other set methods on this class, this method does
+     * not fire a property change. Clients that call this method from a subclass
+     * must ensure that they fire an IWorkbenchPartConstants.PROP_INPUT property
      * change after calling this method but before leaving whatever public method
      * they are in. Clients that expose this method as public API must fire
      * the property change within their implementation of setInput.</p>
-     * 
-     * <p>Note that firing a property change may cause listeners to immediately 
-     * reach back and call methods on this editor. Care should be taken not to 
-     * fire the property change until the editor has fully updated its internal 
+     *
+     * <p>Note that firing a property change may cause listeners to immediately
+     * reach back and call methods on this editor. Care should be taken not to
+     * fire the property change until the editor has fully updated its internal
      * state to reflect the new input.</p>
      *
      * @param input the editor input
-     * 
+     *
      * @see #setInputWithNotify(IEditorInput)
      */
     protected void setInput(IEditorInput input) {
     	Assert.isLegal(input != null);
         editorInput = input;
     }
-    
+
     /**
      * Sets the input to this editor and fires a PROP_INPUT property change if
      * the input has changed.  This is the convenience method implementation.
-     * 
+     *
      * <p>Note that firing a property change may cause other objects to reach back
      * and invoke methods on the editor. Care should be taken not to call this method
      * until the editor has fully updated its internal state to reflect the
      * new input.</p>
-     * 
+     *
      * @since 3.2
      *
      * @param input the editor input
@@ -290,7 +290,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 
         setDefaultPartName();
     }
-    
+
 
     private void setDefaultPartName() {
         if (compatibilityTitleListener == null) {
@@ -311,7 +311,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     /**
      * Checks that the given site is valid for this type of part.
      * The site for an editor must be an <code>IEditorSite</code>.
-     * 
+     *
      * @param site the site to check
      * @since 3.1
      */
@@ -319,6 +319,6 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 	protected final void checkSite(IWorkbenchPartSite site) {
         super.checkSite(site);
         Assert.isTrue(site instanceof IEditorSite, "The site for an editor must be an IEditorSite"); //$NON-NLS-1$
-    }    
+    }
 
 }

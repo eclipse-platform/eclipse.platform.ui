@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * done by default.
  */
 public abstract class RegistryReader {
-	
+
     // for dynamic UI - remove this cache to avoid inconsistency
     //protected static Hashtable extensionPoints = new Hashtable();
     /**
@@ -118,7 +118,7 @@ public abstract class RegistryReader {
      * Implement this method to read element's attributes.
      * If children should also be read, then implementor
      * is responsible for calling <code>readElementChildren</code>.
-     * Implementor is also responsible for logging missing 
+     * Implementor is also responsible for logging missing
      * attributes.
      *
      * @return true if element was recognized, false if not.
@@ -159,7 +159,7 @@ public abstract class RegistryReader {
     /**
      *	Start the registry reading process using the
      * supplied plugin ID and extension point.
-     * 
+     *
      * @param registry the registry to read from
      * @param pluginId the plugin id of the extenion point
      * @param extensionPoint the extension point id
@@ -177,10 +177,10 @@ public abstract class RegistryReader {
 			readExtension(extensions[i]);
 		}
     }
-    
+
     /**
      * Utility for extracting the description child of an element.
-     * 
+     *
      * @param configElement the element
      * @return the description
      * @since 3.1
@@ -192,12 +192,12 @@ public abstract class RegistryReader {
 	    }
 	    return "";//$NON-NLS-1$
     }
-    
+
     /**
 	 * Utility for extracting the value of a class attribute or a nested class
 	 * element that follows the pattern set forth by
 	 * {@link org.eclipse.core.runtime.IExecutableExtension}.
-	 * 
+	 *
 	 * @param configElement
 	 *            the element
 	 * @param classAttributeName
@@ -214,7 +214,7 @@ public abstract class RegistryReader {
 		if (candidateChildren.length == 0) {
 			return null;
 		}
-	
+
 		return candidateChildren[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
     }
 }

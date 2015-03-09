@@ -13,7 +13,7 @@ package org.eclipse.ui;
 
 /**
  * Default implementation of INavigationLocation.
- * 
+ *
  * @since 2.1
  */
 public abstract class NavigationLocation implements INavigationLocation {
@@ -24,7 +24,7 @@ public abstract class NavigationLocation implements INavigationLocation {
 
     /**
      * Constructs a NavigationLocation with its editor part.
-     * 
+     *
      * @param editorPart
      */
     protected NavigationLocation(IEditorPart editorPart) {
@@ -32,9 +32,9 @@ public abstract class NavigationLocation implements INavigationLocation {
         this.input = editorPart.getEditorInput();
     }
 
-    /** 
+    /**
      * Returns the part that the receiver holds the location for.
-     * 
+     *
      * @return IEditorPart
      */
     protected IEditorPart getEditorPart() {
@@ -75,7 +75,7 @@ public abstract class NavigationLocation implements INavigationLocation {
 
     /**
      * May be extended by clients.
-     * 
+     *
      * @see org.eclipse.ui.INavigationLocation#releaseState()
      */
     @Override

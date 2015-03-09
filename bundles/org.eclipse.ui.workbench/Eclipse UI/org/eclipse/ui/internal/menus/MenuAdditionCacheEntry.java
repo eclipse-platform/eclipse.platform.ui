@@ -70,7 +70,7 @@ public class MenuAdditionCacheEntry {
 	/**
 	 * Test whether the location URI is in one of the pre-defined workbench trim
 	 * areas.
-	 * 
+	 *
 	 * @param location
 	 * @return true if the URI is in workbench trim area.
 	 */

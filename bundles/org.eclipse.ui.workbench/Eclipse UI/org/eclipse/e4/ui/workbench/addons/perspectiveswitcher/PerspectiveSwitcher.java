@@ -104,7 +104,7 @@ import org.osgi.service.event.Event;
 
 public class PerspectiveSwitcher {
 	/**
-	 * 
+	 *
 	 */
 	public static final String PERSPECTIVE_SWITCHER_ID = "org.eclipse.e4.ui.PerspectiveSwitcher"; //$NON-NLS-1$
 	@Inject

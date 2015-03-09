@@ -38,11 +38,11 @@ import org.eclipse.ui.intro.IIntroManager;
  * </p>
  * <p>
  * The following advisor methods are called at strategic points in the
- * workbench window's lifecycle (as with the workbench advisor, all occur 
- * within the dynamic scope of the call to 
+ * workbench window's lifecycle (as with the workbench advisor, all occur
+ * within the dynamic scope of the call to
  * {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
  * <ul>
- * <li><code>preWindowOpen</code> - called as the window is being opened; 
+ * <li><code>preWindowOpen</code> - called as the window is being opened;
  *  use to configure aspects of the window other than actions bars</li>
  * <li><code>postWindowRestore</code> - called after the window has been
  * recreated from a previously saved state; use to adjust the restored
@@ -58,7 +58,7 @@ import org.eclipse.ui.intro.IIntroManager;
  * is closed by the user; use to pre-screen window closings</li>
  * </ul>
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class WorkbenchWindowAdvisor {
@@ -68,7 +68,7 @@ public class WorkbenchWindowAdvisor {
     /**
      * Creates a new workbench window advisor for configuring a workbench
      * window via the given workbench window configurer.
-     * 
+     *
      * @param configurer an object for configuring the workbench window
      */
     public WorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -78,13 +78,13 @@ public class WorkbenchWindowAdvisor {
 
     /**
      * Returns the workbench window configurer.
-     * 
+     *
      * @return the workbench window configurer
      */
     protected IWorkbenchWindowConfigurer getWindowConfigurer() {
         return windowConfigurer;
     }
-    
+
     /**
      * Performs arbitrary actions before the window is opened.
      * <p>
@@ -93,7 +93,7 @@ public class WorkbenchWindowAdvisor {
      * The default implementation does nothing. Subclasses may override.
      * Typical clients will use the window configurer to tweak the
      * workbench window in an application-specific way; however, filling the
-     * window's menu bar, tool bar, and status line must be done in 
+     * window's menu bar, tool bar, and status line must be done in
      * {@link ActionBarAdvisor#fillActionBars}, which is called immediately
      * after this method is called.
      * </p>
@@ -106,16 +106,16 @@ public class WorkbenchWindowAdvisor {
      * Creates a new action bar advisor to configure the action bars of the window
      * via the given action bar configurer.
      * The default implementation returns a new instance of {@link ActionBarAdvisor}.
-     * 
+     *
      * @param configurer the action bar configurer for the window
      * @return the action bar advisor for the window
      */
     public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
         return new ActionBarAdvisor(configurer);
     }
-    
+
     /**
-     * Performs arbitrary actions after the window has been restored, 
+     * Performs arbitrary actions after the window has been restored,
      * but before it is opened.
      * <p>
      * This method is called after a previously-saved window has been
@@ -126,7 +126,7 @@ public class WorkbenchWindowAdvisor {
      * The default implementation does nothing. Subclasses may override.
      * It is okay to call <code>IWorkbench.close()</code> from this method.
      * </p>
-     * 
+     *
      * @exception WorkbenchException thrown if there are any errors to report
      *   from post-restoration of the window
      */
@@ -139,7 +139,7 @@ public class WorkbenchWindowAdvisor {
 	 * Workbench Window shut down. May be called from
 	 * {@link #postWindowRestore()} in the subclass but is not called by
 	 * default.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	protected void cleanUpEditorArea() {
@@ -148,21 +148,21 @@ public class WorkbenchWindowAdvisor {
 	}
 
     /**
-     * Opens the introduction componenet.  
+     * Opens the introduction componenet.
      * <p>
      * Clients must not call this method directly (although super calls are okay).
      * The default implementation opens the intro in the first window provided
-     * if the preference IWorkbenchPreferences.SHOW_INTRO is <code>true</code>.  If 
-     * an intro is shown then this preference will be set to <code>false</code>.  
-     * Subsequently, and intro will be shown only if 
-     * <code>WorkbenchConfigurer.getSaveAndRestore()</code> returns 
-     * <code>true</code> and the introduction was visible on last shutdown.  
+     * if the preference IWorkbenchPreferences.SHOW_INTRO is <code>true</code>.  If
+     * an intro is shown then this preference will be set to <code>false</code>.
+     * Subsequently, and intro will be shown only if
+     * <code>WorkbenchConfigurer.getSaveAndRestore()</code> returns
+     * <code>true</code> and the introduction was visible on last shutdown.
      * Subclasses may override.
      * </p>
      */
     public void openIntro() {
         // TODO: Refactor this into an IIntroManager.openIntro(IWorkbenchWindow) call
-        
+
         // introOpened flag needs to be global
         IWorkbenchConfigurer wbConfig = getWindowConfigurer().getWorkbenchConfigurer();
         final String key = "introOpened"; //$NON-NLS-1$
@@ -175,27 +175,27 @@ public class WorkbenchWindowAdvisor {
 
         boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.SHOW_INTRO);
-        
+
         IIntroManager introManager = wbConfig.getWorkbench().getIntroManager();
-        
+
         boolean hasIntro = introManager.hasIntro();
         boolean isNewIntroContentAvailable = introManager.isNewContentAvailable();
-        
+
 		if (hasIntro && (showIntro || isNewIntroContentAvailable)) {
 			PrefUtil.getAPIPreferenceStore().setValue(
 					IWorkbenchPreferenceConstants.SHOW_INTRO, false);
 			PrefUtil.saveAPIPrefs();
-			
+
             introManager
                     .showIntro(getWindowConfigurer().getWindow(), false);
         }
     }
 
     /**
-     * Performs arbitrary actions after the window has been created (possibly 
+     * Performs arbitrary actions after the window has been created (possibly
      * after being restored), but has not yet been opened.
      * <p>
-     * This method is called after the window has been created from scratch, 
+     * This method is called after the window has been created from scratch,
      * or when it has been restored from a previously-saved window.  In the latter case,
      * this method is called after <code>postWindowRestore</code>.
      * Clients must not call this method directly (although super calls are okay).
@@ -207,10 +207,10 @@ public class WorkbenchWindowAdvisor {
     }
 
     /**
-     * Performs arbitrary actions after the window has been opened (possibly 
+     * Performs arbitrary actions after the window has been opened (possibly
      * after being restored).
      * <p>
-     * This method is called after the window has been opened. This method is 
+     * This method is called after the window has been opened. This method is
      * called after the window has been created from scratch, or when
      * it has been restored from a previously-saved window.
      * Clients must not call this method directly (although super calls are okay).
@@ -235,7 +235,7 @@ public class WorkbenchWindowAdvisor {
 	 * an opportunity to query the user and/or veto the closing of a window
 	 * under some circumstances.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> to allow the window to close, and
 	 *         <code>false</code> to prevent the window from closing
 	 * @see org.eclipse.ui.IWorkbenchWindow#close
@@ -270,7 +270,7 @@ public class WorkbenchWindowAdvisor {
 	 * Subclasses may override to define custom window contents and layout, but
 	 * must call <code>IWorkbenchWindowConfigurer.createPageComposite</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param shell
 	 *            the window's shell
 	 * @see IWorkbenchWindowConfigurer#createMenuBar
@@ -293,7 +293,7 @@ public class WorkbenchWindowAdvisor {
 	 * The default implementation returns <code>null</code>. Subclasses may
 	 * override.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control or <code>null</code>
@@ -304,19 +304,19 @@ public class WorkbenchWindowAdvisor {
 	public Control createEmptyWindowContents(Composite parent) {
         return null;
     }
-    
+
 	/**
 	 * Returns <code>true</code> if the given folder in the given perspective
 	 * should remain visible even after all parts in it have been closed by the
 	 * user. The default is <code>false</code>. The return value for a certain
 	 * combination of perspective id and folder id must not change over time.
-	 * 
+	 *
 	 * @param perspectiveId
 	 *            the perspective id
 	 * @param folderId
 	 *            the folder id
 	 * @return <code>true</code> if the given folder should be durable
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public boolean isDurableFolder(String perspectiveId, String folderId) {
@@ -332,10 +332,10 @@ public class WorkbenchWindowAdvisor {
     public void dispose() {
         // do nothing.
     }
-	
+
 	/**
 	 * Saves arbitrary application specific state information.
-	 * 
+	 *
 	 * @param memento the storage area for object's state
 	 * @return a status object indicating whether the save was successful
 	 * @since 3.1
@@ -344,10 +344,10 @@ public class WorkbenchWindowAdvisor {
 		// do nothing
 		return Status.OK_STATUS;
 	}
-	
+
 	/**
 	 * Restores arbitrary application specific state information.
-	 * 
+	 *
 	 * @param memento the storage area for object's state
 	 * @return a status object indicating whether the restore was successful
 	 * @since 3.1

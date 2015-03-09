@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Implements a simple web style navigation metaphor for a <code>TreeViewer</code>.  
+ * Implements a simple web style navigation metaphor for a <code>TreeViewer</code>.
  * Home, back, and "drill into" functions are supported for the viewer,
  * <p>
  * To use the <code>DrillDownAdapter</code> ..
@@ -40,9 +40,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *		</code>addNavigationActions</code> with the popup menu or toolbar.</li>
  * </ol>
  * <p>
- * If the input for the underlying viewer is changed by something other than the 
+ * If the input for the underlying viewer is changed by something other than the
  * adapter the <code>reset</code> method should be called.  This will clear
- * the drill stack and update the navigation buttons to reflect the new 
+ * the drill stack and update the navigation buttons to reflect the new
  * state of the underlying viewer.
  * </p>
  * </p>
@@ -99,7 +99,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
      * will only be true if it has children.
      *
      * @param element the object to test for expansion
-     * @return <code>true</code> if expansion is possible; otherwise 
+     * @return <code>true</code> if expansion is possible; otherwise
      *		return <code>false</code
      */
     public boolean canExpand(Object element) {
@@ -107,7 +107,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     }
 
     /**
-     * Returns whether "go back" is possible for child tree.  This is only possible 
+     * Returns whether "go back" is possible for child tree.  This is only possible
      * if the client has performed one or more drilling operations.
      *
      * @return <code>true</code> if "go back" is possible; <code>false</code> otherwise
@@ -117,7 +117,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     }
 
     /**
-     * Returns whether "go home" is possible for child tree.  This is only possible 
+     * Returns whether "go home" is possible for child tree.  This is only possible
      * if the client has performed one or more drilling operations.
      *
      * @return <code>true</code> if "go home" is possible; <code>false</code> otherwise
@@ -127,7 +127,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     }
 
     /**
-     * Returns whether "go into" is possible for child tree.  This is only possible 
+     * Returns whether "go into" is possible for child tree.  This is only possible
      * if the current selection in the client has one item and it has children.
      *
      * @return <code>true</code> if "go into" is possible; <code>false</code> otherwise
@@ -152,7 +152,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
 			return;
 		}
 
-        // Home.	
+        // Home.
         homeAction = new Action(WorkbenchMessages.GoHome_text) {
             @Override
 			public void run() {
@@ -174,20 +174,20 @@ public class DrillDownAdapter implements ISelectionChangedListener {
             }
         };
         backAction
-                .setToolTipText(WorkbenchMessages.GoBack_toolTip); 
+                .setToolTipText(WorkbenchMessages.GoBack_toolTip);
         backAction.setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
         backAction.setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 
         // Forward.
-        forwardAction = new Action(WorkbenchMessages.GoInto_text) { 
+        forwardAction = new Action(WorkbenchMessages.GoInto_text) {
             @Override
 			public void run() {
                 goInto();
             }
         };
-        forwardAction.setToolTipText(WorkbenchMessages.GoInto_toolTip); 
+        forwardAction.setToolTipText(WorkbenchMessages.GoInto_toolTip);
         forwardAction.setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
         forwardAction.setDisabledImageDescriptor(images
@@ -209,7 +209,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     }
 
     /**
-     * Returns a list of elements corresponding to expanded nodes in 
+     * Returns a list of elements corresponding to expanded nodes in
      * child tree.
      *
      * @return a list of expandd elements
@@ -245,7 +245,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
      * Reverts the input for the tree back to the state when the adapter was
      * created.
      * <p>
-     * All of the frames are removed from the drill stack.  Then the oldest frame is 
+     * All of the frames are removed from the drill stack.  Then the oldest frame is
      * used to reset the input and expansion state for the child tree.
      * </p>
      */
@@ -267,11 +267,11 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     /**
      * Sets the input for the tree to the current selection.
      * <p>
-     * The current input and expansion state are saved in a frame and added to the 
-     * drill stack.  Then the input for the tree is changed to be the current selection.  
+     * The current input and expansion state are saved in a frame and added to the
+     * drill stack.  Then the input for the tree is changed to be the current selection.
      * The expansion state for the tree is maintained during the operation.
      * </p><p>
-     * On return the client may revert back to the previous state by invoking 
+     * On return the client may revert back to the previous state by invoking
      * <code>goBack</code> or <code>goHome</code>.
      * </p>
      */
@@ -285,11 +285,11 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     /**
      * Sets the input for the tree to a particular item in the tree.
      * <p>
-     * The current input and expansion state are saved in a frame and added to the 
-     * drill stack.  Then the input for the tree is changed to be <code>newInput</code>.  
+     * The current input and expansion state are saved in a frame and added to the
+     * drill stack.  Then the input for the tree is changed to be <code>newInput</code>.
      * The expansion state for the tree is maintained during the operation.
      * </p><p>
-     * On return the client may revert back to the previous state by invoking 
+     * On return the client may revert back to the previous state by invoking
      * <code>goBack</code> or <code>goHome</code>.
      * </p>
      *
@@ -311,7 +311,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     }
 
     /**
-     * Resets the drill down adapter. 
+     * Resets the drill down adapter.
      * <p>
      * This method is typically called when the input for the underlying view
      * is reset by something other than the adapter.
@@ -334,7 +334,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     }
 
     /**
-     * Updates the enabled state for each navigation button.  
+     * Updates the enabled state for each navigation button.
      */
     protected void updateNavigationButtons() {
         if (homeAction != null) {

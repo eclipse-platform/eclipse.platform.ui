@@ -157,7 +157,7 @@ public class ReferenceCounter {
     	}
     	return newCount;
     }
-    
+
     /**
      * Returns a complete list of the values in the counter.
      *

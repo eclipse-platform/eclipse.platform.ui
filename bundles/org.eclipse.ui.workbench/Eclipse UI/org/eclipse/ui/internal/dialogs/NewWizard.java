@@ -73,7 +73,7 @@ public class NewWizard extends Wizard {
      * Returns the id of the category of wizards to show or <code>null</code>
      * to show all categories. If no entries can be found with this id then all
      * categories are shown.
-     * 
+     *
      * @return String or <code>null</code>.
      */
     public String getCategoryId() {
@@ -121,7 +121,7 @@ public class NewWizard extends Wizard {
     /**
      * The user has pressed Finish. Instruct self's pages to finish, and answer
      * a boolean indicating success.
-     * 
+     *
      * @return boolean
      */
     @Override
@@ -143,7 +143,7 @@ public class NewWizard extends Wizard {
      * Sets the id of the category of wizards to show or <code>null</code> to
      * show all categories. If no entries can be found with this id then all
      * categories are shown.
-     * 
+     *
      * @param id may be <code>null</code>.
      */
     public void setCategoryId(String id) {
@@ -158,7 +158,7 @@ public class NewWizard extends Wizard {
     public void setProjectsOnly(boolean b) {
         projectsOnly = b;
     }
-    
+
     @Override
 	public boolean canFinish() {
          // we can finish if the first page is current and the the page can finish early.

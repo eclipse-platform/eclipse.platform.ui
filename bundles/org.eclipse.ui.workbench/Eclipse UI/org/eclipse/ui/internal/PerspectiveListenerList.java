@@ -43,7 +43,7 @@ public class PerspectiveListenerList extends EventManager {
 
     /**
      * Calls a perspective listener with associated performance event instrumentation
-     * 
+     *
      * @param runnable
      * @param listener
      * @param perspective
@@ -80,7 +80,7 @@ public class PerspectiveListenerList extends EventManager {
 
     /**
      * Notifies the listener that a perspective has been deactivated.
-     * 
+     *
      * @since 3.2
      */
     public void firePerspectivePreDeactivate(final IWorkbenchPage page,
@@ -101,7 +101,7 @@ public class PerspectiveListenerList extends EventManager {
 
     /**
      * Notifies the listener that a perspective has been deactivated.
-     * 
+     *
      * @since 3.1
      */
     public void firePerspectiveDeactivated(final IWorkbenchPage page,
@@ -140,7 +140,7 @@ public class PerspectiveListenerList extends EventManager {
     /**
      * Notifies the listener that a part has been affected
      * in the given perspective.
-     * 
+     *
      * @since 3.0
      */
     public void firePerspectiveChanged(final IWorkbenchPage page,
@@ -163,7 +163,7 @@ public class PerspectiveListenerList extends EventManager {
 
     /**
      * Notifies the listener that a perspective has been closed.
-     * 
+     *
      * @since 3.1
      */
     public void firePerspectiveClosed(final IWorkbenchPage page,
@@ -184,7 +184,7 @@ public class PerspectiveListenerList extends EventManager {
 
     /**
      * Notifies the listener that a perspective has been opened.
-     * 
+     *
      * @since 3.1
      */
     public void firePerspectiveOpened(final IWorkbenchPage page,
@@ -202,10 +202,10 @@ public class PerspectiveListenerList extends EventManager {
             }
         }
     }
-    
+
     /**
      * Notifies the listener that a perspective has been deactivated.
-     * 
+     *
      * @since 3.1
      */
     public void firePerspectiveSavedAs(final IWorkbenchPage page,

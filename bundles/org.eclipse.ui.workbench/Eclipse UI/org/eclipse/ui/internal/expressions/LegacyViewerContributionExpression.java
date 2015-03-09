@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @see ISources#ACTIVE_MENU_NAME
  * @since 3.2
  */
@@ -59,7 +59,7 @@ public final class LegacyViewerContributionExpression extends
 
 	/**
 	 * Constructs a new {@link LegacyViewerContributionExpression}.
-	 * 
+	 *
 	 * @param targetId
 	 *            The identifier of the menu to which this viewer contribution
 	 *            applies; never <code>null</code>.

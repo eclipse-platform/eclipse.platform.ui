@@ -24,46 +24,46 @@ public final class Persistence {
 
     final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$
 
-    final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$	
+    final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$
 
     final static String TAG_ACTIVITY_REQUIREMENT_BINDING = "activityRequirementBinding"; //$NON-NLS-1$
 
     final static String TAG_DEFAULT_ENABLEMENT = "defaultEnablement"; //$NON-NLS-1$
 
-    final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
+    final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$
 
-    final static String TAG_ACTIVITY_PATTERN_BINDING = "activityPatternBinding"; //$NON-NLS-1$	
+    final static String TAG_ACTIVITY_PATTERN_BINDING = "activityPatternBinding"; //$NON-NLS-1$
 
-    final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
+    final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
 
-    final static String TAG_CATEGORY_ACTIVITY_BINDING = "categoryActivityBinding"; //$NON-NLS-1$	
+    final static String TAG_CATEGORY_ACTIVITY_BINDING = "categoryActivityBinding"; //$NON-NLS-1$
 
     final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 
-    final static String TAG_REQUIRED_ACTIVITY_ID = "requiredActivityId"; //$NON-NLS-1$		
+    final static String TAG_REQUIRED_ACTIVITY_ID = "requiredActivityId"; //$NON-NLS-1$
 
     final static String TAG_ID = "id"; //$NON-NLS-1$
 
-    final static String TAG_NAME = "name"; //$NON-NLS-1$	
+    final static String TAG_NAME = "name"; //$NON-NLS-1$
 
     final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$
-    
+
     final static String TAG_IS_EQUALITY_PATTERN = "isEqualityPattern"; //$NON-NLS-1$
 
     final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 
     final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-    
+
     // Used only in error messages addressed to plug-in developers
     public final static String ACTIVITY_REQUIREMENT_BINDING_DESC = "Invalid activity requirement binding"; //$NON-NLS-1$
     public final static String ACTIVITY_DESC = "Invalid activity"; //$NON-NLS-1$
-    public final static String ACTIVITY_PATTERN_BINDING_DESC = "Invalid activity pattern binding"; //$NON-NLS-1$	
-    public final static String CATEGORY_ACTIVITY_BINDING_DESC = "Invalid category activity binding"; //$NON-NLS-1$	
-    public final static String CATEGORY_DESC = "Invalid category description"; //$NON-NLS-1$	
-    public final static String ACTIVITY_IMAGE_BINDING_DESC = "Invalid activity image binding"; //$NON-NLS-1$	
-    public final static String ACTIVITY_TRIGGER_DESC = "Invalid trigger point"; //$NON-NLS-1$	
+    public final static String ACTIVITY_PATTERN_BINDING_DESC = "Invalid activity pattern binding"; //$NON-NLS-1$
+    public final static String CATEGORY_ACTIVITY_BINDING_DESC = "Invalid category activity binding"; //$NON-NLS-1$
+    public final static String CATEGORY_DESC = "Invalid category description"; //$NON-NLS-1$
+    public final static String ACTIVITY_IMAGE_BINDING_DESC = "Invalid activity image binding"; //$NON-NLS-1$
+    public final static String ACTIVITY_TRIGGER_DESC = "Invalid trigger point"; //$NON-NLS-1$
     public final static String ACTIVITY_TRIGGER_HINT_DESC = "Invalid trigger point hint"; //$NON-NLS-1$
-    
+
     // Non-translatable error messages for plug-in developers
     public final static String shortContextTemplate = " (contributed by ''{0}'')"; //$NON-NLS-1$;
     public final static String fullContextTemplate = " (contributed by ''{0}'', extension ID ''{1}'')"; //$NON-NLS-1$;
@@ -114,7 +114,7 @@ public final class Persistence {
 
     static ActivityPatternBindingDefinition readActivityPatternBindingDefinition(
             IMemento memento, String sourceIdOverride) {
-    	
+
         String activityId = memento.getString(TAG_ACTIVITY_ID);
         if (activityId == null) {
         	log(memento, ACTIVITY_PATTERN_BINDING_DESC, "missing an ID of the activity to bind"); //$NON-NLS-1$
@@ -127,11 +127,11 @@ public final class Persistence {
 		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
-        
+
         final String isEqualityPatternStr = memento.getString(TAG_IS_EQUALITY_PATTERN);
         final boolean isEqualityPattern = (isEqualityPatternStr != null && isEqualityPatternStr
 				.equals("true")); //$NON-NLS-1$
-        
+
         return new ActivityPatternBindingDefinition(activityId, pattern,
                 sourceId, isEqualityPattern);
     }

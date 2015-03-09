@@ -16,15 +16,15 @@ import java.util.Set;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * An instance of this class describes changes to an instance of 
- * <code>IActivityManager</code>.  This class does not give details as to the 
- * specifics of a change, only that the given property on the source object has 
+ * An instance of this class describes changes to an instance of
+ * <code>IActivityManager</code>.  This class does not give details as to the
+ * specifics of a change, only that the given property on the source object has
  * changed.
- * 
+ *
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see IActivityManagerListener#activityManagerChanged(ActivityManagerEvent)
  */
@@ -60,7 +60,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param activityManager
      *            the instance of the interface that changed.
      * @param definedActivityIdsChanged
@@ -146,7 +146,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns the instance of the interface that changed.
-     * 
+     *
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -156,7 +156,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns the activity identifiers that were previously defined.
-     * 
+     *
      * @return The set of defined activity identifiers before the changed; may
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
@@ -167,7 +167,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns the category identifiers that were previously defined.
-     * 
+     *
      * @return The set of defined category identifiers before the changed; may
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
@@ -178,7 +178,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns the activity identifiers that were previously enabled.
-     * 
+     *
      * @return The set of enabled activity identifiers before the changed; may
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
@@ -189,7 +189,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns whether or not the definedActivityIds property changed.
-     * 
+     *
      * @return <code>true</code>, iff the definedActivityIds property changed.
      */
     public boolean haveDefinedActivityIdsChanged() {
@@ -198,7 +198,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns whether or not the definedCategoryIds property changed.
-     * 
+     *
      * @return <code>true</code>, iff the definedCategoryIds property changed.
      */
     public boolean haveDefinedCategoryIdsChanged() {
@@ -207,7 +207,7 @@ public final class ActivityManagerEvent {
 
     /**
      * Returns whether or not the enabledActivityIds property changed.
-     * 
+     *
      * @return <code>true</code>, iff the enabledActivityIds property changed.
      */
     public boolean haveEnabledActivityIdsChanged() {

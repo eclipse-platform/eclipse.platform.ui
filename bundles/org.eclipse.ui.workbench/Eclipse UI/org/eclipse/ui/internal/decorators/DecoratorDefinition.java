@@ -26,15 +26,15 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 
 public abstract class DecoratorDefinition implements IPluginContribution {
-	
+
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
-    
+
     private static final String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
-    
+
     static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
-    
+
     private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
-    
+
     private static final String ATT_ENABLED = "state"; //$NON-NLS-1$
 
     private ActionExpression enablement;
@@ -61,9 +61,9 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
     DecoratorDefinition(String identifier, IConfigurationElement element) {
 
-        this.id = identifier;  
+        this.id = identifier;
         this.definingElement = element;
-        
+
         this.enabled = this.defaultEnabled = Boolean.valueOf(element.getAttribute(ATT_ENABLED)).booleanValue();
     }
 
@@ -129,10 +129,10 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     }
 
     /**
-     * Return whether or not this decorator should be 
+     * Return whether or not this decorator should be
      * applied to adapted types.
-     * 
-     * @return whether or not this decorator should be 
+     *
+     * @return whether or not this decorator should be
      * applied to adapted types
      */
     public boolean isAdaptable() {
@@ -150,7 +150,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     /**
      * Return the default value for this type - this value
      * is the value read from the element description.
-     * 
+     *
      * @return the default value for this type - this value
      * is the value read from the element description
      */
@@ -206,7 +206,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
     /**
      * Return whether or not the decorator registered for element
-     * has a label property called property name. If there is an 
+     * has a label property called property name. If there is an
      * exception disable the receiver and return false.
      * This method should not be called unless a check for
      * isEnabled() has been done first.
@@ -225,7 +225,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     }
 
     /**
-     * Gets the label provider and creates it if it does not exist yet. 
+     * Gets the label provider and creates it if it does not exist yet.
      * Throws a CoreException if there is a problem
      * creating the labelProvider.
      * This method should not be called unless a check for
@@ -235,7 +235,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     protected abstract IBaseLabelProvider internalGetLabelProvider()
             throws CoreException;
 
-    /** 
+    /**
      * A CoreException has occured. Inform the user and disable
      * the receiver.
      */
@@ -262,7 +262,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Return the configuration element.
-	 * 
+	 *
 	 * @return the configuration element
 	 * @since 3.1
 	 */
@@ -284,7 +284,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     		return true;//Always on if no expression
     	}
     	return false;
-       
+
     }
 
 	@Override

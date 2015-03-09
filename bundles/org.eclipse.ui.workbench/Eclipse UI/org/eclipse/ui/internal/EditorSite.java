@@ -35,14 +35,14 @@ public class EditorSite extends PartSite implements IEditorSite {
     //private ListenerList propChangeListeners = new ListenerList(1);
 
     private SubActionBars ab = null;
-    
+
     /**
      * Constructs an EditorSite for an editor.
      */
 	public EditorSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
 			IConfigurationElement element) {
 		super(model, part, ref, element);
-        
+
 		// Initialize the services specific to this editor site.
         initializeDefaultServices();
     }
@@ -51,24 +51,24 @@ public class EditorSite extends PartSite implements IEditorSite {
 	 * Initialize the local services.
 	 */
 	private void initializeDefaultServices() {
-		// Register an implementation of the service appropriate for the 
+		// Register an implementation of the service appropriate for the
 		// EditorSite.
 		final IDragAndDropService editorDTService = new EditorSiteDragAndDropServiceImpl();
 		serviceLocator.registerService(IDragAndDropService.class, editorDTService);
 		serviceLocator.registerService(IEditorPart.class, (IEditorPart) getPart());
 	}
-	
+
     @Override
 	public void setActionBars(SubActionBars bars) {
         super.setActionBars(bars);
-        
+
         if (bars instanceof IActionBars2) {
             ab = new SubActionBars2((IActionBars2)bars, this);
         } else {
             ab = new SubActionBars(bars, this);
         }
     }
-    
+
     @Override
 	public void activateActionBars(boolean forceVisibility) {
         if (ab != null) {
@@ -84,7 +84,7 @@ public class EditorSite extends PartSite implements IEditorSite {
         }
         super.deactivateActionBars(forceHide);
     }
-    
+
     /**
      * Returns the editor action bar contributor for this editor.
      * <p>
@@ -102,7 +102,7 @@ public class EditorSite extends PartSite implements IEditorSite {
         if (bars != null) {
 			return bars.getEditorContributor();
 		}
-        
+
         return null;
     }
 
@@ -114,7 +114,7 @@ public class EditorSite extends PartSite implements IEditorSite {
         if (bars != null) {
 			return bars.getExtensionContributor();
 		}
-        
+
         return null;
     }
 
@@ -129,17 +129,17 @@ public class EditorSite extends PartSite implements IEditorSite {
 	protected String getInitialScopeId() {
         return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
     }
-    
+
     @Override
 	public void dispose() {
         super.dispose();
-        
+
         if (ab != null) {
             ab.dispose();
 			ab = null;
         }
     }
-    
+
     @Override
 	public final void registerContextMenu(final MenuManager menuManager,
             final ISelectionProvider selectionProvider,
@@ -147,7 +147,7 @@ public class EditorSite extends PartSite implements IEditorSite {
         registerContextMenu(getId(), menuManager, selectionProvider,
                 includeEditorInput);
     }
-    
+
     @Override
 	public final void registerContextMenu(final String menuId,
             final MenuManager menuManager,
@@ -156,7 +156,7 @@ public class EditorSite extends PartSite implements IEditorSite {
         if (menuExtenders == null) {
             menuExtenders = new ArrayList(1);
         }
-        
+
 		PartSite.registerContextMenu(menuId, menuManager, selectionProvider, includeEditorInput,
 				getPart(), getModel().getContext(), menuExtenders);
     }

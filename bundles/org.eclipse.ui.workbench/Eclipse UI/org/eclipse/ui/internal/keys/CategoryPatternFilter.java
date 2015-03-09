@@ -36,7 +36,7 @@ class CategoryPatternFilter extends PatternFilter {
 			setPattern("org.eclipse.ui.keys.optimization.true"); //$NON-NLS-1$
 		}
 	}
-	
+
 	public boolean isFilteringCategories() {
 		return filterCategories;
 	}

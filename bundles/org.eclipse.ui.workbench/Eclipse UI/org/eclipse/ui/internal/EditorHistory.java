@@ -56,7 +56,7 @@ public class EditorHistory {
      * Adds an item to the history.
      */
     private void add(EditorHistoryItem newItem, int index) {
-        // Remove the item if it already exists so that it will be put 
+        // Remove the item if it already exists so that it will be put
         // at the top of the list.
         if (newItem.isRestored()) {
             remove(newItem.getInput());
@@ -124,7 +124,7 @@ public class EditorHistory {
 
     /**
      * Restore the most-recently-used history from the given memento.
-     * 
+     *
      * @param memento the memento to restore the mru history from
      */
     public IStatus restoreState(IMemento memento) {
@@ -140,7 +140,7 @@ public class EditorHistory {
 
     /**
      * Save the most-recently-used history in the given memento.
-     * 
+     *
      * @param memento the memento to save the mru history in
      */
     public IStatus saveState(IMemento memento) {

@@ -98,7 +98,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * This class is responsible for tracking various registries
  * font, preference, graphics, dialog store.
  *
- * This class is explicitly referenced by the 
+ * This class is explicitly referenced by the
  * workbench plugin's  "plugin.xml" and places it
  * into the UI start extension point of the main
  * overall application harness
@@ -109,7 +109,7 @@ import org.osgi.util.tracker.ServiceTracker;
  *      instance of our workbench class.
  */
 public class WorkbenchPlugin extends AbstractUIPlugin {
-	
+
 	/**
 	 * Splash shell constant.
 	 */
@@ -117,21 +117,21 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The OSGi splash property.
-	 * 
+	 *
 	 * @sicne 3.4
 	 */
 	private static final String PROP_SPLASH_HANDLE = "org.eclipse.equinox.launcher.splash.handle"; //$NON-NLS-1$
-	
+
 	private static final String LEFT_TO_RIGHT = "ltr"; //$NON-NLS-1$
 	private static final String RIGHT_TO_LEFT = "rtl";//$NON-NLS-1$
 	private static final String ORIENTATION_COMMAND_LINE = "-dir";//$NON-NLS-1$
 	private static final String ORIENTATION_PROPERTY = "eclipse.orientation";//$NON-NLS-1$
 	private static final String NL_USER_PROPERTY = "osgi.nl.user"; //$NON-NLS-1$
-	private static final String BIDI_COMMAND_LINE = "-bidi";//$NON-NLS-1$	
+	private static final String BIDI_COMMAND_LINE = "-bidi";//$NON-NLS-1$
 	private static final String BIDI_SUPPORT_OPTION = "on";//$NON-NLS-1$
 	private static final String BIDI_TEXTDIR_OPTION = "textDir";//$NON-NLS-1$
 
-   
+
     // Default instance of the receiver
     private static WorkbenchPlugin inst;
 
@@ -164,7 +164,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * The workbench plugin ID.
-     * 
+     *
      * @issue we should just drop this constant and use PlatformUI.PLUGIN_ID instead
      */
     public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
@@ -193,16 +193,16 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     private ProductInfo productInfo = null;
 
     private IntroRegistry introRegistry;
-    
+
     private WorkbenchOperationSupport operationSupport;
 	private BundleListener bundleListener;
 
 	private IEclipseContext e4Context;
 
 	private ServiceTracker debugTracker = null;
-    
+
 	private ServiceTracker testableTracker = null;
-	
+
 	private EHelpService helpService;
 
 	private ICommandHelpService commandHelpService;
@@ -219,7 +219,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Unload all members.  This can be used to run a second instance of a workbench.
-     * @since 3.0 
+     * @since 3.0
      */
     void reset() {
         editorRegistry = null;
@@ -255,14 +255,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		helpService = null;
 		commandHelpService = null;
-        
+
         if (operationSupport != null) {
         	operationSupport.dispose();
         	operationSupport = null;
         }
 
         DEBUG = false;
-         
+
     }
 
     /**
@@ -308,12 +308,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                     IStatus.ERROR, WorkbenchMessages.WorkbenchPlugin_extension,e));
         }
     }
-    
+
     /**
 	 * Answers whether the provided element either has an attribute with the
 	 * given name or a child element with the given name with an attribute
 	 * called class.
-	 * 
+	 *
 	 * @param element
 	 *            the element to test
 	 * @param extensionName
@@ -336,7 +336,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks to see if the provided element has the syntax for an executable
 	 * extension with a given name that resides in a bundle that is already
@@ -347,7 +347,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * <li>The element has a child element with the specified name that has a
 	 * <code>plugin</code> attribute</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param element
 	 *            the element to test
 	 * @param extensionName
@@ -365,7 +365,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			return true;
 		return bundle.getState() == Bundle.ACTIVE;
 	}
-	
+
 	/**
 	 * Returns the bundle that contains the class referenced by an executable
 	 * extension. Determining the bundle happens in one of two ways:<br/>
@@ -375,7 +375,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * <li>The element has a child element with the specified name that has a
 	 * <code>plugin</code> attribute</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param element
 	 *            the element to test
 	 * @param extensionName
@@ -387,7 +387,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static Bundle getBundleForExecutableExtension(IConfigurationElement element, String extensionName) {
 		// this code is derived heavily from
-		// ConfigurationElement.createExecutableExtension.  
+		// ConfigurationElement.createExecutableExtension.
 		String prop = null;
 		String executable;
 		String contributorName = null;
@@ -408,12 +408,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (prop == null) {
 			// property not defined, try as a child element
 			IConfigurationElement[] exec = element.getChildren(extensionName);
-			if (exec.length != 0) 
+			if (exec.length != 0)
 				contributorName = exec[0].getAttribute("plugin"); //$NON-NLS-1$
 		} else {
 			// simple property or element value, parse it into its components
 			i = prop.indexOf(':');
-			if (i != -1) 
+			if (i != -1)
 				executable = prop.substring(0, i).trim();
 			else
 				executable = prop;
@@ -421,23 +421,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			i = executable.indexOf('/');
 			if (i != -1)
 				contributorName = executable.substring(0, i).trim();
-				
+
 		}
-		
+
 		if (contributorName == null)
 			contributorName = element.getContributor().getName();
-		
+
 		return Platform.getBundle(contributorName);
 	}
 
     /**
 	 * Returns the image registry for this plugin.
-	 * 
+	 *
 	 * Where are the images? The images (typically gifs) are found in the same
 	 * plugins directory.
-	 * 
+	 *
 	 * @see ImageRegistry
-	 * 
+	 *
 	 * Note: The workbench uses the standard JFace ImageRegistry to track its
 	 * images. In addition the class WorkbenchGraphicResources provides
 	 * convenience access to the graphics resources and fast field access for
@@ -467,7 +467,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Answer the manager that maps resource types to a the 
+     * Answer the manager that maps resource types to a the
      * description of the editor to use
      * @return IEditorRegistry the editor registry used
      * by this plug-in.
@@ -535,7 +535,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the working set manager
-     * 
+     *
      * @return the working set manager
      * @since 2.0
      */
@@ -545,7 +545,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the working set registry
-     * 
+     *
      * @return the working set registry
      * @since 2.0
      */
@@ -562,10 +562,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public IIntroRegistry getIntroRegistry() {
 		return e4Context.get(IIntroRegistry.class);
     }
-    
+
     /**
 	 * Returns the operation support.
-	 * 
+	 *
 	 * @return the workbench operation support.
 	 * @since 3.1
 	 */
@@ -578,7 +578,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return op;
     }
-    
+
 
     /**
      * Get the preference manager.
@@ -606,7 +606,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the theme registry for the workbench.
-     * 
+     *
      * @return the theme registry
      */
     public IThemeRegistry getThemeRegistry() {
@@ -632,7 +632,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         return PlatformUI.getWorkbench();
     }
 
-    /** 
+    /**
      * Set default preference values.
      * This method must be called whenever the preference store is initially loaded
      * because the default values are not stored in the preference store.
@@ -645,22 +645,22 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Logs the given message to the platform log.
-     * 
+     *
      * If you have an exception in hand, call log(String, Throwable) instead.
-     * 
+     *
      * If you have a status object in hand call log(String, IStatus) instead.
-     * 
+     *
      * This convenience method is for internal use by the Workbench only and
      * must not be called outside the Workbench.
-     * 
+     *
      * @param message
      *            A high level UI message describing when the problem happened.
      */
     public static void log(String message) {
         getDefault().getLog().log(
-                StatusUtil.newStatus(IStatus.ERROR, message, null));    
+                StatusUtil.newStatus(IStatus.ERROR, message, null));
     }
-    
+
     /**
      * Log the throwable.
      * @param t
@@ -702,15 +702,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return new Status(IStatus.ERROR, pluginId, errorCode, message,
 				StatusUtil.getCause(t));
 	}
-    
+
     /**
 	 * Logs the given message and throwable to the platform log.
-	 * 
+	 *
 	 * If you have a status object in hand call log(String, IStatus) instead.
-	 * 
+	 *
 	 * This convenience method is for internal use by the Workbench only and
 	 * must not be called outside the Workbench.
-	 * 
+	 *
 	 * @param message
 	 *            A high level UI message describing when the problem happened.
 	 * @param t
@@ -720,15 +720,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
         log(message, status);
     }
-    
+
     /**
      * Logs the given throwable to the platform log, indicating the class and
      * method from where it is being logged (this is not necessarily where it
      * occurred).
-     * 
+     *
      * This convenience method is for internal use by the Workbench only and
      * must not be called outside the Workbench.
-     * 
+     *
      * @param clazz
      *            The calling class.
      * @param methodName
@@ -741,13 +741,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                 new Object[] { clazz.getName(), methodName, t });
         log(msg, t);
     }
-    
+
     /**
      * Logs the given message and status to the platform log.
-     * 
+     *
      * This convenience method is for internal use by the Workbench only and
      * must not be called outside the Workbench.
-     * 
+     *
      * @param message
      *            A high level UI message describing when the problem happened.
      *            May be <code>null</code>.
@@ -773,7 +773,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public static void log(IStatus status) {
         getDefault().getLog().log(status);
     }
-    
+
     /**
      * Get the decorator manager for the receiver
      * @return DecoratorManager the decorator manager
@@ -788,9 +788,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     	context.addBundleListener(getBundleListener());
         super.start(context);
         bundleContext = context;
-        
+
         JFaceUtil.initializeJFace();
-		
+
 		parseBidiArguments();
 		Window.setDefaultOrientation(getDefaultOrientation());
 
@@ -819,7 +819,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Read the -bidi option from the command line arguments. The valid values /
 	 * syntax is as follows:
-	 * 
+	 *
 	 * <pre>
 	 * -bidi "on=[y/n];textDir=[ltr/rtl/auto]"
 	 * </pre>
@@ -874,24 +874,24 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Get the default orientation from the command line arguments. If there are
 	 * no arguments imply the orientation.
-	 * 
+	 *
 	 * @return int
 	 * @see SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
 	 * @see SWT#LEFT_TO_RIGHT
 	 */
     private int getDefaultOrientation() {
-		
+
 		String[] commandLineArgs = Platform.getCommandLineArgs();
-		
+
 		int orientation = getCommandLineOrientation(commandLineArgs);
-		
+
 		if(orientation != SWT.NONE) {
 			return orientation;
 		}
-		
+
 		orientation = getSystemPropertyOrientation();
-		
+
 		if(orientation != SWT.NONE) {
 			return orientation;
 		}
@@ -924,15 +924,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Check to see if the command line parameter for -nl
-	 * has been set. If so imply the orientation from this 
+	 * has been set. If so imply the orientation from this
 	 * specified Locale. If it is a bidirectional Locale
 	 * return SWT#RIGHT_TO_LEFT.
-	 * If it has not been set or has been set to 
+	 * If it has not been set or has been set to
 	 * a unidirectional Locale then return SWT#NONE.
-	 * 
-	 * Locale is determined differently by different JDKs 
+	 *
+	 * Locale is determined differently by different JDKs
 	 * and may not be consistent with the users expectations.
-	 * 
+	 *
 
 	 * @return int
 	 * @see SWT#NONE
@@ -961,7 +961,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Check to see if the orientation was set in the
-	 * system properties. If there is no orientation 
+	 * system properties. If there is no orientation
 	 * specified return SWT#NONE.
 	 * @return int
 	 * @see SWT#NONE
@@ -1003,13 +1003,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 				}
 			}
 		}
-		
+
 		return SWT.NONE;
 	}
 
 	/**
      * Return an array of all bundles contained in this workbench.
-     * 
+     *
      * @return an array of bundles in the workbench or an empty array if none
      * @since 3.0
      */
@@ -1017,10 +1017,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         return bundleContext == null ? new Bundle[0] : bundleContext
                 .getBundles();
     }
-    
+
     /**
      * Returns the bundle context associated with the workbench plug-in.
-     * 
+     *
      * @return the bundle context
      * @since 3.1
      */
@@ -1047,7 +1047,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the name of the product.
-     * 
+     *
      * @return the product name, or <code>null</code> if none
      * @since 3.0
      */
@@ -1057,7 +1057,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the image descriptors for the window image to use for this product.
-     * 
+     *
      * @return an array of the image descriptors for the window image, or
      *         <code>null</code> if none
      * @since 3.0
@@ -1092,47 +1092,47 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			testableTracker.close();
 			testableTracker = null;
 		}
-        super.stop(context);     
-    } 
-    
+        super.stop(context);
+    }
+
     /**
      * Return the new wizard registry.
-     * 
+     *
      * @return the new wizard registry
      * @since 3.1
      */
     public IWizardRegistry getNewWizardRegistry() {
 		return e4Context.get(NewWizardRegistry.class);
     }
-    
+
     /**
      * Return the import wizard registry.
-     * 
+     *
      * @return the import wizard registry
      * @since 3.1
      */
     public IWizardRegistry getImportWizardRegistry() {
 		return e4Context.get(ImportWizardRegistry.class);
     }
-    
+
     /**
      * Return the export wizard registry.
-     * 
+     *
      * @return the export wizard registry
      * @since 3.1
      */
     public IWizardRegistry getExportWizardRegistry() {
 		return e4Context.get(ExportWizardRegistry.class);
     }
-    
+
     /**
-     * FOR INTERNAL WORKBENCH USE ONLY. 
-     * 
-     * Returns the path to a location in the file system that can be used 
+     * FOR INTERNAL WORKBENCH USE ONLY.
+     *
+     * Returns the path to a location in the file system that can be used
      * to persist/restore state between workbench invocations.
      * If the location did not exist prior to this call it will  be created.
      * Returns <code>null</code> if no such location is available.
-     * 
+     *
      * @return path to a location in the file system where this plug-in can
      * persist data between sessions, or <code>null</code> if no such
      * location is available.
@@ -1150,16 +1150,16 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/* package */ void addBundleListener(BundleListener bundleListener) {
 		bundleContext.addBundleListener(bundleListener);
-	}    
+	}
 
 	/* package */ void removeBundleListener(BundleListener bundleListener) {
 		bundleContext.removeBundleListener(bundleListener);
-	}    
-	
+	}
+
 	/* package */ int getBundleCount() {
 		return bundleContext.getBundles().length;
 	}
-	
+
 	/* package */ OutputStream getSplashStream() {
 		// assumes the output stream is available as a service
 		// see EclipseStarter.publishSplashScreen
@@ -1225,23 +1225,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return whether or not the OSGi framework has specified the handle of a splash shell.
-	 * 
+	 *
 	 * @return whether or not the OSGi framework has specified the handle of a splash shell
 	 * @since 3.4
 	 */
 	public static boolean isSplashHandleSpecified() {
 		return System.getProperty(PROP_SPLASH_HANDLE) != null;
 	}
-	
+
 	/**
 	 * Get the splash shell for this workbench instance, if any. This will find
 	 * the splash created by the launcher (native) code and wrap it in a SWT
 	 * shell. This may have the side effect of setting data on the provided
 	 * {@link Display}.
-	 * 
+	 *
 	 * @param display
 	 *            the display to parent the shell on
-	 * 
+	 *
 	 * @return the splash shell or <code>null</code>
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -1253,15 +1253,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public static Shell getSplashShell(Display display)
 			throws NumberFormatException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
-		Shell splashShell = (Shell) display.getData(DATA_SPLASH_SHELL); 
+		Shell splashShell = (Shell) display.getData(DATA_SPLASH_SHELL);
 		if (splashShell != null)
 			return splashShell;
-		
+
 		String splashHandle = System.getProperty(PROP_SPLASH_HANDLE);
 		if (splashHandle == null) {
 			return null;
 		}
-	
+
 		// look for the 32 bit internal_new shell method
 		try {
 			Method method = Shell.class.getMethod(
@@ -1288,11 +1288,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		display.setData(DATA_SPLASH_SHELL, splashShell);
 		return splashShell;
 	}
-	
+
 	/**
 	 * Removes any splash shell data set on the provided display and disposes
 	 * the shell if necessary.
-	 * 
+	 *
 	 * @param display
 	 *            the display to parent the shell on
 	 * @since 3.4
@@ -1489,7 +1489,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return (DebugOptions) debugTracker.getService();
 	}
-	
+
 
 	/**
 	 * Returns a {@link TestableObject} provided by a TestableObject
@@ -1498,9 +1498,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * application lifecycle.
 	 * <p>
 	 * It is recommended the testable object is obtained via service
-	 * over {@link Workbench#getWorkbenchTestable()} to avoid the 
+	 * over {@link Workbench#getWorkbenchTestable()} to avoid the
 	 * tests having a dependency on the Workbench.
-	 * </p> 
+	 * </p>
 	 * @see PlatformUI#getTestableObject()
 	 * @return TestableObject provided via service or <code>null</code>
 	 */

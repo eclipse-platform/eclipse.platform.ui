@@ -46,7 +46,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     /**
      * Create a new perspective contribution item
-     * 
+     *
      * @param perspective the descriptor for the perspective
      * @param workbenchPage the page that this perspective is in
      */
@@ -181,9 +181,9 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     }
 
     /**
-     * Answer whether the receiver is a match for the provided 
+     * Answer whether the receiver is a match for the provided
      * perspective descriptor
-     * 
+     *
      * @param perspective the perspective descriptor
      * @param workbenchPage the page
      * @return <code>true</code> if it is a match

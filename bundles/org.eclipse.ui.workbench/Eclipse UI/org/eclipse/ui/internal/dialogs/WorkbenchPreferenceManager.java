@@ -41,12 +41,12 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 
 	/**
 	 * Create a new instance of the receiver with the specified seperatorChar
-	 * 
+	 *
 	 * @param separatorChar
 	 */
 	public WorkbenchPreferenceManager(char separatorChar) {
 		super(separatorChar, new WorkbenchPreferenceExpressionNode("")); //$NON-NLS-1$
-        
+
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
 		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 
@@ -71,7 +71,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 
 	/**
 	 * Add the pages and the groups to the receiver.
-	 * 
+	 *
 	 * @param pageContributions
 	 */
 	public void addPages(Collection pageContributions) {
@@ -91,7 +91,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 
 	/**
 	 * Register a node with the extension tracker.
-	 * 
+	 *
 	 * @param node
 	 *            register the given node and its subnodes with the extension
 	 *            tracker
@@ -133,7 +133,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 				}
 				if (parent == null) {
 					// Could not find the parent - log
-					String message = "Invalid preference category path: " + category + " (bundle: " + node.getPluginId() + ", page: " + node.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+					String message = "Invalid preference category path: " + category + " (bundle: " + node.getPluginId() + ", page: " + node.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING, message, null));
 					addToRoot(node);
 				} else {
@@ -161,7 +161,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 
 	/**
 	 * Removes the node from the manager, searching through all subnodes.
-	 * 
+	 *
 	 * @param parent
 	 *            the node to search
 	 * @param nodeToRemove

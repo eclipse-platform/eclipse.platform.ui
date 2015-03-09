@@ -13,7 +13,7 @@ package org.eclipse.ui.branding;
 /**
  * These constants define the set of properties that the UI expects to
  * be available via <code>IBundleGroup.getProperty(String)</code>.
- * 
+ *
  * @since 3.0
  * @see org.eclipse.core.runtime.IBundleGroup#getProperty(String)
  */
@@ -28,7 +28,7 @@ public interface IBundleGroupConstants {
      * An image which can be shown in an "about features" dialog (32x32).
      * <p>
      * The value is a fully qualified valid URL.
-     * </p> 
+     * </p>
      */
     public static final String FEATURE_IMAGE = "featureImage"; //$NON-NLS-1$
 
@@ -41,7 +41,7 @@ public interface IBundleGroupConstants {
      * The feature's welcome page (special XML-based format).
      * <p>
      * The value is a fully qualified valid URL.
-     * </p> 
+     * </p>
      * Products designed to run "headless" typically would not have such a page.
      */
     public static final String WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
@@ -56,20 +56,20 @@ public interface IBundleGroupConstants {
      * The URL of the license page for the feature (optional).
      * <p>
      * The value is a fully qualified valid URL.
-     * </p> 
+     * </p>
      */
     public static final String LICENSE_HREF = "licenseHref"; //$NON-NLS-1$
-    
+
 	/**
 	 * The feature's branding bundle id (optional).
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final String BRANDING_BUNDLE_ID = "brandingBundleId"; //$NON-NLS-1$
 
 	/**
 	 * The feature's branding bundle version (optional).
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final String BRANDING_BUNDLE_VERSION = "brandingBundleVersion"; //$NON-NLS-1$

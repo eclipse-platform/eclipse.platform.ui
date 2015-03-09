@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.services.RegistryPersistence;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 final public class MenuPersistence extends RegistryPersistence {
@@ -74,7 +74,7 @@ final public class MenuPersistence extends RegistryPersistence {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.services.RegistryPersistence#dispose()
 	 */
 	@Override
@@ -89,7 +89,7 @@ final public class MenuPersistence extends RegistryPersistence {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.tests.workbench.RegistryPersistence#isChangeImportant
 	 * (org.eclipse.core.runtime.IRegistryChangeEvent)

@@ -22,7 +22,7 @@ import org.eclipse.ui.branding.IBundleGroupConstants;
  * appropriate class. This implementation is tightly bound to the properties
  * provided in IBundleGroupConstants. Clients adding their own properties could
  * choose to subclass this.
- * 
+ *
  * @see org.eclipse.ui.branding.IBundleGroupConstants
  * @since 3.0
  */
@@ -168,7 +168,7 @@ public class BundleGroupProperties extends BrandingProperties implements
 		}
         return versionId;
     }
-    
+
 	/**
 	 * @return the branding plugin id, or <code>null</code>
 	 */
@@ -261,10 +261,10 @@ public class BundleGroupProperties extends BrandingProperties implements
     public static String getFeatureVersion(IBundleGroup bundleGroup) {
         return bundleGroup.getVersion();
     }
-    
+
 	/**
 	 * A Feature's branding plugin id.
-	 * 
+	 *
 	 * @param bundleGroup
 	 * @return the ID or <code>null</code> if not provided.
 	 */
@@ -274,7 +274,7 @@ public class BundleGroupProperties extends BrandingProperties implements
 
 	/**
 	 * A Feature's branding plugin version.
-	 * 
+	 *
 	 * @param bundleGroup
 	 * @return the version, or <code>null</code> if not provided.
 	 */

@@ -16,13 +16,13 @@ import org.eclipse.swt.SWT;
 
 /**
  * Allow programmatic access to the workbench window trim areas.
- * 
+ *
  * <p>
  * <b>Note:</b> This is highly experimental and will change between M4 and M5.
  * For example, the current trim area IDs will be changes to Strings, amongst
  * other things.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface ITrimManager {
@@ -55,7 +55,7 @@ public interface ITrimManager {
 	/**
 	 * Adds the given control to the layout's trim. The same as calling
 	 * addTrim(areaId, trim, null);
-	 * 
+	 *
 	 * @param trim
 	 *            new window trim to be added
 	 * @param areaId
@@ -70,13 +70,13 @@ public interface ITrimManager {
 	 * called for every trim control. If the given widget is already a trim
 	 * widget, it will be moved to the new position. Specifying a position
 	 * allows a new widget to be inserted between existing trim widgets.
-	 * 
+	 *
 	 * <p>
 	 * For example, this method allows the caller to say "insert this new
 	 * control as trim along the bottom of the layout, to the left of this
 	 * existing control".
 	 * </p>
-	 * 
+	 *
 	 * @param trim
 	 *            new window trim to be added
 	 * @param areaId
@@ -91,7 +91,7 @@ public interface ITrimManager {
 	/**
 	 * Removes the given window trim. Note that this has no effect if window
 	 * trim is not our window trim.
-	 * 
+	 *
 	 * @param toRemove
 	 *            a piece of trim.
 	 */
@@ -99,7 +99,7 @@ public interface ITrimManager {
 
 	/**
 	 * Return the window trim for a given id.
-	 * 
+	 *
 	 * @param id
 	 *            the id
 	 * @return the window trim, or <code>null</code> if not found.
@@ -109,7 +109,7 @@ public interface ITrimManager {
 	/**
 	 * Return all of the IDs for the currently supported trim areas. This is
 	 * <b>experimental</b> and will be changing.
-	 * 
+	 *
 	 * @return the list of IDs that can be used with area descriptions. We
 	 *         currently support SWT.TOP, SWT.BOTTOM, SWT.LEFT, and SWT.RIGHT.
 	 * @since 3.2
@@ -120,7 +120,7 @@ public interface ITrimManager {
 	 * Return a copy of the IWindowTrim in an ordered array. This will not
 	 * return <code>null</code>. This array can be used to shuffle items
 	 * around in {@link #updateAreaTrim(int, List, boolean) }.
-	 * 
+	 *
 	 * @param areaId
 	 *            the trim area id
 	 * @return the IWindowTrim array
@@ -133,7 +133,7 @@ public interface ITrimManager {
 	 * Update ID's area description with the new window trim ordering. This
 	 * applies the IWindowTrim contains in the array to the trim area named
 	 * "ID".
-	 * 
+	 *
 	 * @param id
 	 *            the trim area ID
 	 * @param trim
@@ -151,7 +151,7 @@ public interface ITrimManager {
 	/**
 	 * This method returns an aggregate array of all trim items known to this
 	 * TrimLayout.
-	 * 
+	 *
 	 * @return The List of all IWindowTrim elements
 	 * @since 3.2
 	 */
@@ -161,7 +161,7 @@ public interface ITrimManager {
 	 * Update the visibility of the trim controls. It updates any docking
 	 * handles as well. It has no effect on visiblity if the window trim doesn't
 	 * belong to this TrimLayout.
-	 * 
+	 *
 	 * @param trim
 	 *            the trim to update
 	 * @param visible
@@ -169,10 +169,10 @@ public interface ITrimManager {
 	 * @since 3.2
 	 */
 	public void setTrimVisible(IWindowTrim trim, boolean visible);
-	
+
 	/**
 	 * Force the trim areas to layout to pick up changes
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void forceLayout();

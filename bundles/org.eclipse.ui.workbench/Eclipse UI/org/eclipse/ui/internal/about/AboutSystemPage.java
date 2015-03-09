@@ -83,7 +83,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.about.ProductInfoPage#getId()
 	 */
 	@Override
@@ -113,7 +113,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	@Override

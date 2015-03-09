@@ -41,7 +41,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 public class WorkbenchWizardElement extends WorkbenchAdapter implements
         IAdaptable, IPluginContribution, IWizardDescriptor {
     private String id;
-    
+
     private ImageDescriptor imageDescriptor;
 
     private SelectionEnabler selectionEnabler;
@@ -49,9 +49,9 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
     private IConfigurationElement configurationElement;
 
     private ImageDescriptor descriptionImage;
-    
+
     private WizardCollectionElement parentCategory;
-    
+
 	/**
 	 * TODO: DO we need to  make this API?
 	 */
@@ -63,10 +63,10 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 
 	private String[] keywordLabels;
 
-    
+
     /**
      * Create a new instance of this class
-     * 
+     *
      * @param configurationElement
      * @since 3.1
      */
@@ -78,7 +78,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
     /**
      * Answer a boolean indicating whether the receiver is able to handle the
      * passed selection
-     * 
+     *
      * @return boolean
      * @param selection
      *            IStructuredSelection
@@ -92,7 +92,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * the selection. If it can return the selection. If it can handle the
      * adapted to IResource value of the selection. If it satisfies neither of
      * these conditions return an empty IStructuredSelection.
-     * 
+     *
      * @return IStructuredSelection
      * @param selection
      *            IStructuredSelection
@@ -117,7 +117,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * element. That is, create the instance of the class the isv supplied in
      * the extension point.
      * @return the new object
-     * @throws CoreException 
+     * @throws CoreException
      */
     public Object createExecutableExtension() throws CoreException {
         return WorkbenchPlugin.createExtension(configurationElement,
@@ -154,7 +154,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 
     /**
      * Answer the description parameter of this element
-     * 
+     *
      * @return java.lang.String
      */
     @Override
@@ -174,7 +174,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 				return null;
 			}
             imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    configurationElement.getNamespaceIdentifier(), iconName);    
+                    configurationElement.getNamespaceIdentifier(), iconName);
     	}
         return imageDescriptor;
     }
@@ -186,7 +186,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	public ImageDescriptor getImageDescriptor(Object element) {
         return getImageDescriptor();
     }
-    
+
     /**
      * Returns the name of this wizard element.
      */
@@ -212,7 +212,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * resource). If all elements in the initial selection can be converted to
      * resources then answer a new selection containing these resources;
      * otherwise answer an empty selection.
-     * 
+     *
      * @param originalSelection the original selection
      * @return the converted selection or an empty selection
      */
@@ -255,7 +255,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	public String getHelpHref() {
         return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_HREF);
     }
-	
+
 	@Override
 	public IWorkbenchWizard createWizard() throws CoreException {
 		return (IWorkbenchWizard) createExecutableExtension();
@@ -267,18 +267,18 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	}
 
 	@Override
-	public String getLabel() {		
+	public String getLabel() {
 		return getLabel(this);
 	}
-	
+
 	@Override
 	public IWizardCategory getCategory() {
 		return (IWizardCategory) getParent(this);
 	}
-	
+
 	/**
 	 * Return the collection.
-	 * 
+	 *
 	 * @return the collection
 	 * @since 3.1
 	 */
@@ -288,15 +288,15 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 
 	@Override
 	public String [] getTags() {
- 
+
         String flag = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PROJECT);
         if (Boolean.valueOf(flag).booleanValue()) {
         	return PROJECT_TAGS;
         }
-        
+
         return EMPTY_TAGS;
 	}
-	
+
 	@Override
 	public Object getParent(Object object) {
 		return parentCategory;
@@ -304,7 +304,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 
 	/**
 	 * Set the parent category.
-	 * 
+	 *
 	 * @param parent the parent category
 	 * @since 3.1
 	 */

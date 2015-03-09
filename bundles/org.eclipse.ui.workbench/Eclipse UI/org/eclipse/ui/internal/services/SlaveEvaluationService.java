@@ -23,7 +23,7 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class SlaveEvaluationService implements IEvaluationService {
 
@@ -56,7 +56,7 @@ public class SlaveEvaluationService implements IEvaluationService {
 		}
 		return ref;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IEvaluationService#addEvaluationReference(org.eclipse.ui.services.IEvaluationReference)
 	 */
@@ -127,7 +127,7 @@ public class SlaveEvaluationService implements IEvaluationService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override

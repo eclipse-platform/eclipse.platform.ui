@@ -38,10 +38,10 @@ import org.eclipse.ui.services.IDisposable;
  * We currently support a default image style (none) and an image style of
  * IMAGE_STYLE_TOOLBAR.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @since 3.4
  */
 public interface ICommandImageService extends IDisposable {
@@ -78,7 +78,7 @@ public interface ICommandImageService extends IDisposable {
 	/**
 	 * Retrieves the default image associated with the given command in the
 	 * default style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return An image appropriate for the given command; may be
@@ -89,10 +89,10 @@ public interface ICommandImageService extends IDisposable {
 	/**
 	 * Retrieves the image of the given type associated with the given command
 	 * in the default style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
-	 * 
+	 *
 	 * @param type
 	 *            The type of image to retrieve. This value must be one of the
 	 *            <code>TYPE</code> constants defined in this interface.
@@ -104,7 +104,7 @@ public interface ICommandImageService extends IDisposable {
 	/**
 	 * Retrieves the image of the given type associated with the given command
 	 * in the given style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @param type
@@ -121,7 +121,7 @@ public interface ICommandImageService extends IDisposable {
 	/**
 	 * Retrieves the default image associated with the given command in the
 	 * given style.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @param style

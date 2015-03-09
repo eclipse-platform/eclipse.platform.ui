@@ -25,17 +25,17 @@ import org.eclipse.ui.IWorkingSet;
  * </p>
  * @see org.eclipse.ui.IWorkingSetManager
  * @see org.eclipse.ui.dialogs.IWorkingSetPage
- * 
+ *
  * @since 3.1
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkingSetNewWizard extends IWizard {
-	
+
     /**
-     * Returns the new working set. Returns <code>null</code> if the wizard has 
+     * Returns the new working set. Returns <code>null</code> if the wizard has
      * been cancelled.
-     * 
-     * @return the new working set or <code>null</code> if the wizard has been 
+     *
+     * @return the new working set or <code>null</code> if the wizard has been
      * 	cancelled.
      */
     public IWorkingSet getSelection();

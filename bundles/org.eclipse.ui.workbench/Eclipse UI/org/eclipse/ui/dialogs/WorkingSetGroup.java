@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * Instances of this class provide a {@link WorkingSetConfigurationBlock}
  * wrapped with an SWT Group container.
- * 
+ *
  * @since 3.4
  */
 public final class WorkingSetGroup {
@@ -32,7 +32,7 @@ public final class WorkingSetGroup {
 
 	/**
 	 * Create a new instance of this class.
-	 * 
+	 *
 	 * @param composite
 	 *            parent composite
 	 * @param currentSelection
@@ -62,7 +62,7 @@ public final class WorkingSetGroup {
 	/**
 	 * Return the working sets selected by the contained
 	 * {@link WorkingSetConfigurationBlock}.
-	 * 
+	 *
 	 * @return the selected working sets
 	 */
 	public IWorkingSet[] getSelectedWorkingSets() {

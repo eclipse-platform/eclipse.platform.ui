@@ -52,7 +52,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
      * Provides the shell in which to open the property dialog.
      */
     private IShellProvider shellProvider;
-    
+
 	/**
 	 * The id of the page to open up on.
 	 */
@@ -62,7 +62,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	/**
 	 * Creates a new action for opening a property dialog on the elements from
 	 * the given selection provider.
-     * 
+     *
 	 * @param shell
 	 *            the shell in which the dialog will open
 	 * @param provider
@@ -74,11 +74,11 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	public PropertyDialogAction(Shell shell, ISelectionProvider provider) {
         this(new SameShellProvider(shell), provider);
 	}
-    
+
     /**
      * Creates a new action for opening a property dialog on the elements from
      * the given selection provider.
-     * 
+     *
      * @param shell
      *            provides the shell in which the dialog will open
      * @param provider
@@ -87,10 +87,10 @@ public class PropertyDialogAction extends SelectionProviderAction {
      * @since 3.1
      */
     public PropertyDialogAction(IShellProvider shell, ISelectionProvider provider) {
-        super(provider, WorkbenchMessages.PropertyDialog_text); 
+        super(provider, WorkbenchMessages.PropertyDialog_text);
         Assert.isNotNull(shell);
         this.shellProvider = shell;
-        setToolTipText(WorkbenchMessages.PropertyDialog_toolTip); 
+        setToolTipText(WorkbenchMessages.PropertyDialog_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
     }
@@ -98,7 +98,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	/**
 	 * Returns whether the provided selection has pages registered in the property
 	 * page manager.
-	 * 
+	 *
 	 * @param object
 	 * @return boolean
 	 */
@@ -116,7 +116,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * This method is generally too expensive to use when updating the enabled
 	 * state of the action on each selection change.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the selection is not empty and there are
 	 *         property pages for the selected element, and <code>false</code>
 	 *         otherwise
@@ -137,7 +137,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * This method is generally too expensive to use when updating the enabled
 	 * state of the action on each selection change.
 	 * </p>
-	 * 
+	 *
 	 * @param selection
 	 *            The selection to test
 	 * @return <code>true</code> if the selection is of not empty and there are
@@ -148,7 +148,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 		return !selection.isEmpty() && hasPropertyPagesFor(selection);
 	}
 
-	
+
 	@Override
 	public void run() {
 
@@ -161,7 +161,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	/**
 	 * Create the dialog for the receiver. If no pages are found, an informative
 	 * message dialog is presented instead.
-	 * 
+	 *
 	 * @return PreferenceDialog or <code>null</code> if no applicable pages
 	 *         are found.
 	 * @since 3.1
@@ -174,7 +174,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 				.createDialogOn(shellProvider.getShell(), initialPageId, getStructuredSelection());
 	}
 
-	
+
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(!selection.isEmpty());

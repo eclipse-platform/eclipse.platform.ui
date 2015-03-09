@@ -23,18 +23,18 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
  * WorkbenchActivityHelper. Much of the logic for what to display in the
  * preference page is bound to the API contracts in this class and these are no
  * longer suitable now that we have expression bound activities to consider.
- * 
+ *
  * <p>
  * These methods are the same as the originals except that activities with
  * expressions are not considered in any calculations.
  * </p>
- * 
+ *
  * <p>
  * See bug 229424 for details.
  * </p>
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public final class InternalActivityHelper {
 

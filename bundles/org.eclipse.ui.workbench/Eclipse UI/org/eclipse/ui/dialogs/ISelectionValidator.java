@@ -14,7 +14,7 @@ package org.eclipse.ui.dialogs;
  * For validating selections in some selection dialogs.
  * <p>
  * Clients should implement this interface to define specialized selection
- * validators. 
+ * validators.
  * </p>
  */
 public interface ISelectionValidator {

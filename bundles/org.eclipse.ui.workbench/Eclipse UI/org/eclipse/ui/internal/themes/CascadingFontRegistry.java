@@ -39,13 +39,13 @@ public class CascadingFontRegistry extends FontRegistry {
 			if (!hasOverrideFor(event.getProperty()))
             fireMappingChanged(event.getProperty(), event.getOldValue(), event
                     .getNewValue());
-			
+
         }
     };
 
     /**
      * Create a new instance of this class.
-     * 
+     *
      * @param parent the parent registry
      */
     public CascadingFontRegistry(FontRegistry parent) {
@@ -92,9 +92,9 @@ public class CascadingFontRegistry extends FontRegistry {
     }
 
     /**
-     * Returns whether this cascading registry has an override for the provided 
+     * Returns whether this cascading registry has an override for the provided
      * color key.
-     * 
+     *
      * @param fontKey the provided color key
      * @return hether this cascading registry has an override
      */

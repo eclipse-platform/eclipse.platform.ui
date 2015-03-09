@@ -27,14 +27,14 @@ import org.eclipse.ui.IWorkbenchWindow;
  * only implementation of this class in PluginActionSet.  So, it may
  * be useful to phase this interface out at some point.  PluginActionSet
  * provides a lazy load strategy, where the actions are declared in
- * XML and represented at runtime by a PluginAction.  
+ * XML and represented at runtime by a PluginAction.
  * </p>
  */
 public interface IActionSet {
     /**
      * Disposes of this action set.
      * <p>
-     * Implementation should remove any references to the window and action bars 
+     * Implementation should remove any references to the window and action bars
      * created in the <code>init</code>.
      * </p>
      * <p>

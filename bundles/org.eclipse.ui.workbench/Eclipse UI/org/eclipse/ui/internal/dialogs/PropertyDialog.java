@@ -39,7 +39,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Create a new property dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            the parent shell
 	 * @param propertyPageId
@@ -93,7 +93,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Returns the name of the given element(s). Prints at most 3 names.
-	 * 
+	 *
 	 * @param element
 	 *            the element / IStructuredSelection
 	 * @return the name of the element
@@ -125,7 +125,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Create an instance of the receiver.
-	 * 
+	 *
 	 * @param parentShell
 	 * @param mng
 	 * @param selection
@@ -138,7 +138,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Returns selection in the "Properties" action context.
-	 * 
+	 *
 	 * @return the selection
 	 */
 	public ISelection getSelection() {
@@ -147,7 +147,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Sets the selection that will be used to determine target object.
-	 * 
+	 *
 	 * @param newSelection
 	 *            the new selection
 	 */
@@ -173,9 +173,9 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 	/**
 	 * Return the contributionType (used by the IContributionService).
-	 * 
+	 *
 	 * Override this with a more specific contribution type as required.
-	 * 
+	 *
 	 * @return a string, the contributionType
 	 */
 	@Override
@@ -183,6 +183,6 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		return IContributionService.TYPE_PROPERTY;
 	}
 
-	
-	
+
+
 }

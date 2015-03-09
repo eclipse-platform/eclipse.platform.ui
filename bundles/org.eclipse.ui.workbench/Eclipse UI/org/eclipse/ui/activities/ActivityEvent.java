@@ -12,14 +12,14 @@
 package org.eclipse.ui.activities;
 
 /**
- * An instance of this class describes changes to an instance of 
- * <code>IActivity</code>.  This class does not give details as to the 
- * specifics of a change, only that the given property on the source object has 
+ * An instance of this class describes changes to an instance of
+ * <code>IActivity</code>.  This class does not give details as to the
+ * specifics of a change, only that the given property on the source object has
  * changed.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see IActivityListener#activityChanged(ActivityEvent)
  */
@@ -33,7 +33,7 @@ public final class ActivityEvent {
     private boolean definedChanged;
 
     private boolean enabledChanged;
-    
+
     private boolean defaultEnabledChanged;
 
     private boolean nameChanged;
@@ -43,7 +43,7 @@ public final class ActivityEvent {
     /**
      * Creates a new instance of this class. Since 3.1 this method will assume
      * that the default enabled state has not changed.
-     * 
+     *
      * @param activity
      *            the instance of the interface that changed.
      * @param activityRequirementBindingsChanged
@@ -66,20 +66,20 @@ public final class ActivityEvent {
             boolean activityPatternBindingsChanged, boolean definedChanged,
             boolean descriptionChanged, boolean enabledChanged,
             boolean nameChanged) {
-        
-        this(activity, 
+
+        this(activity,
                 activityRequirementBindingsChanged,
                 activityPatternBindingsChanged,
                 definedChanged,
                 descriptionChanged,
                 enabledChanged,
-                nameChanged, 
+                nameChanged,
                 false);
     }
 
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param activity
      *        the instance of the interface that changed.
      * @param activityRequirementBindingsChanged
@@ -94,7 +94,7 @@ public final class ActivityEvent {
      *      <code>true</code>, iff the enabled property changed.
      * @param nameChanged
      *        <code>true</code>, iff the name property changed.
-     * @param defaultEnabledChanged 
+     * @param defaultEnabledChanged
      * 		  <code>true</code>, iff the default enabled property changed.
      * @since 3.1
      */
@@ -118,10 +118,10 @@ public final class ActivityEvent {
         this.defaultEnabledChanged = defaultEnabledChanged;
     }
 
-    
+
     /**
      * Returns the instance of the interface that changed.
-     * 
+     *
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -131,7 +131,7 @@ public final class ActivityEvent {
 
     /**
      * Returns whether or not the defined property changed.
-     * 
+     *
      * @return <code>true</code>, iff the defined property changed.
      */
     public boolean hasDefinedChanged() {
@@ -140,16 +140,16 @@ public final class ActivityEvent {
 
     /**
      * Returns whether or not the enabled property changed.
-     * 
+     *
      * @return <code>true</code>, iff the enabled property changed.
      */
     public boolean hasEnabledChanged() {
         return enabledChanged;
     }
-    
+
     /**
      * Returns whether or not the default enabled property changed.
-     * 
+     *
      * @return <code>true</code>, iff the default enabled property changed.
      * @since 3.1
      */
@@ -159,7 +159,7 @@ public final class ActivityEvent {
 
     /**
      * Returns whether or not the name property changed.
-     * 
+     *
      * @return <code>true</code>, iff the name property changed.
      */
     public boolean hasNameChanged() {
@@ -168,7 +168,7 @@ public final class ActivityEvent {
 
     /**
      * Returns whether or not the description property changed.
-     * 
+     *
      * @return <code>true</code>, iff the description property changed.
      */
     public boolean hasDescriptionChanged() {
@@ -177,7 +177,7 @@ public final class ActivityEvent {
 
     /**
      * Returns whether or not the activityRequirementBindings property changed.
-     * 
+     *
      * @return <code>true</code>, iff the activityRequirementBindings property changed.
      */
     public boolean haveActivityRequirementBindingsChanged() {
@@ -186,7 +186,7 @@ public final class ActivityEvent {
 
     /**
      * Returns whether or not the activityPatternBindings property changed.
-     * 
+     *
      * @return <code>true</code>, iff the activityPatternBindings property changed.
      */
     public boolean haveActivityPatternBindingsChanged() {

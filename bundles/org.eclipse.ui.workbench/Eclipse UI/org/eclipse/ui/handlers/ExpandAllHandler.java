@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     
- *     @author Prakash G. R. 
+ *
+ *     @author Prakash G. R.
  ******************************************************************************/
 
 package org.eclipse.ui.handlers;
@@ -22,14 +22,14 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
  * Expand a tree viewer.
  * <p>
  * It can be used in a part's createPartControl(Composite) method:
- * 
+ *
  * <pre>
  * IHandlerService handlerService = (IHandlerService) getSite().getService(
  * 		IHandlerService.class);
  * expandHandler = new ExpandAllHandler(myViewer);
  * handlerService.activateHandler(ExpandAllHandler.COMMAND_ID, expandHandler);
  * </pre>
- * 
+ *
  * The part should dispose the handler in its own dispose() method. The part can
  * provide its own expand all handler if desired, or if it needs to delegate to
  * multiple tree viewers.
@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
  * <p>
  * <b>Note</b>: This class can be instantiated. It should not be subclasses.
  * </p>
- * 
+ *
  * @since 3.6
  */
 public class ExpandAllHandler extends AbstractHandler {
@@ -50,7 +50,7 @@ public class ExpandAllHandler extends AbstractHandler {
 
 	/**
 	 * Create the handler for this tree viewer.
-	 * 
+	 *
 	 * @param viewer
 	 *            The viewer to expand. Must not be <code>null</code>.
 	 */
@@ -61,7 +61,7 @@ public class ExpandAllHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class ExpandAllHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
 	 */
 	@Override

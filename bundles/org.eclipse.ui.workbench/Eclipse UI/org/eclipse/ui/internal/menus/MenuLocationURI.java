@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * The expected format for URI Strings managed by this class is:
  * </p><p>
- * "[scheme]:[path]?[query]" 
+ * "[scheme]:[path]?[query]"
  * </p><p>
  *  with the 'query' format being "[id1]=[val1]&[id2]=[val2]..."
  * </p>
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.util.Util;
 public class MenuLocationURI {
 
 	private String rawString;
-	
+
 	/**
 	 * @param uriDef
 	 */
@@ -66,7 +66,7 @@ public class MenuLocationURI {
 		String[] vals = Util.split(rawString, ':');
 		if (vals.length<2)
 			return null;
-		
+
 		// Now, trim off any query
 		vals = Util.split(vals[1], '?');
 		return vals.length==0?Util.ZERO_LENGTH_STRING:vals[0];

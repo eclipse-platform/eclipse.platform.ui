@@ -65,7 +65,7 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class LegacyHandlerService implements IHandlerService {
 
@@ -81,7 +81,7 @@ public class LegacyHandlerService implements IHandlerService {
 		private final String commandId;
 
 		/**
-		 * 
+		 *
 		 */
 		public HandlerSelectionFunction(String commandId) {
 			this.commandId = commandId;

@@ -34,14 +34,14 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
     public TableViewer wizardSelectionViewer;
 
     protected IStructuredSelection currentResourceSelection;
-    
+
     protected String triggerPointId;
 
     /**
      *	Create an instance of this class
      */
     public WorkbenchWizardSelectionPage(String name, IWorkbench aWorkbench,
-            IStructuredSelection currentSelection, AdaptableList elements, 
+            IStructuredSelection currentSelection, AdaptableList elements,
             String triggerPointId) {
         super(name);
         this.wizardElements = elements;
@@ -91,7 +91,7 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
     }
 
     @Override
-	public IWizardPage getNextPage() { 
+	public IWizardPage getNextPage() {
         ITriggerPoint triggerPoint = getWorkbench().getActivitySupport()
         .getTriggerPointManager().getTriggerPoint(triggerPointId);
         if (triggerPoint == null || WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelectedNode())) {

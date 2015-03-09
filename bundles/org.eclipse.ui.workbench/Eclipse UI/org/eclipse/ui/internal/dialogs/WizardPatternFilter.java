@@ -17,13 +17,13 @@ import org.eclipse.ui.dialogs.PatternFilter;
 /**
  * A class that handles filtering wizard node items based on a supplied matching
  * string and keywords
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class WizardPatternFilter extends PatternFilter {
 	/**
-	 * Create a new instance of a WizardPatternFilter 
+	 * Create a new instance of a WizardPatternFilter
 	 * @param isMatchItem
 	 */
 	public WizardPatternFilter() {
@@ -40,7 +40,7 @@ public class WizardPatternFilter extends PatternFilter {
 		if (element instanceof WizardCollectionElement) {
 			return false;
 		}
-		
+
 		if (element instanceof WorkbenchWizardElement) {
 			WorkbenchWizardElement desc = (WorkbenchWizardElement) element;
 			String text = desc.getLabel();

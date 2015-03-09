@@ -80,7 +80,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * A property to determine if the job was run in the dialog. Kept for
 	 * backwards compatability.
-	 * 
+	 *
 	 * @deprecated
 	 * @see IProgressConstants#PROPERTY_IN_DIALOG
 	 */
@@ -100,7 +100,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	//	list of IJobProgressManagerListener
 	private ListenerList listeners = new ListenerList();
-	
+
 	final IJobChangeListener changeListener;
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
@@ -144,7 +144,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Get the progress manager currently in use.
-	 * 
+	 *
 	 * @return JobProgressManager
 	 */
 	public static ProgressManager getInstance() {
@@ -179,7 +179,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/**
 		 * Create a monitor on the supplied job.
-		 * 
+		 *
 		 * @param newJob
 		 */
 		JobMonitor(Job newJob) {
@@ -188,7 +188,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/**
 		 * Add monitor as another monitor that
-		 * 
+		 *
 		 * @param monitor
 		 */
 		void addProgressListener(IProgressMonitorWithBlocking monitor) {
@@ -203,7 +203,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
 		 *      int)
 		 */
@@ -220,7 +220,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 		 */
 		@Override
@@ -236,7 +236,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		@Override
@@ -253,7 +253,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		@Override
@@ -268,7 +268,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		@Override
@@ -286,7 +286,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		@Override
@@ -308,7 +308,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		@Override
@@ -327,7 +327,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		@Override
@@ -337,7 +337,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 		 */
 		@Override
@@ -352,7 +352,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 		 */
 		@Override
@@ -411,13 +411,13 @@ public class ProgressManager extends ProgressProvider implements
 					StatusAdapterHelper.getInstance().clear();
 				}
 			}
-			
+
 		};
 	}
 
 	/**
 	 * Create and return the IJobChangeListener registered with the Job manager.
-	 * 
+	 *
 	 * @return the created IJobChangeListener
 	 */
 	private IJobChangeListener createChangeListener() {
@@ -425,7 +425,7 @@ public class ProgressManager extends ProgressProvider implements
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			@Override
@@ -443,7 +443,7 @@ public class ProgressManager extends ProgressProvider implements
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			@Override
@@ -499,7 +499,7 @@ public class ProgressManager extends ProgressProvider implements
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			@Override
@@ -513,7 +513,7 @@ public class ProgressManager extends ProgressProvider implements
 								ProgressMessages.ProgressManager_showInDialogName) {
 							/*
 							 * (non-Javadoc)
-							 * 
+							 *
 							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 							 */
 							@Override
@@ -532,7 +532,7 @@ public class ProgressManager extends ProgressProvider implements
 
 			/**
 			 * Update the listeners for the receiver for the event.
-			 * 
+			 *
 			 * @param event
 			 */
 			private void updateFor(IJobChangeEvent event) {
@@ -548,7 +548,7 @@ public class ProgressManager extends ProgressProvider implements
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#awake(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			@Override
@@ -558,7 +558,7 @@ public class ProgressManager extends ProgressProvider implements
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			@Override
@@ -573,7 +573,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * The job in JobInfo is now sleeping. Refresh it if we are showing it,
 	 * remove it if not.
-	 * 
+	 *
 	 * @param info
 	 */
 	protected void sleepJobInfo(JobInfo info) {
@@ -606,11 +606,11 @@ public class ProgressManager extends ProgressProvider implements
 	private void sleepGroup(GroupInfo group, JobInfo info) {
 		Object[] listenersArray = listeners.getListeners();
 		for (int i = 0; i < listenersArray.length; i++) {
-			
+
 			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
 			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
 				continue;
-	
+
 			if (listener.showsDebug() || group.isActive())
 				listener.refreshGroup(group);
 			else
@@ -620,7 +620,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Set up the image in the image regsitry.
-	 * 
+	 *
 	 * @param iconsRoot
 	 * @param fileName
 	 * @param key
@@ -634,7 +634,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
 	 */
 	@Override
@@ -644,7 +644,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#getDefaultMonitor()
 	 */
 	@Override
@@ -666,7 +666,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * Return a monitor for the job. Check if we cached a monitor for this job
 	 * previously for a long operation timeout check.
-	 * 
+	 *
 	 * @param job
 	 * @return IProgressMonitor
 	 */
@@ -678,7 +678,7 @@ public class ProgressManager extends ProgressProvider implements
 				monitor = new JobMonitor(job);
 				runnableMonitors.put(job, monitor);
 			}
-			
+
 			return monitor;
 		}
 
@@ -686,7 +686,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Add an IJobProgressManagerListener to listen to the changes.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void addListener(IJobProgressManagerListener listener) {
@@ -696,7 +696,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * Remove the supplied IJobProgressManagerListener from the list of
 	 * listeners.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void removeListener(IJobProgressManagerListener listener) {
@@ -705,7 +705,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Get the JobInfo for the job. If it does not exist create it.
-	 * 
+	 *
 	 * @param job
 	 * @return JobInfo
 	 */
@@ -721,7 +721,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * Return an existing job info for the given Job or <code>null</code> if
 	 * there isn't one.
-	 * 
+	 *
 	 * @param job
 	 * @return JobInfo
 	 */
@@ -731,7 +731,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
-	 * 
+	 *
 	 * @param info
 	 */
 	public void refreshJobInfo(JobInfo info) {
@@ -751,7 +751,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
-	 * 
+	 *
 	 * @param info
 	 */
 	public void refreshGroup(GroupInfo info) {
@@ -778,7 +778,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Refresh the content providers as a result of a deletion of info.
-	 * 
+	 *
 	 * @param info
 	 *            JobInfo
 	 */
@@ -799,7 +799,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Remove the group from the roots and inform the listeners.
-	 * 
+	 *
 	 * @param group
 	 *            GroupInfo
 	 */
@@ -813,7 +813,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Refresh the content providers as a result of an addition of info.
-	 * 
+	 *
 	 * @param info
 	 */
 	public void addJobInfo(JobInfo info) {
@@ -834,7 +834,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return whether or not this job is currently displayable.
-	 * 
+	 *
 	 * @param job
 	 * @param debug
 	 *            If the listener is in debug mode.
@@ -847,7 +847,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * Return whether or not we even display this job with debug mode set to
 	 * debug.
-	 * 
+	 *
 	 * @param job
 	 * @param debug
 	 * @return boolean
@@ -864,7 +864,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return whether or not this job is an infrastructure job.
-	 * 
+	 *
 	 * @param job
 	 * @return boolean <code>true</code> if it is never displayed.
 	 */
@@ -876,7 +876,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return the current job infos filtered on debug mode.
-	 * 
+	 *
 	 * @param debug
 	 * @return JobInfo[]
 	 */
@@ -898,7 +898,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return the current root elements filtered on the debug mode.
-	 * 
+	 *
 	 * @param debug
 	 * @return JobTreeElement[]
 	 */
@@ -926,7 +926,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return whether or not there are any jobs being displayed.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean hasJobInfos() {
@@ -941,7 +941,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Returns the image descriptor with the given relative path.
-	 * 
+	 *
 	 * @param source
 	 * @return Image
 	 */
@@ -952,7 +952,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Returns the image descriptor with the given relative path.
-	 * 
+	 *
 	 * @param fileSystemPath
 	 *            The URL for the file system to the image.
 	 * @param loader -
@@ -976,7 +976,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IProgressService#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	@Override
@@ -1016,7 +1016,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * Show the busy cursor while the runnable is running. Schedule a job to
 	 * replace it with a progress dialog.
-	 * 
+	 *
 	 * @param dialogWaitRunnable
 	 * @param dialog
 	 */
@@ -1034,7 +1034,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Schedule the job that will open the progress monitor dialog
-	 * 
+	 *
 	 * @param dialog
 	 *            the dialog to open
 	 */
@@ -1045,7 +1045,7 @@ public class ProgressManager extends ProgressProvider implements
 				ProgressMessages.ProgressManager_openJobName) {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			@Override
@@ -1073,7 +1073,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#createProgressGroup()
 	 */
 	@Override
@@ -1083,7 +1083,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job,
 	 *      org.eclipse.core.runtime.IProgressMonitor, int)
 	 */
@@ -1103,7 +1103,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Add the listener to the family.
-	 * 
+	 *
 	 * @param family
 	 * @param listener
 	 */
@@ -1120,7 +1120,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Remove the listener from all families.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void removeListener(IJobBusyListener listener) {
@@ -1142,7 +1142,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return the listeners for the job.
-	 * 
+	 *
 	 * @param job
 	 * @return Collection of IJobBusyListener
 	 */
@@ -1172,7 +1172,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
 	 *      org.eclipse.core.runtime.jobs.Job)
 	 */
@@ -1189,7 +1189,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean,
 	 *      org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
@@ -1210,7 +1210,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableWithProgress,
 	 *      org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
@@ -1244,7 +1244,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IProgressService#getLongOperationTime()
 	 */
 	@Override
@@ -1254,7 +1254,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IProgressService#registerIconForFamily(org.eclipse.jface.resource.ImageDescriptor,
 	 *      java.lang.Object)
 	 */
@@ -1273,7 +1273,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IProgressService#getIconFor(org.eclipse.core.runtime.jobs.Job)
 	 */
 	@Override
@@ -1292,7 +1292,7 @@ public class ProgressManager extends ProgressProvider implements
 	/**
 	 * Iterate through all of the windows and set them to be disabled or enabled
 	 * as appropriate.'
-	 * 
+	 *
 	 * @param active
 	 *            The set the windows will be set to.
 	 */
@@ -1317,7 +1317,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Check to see if there are any stale jobs we have not cleared out.
-	 * 
+	 *
 	 * @return <code>true</code> if anything was pruned
 	 */
 	private boolean pruneStaleJobs() {
@@ -1338,7 +1338,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Check the if the job should be removed from the list as it may be stale.
-	 * 
+	 *
 	 * @param job
 	 * @return boolean
 	 */
@@ -1352,7 +1352,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Return whether or not dialogs should be run in the background
-	 * 
+	 *
 	 * @return <code>true</code> if the dialog should not be shown.
 	 */
 	private boolean shouldRunInBackground() {
@@ -1362,7 +1362,7 @@ public class ProgressManager extends ProgressProvider implements
 
 	/**
 	 * Set whether or not the ProgressViewUpdater should show system jobs.
-	 * 
+	 *
 	 * @param showSystem
 	 */
 	public void setShowSystemJobs(boolean showSystem) {
@@ -1409,7 +1409,7 @@ public class ProgressManager extends ProgressProvider implements
 		/**
 		 * Get a progress monitor that forwards to an event loop monitor.
 		 * Override #setBlocked() so that we always open the blocked dialog.
-		 * 
+		 *
 		 * @return the monitor on the event loop
 		 */
 		private IProgressMonitor getEventLoopMonitor() {

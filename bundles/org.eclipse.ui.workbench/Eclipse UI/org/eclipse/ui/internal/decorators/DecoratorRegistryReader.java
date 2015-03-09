@@ -45,17 +45,17 @@ public class DecoratorRegistryReader extends RegistryReader {
 	public boolean readElement(IConfigurationElement element) {
 
     	DecoratorDefinition desc = getDecoratorDefinition(element);
-    	
+
     	if (desc == null) {
 			return false;
 		}
-    	
+
         values.add(desc);
 
         return true;
 
     }
-    
+
     /**
      * Return the DecoratorDefinition defined by element or <code>null</code>
      * if it cannot be determined.
@@ -84,13 +84,13 @@ public class DecoratorRegistryReader extends RegistryReader {
             }
 
             return new LightweightDecoratorDefinition(id, element);
-        } 
+        }
         return new FullDecoratorDefinition(id, element);
-        
+
     }
 
     /**
-     * Read the decorator extensions within a registry and set 
+     * Read the decorator extensions within a registry and set
      * up the registry values.
      */
     Collection readRegistry(IExtensionRegistry in) {
@@ -103,7 +103,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 
     /**
      * Return the values.
-     * 
+     *
      * @return the values
      */
     public Collection getValues() {

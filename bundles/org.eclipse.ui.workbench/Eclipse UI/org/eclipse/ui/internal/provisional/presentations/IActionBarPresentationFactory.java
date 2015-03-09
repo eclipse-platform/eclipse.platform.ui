@@ -25,28 +25,28 @@ import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IActionBarPresentationFactory {
-	
+
 	/**
 	 * Creates the cool bar manager for the window's tool bar area.
-	 * 
+	 *
 	 * @return the cool bar manager
 	 */
 	public ICoolBarManager2 createCoolBarManager();
 
 	/**
 	 * Creates a tool bar manager for window's tool bar area.
-	 * 
+	 *
 	 * @return the tool bar manager
 	 */
 	public IToolBarManager2 createToolBarManager();
 
 	/**
 	 * Creates a tool bar manager for a view's tool bar.
-	 * 
+	 *
 	 * @return the tool bar manager
 	 */
 	public IToolBarManager2 createViewToolBarManager();
@@ -54,7 +54,7 @@ public interface IActionBarPresentationFactory {
 	/**
 	 * Creates a toolbar contribution item for a window toolbar manager to be
 	 * added to the window's cool bar.
-	 * 
+	 *
 	 * @param toolBarManager
 	 *            the tool bar manager
 	 * @param id

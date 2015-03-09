@@ -135,7 +135,7 @@ public final class ConfigurationElementMemento implements IMemento {
 	public String getTextData() {
         return configurationElement.getValue();
     }
-    
+
     @Override
 	public String[] getAttributeKeys() {
     	return configurationElement.getAttributeNames();
@@ -156,7 +156,7 @@ public final class ConfigurationElementMemento implements IMemento {
     @Override
 	public void putString(String key, String value) {
     }
-    
+
     @Override
 	public void putBoolean(String key, boolean value) {
     }
@@ -164,11 +164,11 @@ public final class ConfigurationElementMemento implements IMemento {
     @Override
 	public void putTextData(String data) {
     }
-    
+
     public String getContributorName() {
     	return configurationElement.getContributor().getName();
     }
-    
+
     public String getExtensionID() {
     	return configurationElement.getDeclaringExtension().getUniqueIdentifier();
     }

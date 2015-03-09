@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TabFolder;
 /**
  * Abstract superclass of all multi-page workbench editors.
  * <p>
- * This class should be subclassed by clients wishing to define new 
+ * This class should be subclassed by clients wishing to define new
  * multi-page editor.
  * </p>
  * <p>
@@ -41,9 +41,9 @@ import org.eclipse.swt.widgets.TabFolder;
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
  * <ul>
- *   <li><code>setInitializationData</code> - extend to provide additional 
+ *   <li><code>setInitializationData</code> - extend to provide additional
  *       initialization when editor extension is instantiated</li>
- *   <li><code>init(IEditorSite,IEditorInput)</code> - extend to provide 
+ *   <li><code>init(IEditorSite,IEditorInput)</code> - extend to provide
  *       additional initialization when editor is assigned its site</li>
  *   <li><code>isSaveOnCloseNeeded</code> - override to control saving</li>
  *   <li><code>isSaveAsAllowed</code> - override to control saving</li>
@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.TabFolder;
  *       adaptable</li>
  * </ul>
  * </p>
- * 
+ *
  * @deprecated Use the class <code>MultiPageEditorPart</code> instead
  */
 @Deprecated
@@ -65,7 +65,7 @@ public abstract class MultiPageEditor extends EditorPart {
 
     /**
      * Creates a new multi-page editor.
-     * 
+     *
      * @deprecated Use the class <code>MultiPageEditorPart</code> instead
      */
     @Deprecated
@@ -75,7 +75,7 @@ public abstract class MultiPageEditor extends EditorPart {
 
     /**
      * Adds a synchronized pagebook to this editor.  Once added, the
-     * visible page of the pagebook and the visible page of the editor 
+     * visible page of the pagebook and the visible page of the editor
      * will be synchronized.
      *
      * @param pageBook the pagebook to add
@@ -129,9 +129,9 @@ public abstract class MultiPageEditor extends EditorPart {
     }
 
     /**
-     * Removes a synchronized pagebook from this editor. 
+     * Removes a synchronized pagebook from this editor.
      *
-     * @param pageBook the pagebook to remove 
+     * @param pageBook the pagebook to remove
      * @see #addSyncroPageBook(PageBook)
      */
     protected void removeSyncroPageBook(PageBook pageBook) {

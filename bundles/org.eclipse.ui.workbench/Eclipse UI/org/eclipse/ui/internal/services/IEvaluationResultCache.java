@@ -23,7 +23,7 @@ import org.eclipse.ui.ISources;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * 
+ *
  * @since 3.2
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.ISourceProvider
@@ -41,7 +41,7 @@ public interface IEvaluationResultCache {
 	/**
 	 * Returns the expression controlling the activation or visibility of this
 	 * item.
-	 * 
+	 *
 	 * @return The expression associated with this item; may be
 	 *         <code>null</code>.
 	 */
@@ -49,7 +49,7 @@ public interface IEvaluationResultCache {
 
 	/**
 	 * Returns the priority that has been given to this expression.
-	 * 
+	 *
 	 * @return The priority.
 	 * @see ISources
 	 */
@@ -59,7 +59,7 @@ public interface IEvaluationResultCache {
 	 * Evaluates the expression -- given the current state of the workbench.
 	 * This method should cache its computation. The cache will be cleared by a
 	 * call to <code>clearResult</code>.
-	 * 
+	 *
 	 * @param context
 	 *            The context in which this state should be evaluated; must not
 	 *            be <code>null</code>.
@@ -71,7 +71,7 @@ public interface IEvaluationResultCache {
 	/**
 	 * Forces the cached result to be a particular value. This will <b>not</b>
 	 * notify any users of the cache that it has changed.
-	 * 
+	 *
 	 * @param result
 	 *            The cached result to use.
 	 * @since 3.3

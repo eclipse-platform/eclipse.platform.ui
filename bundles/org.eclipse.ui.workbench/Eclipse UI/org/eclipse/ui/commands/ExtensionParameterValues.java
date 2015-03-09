@@ -42,9 +42,9 @@ import org.eclipse.core.runtime.IExecutableExtension;
  *     					&lt;parameter name="%parameterName3" value="parameterValue3" /&gt;
  *     				&lt;/values&gt;
  *          &lt;/parameter&gt;
- *     &lt;/command&gt; 
+ *     &lt;/command&gt;
  * </code></pre></p>
- * 
+ *
  * @since 3.1
  */
 public final class ExtensionParameterValues implements IParameterValues,

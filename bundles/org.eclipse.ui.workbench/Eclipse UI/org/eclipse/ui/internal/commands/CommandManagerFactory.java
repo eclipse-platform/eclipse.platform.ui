@@ -20,14 +20,14 @@ import org.eclipse.jface.bindings.BindingManager;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class CommandManagerFactory {
 
 	/**
 	 * Creates a new instance of <code>IMutableCommandManager</code>.
-	 * 
+	 *
 	 * @param bindingManager
 	 *            The binding manager providing support for the command manager;
 	 *            must not be <code>null</code>.

@@ -23,7 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Describes an introduction extension.
- * 
+ *
  * @since 3.0
  */
 public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
@@ -38,7 +38,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      */
     public IntroDescriptor(IConfigurationElement configElement)
             throws CoreException {
-    	element = configElement;  
+    	element = configElement;
 
     	if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) == null) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
@@ -55,7 +55,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	public IIntroPart createIntro() throws CoreException {
     	return (IIntroPart) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
     }
-    
+
     public IntroContentDetector getIntroContentDetector() throws CoreException {
     	if (element.getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR) == null) {
     		return null;
@@ -67,7 +67,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IIntroDescriptor#getId()
      */
     @Override
-	public String getId() {    	
+	public String getId() {
         return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
@@ -78,12 +78,12 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	public ImageDescriptor getImageDescriptor() {
         if (imageDescriptor != null) {
 			return imageDescriptor;
-		}        
+		}
 		String iconName = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (iconName == null) {
 			return null;
 		}
-        
+
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element
                 .getNamespace(), iconName);
         return imageDescriptor;
@@ -104,10 +104,10 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	public String getPluginId() {
         return element.getNamespace();
     }
-    
+
     /**
      * Returns the configuration element.
-     * 
+     *
      * @return the configuration element
      * @since 3.1
      */

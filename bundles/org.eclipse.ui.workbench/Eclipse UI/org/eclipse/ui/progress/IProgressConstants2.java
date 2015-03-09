@@ -21,11 +21,11 @@ import org.eclipse.ui.progress.IProgressConstants;
  * The constants define property keys that are used to associate UI related
  * information with Jobs (<code>org.eclipse.core.runtime.jobs.Job</code>). This
  * class is a superset of all previously defined progress constants.
- * 
+ *
  * @see org.eclipse.core.runtime.jobs.Job#setProperty
  * @see IProgressConstants
  * @since 3.6
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProgressConstants2 extends IProgressConstants {
@@ -45,7 +45,7 @@ public interface IProgressConstants2 extends IProgressConstants {
 	 * Note: Only one of <code>ACTION_PROPERTY</code> or
 	 * <code>COMMAND_PROPERTY</code> should be used
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.ParameterizedCommand
 	 **/
 	public static final QualifiedName COMMAND_PROPERTY = new QualifiedName(

@@ -40,7 +40,7 @@ public class PartListenerList2 extends EventManager {
 
     /**
      * Calls a part listener with associated performance event instrumentation
-     * 
+     *
      * @param runnable
      * @param listener
      * @param ref
@@ -203,7 +203,7 @@ public class PartListenerList2 extends EventManager {
             }, l, ref, "inputChanged::"); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Removes an IPartListener from the part service.
      */

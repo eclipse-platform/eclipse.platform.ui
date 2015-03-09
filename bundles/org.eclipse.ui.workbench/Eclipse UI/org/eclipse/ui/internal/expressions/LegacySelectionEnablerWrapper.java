@@ -30,7 +30,7 @@ import org.eclipse.ui.SelectionEnabler;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class LegacySelectionEnablerWrapper extends
@@ -49,7 +49,7 @@ public final class LegacySelectionEnablerWrapper extends
 
 	/**
 	 * Constructs a new instance of <code>SelectionEnablerExpression</code>.
-	 * 
+	 *
 	 * @param enabler
 	 *            The enabler; must not be <code>null</code>.
 	 * @param window

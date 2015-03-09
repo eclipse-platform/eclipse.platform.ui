@@ -19,7 +19,7 @@ import java.util.Set;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,7 +28,7 @@ public interface IActivityManager {
     /**
      * Registers an instance of <code>IActivityManagerListener</code> to
      * listen for changes to properties of this instance.
-     * 
+     *
      * @param activityManagerListener
      *            the instance to register. Must not be <code>null</code>.
      *            If an attempt is made to register an instance which is
@@ -40,7 +40,7 @@ public interface IActivityManager {
 
     /**
      * Returns an instance of <code>IActivity</code> given an identifier.
-     * 
+     *
      * @param activityId
      *            an identifier. Must not be <code>null</code>
      * @return an instance of <code>IActivity</code>.
@@ -49,7 +49,7 @@ public interface IActivityManager {
 
     /**
      * Returns an instance of <code>ICategory</code> given an identifier.
-     * 
+     *
      * @param categoryId
      *            an identifier. Must not be <code>null</code>
      * @return an instance of <code>ICategory</code>.
@@ -62,7 +62,7 @@ public interface IActivityManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to defined activities. This set may be
      *         empty, but is guaranteed not to be <code>null</code>. If this
      *         set is not empty, it is guaranteed to only contain instances of
@@ -76,7 +76,7 @@ public interface IActivityManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to defined categories. This set may be
      *         empty, but is guaranteed not to be <code>null</code>. If this
      *         set is not empty, it is guaranteed to only contain instances of
@@ -90,7 +90,7 @@ public interface IActivityManager {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the set of identifiers to enabled activities. This set may be
      *         empty, but is guaranteed not to be <code>null</code>. If this
      *         set is not empty, it is guaranteed to only contain instances of
@@ -100,7 +100,7 @@ public interface IActivityManager {
 
     /**
      * Returns an instance of <code>IIdentifier</code> given an identifier.
-     * 
+     *
      * @param identifierId
      *            an identifier. Must not be <code>null</code>
      * @return an instance of <code>IIdentifier</code>.
@@ -110,7 +110,7 @@ public interface IActivityManager {
     /**
      * Removes an instance of <code>IActivityManagerListener</code>
      * listening for changes to properties of this instance.
-     * 
+     *
      * @param activityManagerListener
      *            the instance to remove. Must not be <code>null</code>.
      *            If an attempt is made to remove an instance which is not

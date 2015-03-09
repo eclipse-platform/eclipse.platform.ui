@@ -42,8 +42,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * navigation history can hold on to quite a few inputs (i.e., the default is
  * fifty). The actual data model should probably not be held in the input.
  * </p>
- * 
- * 
+ *
+ *
  * @see org.eclipse.ui.IEditorPart
  * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
  * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
@@ -56,7 +56,7 @@ public interface IEditorInput extends IAdaptable {
 	 * appear in the "File Most Recently Used" menu. An editor input will appear
 	 * in the list until the return value of <code>exists</code> becomes
 	 * <code>false</code> or it drops off the bottom of the list.
-	 * 
+	 *
 	 * @return <code>true</code> if the editor input exists;
 	 *         <code>false</code> otherwise
 	 */
@@ -64,7 +64,7 @@ public interface IEditorInput extends IAdaptable {
 
 	/**
 	 * Returns the image descriptor for this input.
-	 * 
+	 *
 	 * <p>
 	 * Note: although a null return value has never been permitted from this
 	 * method, there are many known buggy implementations that return null.
@@ -75,7 +75,7 @@ public interface IEditorInput extends IAdaptable {
 	 * from this method should pick some other default return value (such as
 	 * ImageDescriptor.getMissingImageDescriptor()).
 	 * </p>
-	 * 
+	 *
 	 * @return the image descriptor for this input; may be <code>null</code> if
 	 * there is no image.
 	 */
@@ -86,7 +86,7 @@ public interface IEditorInput extends IAdaptable {
 	 * <p>
 	 * For instance, when the input is from a file, the return value would
 	 * ordinarily be just the file name.
-	 * 
+	 *
 	 * @return the name string; never <code>null</code>;
 	 */
 	public String getName();
@@ -94,7 +94,7 @@ public interface IEditorInput extends IAdaptable {
 	/**
 	 * Returns an object that can be used to save the state of this editor
 	 * input.
-	 * 
+	 *
 	 * @return the persistable element, or <code>null</code> if this editor
 	 *         input cannot be persisted
 	 */
@@ -106,7 +106,7 @@ public interface IEditorInput extends IAdaptable {
 	 * MyClass.java in folder X and MyClass.java in folder Y. The format of the
 	 * text varies between input types.
 	 * </p>
-	 * 
+	 *
 	 * @return the tool tip text; never <code>null</code>.
 	 */
 	public String getToolTipText();

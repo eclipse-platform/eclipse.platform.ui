@@ -45,7 +45,7 @@ public class AboutUtils {
 
 	/**
 	 * Scan the contents of the about text
-	 * 
+	 *
 	 * @param s
 	 * @return
 	 */
@@ -110,7 +110,7 @@ public class AboutUtils {
 	 * Open a browser with the argument title on the argument url. If the url
 	 * refers to a resource within a bundle, then a temp copy of the file will
 	 * be extracted and opened.
-	 * 
+	 *
 	 * @see <code>Platform.asLocalUrl</code>
 	 * @param url
 	 *            The target url to be displayed, null will be safely ignored
@@ -160,7 +160,7 @@ public class AboutUtils {
 	 * This method encodes the url, removes the spaces from the url and replaces
 	 * the same with <code>"%20"</code>. This method is required to fix Bug
 	 * 77840.
-	 * 
+	 *
 	 * @since 3.0.2
 	 */
 	private static String urlEncodeForSpaces(char[] input) {
@@ -226,7 +226,7 @@ public class AboutUtils {
 
 	/**
 	 * Returns a copy of the given file to be used for display in a browser.
-	 * 
+	 *
 	 * @return the file, or <code>null</code>
 	 */
 	private static File makeDisplayCopy(File file) {

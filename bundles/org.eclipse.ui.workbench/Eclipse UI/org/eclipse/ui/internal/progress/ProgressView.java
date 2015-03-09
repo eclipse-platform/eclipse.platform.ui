@@ -56,7 +56,7 @@ public class ProgressView extends ViewPart {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.RESPONSIVE_UI);
-		
+
 		initContentProvider();
 		createClearAllAction();
 		createCancelAction();
@@ -126,7 +126,7 @@ public class ProgressView extends ViewPart {
 	/**
 	 * Return the selected objects. If any of the selections are not JobInfos or
 	 * there is no selection then return null.
-	 * 
+	 *
 	 * @return JobInfo[] or <code>null</code>.
 	 */
 	private IStructuredSelection getSelection() {
@@ -145,7 +145,7 @@ public class ProgressView extends ViewPart {
 	/**
 	 * Get the currently selected job info. Only return it if it is the only
 	 * item selected and it is a JobInfo.
-	 * 
+	 *
 	 * @return JobInfo
 	 */
 	JobInfo getSelectedInfo() {

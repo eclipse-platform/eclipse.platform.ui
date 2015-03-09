@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.services.IEvaluationResultCache;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.ISourceProvider
@@ -36,7 +36,7 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 * any. This method is only intended for internal use. It provides a
 	 * mechanism by which <code>ISourceProvider</code> events can invalidate
 	 * state on a <code>IContextActivation</code> instance.
-	 * 
+	 *
 	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
 	@Deprecated
@@ -44,7 +44,7 @@ public interface IContextActivation extends IEvaluationResultCache {
 
 	/**
 	 * Returns the identifier of the context that is being activated.
-	 * 
+	 *
 	 * @return The context identifier; never <code>null</code>.
 	 */
 	public String getContextId();
@@ -53,7 +53,7 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 * Returns the context service from which this activation was requested.
 	 * This is used to ensure that an activation can only be retracted from the
 	 * same service which issued it.
-	 * 
+	 *
 	 * @return The context service; never <code>null</code>.
 	 */
 	public IContextService getContextService();
@@ -62,7 +62,7 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 * Returns whether this context activation is currently active -- given the
 	 * current state of the workbench. This method should cache its computation.
 	 * The cache will be cleared by a call to <code>clearActive</code>.
-	 * 
+	 *
 	 * @param context
 	 *            The context in which this state should be evaluated; must not
 	 *            be <code>null</code>.

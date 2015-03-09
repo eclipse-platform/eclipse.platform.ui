@@ -13,15 +13,15 @@ package org.eclipse.ui;
 
 /**
  * An editor is a visual component within a workbench page. It is
- * typically used to edit or browse a document or input object. The input 
- * is identified using an <code>IEditorInput</code>.  Modifications made 
- * in an editor part follow an open-save-close lifecycle model (in contrast 
- * to a view part, where modifications are saved to the workbench 
+ * typically used to edit or browse a document or input object. The input
+ * is identified using an <code>IEditorInput</code>.  Modifications made
+ * in an editor part follow an open-save-close lifecycle model (in contrast
+ * to a view part, where modifications are saved to the workbench
  * immediately).
  * <p>
  * An editor is document or input-centric.  Each editor has an input, and only
- * one editor can exist for each editor input within a page.  This policy has 
- * been designed to simplify part management.  
+ * one editor can exist for each editor input within a page.  This policy has
+ * been designed to simplify part management.
  * </p><p>
  * An editor should be used in place of a view whenever more than one instance
  * of a document type can exist.
@@ -33,7 +33,7 @@ package org.eclipse.ui;
  * An editor part is added to the workbench in two stages:
  * <ol>
  * 	<li>An editor extension is contributed to the workbench registry. This
- *    extension defines the extension id, extension class, and the file 
+ *    extension defines the extension id, extension class, and the file
  *    extensions which are supported by the editor.</li>
  *  <li>An editor part based upon the extension is created and added to the
  *    workbench when the user opens a file with one of the supported file
@@ -61,7 +61,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
     public static final int PROP_INPUT = IWorkbenchPartConstants.PROP_INPUT;
 
     /**
-     * Returns the input for this editor.  If this value changes the part must 
+     * Returns the input for this editor.  If this value changes the part must
      * fire a property listener event with <code>PROP_INPUT</code>.
      *
      * @return the editor input
@@ -69,14 +69,14 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
     public IEditorInput getEditorInput();
 
     /**
-     * Returns the site for this editor. 
+     * Returns the site for this editor.
      * This method is equivalent to <code>(IEditorSite) getSite()</code>.
-     * <p>  
-     * The site can be <code>null</code> while the editor is being initialized. 
+     * <p>
+     * The site can be <code>null</code> while the editor is being initialized.
      * After the initialization is complete, this value must be non-<code>null</code>
      * for the remainder of the editor's life cycle.
      * </p>
-     * 
+     *
      * @return the editor site; this value may be <code>null</code> if the editor
      *         has not yet been initialized
      */
@@ -86,8 +86,8 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
      * Initializes this editor with the given editor site and input.
      * <p>
      * This method is automatically called shortly after the part is instantiated.
-     * It marks the start of the part's lifecycle. The 
-     * {@link IWorkbenchPart#dispose IWorkbenchPart.dispose} method will be called 
+     * It marks the start of the part's lifecycle. The
+     * {@link IWorkbenchPart#dispose IWorkbenchPart.dispose} method will be called
      * automically at the end of the lifecycle. Clients must not call this method.
      * </p><p>
      * Implementors of this method must examine the editor input object type to

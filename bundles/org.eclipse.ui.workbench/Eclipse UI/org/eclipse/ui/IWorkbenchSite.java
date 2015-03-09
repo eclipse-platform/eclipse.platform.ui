@@ -40,7 +40,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.IWorkbenchPartSite
  * @see org.eclipse.ui.part.IPageSite
  * @since 2.0
@@ -51,14 +51,14 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 
 	/**
 	 * Returns the page containing this workbench site.
-	 * 
+	 *
 	 * @return the page containing this workbench site
 	 */
 	public IWorkbenchPage getPage();
 
 	/**
 	 * Returns the selection provider for this workbench site.
-	 * 
+	 *
 	 * @return the selection provider, or <code>null</code> if none
 	 */
 	public ISelectionProvider getSelectionProvider();
@@ -67,12 +67,12 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 	 * Returns the shell for this workbench site. Not intended to be called from
 	 * outside the UI thread. Clients should call IWorkbench.getDisplay() to
 	 * gain access to the display rather than calling getShell().getDisplay().
-	 * 
+	 *
 	 * <p>
 	 * For compatibility, this method will not throw an exception if called from
 	 * outside the UI thread, but the returned Shell may be wrong.
 	 * </p>
-	 * 
+	 *
 	 * @return the shell for this workbench site
 	 */
 	@Override
@@ -80,14 +80,14 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 
 	/**
 	 * Returns the workbench window containing this workbench site.
-	 * 
+	 *
 	 * @return the workbench window containing this workbench site
 	 */
 	public IWorkbenchWindow getWorkbenchWindow();
 
 	/**
 	 * Sets the selection provider for this workbench site.
-	 * 
+	 *
 	 * @param provider
 	 *            the selection provider, or <code>null</code> to clear it
 	 */

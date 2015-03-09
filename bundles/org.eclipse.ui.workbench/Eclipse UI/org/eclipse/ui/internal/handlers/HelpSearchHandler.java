@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @author Prakash G.R.
  * @since 3.7
- * 
+ *
  */
 public class HelpSearchHandler extends AbstractHandler {
 

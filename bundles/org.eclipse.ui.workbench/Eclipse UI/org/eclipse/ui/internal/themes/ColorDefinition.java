@@ -20,9 +20,9 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.themes.ColorUtil;
 
 /**
- * A <code>ColorDefiniton </code> is the representation of the extensions 
+ * A <code>ColorDefiniton </code> is the representation of the extensions
  * defined by the <code>org.eclipse.ui.colorDefinitions</code> extension point.
- * 
+ *
  *  @since 3.0
  */
 public class ColorDefinition extends ThemeElementDefinition implements IPluginContribution,
@@ -45,15 +45,15 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param label the label for this definition
      * @param id the identifier for this definition
-     * @param defaultsTo the id of a definition that this definition will 
+     * @param defaultsTo the id of a definition that this definition will
      * 		default to.
-     * @param value the default value of this definition, either in the form 
-     * rrr,ggg,bbb or the name of an SWT color constant. 
+     * @param value the default value of this definition, either in the form
+     * rrr,ggg,bbb or the name of an SWT color constant.
      * @param description the description for this definition.
-     * @param pluginId the identifier of the plugin that contributed this 
+     * @param pluginId the identifier of the plugin that contributed this
      * 		definition.
      */
     public ColorDefinition(String label, String id, String defaultsTo,
@@ -68,9 +68,9 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 
     /**
      * Create a new instance of the receiver.
-     * 
-     * @param original the original definition.  This will be used to populate 
-     * all fields except defaultsTo and value.  defaultsTo will always be 
+     *
+     * @param original the original definition.  This will be used to populate
+     * all fields except defaultsTo and value.  defaultsTo will always be
      * <code>null</code>.
      * @param value the RGB value
      */
@@ -107,7 +107,7 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
     }
 
     /**
-     * @return the value. Any SWT constants  supplied to the constructor will be 
+     * @return the value. Any SWT constants  supplied to the constructor will be
      * evaluated and converted into their RGB value.
      */
     @Override
@@ -133,7 +133,7 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
     @Override
@@ -148,7 +148,7 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 	public boolean isEditable() {
         return isEditable;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -159,7 +159,7 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -170,7 +170,7 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.internal.css.swt.definition.
 	 * IThemeElementDefinitionOverridable#setValue(java.lang.Object)
 	 */

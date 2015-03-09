@@ -29,7 +29,7 @@ import org.osgi.service.prefs.Preferences;
  * Note: Working copy nodes do not fire node change events.
  * </p>
  * <p>
- * Note: Preference change listeners registered on this node will only receive 
+ * Note: Preference change listeners registered on this node will only receive
  * events from this node and not events based on the original backing node.
  * </p>
  * @since 3.1

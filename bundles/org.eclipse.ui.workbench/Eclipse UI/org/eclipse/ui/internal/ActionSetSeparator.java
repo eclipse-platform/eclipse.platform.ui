@@ -60,8 +60,8 @@ public class ActionSetSeparator extends ContributionItem implements
         return actionSetId;
     }
 
-    /** 
-     * The <code>Separator</code> implementation of this <code>IContributionItem</code> 
+    /**
+     * The <code>Separator</code> implementation of this <code>IContributionItem</code>
      * method returns <code>true</code>
      */
     @Override

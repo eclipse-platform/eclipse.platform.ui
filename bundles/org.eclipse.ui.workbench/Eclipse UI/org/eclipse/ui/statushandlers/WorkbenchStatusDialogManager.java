@@ -38,32 +38,32 @@ import org.eclipse.ui.progress.IProgressConstants;
  * {@link WorkbenchStatusDialogManager#enableDefaultSupportArea(boolean)} is
  * invoked.
  * </p>
- * 
+ *
  * <p>
  * The default details area can be replaced using
  * {@link WorkbenchStatusDialogManager#setDetailsAreaProvider(AbstractStatusAreaProvider)}
  * </p>
- * 
+ *
  * <p>
  * The default support area can be replaced using
  * {@link WorkbenchStatusDialogManager#setSupportAreaProvider(AbstractStatusAreaProvider)}
  * or {@link Policy#setErrorSupportProvider(ErrorSupportProvider)}.
  * </p>
- * 
+ *
  * <p>
  * The manager can switch from a non-modal dialog to a modal dialog. See
  * {@link #addStatusAdapter(StatusAdapter, boolean)}
  * </p>
- * 
+ *
  * @see Policy#setErrorSupportProvider(ErrorSupportProvider)
  * @see ErrorSupportProvider
  * @see AbstractStatusAreaProvider
- * 
+ *
  * @since 3.4
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkbenchStatusDialogManager {
-	
+
 	static final QualifiedName HINT = new QualifiedName(
 			IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
 
@@ -71,21 +71,21 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * Creates workbench status dialog.
-	 * 
+	 *
 	 * @param displayMask
 	 *            the mask used to filter the handled <code>StatusAdapter</code>
 	 *            objects, the mask is a logical sum of status severities
 	 * @param dialogTitle
 	 *            the title of the dialog. If null, than default will be used.
 	 */
-	
+
 	public WorkbenchStatusDialogManager(int displayMask, String dialogTitle) {
 		manager = new WorkbenchStatusDialogManagerImpl(displayMask, dialogTitle);
 	}
-	
+
 	/**
 	 * Creates workbench status dialog.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell for the dialog. It may be null.
 	 * @param displayMask
@@ -104,7 +104,7 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * Creates workbench status dialog.
-	 * 
+	 *
 	 * @param dialogTitle
 	 *            the title of the dialog. If null, than default will be used.
 	 */
@@ -115,7 +115,7 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * Creates workbench status dialog.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell for the dialog. It may be null.
 	 * @param dialogTitle
@@ -146,7 +146,7 @@ public class WorkbenchStatusDialogManager {
 	 * All not shown status adapters will be displayed as soon as the dialog
 	 * shows up.
 	 * </p>
-	 * 
+	 *
 	 * @param modal
 	 *            <code>true</code> if the dialog should be modal,
 	 *            <code>false</code> otherwise
@@ -161,7 +161,7 @@ public class WorkbenchStatusDialogManager {
 	/**
 	 * Enables the default support area that shows stack trace of the exception
 	 * contained in the selected status.
-	 * 
+	 *
 	 * @param enable
 	 *            true enables, false disables default support
 	 */
@@ -173,7 +173,7 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * Gets a collection of status adapters that were passed to the dialog.
-	 * 
+	 *
 	 * @return collection of {@link StatusAdapter} objects
 	 */
 	public Collection getStatusAdapters() {
@@ -183,7 +183,7 @@ public class WorkbenchStatusDialogManager {
 	/**
 	 * Sets the details area provider. If null is set, the default area provider
 	 * will be used.
-	 * 
+	 *
 	 * @param provider
 	 *            A details area provider to be set.
 	 */
@@ -196,14 +196,14 @@ public class WorkbenchStatusDialogManager {
 	 * Sets new label provider for the status list. This label provider is used
 	 * also to display the second message on the dialog if only one status is
 	 * available.
-	 * 
+	 *
 	 * <p>
 	 * This method is no longer recommended to use as it is impossible to
 	 * achieve consistent behavior after changing only one label provider.
 	 * </p>
-	 * 
-	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended. 
-	 * 
+	 *
+	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended.
+	 *
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
 	 */
@@ -214,14 +214,14 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * Sets the support provider.
-	 * 
+	 *
 	 * The policy for choosing support provider is:
 	 * <ol>
 	 * <li>use the support provider set by this method, if set</li>
 	 * <li>use the support provider set in JFace Policy, if set</li>
 	 * <li>use the default support area, if enabled</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param provider
 	 *            Support provider to be set.
 	 */
@@ -248,7 +248,7 @@ public class WorkbenchStatusDialogManager {
 	 * This method should not be used together with
 	 * {@link #setStatusListLabelProvider(ITableLabelProvider)}.
 	 * </p>
-	 * 
+	 *
 	 * @param decorator
 	 *            - the decorator to be set. Only
 	 *            {@link ILabelDecorator#decorateText(String, Object)} method
@@ -261,10 +261,10 @@ public class WorkbenchStatusDialogManager {
 	public void setMessageDecorator(ILabelDecorator decorator){
 		manager.setMessageDecorator(decorator);
 	}
-	
+
 	/**
 	 * This method sets various properties on the manager.
-	 * 
+	 *
 	 * @param key
 	 *            a key of the property to be set.
 	 * @param value
@@ -279,7 +279,7 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * This method gets various dialog properties.
-	 * 
+	 *
 	 * @param key
 	 *            a key of the property to be get.
 	 * @return a value of the property. The value will be of type specified by
@@ -289,14 +289,14 @@ public class WorkbenchStatusDialogManager {
 	public Object getProperty(Object key){
 		return manager.getProperty(key);
 	}
-	
-	
+
+
 	/**
 	 * This method makes the dialog to be similar to the JFace ErrorDialog. The
 	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with
 	 * severity {@link IStatus#OK}, does not display the link to the error log,
 	 * does not display the link to the support area but always opens it.
-	 * 
+	 *
 	 * @see ErrorDialog
 	 * @since 3.5
 	 */

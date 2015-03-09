@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Marc R. Hoffmann <hoffmann@mountainminds.com> 
+ *     Marc R. Hoffmann <hoffmann@mountainminds.com>
  *         - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui;
 
 /**
  * Constants for all commands defined by the Eclipse workbench.
- * 
+ *
  * @since 3.5
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -31,7 +31,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for parameter "New Wizard" in command "New" in category "File" (value
 	 * is <code>"newWizardId"</code>). Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String FILE_NEW_PARM_WIZARDID = "newWizardId"; //$NON-NLS-1$
@@ -57,7 +57,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for parameter "Import Wizard" in command "Import" in category "File"
 	 * (value is <code>"importWizardId"</code>). Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String FILE_IMPORT_PARM_WIZARDID = "importWizardId"; //$NON-NLS-1$
@@ -71,7 +71,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for parameter "Export Wizard" in command "Export" in category "File"
 	 * (value is <code>"exportWizardId"</code>). Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String FILE_EXPORT_PARM_WIZARDID = "exportWizardId"; //$NON-NLS-1$
@@ -299,7 +299,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for command "Expand All" in category "Navigate" (value is
 	 * <code>"org.eclipse.ui.navigate.expandAll"</code>).
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String NAVIGATE_EXPAND_ALL = "org.eclipse.ui.navigate.expandAll"; //$NON-NLS-1$
@@ -314,7 +314,7 @@ public interface IWorkbenchCommandConstants {
 	 * Id for parameter "Target Id" in command "Show In" in category "Navigate"
 	 * (value is <code>"org.eclipse.ui.navigate.showIn.targetId"</code>).
 	 * Required.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String NAVIGATE_SHOW_IN_PARM_TARGET = "org.eclipse.ui.navigate.showIn.targetId"; //$NON-NLS-1$
@@ -326,7 +326,7 @@ public interface IWorkbenchCommandConstants {
     public static final String NAVIGATE_SHOW_IN_QUICK_MENU = "org.eclipse.ui.navigate.showInQuickMenu"; //$NON-NLS-1$
 
     // project category
-    
+
     /**
      * Id for command "Build All" in category "Project".
      * (value is <code>"org.eclipse.ui.project.buildAll"</code>).
@@ -448,7 +448,7 @@ public interface IWorkbenchCommandConstants {
 	 * category "Window" (value is
 	 * <code>"org.eclipse.ui.window.closePerspective.perspectiveId"</code>).
 	 * Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String WINDOW_CLOSE_PERSPECTIVE_PARM_ID = "org.eclipse.ui.window.closePerspective.perspectiveId"; //$NON-NLS-1$
@@ -480,7 +480,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for parameter "Preference Page Id" in command "Preferences" in
 	 * category "Window" (value is <code>"preferencePageId"</code>). Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String WINDOW_PREFERENCES_PARM_PAGEID = "preferencePageId"; //$NON-NLS-1$
@@ -506,7 +506,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for command "Lock Toolbar" in category "Window" (value is
 	 * <code>"org.eclipse.ui.window.lockToolbar"</code>).
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String WINDOW_LOCK_TOOLBAR = "org.eclipse.ui.window.lockToolBar"; //$NON-NLS-1$
@@ -560,7 +560,7 @@ public interface IWorkbenchCommandConstants {
 	/**
 	 * Id for parameter "View Id" in command "Show View" in category "Views"
 	 * (value is <code>"org.eclipse.ui.views.showView.viewId"</code>).
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String VIEWS_SHOW_VIEW_PARM_ID = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
@@ -569,7 +569,7 @@ public interface IWorkbenchCommandConstants {
 	 * Id for parameter "Secondary Id" in command "Show View" in category
 	 * "Views" (value is
 	 * <code>"org.eclipse.ui.views.showView.secondaryId"</code>).
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String VIEWS_SHOW_VIEW_SECONDARY_ID = "org.eclipse.ui.views.showView.secondaryId"; //$NON-NLS-1$
@@ -578,7 +578,7 @@ public interface IWorkbenchCommandConstants {
 	 * Id for parameter "As Fastview" in command "Show View" in category "Views"
 	 * (value is <code>"org.eclipse.ui.views.showView.makeFast"</code>).
 	 * Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String VIEWS_SHOW_VIEW_PARM_FASTVIEW = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
@@ -596,7 +596,7 @@ public interface IWorkbenchCommandConstants {
 	 * category "Perspectives" (value is
 	 * <code>"org.eclipse.ui.perspectives.showPerspective.perspectiveId"</code>
 	 * ).
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID = "org.eclipse.ui.perspectives.showPerspective.perspectiveId"; //$NON-NLS-1$
@@ -606,7 +606,7 @@ public interface IWorkbenchCommandConstants {
 	 * category "Perspectives" (value is
 	 * <code>"org.eclipse.ui.perspectives.showPerspective.newWindow"</code>).
 	 * Optional.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String PERSPECTIVES_SHOW_PERSPECTIVE_PARM_NEWWINDOW = "org.eclipse.ui.perspectives.showPerspective.newWindow"; //$NON-NLS-1$

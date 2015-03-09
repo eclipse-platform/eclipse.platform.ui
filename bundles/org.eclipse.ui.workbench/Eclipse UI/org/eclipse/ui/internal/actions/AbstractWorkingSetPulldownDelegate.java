@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
 /**
  * Baseclass for working set pulldown actions.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractWorkingSetPulldownDelegate implements
@@ -49,7 +49,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 	private IWorkbenchWindow window;
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractWorkingSetPulldownDelegate() {
 		super();
@@ -113,7 +113,7 @@ public abstract class AbstractWorkingSetPulldownDelegate implements
 	/**
 	 * Split the working sets known by the manager into arrays based on their
 	 * defining page Id.
-	 * 
+	 *
 	 * @return an array of arrays
 	 */
 	protected IWorkingSet[][] splitSets() {

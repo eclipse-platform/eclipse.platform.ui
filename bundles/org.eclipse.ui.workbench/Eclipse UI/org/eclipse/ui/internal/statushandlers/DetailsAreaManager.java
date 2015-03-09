@@ -47,7 +47,7 @@ public class DetailsAreaManager {
 	/**
 	 * This method is responsible for creating details area on the specified
 	 * Composite and displaying specified StatusAdapter
-	 * 
+	 *
 	 * @param parent
 	 *            A composite on which should be the details area created.
 	 * @param statusAdapter
@@ -65,7 +65,7 @@ public class DetailsAreaManager {
 
 	/**
 	 * Returns current detail area provider.
-	 * 
+	 *
 	 * @return current detail area provider.
 	 */
 	public AbstractStatusAreaProvider getProvider() {
@@ -80,7 +80,7 @@ public class DetailsAreaManager {
 	/**
 	 * This method allows to check if the details area is open (physically
 	 * constructed).
-	 * 
+	 *
 	 * @return true if the area is open, false otherwise
 	 */
 	public boolean isOpen() {

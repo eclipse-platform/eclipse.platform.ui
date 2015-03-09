@@ -26,7 +26,7 @@ import org.eclipse.ui.Saveable;
 /**
  * A default {@link Saveable} implementation that wrappers a regular
  * workbench part (one that does not itself adapt to Saveable).
- * 
+ *
  * @since 3.2
  */
 public class DefaultSaveable extends Saveable {
@@ -35,7 +35,7 @@ public class DefaultSaveable extends Saveable {
 
 	/**
 	 * Creates a new DefaultSaveable.
-	 * 
+	 *
 	 * @param part
 	 *            the part represented by this model
 	 */
@@ -102,7 +102,7 @@ public class DefaultSaveable extends Saveable {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public boolean show(IWorkbenchPage page) {
 		IWorkbenchPartReference reference = page.getReference(part);

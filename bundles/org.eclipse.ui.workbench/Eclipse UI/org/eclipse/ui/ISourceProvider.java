@@ -24,7 +24,7 @@ import java.util.Map;
  * It is recommended that clients subclass <code>AbstractSourceProvider</code>
  * instead, as this provides some common support for listeners.
  * </p>
- * 
+ *
  * @since 3.1
  * @see org.eclipse.ui.handlers.IHandlerService
  * @see org.eclipse.ui.ISources
@@ -34,7 +34,7 @@ public interface ISourceProvider {
 	/**
 	 * Adds a listener to this source provider. This listener will be notified
 	 * whenever the corresponding source changes.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to add; must not be <code>null</code>.
 	 */
@@ -53,11 +53,11 @@ public interface ISourceProvider {
 	 * is used to provide a view of the world if the event loop is busy and
 	 * things are some state has already changed.
 	 * <p>
-	 * For use with core expressions, this map should contain 
+	 * For use with core expressions, this map should contain
 	 * IEvaluationContext#UNDEFINED_VARIABLE for properties which
 	 * are only sometimes available.
 	 * </p>
-	 * 
+	 *
 	 * @return A map of variable names (<code>String</code>) to variable
 	 *         values (<code>Object</code>). This may be empty, and may be
 	 *         <code>null</code>.
@@ -68,7 +68,7 @@ public interface ISourceProvider {
 	 * Returns the names of those sources provided by this class. This is used
 	 * by clients of source providers to determine which source providers they
 	 * actually need.
-	 * 
+	 *
 	 * @return An array of source names. This value should never be
 	 *         <code>null</code> or empty.
 	 */
@@ -77,7 +77,7 @@ public interface ISourceProvider {
 	/**
 	 * Removes a listener from this source provider. This listener will be
 	 * notified whenever the corresponding source changes.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to remove; must not be <code>null</code>.
 	 */

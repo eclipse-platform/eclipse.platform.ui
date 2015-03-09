@@ -39,7 +39,7 @@ import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * The show in command, which only needs a target id.
- * 
+ *
  * @since 3.4
  */
 public class ShowInHandler extends AbstractHandler implements IElementUpdater {
@@ -97,7 +97,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 * This implementation obtains the context from global variables provide.
 	 * showInSelection and showInInput should be available.
 	 * <p>
-	 * 
+	 *
 	 * @return the <code>ShowInContext</code> to show or <code>null</code>
 	 */
 	private ShowInContext getContext(ISelection showInSelection, Object input) {
@@ -110,7 +110,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	/**
 	 * Returns the <code>IShowInTarget</code> for the given part, or
 	 * <code>null</code> if it does not provide one.
-	 * 
+	 *
 	 * @param targetPart
 	 *            the target part
 	 * @return the <code>IShowInTarget</code> or <code>null</code>

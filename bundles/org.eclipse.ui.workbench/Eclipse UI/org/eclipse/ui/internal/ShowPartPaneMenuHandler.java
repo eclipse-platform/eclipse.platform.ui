@@ -36,7 +36,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * <p>
  * Replacement for ShowPartPaneMenuAction
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class ShowPartPaneMenuHandler extends AbstractEvaluationHandler {

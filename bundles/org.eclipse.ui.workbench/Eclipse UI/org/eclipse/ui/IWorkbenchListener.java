@@ -21,7 +21,7 @@ package org.eclipse.ui;
  * @since 3.2
  */
 public interface IWorkbenchListener {
-	
+
     /**
      * Notifies that the workbench is about to shut down.
      * <p>
@@ -29,15 +29,15 @@ public interface IWorkbenchListener {
      * windows have been closed.
      * </p>
      * <p>
-     * The listener may veto a regular shutdown by returning <code>false</code>, 
+     * The listener may veto a regular shutdown by returning <code>false</code>,
      * although this will be ignored if the workbench is being forced to shut down.
      * </p>
      * <p>
      * Since other workbench listeners may veto the shutdown, the listener should
-     * not dispose resources or do any other work during this notification that would 
+     * not dispose resources or do any other work during this notification that would
      * leave the workbench in an inconsistent state.
      * </p>
-     * 
+     *
      * @param workbench the workbench
      * @param forced <code>true</code> if the workbench is being forced to shutdown,
      *   <code>false</code> for a regular close
@@ -52,7 +52,7 @@ public interface IWorkbenchListener {
      * This method is called during workbench shutdown after all windows
      * have been closed.
      * </p>
-     * 
+     *
      * @param workbench the workbench
      */
     public void postShutdown(IWorkbench workbench);

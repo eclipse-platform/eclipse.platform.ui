@@ -18,7 +18,7 @@ import org.eclipse.ui.PartInitException;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see IWorkbenchBrowserSupport
  * @noimplement This interface is not intended to be implemented by clients.
@@ -30,7 +30,7 @@ public interface IWebBrowser {
 	 * to the browser support when the instance was created, it will be used.
 	 * Otherwise, a generated id will be provided to the browser that is
 	 * guaranteed to be unique.
-	 * 
+	 *
 	 * @return a unique identifier of this browser instance
 	 */
 	String getId();
@@ -40,7 +40,7 @@ public interface IWebBrowser {
 	 * <p>
 	 * <b>NOTE</b> This method must be called from the current UI thread
 	 * </p>
-	 * 
+	 *
 	 * @param url
 	 *            the URL to display
 	 * @exception PartInitException
@@ -54,7 +54,7 @@ public interface IWebBrowser {
 	 * <p>
 	 * <b>NOTE</b> This method must be called from the current UI thread
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the browser was closed or <code>false</code>
 	 *         if the operation failed or is not supported.
 	 */

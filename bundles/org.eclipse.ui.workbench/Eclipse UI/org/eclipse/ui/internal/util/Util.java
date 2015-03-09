@@ -53,7 +53,7 @@ public final class Util {
             .unmodifiableSortedSet(new TreeSet());
 
     public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
-    
+
     public final static String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
@@ -61,8 +61,8 @@ public final class Util {
      * strings, and leaves any other string unmodified. Use this to help
      * wrap calls to methods that return null instead of the empty string.
      * Can also help protect against implementation errors in methods that
-     * are not supposed to return null. 
-     * 
+     * are not supposed to return null.
+     *
      * @param input input string (may be null)
      * @return input if not null, or the empty string if input is null
      */
@@ -73,11 +73,11 @@ public final class Util {
 
         return ZERO_LENGTH_STRING;
     }
-    
+
     /**
      * If it is possible to adapt the given object to the given type, this
      * returns the adapter. Performs the following checks:
-     * 
+     *
      * <ol>
      * <li>Returns <code>sourceObject</code> if it is an instance of the
      * adapter type.</li>
@@ -85,9 +85,9 @@ public final class Util {
      * <li>If sourceObject is not an instance of PlatformObject (which would have
      * already done so), the adapter manager is queried for adapters</li>
      * </ol>
-     * 
+     *
      * Otherwise returns null.
-     * 
+     *
      * @param sourceObject
      *            object to adapt, or null
      * @param adapterType
@@ -113,8 +113,8 @@ public final class Util {
                 Assert.isTrue(adapterType.isInstance(result));
                 return result;
             }
-        } 
-        
+        }
+
         if (!(sourceObject instanceof PlatformObject)) {
             Object result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
             if (result != null) {
@@ -234,7 +234,7 @@ public final class Util {
     /**
      * An optimized comparison that uses identity hash codes to perform the
      * comparison between non- <code>null</code> objects.
-     * 
+     *
      * @param left
      *            The left-hand side of the comparison; may be <code>null</code>.
      * @param right
@@ -374,7 +374,7 @@ public final class Util {
 	 * Tests whether two arrays of objects are equal to each other. The arrays
 	 * must not be <code>null</code>, but their elements may be
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param leftArray
 	 *            The left array to compare; may be <code>null</code>, and
 	 *            may be empty and may contain <code>null</code> elements.
@@ -616,14 +616,14 @@ public final class Util {
 
         return trim ? string.trim() : string;
     }
-    
+
     public static void arrayCopyWithRemoval(Object [] src, Object [] dst, int idxToRemove) {
     	if (src == null || dst == null || src.length - 1 != dst.length || idxToRemove < 0 || idxToRemove >= src.length) {
 			throw new IllegalArgumentException();
 		}
-    	
+
     	if (idxToRemove == 0) {
-    		System.arraycopy(src, 1, dst, 0, src.length - 1);    		
+    		System.arraycopy(src, 1, dst, 0, src.length - 1);
     	}
     	else if (idxToRemove == src.length - 1) {
     		System.arraycopy(src, 0, dst, 0, src.length - 1);
@@ -631,24 +631,24 @@ public final class Util {
     	else {
     		System.arraycopy(src, 0, dst, 0, idxToRemove);
     		System.arraycopy(src, idxToRemove + 1, dst, idxToRemove, src.length - idxToRemove - 1);
-    	}    	
+    	}
     }
 
     /**
      * Appends array2 to the end of array1 and returns the result
-     * 
+     *
      * @param array1
      * @param array2
      * @return
      * @since 3.1
      */
-    public static Object[] appendArray(Object[] array1, Object[] array2) {        
+    public static Object[] appendArray(Object[] array1, Object[] array2) {
         Object[] result = new Object[array1.length + array2.length];
         System.arraycopy(array1, 0, result, 0, array1.length);
         System.arraycopy(array2, 0, result, array1.length, array2.length);
-        return result;               
+        return result;
     }
-    
+
     private Util() {
     }
 
@@ -660,12 +660,12 @@ public final class Util {
 	public static String intern(String string) {
 		return string == null ? null : string.intern();
 	}
-	
+
 	/**
 	 * Returns the result of converting a list of comma-separated tokens into an array.
 	 * Used as a replacement for <code>String.split(String)</code>, to allow compilation
 	 * against JCL Foundation (bug 80053).
-	 * 
+	 *
 	 * @param prop the initial comma-separated string
 	 * @param separator the separator characters
 	 * @return the array of string tokens
@@ -676,7 +676,7 @@ public final class Util {
 			return new String[0];
 		}
 		ArrayList list = new ArrayList();
-		StringTokenizer tokens = new StringTokenizer(prop, separator); 
+		StringTokenizer tokens = new StringTokenizer(prop, separator);
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
 			if (!token.equals("")) { //$NON-NLS-1$
@@ -685,28 +685,28 @@ public final class Util {
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
 	}
-	
+
 	/**
 	 * Two {@link String}s presented in a list form.
 	 * This method can be used to form a longer list by providing a list for
-	 * <code>item1</code> and an item to append to the list for 
-	 * <code>item2</code>.  
-	 * 
+	 * <code>item1</code> and an item to append to the list for
+	 * <code>item2</code>.
+	 *
 	 * @param item1	a string
 	 * @param item2	a string
-	 * @return	a string which presents <code>item1</code> and 
+	 * @return	a string which presents <code>item1</code> and
 	 * 	<code>item2</code> in a list form.
 	 */
 	public static String createList(String item1, String item2) {
 		return NLS.bind(WorkbenchMessages.Util_List, item1, item2);
 	}
-	
+
 	/**
 	 * Creates a {@link String} representing the elements in <code>items</code>
 	 * as a list. This method uses the {@link Object#toString()} method on the
 	 * objects to create them as a String.
 	 * @param items	the List to make into a String
-	 * @return	a string which presents <code>items</code> in String form. 
+	 * @return	a string which presents <code>items</code> in String form.
 	 */
 	public static String createList(List items) {
 		String list = null;
@@ -721,13 +721,13 @@ public final class Util {
 		}
 		return safeString(list);
 	}
-	
+
 	/**
 	 * Creates a {@link String} representing the elements in <code>items</code>
 	 * as a list. This method uses the {@link Object#toString()} method on the
 	 * objects to create them as a String.
 	 * @param items	the array to make into a String
-	 * @return	a string which presents <code>items</code> in String form. 
+	 * @return	a string which presents <code>items</code> in String form.
 	 */
 	public static String createList(Object[] items) {
 		String list = null;
@@ -744,7 +744,7 @@ public final class Util {
 	/**
 	 * Return the window for the given shell or the currently active window if
 	 * one could not be determined.
-	 * 
+	 *
 	 * @param shellToCheck
 	 *            the shell to search on
 	 * @return the window for the given shell or the currently active window if
@@ -768,12 +768,12 @@ public final class Util {
 
 		return workbenchWindow;
 	}
-	
+
 	/**
 	 * Return an appropriate shell to parent dialogs on. This will be one of the
 	 * workbench windows (the active one) should any exist. Otherwise
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @return the shell to parent on or <code>null</code> if there is no
 	 *         appropriate shell
 	 * @since 3.3
@@ -790,7 +790,7 @@ public final class Util {
 	/**
 	 * A String#split(*) replacement that splits on the provided char. No Regex
 	 * involved.
-	 * 
+	 *
 	 * @param src
 	 *            The string to be split
 	 * @param delim
@@ -802,7 +802,7 @@ public final class Util {
 		if (src == null) {
 			return EMPTY_STRING_ARRAY;
 		}
-		
+
 		if (src.length()==0) {
 			return new String[] { ZERO_LENGTH_STRING };
 		}
@@ -834,10 +834,10 @@ public final class Util {
 		}
 		return resultArray;
 	}
-	
+
 	/**
 	 * Foundation replacement for String.replaceAll(*).
-	 * 
+	 *
 	 * @param src the starting string.
 	 * @param find the string to find.
 	 * @param replacement the string to replace.
@@ -847,57 +847,57 @@ public final class Util {
 	public static String replaceAll(String src, String find, String replacement) {
 		return org.eclipse.jface.util.Util.replaceAll(src, find, replacement);
 	}
-	
+
 	/**
 	 * Attempt to load the executable extension from the element/attName. If
 	 * the load fails or the resulting object is not castable to the
 	 * provided classSpec (if any) an error is logged and a null is returned.
-	 * 
+	 *
 	 * @param element The {@link IConfigurationElement} containing the
-	 * executable extension's specification 
+	 * executable extension's specification
 	 * @param attName The attribute name of the executable extension
 	 * @param classSpec An optional <code>Class</code> defining the type
 	 * that the loaded Object must be castable to. This is optional to support
 	 * code where the client has a choice of mutually non-castable types to
 	 * choose from.
-	 * 
+	 *
 	 * @return The loaded object which is guaranteed to be
-	 * castable to the given classSpec or null if a failure occurred 
+	 * castable to the given classSpec or null if a failure occurred
 	 */
-	public static Object safeLoadExecutableExtension(IConfigurationElement element, 
+	public static Object safeLoadExecutableExtension(IConfigurationElement element,
 			String attName, Class classSpec) {
 		Object loadedEE = null;
-		
+
 		// Load the handler.
 		try {
 			loadedEE = element.createExecutableExtension(attName);
 		} catch (final CoreException e) {
 			// TODO: give more info (eg plugin id)....
 			// Gather formatting info
-			final String classDef = element.getAttribute(attName);			
+			final String classDef = element.getAttribute(attName);
 
 			final String message = "Class load Failure: '" + classDef + "'";  //$NON-NLS-1$//$NON-NLS-2$
 			IStatus status = new Status(IStatus.ERROR,
 					WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 			WorkbenchPlugin.log(message, status);
 		}
-		
+
 		// Check the loaded object's type
 		if (classSpec != null && loadedEE != null && !classSpec.isInstance(loadedEE)) {
 			// ooops, the loaded class is not castable to the given type
 			final String message = "Loaded class is of incorrect type: expected(" + //$NON-NLS-1$
 				classSpec.getName() + ") got (" + loadedEE.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
-			IllegalArgumentException e = new IllegalArgumentException(message);			
+			IllegalArgumentException e = new IllegalArgumentException(message);
 			final IStatus status = new Status(IStatus.ERROR,
 					WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 			WorkbenchPlugin.log(message, status);
-			
+
 			// This 'failed'
 			loadedEE = null;
 		}
-		
+
 		return loadedEE;
 	}
-	
+
 }

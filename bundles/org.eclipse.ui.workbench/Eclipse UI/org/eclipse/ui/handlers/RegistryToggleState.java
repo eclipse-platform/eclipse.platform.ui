@@ -35,15 +35,15 @@ import org.eclipse.jface.commands.ToggleState;
  * <p>
  * Clients may instantiate this class, but must not extend.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class RegistryToggleState extends ToggleState implements
 		IExecutableExtension {
-	
+
 	/**
 	 * The state ID for a toggle state understood by the system.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public final static String STATE_ID = "org.eclipse.ui.commands.toggleState";  //$NON-NLS-1$
@@ -52,7 +52,7 @@ public final class RegistryToggleState extends ToggleState implements
 	 * Reads the <code>default</code> parameter from the given string. This
 	 * converts the string to a boolean, using <code>true</code> as the
 	 * default.
-	 * 
+	 *
 	 * @param defaultString
 	 *            The string to parse; may be <code>null</code>.
 	 */
@@ -66,7 +66,7 @@ public final class RegistryToggleState extends ToggleState implements
 	 * Reads the <code>persisted</code> parameter from the given string. This
 	 * converts the string to a boolean, using <code>true</code> as the
 	 * default.
-	 * 
+	 *
 	 * @param persistedString
 	 *            The string to parse; may be <code>null</code>.
 	 */
@@ -101,7 +101,7 @@ public final class RegistryToggleState extends ToggleState implements
 
 		} else {
 			setShouldPersist(true);
-			
+
 		}
 	}
 }

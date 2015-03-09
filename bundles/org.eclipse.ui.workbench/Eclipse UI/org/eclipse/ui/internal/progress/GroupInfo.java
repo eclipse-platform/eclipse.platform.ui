@@ -39,7 +39,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
 	@Override
@@ -52,7 +52,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
 	 */
 	@Override
@@ -64,7 +64,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	@Override
@@ -82,7 +82,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/**
 	 * Return an integer representing the amount of work completed.
-	 * 
+	 *
 	 * @return int
 	 */
 	int getPercentDone() {
@@ -91,7 +91,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
 	@Override
@@ -101,7 +101,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
 	 * int)
@@ -122,7 +122,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	@Override
@@ -156,7 +156,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 	 */
 	@Override
@@ -169,7 +169,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 	 */
 	@Override
@@ -180,7 +180,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 	 */
 	@Override
@@ -190,7 +190,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
@@ -208,7 +208,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 	 */
 	@Override
@@ -218,7 +218,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 	 */
 	@Override
@@ -228,7 +228,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/**
 	 * Remove the job from the list of jobs.
-	 * 
+	 *
 	 * @param job
 	 */
 	void removeJobInfo(final JobInfo job) {
@@ -242,7 +242,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/**
 	 * Remove the job from the list of jobs.
-	 * 
+	 *
 	 * @param job
 	 */
 	void addJobInfo(final JobInfo job) {
@@ -253,7 +253,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
 	@Override
@@ -263,7 +263,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#cancel()
 	 */
 	@Override
@@ -278,7 +278,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isCancellable()
 	 */
 	@Override
@@ -288,7 +288,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	/**
 	 * Get the task name for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	String getTaskName() {

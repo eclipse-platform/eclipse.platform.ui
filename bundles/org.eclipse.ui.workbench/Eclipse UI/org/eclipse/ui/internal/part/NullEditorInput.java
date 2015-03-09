@@ -32,7 +32,7 @@ public class NullEditorInput implements IEditorInput {
 	/**
 	 * Creates a <code>NullEditorInput</code> for the
 	 * given editor reference.
-	 * 
+	 *
 	 * @param editorReference the editor reference
 	 * @since 3.4
 	 */

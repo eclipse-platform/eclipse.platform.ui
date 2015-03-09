@@ -19,13 +19,13 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 /**
  * A viewer filter that will exclude all IWizardDescriptors that do not have at
  * least one tag in a provided set.
- * 
+ *
  * @since 3.1
  */
 public class WizardTagFilter extends ViewerFilter {
 
 	private String [] myTags;
-	
+
 	/**
 	 * Create a new instance of this filter
 	 * @param tags the wizard tags to allow
@@ -33,7 +33,7 @@ public class WizardTagFilter extends ViewerFilter {
 	public WizardTagFilter(String [] tags) {
 		myTags = tags;
 	}
-	
+
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IWizardDescriptor) {

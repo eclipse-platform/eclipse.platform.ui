@@ -16,7 +16,7 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets.TweakKey;
 
 /**
  * @since 3.8
- * 
+ *
  */
 public abstract class PreferencePageEnhancer {
 	public static TweakKey KEY = new Tweaklets.TweakKey(PreferencePageEnhancer.class);

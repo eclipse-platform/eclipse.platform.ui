@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * <ul>
  * <li>Create an instance of <code>DrillDownComposite</code>.</li>
  * <li>Create a tree viewer.  </li>
- * <li>Pass the second tree viewer into the composite by 
+ * <li>Pass the second tree viewer into the composite by
  *   calling <code>setChildTree</code>.</li>
  * </ol>
  */

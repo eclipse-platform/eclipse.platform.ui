@@ -26,21 +26,21 @@ import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
  * Registry for introduction elements.
- * 
+ *
  * @since 3.0
  */
 public class IntroRegistry implements IIntroRegistry {
-	private static final String TAG_INTRO = "intro";//$NON-NLS-1$	
+	private static final String TAG_INTRO = "intro";//$NON-NLS-1$
 
 	private static final String TAG_INTROPRODUCTBINDING = "introProductBinding";//$NON-NLS-1$
 
 	private static final String ATT_INTROID = "introId"; //$NON-NLS-1$
 
-	private static final String ATT_PRODUCTID = "productId"; //$NON-NLS-1$	
+	private static final String ATT_PRODUCTID = "productId"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.intro.IIntroRegistry#getIntroCount()
 	 */
 	@Override
@@ -50,7 +50,7 @@ public class IntroRegistry implements IIntroRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.intro.IIntroRegistry#getIntros()
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class IntroRegistry implements IIntroRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.intro.IIntroRegistry#getIntroForProduct(java.lang.String)
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class IntroRegistry implements IIntroRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.intro.IIntroRegistry#getIntro(java.lang.String)
 	 */
 	@Override

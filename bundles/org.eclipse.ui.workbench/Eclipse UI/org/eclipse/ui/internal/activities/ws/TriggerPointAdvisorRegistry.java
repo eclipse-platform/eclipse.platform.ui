@@ -32,14 +32,14 @@ public class TriggerPointAdvisorRegistry {
 	private static TriggerPointAdvisorRegistry instance;
 
 	/**
-	 * 
+	 *
 	 */
 	private TriggerPointAdvisorRegistry() {
 	}
 
 	/**
 	 * Return the instance of this registry.
-	 * 
+	 *
 	 * @return the instance of this registry
 	 */
 	public static TriggerPointAdvisorRegistry getInstance() {
@@ -52,7 +52,7 @@ public class TriggerPointAdvisorRegistry {
 
 	/**
 	 * Return the trigger point advisors.
-	 * 
+	 *
 	 * @return the advisors
 	 */
 	public TriggerPointAdvisorDescriptor[] getAdvisors() {
@@ -94,7 +94,7 @@ public class TriggerPointAdvisorRegistry {
 
 	/**
 	 * Return the trigger point advisor bound to a given product.
-	 * 
+	 *
 	 * @param productId
 	 *            the product id
 	 * @return the advisor

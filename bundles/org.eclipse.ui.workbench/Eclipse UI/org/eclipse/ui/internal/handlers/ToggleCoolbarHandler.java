@@ -27,7 +27,7 @@ import org.eclipse.ui.menus.UIElement;
 /**
  * Handler that toggles the visibility of the coolbar/perspective bar in a given
  * window.
- * 
+ *
  * @since 3.3
  */
 public class ToggleCoolbarHandler extends AbstractHandler implements
@@ -60,7 +60,7 @@ public class ToggleCoolbarHandler extends AbstractHandler implements
 
 	/**
 	 * Return whether the coolbar is currently visible.
-	 * 
+	 *
 	 * @param window
 	 * 		the window to test
 	 * @return whether or not the coolbar is visible

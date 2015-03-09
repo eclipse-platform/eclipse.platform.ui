@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
  * <b>Note:</b> this class has a natural ordering that is inconsistent with
  * equals.
  * </p>
- * 
+ *
  * @since 3.1
  */
 final class HandlerActivation implements IHandlerActivation {
@@ -65,7 +65,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
 	 */
@@ -75,7 +75,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression()
 	 */
@@ -86,7 +86,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
 	 * ()
@@ -98,7 +98,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(org.
 	 * eclipse.core.expressions.IEvaluationContext)
@@ -127,7 +127,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult(boolean
 	 * )
@@ -139,7 +139,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -183,7 +183,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.handlers.IHandlerActivation#clearActive()
 	 */
 	@Override
@@ -194,7 +194,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.handlers.IHandlerActivation#getCommandId()
 	 */
 	@Override
@@ -204,7 +204,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.handlers.IHandlerActivation#getDepth()
 	 */
 	@Override
@@ -214,7 +214,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandler()
 	 */
 	@Override
@@ -224,7 +224,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandlerService()
 	 */
 	@Override
@@ -234,7 +234,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.handlers.IHandlerActivation#isActive(org.eclipse.core.
 	 * expressions.IEvaluationContext)
@@ -246,7 +246,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

@@ -23,7 +23,7 @@ import org.eclipse.ui.actions.RetargetAction;
 /**
  * This class adapts instances of <code>IAction</code> to
  * <code>IHandler</code>.
- * 
+ *
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.jface.commands.ActionHandler
@@ -74,9 +74,9 @@ public final class ActionHandler extends AbstractHandler {
      * The map of attributes values. The keys are <code>String</code> values
      * of the attribute names (given above). The values can be any type of
      * <code>Object</code>.
-     * 
+     *
      * This map is always null if there are no IHandlerListeners registered.
-     *  
+     *
      */
     private Map attributeValuesByName;
 
@@ -90,7 +90,7 @@ public final class ActionHandler extends AbstractHandler {
     /**
      * Creates a new instance of this class given an instance of
      * <code>IAction</code>.
-     * 
+     *
      * @param action
      *            the action. Must not be <code>null</code>.
      */
@@ -120,7 +120,7 @@ public final class ActionHandler extends AbstractHandler {
     /**
      * When a listener is attached to this handler, then this registers a
      * listener with the underlying action.
-     * 
+     *
      * @since 3.1
      */
     private final void attachListener() {
@@ -156,9 +156,9 @@ public final class ActionHandler extends AbstractHandler {
     /**
      * When no more listeners are registered, then this is used to removed the
      * property change listener from the underlying action.
-     * 
+     *
      * @since 3.1
-     *  
+     *
      */
     private final void detachListener() {
         this.action.removePropertyChangeListener(propertyChangeListener);
@@ -168,7 +168,7 @@ public final class ActionHandler extends AbstractHandler {
 
     /**
      * Removes the property change listener from the action.
-     * 
+     *
      * @see org.eclipse.ui.commands.IHandler#dispose()
      */
 	@Override
@@ -179,7 +179,7 @@ public final class ActionHandler extends AbstractHandler {
         }
     }
 
-   
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.commands.IHandler#execute(java.util.Map)
      */
@@ -201,7 +201,7 @@ public final class ActionHandler extends AbstractHandler {
 
     /**
      * Returns the action associated with this handler
-     * 
+     *
      * @return the action associated with this handler (not null)
      * @since 3.1
      */
@@ -226,10 +226,10 @@ public final class ActionHandler extends AbstractHandler {
     /**
      * An accessor for the attribute names from the action. This reads out all
      * of the attributes from an action into a local map.
-     * 
+     *
      * @return A map of the attribute values indexed by the attribute name. The
      *         attributes names are strings, but the values can by any object.
-     *  
+     *
      */
     private Map getAttributeValuesByNameFromAction() {
         Map map = new HashMap();
@@ -261,7 +261,7 @@ public final class ActionHandler extends AbstractHandler {
             detachListener();
         }
     }
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

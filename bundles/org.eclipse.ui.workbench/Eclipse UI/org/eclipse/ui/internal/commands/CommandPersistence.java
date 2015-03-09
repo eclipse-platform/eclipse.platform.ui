@@ -36,28 +36,28 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * <p>
  * A static class for accessing the registry and the preference store.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class CommandPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the category elements in the indexed array.
-	 * 
+	 *
 	 * @see CommandPersistence#read()
 	 */
 	private static final int INDEX_CATEGORY_DEFINITIONS = 0;
 
 	/**
 	 * The index of the command elements in the indexed array.
-	 * 
+	 *
 	 * @see CommandPersistence#read()
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
 
 	/**
 	 * The index of the commandParameterType elements in the indexed array.
-	 * 
+	 *
 	 * @see CommandPersistence#read()
 	 * @since 3.2
 	 */
@@ -65,7 +65,7 @@ public final class CommandPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the category definitions from the commands extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.
@@ -126,7 +126,7 @@ public final class CommandPersistence extends RegistryPersistence {
 
 	/**
 	 * Reads all of the command definitions from the commands extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.
@@ -223,7 +223,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 * read the parameter sub-elements from a command element. Each parameter is
 	 * guaranteed to be valid. If invalid parameters are found, then a warning
 	 * status will be appended to the <code>warningsToLog</code> list.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            The configuration element from which the parameters should be
 	 *            read; must not be <code>null</code>.
@@ -301,7 +301,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	/**
 	 * Reads all of the commandParameterType definitions from the commands
 	 * extension point.
-	 * 
+	 *
 	 * @param configurationElements
 	 *            The configuration elements in the commands extension point;
 	 *            must not be <code>null</code>, but may be empty.
@@ -363,7 +363,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 * read the state sub-elements from a command element. Each state is
 	 * guaranteed to be valid. If invalid states are found, then a warning
 	 * status will be appended to the <code>warningsToLog</code> list.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            The configuration element from which the states should be
 	 *            read; must not be <code>null</code>.
@@ -411,7 +411,7 @@ public final class CommandPersistence extends RegistryPersistence {
 
 	/**
 	 * Constructs a new instance of <code>CommandPersistence</code>.
-	 * 
+	 *
 	 * @param commandService
 	 *            The command service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
@@ -442,10 +442,10 @@ public final class CommandPersistence extends RegistryPersistence {
 
 		return true;
 	}
-	
+
 	/**
 	 * Reads all of the commands and categories from the registry,
-	 * 
+	 *
 	 * @param commandManager
 	 *            The command service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
@@ -455,7 +455,7 @@ public final class CommandPersistence extends RegistryPersistence {
 		super.read();
 		reRead();
 	}
-	
+
 	public void reRead() {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();

@@ -24,7 +24,7 @@ public interface IWorkingCopyManager {
 	 * Return a working copy instance based on the given preference node. If a
 	 * working copy already exists then return it, otherwise create one and keep
 	 * track of it for other clients who are looking for it.
-	 * 
+	 *
 	 * @param original
 	 *            the original node
 	 * @return the working copy node
@@ -36,7 +36,7 @@ public interface IWorkingCopyManager {
 	 * preference nodes. Alternatively, if a client wishes to apply the changes
 	 * for a single working copy they can call <code>#flush</code> on that
 	 * working copy node.
-	 * 
+	 *
 	 * @throws BackingStoreException
 	 *             if there were problems accessing the backing store
 	 */

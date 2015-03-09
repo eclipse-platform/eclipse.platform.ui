@@ -65,7 +65,7 @@ import org.eclipse.ui.menus.IMenuService;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public class WorkbenchMenuService implements IMenuService {
 
@@ -92,7 +92,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse
 	 * .ui.ISourceProvider)
@@ -105,7 +105,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.
 	 * eclipse.ui.ISourceProvider)
@@ -118,7 +118,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override
@@ -132,7 +132,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.menus.IMenuService#addContributionFactory(org.eclipse.
 	 * ui.menus.AbstractContributionFactory)
@@ -215,7 +215,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse
 	 * .ui.menus.AbstractContributionFactory)
@@ -278,7 +278,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.menus.IMenuService#populateContributionManager(org.eclipse
 	 * .jface.action.ContributionManager, java.lang.String)
@@ -464,7 +464,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.menus.IMenuService#releaseContributions(org.eclipse.jface
 	 * .action.ContributionManager)
@@ -554,7 +554,7 @@ public class WorkbenchMenuService implements IMenuService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.menus.IMenuService#getCurrentState()
 	 */
 	@Override

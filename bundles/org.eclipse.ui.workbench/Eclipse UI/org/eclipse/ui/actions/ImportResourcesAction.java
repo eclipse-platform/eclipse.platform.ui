@@ -29,13 +29,13 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * the client must call IWorkbenchAction#dispose to give the
  * action an opportunity to deregister its listeners and to perform any other
  * cleanup.
- * 
+ *
  * </p>
  * <p>
  * Note: Despite the name, an import operation can deal with things other than
  * resources; the current name was retained for historical reasons.
  * </p>
- * 
+ *
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -45,7 +45,7 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
      * Reference to the WorkbenchCommandAction that executes the Import Wizard.
      */
     private ActionFactory.IWorkbenchAction action;
-    
+
     /**
      * The workbench window; or <code>null</code> if this
      * action has been <code>dispose</code>d.
@@ -54,7 +54,7 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
 
     /**
      * Create a new instance of this class.
-     * 
+     *
      * @param window the window
      */
     public ImportResourcesAction(IWorkbenchWindow window) {
@@ -62,11 +62,11 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
         if (window == null) {
             throw new IllegalArgumentException();
         }
-        
+
         this.workbenchWindow = window;
         action = ActionFactory.IMPORT.create(window);
-        
-        setText(action.getText()); 
+
+        setText(action.getText());
         setToolTipText(action.getToolTipText());
         setId(action.getId());
         setActionDefinitionId(action.getActionDefinitionId());
@@ -77,7 +77,7 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
 
     /**
      * Create a new instance of this class
-     * 
+     *
      * @param workbench the workbench
      * @deprecated use the constructor <code>ImportResourcesAction(IWorkbenchWindow)</code>
      */
@@ -95,12 +95,12 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
             // action has been disposed
             return;
         }
-        
+
         action.run();
     }
 
     /**
-     * Sets the current selection. 
+     * Sets the current selection.
      * In for backwards compatability. Use selectionChanged() instead.
      * @param selection the new selection
      * @deprecated

@@ -45,11 +45,11 @@ import org.eclipse.swt.widgets.Shell;
  * not have to use the {@link IProgressService} as the {@link ProgressProvider}
  * to the jobs framework if they do not wish to reference it.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.IWorkbench#getProgressService()
  * @see IJobManager#setProgressProvider(org.eclipse.core.runtime.jobs.ProgressProvider)
  * @see org.eclipse.ui.services.IServiceLocator#getService(Class)
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -57,9 +57,9 @@ public interface IProgressService extends IRunnableContext {
 
     /**
      * The time at which an operation becomes considered a long
-     * operation. Used to determine when the busy cursor will 
+     * operation. Used to determine when the busy cursor will
      * be replaced with a progress monitor.
-     * @return int 
+     * @return int
      * @see IProgressService#busyCursorWhile(IRunnableWithProgress)
      */
     public int getLongOperationTime();
@@ -74,19 +74,19 @@ public interface IProgressService extends IRunnableContext {
     public void registerIconForFamily(ImageDescriptor icon, Object family);
 
     /**
-     * Runs the given operation in the UI thread using the given runnable context.  
-     * The given scheduling rule, if any, will be acquired for the duration of the operation. 
-     * If the rule is not available when this method is called, a progress dialog will be 
-     * displayed that gives users control over the background processes that may 
+     * Runs the given operation in the UI thread using the given runnable context.
+     * The given scheduling rule, if any, will be acquired for the duration of the operation.
+     * If the rule is not available when this method is called, a progress dialog will be
+     * displayed that gives users control over the background processes that may
      * be blocking the runnable from proceeding.
      * <p>
      * This method can act as a wrapper for uses of <tt>IRunnableContext</tt>
-     * where the <tt>fork</tt> parameter was <tt>false</tt>. 
+     * where the <tt>fork</tt> parameter was <tt>false</tt>.
      * <p>
-     * Note: Running long operations in the UI thread is generally not 
+     * Note: Running long operations in the UI thread is generally not
      * recommended. This can result in the UI becoming unresponsive for
      * the duration of the operation. Where possible, <tt>busyCursorWhile</tt>
-     * should be used instead.  
+     * should be used instead.
      * </p>
      * <p>
      * Modal dialogs should also be avoided in the runnable as there will already
@@ -94,15 +94,15 @@ public interface IProgressService extends IRunnableContext {
      * </p>
      * @see org.eclipse.jface.dialogs.Dialog
      * @see org.eclipse.swt.SWT#APPLICATION_MODAL
-     * 
+     *
      * @param context The runnable context to run the operation in
      * @param runnable The operation to run
      * @param rule A scheduling rule, or <code>null</code>
-     * @throws InvocationTargetException wraps any exception or error which occurs 
+     * @throws InvocationTargetException wraps any exception or error which occurs
      *  while running the runnable
-     * @throws InterruptedException propagated by the context if the runnable 
+     * @throws InterruptedException propagated by the context if the runnable
      *  acknowledges cancelation by throwing this exception.
-     *  
+     *
      */
     public void runInUI(IRunnableContext context,
             IRunnableWithProgress runnable, ISchedulingRule rule)
@@ -110,7 +110,7 @@ public interface IProgressService extends IRunnableContext {
 
     /**
      * Get the icon that has been registered for a Job by
-     * checking if the job belongs to any of the registered 
+     * checking if the job belongs to any of the registered
      * families.
      * @param job
      * @return Icon or <code>null</code> if there isn't one.
@@ -122,13 +122,13 @@ public interface IProgressService extends IRunnableContext {
      * Set the cursor to busy and run the runnable in a non-UI Thread.
      * The calling thread will be blocked for the duration of the execution
      * of the supplied runnable.
-     * 
-     * After the cursor has been running for 
+     *
+     * After the cursor has been running for
      * <code>getLongOperationTime()</code> replace it with
      * a ProgressMonitorDialog so that the user may cancel.
      * Do not open the ProgressMonitorDialog if there is already a modal
      * dialog open.
-     * 
+     *
      * @param runnable The runnable to execute and show the progress for.
      * @see IProgressService#getLongOperationTime
      * @throws InvocationTargetException
@@ -141,21 +141,21 @@ public interface IProgressService extends IRunnableContext {
      * This specialization of IRunnableContext#run(boolean, boolean,
      * IRunnableWithProgress) might run the runnable asynchronously
      * if <code>fork</code> is <code>true</code>.
-     * 
+     *
      * @since 3.2
      */
     @Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
-    
+
     /**
-     * Open a dialog on job when it starts to run and close it 
+     * Open a dialog on job when it starts to run and close it
      * when the job is finished. Wait for ProgressManagerUtil#SHORT_OPERATION_TIME
      * before opening the dialog. Do not open if it is already done or
      * if the user has set a preference to always run in the background.
-     * 
+     *
      * Parent the dialog from the shell.
-     * 
-     * @param shell The Shell to parent the dialog from or 
+     *
+     * @param shell The Shell to parent the dialog from or
      * <code>null</code> if the active shell is to be used.
      * @param job The Job that will be reported in the dialog. job
      * must not be <code>null</code>.

@@ -47,7 +47,7 @@ public class ActionBars extends SubActionBars {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionBars#getMenuManager()
 	 */
 	@Override
@@ -61,7 +61,7 @@ public class ActionBars extends SubActionBars {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionBars#getToolBarManager()
 	 */
 	@Override
@@ -74,7 +74,7 @@ public class ActionBars extends SubActionBars {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionBars#updateActionBars()
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class ActionBars extends SubActionBars {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.SubActionBars#dispose()
 	 */
 	@Override

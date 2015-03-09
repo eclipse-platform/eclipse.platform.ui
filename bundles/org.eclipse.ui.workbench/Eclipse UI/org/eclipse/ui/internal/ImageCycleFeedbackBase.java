@@ -24,9 +24,9 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Base class for Cyclic animations.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 	protected Image[] images;
@@ -48,7 +48,7 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param parentShell
 	 * @param images :
 	 *            an array of images
@@ -60,20 +60,20 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 
 	/**
 	 * Set the image during progress without caching.
-	 * 
+	 *
 	 * @param image
 	 */
 	public abstract void showImage(Image image);
 
 	/**
 	 * Save initial Image which would be stoppedImage
-	 * 
+	 *
 	 */
 	public abstract void saveStoppedImage();
 
 	/**
 	 * Set the stopped Image upon animation completion
-	 * 
+	 *
 	 * @param image
 	 */
 	public abstract void setStoppedImage(Image image);

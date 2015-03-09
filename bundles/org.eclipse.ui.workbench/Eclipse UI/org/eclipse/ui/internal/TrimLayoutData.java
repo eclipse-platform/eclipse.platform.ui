@@ -18,9 +18,9 @@ package org.eclipse.ui.internal;
  * without consulting the Platform UI group. No guarantees are made as to the
  * stability of the API (except that the javadoc will get better...;-).
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class TrimLayoutData {
 

@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Contains various methods for manipulating layouts
- * 
+ *
  * @since 3.0
  */
 public class LayoutUtil {
@@ -27,7 +27,7 @@ public class LayoutUtil {
     /**
      * Should be called whenever a control's contents have changed. Will
      * trigger a layout parent controls if necessary.
-     * 
+     *
      * @param changedControl
      */
     public static void resize(Control changedControl) {

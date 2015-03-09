@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class is not intended for use outside of the
  * <code>org.eclipse.ui.workbench</code> plug-in.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class LegacyViewContributionExpression extends
@@ -48,7 +48,7 @@ public final class LegacyViewContributionExpression extends
 	/**
 	 * Constructs a new instance of
 	 * <code>LegacyViewContributionExpression</code>
-	 * 
+	 *
 	 * @param activePartId
 	 *            The identifier of the part to match with the active part; may
 	 *            be <code>null</code>

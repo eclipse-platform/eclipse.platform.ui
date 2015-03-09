@@ -28,7 +28,7 @@ final class ImageFactory {
 	static {
 		put("blank", "$nl$/icons/full/obj16/blank.png"); //$NON-NLS-1$//$NON-NLS-2$
 		put("change", "$nl$/icons/full/obj16/change_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
-		
+
 		/*
 		 * TODO Remove these images from the registry if they are no longer
 		 * needed.

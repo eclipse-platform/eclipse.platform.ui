@@ -36,10 +36,10 @@ public class ThemeElementCategory implements IPluginContribution,
     private String pluginId;
 
     /**
-     * 
+     *
      * @param label
      * @param id
-     * @param parentId 
+     * @param parentId
      * @param description
      * @param pluginId
      * @param element
@@ -122,7 +122,7 @@ public class ThemeElementCategory implements IPluginContribution,
     public String getParentId() {
         return parentId;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -133,12 +133,12 @@ public class ThemeElementCategory implements IPluginContribution,
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
 	public int hashCode() {
         return id.hashCode();
-    }    
+    }
 }

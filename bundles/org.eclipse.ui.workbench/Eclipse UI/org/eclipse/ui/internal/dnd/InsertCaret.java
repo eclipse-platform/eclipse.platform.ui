@@ -33,16 +33,16 @@ public class InsertCaret {
 	private Canvas caretControl;
 	private Canvas end1;
 	private Canvas end2;
-	
+
 	// Colors
 	private Color baseColor;
 	private Color hilightColor;
 	private boolean isHighlight;
-	
+
 	/**
 	 * Creates an affordance to indicate that the given trim area is a valid location for the
 	 * trim being dragged.
-	 * 
+	 *
 	 * @param windowComposite The window to create the affordance as a child of
 	 * @param trimRect The rectangle to show the affordance for
 	 * @param swtSide The 'side' that the rectangle is on
@@ -63,7 +63,7 @@ public class InsertCaret {
 	/**
 	 * Creates a control to show the 'area valid' affordance. The current implementation creates a
 	 * simple rect half the length of the rect, centered and offset by the 'threshold' value.
-	 * 
+	 *
 	 * @param parent The control to used as the parent of the affordance control
 	 * @param trimRect The trim rectangle
 	 * @param swtSide The SWT side that the trim is on
@@ -73,12 +73,12 @@ public class InsertCaret {
 		int hDelta = trimRect.width/pctInset;
 		int vDelta = trimRect.height/pctInset;
 		caretControl = new Canvas (parent.getShell(), SWT.BORDER);
-		
+
 		end1 = new Canvas (parent.getShell(), SWT.BORDER);
 		end1.setSize(width, width);
 		end2 = new Canvas (parent.getShell(), SWT.BORDER);
 		end2.setSize(width, width);
-		
+
 		Rectangle bb;
 		switch (swtSide) {
 		case SWT.TOP:
@@ -90,7 +90,7 @@ public class InsertCaret {
 			break;
 		case SWT.BOTTOM:
 			caretControl.setSize(trimRect.width-(2*hDelta), width);
-			caretControl.setLocation(trimRect.x + hDelta, trimRect.y - threshold); 
+			caretControl.setLocation(trimRect.x + hDelta, trimRect.y - threshold);
 			bb = caretControl.getBounds();
 			end1.setLocation(bb.x, bb.y+width);
 			end2.setLocation((bb.x+bb.width)-width, bb.y+width);
@@ -98,7 +98,7 @@ public class InsertCaret {
 		case SWT.LEFT:
 			caretControl.setSize(width, trimRect.height -(2*vDelta));
 			caretControl.setLocation(trimRect.x + trimRect.width + threshold,
-									trimRect.y + vDelta); 
+									trimRect.y + vDelta);
 			bb = caretControl.getBounds();
 			end1.setLocation(bb.x-bb.width, bb.y);
 			end2.setLocation(bb.x-bb.width, (bb.y+bb.height)-width);
@@ -106,13 +106,13 @@ public class InsertCaret {
 		case SWT.RIGHT:
 			caretControl.setSize(width, trimRect.height -(2*vDelta));
 			caretControl.setLocation(trimRect.x - threshold,
-									trimRect.y + vDelta); 
+									trimRect.y + vDelta);
 			bb = caretControl.getBounds();
 			end1.setLocation(bb.x+bb.width, bb.y);
 			end2.setLocation(bb.x+bb.width, (bb.y+bb.height)-width);
 			break;
 		}
-		
+
 		// Initially create as not hilighted
 		setHighlight(false);
 		caretControl.moveAbove(null);
@@ -145,7 +145,7 @@ public class InsertCaret {
 		// Dispose the control's resources (we don't have to dispose the
 		// 'bacseColor' because it's a system color
 		hilightColor.dispose();
-		
+
 		caretControl.dispose();
 		end1.dispose();
 		end2.dispose();

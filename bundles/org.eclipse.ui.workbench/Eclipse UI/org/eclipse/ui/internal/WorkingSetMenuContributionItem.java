@@ -27,12 +27,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Menu contribution item which shows a working set.
- * 
+ *
  * @since 2.1
  */
 public class WorkingSetMenuContributionItem extends ContributionItem {
     private Image image;
-    
+
     private int id;
 
     private IWorkingSet workingSet;
@@ -41,7 +41,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 
     /**
      * Returns the id of this menu contribution item
-     * 
+     *
      * @param id numerical id
      * @return String string id
      */
@@ -51,7 +51,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 
     /**
      * Creates a new instance of the receiver.
-     * 
+     *
      * @param id sequential id of the new instance
      * @param actionGroup the action group this contribution item is created in
      */
@@ -68,7 +68,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
     /**
      * Adds a menu item for the working set.
      * Overrides method from ContributionItem.
-     * 
+     *
      * @see org.eclipse.jface.action.ContributionItem#fill(Menu,int)
      */
     @Override

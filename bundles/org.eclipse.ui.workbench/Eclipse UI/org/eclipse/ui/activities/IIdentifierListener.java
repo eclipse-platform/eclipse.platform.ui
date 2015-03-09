@@ -17,7 +17,7 @@ package org.eclipse.ui.activities;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see IIdentifier#addIdentifierListener(IIdentifierListener)
  * @see IIdentifier#removeIdentifierListener(IIdentifierListener)
@@ -27,7 +27,7 @@ public interface IIdentifierListener {
     /**
      * Notifies that one or more properties of an instance of <code>IIdentifier</code>
      * have changed. Specific details are described in the <code>IdentifierEvent</code>.
-     * 
+     *
      * @param identifierEvent
      *            the identifier event. Guaranteed not to be <code>null</code>.
      */

@@ -17,13 +17,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A <code>LabelRetargetAction</code> extends the behavior of
- * RetargetAction.  It will track the enable state, label, and 
+ * RetargetAction.  It will track the enable state, label, and
  * tool tip text of the target action..
  * <p>
  * This class may be instantiated. It is not intented to be subclassed.
  * </p>
  *
- * @since 2.0 
+ * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class LabelRetargetAction extends RetargetAction {
@@ -41,7 +41,7 @@ public class LabelRetargetAction extends RetargetAction {
 
     /**
      * Constructs a LabelRetargetAction with the given action id and text.
-     * 
+     *
      * @param actionID the retargetable action id
      * @param text the action's text, or <code>null</code> if there is no text
      */
@@ -51,7 +51,7 @@ public class LabelRetargetAction extends RetargetAction {
 
     /**
      * Constructs a RetargetAction with the given action id, text and style.
-     * 
+     *
      * @param actionID the retargetable action id
      * @param text the action's text, or <code>null</code> if there is no text
      * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,

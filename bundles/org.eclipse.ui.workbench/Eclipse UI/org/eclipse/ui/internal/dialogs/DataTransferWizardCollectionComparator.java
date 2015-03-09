@@ -22,16 +22,16 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  *
  *	NOTE exceptions to the above: an element with the system's reserved
  *	category for Other Wizards will always be sorted such that it will
- *	ultimately be placed at the end of the sorted result, and an elemen 
- *  with the reserved category name for General wizards will always be 
+ *	ultimately be placed at the end of the sorted result, and an elemen
+ *  with the reserved category name for General wizards will always be
  *  placed at the beginning of the sorted result.
- *  
+ *
  *  @since 3.2
  */
 class DataTransferWizardCollectionComparator extends ViewerComparator {
 	/**
 	 * Static instance of this class.
-	 */	
+	 */
     public final static DataTransferWizardCollectionComparator INSTANCE = new DataTransferWizardCollectionComparator();
 
     /**
@@ -59,7 +59,7 @@ class DataTransferWizardCollectionComparator extends ViewerComparator {
 	}
 
 	/**
-     *	Return true if this sorter is affected by a property 
+     *	Return true if this sorter is affected by a property
      *	change of propertyName on the specified element.
      */
     @Override

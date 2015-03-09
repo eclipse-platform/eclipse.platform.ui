@@ -16,28 +16,28 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 /**
  * Registry that contains wizards contributed via the <code>importWizards</code>
  * extension point.
- * 
+ *
  * @since 3.1
  */
 public class ImportWizardRegistry extends AbstractExtensionWizardRegistry {
 
 	private static ImportWizardRegistry singleton;
-	
+
 	/**
 	 * Return the singleton instance of this class.
-	 * 
+	 *
 	 * @return the singleton instance of this class
 	 */
-	public static synchronized ImportWizardRegistry getInstance() {		
+	public static synchronized ImportWizardRegistry getInstance() {
 		if (singleton == null) {
 			singleton = new ImportWizardRegistry();
 		}
 		return singleton;
 	}
-		
-	
+
+
 	/**
-	 * 
+	 *
 	 */
 	public ImportWizardRegistry() {
 		super();

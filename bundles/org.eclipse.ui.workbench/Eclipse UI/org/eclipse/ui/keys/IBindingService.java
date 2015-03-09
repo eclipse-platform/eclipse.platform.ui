@@ -38,10 +38,10 @@ import org.eclipse.ui.services.IDisposable;
  * <li>This service is available globally.</li>
  * </ul>
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @since 3.1
  */
 public interface IBindingService extends IDisposable {
@@ -63,10 +63,10 @@ public interface IBindingService extends IDisposable {
 	 * <p>
 	 * This method completes in amortized constant time (<code>O(1)</code>).
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void addBindingManagerListener(IBindingManagerListener listener);
@@ -78,17 +78,17 @@ public interface IBindingService extends IDisposable {
 	 * <p>
 	 * This method completes in amortized <code>O(1)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void removeBindingManagerListener(IBindingManagerListener listener);
 
 	/**
 	 * Gets the active bindings for a given parameterized command.
-	 * 
+	 *
 	 * @param parameterizedCommand
 	 *            The fully-parameterized command for which the active bindings
 	 *            should be found; must not be <code>null</code>.
@@ -101,7 +101,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Gets the active bindings for a given command identifier. It is assumed
 	 * that the command has no parameters.
-	 * 
+	 *
 	 * @param commandId
 	 *            The id of the command for which the active bindings should be
 	 *            found; must not be <code>null</code>.
@@ -112,7 +112,7 @@ public interface IBindingService extends IDisposable {
 
 	/**
 	 * Returns the currently active scheme.
-	 * 
+	 *
 	 * @return The currently active scheme. This value may (in certain rare
 	 *         circumstances) be <code>null</code>.
 	 */
@@ -127,7 +127,7 @@ public interface IBindingService extends IDisposable {
 	 * most on various concepts of "length", as well as giving some modifier
 	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
 	 * <code>Ctrl</code>).
-	 * 
+	 *
 	 * @param command
 	 *            The command for which the best active binding should be
 	 *            retrieved; must not be <code>null</code>.
@@ -147,7 +147,7 @@ public interface IBindingService extends IDisposable {
 	 * most on various concepts of "length", as well as giving some modifier
 	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
 	 * <code>Ctrl</code>).
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command for which the best active
 	 *            binding should be retrieved; must not be <code>null</code>.
@@ -158,7 +158,7 @@ public interface IBindingService extends IDisposable {
 	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
 	public TriggerSequence getBestActiveBindingFor(String commandId);
-	
+
 	/**
 	 * Gets the formatted string representing the best active binding for a
 	 * command. The best binding is the one that would be most appropriate to
@@ -167,7 +167,7 @@ public interface IBindingService extends IDisposable {
 	 * based most on various concepts of "length", as well as giving some
 	 * modifier keys preference (e.g., <code>Alt</code> is less likely to
 	 * appear than <code>Ctrl</code>).
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command for which the best active
 	 *            binding should be retrieved; must not be <code>null</code>.
@@ -181,7 +181,7 @@ public interface IBindingService extends IDisposable {
 
 	/**
 	 * Returns the current set of bindings.
-	 * 
+	 *
 	 * @return The current array of bindings (<code>Binding</code>).
 	 */
 	public Binding[] getBindings();
@@ -193,7 +193,7 @@ public interface IBindingService extends IDisposable {
 	 * the trigger sequence used to execute the command. If the key binding
 	 * architecture has seen part of multi-key binding, then this will contain
 	 * the part that it has seen. Otherwise, this will return nothing.
-	 * 
+	 *
 	 * @return The trigger sequence indicating the current state of the key
 	 *         binding buffer; never <code>null</code>, but may be empty if
 	 *         there is nothing in the buffer.
@@ -204,7 +204,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Returns the default scheme identifier for the currently running
 	 * application.
-	 * 
+	 *
 	 * @return The default scheme identifier (<code>String</code>); never
 	 *         <code>null</code>, but may be empty or point to an undefined
 	 *         scheme.
@@ -213,7 +213,7 @@ public interface IBindingService extends IDisposable {
 
 	/**
 	 * Returns the array of defined schemes in the workbench.
-	 * 
+	 *
 	 * @return The array of schemes (<code>Scheme</code>) that are defined;
 	 *         it may be <code>null</code>, and it may be empty.
 	 */
@@ -221,7 +221,7 @@ public interface IBindingService extends IDisposable {
 
 	/**
 	 * Returns the currently active locale.
-	 * 
+	 *
 	 * @return The current locale.
 	 */
 	public String getLocale();
@@ -229,7 +229,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Returns all of the possible bindings that start with the given trigger
 	 * (but are not equal to the given trigger).
-	 * 
+	 *
 	 * @param trigger
 	 *            The prefix to look for; must not be <code>null</code>.
 	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
@@ -240,7 +240,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Returns the command identifier for the active binding matching this
 	 * trigger, if any.
-	 * 
+	 *
 	 * @param trigger
 	 *            The trigger to match; may be <code>null</code>.
 	 * @return The binding that matches, if any; <code>null</code> otherwise.
@@ -249,7 +249,7 @@ public interface IBindingService extends IDisposable {
 
 	/**
 	 * Returns the currently active platform.
-	 * 
+	 *
 	 * @return The current platform.
 	 */
 	public String getPlatform();
@@ -257,7 +257,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Retrieves the scheme with the given identifier. If no such scheme exists,
 	 * then an undefined scheme with the given id is created.
-	 * 
+	 *
 	 * @param schemeId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return A scheme with the given identifier, either defined or undefined.
@@ -266,7 +266,7 @@ public interface IBindingService extends IDisposable {
 
 	/**
 	 * Tests whether the global key binding architecture is currently active.
-	 * 
+	 *
 	 * @return <code>true</code> if the key bindings are active;
 	 *         <code>false</code> otherwise.
 	 */
@@ -275,7 +275,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Returns whether the given trigger sequence is a partial match for the
 	 * given sequence.
-	 * 
+	 *
 	 * @param trigger
 	 *            The sequence which should be the prefix for some binding;
 	 *            should not be <code>null</code>.
@@ -287,7 +287,7 @@ public interface IBindingService extends IDisposable {
 	/**
 	 * Returns whether the given trigger sequence is a perfect match for the
 	 * given sequence.
-	 * 
+	 *
 	 * @param trigger
 	 *            The sequence which should match exactly; should not be
 	 *            <code>null</code>.
@@ -310,7 +310,7 @@ public interface IBindingService extends IDisposable {
 	 * completes, this binding service will reflect the current state of the
 	 * registry and preference store.
 	 * </p>
-	 * 
+	 *
 	 * @param commandService
 	 *            Ignored.
 	 */
@@ -331,7 +331,7 @@ public interface IBindingService extends IDisposable {
 	 * This method also updates the active scheme and bindings in the system to
 	 * match those written to the preference store.
 	 * </p>
-	 * 
+	 *
 	 * @param activeScheme
 	 *            The scheme which should be persisted; may be <code>null</code>.
 	 * @param bindings
@@ -362,18 +362,18 @@ public interface IBindingService extends IDisposable {
 	 * possible that someone listening for key events on a widget could trigger
 	 * a command.)
 	 * </p>
-	 * 
+	 *
 	 * @param enabled
 	 *            Whether the key filter should be enabled.
 	 */
 	public void setKeyFilterEnabled(boolean enabled);
 
 	/**
-	 * Provides the current conflicts in the keybindings for the given 
+	 * Provides the current conflicts in the keybindings for the given
 	 * TriggerSequence as a {@link Collection} of {@link Binding}
-	 * 
+	 *
 	 * @param sequence The sequence for which conflict info is required
-	 * 
+	 *
 	 * @return Collection of Bindings. If no conflicts,
 	 *         then returns a <code>null</code>
 	 * @since 3.5

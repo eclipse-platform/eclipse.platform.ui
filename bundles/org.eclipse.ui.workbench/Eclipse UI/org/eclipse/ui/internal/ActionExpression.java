@@ -46,7 +46,7 @@ public class ActionExpression {
 		 * from the expression and returns the object classes. The expression is
 		 * not changed and a <code>null</code> is returned if no object class
 		 * is found.
-		 * 
+		 *
 		 * @return String[] the object class names or <code>null</code> if
 		 *         none was found.
 		 */
@@ -56,7 +56,7 @@ public class ActionExpression {
 
 		/**
 		 * Returns whether the expression is valid for the given object.
-		 * 
+		 *
 		 * @param object
 		 *            the object to validate against (can be <code>null</code>)
 		 * @return boolean whether the expression is valid for the object.
@@ -67,7 +67,7 @@ public class ActionExpression {
 		 * Returns whether or not the receiver is potentially valid for the
 		 * object via just the extension type. Currently the only supported
 		 * expression type is <code>EXP_TYPE_OBJECT_CLASS</code>.
-		 * 
+		 *
 		 * @param object
 		 *            the object to validate against (can be <code>null</code>)
 		 * @param expressionType
@@ -84,7 +84,7 @@ public class ActionExpression {
 		 * Return the value of the expression type that the receiver is enabled
 		 * for. If the receiver is not enabled for the expressionType then
 		 * return <code>null</code>.
-		 * 
+		 *
 		 * @param expressionType
 		 *            the expression type to consider
 		 * @return Collection of String if there are values for this expression
@@ -101,7 +101,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to determine the expressions
 		 *            for And.
@@ -139,14 +139,14 @@ public class ActionExpression {
 	private static abstract class CompositeExpression extends
 			AbstractExpression {
 		/**
-		 * 
+		 *
 		 */
 		protected ArrayList list;
 
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The composite element we will create the expression from.
 		 * @throws IllegalStateException
@@ -201,7 +201,7 @@ public class ActionExpression {
 
 		/**
 		 * Computes the hash code for this object based on the id.
-		 * 
+		 *
 		 * @return The hash code for this object.
 		 */
 		@Override
@@ -253,7 +253,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to create the definition for
 		 *            the receiver.
@@ -279,7 +279,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to determine the expressions
 		 *            for objectClass.
@@ -300,7 +300,7 @@ public class ActionExpression {
 		/**
 		 * Create an ObjectClass expression based on the className. Added for
 		 * backwards compatibility.
-		 * 
+		 *
 		 * @param className
 		 */
 		public ObjectClassExpression(String className) {
@@ -317,7 +317,7 @@ public class ActionExpression {
 		/**
 		 * Check the interfaces the whole way up. If one of them matches
 		 * className return <code>true</code>.
-		 * 
+		 *
 		 * @param interfaceToCheck
 		 *            The interface whose name we are testing against.
 		 * @return <code>true</code> if one of the interfaces in the hierarchy
@@ -355,7 +355,7 @@ public class ActionExpression {
 
 		/**
 		 * Computes the hash code for this object based on the id.
-		 * 
+		 *
 		 * @return The hash code for this object.
 		 */
 		@Override
@@ -420,7 +420,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to determine the expressions
 		 *            for objectState.
@@ -456,7 +456,7 @@ public class ActionExpression {
 
 		/**
 		 * Computes the hash code for this object based on the id.
-		 * 
+		 *
 		 * @return The hash code for this object.
 		 */
 		@Override
@@ -529,7 +529,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to determine the expressions
 		 *            for Or.
@@ -572,7 +572,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to determine the expressions
 		 *            for pluginState.
@@ -604,7 +604,7 @@ public class ActionExpression {
 
 		/**
 		 * Computes the hash code for this object based on the id.
-		 * 
+		 *
 		 * @return The hash code for this object.
 		 */
 		@Override
@@ -640,7 +640,7 @@ public class ActionExpression {
 
 		/**
 		 * Create a single expression from the abstract definition.
-		 * 
+		 *
 		 * @param expression
 		 *            The expression that will be the child of the new single
 		 *            expression.
@@ -662,7 +662,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element to create the expression from.
 		 * @throws IllegalStateException
@@ -697,7 +697,7 @@ public class ActionExpression {
 
 		/**
 		 * Computes the hash code for this object based on the id.
-		 * 
+		 *
 		 * @return The hash code for this object.
 		 */
 		@Override
@@ -737,7 +737,7 @@ public class ActionExpression {
 		/**
 		 * Creates and populates the expression from the attributes and sub-
 		 * elements of the configuration element.
-		 * 
+		 *
 		 * @param element
 		 *            The element that will be used to determine the expressions
 		 *            for systemProperty.
@@ -778,7 +778,7 @@ public class ActionExpression {
 
 		/**
 		 * Computes the hash code for this object based on the id.
-		 * 
+		 *
 		 * @return The hash code for this object.
 		 */
 		@Override
@@ -802,45 +802,45 @@ public class ActionExpression {
 
 	/**
 	 * Constant definition for AND.
-	 * 
+	 *
 	 */
 	public static final String EXP_TYPE_AND = "and"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for NOT.
-	 * 
+	 *
 	 */
 	public static final String EXP_TYPE_NOT = "not"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for objectClass.
-	 * 
+	 *
 	 */
 	public static final String EXP_TYPE_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for objectState.
-	 * 
+	 *
 	 */
 	public static final String EXP_TYPE_OBJECT_STATE = "objectState"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for OR.
-	 * 
+	 *
 	 */
 	public static final String EXP_TYPE_OR = "or"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for pluginState.
-	 * 
+	 *
 	 */
 	public static final String EXP_TYPE_PLUG_IN_STATE = "pluginState"; //$NON-NLS-1$
 
 	/**
 	 * Constant definition for systemProperty.
-	 * 
+	 *
 	 */
-	public static final String EXP_TYPE_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$	
+	public static final String EXP_TYPE_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$
 
 	/**
 	 * The constant integer hash code value meaning the hash code has not yet
@@ -866,7 +866,7 @@ public class ActionExpression {
 	/**
 	 * Create an expression from the attributes and sub-elements of the
 	 * configuration element.
-	 * 
+	 *
 	 * @param element
 	 *            The IConfigurationElement with a tag defined in the public
 	 *            constants.
@@ -913,7 +913,7 @@ public class ActionExpression {
 
 	/**
 	 * Creates an action expression for the given configuration element.
-	 * 
+	 *
 	 * @param element
 	 *            The element to build the expression from.
 	 */
@@ -930,7 +930,7 @@ public class ActionExpression {
 	 * Create an instance of the receiver with the given expression type and
 	 * value. Currently the only supported expression type is
 	 * <code>EXP_TYPE_OBJECT_CLASS</code>.
-	 * 
+	 *
 	 * @param expressionType
 	 *            The expression constant we are creating an instance of.
 	 * @param expressionValue
@@ -959,7 +959,7 @@ public class ActionExpression {
 	 * optimized way. This method removes the objectClass test from the
 	 * expression and returns the object class. The expression is not changed
 	 * and a <code>null</code> is returned if no object class is found.
-	 * 
+	 *
 	 * @return the object class or <code>null</code> if none was found.
 	 */
 	public String[] extractObjectClasses() {
@@ -968,7 +968,7 @@ public class ActionExpression {
 
 	/**
 	 * Computes the hash code for this object based on the id.
-	 * 
+	 *
 	 * @return The hash code for this object.
 	 */
 	@Override
@@ -985,7 +985,7 @@ public class ActionExpression {
 	/**
 	 * Returns whether the expression is valid for all elements of the given
 	 * selection.
-	 * 
+	 *
 	 * @param selection
 	 *            the structured selection to use
 	 * @return boolean whether the expression is valid for the selection.
@@ -1010,7 +1010,7 @@ public class ActionExpression {
 
 	/**
 	 * Returns whether the expression is valid for the given object.
-	 * 
+	 *
 	 * @param object
 	 *            the object to validate against (can be <code>null</code>)
 	 * @return boolean whether the expression is valid for the object.
@@ -1026,7 +1026,7 @@ public class ActionExpression {
 	 * Returns whether or not the receiver is potentially valid for the object
 	 * via just the extension type. Currently the only supported expression type
 	 * is <code>EXP_TYPE_OBJECT_CLASS</code>.
-	 * 
+	 *
 	 * @param object
 	 *            the object to validate against (can be <code>null</code>)
 	 * @param expressionType
@@ -1045,7 +1045,7 @@ public class ActionExpression {
 	 * Return the values of the expression type that the receiver is enabled
 	 * for. If the receiver is not enabled for the expressionType then return
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param expressionType
 	 *            the expression type to consider
 	 * @return Collection if there are values for this expression or

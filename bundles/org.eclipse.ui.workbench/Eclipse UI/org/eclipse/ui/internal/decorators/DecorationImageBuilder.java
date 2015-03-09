@@ -20,9 +20,9 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * DecorationImageBuilder is a utility class for merging images without data
  * loss.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 class DecorationImageBuilder {
 

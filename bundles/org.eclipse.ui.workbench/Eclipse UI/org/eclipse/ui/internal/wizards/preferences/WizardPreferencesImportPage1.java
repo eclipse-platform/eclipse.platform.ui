@@ -28,8 +28,8 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
 /**
  * Page 1 of the base preference import Wizard
- * 
- * 
+ *
+ *
  * @since 3.1
  */
 public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
@@ -61,7 +61,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         return PreferencesMessages.WizardPreferencesImportPage1_choose;
     }
 
-   
+
     @Override
 	protected PreferenceTransferElement[] getTransfers() {
         if (validFromFile()) {
@@ -92,7 +92,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                         PreferenceTransferElement element = transfers[j];
                         if (element.getFilter().equals(filter)) {
 							returnTransfers[index++] = element;
-						}                        
+						}
                     }
                 }
 
@@ -126,8 +126,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
     @Override
 	protected void setPreferenceTransfers() {
-    	super.setPreferenceTransfers();	
-    	
+    	super.setPreferenceTransfers();
+
 		if (validFromFile()
 				&& (transfersTree.getViewer().getTree().getItemCount() == 0)) {
 			descText
@@ -136,7 +136,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 			descText.setText(""); //$NON-NLS-1$
 		}
 	}
-  
+
     @Override
 	protected void createTransferArea(Composite composite) {
         createDestinationGroup(composite);
@@ -145,7 +145,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
     /**
      * Answer the string to display in self as the destination type
-     * 
+     *
      * @return java.lang.String
      */
     @Override
@@ -176,7 +176,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 IPreferencesService service = Platform.getPreferencesService();
                 try {
                     IExportedPreferences prefs = service.readPreferences(fis);
-                    
+
                     service.applyPreferences(prefs, filters);
                 } catch (CoreException e) {
                     WorkbenchPlugin.log(e.getMessage(), e);
@@ -203,7 +203,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
     /**
      * Handle events and enablements for widgets in this page
-     * 
+     *
      * @param e
      *            Event
      */
@@ -215,17 +215,17 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
         super.handleEvent(e);
     }
-	
+
     @Override
 	protected String getFileDialogTitle(){
 		return PreferencesMessages.WizardPreferencesImportPage1_title;
 	}
-	
+
 	@Override
 	protected int getFileDialogStyle() {
 		return SWT.OPEN | SWT.SHEET;
 	}
-	
+
 	@Override
 	protected boolean validDestination() {
 		return super.validDestination() && validFromFile();

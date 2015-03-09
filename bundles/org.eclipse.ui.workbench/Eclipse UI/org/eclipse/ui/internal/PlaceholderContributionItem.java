@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * contribution item that has been disposed. This is to ensure that tool bar
  * contribution items are disposed (freeing their resources), but that layout
  * information about the item is not lost.
- * 
+ *
  * @since 3.0
  */
 final class PlaceholderContributionItem implements IContributionItem {
@@ -60,7 +60,7 @@ final class PlaceholderContributionItem implements IContributionItem {
     /**
      * Constructs a new instance of <code>PlaceholderContributionItem</code>
      * from the item it is intended to replace.
-     * 
+     *
      * @param item
      *            The item to be replaced; must not be <code>null</code>.
      */
@@ -103,7 +103,7 @@ final class PlaceholderContributionItem implements IContributionItem {
 
     /**
      * The height of the replaced contribution item.
-     * 
+     *
      * @return The height.
      */
     int getHeight() {
@@ -117,16 +117,16 @@ final class PlaceholderContributionItem implements IContributionItem {
 
     /**
      * The width of the replaced contribution item.
-     * 
+     *
      * @return The width.
      */
     int getWidth() {
         return storedWidth;
     }
-    
+
     /**
      * Returns the minimum number of tool items to show in the cool item.
-     * 
+     *
      * @return the minimum number of tool items to show, or <code>SHOW_ALL_ITEMS</code>
      *         if a value was not set
      * @see #setMinimumItemsToShow(int)
@@ -135,10 +135,10 @@ final class PlaceholderContributionItem implements IContributionItem {
     int getMinimumItemsToShow() {
     	return storedMinimumItems;
     }
-    
+
     /**
      * Returns whether chevron support is enabled.
-     * 
+     *
      * @return <code>true</code> if chevron support is enabled, <code>false</code>
      *         otherwise
 	 * @since 3.2

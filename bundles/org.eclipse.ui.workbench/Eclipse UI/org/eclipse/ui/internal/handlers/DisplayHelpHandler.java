@@ -18,7 +18,7 @@ import org.eclipse.ui.help.IWorkbenchHelpSystem;
 /**
  * Displays the help resource specified in the <code>href</code> command
  * parameter or simply displays the help bookshelf if no parameter was passed.
- * 
+ *
  * @since 3.2
  */
 public final class DisplayHelpHandler extends AbstractHandler {

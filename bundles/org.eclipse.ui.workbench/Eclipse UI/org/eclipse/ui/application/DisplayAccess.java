@@ -16,7 +16,7 @@ import org.eclipse.ui.internal.UISynchronizer;
 /**
  * This class provides static methods that help RCP applications interact with
  * the Display.
- * 
+ *
  * @since 3.4
  */
 public final class DisplayAccess {
@@ -30,7 +30,7 @@ public final class DisplayAccess {
 	 * Without invoking this method from a given thread subsequent calls to the
 	 * above Display methods will behave as follows:
 	 * </p>
-	 * 
+	 *
 	 * <ul>
 	 * <li>runnables posted to
 	 * {@link org.eclipse.swt.widgets.Display#asyncExec(Runnable)} will not be
@@ -39,23 +39,23 @@ public final class DisplayAccess {
 	 * {@link org.eclipse.swt.widgets.Display#syncExec(Runnable)} will block
 	 * until the Workbench is fully restored.</li>
 	 * </ul>
-	 * 
+	 *
 	 * <p>
 	 * This method MUST NOT be called from threads created by the workbench. If
 	 * invoked from any thread owned by the Workbench this method will throw an
 	 * {@link IllegalStateException}.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * It is recommended that this method be used from ALL threads that touch
 	 * the display during the startup process, even those that may have been
 	 * created in the main application class.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method has no effect after the workbench has been restored.
 	 * </p>
-	 * 
+	 *
 	 * @throws IllegalStateException
 	 *             thrown if invoked from a thread created by the workbench.
 	 */

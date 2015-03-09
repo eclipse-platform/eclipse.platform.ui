@@ -16,7 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class QuickAccessElement {
 
@@ -35,14 +35,14 @@ public abstract class QuickAccessElement {
 
 	/**
 	 * Returns the label to be displayed to the user.
-	 * 
+	 *
 	 * @return the label
 	 */
 	public abstract String getLabel();
 
 	/**
 	 * Returns the image descriptor for this element.
-	 * 
+	 *
 	 * @return an image descriptor, or null if no image is available
 	 */
 	public abstract ImageDescriptor getImageDescriptor();
@@ -50,7 +50,7 @@ public abstract class QuickAccessElement {
 	/**
 	 * Returns the id for this element. The id has to be unique within the
 	 * QuickAccessProvider that provided this element.
-	 * 
+	 *
 	 * @return the id
 	 */
 	public abstract String getId();
@@ -62,7 +62,7 @@ public abstract class QuickAccessElement {
 
 	/**
 	 * Return the label to be used for sorting elements.
-	 * 
+	 *
 	 * @return the sort label
 	 */
 	public String getSortLabel() {
@@ -80,7 +80,7 @@ public abstract class QuickAccessElement {
 	 * If this element is a match (partial, complete, camel case, etc) to the
 	 * given filter, returns a {@link QuickAccessEntry}. Otherwise returns
 	 * <code>null</code>;
-	 * 
+	 *
 	 * @param filter
 	 *            filter for matching
 	 * @param providerForMatching

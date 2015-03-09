@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.util.Util;
  * <code>org.eclipse.ui.workbench</code> and <code>org.eclipse.ui.ide</code>
  * plug-ins.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class SelectionConversionService implements ISelectionConversionService {
@@ -40,7 +40,7 @@ public class SelectionConversionService implements ISelectionConversionService {
 	 * If all elements in the initial selection can be converted to resources
 	 * then answer a new selection containing these resources; otherwise answer
 	 * an empty selection.
-	 * 
+	 *
 	 * @param originalSelection
 	 *            the original selection
 	 * @return the converted selection or an empty selection.
@@ -61,7 +61,7 @@ public class SelectionConversionService implements ISelectionConversionService {
 			Object currentElement = elements.next();
             Object resource = Util.getAdapter(currentElement, resourceClass);
             if (resource != null) {
-            	result.add(resource);   
+            	result.add(resource);
             }
 		}
 

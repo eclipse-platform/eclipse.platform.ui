@@ -34,7 +34,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * <p>
  * This class is not intended to be instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
@@ -47,7 +47,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
     private Map extraData = new HashMap();
 
     /**
-     * Indicates whether workbench state should be saved on close and 
+     * Indicates whether workbench state should be saved on close and
      * restored on subsequent open.
      */
     private boolean saveAndRestore = false;
@@ -60,10 +60,10 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 
     /**
      * Indicates the behaviour when the last window is closed.
-     * If <code>true</code>, the workbench will exit (saving the last window's state, 
+     * If <code>true</code>, the workbench will exit (saving the last window's state,
      * if configured to do so).
      * If <code>false</code> the window will be closed, leaving the workbench running.
-     * 
+     *
      * @since 3.1
      */
 	private boolean exitOnLastWindowClose = true;

@@ -68,7 +68,7 @@ public interface IPageService {
     /**
 	 * Removes the given page listener. Has no effect if an identical listener
 	 * is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a page listener
 	 */
@@ -77,7 +77,7 @@ public interface IPageService {
     /**
 	 * Removes the given page's perspective listener. Has no effect if an
 	 * identical listener is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a perspective listener
 	 */

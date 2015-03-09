@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 /**
  * A utility class used to call #earlyStartup on the proper instance for a given
  * configuration element.
- * 
+ *
  * @since 3.0
  */
 public class EarlyStartupRunnable extends SafeRunnable {
@@ -93,7 +93,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
 
     /**
      * In 3.0 the class attribute is a mandatory element of the startup element.
-     * 
+     *
      * @return an executable extension for this startup element or null if an
      *         extension (or plugin) could not be found
      */

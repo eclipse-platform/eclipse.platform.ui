@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Action to open the dynamic help.
- * 
+ *
  * @since 3.1
  */
 public class DynamicHelpAction extends Action implements IWorkbenchAction {
@@ -42,7 +42,7 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 
 	/**
 	 * Constructor for use by ActionFactory.
-	 * 
+	 *
 	 * @param window
 	 *            the window
 	 */
@@ -73,7 +73,7 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 		//
 		// Commented out due to the problem described in
 		// Bugzilla bug #95057
-	
+
 		//if (Platform.getWS().equals(Platform.WS_WIN32))
 		//	return text + "\t" + KeyStroke.getInstance(SWT.F1).format(); //$NON-NLS-1$
 		return text;

@@ -24,10 +24,10 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * <p>
  * RedoActionHandler provides common behavior for redoing an operation, as well
- * as labelling and enabling the menu item.  This class may be instantiated by 
+ * as labelling and enabling the menu item.  This class may be instantiated by
  * clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class RedoActionHandler extends OperationHistoryActionHandler {
@@ -35,10 +35,10 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
 	 * the redo action for the specified undo context.
-	 * 
-	 * @param site 
+	 *
+	 * @param site
 	 *            the workbench part site that created the action.
-	 * @param context 
+	 * @param context
 	 *            the undo context to be used for redoing.
 	 */
 	public RedoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
@@ -59,17 +59,17 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 	String getCommandString() {
 		return WorkbenchMessages.Operations_redoCommand;
 	}
-	
+
 	@Override
 	String getTooltipString() {
 		return WorkbenchMessages.Operations_redoTooltipCommand;
 	}
-	
+
 	@Override
 	String getSimpleCommandString() {
 		return WorkbenchMessages.Workbench_redo;
 	}
-	
+
 	@Override
 	String getSimpleTooltipString() {
 		return WorkbenchMessages.Workbench_redoToolTip;

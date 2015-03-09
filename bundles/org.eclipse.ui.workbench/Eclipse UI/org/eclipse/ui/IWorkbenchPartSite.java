@@ -60,7 +60,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      * This method should only be called if the target part has more
      * than one context menu to register.
      * <p>
-     * For a detailed description of context menu registration see 
+     * For a detailed description of context menu registration see
      * <code>registerContextMenu(MenuManager, ISelectionProvider);
      * </p>
      *
@@ -72,13 +72,13 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
             ISelectionProvider selectionProvider);
 
     /**
-     * Registers a pop-up menu with the default id for extension.  
+     * Registers a pop-up menu with the default id for extension.
      * The default id is defined as the part id.
      * <p>
      * Within the workbench one plug-in may extend the pop-up menus for a view
      * or editor within another plug-in.  In order to be eligible for extension,
      * the target part must publish each menu by calling <code>registerContextMenu</code>.
-     * Once this has been done the workbench will automatically insert any action 
+     * Once this has been done the workbench will automatically insert any action
      * extensions which exist.
      * </p>
      * <p>
@@ -91,16 +91,16 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      *			<code>registerContextMenu(MenuManager, ISelectionProvider)</code>.
      *		<li>If the target part has more than one context menu a unique id should be
      *			defined for each.  Prefix each menu id with the part id and publish these
-     *			ids within the javadoc for the target part.  Register each menu at 
-     *			runtime by calling <code>registerContextMenu(String, MenuManager, 
+     *			ids within the javadoc for the target part.  Register each menu at
+     *			runtime by calling <code>registerContextMenu(String, MenuManager,
      *			ISelectionProvider)</code>.  </li>
      * </ol>
      * <p>
-     * Any pop-up menu which is registered with the workbench should also define a  
-     * <code>GroupMarker</code> in the registered menu with id 
-     * <code>IWorkbenchActionConstants.MB_ADDITIONS</code>.  Other plug-ins will use this 
-     * group as a reference point for insertion.  The marker should be defined at an 
-     * appropriate location within the menu for insertion.  
+     * Any pop-up menu which is registered with the workbench should also define a
+     * <code>GroupMarker</code> in the registered menu with id
+     * <code>IWorkbenchActionConstants.MB_ADDITIONS</code>.  Other plug-ins will use this
+     * group as a reference point for insertion.  The marker should be defined at an
+     * appropriate location within the menu for insertion.
      * </p>
      *
      * @param menuManager the menu manager
@@ -115,7 +115,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
 	 * The part will access this service to register all of its actions, to set
 	 * the active scope.
 	 * </p>
-	 * 
+	 *
 	 * @return the key binding service in use
 	 * @since 2.1
 	 * @deprecated Use {@link IServiceLocator#getService(Class)} instead.
@@ -124,13 +124,13 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
 	 */
     @Deprecated
 	public IKeyBindingService getKeyBindingService();
-    
+
     /**
-     * Returns the part associated with this site 
-     * 
-     * @since 3.1 
+     * Returns the part associated with this site
+     *
+     * @since 3.1
      *
      * @return the part associated with this site
      */
-    public IWorkbenchPart getPart(); 
+    public IWorkbenchPart getPart();
 }

@@ -33,7 +33,7 @@ import com.ibm.icu.text.MessageFormat;
  * appropriate class. This implementation is tightly bound to the properties
  * provided in IProductConstants. Clients adding their own properties could
  * choose to subclass this.
- * 
+ *
  * @see org.eclipse.ui.branding.IProductConstants
  * @since 3.0
  */
@@ -59,7 +59,7 @@ public class ProductProperties extends BrandingProperties implements
     private static final String ABOUT_MAPPINGS = "$nl$/about.mappings"; //$NON-NLS-1$
 
     private static HashMap mappingsMap = new HashMap(4);
-    
+
     private static String[] loadMappings(Bundle definingBundle) {
         URL location = Platform.find(definingBundle, new Path(
                 ABOUT_MAPPINGS));
@@ -100,7 +100,7 @@ public class ProductProperties extends BrandingProperties implements
         mappingsMap.put(definingBundle, mappings);
         return mappings;
     }
-    
+
     private static String[] getMappings(Bundle definingBundle) {
     	String[] mappings = (String[]) mappingsMap.get(definingBundle);
     	if (mappings == null) {
@@ -111,7 +111,7 @@ public class ProductProperties extends BrandingProperties implements
     	}
     	return mappings;
     }
-    
+
     /**
      * This instance will return properties from the given product.  The properties are
      * retrieved in a lazy fashion and cached for later retrieval.
@@ -155,7 +155,7 @@ public class ProductProperties extends BrandingProperties implements
 
     /**
      * An image which can be shown in an "about" dialog for this
-     * product. Products designed to run "headless" typically would not 
+     * product. Products designed to run "headless" typically would not
      * have such an image.
      * <p>
      * A full-sized product image (no larger than 500x330 pixels) is
@@ -173,7 +173,7 @@ public class ProductProperties extends BrandingProperties implements
     /**
      * An array of one or more images to be used for this product.  The
      * expectation is that the array will contain the same image rendered
-     * at different sizes (16x16 and 32x32).  
+     * at different sizes (16x16 and 32x32).
      * Products designed to run "headless" typically would not have such images.
      * <p>
      * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.
@@ -268,12 +268,12 @@ public class ProductProperties extends BrandingProperties implements
                 /*
     	 * Check if the mapping value is a system property, specified
     	 * by '$' at the beginning and end of the string.  If so, update
-    	 * the mappings array with the system property value.  
+    	 * the mappings array with the system property value.
     	 */
         for (int i=0; i<tempMappings.length; i++) {
         	String nextString = tempMappings[i];
         	int length = nextString.length();
-        	
+
         	if (length > 2 && nextString.charAt(0) == '$' && nextString.charAt(length-1) == '$') {
         		String systemPropertyKey = nextString.substring(1, length-1);
         		// If system property is not set, insert an empty String
@@ -286,7 +286,7 @@ public class ProductProperties extends BrandingProperties implements
 
     /**
      * An image which can be shown in an "about" dialog for this
-     * product. Products designed to run "headless" typically would not 
+     * product. Products designed to run "headless" typically would not
      * have such an image.
      * <p>
      * A full-sized product image (no larger than 500x330 pixels) is
@@ -302,7 +302,7 @@ public class ProductProperties extends BrandingProperties implements
     /**
      * An array of one or more images to be used for this product.  The
      * expectation is that the array will contain the same image rendered
-     * at different sizes (16x16 and 32x32).  
+     * at different sizes (16x16 and 32x32).
      * Products designed to run "headless" typically would not have such images.
      * <p>
      * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.

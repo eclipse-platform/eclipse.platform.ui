@@ -34,7 +34,7 @@ package org.eclipse.ui.commands;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see IKeyConfigurationListener
  * @see ICommandManager
@@ -50,7 +50,7 @@ public interface IKeyConfiguration extends Comparable {
     /**
      * Registers an instance of <code>IKeyConfigurationListener</code> to
      * listen for changes to attributes of this instance.
-     * 
+     *
      * @param keyConfigurationListener
      *            the instance of <code>IKeyConfigurationListener</code> to
      *            register. Must not be <code>null</code>. If an attempt is
@@ -71,7 +71,7 @@ public interface IKeyConfiguration extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the description of the key configuration represented by this
      *         handle. Guaranteed not to be <code>null</code>.
      * @throws NotDefinedException
@@ -83,7 +83,7 @@ public interface IKeyConfiguration extends Comparable {
 
     /**
      * Returns the identifier of this handle.
-     * 
+     *
      * @return the identifier of this handle. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -99,7 +99,7 @@ public interface IKeyConfiguration extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the name of the key configuration represented by this handle.
      *         Guaranteed not to be <code>null</code>.
      * @throws NotDefinedException
@@ -118,7 +118,7 @@ public interface IKeyConfiguration extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return the identifier of the parent of the key configuration
      *         represented by this handle. May be <code>null</code>.
      * @throws NotDefinedException
@@ -138,7 +138,7 @@ public interface IKeyConfiguration extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return <code>true</code>, iff this command is active.
      */
 	@Deprecated
@@ -153,7 +153,7 @@ public interface IKeyConfiguration extends Comparable {
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
-     * 
+     *
      * @return <code>true</code>, iff the key configuration represented by
      *         this handle is defined.
      */
@@ -163,7 +163,7 @@ public interface IKeyConfiguration extends Comparable {
     /**
      * Unregisters an instance of <code>IKeyConfigurationListener</code>
      * listening for changes to attributes of this instance.
-     * 
+     *
      * @param keyConfigurationListener
      *            the instance of <code>IKeyConfigurationListener</code> to
      *            unregister. Must not be <code>null</code>. If an attempt is

@@ -16,7 +16,7 @@ import java.util.EventObject;
 
 /**
  * Event object describing a change to a set of Saveable objects.
- * 
+ *
  * @since 3.2
  */
 public class SaveablesLifecycleEvent extends EventObject {
@@ -61,7 +61,7 @@ public class SaveablesLifecycleEvent extends EventObject {
 
 	/**
 	 * Creates a new SaveablesLifecycleEvent.
-	 * 
+	 *
 	 * @param source
 	 *            The source of the event. If an ISaveablesSource notifies
 	 *            about changes to the saveables returned by
@@ -88,7 +88,7 @@ public class SaveablesLifecycleEvent extends EventObject {
 	 * Returns the eventType, currently one of POST_OPEN, PRE_CLOSE, POST_CLOSE,
 	 * DIRTY_CHANGED. Listeners should silently ignore unknown event types since
 	 * new event types might be added in the future.
-	 * 
+	 *
 	 * @return the eventType
 	 */
 	public int getEventType() {
@@ -97,7 +97,7 @@ public class SaveablesLifecycleEvent extends EventObject {
 
 	/**
 	 * Returns the affected saveables.
-	 * 
+	 *
 	 * @return the saveables
 	 */
 	public Saveable[] getSaveables() {
@@ -107,7 +107,7 @@ public class SaveablesLifecycleEvent extends EventObject {
 	/**
 	 * Returns the veto. This value is ignored for POST_OPEN,POST_CLOSE, and
 	 * DIRTY_CHANGED.
-	 * 
+	 *
 	 * @return Returns the veto.
 	 */
 	public boolean isVeto() {
@@ -125,7 +125,7 @@ public class SaveablesLifecycleEvent extends EventObject {
 	/**
 	 * Sets the force flag. This value is ignored for POST_OPEN, POST_CLOSE, and
 	 * DIRTY_CHANGED.
-	 * 
+	 *
 	 * @return Returns the force.
 	 */
 	public boolean isForce() {

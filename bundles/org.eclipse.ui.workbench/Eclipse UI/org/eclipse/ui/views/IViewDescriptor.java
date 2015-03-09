@@ -27,15 +27,15 @@ import org.eclipse.ui.IWorkbenchPartDescriptor;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.views.IViewRegistry
- * @since 3.1 
+ * @since 3.1
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
     /**
      * Creates an instance of the view defined in the descriptor.
-     * 
+     *
      * @return the view part
      * @throws CoreException thrown if there is a problem creating the part
      */
@@ -59,7 +59,7 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
 
     /**
      * Returns the id of the view.
-     * 
+     *
      * @return the id
      */
     @Override
@@ -73,7 +73,7 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
 
     /**
      * Returns the label to show for this view.
-     * 
+     *
      * @return the label
      */
     @Override
@@ -81,21 +81,21 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
 
     /**
      * Returns the default fast view width ratio for this view.
-     * 
+     *
      * @return the fast view width ratio
      */
     public float getFastViewWidthRatio();
 
     /**
      * Returns whether this view allows multiple instances.
-     * 
+     *
      * @return whether this view allows multiple instances
      */
     public boolean getAllowMultiple();
 
     /**
      * Returns whether this view can be restored upon workbench restart.
-     * 
+     *
      * @return whether whether this view can be restored upon workbench restart
      * @since 3.4
      */

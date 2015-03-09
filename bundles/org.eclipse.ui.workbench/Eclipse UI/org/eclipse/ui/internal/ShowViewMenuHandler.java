@@ -46,9 +46,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * <p>
  * Replacement for: ShowViewMenuAction
  * </p>
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 

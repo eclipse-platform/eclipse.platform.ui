@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see ICommandListener#commandChanged(CommandEvent)
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
@@ -79,7 +79,7 @@ public final class CommandEvent {
 
     /**
      * Creates a new instance of this class.
-     * 
+     *
      * @param command
      *            the instance of the interface that changed.
      * @param attributeValuesByNameChanged
@@ -140,7 +140,7 @@ public final class CommandEvent {
 
     /**
      * Returns the instance of the interface that changed.
-     * 
+     *
      * @return the instance of the interface that changed. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -151,7 +151,7 @@ public final class CommandEvent {
 
     /**
      * Returns the map of previous attribute values by name.
-     * 
+     *
      * @return the map of previous attribute values by name. This map may be
      *         empty. If this map is not empty, it's collection of keys is
      *         guaranteed to only contain instances of <code>String</code>.
@@ -167,7 +167,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the categoryId property changed.
-     * 
+     *
      * @return true, iff the categoryId property changed.
      */
 	@Deprecated
@@ -177,7 +177,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the defined property changed.
-     * 
+     *
      * @return true, iff the defined property changed.
      */
 	@Deprecated
@@ -187,7 +187,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the description property changed.
-     * 
+     *
      * @return true, iff the description property changed.
      */
 	@Deprecated
@@ -197,7 +197,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the handled property changed.
-     * 
+     *
      * @return true, iff the handled property changed.
      */
 	@Deprecated
@@ -207,7 +207,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the name property changed.
-     * 
+     *
      * @return true, iff the name property changed.
      */
 	@Deprecated
@@ -217,7 +217,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the attributeValuesByName property changed.
-     * 
+     *
      * @return true, iff the attributeValuesByName property changed.
      */
 	@Deprecated
@@ -227,7 +227,7 @@ public final class CommandEvent {
 
     /**
      * Returns whether or not the keySequenceBindings property changed.
-     * 
+     *
      * @return true, iff the keySequenceBindings property changed.
      */
 	@Deprecated

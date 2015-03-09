@@ -36,12 +36,12 @@ import org.eclipse.ui.themes.IThemePreview;
  * @since 3.0
  */
 public class WorkbenchPreview implements IThemePreview {
-	
+
 	  // don't reset this dynamically, so just keep the information static.
 	// see bug:
 	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
     private static int tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
-  
+
     private boolean disposed = false;
 
     private CTabFolder folder;

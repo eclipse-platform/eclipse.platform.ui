@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
 /**
- * 
+ *
  * @since 3.6
  * @author Prakash G.R.
  */
@@ -53,6 +53,6 @@ public class PreferencesContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 	}
-	
+
 
 }

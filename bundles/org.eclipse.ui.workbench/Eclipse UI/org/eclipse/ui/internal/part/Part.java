@@ -18,16 +18,16 @@ import org.eclipse.ui.IPersistable;
  * of a part matches that of its control. The part creates its
  * control in its constructor, and it performs any cleanup by hooking
  * a dispose listener on the control.
- * 
+ *
  * <p>
- * Not intended to be subclassed by clients. 
+ * Not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class Part implements IPersistable
 {
-    
+
     /**
      * Returns the part's control. The owner of a part may attach
      * layout data to this control, and may give the part focus by

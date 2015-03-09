@@ -18,7 +18,7 @@ import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
  * Descriptor for trigger point advisor extensions.
- * 
+ *
  * @since 3.1
  */
 public final class TriggerPointAdvisorDescriptor {
@@ -29,7 +29,7 @@ public final class TriggerPointAdvisorDescriptor {
 
 	/**
 	 * Create a new instance of this class.
-	 * 
+	 *
 	 * @param element
 	 *            the configuration element
 	 * @throws IllegalArgumentException
@@ -48,7 +48,7 @@ public final class TriggerPointAdvisorDescriptor {
 
 	/**
 	 * Return the id.
-	 * 
+	 *
 	 * @return the id
 	 */
 	public String getId() {
@@ -57,7 +57,7 @@ public final class TriggerPointAdvisorDescriptor {
 
 	/**
 	 * Create the advisor for this descriptor.
-	 * 
+	 *
 	 * @return the advisor
 	 * @throws CoreException
 	 *             thrown if there is an issue creating the advisor

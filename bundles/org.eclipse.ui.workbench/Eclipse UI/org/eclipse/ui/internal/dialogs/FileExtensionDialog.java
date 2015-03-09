@@ -36,11 +36,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * This class is used to prompt the user for a file name & extension.
  */
 public class FileExtensionDialog extends TitleAreaDialog {
-	
+
 	private static final String DIALOG_SETTINGS_SECTION = "FileExtensionDialogSettings"; //$NON-NLS-1$
-	
+
     private String filename = ""; //$NON-NLS-1$
-    
+
     private String initialValue;
 
     private Text filenameField;
@@ -69,10 +69,10 @@ public class FileExtensionDialog extends TitleAreaDialog {
 				WorkbenchMessages.FileExtension_fileTypeLabel);
 		setShellStyle(getShellStyle() | SWT.SHEET);
 	}
-    
+
     /**
      * Constructs a new file extension dialog.
-     * 
+     *
      * @param parentShell the parent shell
      * @param title the dialog title
      * @param helpContextId the help context for this dialog
@@ -91,7 +91,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 
 		setShellStyle(getShellStyle() | SWT.SHEET);
     }
-    
+
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -99,7 +99,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, helpContextId);
     }
 
-   
+
     @Override
 	protected Control createDialogArea(Composite parent) {
 		Composite parentComposite = (Composite) super.createDialogArea(parent);
@@ -133,11 +133,11 @@ public class FileExtensionDialog extends TitleAreaDialog {
 		Point defaultMargins = LayoutConstants.getMargins();
 		GridLayoutFactory.fillDefaults().numColumns(2).margins(
 				defaultMargins.x, defaultMargins.y).generateLayout(contents);
-		
+
 		return contents;
 	}
 
-   
+
     @Override
 	protected void createButtonsForButtonBar(Composite parent) {
         okButton = createButton(parent, IDialogConstants.OK_ID,
@@ -163,19 +163,19 @@ public class FileExtensionDialog extends TitleAreaDialog {
         int index = filename.lastIndexOf('.');
         if (index == filename.length() - 1) {
             if (index == 0 || (index == 1 && filename.charAt(0) == '*')) {
-                setErrorMessage(WorkbenchMessages.FileExtension_extensionEmptyMessage); 
+                setErrorMessage(WorkbenchMessages.FileExtension_extensionEmptyMessage);
                 return false;
             }
         }
 
-        // check for characters before * 
+        // check for characters before *
         // or no other characters
         // or next chatacter not '.'
         // or another *
         index = filename.indexOf('*');
         if (index > -1) {
             if (filename.length() == 1) {
-                setErrorMessage(WorkbenchMessages.FileExtension_extensionEmptyMessage); 
+                setErrorMessage(WorkbenchMessages.FileExtension_extensionEmptyMessage);
                 return false;
             }
             if (index != 0 || filename.charAt(1) != '.') {
@@ -183,7 +183,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
                 return false;
             }
             if (filename.length() > index && filename.indexOf('*', index + 1) != -1) {
-            	setErrorMessage(WorkbenchMessages.FileExtension_fileNameInvalidMessage); 
+            	setErrorMessage(WorkbenchMessages.FileExtension_fileNameInvalidMessage);
             	return false;
             }
         }
@@ -194,7 +194,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 
     /**
      * Get the extension.
-     * 
+     *
      * @return the extension
      */
     public String getExtension() {
@@ -212,7 +212,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 
     /**
      * Get the name.
-     * 
+     *
      * @return the name
      */
     public String getName() {
@@ -227,10 +227,10 @@ public class FileExtensionDialog extends TitleAreaDialog {
 		}
         return filename.substring(0, index);
     }
-    
+
     /**
 	 * Sets the initial value that should be prepopulated in this dialog.
-	 * 
+	 *
 	 * @param initialValue
 	 *            the value to be displayed to the user
 	 * @since 3.4
@@ -238,7 +238,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
     public void setInitialValue(String initialValue) {
     	this.initialValue = initialValue;
     }
-   
+
     @Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
@@ -246,7 +246,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
         if (section == null) section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
         return section;
     }
-    
+
     @Override
 	protected boolean isResizable() {
     	return true;

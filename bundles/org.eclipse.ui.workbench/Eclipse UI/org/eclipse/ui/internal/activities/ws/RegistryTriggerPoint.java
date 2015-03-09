@@ -30,7 +30,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     /**
      * Create a new instance of this class.
-     * 
+     *
      * @param id the id of the trigger point
      * @param element the defining configuration element
      */
@@ -41,7 +41,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.activities.ITriggerPoint#getId()
      */
     @Override
@@ -51,7 +51,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.activities.ITriggerPoint#getStringHint(java.lang.String)
      */
     @Override
@@ -61,7 +61,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.activities.ITriggerPoint#getBooleanHint(java.lang.String)
      */
     @Override
@@ -71,7 +71,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     /**
      * Lazily create the hints.
-     * 
+     *
      * @return the hint map
      */
     private Map getHints() {

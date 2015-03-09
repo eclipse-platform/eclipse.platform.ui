@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *		IBM Corporation - initial API and implementation 
+ *		IBM Corporation - initial API and implementation
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 		font should be activated and used by other components.
  *      Robin Stocker <robin@nibor.org> - Add filter text field
@@ -74,7 +74,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * Displays information about the product plugins.
- * 
+ *
  * PRIVATE this class is internal to the IDE
  */
 public class AboutPluginsPage extends ProductInfoPage {
@@ -150,7 +150,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
 			 * runtime.IProgressMonitor)
@@ -180,7 +180,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
 		 * .lang.Object, int)
@@ -210,7 +210,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
 		 * lang.Object, int)
@@ -370,7 +370,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 	/**
 	 * Create the table part of the dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite to contain the dialog area
 	 */
@@ -444,7 +444,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 	/**
 	 * Update the sort information on both the comparator and the table.
-	 * 
+	 *
 	 * @param columnIndex
 	 *            the index to sort by
 	 * @since 3.4
@@ -468,7 +468,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 	 * Return an URL to the plugin's about.html file (what is shown when
 	 * "More info" is pressed) or null if no such file exists. The method does
 	 * nl lookup to allow for i18n.
-	 * 
+	 *
 	 * @param bundleInfo
 	 *            the bundle info
 	 * @param makeLocal
@@ -512,7 +512,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.about.ProductInfoPage#getId()
 	 */
 	@Override
@@ -560,9 +560,9 @@ public class AboutPluginsPage extends ProductInfoPage {
 	/**
 	 * Check if the currently selected plugin has additional information to
 	 * show.
-	 * 
+	 *
 	 * @param bundleInfo
-	 * 
+	 *
 	 * @return true if the selected plugin has additional info available to
 	 *         display
 	 */
@@ -607,7 +607,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void handleColumnsPressed() {
 		ConfigureColumns.forTable(vendorInfo.getTable(), this);
@@ -623,7 +623,7 @@ class TableComparator extends ViewerComparator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.
 	 * viewers.Viewer, java.lang.Object, java.lang.Object)

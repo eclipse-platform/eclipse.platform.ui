@@ -18,7 +18,7 @@ import org.eclipse.ui.IFileEditorMapping;
  * A content provider for displaying of <code>IFileEditorMapping</code>
  * objects in viewers.
  * <p>
- * This class has a singleton instance, 
+ * This class has a singleton instance,
  * <code>FileEditorMappingContentProvider.INSTANCE</code>,
  * which can be used any place this kind of content provider is needed.
  * </p>

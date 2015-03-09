@@ -52,7 +52,7 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker
 
     /**
      * Constructs a new selection tracker for the given window and part id.
-     * 
+     *
      * @param window workbench window
      * @param partId part identifier
      */
@@ -93,7 +93,7 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker
 
     /**
      * Sets the window this tracker is working in.
-     * 
+     *
      * @param window workbench window
      */
     private void setWindow(IWorkbenchWindow window) {
@@ -102,7 +102,7 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker
 
     /**
      * Returns the window this tracker is working in.
-     * 
+     *
      * @return workbench window
      */
     protected IWorkbenchWindow getWindow() {

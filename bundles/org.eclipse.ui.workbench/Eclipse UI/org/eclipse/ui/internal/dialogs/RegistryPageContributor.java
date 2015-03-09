@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 223808 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 223808
  *     James Blackburn (Broadcom Corp.) - Bug 294628 multiple selection
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
@@ -83,7 +83,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * PropertyPageContributor constructor.
-	 * 
+	 *
 	 * @param pageId
 	 *            the id
 	 * @param element
@@ -110,10 +110,10 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 			node.setPriority(-1);
 		return node;
 	}
-	
+
 	/**
 	 * Creates the page based on the information in the configuration element.
-	 * 
+	 *
 	 * @param element
 	 *            the adaptable element
 	 * @return the property page
@@ -136,7 +136,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 			if (adaptable) {
 				adapted = getAdaptedElement(adapted);
 				if (adapted == null) {
-					String message = "Error adapting selection to Property page " + pageId + " is being ignored"; //$NON-NLS-1$ //$NON-NLS-2$            	
+					String message = "Error adapting selection to Property page " + pageId + " is being ignored"; //$NON-NLS-1$ //$NON-NLS-2$
 					throw new CoreException(new Status(IStatus.ERROR,
 							WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
 							message, null));
@@ -165,7 +165,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Find an adapted element from the receiver.
-	 * 
+	 *
 	 * @param element
 	 * @return the adapted element or <code>null</code> if it could not be
 	 *         found.
@@ -181,7 +181,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Return the object class name
-	 * 
+	 *
 	 * @return the object class name
 	 */
 	public String getObjectClass() {
@@ -191,7 +191,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Returns page icon as defined in the registry.
-	 * 
+	 *
 	 * @return the page icon
 	 */
 	public ImageDescriptor getPageIcon() {
@@ -205,7 +205,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Returns page ID as defined in the registry.
-	 * 
+	 *
 	 * @return the page id
 	 */
 
@@ -215,7 +215,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Returns page name as defined in the registry.
-	 * 
+	 *
 	 * @return the page name
 	 */
 	public String getPageName() {
@@ -317,7 +317,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 * Returns an object array for the passed in object. If the object is an
 	 * IStructuredSelection, then return its array otherwise return a 1 element
 	 * Object[] containing the passed in object
-	 * 
+	 *
 	 * @param obj
 	 * @return an object array representing the passed in object
 	 */
@@ -378,7 +378,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Get the id of the category.
-	 * 
+	 *
 	 * @return String
 	 * @since 3.1
 	 */
@@ -389,7 +389,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Return the children of the receiver.
-	 * 
+	 *
 	 * @return Collection
 	 */
 	public Collection getSubPages() {
@@ -398,7 +398,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Add child to the list of children.
-	 * 
+	 *
 	 * @param child
 	 */
 	public void addSubPage(RegistryPageContributor child) {
@@ -419,7 +419,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Get the child with the given id.
-	 * 
+	 *
 	 * @param id
 	 * @return RegistryPageContributor
 	 */
@@ -436,7 +436,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	/**
 	 * Parses child element and processes it.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void processChildElement(Map map, IConfigurationElement element) {

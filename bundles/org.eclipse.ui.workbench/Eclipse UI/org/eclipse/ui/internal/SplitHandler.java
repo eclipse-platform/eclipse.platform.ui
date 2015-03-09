@@ -46,16 +46,16 @@ public class SplitHandler extends AbstractHandler {
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
 		if (activeEditor == null)
 			return null;
-		
+
 		MPart editorPart = (MPart) activeEditor.getSite().getService(MPart.class);
 		if (editorPart == null)
 			return null;
-		
+
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// Get services
 		modelService =  editorPart.getContext().get(EModelService.class);
-		
+
 		MPartStack stack = getStackFor(editorPart);
 		if (stack == null)
 			return null;
@@ -88,16 +88,16 @@ public class SplitHandler extends AbstractHandler {
 		} finally {
 			window.getShell().setRedraw(true);
 		}
-		
+
 		return null;
 	}
-	
+
 	private MPartStack getStackFor(MPart part) {
 		MUIElement presentationElement = part.getCurSharedRef() == null ? part : part.getCurSharedRef();
 		MUIElement parent = presentationElement.getParent();
 		while (parent != null && !(parent instanceof MPartStack))
 			parent = parent.getParent();
-		
+
 		return (MPartStack) parent;
 	}
 }

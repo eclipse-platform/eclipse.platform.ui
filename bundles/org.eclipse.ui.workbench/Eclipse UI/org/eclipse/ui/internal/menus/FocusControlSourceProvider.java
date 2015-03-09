@@ -27,7 +27,7 @@ import org.eclipse.ui.swt.IFocusService;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class FocusControlSourceProvider extends AbstractSourceProvider
 		implements IFocusService {
@@ -50,7 +50,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.menus.IFocusService#addTrackerFor(org.eclipse.swt.widgets.Control,
 	 *      java.lang.String)
 	 */
@@ -123,7 +123,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.menus.IFocusService#removeTrackerFor(org.eclipse.swt.widgets.Control)
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISourceProvider#dispose()
 	 */
 	@Override
@@ -163,7 +163,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISourceProvider#getCurrentState()
 	 */
 	@Override
@@ -184,7 +184,7 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISourceProvider#getProvidedSourceNames()
 	 */
 	@Override

@@ -51,7 +51,7 @@ public class EditorHistoryItem {
 
     /**
      * Returns the editor descriptor.
-     * 
+     *
      * @return the editor descriptor.
      */
     public IEditorDescriptor getDescriptor() {
@@ -60,7 +60,7 @@ public class EditorHistoryItem {
 
     /**
      * Returns the editor input.
-     * 
+     *
      * @return the editor input.
      */
     public IEditorInput getInput() {
@@ -148,7 +148,7 @@ public class EditorHistoryItem {
     }
 
     /**
-     * Restores the object state from the memento. 
+     * Restores the object state from the memento.
      */
     public IStatus restoreState() {
         Assert.isTrue(!isRestored());
@@ -200,8 +200,8 @@ public class EditorHistoryItem {
     }
 
     /**
-     * Saves the object state in the given memento. 
-     * 
+     * Saves the object state in the given memento.
+     *
      * @param memento the memento to save the object state in
      */
     public IStatus saveState(IMemento memento) {
@@ -213,7 +213,7 @@ public class EditorHistoryItem {
             if (persistable != null) {
                 /*
                  * Store IPersistable of the IEditorInput in a separate section
-                 * since it could potentially use a tag already used in the parent 
+                 * since it could potentially use a tag already used in the parent
                  * memento and thus overwrite data.
                  */
                 IMemento persistableMemento = memento

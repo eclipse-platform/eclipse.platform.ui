@@ -30,7 +30,7 @@ package org.eclipse.ui.contexts;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  * @see org.eclipse.ui.contexts.IContextManager
  * @see org.eclipse.core.commands.contexts.Context
@@ -43,7 +43,7 @@ public interface IContext extends Comparable {
     /**
      * Registers an instance of <code>IContextListener</code> to listen for
      * changes to properties of this instance.
-     * 
+     *
      * @param contextListener
      *            the instance to register. Must not be <code>null</code>. If
      *            an attempt is made to register an instance which is already
@@ -53,7 +53,7 @@ public interface IContext extends Comparable {
 
     /**
      * Returns the identifier of this instance.
-     * 
+     *
      * @return the identifier of this instance. Guaranteed not to be
      *         <code>null</code>.
      */
@@ -65,7 +65,7 @@ public interface IContext extends Comparable {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the name of this instance. Guaranteed not to be <code>null</code>.
      * @throws NotDefinedException
      *             if this instance is not defined.
@@ -78,7 +78,7 @@ public interface IContext extends Comparable {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the identifier of the parent of this instance. May be
      *         <code>null</code>.
      * @throws NotDefinedException
@@ -92,7 +92,7 @@ public interface IContext extends Comparable {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return true, iff this instance is defined.
      */
     boolean isDefined();
@@ -103,7 +103,7 @@ public interface IContext extends Comparable {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return true, iff this instance is enabled.
      */
     boolean isEnabled();
@@ -111,7 +111,7 @@ public interface IContext extends Comparable {
     /**
      * Unregisters an instance of <code>IContextListener</code> listening for
      * changes to properties of this instance.
-     * 
+     *
      * @param contextListener
      *            the instance to unregister. Must not be <code>null</code>.
      *            If an attempt is made to unregister an instance which is not

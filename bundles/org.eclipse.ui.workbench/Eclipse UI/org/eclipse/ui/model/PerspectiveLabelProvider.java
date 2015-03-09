@@ -25,13 +25,13 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * A table label provider implementation for showing workbench perspectives 
- * (objects of type <code>IPerspectiveDescriptor</code>) in table- and 
+ * A table label provider implementation for showing workbench perspectives
+ * (objects of type <code>IPerspectiveDescriptor</code>) in table- and
  * tree-structured viewers.
  * <p>
  * Clients may instantiate this class. It is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class PerspectiveLabelProvider extends LabelProvider implements
@@ -57,7 +57,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
 
     /**
      * Creates a new label provider for perspectives.
-     * 
+     *
      * @param markDefault <code>true</code> if the default perspective is to be
      * visually marked, and <code>false</code> if the default perspective is
      * not treated as anything special
