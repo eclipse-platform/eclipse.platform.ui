@@ -19,6 +19,7 @@ public class RuntimeSpyPerspective implements IPerspectiveFactory {
 		super();
 	}
 
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(false);
 		layout.addView(ActivePluginsView.VIEW_ID, IPageLayout.LEFT, 0.75f, layout.getEditorArea());

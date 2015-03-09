@@ -26,6 +26,7 @@ public abstract class SpyView extends ViewPart {
 	/**
 	 * Asks this part to take focus within the workbench. Does nothing.
 	 */
+	@Override
 	public void setFocus() {
 		// do nothing
 	}

@@ -48,6 +48,7 @@ public class DumpTool implements IApplication {
 	 * @param context Application Context
 	 * @see DumperFactory#getDumper(String)
 	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		String fileName = System.getProperty("dump.file"); //$NON-NLS-1$
 		if (fileName == null) {
@@ -170,11 +171,13 @@ public class DumpTool implements IApplication {
 		/**
 		 * @see java.io.FileFilter#accept(java.io.File)
 		 */
+		@Override
 		public boolean accept(File file) {
 			return file.isDirectory();
 		}
 	}
 	
+	@Override
 	public void stop() {
 		// Does not do anything
 	}

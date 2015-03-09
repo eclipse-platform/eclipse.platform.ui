@@ -37,6 +37,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 		/**
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object arg0, int arg1) {
 			return null;
 		}
@@ -44,6 +45,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return element == null ? Messages.depend_badPluginId : ((BundleDescription) element).getSymbolicName();
 		}
@@ -52,6 +54,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 	/**
 	 * @see IStructuredContentProvider#getElements(Object)
 	 */
+	@Override
 	public Object[] getElements(Object arg0) {
 		if (bundles == null) {
 			// before caching the array of descriptors, sort them.
@@ -59,6 +62,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 			// descriptors cannot be compared against each other
 			// in a tree set.
 			Comparator comparator = new Comparator() {
+				@Override
 				public int compare(Object obj1, Object obj2) {
 					String id1 = ((BundleDescription) obj1).getSymbolicName();
 					String id2 = ((BundleDescription) obj2).getSymbolicName();
@@ -79,6 +83,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 	/**
 	 * @see IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		bundles = null;
 	}
@@ -86,6 +91,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 	/**
 	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
+	@Override
 	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
 		// do nothing
 	}
@@ -93,6 +99,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		// Create viewer.
 		ListViewer viewer = new ListViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);

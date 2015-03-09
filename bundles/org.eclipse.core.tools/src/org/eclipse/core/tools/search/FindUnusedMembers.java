@@ -42,6 +42,7 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.tools.search.FindUnusedMembers.IResultReporter#unusedElementFound(org.eclipse.jdt.core.IMethod)
 		 */
+		@Override
 		public void unusedElementFound(IMember member) throws CoreException {
 			try {
 				if (!member.getDeclaringType().equals(lastType)) {
@@ -183,6 +184,7 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 			IJavaSearchScope searchScope = RefactoringScopeFactory.create(member.getDeclaringType());
 			SearchPattern pattern = SearchPattern.createPattern(member, IJavaSearchConstants.REFERENCES);
 			SearchRequestor requestor = new SearchRequestor() {
+				@Override
 				public void acceptSearchMatch(SearchMatch match) throws CoreException {
 					if (match.getAccuracy() == SearchMatch.A_ACCURATE) {
 						throw new ReferenceFound();
@@ -211,6 +213,7 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 		}
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			process(monitor);

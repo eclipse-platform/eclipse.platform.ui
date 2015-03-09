@@ -35,6 +35,7 @@ public class CopyTextSelectionAction extends AbstractCopySelectionAction {
 	 * @return a string containing the currently selected text
 	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#getContents()
 	 */
+	@Override
 	protected String getContents() {
 		return ((ITextSelection) selectionProvider.getSelection()).getText();
 	}

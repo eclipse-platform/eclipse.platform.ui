@@ -29,6 +29,7 @@ public class SelectAllAction extends GlobalAction {
 	 * @param actionBars the action bars where this action will be registered.
 	 * @see org.eclipse.core.tools.GlobalAction#registerAsGlobalAction(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void registerAsGlobalAction(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), this);
 	}
@@ -36,6 +37,7 @@ public class SelectAllAction extends GlobalAction {
 	/**
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		target.doOperation(ITextOperationTarget.SELECT_ALL);
 	}

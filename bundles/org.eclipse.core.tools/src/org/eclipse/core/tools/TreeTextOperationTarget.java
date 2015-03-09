@@ -24,6 +24,7 @@ public class TreeTextOperationTarget implements ITextOperationTarget {
 	/**
 	 * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
 	 */
+	@Override
 	public boolean canDoOperation(int operation) {
 		return true;
 	}
@@ -31,6 +32,7 @@ public class TreeTextOperationTarget implements ITextOperationTarget {
 	/**
 	 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 	 */
+	@Override
 	public void doOperation(int operation) {
 		//TODO: add support to other operations
 		switch (operation) {

@@ -39,6 +39,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.addSelectionChangedListener(listener);
 	}
@@ -52,6 +53,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 	 * @return the current selection, printed in table view format
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		// gets the original selection object 
 		ISelection selection = selectionProvider.getSelection();
@@ -100,6 +102,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.removeSelectionChangedListener(listener);
 	}
@@ -107,6 +110,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);
 	}

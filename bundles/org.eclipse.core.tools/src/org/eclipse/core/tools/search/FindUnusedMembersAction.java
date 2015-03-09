@@ -35,11 +35,13 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 	private IStructuredSelection selection;
 	private IWorkbenchPart part;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart part) {
 		this.part = part;
 		//not needed
 	}
 
+	@Override
 	public void run(IAction action) {
 		ArrayList allCus = new ArrayList();
 		try {
@@ -114,6 +116,7 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 			res.add(current);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection aSelection) {
 		if (aSelection instanceof IStructuredSelection)
 			this.selection = (IStructuredSelection) aSelection;

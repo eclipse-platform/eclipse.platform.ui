@@ -60,6 +60,7 @@ public class PreferenceStatsView extends SpyView {
 			this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
 		}
 
+		@Override
 		public void run() {
 			super.run();
 			reset();
@@ -271,6 +272,7 @@ public class PreferenceStatsView extends SpyView {
 			// count the number of nodes in the preferences tree
 			reset();
 			IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+				@Override
 				public boolean visit(IEclipsePreferences node) {
 					try {
 						treeSize += sizeof(node);
@@ -303,6 +305,7 @@ public class PreferenceStatsView extends SpyView {
 
 			//post changes to UI thread
 			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!viewer.getControl().isDisposed()) {
 						IDocument doc = viewer.getDocument();
@@ -352,6 +355,7 @@ public class PreferenceStatsView extends SpyView {
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
@@ -373,6 +377,7 @@ public class PreferenceStatsView extends SpyView {
 		// so we need our key binding service to handle Delete keystrokes for us
 
 		this.viewer.getControl().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL)
 					clearOutputAction.run();
@@ -402,6 +407,7 @@ public class PreferenceStatsView extends SpyView {
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		updateAction = null;

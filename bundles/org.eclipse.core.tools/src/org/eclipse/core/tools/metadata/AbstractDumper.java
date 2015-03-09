@@ -41,6 +41,7 @@ public abstract class AbstractDumper implements IDumper {
 	 * @see IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 * @see #openInputStream(File)
 	 */
+	@Override
 	public IDump dump(File file) {
 		MeteredInputStream meteredInput = null;
 		Dump dump = new Dump();

@@ -40,6 +40,7 @@ public class DumpSummaryView extends SpyView {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl
 	 * (org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(final Composite parent) {
 
 		// creates a read-only text viewer

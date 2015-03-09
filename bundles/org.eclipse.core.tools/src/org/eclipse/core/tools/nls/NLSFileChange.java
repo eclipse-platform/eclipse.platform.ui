@@ -28,6 +28,7 @@ public class NLSFileChange extends TextFileChange {
 		setTextType("text"); //$NON-NLS-1$
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws OperationCanceledException {
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
@@ -39,6 +40,7 @@ public class NLSFileChange extends TextFileChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.TextFileChange#commit(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void commit(IDocument document, IProgressMonitor monitor) throws CoreException {
 		if (contents == null) {
 			System.err.println("Cannot write null contents to file: " + file); //$NON-NLS-1$
@@ -60,6 +62,7 @@ public class NLSFileChange extends TextFileChange {
 	/* (non-Javadoc)
 	 * @see Change#getModifiedElement()
 	 */
+	@Override
 	public Object getModifiedElement() {
 		return file;
 	}

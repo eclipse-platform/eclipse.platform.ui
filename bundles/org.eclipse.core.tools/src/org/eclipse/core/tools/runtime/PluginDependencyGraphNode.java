@@ -109,6 +109,7 @@ public class PluginDependencyGraphNode {
 	/**
 	 * @see java.lang.Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
@@ -121,6 +122,7 @@ public class PluginDependencyGraphNode {
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}
@@ -128,6 +130,7 @@ public class PluginDependencyGraphNode {
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("PluginDependencyGraphNode("); //$NON-NLS-1$

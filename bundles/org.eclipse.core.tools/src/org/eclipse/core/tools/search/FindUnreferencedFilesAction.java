@@ -26,10 +26,12 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 
 	private IStructuredSelection selection;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart part) {
 		//not needed
 	}
 
+	@Override
 	public void run(IAction action) {
 		try {
 			for (Iterator it = selection.iterator(); it.hasNext();) {
@@ -63,6 +65,7 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 		
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection aSelection) {
 		if (aSelection instanceof IStructuredSelection)
 			this.selection = (IStructuredSelection) aSelection;

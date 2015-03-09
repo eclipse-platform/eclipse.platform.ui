@@ -61,6 +61,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * java.lang.Object)
 	 * @see org.eclipse.core.tools.TreeContentProviderNode#getChildren() 
 	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (!(parentElement instanceof TreeContentProviderNode))
 			return null;
@@ -78,6 +79,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * java.lang.Object)
 	 * @see org.eclipse.core.tools.TreeContentProviderNode#getParent()
 	 */
+	@Override
 	public Object getParent(Object element) {
 		if (!(element instanceof TreeContentProviderNode))
 			return null;
@@ -94,6 +96,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * java.lang.Object)
 	 * @see org.eclipse.core.tools.TreeContentProviderNode#hasChildren() *  
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return element instanceof TreeContentProviderNode && ((TreeContentProviderNode) element).hasChildren();
 	}
@@ -106,6 +109,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
 	 * java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		if (rootNode == null)
 			return new Object[0];
@@ -119,6 +123,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		rootNode = null;
 	}
@@ -160,6 +165,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 * @see #rebuild(Viewer, Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, final Object input) {
 		if (input == null) {
 			rootNode = createNode("root"); //$NON-NLS-1$

@@ -110,6 +110,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		if (name == null)
 			return value.toString();
@@ -162,6 +163,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(Object other) {
 		TreeContentProviderNode otherNode = (TreeContentProviderNode) other;
 		return this.name.compareTo(otherNode.name);
@@ -215,6 +217,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 		return null;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		return value instanceof IAdaptable ? ((IAdaptable) value).getAdapter(adapter) : null;
 	}

@@ -23,6 +23,7 @@ public class MetadataPerspective implements IPerspectiveFactory {
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(
 	 * org.eclipse.ui.IPageLayout)
 	 */
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		String editorAreaId = layout.getEditorArea();
 

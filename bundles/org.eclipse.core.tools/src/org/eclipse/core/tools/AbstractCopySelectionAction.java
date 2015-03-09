@@ -44,6 +44,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		// puts that content in the clipboard
 		Clipboard clipboard = new Clipboard(Display.getCurrent());
@@ -58,6 +59,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 	 * @see org.eclipse.core.tools.GlobalAction#registerAsGlobalAction(
 	 * org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void registerAsGlobalAction(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), this);
 	}

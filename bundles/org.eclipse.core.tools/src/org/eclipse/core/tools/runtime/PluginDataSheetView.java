@@ -33,15 +33,18 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 	/** The id by which this view is known in the plug-in registry */
 	public static final String VIEW_ID = PluginDataSheetView.class.getName();
 
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		getViewSite().getPage().addSelectionListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		getViewSite().getPage().removeSelectionListener(this);
 	}
 
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 //		if (selection instanceof IStructuredSelection) {
 //			Object first = ((IStructuredSelection) selection).getFirstElement();

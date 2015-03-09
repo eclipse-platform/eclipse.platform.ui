@@ -93,6 +93,7 @@ public class LoadedClassesViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Returns the number of the column by which this is sorting.
 	 */
+	@Override
 	public int getColumnNumber() {
 		return columnNumber;
 	}
@@ -100,6 +101,7 @@ public class LoadedClassesViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Returns true for descending, or false for ascending sorting order.
 	 */
+	@Override
 	public boolean isReversed() {
 		return reversed;
 	}
@@ -107,6 +109,7 @@ public class LoadedClassesViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Sets the sorting order.
 	 */
+	@Override
 	public void setReversed(boolean value) {
 		reversed = value;
 	}
@@ -114,6 +117,7 @@ public class LoadedClassesViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * @see org.eclipse.core.tools.ISorter#states()
 	 */
+	@Override
 	public int states() {
 		return 3;
 	}

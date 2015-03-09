@@ -41,6 +41,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Returns the number of the column by which this is sorting.
 	 */
+	@Override
 	public int getColumnNumber() {
 		return columnNumber;
 	}
@@ -48,6 +49,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Returns true for descending, or false for ascending sorting order.
 	 */
+	@Override
 	public boolean isReversed() {
 		return reversed;
 	}
@@ -55,6 +57,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Sets the sorting order.
 	 */
+	@Override
 	public void setReversed(boolean newReversed) {
 		reversed = newReversed;
 	}
@@ -62,6 +65,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 	/*
 	 * Overrides method from ViewerSorter
 	 */
+	@Override
 	public void sort(final Viewer viewer, Object[] elements) {
 		Comparator comparator = new Comparator() {
 			Collator c = Collator.getInstance();
@@ -70,6 +74,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 			 * Compares two stats objects, sorting first by the main column of this sorter,
 			 * then by subsequent columns, depending on the column sort order.
 			 */
+			@Override
 			public int compare(Object o1, Object o2) {
 				PerformanceStats s1 = (PerformanceStats) o1;
 				PerformanceStats s2 = (PerformanceStats) o2;
@@ -114,6 +119,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 		Arrays.sort(elements, comparator);
 	}
 
+	@Override
 	public int states() {
 		return 2;
 	}

@@ -20,26 +20,32 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ActivePluginsViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing
 	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// do nothing
 	}
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 //		if (!(element instanceof BundleStats))
 			return "not a plug-in"; //$NON-NLS-1$

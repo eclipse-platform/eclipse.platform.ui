@@ -53,6 +53,7 @@ public class DumpException extends Exception {
 	 * 
 	 * @return the cause for this <code>DumpException</code>.
 	 */
+	@Override
 	public Throwable getCause() {
 		return cause;
 	}
@@ -64,6 +65,7 @@ public class DumpException extends Exception {
 	 * @return the error message string
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return super.getMessage() + ((cause != null) ? (" caused by " + cause.toString()) : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -75,6 +77,7 @@ public class DumpException extends Exception {
 	 * @param output the <code>java.io.PrintStream</code> object where to print
 	 * @see java.lang.Throwable#printStackTrace(java.io.PrintStream)
 	 */
+	@Override
 	public void printStackTrace(PrintStream output) {
 		super.printStackTrace(output);
 		if (cause == null)
@@ -90,6 +93,7 @@ public class DumpException extends Exception {
 	 * @param output the <code>java.io.PrintWriter</code> object where to print
 	 * @see java.lang.Throwable#printStackTrace(java.io.PrintWriter)
 	 */
+	@Override
 	public void printStackTrace(PrintWriter output) {
 		super.printStackTrace(output);
 		if (cause == null)

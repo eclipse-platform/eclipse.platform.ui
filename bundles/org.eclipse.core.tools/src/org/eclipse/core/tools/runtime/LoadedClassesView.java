@@ -20,7 +20,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PartInitException;
 
 /**
  * View that display information about classes
@@ -32,14 +31,17 @@ public class LoadedClassesView extends TableWithTotalView {
 	private String[] columnHeaders = new String[] {"Class", "Order", "Memory", "Plug-in", "Timestamp", "RAM", "ROM"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	private ColumnLayoutData[] columnLayout = new ColumnLayoutData[] {new ColumnWeightData(500), new ColumnWeightData(100), new ColumnWeightData(100), new ColumnWeightData(200), new ColumnPixelData(0), new ColumnPixelData(0), new ColumnPixelData(0)};
 
+	@Override
 	protected String[] getColumnHeaders() {
 		return columnHeaders;
 	}
 
+	@Override
 	protected ColumnLayoutData[] getColumnLayout() {
 		return columnLayout;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 //		if (!StatsManager.MONITOR_CLASSES) {
 			Text text = new Text(parent, 0);
@@ -50,14 +52,17 @@ public class LoadedClassesView extends TableWithTotalView {
 //		viewer.setSelection(StructuredSelection.EMPTY);
 	}
 
+	@Override
 	protected ITreeContentProvider getContentProvider() {
 		return new LoadedClassesViewContentProvider();
 	}
 
+	@Override
 	protected ITableLabelProvider getLabelProvider() {
 		return new LoadedClassesViewLabelProvider();
 	}
 
+	@Override
 	protected ViewerSorter getSorter(int column) {
 		return new LoadedClassesViewSorter(column);
 	}
@@ -65,6 +70,7 @@ public class LoadedClassesView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getStatusLineMessage(Object)
 	 */
+	@Override
 	protected String getStatusLineMessage(Object element) {
 		return ""; //$NON-NLS-1$
 	}
@@ -73,8 +79,10 @@ public class LoadedClassesView extends TableWithTotalView {
 		return viewer;
 	}
 
+	@Override
 	protected void createActions() {
 		displayStackAction = new Action("Stack &Trace") { //$NON-NLS-1$
+			@Override
 			public void run() {
 //				try {
 //					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
@@ -91,6 +99,7 @@ public class LoadedClassesView extends TableWithTotalView {
 		displayStackAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("trace.gif")); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void createToolbar() {
 		IToolBarManager manager = getViewSite().getActionBars().getToolBarManager();
 		manager.add(displayStackAction);
@@ -101,6 +110,7 @@ public class LoadedClassesView extends TableWithTotalView {
 		viewer.setSelection(StructuredSelection.EMPTY);
 	}
 
+	@Override
 	protected String[] computeTotalLine(Iterator iterator) {
 		String[] totals = new String[getColumnHeaders().length];
 		int ramTotal = 0;
@@ -125,15 +135,18 @@ public class LoadedClassesView extends TableWithTotalView {
 		return totals;
 	}
 
+	@Override
 	public void dispose() {
 		if (displayStackAction != null)
 			displayStackAction.setImageDescriptor(null);
 	}
 
+	@Override
 	protected void createContextMenu() {
 		MenuManager manager = new MenuManager();
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}

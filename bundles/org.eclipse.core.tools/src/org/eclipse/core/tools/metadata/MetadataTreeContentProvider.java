@@ -69,6 +69,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	 * @param input an input object 
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#acceptInput(java.lang.Object)
 	 */
+	@Override
 	protected boolean acceptInput(Object input) {
 		return (input instanceof File) && ((File) input).isDirectory(); //$NON-NLS-1$
 	}
@@ -80,6 +81,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	 * 
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#rebuild(Viewer, Object)
 	 */
+	@Override
 	protected void rebuild(final Viewer viewer, final Object input) {
 		final File metadataRootDir = (File) input;
 		final TreeContentProviderNode metadataRootNode = makeNode(metadataRootDir);
@@ -96,6 +98,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			super("Updating metadata tree"); //$NON-NLS-1$
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				extractInfo(rootDir, rootNode, monitor);
@@ -104,6 +107,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 				final Viewer tmpViewer = viewer;
 				if (!tmpViewer.getControl().isDisposed())
 					tmpViewer.getControl().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							tmpViewer.refresh();
 						}
@@ -181,6 +185,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 		return new TreeContentProviderNode(file.getName(), file) {
 			// redefines toString so the root shows the full path while any other 
 			// node shows only the file / directory name
+			@Override
 			public String toString() {
 				return isRoot() ? file.getAbsolutePath() : file.getName();
 			}
@@ -196,6 +201,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 		/**
 		 * @see java.io.FileFilter#accept(java.io.File)
 		 */
+		@Override
 		public boolean accept(File file) {
 			return file.isDirectory();
 		}

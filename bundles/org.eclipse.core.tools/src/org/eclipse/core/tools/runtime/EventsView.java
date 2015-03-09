@@ -50,26 +50,31 @@ public class EventsView extends TableWithTotalView {
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
 		/** @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object) */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return new Object[0];
 		}
 
 		/** @see IStructuredContentProvider#getElements(Object) */
+		@Override
 		public Object[] getElements(Object input) {
 			return PerformanceStats.getAllStats();
 		}
 
 		/** @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object) */
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
 		/** @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object) */
+		@Override
 		public boolean hasChildren(Object element) {
 			return false;
 		}
@@ -77,6 +82,7 @@ public class EventsView extends TableWithTotalView {
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
 			// do nothing
 		}
@@ -90,6 +96,7 @@ public class EventsView extends TableWithTotalView {
 		/**
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object arg0, int arg1) {
 			return null;
 		}
@@ -97,6 +104,7 @@ public class EventsView extends TableWithTotalView {
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (!(element instanceof PerformanceStats)) {
 				return Messages.stats_badStat;
@@ -117,6 +125,7 @@ public class EventsView extends TableWithTotalView {
 			return Messages.stats_badColumn;
 		}
 
+		@Override
 		public Color getForeground(Object element) {
 			if (!(element instanceof PerformanceStats)) {
 				return null;
@@ -127,6 +136,7 @@ public class EventsView extends TableWithTotalView {
 			return null;
 		}
 
+		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
@@ -146,8 +156,10 @@ public class EventsView extends TableWithTotalView {
 		/**
 		 * @see PerformanceStats.PerformanceListener#eventsOccurred(PerformanceStats[])
 		 */
+		@Override
 		public void eventsOccurred(final PerformanceStats[] event) {
 			asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!getViewer().getControl().isDisposed())
 						getViewer().refresh();
@@ -155,8 +167,10 @@ public class EventsView extends TableWithTotalView {
 			});
 		}
 
+		@Override
 		public void eventFailed(final PerformanceStats event, final long duration) {
 			asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlameString() + " context: " + event.getContext() + " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					getViewSite().getActionBars().getStatusLineManager().setErrorMessage(msg);
@@ -191,6 +205,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#computeTotalLine(java.util.Iterator)
 	 */
+	@Override
 	protected String[] computeTotalLine(Iterator iter) {
 		String[] totals = new String[getColumnHeaders().length];
 		int count = 0;
@@ -215,8 +230,10 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		resetAction = new Action("Reset") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				PerformanceStats.clear();
 				getViewer().setInput("");
@@ -236,6 +253,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#createContextMenu()
 	 */
+	@Override
 	protected void createContextMenu() {
 		// creates a context menu with actions and adds it to the viewer control
 		MenuManager menuMgr = new MenuManager();
@@ -248,6 +266,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see IWorkbenchPart#createPartControl
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		PerformanceStats.addListener(statsListener);
@@ -257,6 +276,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#createToolbar()
 	 */
+	@Override
 	protected void createToolbar() {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(resetAction);
@@ -265,6 +285,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see WorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		PerformanceStats.removeListener(statsListener);
@@ -273,6 +294,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getColumnHeaders()
 	 */
+	@Override
 	protected String[] getColumnHeaders() {
 		return columnHeaders;
 	}
@@ -280,6 +302,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getColumnLayout()
 	 */
+	@Override
 	protected ColumnLayoutData[] getColumnLayout() {
 		return columnLayouts;
 	}
@@ -287,6 +310,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getContentProvider()
 	 */
+	@Override
 	protected ITreeContentProvider getContentProvider() {
 		return new EventsViewContentProvider();
 	}
@@ -294,6 +318,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getLabelProvider()
 	 */
+	@Override
 	protected ITableLabelProvider getLabelProvider() {
 		return new EventsViewLabelProvider();
 	}
@@ -301,6 +326,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getSorter(int)
 	 */
+	@Override
 	protected ViewerSorter getSorter(int column) {
 		return new EventsSorter(column);
 	}
@@ -308,6 +334,7 @@ public class EventsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getStatusLineMessage(Object)
 	 */
+	@Override
 	protected String getStatusLineMessage(Object element) {
 		if (!(element instanceof PerformanceStats))
 			return ""; //$NON-NLS-1$

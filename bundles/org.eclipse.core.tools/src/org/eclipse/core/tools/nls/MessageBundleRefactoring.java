@@ -42,14 +42,17 @@ public class MessageBundleRefactoring extends Refactoring {
 		fPropertiesFile = propertiesFile;
 	}
 
+	@Override
 	public String getName() {
 		return "Message Bundle Refactoring";
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		RefactoringStatus result = new RefactoringStatus();
 		fAccessorTypeBinding = computeAccessorClassBinding(new SubProgressMonitor(monitor, 1));
@@ -111,6 +114,7 @@ public class MessageBundleRefactoring extends Refactoring {
 		// keep track of the number of changes we make per line so we can get rid of the NLS comments.
 		final IntegerMap map = new IntegerMap(10);
 		ASTVisitor visitor = new ASTVisitor() {
+			@Override
 			public boolean visit(MethodInvocation node) {
 				Name messageBundleName = getMessageBundleReceiver(node);
 				if (messageBundleName == null)
@@ -169,6 +173,7 @@ public class MessageBundleRefactoring extends Refactoring {
 		//		root.accept(visitor);
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		return fChange;
 	}

@@ -32,6 +32,7 @@ public class FindUnusedSearchQuery implements ISearchQuery {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchQuery#canRerun()
 	 */
+	@Override
 	public boolean canRerun() {
 		return true;
 	}
@@ -39,6 +40,7 @@ public class FindUnusedSearchQuery implements ISearchQuery {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchQuery#canRunInBackground()
 	 */
+	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
@@ -46,6 +48,7 @@ public class FindUnusedSearchQuery implements ISearchQuery {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return "Find Unreferenced Members"; //$NON-NLS-1$
 	}
@@ -53,6 +56,7 @@ public class FindUnusedSearchQuery implements ISearchQuery {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchQuery#getSearchResult()
 	 */
+	@Override
 	public ISearchResult getSearchResult() {
 		return fSearchResult;
 	}
@@ -60,6 +64,7 @@ public class FindUnusedSearchQuery implements ISearchQuery {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		fSearchResult.removeAll();
 

@@ -22,6 +22,7 @@ public class StackTraceView extends BaseTextView {
 		super();
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

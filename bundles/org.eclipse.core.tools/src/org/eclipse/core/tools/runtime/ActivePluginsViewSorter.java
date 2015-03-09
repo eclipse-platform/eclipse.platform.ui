@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import java.text.Collator;
 //import org.eclipse.core.runtime.internal.stats.BundleStats;
 import org.eclipse.core.tools.ISorter;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
@@ -89,14 +87,17 @@ public class ActivePluginsViewSorter extends ViewerSorter implements ISorter {
 //		return 0;
 //	}
 
+	@Override
 	public int getColumnNumber() {
 		return columnNumber;
 	}
 
+	@Override
 	public boolean isReversed() {
 		return reversed;
 	}
 
+	@Override
 	public void setReversed(boolean value) {
 		reversed = value;
 	}
@@ -104,6 +105,7 @@ public class ActivePluginsViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * @see org.eclipse.core.tools.ISorter#states()
 	 */
+	@Override
 	public int states() {
 		return 3;
 	}

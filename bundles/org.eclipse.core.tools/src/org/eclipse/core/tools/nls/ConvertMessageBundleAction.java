@@ -29,16 +29,19 @@ public class ConvertMessageBundleAction implements IObjectActionDelegate {
 	private ICompilationUnit fAccessorUnit;
 	private IWorkbenchPart fPart;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart part) {
 		fPart = part;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fAccessorUnit == null)
 			return;
 		try {
 			final GotoResourceAction pAction = new GotoResourceAction(fPart);
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					pAction.run();
 				}
@@ -60,6 +63,7 @@ public class ConvertMessageBundleAction implements IObjectActionDelegate {
 
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		Object element = ((IStructuredSelection) selection).getFirstElement();
 		if (element instanceof ICompilationUnit) {

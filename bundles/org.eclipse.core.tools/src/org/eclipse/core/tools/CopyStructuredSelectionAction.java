@@ -39,6 +39,7 @@ public class CopyStructuredSelectionAction extends AbstractCopySelectionAction {
 	 * line terminators 
 	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#getContents()
 	 */
+	@Override
 	public String getContents() {
 		// retrieves the selected contents from the selection provider
 		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();

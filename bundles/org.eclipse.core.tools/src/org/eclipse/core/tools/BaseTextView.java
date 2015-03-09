@@ -26,6 +26,7 @@ public class BaseTextView extends ViewPart {
 		super();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY);
 		viewer.setDocument(new Document());
@@ -48,6 +49,7 @@ public class BaseTextView extends ViewPart {
 		viewer.getControl().setMenu(menu);
 	}
 
+	@Override
 	public void setFocus() {
 		// do nothing
 	}

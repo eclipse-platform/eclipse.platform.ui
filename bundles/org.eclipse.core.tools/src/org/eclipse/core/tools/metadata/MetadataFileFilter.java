@@ -31,6 +31,7 @@ class MetadataFileFilter implements FileFilter {
 	/**
 	 * @see java.io.FileFilter#accept(java.io.File)
 	 */
+	@Override
 	public boolean accept(File file) {
 		return file.isFile() && Arrays.binarySearch(fileNames, file.getName()) >= 0;
 	}

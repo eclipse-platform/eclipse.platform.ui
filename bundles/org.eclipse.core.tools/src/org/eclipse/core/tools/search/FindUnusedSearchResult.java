@@ -33,6 +33,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
 	 */
+	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return null;
 	}
@@ -40,6 +41,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
 	 */
+	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}
@@ -47,6 +49,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
@@ -54,6 +57,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		if (getMatchCount() == 1)
 			return "1 unused element found"; //$NON-NLS-1$
@@ -63,6 +67,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
 	 */
+	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
@@ -70,6 +75,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getTooltip()
 	 */
+	@Override
 	public String getTooltip() {
 		return getLabel();
 	}
@@ -77,6 +83,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.tools.search.FindUnusedMembers.IResultReporter#unusedElementFound(org.eclipse.jdt.core.IMember)
 	 */
+	@Override
 	public void unusedElementFound(IMember member) throws CoreException {
 		ISourceRange nameRange = member.getNameRange();
 		addMatch(new Match(member, nameRange.getOffset(), nameRange.getLength()));

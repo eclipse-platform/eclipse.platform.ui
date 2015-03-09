@@ -44,14 +44,17 @@ public class RemoveUnusedMessages extends Refactoring {
 		this.propertiesFile = propertiesFile;
 	}
 
+	@Override
 	public String getName() {
 		return "Fix NLS References";
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor monitor) {
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
@@ -120,6 +123,7 @@ public class RemoveUnusedMessages extends Refactoring {
 
 	private void processAST(final CompilationUnit root, final ASTRewrite rewriter, final List toDelete) {
 		ASTVisitor visitor = new ASTVisitor() {
+			@Override
 			public boolean visit(VariableDeclarationFragment node) {
 				// check to see if its in our list of fields to delete
 				if (!toDelete.contains(node.getName().toString()))
@@ -147,6 +151,7 @@ public class RemoveUnusedMessages extends Refactoring {
 		}
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor monitor) {
 		return change;
 	}

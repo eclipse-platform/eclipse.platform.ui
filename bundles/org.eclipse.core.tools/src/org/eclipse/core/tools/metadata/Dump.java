@@ -49,6 +49,7 @@ public class Dump implements IDump {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IDump#getFile()
 	 */
+	@Override
 	public File getFile() {
 		return file;
 	}
@@ -56,6 +57,7 @@ public class Dump implements IDump {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IDump#isFailed()
 	 */
+	@Override
 	public boolean isFailed() {
 		return failed || this.failureReason != null;
 	}
@@ -63,6 +65,7 @@ public class Dump implements IDump {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IDump#getFailureReason()
 	 */
+	@Override
 	public Exception getFailureReason() {
 		return failureReason;
 	}
@@ -88,6 +91,7 @@ public class Dump implements IDump {
 	/**
 	 * @see IDump#getContents()
 	 */
+	@Override
 	public Object getContents() {
 		return contents;
 	}
@@ -113,6 +117,7 @@ public class Dump implements IDump {
 	/**
 	 * @see IDump#getOffset()
 	 */
+	@Override
 	public long getOffset() {
 		return offset;
 	}
@@ -123,6 +128,7 @@ public class Dump implements IDump {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "File: " + getFile() + "\n" + "Contents: \n******\n" + getContents() + "\n******\n" + "Failed: " + failed + "\n" + "Reason: " + failureReason + "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 	}

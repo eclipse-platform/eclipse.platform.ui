@@ -37,6 +37,7 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
 	 */
+	@Override
 	public Object getEditableValue() {
 		return null;
 	}
@@ -44,6 +45,7 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
 	 */
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return PROPERTY_DESCRIPTORS;
 	}
@@ -51,6 +53,7 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyValue(Object)
 	 */
+	@Override
 	public Object getPropertyValue(Object id) {
 		if (id.equals(UNIQUE_ID.getId()))
 			return type.getId();
@@ -84,6 +87,7 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(Object)
 	 */
+	@Override
 	public boolean isPropertySet(Object id) {
 		return true;
 	}
@@ -91,6 +95,7 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#resetPropertyValue(Object)
 	 */
+	@Override
 	public void resetPropertyValue(Object id) {
 		// do nothing
 	}
@@ -98,24 +103,29 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#setPropertyValue(Object, Object)
 	 */
+	@Override
 	public void setPropertyValue(Object id, Object value) {
 		// do nothing
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ContentTypePropertySource))
 			return false;
 		return type.getId().equals(((ContentTypePropertySource) obj).type.getId());
 	}
 
+	@Override
 	public int hashCode() {
 		return type.getId().hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return type.getId();
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySource.class)
 			return this;

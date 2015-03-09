@@ -42,6 +42,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.addSelectionChangedListener(listener);
 	}
@@ -57,6 +58,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 	 * the tree
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		// gets the original selection object 
 		ISelection selection = selectionProvider.getSelection();
@@ -83,6 +85,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 		// uses a visitor to traverse the whole tree
 		// when a visited node is the selected list, it is moved to the ordered list  
 		anyNode.getRoot().accept(new ITreeNodeVisitor() {
+			@Override
 			public boolean visit(TreeContentProviderNode node) {
 				int elementIndex = selectedElements.indexOf(node);
 
@@ -118,6 +121,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.removeSelectionChangedListener(listener);
 	}
@@ -125,6 +129,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);
 	}

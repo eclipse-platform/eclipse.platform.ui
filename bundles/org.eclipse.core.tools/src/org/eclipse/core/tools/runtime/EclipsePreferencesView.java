@@ -32,10 +32,12 @@ public class EclipsePreferencesView extends ViewPart {
 
 		private IEclipsePreferences invisibleRoot;
 
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			// do nothing
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent.equals(getViewSite())) {
 				if (invisibleRoot == null)
@@ -45,16 +47,19 @@ public class EclipsePreferencesView extends ViewPart {
 			return getChildren(parent);
 		}
 
+		@Override
 		public void dispose() {
 			// do nothing
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IEclipsePreferences)
 				return ((IEclipsePreferences) child).parent();
 			return null;
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			ArrayList result = new ArrayList();
 			if (parent instanceof IEclipsePreferences) {
@@ -73,6 +78,7 @@ public class EclipsePreferencesView extends ViewPart {
 			return result.toArray(new Object[result.size()]);
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof IEclipsePreferences)
 				try {
@@ -87,6 +93,7 @@ public class EclipsePreferencesView extends ViewPart {
 
 	class ViewLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object obj) {
 			String result = obj.toString();
 			if (obj instanceof IEclipsePreferences) {
@@ -98,6 +105,7 @@ public class EclipsePreferencesView extends ViewPart {
 			return result;
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			if (obj instanceof IEclipsePreferences)
@@ -110,6 +118,7 @@ public class EclipsePreferencesView extends ViewPart {
 		super();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -123,11 +132,13 @@ public class EclipsePreferencesView extends ViewPart {
 		bars.updateActionBars();
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		collapseAllAction = null;
 	}
 
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

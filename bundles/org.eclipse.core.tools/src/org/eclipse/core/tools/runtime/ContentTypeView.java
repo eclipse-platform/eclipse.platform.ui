@@ -34,6 +34,7 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 			super(true);
 		}
 
+		@Override
 		protected boolean acceptInput(Object input) {
 			return true;
 		}
@@ -57,6 +58,7 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 			return getRootNode().findNode(type);
 		}
 
+		@Override
 		protected void rebuild(Viewer viewer, Object input) {
 			IContentType[] allTypes = ContentTypeManager.getInstance().getAllContentTypes();
 			Set visited = new HashSet(allTypes.length);
@@ -68,6 +70,7 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 	/** JFace's tree component used to present resource details. */
 	private AbstractTreeViewer viewer;
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ContentTypeContentProvider());

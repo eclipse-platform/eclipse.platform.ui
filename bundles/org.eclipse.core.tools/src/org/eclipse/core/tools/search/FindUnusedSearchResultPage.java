@@ -39,6 +39,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 			collator = null;
 		}
 
+		@Override
 		public int compare(Viewer aViewer, Object e1, Object e2) {
 			String name1 = labelProvider.getText(e1);
 			String name2 = labelProvider.getText(e2);
@@ -49,6 +50,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 			return getCollator().compare(name1, name2);
 		}
 
+		@Override
 		public final Collator getCollator() {
 			if (collator == null) {
 				collator = Collator.getInstance();
@@ -64,6 +66,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 			this.order = order;
 		}
 
+		@Override
 		public void run() {
 			setSortOrder(order);
 		}
@@ -77,6 +80,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 			fTableViewer.refresh();
 		}
 
+		@Override
 		public void dispose() {
 			//nothing to dispose
 		}
@@ -94,12 +98,14 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 			}
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (fSearchResult != null)
 				return fSearchResult.getElements();
 			return new Object[0];
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			fTableViewer = (TableViewer) viewer;
 			fSearchResult = (AbstractTextSearchResult) newInput;
@@ -107,6 +113,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	}
 
 	public static final IShowInTargetList SHOW_IN_TARGET_LIST = new IShowInTargetList() {
+		@Override
 		public String[] getShowInTargetIds() {
 			return SHOW_IN_TARGETS;
 		}
@@ -132,6 +139,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	/*
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#clear()
 	 */
+	@Override
 	protected void clear() {
 		if (contentProvider != null)
 			contentProvider.clear();
@@ -140,6 +148,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	/*
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
 	 */
+	@Override
 	protected void configureTableViewer(TableViewer aViewer) {
 		this.viewer = aViewer;
 		contentProvider = new TableContentProvider();
@@ -151,6 +160,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	/*
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)
 	 */
+	@Override
 	protected void configureTreeViewer(TreeViewer aViewer) {
 		throw new IllegalStateException("Doesn't support tree mode.");
 	}
@@ -158,11 +168,13 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	/*
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
 	 */
+	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (contentProvider != null)
 			contentProvider.elementsChanged(objects);
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		MenuManager sortMenu = new MenuManager("Sort By");
@@ -176,6 +188,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IShowInTargetList.class.equals(adapter)) {
 			return SHOW_IN_TARGET_LIST;
@@ -198,6 +211,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		viewer.setLabelProvider(labelProvider);
 	}
 
+	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		try {
 			Object element = match.getElement();

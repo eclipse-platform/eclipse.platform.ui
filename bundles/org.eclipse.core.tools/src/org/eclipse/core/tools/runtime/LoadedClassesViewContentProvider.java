@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import java.util.*;
 //import org.eclipse.core.runtime.internal.stats.*;
 import org.eclipse.core.tools.IFlattable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -23,10 +22,12 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 //	private boolean flat;
 //	private String inputNames[] = new String[0];
 
+	@Override
 	public void setFlat(boolean mode) {
 //		flat = mode;
 	}
 
+	@Override
 	public Object[] getChildren(Object element) {
 //		if (flat || !(element instanceof ClassStats))
 			return new Object[0];
@@ -51,12 +52,14 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 //		return false;
 //	}
 
+	@Override
 	public Object getParent(Object element) {
 //		if (flat || !(element instanceof ClassStats))
 			return null;
 //		return ((ClassStats) element).getLoadedBy();
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 //		if (flat || !(element instanceof ClassStats))
 			return false;
@@ -66,6 +69,7 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 //		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 //		if (!StatsManager.MONITOR_CLASSES)
 			return null;
@@ -100,10 +104,12 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 //		return (ClassStats[]) result.toArray(new ClassStats[result.size()]);
 //	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 //		if (oldInput == newInput)
 //			return;

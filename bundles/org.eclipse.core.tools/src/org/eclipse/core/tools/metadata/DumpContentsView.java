@@ -58,6 +58,7 @@ public class DumpContentsView extends SpyView {
 	 * @param parent the parent control
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(final Composite parent) {
 		// creates a read-only text viewer
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
@@ -173,6 +174,7 @@ public class DumpContentsView extends SpyView {
 		 * @see DumpContentsView#setFile
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			// opens a file dialog
 			FileDialog fileDialog = new FileDialog(viewer.getControl().getShell(), SWT.OPEN);

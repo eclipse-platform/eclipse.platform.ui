@@ -40,6 +40,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	/**
 	 * @see IWorkbenchPart#createPartControl
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
 		viewer.setDocument(new Document());
@@ -55,6 +56,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		// Delete action shortcuts are not captured by the workbench
 		// so we need our key binding service to handle Delete keystrokes for us
 		this.viewer.getControl().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL)
 					clearOutputAction.run();
@@ -81,6 +83,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getViewSite().getPage().removeSelectionListener(this);
 		super.dispose();
@@ -135,6 +138,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	/**
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (!(selection instanceof IStructuredSelection))
 			return;

@@ -37,16 +37,19 @@ public class DeepSize {
 			this.object = object;
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			if (o.getClass() != ObjectWrapper.class)
 				return false;
 			return object == ((ObjectWrapper) o).object;
 		}
 
+		@Override
 		public int hashCode() {
 			return object == null ? 1 : object.hashCode();
 		}
 
+		@Override
 		public String toString() {
 			return "ObjectWrapper(" + object + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}

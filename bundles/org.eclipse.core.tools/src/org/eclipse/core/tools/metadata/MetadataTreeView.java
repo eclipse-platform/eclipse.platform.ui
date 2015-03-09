@@ -55,6 +55,7 @@ public class MetadataTreeView extends SpyView {
 		 *
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			IStructuredSelection sel = (IStructuredSelection) MetadataTreeView.this.viewer.getSelection();
 			if (sel == null || sel.isEmpty())
@@ -95,6 +96,7 @@ public class MetadataTreeView extends SpyView {
 		 *
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			DirectoryDialog dirDialog = new DirectoryDialog(viewer.getControl().getShell());
 
@@ -118,6 +120,7 @@ public class MetadataTreeView extends SpyView {
 	 * @param parent the parent control
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent);
 
@@ -145,6 +148,7 @@ public class MetadataTreeView extends SpyView {
 
 		// associates double-click to dump file action
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				dumpFileAction.run();
 			}

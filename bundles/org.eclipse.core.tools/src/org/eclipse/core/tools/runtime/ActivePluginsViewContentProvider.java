@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import java.util.ArrayList;
-import java.util.List;
 //import org.eclipse.core.runtime.internal.stats.BundleStats;
 //import org.eclipse.core.runtime.internal.stats.StatsManager;
 import org.eclipse.core.tools.IFlattable;
@@ -24,18 +22,22 @@ import org.eclipse.jface.viewers.Viewer;
 public class ActivePluginsViewContentProvider implements ITreeContentProvider, IFlattable {
 //	private boolean flat;
 
+	@Override
 	public void setFlat(boolean mode) {
 //		flat = mode;
 	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 	}
 
+	@Override
 	public Object[] getChildren(Object element) {
 //		if (flat || !(element instanceof BundleStats))
 			return new Object[0];
@@ -43,18 +45,21 @@ public class ActivePluginsViewContentProvider implements ITreeContentProvider, I
 //		return stats.toArray(new Object[stats.size()]);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 //		if (flat || !(element instanceof BundleStats))
 			return null;
 //		return ((BundleStats) element).getActivatedBy().getSymbolicName();
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 //		if (flat || !(element instanceof BundleStats))
 			return false;
 //		return element == null ? false : ((BundleStats) element).getBundlesActivated().size() > 0;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 //		if (!StatsManager.MONITOR_ACTIVATION || inputElement != BundleStats.class)
 			return null;

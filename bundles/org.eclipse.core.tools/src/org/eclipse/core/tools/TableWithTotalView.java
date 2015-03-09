@@ -50,10 +50,12 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	private SelectionListener getColumnListener() {
 		return new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				// column selected - need to sort
 				int column = viewer.getTableTree().getTable().indexOf((TableColumn) event.widget);
@@ -94,10 +96,12 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	protected ControlListener getColumnResizeListener() {
 		return new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent event) {
 				// do nothing
 			}
 
+			@Override
 			public void controlResized(ControlEvent event) {
 				TableColumn column = (TableColumn) event.widget;
 				int columnNumber = viewer.getTableTree().getTable().indexOf(column);
@@ -158,6 +162,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	protected abstract String getStatusLineMessage(Object element);
 
+	@Override
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, 0);
 		// crete a grid layout of one column
@@ -185,6 +190,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	private void createCommonActions() {
 		copyAction = new Action() {
+			@Override
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				String result = ""; //$NON-NLS-1$
@@ -207,6 +213,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 
 		selectAllAction = new Action() {
+			@Override
 			public void run() {
 				tableTree.selectAll();
 				// force viewer selection change
@@ -218,6 +225,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	protected ISelectionChangedListener getTableListener() {
 		return new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection selection = (IStructuredSelection) e.getSelection();
 				copyAction.setEnabled(!selection.isEmpty());
@@ -237,22 +245,27 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 		item.setText(computeTotalLine(selection.iterator()));
 	}
 
+	@Override
 	public ISelection getSelection() {
 		return viewer.getSelection();
 	}
 
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		// do nothing
 	}
 
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		// do nothing
 	}
 
+	@Override
 	public void setSelection(ISelection selection) {
 		// do nothing
 	}
 
+	@Override
 	public void setFocus() {
 		if (tableTree != null)
 			tableTree.setFocus();

@@ -36,6 +36,7 @@ public abstract class MultiStrategyDumper extends AbstractDumper {
 	 * @see IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 * @see #openInputStream(File)
 	 */
+	@Override
 	protected final void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
 		DataInputStream dataInput = new DataInputStream(input);
 		int c;
@@ -78,6 +79,7 @@ public abstract class MultiStrategyDumper extends AbstractDumper {
 	 * argument
 	 * @throws IOException if an exception happens while opening the inpuut stream
 	 */
+	@Override
 	protected InputStream openInputStream(File file) throws IOException {
 		return new FileInputStream(file);
 	}

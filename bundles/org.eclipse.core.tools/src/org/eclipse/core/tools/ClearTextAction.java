@@ -45,6 +45,7 @@ public class ClearTextAction extends GlobalAction {
 	/**
 	 * Executes this action (clears associated document's contents).
 	 */
+	@Override
 	public void run() {
 		document.set(""); //$NON-NLS-1$
 	}
@@ -55,6 +56,7 @@ public class ClearTextAction extends GlobalAction {
 	 * @param actionBars the action bars where this action will be registered.
 	 * @see GlobalAction#registerAsGlobalAction(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void registerAsGlobalAction(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), this);
 	}

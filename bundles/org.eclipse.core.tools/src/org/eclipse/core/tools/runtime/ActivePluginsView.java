@@ -34,10 +34,12 @@ public class ActivePluginsView extends TableWithTotalView {
 	private static String columnHeaders[] = {"Plug-in", "Classes", "Alloc", "Used", "Startup time", "Order", "Timestamp", "Class load time", "Startup method time", "RAM Alloc", "RAM Used", "ROM Alloc", "ROM Used"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$ //$NON-NLS-13$
 	private static int columnWidths[] = {500, 150, 200, 200, 150, 100, 0, 0, 0, 0, 0, 0, 0};
 
+	@Override
 	protected String[] getColumnHeaders() {
 		return columnHeaders;
 	}
 
+	@Override
 	protected ColumnLayoutData[] getColumnLayout() {
 		ColumnLayoutData[] result = new ColumnLayoutData[columnWidths.length];
 		for (int i = 0; i < columnWidths.length; i++) {
@@ -47,6 +49,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		return result;
 	}
 
+	@Override
 	protected void createToolbar() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager manager = actionBars.getToolBarManager();
@@ -55,11 +58,13 @@ public class ActivePluginsView extends TableWithTotalView {
 		manager.add(displayStackAction);
 	}
 
+	@Override
 	protected void createContextMenu() {
 		// Create menu manager.
 		MenuManager manager = new MenuManager();
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -81,6 +86,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		manager.add(displayStackAction);
 	}
 
+	@Override
 	protected String[] computeTotalLine(Iterator iterator) {
 		int sumOfClasses = 0;
 		int sumOfMemoryUsed = 0;
@@ -128,6 +134,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		return totalLine;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 //		if (!StatsManager.MONITOR_ACTIVATION) {
 			Text text = new Text(parent, 0);
@@ -140,8 +147,10 @@ public class ActivePluginsView extends TableWithTotalView {
 //		viewer.setSelection(StructuredSelection.EMPTY);
 	}
 
+	@Override
 	protected void createActions() {
 		refreshAction = new Action("Refresh") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				VMClassloaderInfo.refreshInfos();
 				getViewer().refresh();
@@ -153,6 +162,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
 		displayClassesInfoAction = new Action("Classes") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				try {
 					LoadedClassesView view = (LoadedClassesView) getSite().getPage().showView(LoadedClassesView.VIEW_ID);
@@ -171,6 +181,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		displayClassesInfoAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("classes.gif")); //$NON-NLS-1$
 
 		displayStackAction = new Action("Stack &Trace") { //$NON-NLS-1$
+			@Override
 			public void run() {
 //				try {
 //					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
@@ -187,14 +198,17 @@ public class ActivePluginsView extends TableWithTotalView {
 		displayStackAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("trace.gif")); //$NON-NLS-1$
 	}
 
+	@Override
 	protected ITreeContentProvider getContentProvider() {
 		return new ActivePluginsViewContentProvider();
 	}
 
+	@Override
 	protected ITableLabelProvider getLabelProvider() {
 		return new ActivePluginsViewLabelProvider();
 	}
 
+	@Override
 	protected ViewerSorter getSorter(int column) {
 		return new ActivePluginsViewSorter(column);
 	}
@@ -202,6 +216,7 @@ public class ActivePluginsView extends TableWithTotalView {
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#getStatusLineMessage(Object)
 	 */
+	@Override
 	protected String getStatusLineMessage(Object element) {
 		return ""; //$NON-NLS-1$
 	}
@@ -210,6 +225,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		return viewer;
 	}
 
+	@Override
 	public void dispose() {
 		// if there is no viewer then we were not monitoring so there
 		// is nothing to dispose.

@@ -32,6 +32,7 @@ public class GotoResourceAction extends Action {
 			setTitle("Select the corresponding properties file:"); //$NON-NLS-1$
 		}
 
+		@Override
 		protected boolean select(IResource resource) {
 			IProject project = resource.getProject();
 			try {
@@ -53,6 +54,7 @@ public class GotoResourceAction extends Action {
 		setText("Select the corresponding properties file:"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run() {
 		GotoResourceDialog dialog = new GotoResourceDialog(part.getSite().getShell(), ResourcesPlugin.getWorkspace().getRoot());
 		dialog.open();

@@ -21,10 +21,12 @@ import org.eclipse.swt.graphics.Image;
 
 public class LoadedClassesViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 //		if (!(element instanceof ClassStats))
 			return "not a class info"; //$NON-NLS-1$

@@ -64,6 +64,7 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 		instance = this;
 	}
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		this.context = bundleContext;
