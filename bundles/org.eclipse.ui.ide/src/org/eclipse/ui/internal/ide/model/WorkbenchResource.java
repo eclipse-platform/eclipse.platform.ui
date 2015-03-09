@@ -71,7 +71,7 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
             return (IResource) o;
         }
         if (o instanceof IAdaptable) {
-            return (IResource) ((IAdaptable) o).getAdapter(IResource.class);
+            return ((IAdaptable) o).getAdapter(IResource.class);
         }
         return null;
     }

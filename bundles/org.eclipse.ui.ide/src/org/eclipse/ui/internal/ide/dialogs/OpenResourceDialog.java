@@ -127,7 +127,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 					}
 				}
 				private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
-					return (IShowInTarget) org.eclipse.ui.internal.util.Util.getAdapter(targetPart, IShowInTarget.class);
+					return org.eclipse.ui.internal.util.Util.getAdapter(targetPart, IShowInTarget.class);
 				}
 			};
 			action.setId(targetId);

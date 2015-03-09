@@ -1029,7 +1029,7 @@ public class WorkspaceUndoUtil {
 	 */
 	public static Shell getShell(IAdaptable uiInfo) {
 		if (uiInfo != null) {
-			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
+			Shell shell = uiInfo.getAdapter(Shell.class);
 			if (shell != null) {
 				return shell;
 			}

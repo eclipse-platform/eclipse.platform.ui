@@ -263,8 +263,7 @@ class MarkerFieldFilterGroup {
 		List result = new ArrayList(elements.length);
 
 		for (int idx = 0; idx < elements.length; idx++) {
-			IResource next = (IResource) elements[idx]
-					.getAdapter(IResource.class);
+			IResource next = elements[idx].getAdapter(IResource.class);
 
 			if (next != null) {
 				result.add(next);
@@ -524,7 +523,7 @@ class MarkerFieldFilterGroup {
 		clone.id = id;
 		for (int i = 0; i < fieldFilters.length; i++) {
 			try {
-				clone.fieldFilters[i] = (MarkerFieldFilter) fieldFilters[i]
+				clone.fieldFilters[i] = fieldFilters[i]
 						.getClass().newInstance();
 				fieldFilters[i].populateWorkingCopy(clone.fieldFilters[i]);
 			} catch (InstantiationException e) {

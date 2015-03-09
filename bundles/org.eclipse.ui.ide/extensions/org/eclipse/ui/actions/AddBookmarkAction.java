@@ -125,7 +125,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 		if (getSelectedResources().isEmpty())
 			return;
 
-		IResource resource= (IResource)getSelectedResources().get(0);
+		IResource resource= getSelectedResources().get(0);
 		if (resource != null) {
 			if (promptForName) {
 				BookmarkPropertiesDialog dialog= new BookmarkPropertiesDialog(shellProvider.getShell());

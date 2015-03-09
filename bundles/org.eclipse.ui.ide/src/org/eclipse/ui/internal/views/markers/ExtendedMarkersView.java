@@ -1305,7 +1305,7 @@ public class ExtendedMarkersView extends ViewPart {
 	private void setPrimarySortField(MarkerField field, TreeColumn column) {
 		builder.setPrimarySortField(field);
 
-		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getViewSite()
+		IWorkbenchSiteProgressService service = getViewSite()
 				.getAdapter(IWorkbenchSiteProgressService.class);
 		builder.refreshContents(service);
 		updateDirectionIndicator(column, field);
@@ -1731,7 +1731,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @since 3.7
 	 */
 	protected IUndoContext getUndoContext() {
-		return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		return ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 	}
 
 	/**

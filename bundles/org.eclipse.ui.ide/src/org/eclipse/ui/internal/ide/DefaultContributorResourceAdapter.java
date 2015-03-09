@@ -49,12 +49,12 @@ public class DefaultContributorResourceAdapter implements
      */
     @Override
 	public IResource getAdaptedResource(IAdaptable adaptable) {
-        return (IResource) adaptable.getAdapter(IResource.class);
+        return adaptable.getAdapter(IResource.class);
     }
 
     @Override
 	public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
-        return (ResourceMapping) adaptable.getAdapter(ResourceMapping.class);
+        return adaptable.getAdapter(ResourceMapping.class);
     }
 }
 

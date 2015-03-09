@@ -703,8 +703,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				if (object instanceof IResource) {
 					selectedResource = (IResource) object;
 				} else if (object instanceof IAdaptable) {
-					selectedResource = (IResource) ((IAdaptable) object)
-							.getAdapter(IResource.class);
+					selectedResource = ((IAdaptable) object).getAdapter(IResource.class);
 				}
 				if (selectedResource != null) {
 					if (selectedResource.getType() == IResource.FILE) {

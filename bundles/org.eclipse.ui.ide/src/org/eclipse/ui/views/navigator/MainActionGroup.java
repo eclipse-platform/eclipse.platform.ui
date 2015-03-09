@@ -221,7 +221,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         workingSetGroup.setWorkingSet(navigator.getWorkingSet());
         sortAndFilterGroup = new SortAndFilterActionGroup(navigator);
         workspaceGroup = new WorkspaceActionGroup(navigator);
-        IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+        IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		undoRedoGroup= new UndoRedoActionGroup(getNavigator().getSite(), workspaceContext, true);
 
     }

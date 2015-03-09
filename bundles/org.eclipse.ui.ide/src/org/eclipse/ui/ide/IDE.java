@@ -292,7 +292,7 @@ public final class IDE {
 		if (editor instanceof IGotoMarker) {
 			gotoMarker = (IGotoMarker) editor;
 		} else {
-			gotoMarker = (IGotoMarker) editor.getAdapter(IGotoMarker.class);
+			gotoMarker = editor.getAdapter(IGotoMarker.class);
 		}
 		if (gotoMarker != null) {
 			gotoMarker.gotoMarker(marker);

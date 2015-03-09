@@ -77,8 +77,7 @@ public abstract class QuickMenuAction extends Action {
      */
     public String getShortCutString() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IBindingService bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
+		final IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		final TriggerSequence[] activeBindings = bindingService
 				.getActiveBindingsFor(getActionDefinitionId());
 		if (activeBindings.length > 0) {

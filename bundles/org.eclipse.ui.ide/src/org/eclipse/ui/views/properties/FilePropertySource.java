@@ -74,7 +74,7 @@ public class FilePropertySource extends ResourcePropertySource {
 		}
 
         if (key.equals(IResourcePropertyConstants.P_SIZE_RES)) {
-			return IDEResourceInfoUtils.getSizeString((IFile) element);
+			return IDEResourceInfoUtils.getSizeString(element);
 		}
         return null;
     }

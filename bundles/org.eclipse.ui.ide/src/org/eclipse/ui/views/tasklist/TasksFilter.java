@@ -192,8 +192,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         }
         for (int i = 0; i < workingSetElements.length; i++) {
             IAdaptable workingSetElement = workingSetElements[i];
-            IContainmentAdapter containmentAdapter = (IContainmentAdapter) workingSetElement
-                    .getAdapter(IContainmentAdapter.class);
+            IContainmentAdapter containmentAdapter = workingSetElement.getAdapter(IContainmentAdapter.class);
 
             // if there is no IContainmentAdapter defined for the working
             // set element type fall back to using resource based
@@ -237,8 +236,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (workingSetElement instanceof IResource) {
             workingSetResource = (IResource) workingSetElement;
         } else {
-            workingSetResource = (IResource) workingSetElement
-                    .getAdapter(IResource.class);
+            workingSetResource = workingSetElement.getAdapter(IResource.class);
         }
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();

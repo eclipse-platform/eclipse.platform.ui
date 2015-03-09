@@ -290,8 +290,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                     resource = (IResource) o;
                 } else {
                     if (o instanceof IAdaptable) {
-                        resource = (IResource) ((IAdaptable) o)
-                                .getAdapter(IResource.class);
+                        resource = ((IAdaptable) o).getAdapter(IResource.class);
                     }
                 }
                 if (resource != null) {
@@ -621,7 +620,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             if (input instanceof IResource) {
                 resource = (IResource) input;
             } else {
-                resource = (IResource) input.getAdapter(IResource.class);
+                resource = input.getAdapter(IResource.class);
             }
             if (resource != null) {
                 switch (resource.getType()) {

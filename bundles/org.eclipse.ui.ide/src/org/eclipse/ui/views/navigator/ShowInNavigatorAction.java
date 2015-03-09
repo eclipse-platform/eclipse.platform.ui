@@ -72,8 +72,7 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
                 IResource resource = ((IMarker) o).getResource();
                 v.add(resource);
             } else if (o instanceof IAdaptable) {
-                IResource resource = (IResource) ((IAdaptable) o)
-                        .getAdapter(IResource.class);
+                IResource resource = ((IAdaptable) o).getAdapter(IResource.class);
                 if (resource != null) {
                     v.add(resource);
                 }

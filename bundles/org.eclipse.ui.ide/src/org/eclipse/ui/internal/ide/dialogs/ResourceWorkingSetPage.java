@@ -115,7 +115,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
             if (elements[i] instanceof IResource) {
 				resource = (IResource) elements[i];
 			} else {
-				resource = (IResource) elements[i].getAdapter(IResource.class);
+				resource = elements[i].getAdapter(IResource.class);
 			}
 
             if (resource != null) {
@@ -430,8 +430,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
                     if (item instanceof IContainer) {
                         container = (IContainer) item;
                     } else {
-                        container = (IContainer) item
-                                .getAdapter(IContainer.class);
+                        container = item.getAdapter(IContainer.class);
                     }
                     if (container != null) {
                         setSubtreeChecked(container, true, true);
@@ -439,7 +438,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
                     if (item instanceof IResource) {
                         resource = (IResource) item;
                     } else {
-                        resource = (IResource) item.getAdapter(IResource.class);
+                        resource = item.getAdapter(IResource.class);
                     }
                     if (resource != null && resource.isAccessible() == false) {
                         IProject project = resource.getProject();

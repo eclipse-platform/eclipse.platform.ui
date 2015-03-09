@@ -95,8 +95,7 @@ public class AddTaskAction extends SelectionListenerAction {
 			resource = (IResource) element;
 		}
         if (element instanceof IAdaptable) {
-			resource = (IResource) ((IAdaptable) element)
-                    .getAdapter(IResource.class);
+			resource = ((IAdaptable) element).getAdapter(IResource.class);
 		}
 
         if (resource != null && resource instanceof IProject) {
