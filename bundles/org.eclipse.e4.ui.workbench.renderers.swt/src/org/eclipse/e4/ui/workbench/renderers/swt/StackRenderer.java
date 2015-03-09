@@ -1414,7 +1414,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		tabMenu.setVisible(true);
 	}
 
-	private boolean isClosable(MPart part) {
+	protected boolean isClosable(MPart part) {
 		// if it's a shared part check its current ref
 		if (part.getCurSharedRef() != null) {
 			return !(part.getCurSharedRef().getTags()
@@ -1437,7 +1437,19 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		}
 
 		final Menu menu = cachedMenu;
+		populateTabMenu(menu, part);
+		return menu;
+	}
 
+	/**
+	 * Populate the tab's context menu for the given part.
+	 *
+	 * @param menu
+	 *            the menu to be populated
+	 * @param part
+	 *            the relevant part
+	 */
+	protected void populateTabMenu(final Menu menu, MPart part) {
 		int closeableElements = 0;
 		if (isClosable(part)) {
 			MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
@@ -1510,8 +1522,6 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 				});
 			}
 		}
-
-		return menu;
 	}
 
 	private MElementContainer<MUIElement> getParent(MPart part) {
