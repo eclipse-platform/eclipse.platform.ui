@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		this.bundleContext.addBundleListener(this);
 	}
 
+	@Override
 	public boolean containsKey(String name, boolean localOnly) {
 		if (super.containsKey(name, localOnly))
 			return true;
@@ -61,6 +62,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		return (result != null);
 	}
 
+	@Override
 	public Object lookup(String name, EclipseContext originatingContext) {
 		if (name == null)
 			return null;
@@ -92,6 +94,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		return ((String[]) reference.getProperty(Constants.OBJECTCLASS))[0];
 	}
 
+	@Override
 	public void dispose() {
 		for (ServiceReference<?> ref : refs.values()) {
 			if (ref != null)
@@ -103,6 +106,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		super.dispose();
 	}
 
+	@Override
 	public void serviceChanged(ServiceEvent event) {
 		ServiceReference<?> ref = event.getServiceReference();
 		String name = serviceName(ref);
@@ -124,6 +128,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		}
 	}
 
+	@Override
 	public void bundleChanged(BundleEvent event) {
 		// In case OSGi context has not being properly disposed by the application,
 		// OSGi framework shutdown will trigged uninjection of all consumed OSGi

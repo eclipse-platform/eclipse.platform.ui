@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class ValueComputation extends Computation {
 		init();
 	}
 
+	@Override
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
 		if (cachedValue == NotAValue) // already invalidated
 			return;
@@ -66,12 +67,14 @@ public class ValueComputation extends Computation {
 		return cachedValue;
 	}
 
+	@Override
 	public String toString() {
 		if (function == null)
 			return super.toString();
 		return function.toString();
 	}
 
+	@Override
 	protected int calcHashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -108,6 +111,7 @@ public class ValueComputation extends Computation {
 		return true;
 	}
 
+	@Override
 	public boolean isValid() {
 		return valid;
 	}

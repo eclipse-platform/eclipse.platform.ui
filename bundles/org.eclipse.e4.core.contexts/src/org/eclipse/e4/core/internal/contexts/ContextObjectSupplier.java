@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,12 +46,14 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			this.context = context;
 		}
 
+		@Override
 		public Reference<Object> getReference() {
 			if (requestor instanceof Requestor)
 				return ((Requestor<?>) requestor).getReference();
 			return super.getReference();
 		}
 
+		@Override
 		public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments) {
 			if (eventType == ContextChangeEvent.INITIAL) {
 				// needs to be done inside runnable to establish dependencies
@@ -90,6 +92,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			return true;
 		}
 
+		@Override
 		public boolean changed(IEclipseContext eventsContext) {
 			return true;
 		}
@@ -213,11 +216,13 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		return null;
 	}
 
+	@Override
 	synchronized public void pauseRecording() {
 		Stack<Computation> current = EclipseContext.getCalculatedComputations();
 		current.push(null);
 	}
 
+	@Override
 	synchronized public void resumeRecording() {
 		Stack<Computation> current = EclipseContext.getCalculatedComputations();
 		Computation plug = current.pop();
@@ -237,6 +242,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		return objectSupplier;
 	}
 
+	@Override
 	public WeakReference<Object> makeReference(Object object) {
 		if (context instanceof EclipseContext) {
 			return ((EclipseContext) context).trackedWeakReference(object);

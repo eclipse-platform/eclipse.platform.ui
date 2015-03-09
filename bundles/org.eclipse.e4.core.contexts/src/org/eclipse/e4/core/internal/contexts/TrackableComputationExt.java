@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,10 +29,12 @@ public class TrackableComputationExt extends Computation {
 		init();
 	}
 
+	@Override
 	public int hashCode() {
 		return hashCode;
 	}
 
+	@Override
 	protected int calcHashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -41,6 +43,7 @@ public class TrackableComputationExt extends Computation {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -62,6 +65,7 @@ public class TrackableComputationExt extends Computation {
 		return true;
 	}
 
+	@Override
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduledList) {
 		//	don't call super - we keep the link unless uninjected / disposed
 		int eventType = event.getEventType();
@@ -127,6 +131,7 @@ public class TrackableComputationExt extends Computation {
 		return result;
 	}
 
+	@Override
 	public String toString() {
 		return runnable.toString();
 	}

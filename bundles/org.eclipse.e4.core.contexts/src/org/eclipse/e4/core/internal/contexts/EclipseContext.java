@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,10 +56,12 @@ public class EclipseContext implements IEclipseContext {
 			this.event = event;
 		}
 
+		@Override
 		public int hashCode() {
 			return 31 * (31 + event.hashCode()) + runnable.hashCode();
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -133,6 +135,7 @@ public class EclipseContext implements IEclipseContext {
 		return result;
 	}
 
+	@Override
 	public boolean containsKey(String name) {
 		trackAccess(name);
 		return containsKey(name, false);
@@ -149,6 +152,7 @@ public class EclipseContext implements IEclipseContext {
 		return false;
 	}
 
+	@Override
 	public void dispose() {
 		// dispose of child contexts first
 		for (EclipseContext childContext : getChildren()) {
@@ -203,11 +207,13 @@ public class EclipseContext implements IEclipseContext {
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.DISPOSED, null);
 	}
 
+	@Override
 	public Object get(String name) {
 		trackAccess(name);
 		return internalGet(this, name, false);
 	}
 
+	@Override
 	public Object getLocal(String name) {
 		trackAccess(name);
 		return internalGet(this, name, true);
@@ -299,6 +305,7 @@ public class EclipseContext implements IEclipseContext {
 		return localValues.containsKey(name);
 	}
 
+	@Override
 	public void remove(String name) {
 		if (isSetLocally(name)) {
 			Object oldValue = localValues.remove(name);
@@ -308,6 +315,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
+	@Override
 	public void runAndTrack(final RunAndTrack runnable) {
 		TrackableComputationExt computation = new TrackableComputationExt(runnable, this);
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.INITIAL, null, null, null);
@@ -334,6 +342,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
+	@Override
 	public void set(String name, Object value) {
 		if (PARENT.equals(name)) {
 			setParent((IEclipseContext) value);
@@ -360,6 +369,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
+	@Override
 	public void modify(String name, Object value) {
 		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 		if (!internalModify(name, value, scheduled))
@@ -386,10 +396,12 @@ public class EclipseContext implements IEclipseContext {
 		return false;
 	}
 
+	@Override
 	public EclipseContext getParent() {
 		return (EclipseContext) localValues.get(PARENT);
 	}
 
+	@Override
 	public void setParent(IEclipseContext parent) {
 		EclipseContext parentContext = (EclipseContext) localValues.get(PARENT);
 		if (parent == parentContext)
@@ -408,6 +420,7 @@ public class EclipseContext implements IEclipseContext {
 	/**
 	 * Returns a string representation of this context for debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		Object debugString = localValues.get(DEBUG_STRING);
 		return debugString instanceof String ? ((String) debugString) : "Anonymous Context"; //$NON-NLS-1$
@@ -427,6 +440,7 @@ public class EclipseContext implements IEclipseContext {
 		weakListeners.add(name, computation);
 	}
 
+	@Override
 	public void declareModifiable(String name) {
 		if (name == null)
 			return;
@@ -499,6 +513,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
+	@Override
 	public void processWaiting() {
 		// traverse to the root node
 		EclipseContext parent = getParent();
@@ -562,38 +577,47 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
+	@Override
 	public <T> T get(Class<T> clazz) {
 		return clazz.cast(get(clazz.getName()));
 	}
 
+	@Override
 	public boolean containsKey(Class<?> clazz) {
 		return containsKey(clazz.getName());
 	}
 
+	@Override
 	public <T> void set(Class<T> clazz, T value) {
 		set(clazz.getName(), value);
 	}
 
+	@Override
 	public void remove(Class<?> clazz) {
 		remove(clazz.getName());
 	}
 
+	@Override
 	public <T> T getLocal(Class<T> clazz) {
 		return clazz.cast(getLocal(clazz.getName()));
 	}
 
+	@Override
 	public <T> void modify(Class<T> clazz, T value) {
 		modify(clazz.getName(), value);
 	}
 
+	@Override
 	public void declareModifiable(Class<?> clazz) {
 		declareModifiable(clazz.getName());
 	}
 
+	@Override
 	public IEclipseContext createChild() {
 		return new EclipseContext(this); // strategies are not inherited
 	}
 
+	@Override
 	public IEclipseContext createChild(String name) {
 		IEclipseContext result = createChild();
 		result.set(DEBUG_STRING, name);
@@ -606,11 +630,13 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
+	@Override
 	public IEclipseContext getActiveChild() {
 		trackAccess(ACTIVE_CHILD);
 		return (EclipseContext) internalGet(this, ACTIVE_CHILD, true);
 	}
 
+	@Override
 	public IEclipseContext getActiveLeaf() {
 		IEclipseContext activeContext = this;
 		IEclipseContext child = getActiveChild();
@@ -621,6 +647,7 @@ public class EclipseContext implements IEclipseContext {
 		return activeContext;
 	}
 
+	@Override
 	public void activate() {
 		EclipseContext parent = getParent();
 		if (parent == null)
@@ -630,12 +657,14 @@ public class EclipseContext implements IEclipseContext {
 		parent.set(ACTIVE_CHILD, this);
 	}
 
+	@Override
 	public void activateBranch() {
 		for (IEclipseContext i = this; i != null; i = i.getParent()) {
 			i.activate();
 		}
 	}
 
+	@Override
 	public void deactivate() {
 		EclipseContext parent = getParent();
 		if (parent == null)
@@ -722,10 +751,12 @@ public class EclipseContext implements IEclipseContext {
 		return null;
 	}
 
+	@Override
 	public <T> T getActive(Class<T> clazz) {
 		return clazz.cast(getActive(clazz.getName()));
 	}
 
+	@Override
 	public Object getActive(final String name) {
 		return getActiveLeaf().get(name);
 	}
