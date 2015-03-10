@@ -63,7 +63,7 @@ import org.eclipse.core.runtime.IStatus;
  * related to an operation and need to determine whether an undo or redo will
  * cause any conflicts with their local state.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IOperationHistory {
@@ -123,7 +123,7 @@ public interface IOperationHistory {
 	 * the history. Listeners will be notified that the operation was added to
 	 * the history (<code>OPERATION_ADDED</code>).
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            the operation to be added to the history
 	 */
@@ -134,13 +134,13 @@ public interface IOperationHistory {
 	 * Add the specified approver to the list of operation approvers consulted
 	 * by the operation history before an undo or redo is attempted.
 	 * </p>
-	 * 
+	 *
 	 * @param approver
 	 *            the IOperationApprover to be added as an approver.the instance
 	 *            to remove. Must not be <code>null</code>. If an attempt is
 	 *            made to register an instance which is already registered with
 	 *            this instance, this method has no effect.
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationApprover
 	 */
 	void addOperationApprover(IOperationApprover approver);
@@ -151,13 +151,13 @@ public interface IOperationHistory {
 	 * that are notified about changes in the history or operations that are
 	 * executed, undone, or redone.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the IOperationHistoryListener to be added as a listener. Must
 	 *            not be <code>null</code>. If an attempt is made to register
 	 *            an instance which is already registered with this instance,
 	 *            this method has no effect.
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
 	 * @see org.eclipse.core.commands.operations.OperationHistoryEvent
 	 */
@@ -180,7 +180,7 @@ public interface IOperationHistory {
 	 * This method has no effect if the caller has not previously called
 	 * {@link #openOperation}.
 	 * </p>
-	 * 
+	 *
 	 * @param operationOK
 	 *            <code>true</code> if the operation successfully completed.
 	 *            Listeners should be notified with <code>DONE</code>,
@@ -206,7 +206,7 @@ public interface IOperationHistory {
 	 * Return whether there is a valid redoable operation available in the given
 	 * context.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context to be checked
 	 * @return <code>true</code> if there is a redoable operation,
@@ -220,7 +220,7 @@ public interface IOperationHistory {
 	 * Return whether there is a valid undoable operation available in the given
 	 * context
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context to be checked
 	 * @return <code>true</code> if there is an undoable operation,
@@ -236,7 +236,7 @@ public interface IOperationHistory {
 	 * history notification for the removal of each operation being disposed
 	 * will be sent.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context to be disposed
 	 * @param flushUndo
@@ -267,23 +267,23 @@ public interface IOperationHistory {
 	 * the operation has been added to the history (<code>OPERATION_ADDED</code>)
 	 * will be sent.
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            the operation to be executed and then added to the history
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to be used (or <code>null</code>)
 	 *            during the operation.
-	 * 
+	 *
 	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it should minimally contain an adapter
 	 *            for the org.eclipse.swt.widgets.Shell.class.
-	 * 
+	 *
 	 * @return the IStatus indicating whether the execution succeeded.
-	 * 
+	 *
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it was added to the history. <code>OK</code>
@@ -304,10 +304,10 @@ public interface IOperationHistory {
 	 * <code>DONE</code> notification if the execution was approved and
 	 * attempted.
 	 * </p>
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during execution.
-	 * 
+	 *
 	 */
 	IStatus execute(IUndoableOperation operation, IProgressMonitor monitor,
 			IAdaptable info) throws ExecutionException;
@@ -316,10 +316,10 @@ public interface IOperationHistory {
 	 * <p>
 	 * Return the limit on the undo and redo history for a particular context.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context whose limit is requested
-	 * 
+	 *
 	 * @return the undo and redo history limit for the specified context.
 	 */
 	int getLimit(IUndoContext context);
@@ -331,9 +331,9 @@ public interface IOperationHistory {
 	 * history, with the most recently undone operation appearing last in the
 	 * array. This history is used LIFO (last in, first out) when successive
 	 * "Redo" commands are invoked.
-	 * 
+	 *
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context for the redo
 	 * @return the array of operations in the history
@@ -344,7 +344,7 @@ public interface IOperationHistory {
 	 * <p>
 	 * Get the operation that will next be redone in the given undo context.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context for the redo
 	 * @return the operation to be redone or <code>null</code> if there is no
@@ -361,7 +361,7 @@ public interface IOperationHistory {
 	 * array. This history is used LIFO (last in, first out) when successive
 	 * "Undo" commands are invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context for the undo
 	 * @return the array of operations in the history
@@ -402,7 +402,7 @@ public interface IOperationHistory {
 	 * different operation is open, it is presumed to be an application coding
 	 * error and this method will throw an IllegalStateException.
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            the composite operation to be considered as the parent for all
 	 *            subsequent operations.
@@ -419,10 +419,10 @@ public interface IOperationHistory {
 	 * The specified operation has changed in some way since it was added to the
 	 * operation history. Notify listeners with an OPERATION_CHANGED event.
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            the operation that has changed.
-	 * 
+	 *
 	 */
 	void operationChanged(IUndoableOperation operation);
 
@@ -430,7 +430,7 @@ public interface IOperationHistory {
 	 * <p>
 	 * Get the operation that will next be undone in the given undo context.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context for the undo
 	 * @return the operation to be undone or <code>null</code> if there is no
@@ -445,7 +445,7 @@ public interface IOperationHistory {
 	 * the operation is subject to approval by any registered
 	 * {@link IOperationApprover} before it is attempted.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context to be redone
 	 * @param monitor
@@ -458,7 +458,7 @@ public interface IOperationHistory {
 	 *            <code>null</code>, it should minimally contain an adapter
 	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus indicating whether the redo succeeded.
-	 * 
+	 *
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
@@ -479,10 +479,10 @@ public interface IOperationHistory {
 	 * <code>REDONE</code> notification if the redo was approved and
 	 * attempted.
 	 * </p>
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
-	 * 
+	 *
 	 */
 	IStatus redo(IUndoContext context, IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException;
@@ -493,7 +493,7 @@ public interface IOperationHistory {
 	 * approval by any registered {@link IOperationApprover} before it is
 	 * attempted.
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            the operation to be redone
 	 * @param monitor
@@ -505,9 +505,9 @@ public interface IOperationHistory {
 	 *            user if necessary. When this parameter is not <code>null</code>,
 	 *            it should minimally contain an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
-	 * 
+	 *
 	 * @return the IStatus indicating whether the redo succeeded.
-	 * 
+	 *
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
@@ -527,7 +527,7 @@ public interface IOperationHistory {
 	 * instead of the <code>REDONE</code> notification if the redo was
 	 * approved and attempted.
 	 * </p>
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
 	 */
@@ -540,7 +540,7 @@ public interface IOperationHistory {
 	 * Remove the specified operation approver from the list of operation
 	 * approvers that are consulted before an operation is undone or redone.
 	 * </p>
-	 * 
+	 *
 	 * @param approver
 	 *            the IOperationApprover to be removed. Must not be
 	 *            <code>null</code>. If an attempt is made to remove an
@@ -554,7 +554,7 @@ public interface IOperationHistory {
 	 * Remove the specified listener from the list of operation history
 	 * listeners.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            The IOperationHistoryListener to be removed. Must not be
 	 *            <code>null</code>. If an attempt is made to remove an
@@ -572,7 +572,7 @@ public interface IOperationHistory {
 	 * replacements to be undone or redone. Listeners will be notified about the
 	 * removal of the replaced element and the addition of each replacement.
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            The IUndoableOperation to be replaced
 	 * @param replacements
@@ -585,10 +585,10 @@ public interface IOperationHistory {
 	 * <p>
 	 * Set the limit on the undo and redo history for a particular context.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context whose limit is being set.
-	 * 
+	 *
 	 * @param limit
 	 *            the maximum number of operations that should be kept in the
 	 *            undo or redo history for the specified context. Must not be
@@ -602,7 +602,7 @@ public interface IOperationHistory {
 	 * of the operation is subject to approval by any registered
 	 * {@link IOperationApprover} before it is attempted.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context to be undone
 	 * @param monitor
@@ -614,9 +614,9 @@ public interface IOperationHistory {
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it should minimally contain an adapter
 	 *            for the org.eclipse.swt.widgets.Shell.class.
-	 * 
+	 *
 	 * @return the IStatus indicating whether the undo succeeded.
-	 * 
+	 *
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
@@ -637,7 +637,7 @@ public interface IOperationHistory {
 	 * <code>UNDONE</code> notification if the undo was approved and
 	 * attempted.
 	 * </p>
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during undo.
 	 */
@@ -651,7 +651,7 @@ public interface IOperationHistory {
 	 * approval by any registered {@link IOperationApprover} before it is
 	 * attempted.
 	 * </p>
-	 * 
+	 *
 	 * @param operation
 	 *            the operation to be undone
 	 * @param monitor
@@ -663,9 +663,9 @@ public interface IOperationHistory {
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it should minimally contain an adapter
 	 *            for the org.eclipse.swt.widgets.Shell.class.
-	 * 
+	 *
 	 * @return the IStatus indicating whether the undo succeeded.
-	 * 
+	 *
 	 * <p>
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it remains in the history. <code>OK</code>
@@ -686,7 +686,7 @@ public interface IOperationHistory {
 	 * <code>UNDONE</code> notification if the undo was approved and
 	 * attempted.
 	 * </p>
-	 * 
+	 *
 	 * @throws ExecutionException
 	 *             if an exception occurred during undo.
 	 */

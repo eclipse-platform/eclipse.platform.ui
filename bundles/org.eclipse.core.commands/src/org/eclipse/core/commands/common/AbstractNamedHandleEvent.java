@@ -16,7 +16,7 @@ package org.eclipse.core.commands.common;
  * An event fired from a <code>NamedHandleObject</code>. This provides
  * notification of changes to the defined state, the name and the description.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class AbstractNamedHandleEvent extends
@@ -40,7 +40,7 @@ public abstract class AbstractNamedHandleEvent extends
 
 	/**
 	 * Constructs a new instance of <code>AbstractHandleObjectEvent</code>.
-	 * 
+	 *
 	 * @param definedChanged
 	 *            <code>true</code>, iff the defined property changed.
 	 * @param descriptionChanged
@@ -62,7 +62,7 @@ public abstract class AbstractNamedHandleEvent extends
 
 	/**
 	 * Returns whether or not the description property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the description property changed.
 	 */
 	public final boolean isDescriptionChanged() {
@@ -71,7 +71,7 @@ public abstract class AbstractNamedHandleEvent extends
 
 	/**
 	 * Returns whether or not the name property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the name property changed.
 	 */
 	public final boolean isNameChanged() {

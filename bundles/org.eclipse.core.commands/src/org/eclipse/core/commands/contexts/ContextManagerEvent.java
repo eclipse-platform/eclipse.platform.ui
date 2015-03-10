@@ -18,7 +18,7 @@ import org.eclipse.core.commands.common.AbstractBitSetEvent;
  * <p>
  * An event indicating that the set of defined context identifiers has changed.
  * </p>
- * 
+ *
  * @since 3.1
  * @see IContextManagerListener#contextManagerChanged(ContextManagerEvent)
  */
@@ -55,7 +55,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param contextManager
 	 *            the instance of the interface that changed; must not be
 	 *            <code>null</code>.
@@ -97,7 +97,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns the context identifier that was added or removed.
-	 * 
+	 *
 	 * @return The context identifier that was added or removed. This value may
 	 *         be <code>null</code> if no context identifier was added or
 	 *         removed.
@@ -108,7 +108,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -118,7 +118,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
      * Returns the set of identifiers to previously active contexts.
-     * 
+     *
      * @return the set of identifiers to previously active contexts. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
@@ -133,7 +133,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether the active context identifiers have changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the collection of active contexts changed;
 	 *         <code>false</code> otherwise.
 	 */
@@ -143,7 +143,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether the list of defined context identifiers has changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the list of context identifiers has
 	 *         changed; <code>false</code> otherwise.
 	 */
@@ -154,7 +154,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 	/**
 	 * Returns whether the context identifier became defined. Otherwise, the
 	 * context identifier became undefined.
-	 * 
+	 *
 	 * @return <code>true</code> if the context identifier became defined;
 	 *         <code>false</code> if the context identifier became undefined.
 	 */

@@ -18,7 +18,7 @@ import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see ICommandListener#commandChanged(CommandEvent)
  */
@@ -42,7 +42,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * The bit used to represent whether the command has changed its return
 	 * type.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final int CHANGED_RETURN_TYPE = LAST_USED_BIT << 4;
@@ -50,7 +50,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * The bit used to represent whether the command has changed its help
 	 * context identifier.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final int CHANGED_HELP_CONTEXT_ID = LAST_USED_BIT << 5;
@@ -58,7 +58,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * The bit used to represent whether this commands active handler has
 	 * changed its enablement state.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private static final int CHANGED_ENABLED = LAST_USED_BIT << 6;
@@ -70,7 +70,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param command
 	 *            the instance of the interface that changed.
 	 * @param categoryChanged
@@ -97,7 +97,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param command
 	 *            the instance of the interface that changed.
 	 * @param categoryChanged
@@ -129,7 +129,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param command
 	 *            the instance of the interface that changed.
 	 * @param categoryChanged
@@ -165,7 +165,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param command
 	 *            the instance of the interface that changed.
 	 * @param categoryChanged
@@ -226,7 +226,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -236,7 +236,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the category property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the category property changed.
 	 */
 	public final boolean isCategoryChanged() {
@@ -245,7 +245,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the handled property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the handled property changed.
 	 */
 	public final boolean isHandledChanged() {
@@ -254,7 +254,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the help context identifier changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the help context identifier changed.
 	 * @since 3.2
 	 */
@@ -264,7 +264,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the parameters have changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the parameters property changed.
 	 */
 	public final boolean isParametersChanged() {
@@ -273,7 +273,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the return type property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the return type property changed.
 	 * @since 3.2
 	 */
@@ -283,7 +283,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Return whether the enable property changed.
-	 * 
+	 *
 	 * @return <code>true</code> iff the comand enablement changed
 	 * @since 3.3
 	 */

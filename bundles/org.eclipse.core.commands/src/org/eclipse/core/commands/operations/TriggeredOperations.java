@@ -33,7 +33,7 @@ import org.eclipse.core.commands.ExecutionException;
  * <p>
  * This class may be instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class TriggeredOperations extends AbstractOperation implements
@@ -50,7 +50,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * Construct a composite triggered operations using the specified undoable
 	 * operation as the trigger. Use the label of this trigger as the label of
 	 * the operation.
-	 * 
+	 *
 	 * @param operation
 	 *            the operation that will trigger other operations.
 	 * @param history
@@ -66,7 +66,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#add(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void add(IUndoableOperation operation) {
@@ -76,7 +76,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#remove(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void remove(IUndoableOperation operation) {
@@ -113,7 +113,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * triggered. If the context being removed is not the only context for the
 	 * triggering operation, the triggering operation will remain, and the
 	 * children will each be similarly checked.
-	 * 
+	 *
 	 * @param context
 	 *            the undo context being removed from the receiver.
 	 */
@@ -154,7 +154,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -172,7 +172,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 				throw e;
 			} catch (RuntimeException e) {
 				history.closeOperation(false, false, IOperationHistory.EXECUTE);
-				throw e;	
+				throw e;
 			}
 
 		}
@@ -181,7 +181,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -206,7 +206,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 			} catch (RuntimeException e) {
 				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.REDO);
-				throw e;	
+				throw e;
 			}
 		}
 		return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -214,7 +214,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -239,7 +239,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 			} catch (RuntimeException e) {
 				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.UNDO);
-				throw e;	
+				throw e;
 			}
 		}
 		return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -247,7 +247,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 	 */
 	public boolean canUndo() {
@@ -259,7 +259,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
 	 */
 	public boolean canExecute() {
@@ -271,7 +271,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
 	 */
 	public boolean canRedo() {
@@ -332,7 +332,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 	/**
 	 * Return the operation that triggered the other operations in this
 	 * composite.
-	 * 
+	 *
 	 * @return the IUndoableOperation that triggered the other children.
 	 */
 	public IUndoableOperation getTriggeringOperation() {
@@ -341,7 +341,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#getAffectedObjects()
 	 */
 	public Object[] getAffectedObjects() {
@@ -354,7 +354,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
 	 */
 	public void aboutToNotify(OperationHistoryEvent event) {
@@ -366,7 +366,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeUndoableStatus(IProgressMonitor monitor)
@@ -385,7 +385,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeRedoableStatus(IProgressMonitor monitor)
@@ -410,7 +410,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * <p>
 	 * This message has no effect if the original undo context is not present in
 	 * the receiver.
-	 * 
+	 *
 	 * @param original
 	 *            the undo context which is to be replaced
 	 * @param replacement
@@ -450,10 +450,10 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 * Add the specified context to the operation. Overridden in
 	 * TriggeredOperations to add the specified undo context to the triggering
 	 * operation.
-	 * 
+	 *
 	 * @param context
 	 *            the context to be added
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void addContext(IUndoContext context) {
@@ -477,7 +477,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	/**
 	 * @since 3.6
 	 */
@@ -486,7 +486,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 			((IAdvancedUndoableOperation2) triggeringOperation).setQuietCompute(quiet);
 		}
 	}
-	
+
 	/**
 	 * @since 3.6
 	 */

@@ -18,21 +18,21 @@ import org.eclipse.core.commands.common.CommandException;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class NotHandledException extends CommandException {
 
     /**
      * Generated serial version UID for this class.
-     * 
+     *
      * @since 3.1
      */
     private static final long serialVersionUID = 3256446914827726904L;
 
     /**
      * Creates a new instance of this class with the specified detail message.
-     * 
+     *
      * @param s
      *            the detail message.
      */

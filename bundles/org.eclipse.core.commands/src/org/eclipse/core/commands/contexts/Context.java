@@ -43,7 +43,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see ContextManager
  */
@@ -64,7 +64,7 @@ public final class Context extends NamedHandleObject implements Comparable {
 
     /**
      * Constructs a new instance of <code>Context</code>.
-     * 
+     *
      * @param id
      *            The id for this context; must not be <code>null</code>.
      */
@@ -75,7 +75,7 @@ public final class Context extends NamedHandleObject implements Comparable {
     /**
      * Registers an instance of <code>IContextListener</code> to listen for
      * changes to properties of this instance.
-     * 
+     *
      * @param listener
      *            the instance to register. Must not be <code>null</code>. If
      *            an attempt is made to register an instance which is already
@@ -91,8 +91,8 @@ public final class Context extends NamedHandleObject implements Comparable {
         }
 
         listeners.add(listener);
-    } 
-    
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
@@ -125,7 +125,7 @@ public final class Context extends NamedHandleObject implements Comparable {
      * <p>
      * Notification is sent to all listeners that something has changed.
      * </p>
-     * 
+     *
      * @param name
      *            The name of this context; must not be <code>null</code>.
      * @param description
@@ -161,7 +161,7 @@ public final class Context extends NamedHandleObject implements Comparable {
     /**
      * Notifies all listeners that this context has changed. This sends the
      * given event to all of the listeners, if any.
-     * 
+     *
      * @param event
      *            The event to send to the listeners; must not be
      *            <code>null</code>.
@@ -190,7 +190,7 @@ public final class Context extends NamedHandleObject implements Comparable {
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
-     * 
+     *
      * @return the identifier of the parent of this instance. May be
      *         <code>null</code>.
      * @throws NotDefinedException
@@ -209,7 +209,7 @@ public final class Context extends NamedHandleObject implements Comparable {
     /**
      * Unregisters an instance of <code>IContextListener</code> listening for
      * changes to properties of this instance.
-     * 
+     *
      * @param contextListener
      *            the instance to unregister. Must not be <code>null</code>.
      *            If an attempt is made to unregister an instance which is not
@@ -236,7 +236,7 @@ public final class Context extends NamedHandleObject implements Comparable {
     /**
      * The string representation of this context -- for debugging purposes only.
      * This string should not be shown to an end user.
-     * 
+     *
      * @return The string representation; never <code>null</code>.
      */
     public final String toString() {

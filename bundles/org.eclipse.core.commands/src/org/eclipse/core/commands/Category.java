@@ -23,7 +23,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * category. The category has no functional effect, but may be used in graphical
  * tools that want to group the set of commands somehow.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class Category extends NamedHandleObject {
@@ -39,7 +39,7 @@ public final class Category extends NamedHandleObject {
 	 * identifier. When a category is first constructed, it is undefined.
 	 * Category should only be constructed by the <code>CommandManager</code>
 	 * to ensure that identifier remain unique.
-	 * 
+	 *
 	 * @param id
 	 *            The identifier for the category. This value must not be
 	 *            <code>null</code>, and must be unique amongst all
@@ -52,7 +52,7 @@ public final class Category extends NamedHandleObject {
 	/**
 	 * Adds a listener to this category that will be notified when this
 	 * category's state changes.
-	 * 
+	 *
 	 * @param categoryListener
 	 *            The listener to be added; must not be <code>null</code>.
 	 */
@@ -77,7 +77,7 @@ public final class Category extends NamedHandleObject {
 	 * <p>
 	 * Notification is sent to all listeners that something has changed.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            The name of this command; must not be <code>null</code>.
 	 * @param description
@@ -105,7 +105,7 @@ public final class Category extends NamedHandleObject {
 
 	/**
 	 * Notifies the listeners for this category that it has changed in some way.
-	 * 
+	 *
 	 * @param categoryEvent
 	 *            The event to send to all of the listener; must not be
 	 *            <code>null</code>.
@@ -126,10 +126,10 @@ public final class Category extends NamedHandleObject {
 
 	/**
 	 * Removes a listener from this category.
-	 * 
+	 *
 	 * @param categoryListener
 	 *            The listener to be removed; must not be <code>null</code>.
-	 * 
+	 *
 	 */
 	public final void removeCategoryListener(
 			final ICategoryListener categoryListener) {
@@ -144,7 +144,7 @@ public final class Category extends NamedHandleObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.common.HandleObject#toString()
 	 */
 	public String toString() {
@@ -166,7 +166,7 @@ public final class Category extends NamedHandleObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.common.HandleObject#undefine()
 	 */
 	public void undefine() {

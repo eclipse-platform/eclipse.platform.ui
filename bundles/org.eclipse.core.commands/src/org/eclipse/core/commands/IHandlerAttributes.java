@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
  * attributes can be used to communicate extra information from the handler to
  * either the command or the command manager.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IHandlerAttributes {

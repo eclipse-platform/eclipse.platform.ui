@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see Category#addCategoryListener(ICategoryListener)
  * @see Category#removeCategoryListener(ICategoryListener)
@@ -27,7 +27,7 @@ public interface ICategoryListener {
 	 * Notifies that one or more properties of an instance of
 	 * <code>Category</code> have changed. Specific details are described in
 	 * the <code>CategoryEvent</code>.
-	 * 
+	 *
 	 * @param categoryEvent
 	 *            the category event. Guaranteed not to be <code>null</code>.
 	 */

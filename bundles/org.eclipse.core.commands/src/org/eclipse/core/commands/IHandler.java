@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
  * which only one will be active at any given moment in time. When the command
  * is asked to execute, it will simply pass that request on to its active
  * handler, if any.
- * 
+ *
  * @see AbstractHandler
  * @since 3.1
  */
@@ -25,7 +25,7 @@ public interface IHandler {
 	/**
 	 * Registers an instance of <code>IHandlerListener</code> to listen for
 	 * changes to properties of this instance.
-	 * 
+	 *
 	 * @param handlerListener
 	 *            the instance to register. Must not be <code>null</code>. If
 	 *            an attempt is made to register an instance which is already
@@ -42,7 +42,7 @@ public interface IHandler {
 
 	/**
 	 * Executes with the map of parameter values by name.
-	 * 
+	 *
 	 * @param event
 	 *            An event containing all the information about the current
 	 *            state of the application; must not be <code>null</code>.
@@ -58,7 +58,7 @@ public interface IHandler {
 	 * time. If the enabled state is other than true clients should also
 	 * consider implementing IHandler2 so they can be notified about framework
 	 * execution contexts.
-	 * 
+	 *
 	 * @return <code>true</code> if the command is enabled; <code>false</code>
 	 *         otherwise.
 	 * @see IHandler2#setEnabled(Object)
@@ -70,7 +70,7 @@ public interface IHandler {
 	 * the case of a handler that is a composition of other handlers, this reply
 	 * is intended to indicate whether the handler is truly capable of receiving
 	 * delegated responsibilities at this time.
-	 * 
+	 *
 	 * @return <code>true</code> if the handler is handled; <code>false</code>
 	 *         otherwise.
 	 */
@@ -79,7 +79,7 @@ public interface IHandler {
 	/**
 	 * Unregisters an instance of <code>IHandlerListener</code> listening for
 	 * changes to properties of this instance.
-	 * 
+	 *
 	 * @param handlerListener
 	 *            the instance to unregister. Must not be <code>null</code>.
 	 *            If an attempt is made to unregister an instance which is not

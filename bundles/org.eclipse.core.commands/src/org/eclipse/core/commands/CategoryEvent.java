@@ -18,7 +18,7 @@ import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see ICategoryListener#categoryChanged(CategoryEvent)
  */
@@ -31,7 +31,7 @@ public final class CategoryEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param category
 	 *            the instance of the interface that changed.
 	 * @param definedChanged
@@ -53,7 +53,7 @@ public final class CategoryEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */

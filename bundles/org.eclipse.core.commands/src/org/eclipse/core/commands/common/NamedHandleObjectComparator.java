@@ -18,7 +18,7 @@ import org.eclipse.core.internal.commands.util.Util;
 /**
  * Comparator for instances of <code>NamedHandleObject</code> for display to
  * an end user. The comparison is based on the name of the instances.
- * 
+ *
  * @since 3.2
  */
 public class NamedHandleObjectComparator implements Comparator {
@@ -26,7 +26,7 @@ public class NamedHandleObjectComparator implements Comparator {
 	/**
 	 * Compares to instances of NamedHandleObject based on their names. This is
 	 * useful is they are display to an end user.
-	 * 
+	 *
 	 * @param left
 	 *            The first obect to compare; may be <code>null</code>.
 	 * @param right

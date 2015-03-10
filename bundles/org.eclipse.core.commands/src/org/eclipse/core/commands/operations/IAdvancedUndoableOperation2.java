@@ -24,31 +24,31 @@ import org.eclipse.core.runtime.IStatus;
  * the undo history. It also allows operations to specify whether they should be
  * run in the UI thread.
  * </p>
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public interface IAdvancedUndoableOperation2 {
 	/**
 	 * Return a status indicating the projected outcome of executing the
 	 * receiver.
-	 * 
+	 *
 	 * This method should be used to report the possible outcome of executing an
 	 * operation when computing the validity of an execute is too expensive to
 	 * perform in {@link IUndoableOperation#canExecute()}. It is not called by
 	 * the operation history, but instead is used by clients (such as
 	 * implementers of {@link IOperationApprover2}) who wish to perform
 	 * advanced validation of an operation before attempting to execute it.
-	 * 
+	 *
 	 * If the result of this method is the discovery that an operation can in
 	 * fact not be executed, then the operation is expected to correctly answer
 	 * <code>false</code> on subsequent calls to
 	 * {@link IUndoableOperation#canExecute()}.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user while computing the validity.
-	 * 
+	 *
 	 * @return the IStatus indicating the validity of the execute. The status
 	 *         severity should be set to <code>OK</code> if the execute can
 	 *         successfully be performed, and <code>ERROR</code> if it cannot.
@@ -75,12 +75,12 @@ public interface IAdvancedUndoableOperation2 {
 	 * state. Typically, the status computation methods are invoked with this
 	 * flag set to <code>false</code> just before the actual execution, undo,
 	 * or redo occurs, so the user can be consulted for the final outcome.
-	 * 
+	 *
 	 * @param quiet
 	 *            <code>true</code> if it is inappropriate to consult or
 	 *            otherwise prompt the user while computing status, and
 	 *            <code>false</code> if the user may be prompted.
-	 * 
+	 *
 	 * @see #computeExecutionStatus(IProgressMonitor)
 	 * @see IAdvancedUndoableOperation#computeUndoableStatus(IProgressMonitor)
 	 * @see IAdvancedUndoableOperation#computeRedoableStatus(IProgressMonitor)
@@ -90,7 +90,7 @@ public interface IAdvancedUndoableOperation2 {
 	/**
 	 * Return a boolean that instructs whether the operation should be executed,
 	 * undone, or redone in a background thread.
-	 * 
+	 *
 	 * @return <code>true</code> if the operation should be run in the
 	 *         background, <code>false</code> if it should not.
 	 */

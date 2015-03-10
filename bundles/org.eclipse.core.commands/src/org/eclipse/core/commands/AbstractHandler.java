@@ -22,14 +22,14 @@ import org.eclipse.core.commands.common.EventManager;
  * changes. Subclasses can also override {@link AbstractHandler#isEnabled()} and
  * {@link AbstractHandler#isHandled()}.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public abstract class AbstractHandler extends EventManager implements IHandler2 {
 
 	/**
 	 * Track this base class enabled state.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean baseEnabled = true;
@@ -44,7 +44,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	/**
 	 * The default implementation does nothing. Subclasses who attach listeners
 	 * to other objects are encouraged to detach them in this method.
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
 	public void dispose() {
@@ -62,7 +62,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * overriding this behaviour. If this method is overridden, then the first
 	 * line of the method should be "<code>super.fireHandlerChanged(handlerEvent);</code>".
 	 * </p>
-	 * 
+	 *
 	 * @param handlerEvent
 	 *            the event describing changes to this instance. Must not be
 	 *            <code>null</code>.
@@ -84,7 +84,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * override this method. If clients override this method they should also
 	 * consider overriding {@link #setEnabled(Object)} so they can be notified
 	 * about framework execution contexts.
-	 * 
+	 *
 	 * @return <code>true</code>
 	 * @see #setEnabled(Object)
 	 * @see #setBaseEnabled(boolean)
@@ -98,7 +98,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * will fire a HandlerEvent if necessary. If clients use this method they
 	 * should also consider overriding {@link #setEnabled(Object)} so they can
 	 * be notified about framework execution contexts.
-	 * 
+	 *
 	 * @param state
 	 *            the enabled state
 	 * @since 3.4
@@ -116,7 +116,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * by extracting the same information available at execution time. Clients
 	 * may override if they need to extract information from the application
 	 * context.
-	 * 
+	 *
 	 * @param evaluationContext
 	 *            the application context. May be <code>null</code>
 	 * @since 3.4
@@ -128,7 +128,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	/**
 	 * Whether this handler is capable of handling delegated responsibilities at
 	 * this time. Subclasses may override this method.
-	 * 
+	 *
 	 * @return <code>true</code>
 	 */
 	public boolean isHandled() {
@@ -148,7 +148,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * overriding this behaviour. If this method is overridden, then the return
 	 * value should include "<code>super.hasListeners() ||</code>".
 	 * </p>
-	 * 
+	 *
 	 * @return true iff there is one or more IHandlerListeners attached to this
 	 *         AbstractHandler
 	 */

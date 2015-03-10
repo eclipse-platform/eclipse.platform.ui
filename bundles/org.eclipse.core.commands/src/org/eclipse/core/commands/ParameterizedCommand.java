@@ -30,7 +30,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * with parameters. It handles the behaviour of generating a parameter map and a
  * human-readable name.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ParameterizedCommand implements Comparable {
@@ -54,7 +54,7 @@ public final class ParameterizedCommand implements Comparable {
 
 	/**
 	 * The index of the parameter id in the parameter values.
-	 * 
+	 *
 	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_ID = 0;
@@ -62,7 +62,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * The index of the human-readable name of the parameter itself, in the
 	 * parameter values.
-	 * 
+	 *
 	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_NAME = 1;
@@ -70,14 +70,14 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * The index of the human-readable name of the value of the parameter for
 	 * this command.
-	 * 
+	 *
 	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_VALUE_NAME = 2;
 
 	/**
 	 * The index of the value of the parameter that the command can understand.
-	 * 
+	 *
 	 * @deprecated no longer used
 	 */
 	public static final int INDEX_PARAMETER_VALUE_VALUE = 3;
@@ -91,7 +91,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * {@link CommandManager#PARAMETER_SEPARATOR_CHAR} and
 	 * {@link CommandManager#ESCAPE_CHAR} are escaped by prepending a
 	 * {@link CommandManager#ESCAPE_CHAR} character.
-	 * 
+	 *
 	 * @param rawText
 	 *            a <code>String</code> to escape special characters in for
 	 *            serialization.
@@ -138,7 +138,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * Generates every possible combination of parameter values for the given
 	 * parameters. Parameters values that cannot be initialized are just
 	 * ignored. Optional parameters are considered.
-	 * 
+	 *
 	 * @param startIndex
 	 *            The index in the <code>parameters</code> that we should
 	 *            process. This must be a valid index.
@@ -238,7 +238,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * If one of the parameters cannot be loaded due to a
 	 * <code>ParameterValuesException</code>, then it is simply ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param command
 	 *            The command for which the parameter combinations should be
 	 *            generated; must not be <code>null</code>.
@@ -284,7 +284,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Take a command and a map of parameter IDs to values, and generate the
 	 * appropriate parameterized command.
-	 * 
+	 *
 	 * @param command
 	 *            The command object. Must not be <code>null</code>.
 	 * @param parameters
@@ -367,7 +367,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Constructs a new instance of <code>ParameterizedCommand</code> with
 	 * specific values for zero or more of its parameters.
-	 * 
+	 *
 	 * @param command
 	 *            The command that is parameterized; must not be
 	 *            <code>null</code>.
@@ -408,7 +408,7 @@ public final class ParameterizedCommand implements Comparable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {
@@ -433,7 +433,7 @@ public final class ParameterizedCommand implements Comparable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(final Object object) {
@@ -457,7 +457,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * Executes this command with its parameters. This method will succeed
 	 * regardless of whether the command is enabled or defined. It is
 	 * preferrable to use {@link #executeWithChecks(Object, Object)}.
-	 * 
+	 *
 	 * @param trigger
 	 *            The object that triggered the execution; may be
 	 *            <code>null</code>.
@@ -484,7 +484,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * see if the command is enabled and defined. If it is not both enabled and
 	 * defined, then the execution listeners will be notified and an exception
 	 * thrown.
-	 * 
+	 *
 	 * @param trigger
 	 *            The object that triggered the execution; may be
 	 *            <code>null</code>.
@@ -512,7 +512,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Returns the base command. It is possible for more than one parameterized
 	 * command to have the same identifier.
-	 * 
+	 *
 	 * @return The command; never <code>null</code>, but may be undefined.
 	 */
 	public final Command getCommand() {
@@ -522,7 +522,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Returns the command's base identifier. It is possible for more than one
 	 * parameterized command to have the same identifier.
-	 * 
+	 *
 	 * @return The command id; never <code>null</code>.
 	 */
 	public final String getId() {
@@ -532,7 +532,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Returns a human-readable representation of this command with all of its
 	 * parameterizations.
-	 * 
+	 *
 	 * @return The human-readable representation of this parameterized command;
 	 *         never <code>null</code>.
 	 * @throws NotDefinedException
@@ -549,9 +549,9 @@ public final class ParameterizedCommand implements Comparable {
 					appendParameter(nameBuffer, parameterizations[0], false);
 				}else {
 					for (int i = 0; i < parameterizationCount; i++) {
-						
+
 						appendParameter(nameBuffer, parameterizations[i], true);
-	
+
 						// If there is another item, append a separator.
 						if (i + 1 < parameterizationCount) {
 							nameBuffer.append(", "); //$NON-NLS-1$
@@ -567,7 +567,7 @@ public final class ParameterizedCommand implements Comparable {
 
 	private void appendParameter(final StringBuffer nameBuffer,
 			final Parameterization parameterization, boolean shouldAppendName) {
-		
+
 		if(shouldAppendName) {
 			nameBuffer
 					.append(parameterization.getParameter().getName());
@@ -586,7 +586,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Returns the parameter map, as can be used to construct an
 	 * <code>ExecutionEvent</code>.
-	 * 
+	 *
 	 * @return The map of parameter ids (<code>String</code>) to parameter
 	 *         values (<code>String</code>). This map is never
 	 *         <code>null</code>, but may be empty.
@@ -607,7 +607,7 @@ public final class ParameterizedCommand implements Comparable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
@@ -635,13 +635,13 @@ public final class ParameterizedCommand implements Comparable {
 	 * <p>
 	 * The syntax of the returned {@link String} is as follows:
 	 * </p>
-	 * 
+	 *
 	 * <blockquote>
 	 * <code>serialization = <u>commandId</u> [ '(' parameters ')' ]</code><br>
 	 * <code>parameters = parameter [ ',' parameters ]</code><br>
 	 * <code>parameter = <u>parameterId</u> [ '=' <u>parameterValue</u> ]</code>
 	 * </blockquote>
-	 * 
+	 *
 	 * <p>
 	 * In the syntax above, sections inside square-brackets are optional. The
 	 * characters in single quotes (<code>(</code>, <code>)</code>,
@@ -677,7 +677,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * <p>
 	 * <code>command.id(param1.id=value1,param2.id,param3.id=esc%=val3)</code>
 	 * </p>
-	 * 
+	 *
 	 * @return A string containing the escaped command id, parameter ids and
 	 *         parameter values; never <code>null</code>.
 	 * @see CommandManager#deserialize(String)

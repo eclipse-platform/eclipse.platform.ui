@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IStatus;
  * properly synchronized using the techniques specified by the client's widget
  * library.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IOperationApprover {
@@ -46,12 +46,12 @@ public interface IOperationApprover {
 	 * will not be approved. Implementers should not assume that the redo will
 	 * be performed when the status is <code>OK</code>, since other operation
 	 * approvers may veto the redo.
-	 * 
-	 * @param operation 
+	 *
+	 * @param operation
 	 *            the operation to be redone
-	 * @param history 
+	 * @param history
 	 *            the history redoing the operation
-	 * @param info 
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -76,12 +76,12 @@ public interface IOperationApprover {
 	 * will not be approved. Implementers should not assume that the undo will
 	 * be performed when the status is <code>OK</code>, since other operation
 	 * approvers can veto the undo.
-	 * 
-	 * @param operation 
+	 *
+	 * @param operation
 	 *            the operation to be undone
-	 * @param history 
+	 * @param history
 	 *            the history undoing the operation
-	 * @param info 
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not

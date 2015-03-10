@@ -26,7 +26,7 @@ import java.util.Set;
  * <p>
  * Clients may extend.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class HandleObjectManager extends EventManager {
@@ -47,7 +47,7 @@ public abstract class HandleObjectManager extends EventManager {
 	/**
 	 * Verifies that the identifier is valid. Exceptions will be thrown if the
 	 * identifier is invalid in some way.
-	 * 
+	 *
 	 * @param id
 	 *            The identifier to validate; may be anything.
 	 */
@@ -65,7 +65,7 @@ public abstract class HandleObjectManager extends EventManager {
 
 	/**
 	 * Returns the set of identifiers for those handle objects that are defined.
-	 * 
+	 *
 	 * @return The set of defined handle object identifiers; this value may be
 	 *         empty, but it is never <code>null</code>.
 	 */

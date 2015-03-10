@@ -18,7 +18,7 @@ package org.eclipse.core.commands.util;
  * <p>
  * Clients must not extend or instantiate this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class Tracing {
@@ -33,11 +33,11 @@ public final class Tracing {
 	 * Prints a tracing message to standard out. The message is prefixed by a
 	 * component identifier and some separator. See the example below.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 *        BINDINGS &gt;&gt; There are 4 deletion markers
 	 * </pre>
-	 * 
+	 *
 	 * @param component
 	 *            The component for which this tracing applies; may be
 	 *            <code>null</code>

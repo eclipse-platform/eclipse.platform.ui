@@ -29,12 +29,12 @@ import org.eclipse.core.internal.commands.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ContextManager extends HandleObjectManager implements
 		IContextListener {
-	
+
 	/**
 	 * This flag can be set to <code>true</code> if the context manager should
 	 * print information to <code>System.out</code> when certain boundary
@@ -50,11 +50,11 @@ public final class ContextManager extends HandleObjectManager implements
 
 	// allow the ContextManager to send one event for a larger delta
 	private boolean caching = false;
-	
+
 	private int cachingRef = 0;
 
 	private boolean activeContextsChange = false;
-	
+
 	private Set oldIds = null;
 
 	/**
@@ -64,11 +64,11 @@ public final class ContextManager extends HandleObjectManager implements
 	 * <code>deferUpdates(true)</code> that nothing in your batched operation
 	 * will prevent the matching call to <code>deferUpdates(false)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param defer
 	 *            true when starting a batch operation false when ending the
 	 *            operation
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void deferUpdates(boolean defer) {
@@ -84,17 +84,17 @@ public final class ContextManager extends HandleObjectManager implements
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Activates a context in this context manager.
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier of the context to activate; must not be
 	 *            <code>null</code>.
 	 */
 	public final void addActiveContext(final String contextId) {
-		
+
 		if (activeContextIds.contains(contextId)) {
 			return;
 		}
@@ -120,7 +120,7 @@ public final class ContextManager extends HandleObjectManager implements
 	 * Adds a listener to this context manager. The listener will be notified
 	 * when the set of defined contexts changes. This can be used to track the
 	 * global appearance and disappearance of contexts.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 */
@@ -149,7 +149,7 @@ public final class ContextManager extends HandleObjectManager implements
 	/**
 	 * Notifies all of the listeners to this manager that the set of defined
 	 * context identifiers has changed.
-	 * 
+	 *
 	 * @param event
 	 *            The event to send to all of the listeners; must not be
 	 *            <code>null</code>.
@@ -168,7 +168,7 @@ public final class ContextManager extends HandleObjectManager implements
 
 	/**
 	 * Returns the set of active context identifiers.
-	 * 
+	 *
 	 * @return The set of active context identifiers; this value may be
 	 *         <code>null</code> if no active contexts have been set yet. If
 	 *         the set is not <code>null</code>, then it contains only
@@ -181,7 +181,7 @@ public final class ContextManager extends HandleObjectManager implements
 	/**
 	 * Gets the context with the given identifier. If no such context currently
 	 * exists, then the context will be created (but be undefined).
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return The context with the given identifier; this value will never be
@@ -203,7 +203,7 @@ public final class ContextManager extends HandleObjectManager implements
 
 	/**
 	 * Returns the set of identifiers for those contexts that are defined.
-	 * 
+	 *
 	 * @return The set of defined context identifiers; this value may be empty,
 	 *         but it is never <code>null</code>.
 	 */
@@ -213,7 +213,7 @@ public final class ContextManager extends HandleObjectManager implements
 
 	/**
 	 * Returns the those contexts that are defined.
-	 * 
+	 *
 	 * @return The defined contexts; this value may be empty, but it is never
 	 *         <code>null</code>.
 	 * @since 3.2
@@ -225,7 +225,7 @@ public final class ContextManager extends HandleObjectManager implements
 
 	/**
 	 * Deactivates a context in this context manager.
-	 * 
+	 *
 	 * @param contextId
 	 *            The identifier of the context to deactivate; must not be
 	 *            <code>null</code>.
@@ -253,7 +253,7 @@ public final class ContextManager extends HandleObjectManager implements
 
 	/**
 	 * Removes a listener from this context manager.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
 	 */
@@ -266,7 +266,7 @@ public final class ContextManager extends HandleObjectManager implements
 	 * Changes the set of active contexts for this context manager. The whole
 	 * set is required so that internal consistency can be maintained and so
 	 * that excessive recomputations do nothing occur.
-	 * 
+	 *
 	 * @param activeContextIds
 	 *            The new set of active context identifiers; may be
 	 *            <code>null</code>.
@@ -277,7 +277,7 @@ public final class ContextManager extends HandleObjectManager implements
 		}
 
 		activeContextsChange = true;
-		
+
 		final Set previouslyActiveContextIds = this.activeContextIds;
 		if (activeContextIds != null) {
 			this.activeContextIds = new HashSet();
@@ -296,10 +296,10 @@ public final class ContextManager extends HandleObjectManager implements
 					false, true, previouslyActiveContextIds));
 		}
 	}
-	
+
 	/**
 	 * Set the manager to cache context id changes.
-	 * 
+	 *
 	 * @param cache
 	 *            <code>true</code> to turn caching on, <code>false</code>
 	 *            to turn caching off and send an event if necessary.
@@ -312,7 +312,7 @@ public final class ContextManager extends HandleObjectManager implements
 		caching = cache;
 		boolean fireChange = activeContextsChange;
 		Set holdOldIds = (oldIds==null?Collections.EMPTY_SET:oldIds);
-		
+
 		if (caching) {
 			oldIds = new HashSet(activeContextIds);
 		} else {

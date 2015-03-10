@@ -27,7 +27,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
  * dependent. In the Eclipse workbench, the trigger is an SWT event, and the
  * application context contains information about the selection and active part.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class ExecutionEvent {
@@ -63,7 +63,7 @@ public final class ExecutionEvent {
 	 * Constructs a new instance of <code>ExecutionEvent</code> with no
 	 * parameters, no trigger and no application context. This is just a
 	 * convenience method.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public ExecutionEvent() {
@@ -72,7 +72,7 @@ public final class ExecutionEvent {
 
 	/**
 	 * Constructs a new instance of <code>ExecutionEvent</code>.
-	 * 
+	 *
 	 * @param parameters
 	 *            The parameters to qualify the execution; must not be
 	 *            <code>null</code>. This must be a map of parameter ids (<code>String</code>)
@@ -93,7 +93,7 @@ public final class ExecutionEvent {
 
 	/**
 	 * Constructs a new instance of <code>ExecutionEvent</code>.
-	 * 
+	 *
 	 * @param command
 	 *            The command being executed; may be <code>null</code>.
 	 * @param parameters
@@ -124,7 +124,7 @@ public final class ExecutionEvent {
 	/**
 	 * Returns the state of the application at the time the execution was
 	 * triggered.
-	 * 
+	 *
 	 * @return The application context; may be <code>null</code>.
 	 */
 	public final Object getApplicationContext() {
@@ -133,7 +133,7 @@ public final class ExecutionEvent {
 
 	/**
 	 * Returns the command being executed.
-	 * 
+	 *
 	 * @return The command being executed.
 	 * @since 3.2
 	 */
@@ -149,7 +149,7 @@ public final class ExecutionEvent {
 	 * {@link IHandler#execute(ExecutionEvent)} method, so any problem getting
 	 * the object value causes <code>ExecutionException</code> to be thrown.
 	 * </p>
-	 * 
+	 *
 	 * @param parameterId
 	 *            The id of a parameter to retrieve the object value of.
 	 * @return The object value of the parameter with the provided id.
@@ -192,7 +192,7 @@ public final class ExecutionEvent {
 
 	/**
 	 * Returns the value of the parameter with the given id.
-	 * 
+	 *
 	 * @param parameterId
 	 *            The id of the parameter to retrieve; may be <code>null</code>.
 	 * @return The parameter value; <code>null</code> if the parameter cannot
@@ -204,7 +204,7 @@ public final class ExecutionEvent {
 
 	/**
 	 * Returns all of the parameters.
-	 * 
+	 *
 	 * @return The parameters; never <code>null</code>, but may be empty.
 	 */
 	public final Map getParameters() {
@@ -213,7 +213,7 @@ public final class ExecutionEvent {
 
 	/**
 	 * Returns the object that triggered the execution
-	 * 
+	 *
 	 * @return The trigger; <code>null</code> if there was no trigger.
 	 */
 	public final Object getTrigger() {
@@ -223,7 +223,7 @@ public final class ExecutionEvent {
 	/**
 	 * The string representation of this execution event -- for debugging
 	 * purposes only. This string should not be shown to an end user.
-	 * 
+	 *
 	 * @return The string representation; never <code>null</code>.
 	 */
 	public final String toString() {

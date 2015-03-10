@@ -14,10 +14,10 @@ import org.eclipse.core.commands.operations.IUndoContext;
 
 /**
  * <p>
- * An operation context that matches to any context.  It can be used to 
+ * An operation context that matches to any context.  It can be used to
  * get an unfiltered (global) history.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class GlobalUndoContext implements IUndoContext {
@@ -28,7 +28,7 @@ public class GlobalUndoContext implements IUndoContext {
 	public String getLabel() {
 		return "Global Undo Context"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext context)
 	 */

@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see Command#addCommandListener(ICommandListener)
  * @see Command#removeCommandListener(ICommandListener)
@@ -27,7 +27,7 @@ public interface ICommandListener {
      * Notifies that one or more properties of an instance of
      * <code>Command</code> have changed. Specific details are described in
      * the <code>CommandEvent</code>.
-     * 
+     *
      * @param commandEvent
      *            the command event. Guaranteed not to be <code>null</code>.
      */

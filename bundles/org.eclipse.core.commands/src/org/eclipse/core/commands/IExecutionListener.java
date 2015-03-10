@@ -18,7 +18,7 @@ package org.eclipse.core.commands;
  * possible for the listener to prevent the execution, only to respond to it in
  * some way.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IExecutionListener {
@@ -26,7 +26,7 @@ public interface IExecutionListener {
 	/**
 	 * Notifies the listener that an attempt was made to execute a command with
 	 * no handler.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of command that is not handled; never
 	 *            <code>null</code>
@@ -37,7 +37,7 @@ public interface IExecutionListener {
 
 	/**
 	 * Notifies the listener that a command has failed to complete execution.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command that has executed; never
 	 *            <code>null</code>.
@@ -50,7 +50,7 @@ public interface IExecutionListener {
 	/**
 	 * Notifies the listener that a command has completed execution
 	 * successfully.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command that has executed; never
 	 *            <code>null</code>.
@@ -61,7 +61,7 @@ public interface IExecutionListener {
 
 	/**
 	 * Notifies the listener that a command is about to execute.
-	 * 
+	 *
 	 * @param commandId
 	 *            The identifier of the command that is about to execute, never
 	 *            <code>null</code>.

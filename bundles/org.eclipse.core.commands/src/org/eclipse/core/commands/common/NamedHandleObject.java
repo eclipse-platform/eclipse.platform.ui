@@ -14,7 +14,7 @@ package org.eclipse.core.commands.common;
  * A handle object that carries with it a name and a description. This type of
  * handle object is quite common across the commands code base. For example,
  * <code>Command</code>, <code>Context</code> and <code>Scheme</code>.
- * 
+ *
  * @since 3.1
  */
 public abstract class NamedHandleObject extends HandleObject {
@@ -33,7 +33,7 @@ public abstract class NamedHandleObject extends HandleObject {
 
 	/**
 	 * Constructs a new instance of <code>NamedHandleObject</code>.
-	 * 
+	 *
 	 * @param id
 	 *            The identifier for this handle; must not be <code>null</code>.
 	 */
@@ -43,7 +43,7 @@ public abstract class NamedHandleObject extends HandleObject {
 
 	/**
 	 * Returns the description for this handle.
-	 * 
+	 *
 	 * @return The description; may be <code>null</code> if there is no
 	 *         description.
 	 * @throws NotDefinedException
@@ -61,7 +61,7 @@ public abstract class NamedHandleObject extends HandleObject {
 
 	/**
 	 * Returns the name for this handle.
-	 * 
+	 *
 	 * @return The name for this handle; never <code>null</code>.
 	 * @throws NotDefinedException
 	 *             If the handle is not currently defined.

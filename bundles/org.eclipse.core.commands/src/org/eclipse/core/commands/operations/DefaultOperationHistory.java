@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tasktop Technologies -  Bug 323444 - [Undo] [Commands] java.util.ConcurrentModificationException 
+ *     Tasktop Technologies -  Bug 323444 - [Undo] [Commands] java.util.ConcurrentModificationException
  *     		when trying to get the undo history from a source viewer
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
@@ -62,14 +62,14 @@ import org.eclipse.core.runtime.Status;
  * be properly synchronized using the techniques specified by the client's
  * widget library.
  * </p>
- * 
+ *
  * <p>
  * This implementation is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see org.eclipse.core.commands.operations.IOperationHistory
  * @see org.eclipse.core.commands.operations.IOperationApprover
- * 
+ *
  * @since 3.1
  */
 public final class DefaultOperationHistory implements IOperationHistory {
@@ -146,7 +146,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * An operation that is "absorbing" all other operations while it is open.
 	 * When this is not null, other operations added or executed are added to
 	 * this composite.
-	 * 
+	 *
 	 */
 	private ICompositeOperation openComposite = null;
 
@@ -164,7 +164,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#add(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void add(IUndoableOperation operation) {
@@ -215,10 +215,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * inside the implementation must be properly synchronized using the
 	 * techniques specified by the client's widget library.
 	 * </p>
-	 * 
+	 *
 	 * @param approver
 	 *            the IOperationApprover to be added as an approver.
-	 * 
+	 *
 	 */
 
 	public void addOperationApprover(IOperationApprover approver) {
@@ -238,10 +238,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * implementation must be properly synchronized using the techniques
 	 * specified by the client's widget library.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the IOperationHistoryListener to be added as a listener.
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
 	 * @see org.eclipse.core.commands.operations.OperationHistoryEvent
 	 */
@@ -251,7 +251,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#canRedo(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public boolean canRedo(IUndoContext context) {
@@ -262,7 +262,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#canUndo(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public boolean canUndo(IUndoContext context) {
@@ -277,7 +277,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * undo history, which has the same limit. The redo history is cleared
 	 * whenever a new operation is added. We check for completeness since
 	 * implementations may change over time.
-	 * 
+	 *
 	 * Return a boolean indicating whether the redo should proceed.
 	 */
 	private boolean checkRedoLimit(IUndoableOperation operation) {
@@ -314,7 +314,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#dispose(org.eclipse.core.commands.operations.IUndoContext,
 	 *      boolean, boolean, boolean)
 	 */
@@ -343,7 +343,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/**
 	 * Perform the redo. All validity checks have already occurred.
-	 * 
+	 *
 	 * @param monitor
 	 * @param operation
 	 */
@@ -404,7 +404,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/**
 	 * Perform the undo. All validity checks have already occurred.
-	 * 
+	 *
 	 * @param monitor
 	 * @param operation
 	 */
@@ -462,7 +462,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#execute(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -577,7 +577,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 
 		synchronized (undoRedoHistoryLock) {
-			
+
 			Object[] filtered = filter(redoList, context);
 			for (int i = 0; i < filtered.length; i++) {
 				IUndoableOperation operation = (IUndoableOperation) filtered[i];
@@ -618,7 +618,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 
 		synchronized (undoRedoHistoryLock) {
-			
+
 			// Get all operations that have the context (or one that matches)
 			Object[] filtered = filter(undoList, context);
 			for (int i = 0; i < filtered.length; i++) {
@@ -746,7 +746,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#getLimit()
 	 */
 	public int getLimit(IUndoContext context) {
@@ -783,7 +783,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#getRedoHistory(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public IUndoableOperation[] getRedoHistory(IUndoContext context) {
@@ -793,7 +793,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#getOperation(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public IUndoableOperation getRedoOperation(IUndoContext context) {
@@ -837,7 +837,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#getUndoHistory(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public IUndoableOperation[] getUndoHistory(IUndoContext context) {
@@ -847,7 +847,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#getUndoOperation(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public IUndoableOperation getUndoOperation(IUndoContext context) {
@@ -867,7 +867,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/*
 	 * Consult the IOperationApprovers to see if the proposed execution should
 	 * be allowed.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private IStatus getExecuteApproval(IUndoableOperation operation,
@@ -1017,7 +1017,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation did not succeed after an attempt to
 	 * execute, undo, or redo was made. Include the status associated with the
 	 * attempt.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void notifyNotOK(IUndoableOperation operation, IStatus status) {
@@ -1082,7 +1082,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#redo(org.eclipse.core.commands.operations.IUndoContext,
 	 *      org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -1112,7 +1112,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#redoOperation(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -1137,7 +1137,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#removeOperationApprover(org.eclipse.core.commands.operations.IOperationApprover)
 	 */
 	public void removeOperationApprover(IOperationApprover approver) {
@@ -1146,7 +1146,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#removeOperationHistoryListener(org.eclipse.core.commands.operations.IOperationHistoryListener)
 	 */
 	public void removeOperationHistoryListener(
@@ -1156,7 +1156,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#replaceOperation(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.commands.operations.IUndoableOperation [])
 	 */
@@ -1231,7 +1231,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#setLimit(org.eclipse.core.commands.operations.IUndoContext,
 	 *      int)
 	 */
@@ -1255,7 +1255,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#undo(org.eclipse.core.commands.operations.IUndoContext,
 	 *      org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -1284,7 +1284,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#undoOperation(org.eclipse.core.commands.operations.IUndoableOperation,
 	 *      org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -1308,7 +1308,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#openOperation(org.eclipse.core.commands.operations.ICompositeOperation)
 	 */
 	public void openOperation(ICompositeOperation operation, int mode) {
@@ -1338,7 +1338,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation(boolean,
 	 *      boolean)
 	 */
@@ -1385,7 +1385,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#operationChanged(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void operationChanged(IUndoableOperation operation) {

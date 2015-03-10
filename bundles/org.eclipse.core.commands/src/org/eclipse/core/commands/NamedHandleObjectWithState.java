@@ -26,7 +26,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
  * <p>
  * Clients may neither instantiate nor extend this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 abstract class NamedHandleObjectWithState extends NamedHandleObject implements
@@ -46,7 +46,7 @@ abstract class NamedHandleObjectWithState extends NamedHandleObject implements
 
 	/**
 	 * Constructs a new instance of <code>NamedHandleObject<WithState/code>.
-	 * 
+	 *
 	 * @param id
 	 *            The identifier for this handle; must not be <code>null</code>.
 	 */

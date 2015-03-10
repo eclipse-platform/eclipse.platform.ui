@@ -16,9 +16,9 @@ package org.eclipse.core.commands.operations;
  * operations, such as composite operations, where removing and adding an undo
  * context would not have the same semantic as replacing one undo context with
  * another.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public interface IContextReplacingOperation {
 
@@ -28,10 +28,10 @@ public interface IContextReplacingOperation {
 	 * <p>
 	 * This message has no effect if the original undo context is not present in
 	 * the receiver.
-	 * 
+	 *
 	 * @param original the undo context which is to be replaced
 	 * @param replacement the undo context which is replacing the original
-	 * 
+	 *
 	 */
 	void replaceContext(IUndoContext original, IUndoContext replacement);
 }

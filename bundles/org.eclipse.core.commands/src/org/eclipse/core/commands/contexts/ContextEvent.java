@@ -19,7 +19,7 @@ import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see IContextListener#contextChanged(ContextEvent)
  */
@@ -37,7 +37,7 @@ public final class ContextEvent extends AbstractNamedHandleEvent {
 
 	/**
      * Creates a new instance of this class.
-     * 
+     *
      * @param context
      *            the instance of the interface that changed; must not be
      *            <code>null</code>.
@@ -54,12 +54,12 @@ public final class ContextEvent extends AbstractNamedHandleEvent {
 			final boolean nameChanged, final boolean descriptionChanged,
 			final boolean parentIdChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
-		
+
 		if (context == null) {
 			throw new NullPointerException();
 		}
 		this.context = context;
-		
+
 		if (parentIdChanged) {
 			changedValues |= CHANGED_PARENT_ID;
 		}
@@ -67,7 +67,7 @@ public final class ContextEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -77,7 +77,7 @@ public final class ContextEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * Returns whether or not the parentId property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the parentId property changed.
 	 */
 	public final boolean isParentIdChanged() {

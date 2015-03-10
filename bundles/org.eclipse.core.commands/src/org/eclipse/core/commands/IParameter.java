@@ -18,28 +18,28 @@ package org.eclipse.core.commands;
  * id of a view for display. This parameter also identifies possible values, for
  * display in the user interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IParameter {
 
 	/**
 	 * Returns the identifier for this parameter.
-	 * 
+	 *
 	 * @return The identifier; never <code>null</code>.
 	 */
 	public String getId();
 
 	/**
 	 * Returns the human-readable name for this parameter.
-	 * 
+	 *
 	 * @return The parameter name; never <code>null</code>.
 	 */
 	public String getName();
 
 	/**
 	 * Returns the values associated with this parameter.
-	 * 
+	 *
 	 * @return The values associated with this parameter. This must not be
 	 *         <code>null</code>.
 	 * @throws ParameterValuesException
@@ -49,7 +49,7 @@ public interface IParameter {
 
 	/**
 	 * Returns whether parameter is optional. Otherwise, it is required.
-	 * 
+	 *
 	 * @return <code>true</code> if the parameter is optional;
 	 *         <code>false</code> if it is required.
 	 */

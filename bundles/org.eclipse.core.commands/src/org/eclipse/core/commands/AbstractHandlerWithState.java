@@ -26,7 +26,7 @@ import java.util.Set;
  * <p>
  * Clients may extend this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractHandlerWithState extends AbstractHandler
@@ -48,7 +48,7 @@ public abstract class AbstractHandlerWithState extends AbstractHandler
 	 * Clients may extend this method, but they should call this super method
 	 * first before doing anything else.
 	 * </p>
-	 * 
+	 *
 	 * @param stateId
 	 *            The identifier indicating the type of state being added; must
 	 *            not be <code>null</code>.
@@ -95,7 +95,7 @@ public abstract class AbstractHandlerWithState extends AbstractHandler
 	 * Clients may extend this method, but they should call this super method
 	 * first before doing anything else.
 	 * </p>
-	 * 
+	 *
 	 * @param stateId
 	 *            The identifier of the state to remove; must not be
 	 *            <code>null</code>.

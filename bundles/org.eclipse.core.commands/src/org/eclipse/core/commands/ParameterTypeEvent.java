@@ -18,7 +18,7 @@ import org.eclipse.core.commands.common.AbstractHandleObjectEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @see IParameterTypeListener#parameterTypeChanged(ParameterTypeEvent)
  * @since 3.2
  */
@@ -32,7 +32,7 @@ public final class ParameterTypeEvent extends AbstractHandleObjectEvent {
 
 	/**
 	 * Constructs a new instance.
-	 * 
+	 *
 	 * @param parameterType
 	 *            The parameter type that changed; must not be <code>null</code>.
 	 * @param definedChanged
@@ -52,7 +52,7 @@ public final class ParameterTypeEvent extends AbstractHandleObjectEvent {
 
 	/**
 	 * Returns the instance of the parameter type that changed.
-	 * 
+	 *
 	 * @return the instance of the parameter type that changed. Guaranteed not
 	 *         to be <code>null</code>.
 	 */

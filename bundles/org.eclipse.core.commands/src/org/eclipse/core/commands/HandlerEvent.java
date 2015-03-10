@@ -18,7 +18,7 @@ import org.eclipse.core.commands.common.AbstractBitSetEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see IHandlerListener#handlerChanged(HandlerEvent)
  */
@@ -43,7 +43,7 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Creates a new instance of this class.
-	 * 
+	 *
 	 * @param handler
 	 *            the instance of the interface that changed; must not be
      *            <code>null</code>.
@@ -69,7 +69,7 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
@@ -79,7 +79,7 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether or not the enabled property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the enabled property changed.
 	 */
 	public boolean isEnabledChanged() {
@@ -88,7 +88,7 @@ public final class HandlerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * Returns whether or not the handled property changed.
-	 * 
+	 *
 	 * @return <code>true</code>, iff the handled property changed.
 	 */
 	public boolean isHandledChanged() {

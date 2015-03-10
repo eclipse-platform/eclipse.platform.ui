@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.IStatus;
  * properly synchronized using the techniques specified by the client's widget
  * library.
  * </p>
- * 
- * 
+ *
+ *
  * @since 3.1
  */
 public final class OperationHistoryEvent {
@@ -38,10 +38,10 @@ public final class OperationHistoryEvent {
 	 * fails. This notification is only received for those operations executed
 	 * by the operation history. Operations that are added to the history after
 	 * execution do not trigger these notifications.
-	 * 
+	 *
 	 * If the operation successfully executes, clients will also receive a
 	 * notification that it has been added to the history.
-	 * 
+	 *
 	 * (value is 1).
 	 */
 
@@ -53,7 +53,7 @@ public final class OperationHistoryEvent {
 	 * receive a REDONE notification if the operation is successful, or an
 	 * OPERATION_NOT_OK notification if the redo is cancelled or otherwise
 	 * fails.
-	 * 
+	 *
 	 * (value is 2).
 	 */
 	public static final int ABOUT_TO_REDO = 2;
@@ -64,7 +64,7 @@ public final class OperationHistoryEvent {
 	 * receive an UNDONE notification if the operation is successful, or an
 	 * OPERATION_NOT_OK notification if the undo is cancelled or otherwise
 	 * fails.
-	 * 
+	 *
 	 * (value is 3).
 	 */
 	public static final int ABOUT_TO_UNDO = 3;
@@ -75,10 +75,10 @@ public final class OperationHistoryEvent {
 	 * notification is only received for those operations executed by the
 	 * operation history. Operations that are added to the history after
 	 * execution do not trigger this notification.
-	 * 
+	 *
 	 * Clients will also receive a notification that the operation has been
 	 * added to the history.
-	 * 
+	 *
 	 * (value is 4).
 	 */
 	public static final int DONE = 4;
@@ -87,7 +87,7 @@ public final class OperationHistoryEvent {
 	 * OPERATION_ADDED indicates that an operation was added to the history.
 	 * Listeners can use this notification to add their undo context to a new
 	 * operation as appropriate or otherwise record the operation.
-	 * 
+	 *
 	 * (value is 5).
 	 */
 	public static final int OPERATION_ADDED = 5;
@@ -95,7 +95,7 @@ public final class OperationHistoryEvent {
 	/**
 	 * OPERATION_CHANGED indicates that an operation has changed in some way
 	 * since it was added to the operations history.
-	 * 
+	 *
 	 * (value is 6).
 	 */
 	public static final int OPERATION_CHANGED = 6;
@@ -108,7 +108,7 @@ public final class OperationHistoryEvent {
 	 * an operation is undone would turn redraw on when the operation completes,
 	 * or when this notification is received, since there will be no
 	 * notification of the completion.
-	 * 
+	 *
 	 * (value is 7).
 	 */
 	public static final int OPERATION_NOT_OK = 7;
@@ -118,7 +118,7 @@ public final class OperationHistoryEvent {
 	 * Listeners typically remove any record of the operation that they may have
 	 * kept in their own state. The operation has been disposed by the time
 	 * listeners receive this notification.
-	 * 
+	 *
 	 * (value is 8).
 	 */
 	public static final int OPERATION_REMOVED = 8;
@@ -126,7 +126,7 @@ public final class OperationHistoryEvent {
 	/**
 	 * REDONE indicates that an operation was redone. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI.
-	 * 
+	 *
 	 * (value is 9).
 	 */
 	public static final int REDONE = 9;
@@ -134,7 +134,7 @@ public final class OperationHistoryEvent {
 	/**
 	 * UNDONE indicates that an operation was undone. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI.
-	 * 
+	 *
 	 * (value is 10).
 	 */
 	public static final int UNDONE = 10;
@@ -150,7 +150,7 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * Construct an event for the specified operation history.
-	 * 
+	 *
 	 * @param code
 	 *            the event code to be used.
 	 * @param history
@@ -165,7 +165,7 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * Construct an event for the specified operation history.
-	 * 
+	 *
 	 * @param code
 	 *            the event code to be used.
 	 * @param history
@@ -175,7 +175,7 @@ public final class OperationHistoryEvent {
 	 * @param status
 	 *            the status associated with the event, or null if no status is
 	 *            available.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public OperationHistoryEvent(int code, IOperationHistory history,
@@ -194,7 +194,7 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * Return the type of event that is occurring.
-	 * 
+	 *
 	 * @return the type code indicating the type of event.
 	 */
 	public int getEventType() {
@@ -203,7 +203,7 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * Return the operation history that triggered this event.
-	 * 
+	 *
 	 * @return the operation history
 	 */
 
@@ -213,7 +213,7 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * Return the operation associated with this event.
-	 * 
+	 *
 	 * @return the operation
 	 */
 
@@ -223,9 +223,9 @@ public final class OperationHistoryEvent {
 
 	/**
 	 * Return the status associated with this event.
-	 * 
+	 *
 	 * @return the status associated with this event. The status may be null.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 

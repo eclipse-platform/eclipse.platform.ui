@@ -14,7 +14,7 @@ package org.eclipse.core.commands;
  * <p>
  * An event indicating that the set of defined command identifiers has changed.
  * </p>
- * 
+ *
  * @since 3.1
  * @see ICommandManagerListener#commandManagerChanged(CommandManagerEvent)
  */
@@ -35,14 +35,14 @@ public final class CommandManagerEvent {
      * command id, then the command has become undefined.
      */
 	private static final int CHANGED_COMMAND_DEFINED = 1 << 1;
-	
+
 	/**
 	 * The bit used to represent whether the given command parameter type has
 	 * become defined. If this bit is not set and there is no parameter type id,
 	 * then no parameter type has become defined nor undefined. If this bit is
 	 * not set and there is a parameter type id, then the parameter type has
 	 * become undefined.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final int CHANGED_PARAMETER_TYPE_DEFINED = 1 << 2;
@@ -67,13 +67,13 @@ public final class CommandManagerEvent {
 	 * defined command identifiers did not change.
 	 */
 	private final String commandId;
-	
+
 	/**
 	 * The command parameter type identifier that was added or removed from the
 	 * list of defined parameter type identifiers. This value is
 	 * <code>null</code> if the list of defined parameter type identifiers did
 	 * not change.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private final String parameterTypeId;
@@ -86,7 +86,7 @@ public final class CommandManagerEvent {
 	/**
 	 * Creates a new <code>CommandManagerEvent</code> instance to describe
 	 * changes to commands and/or categories.
-	 * 
+	 *
 	 * @param commandManager
 	 *            the instance of the interface that changed; must not be
 	 *            <code>null</code>.
@@ -129,7 +129,7 @@ public final class CommandManagerEvent {
 		this.commandManager = commandManager;
 		this.commandId = commandId;
 		this.categoryId = categoryId;
-		
+
 		// this constructor only works for changes to commands and categories
 		this.parameterTypeId = null;
 
@@ -142,11 +142,11 @@ public final class CommandManagerEvent {
 		}
 		this.changedValues = changedValues;
 	}
-	
+
 	/**
 	 * Creates a new <code>CommandManagerEvent</code> instance to describe
 	 * changes to command parameter types.
-	 * 
+	 *
 	 * @param commandManager
 	 *            the instance of the interface that changed; must not be
 	 *            <code>null</code>.
@@ -160,7 +160,7 @@ public final class CommandManagerEvent {
 	 * @param parameterTypeIdChanged
 	 *            Whether the list of defined parameter type identifiers has
 	 *            changed.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public CommandManagerEvent(final CommandManager commandManager,
@@ -193,7 +193,7 @@ public final class CommandManagerEvent {
 
 	/**
 	 * Returns the category identifier that was added or removed.
-	 * 
+	 *
 	 * @return The category identifier that was added or removed; may be
 	 *         <code>null</code>.
 	 */
@@ -203,7 +203,7 @@ public final class CommandManagerEvent {
 
 	/**
 	 * Returns the command identifier that was added or removed.
-	 * 
+	 *
 	 * @return The command identifier that was added or removed; may be
 	 *         <code>null</code>.
 	 */
@@ -213,20 +213,20 @@ public final class CommandManagerEvent {
 
 	/**
 	 * Returns the instance of the interface that changed.
-	 * 
+	 *
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
 	public final CommandManager getCommandManager() {
 		return commandManager;
 	}
-	
+
 	/**
 	 * Returns the command parameter type identifier that was added or removed.
-	 * 
+	 *
 	 * @return The command parameter type identifier that was added or removed;
 	 *         may be <code>null</code>.
-	 *         
+	 *
 	 * @since 3.2
 	 */
 	public final String getParameterTypeId() {
@@ -235,7 +235,7 @@ public final class CommandManagerEvent {
 
 	/**
 	 * Returns whether the list of defined category identifiers has changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the list of category identifiers has
 	 *         changed; <code>false</code> otherwise.
 	 */
@@ -246,7 +246,7 @@ public final class CommandManagerEvent {
 	/**
 	 * Returns whether the category identifier became defined. Otherwise, the
 	 * category identifier became undefined.
-	 * 
+	 *
 	 * @return <code>true</code> if the category identifier became defined;
 	 *         <code>false</code> if the category identifier became undefined.
 	 */
@@ -256,7 +256,7 @@ public final class CommandManagerEvent {
 
 	/**
 	 * Returns whether the list of defined command identifiers has changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the list of command identifiers has
 	 *         changed; <code>false</code> otherwise.
 	 */
@@ -267,35 +267,35 @@ public final class CommandManagerEvent {
 	/**
 	 * Returns whether the command identifier became defined. Otherwise, the
 	 * command identifier became undefined.
-	 * 
+	 *
 	 * @return <code>true</code> if the command identifier became defined;
 	 *         <code>false</code> if the command identifier became undefined.
 	 */
 	public final boolean isCommandDefined() {
 		return (((changedValues & CHANGED_COMMAND_DEFINED) != 0) && (commandId != null));
 	}
-	
+
 	/**
 	 * Returns whether the list of defined command parameter type identifiers
 	 * has changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the list of command parameter type
 	 *         identifiers has changed; <code>false</code> otherwise.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public final boolean isParameterTypeChanged() {
 		return (parameterTypeId != null);
 	}
-	
+
 	/**
 	 * Returns whether the command parameter type identifier became defined.
 	 * Otherwise, the command parameter type identifier became undefined.
-	 * 
+	 *
 	 * @return <code>true</code> if the command parameter type identifier
 	 *         became defined; <code>false</code> if the command parameter
 	 *         type identifier became undefined.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public final boolean isParameterTypeDefined() {

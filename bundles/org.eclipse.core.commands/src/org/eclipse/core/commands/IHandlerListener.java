@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @see IHandler#addHandlerListener(IHandlerListener)
  * @see IHandler#removeHandlerListener(IHandlerListener)
@@ -27,7 +27,7 @@ public interface IHandlerListener {
      * Notifies that one or more properties of an instance of
      * <code>IHandler</code> have changed. Specific details are described in
      * the <code>HandlerEvent</code>.
-     * 
+     *
      * @param handlerEvent
      *            the handler event. Guaranteed not to be <code>null</code>.
      */

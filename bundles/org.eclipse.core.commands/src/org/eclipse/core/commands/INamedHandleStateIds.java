@@ -19,7 +19,7 @@ package org.eclipse.core.commands;
  * <p>
  * Clients may implement or extend this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface INamedHandleStateIds {

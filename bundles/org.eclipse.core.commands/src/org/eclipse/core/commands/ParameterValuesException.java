@@ -21,9 +21,9 @@ import org.eclipse.core.commands.common.CommandException;
  * <code>IExecutableExtension</code>. For other applications, this exception
  * could be used to signify any general problem during initialization.
  * </p>
- * 
+ *
  * @since 3.1
- * 
+ *
  */
 public final class ParameterValuesException extends CommandException {
 
@@ -35,7 +35,7 @@ public final class ParameterValuesException extends CommandException {
 	/**
 	 * Creates a new instance of this class with the specified detail message
 	 * and cause.
-	 * 
+	 *
 	 * @param message
 	 *            the detail message; may be <code>null</code>.
 	 * @param cause

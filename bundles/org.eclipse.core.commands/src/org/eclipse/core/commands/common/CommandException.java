@@ -15,28 +15,28 @@ package org.eclipse.core.commands.common;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class CommandException extends Exception {
-	
+
 	/**
 	 * Generated serial version UID for this class.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final long serialVersionUID = 5389763628699257234L;
-	
+
 	/**
 	 * This member variable is required here to allow us to compile against JCL
 	 * foundation libraries.  The value may be <code>null</code>.
 	 */
 	private Throwable cause;
-	
+
     /**
      * Creates a new instance of this class with the specified detail message.
-     * 
+     *
      * @param message
      *            the detail message; may be <code>null</code>.
      */
@@ -47,7 +47,7 @@ public abstract class CommandException extends Exception {
     /**
      * Creates a new instance of this class with the specified detail message
      * and cause.
-     * 
+     *
      * @param message
      *            the detail message; may be <code>null</code>.
      * @param cause
@@ -58,15 +58,15 @@ public abstract class CommandException extends Exception {
         // don't pass the cause to super, to allow compilation against JCL Foundation
         this.cause = cause;
     }
-    
+
     /**
      * Returns the cause of this throwable or <code>null</code> if the
-     * cause is nonexistent or unknown. 
-     * 
+     * cause is nonexistent or unknown.
+     *
      * @return the cause or <code>null</code>
      */
     public Throwable getCause() {
         return cause;
     }
-    
+
 }

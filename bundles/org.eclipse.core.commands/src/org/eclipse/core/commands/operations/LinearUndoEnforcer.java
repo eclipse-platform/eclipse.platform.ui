@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Status;
  * the undo or redo of any operation that is not the latest available operation
  * in all of its undo contexts.  This class may be instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class LinearUndoEnforcer extends LinearUndoViolationDetector {
