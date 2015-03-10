@@ -10,7 +10,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * Our sample action implements workbench action delegate.
  * The action proxy will be created by the workbench and
  * shown in the UI. When the user tries to use the action,
- * this delegate will be created and execution will be 
+ * this delegate will be created and execution will be
  * delegated to it.
  * @see IWorkbenchWindowActionDelegate
  */
@@ -36,9 +36,9 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	/**
-	 * Selection in the workbench has been changed. We 
+	 * Selection in the workbench has been changed. We
 	 * can change the state of the 'real' action here
-	 * if we want, but this can only happen after 
+	 * if we want, but this can only happen after
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
