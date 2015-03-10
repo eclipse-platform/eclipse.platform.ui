@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -25,13 +25,13 @@ public class ToolbarBrowserTestCase extends TestCase {
 	protected static Dialog dialog;
 	protected static Shell shell;
 	protected static BrowserViewer browser;
-	
+
 	class TestToolbarBrowser extends BrowserViewer {
 
 		public TestToolbarBrowser(Composite parent, int style) {
 			super(parent, style);
 		}
-		
+
 		public void testProtectedMethods() {
 			super.addToHistory("www.eclispe.org");
 			super.updateBackNextBusy();
@@ -39,7 +39,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 			super.updateLocation();
 		}
 	}
-	
+
 	public static Test suite() {
 		return new OrderedTestSuite(ToolbarBrowserTestCase.class, "ToolbarBrowserTestCase");
 	}
@@ -49,24 +49,24 @@ public class ToolbarBrowserTestCase extends TestCase {
 		dialog = new Dialog(shell) {
 			protected Control createDialogArea(Composite parent) {
 				Composite composite = (Composite) super.createDialogArea(parent);
-				
+
 				browser = new BrowserViewer(composite, BrowserViewer.LOCATION_BAR | BrowserViewer.BUTTON_BAR);
 				GridData data = new GridData(GridData.FILL_BOTH);
 				data.widthHint = 400;
 				data.heightHint = 400;
 				browser.setLayoutData(data);
-				
+
 				return composite;
 			}
 		};
 		dialog.setBlockOnOpen(false);
 		dialog.open();
-		
+
 		boolean b = Display.getCurrent().readAndDispatch();
 		while (b)
 			b = Display.getCurrent().readAndDispatch();
 	}
-	
+
 	public void test01SetURL() throws Exception {
 		runLoopTimer(5);
 		browser.setURL("http://www.eclipse.org");
@@ -91,7 +91,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 		assertTrue(browser.back());
 		runLoopTimer(5);
 	}
-	
+
 	public void test06IsForwardEnabled() throws Exception {
 		assertTrue(browser.isForwardEnabled());
 	}
@@ -100,15 +100,15 @@ public class ToolbarBrowserTestCase extends TestCase {
 		assertTrue(browser.forward());
 		runLoopTimer(5);
 	}
-	
+
 	public void test08Refresh() throws Exception {
 		browser.refresh();
 	}
-	
+
 	public void test09GetBrowser() throws Exception {
 		assertNotNull(browser.getBrowser());
 	}
-	
+
 	public void test10Stop() throws Exception {
 		browser.stop();
 	}
@@ -124,41 +124,41 @@ public class ToolbarBrowserTestCase extends TestCase {
 	public void test13Close() throws Exception {
 		dialog.close();
 	}
-	
+
 	TestToolbarBrowser ttb = null;
-	
+
 	public void test14ProtectedMethods() {
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		dialog = new Dialog(shell) {
 			protected Control createDialogArea(Composite parent) {
 				Composite composite = (Composite) super.createDialogArea(parent);
-				
+
 				ttb = new TestToolbarBrowser(composite, BrowserViewer.LOCATION_BAR | BrowserViewer.BUTTON_BAR);
 				GridData data = new GridData(GridData.FILL_BOTH);
 				data.widthHint = 400;
 				data.heightHint = 400;
 				ttb.setLayoutData(data);
-				
+
 				return composite;
 			}
 		};
 		dialog.setBlockOnOpen(false);
 		dialog.open();
-		
+
 		ttb.testProtectedMethods();
 		dialog.close();
 	}
-	
+
 	public void test15Listeners() {
 		BrowserViewer.IBackNextListener listener = new BrowserViewer.IBackNextListener() {
 			public void updateBackNextBusy() {
 				// ignore
 			}
 		};
-		
+
 		listener.updateBackNextBusy();
 	}
-	
+
 	public void test16Listeners() {
 		BrowserViewer.ILocationListener listener = new BrowserViewer.ILocationListener() {
 			public void locationChanged(String url) {
@@ -169,7 +169,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 				// ignore
 			}
 		};
-		
+
 		listener.locationChanged(null);
 		listener.historyChanged(null);
 	}
@@ -189,7 +189,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 				if (!display.isDisposed()) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							if (!shell.isDisposed()) shell.redraw();						
+							if (!shell.isDisposed()) shell.redraw();
 						}
 					});
 				}

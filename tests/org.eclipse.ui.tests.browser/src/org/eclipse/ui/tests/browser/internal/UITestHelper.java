@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -49,7 +49,7 @@ public class UITestHelper {
 			return super.showPage(node);
 		}
 	}
-	
+
 	private static class PropertyDialogWrapper extends PropertyDialog {
 		public PropertyDialogWrapper(Shell parentShell, PreferenceManager manager, ISelection selection) {
 			super(parentShell, manager, selection);
@@ -68,7 +68,7 @@ public class UITestHelper {
 		PreferenceManager manager = WorkbenchPlugin.getDefault().getPreferenceManager();
 		if (manager != null) {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
-			dialog.create();	
+			dialog.create();
 
 			for (Iterator iterator = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
 			     iterator.hasNext();)
@@ -82,7 +82,7 @@ public class UITestHelper {
 		}
 		return dialog;
 	}
-	
+
 	public static PropertyDialog getPropertyDialog(String id, IAdaptable element) {
 		PropertyDialogWrapper dialog = null;
 
@@ -93,19 +93,19 @@ public class UITestHelper {
 		// load pages for the selection
 		// fill the manager with contributions from the matching contributors
 		PropertyPageContributorManager.getManager().contribute(manager, element);
-		
+
 		IWorkbenchAdapter adapter = (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
 		if (adapter != null) {
 			name = adapter.getLabel(element);
 		}
-		
+
 		// testing if there are pages in the manager
-		Iterator pages = manager.getElements(PreferenceManager.PRE_ORDER).iterator();		
+		Iterator pages = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		if (!pages.hasNext())
 			return null;
-		
+
 		title = MessageFormat.format("PropertyDialog.propertyMessage", new Object[] {name});
-		dialog = new PropertyDialogWrapper(getShell(), manager, new StructuredSelection(element)); 
+		dialog = new PropertyDialogWrapper(getShell(), manager, new StructuredSelection(element));
 		dialog.create();
 		dialog.getShell().setText(title);
 		for (Iterator iterator = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
@@ -118,12 +118,12 @@ public class UITestHelper {
 		}
 		return dialog;
 	}
-	
+
 	/**
 	 * Automated test that checks all the labels and buttons of a dialog
 	 * to make sure there is enough room to display all the text.  Any
 	 * text that wraps is only approximated and is currently not accurate.
-	 * 
+	 *
 	 * @param dialog the test dialog to be verified.
 	 */
 	public static void assertDialog(Dialog dialog) {
@@ -161,7 +161,7 @@ public class UITestHelper {
 			}
 		}
 	}
-	
+
 	/*
 	 * Verifies that a given button is large enough to display its text.
 	 * @param button The button to verify,
@@ -195,7 +195,7 @@ public class UITestHelper {
 			Assert.assertTrue(message.toString(), false);
 		}
 	}
-	
+
 	/*
 	 * Verifies that a given label is large enough to display its text.
 	 * @param label The label to verify,
@@ -223,7 +223,7 @@ public class UITestHelper {
 			Assert.assertTrue(message.toString(), false);
 		}
 	}
-	
+
 	/*
 	 * Counts the number of lines in a given String.
 	 * For example, if a string contains one (1) newline character,

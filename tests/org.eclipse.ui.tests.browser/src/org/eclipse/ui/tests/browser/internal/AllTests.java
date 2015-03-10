@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class AllTests {
 		suite.addTestSuite(InternalBrowserViewTestCase.class);
 		suite.addTestSuite(InternalBrowserEditorTestCase.class);
 		//suite.addTestSuite(ExternalBrowserTestCase.class);
-		
+
 		suite.addTestSuite(DialogsTestCase.class);
 		suite.addTestSuite(PreferencesTestCase.class);
 		suite.addTestSuite(ToolbarBrowserTestCase.class);
