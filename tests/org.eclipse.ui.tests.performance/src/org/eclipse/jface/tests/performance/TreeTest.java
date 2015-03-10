@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public abstract class TreeTest extends ViewerTest {
-	
+
 
 
 	TreeViewer viewer;
@@ -70,56 +70,56 @@ public abstract class TreeTest extends ViewerTest {
 
 	private IContentProvider getContentProvider() {
 		return new ITreeContentProvider() {
-	
+
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 			 */
 			public Object[] getChildren(Object parentElement) {
 				TestTreeElement element = (TestTreeElement) parentElement;
 				return element.children;
 			}
-	
+
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 			 */
 			public Object getParent(Object element) {
 				return ((TestTreeElement) element).parent;
 			}
-	
+
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 			 */
 			public boolean hasChildren(Object element) {
 				return ((TestTreeElement) element).children.length > 0;
 			}
-	
+
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
 				return getChildren(inputElement);
 			}
-	
+
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
 				// Do nothing here
 			}
-	
+
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
@@ -127,7 +127,7 @@ public abstract class TreeTest extends ViewerTest {
 					Object newInput) {
 				// Do nothing here
 			}
-	
+
 		};
 	}
 

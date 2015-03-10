@@ -21,18 +21,18 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
 
 /**
  * This test ContentDescriber added specifically for OpenNavigatorFolderTest.
- * 
+ *
  */
 
 public final class ContentDescriberForTestsOnly implements ITextContentDescriber {
 
 	/*
 	 * this "simulated time" represents how long a content describer might
-	 * take parsing a file. Offhand (i.e. just guessing) 2000 msecs would be "bad case" examples. 
+	 * take parsing a file. Offhand (i.e. just guessing) 2000 msecs would be "bad case" examples.
 	 * 20 msecs would be near a good, optimistic case.
-	 * I've picked 75 msecs for this test, to represent "normal" case 
-	 * (such as the HTML parser that gave rise to the original bug :)  
-	 * 
+	 * I've picked 75 msecs for this test, to represent "normal" case
+	 * (such as the HTML parser that gave rise to the original bug :)
+	 *
 	 * Note: unlike a "real" ContentDescriber, this one only effects "elapsed
 	 * time", not "CPU Time", since all it is doing is sleeping.
 	 */

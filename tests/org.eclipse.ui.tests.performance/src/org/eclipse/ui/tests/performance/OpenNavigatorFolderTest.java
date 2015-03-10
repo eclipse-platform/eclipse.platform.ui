@@ -35,24 +35,24 @@ import org.osgi.framework.Bundle;
  * This class/test was originally written for WTP bug 106158, and adapted to a
  * generic "platform" test case, since some of the problem was due to bug
  * 107121
- * 
+ *
  * Thanks for Jeffrey Liu (jeffliu@ca.ibm.com) who wrote the test for WTP.
- * 
+ *
  * And, thanks to Eric Glass <ericglass@maximus.com> for opening bug 106158
  * (100% CPU for over 3 minutes opening a directory in the Navigator view with
  * over 2000 HTML files) https://bugs.eclipse.org/bugs/show_bug.cgi?id=106158
  * and for providing 2500 "generic" HTML files for the original test case in
  * WTP.
- * 
+ *
  * modified by David Williams for platform level test that does not depend on
  * WTP or, for that matter, any meaningful content type. The content type
  * assumed there is designed simply to "take a while" to complete, if asked
  * for its properties.
- * 
+ *
  * Note, since this test companion "ContentDescriberForTestsOnly", simply uses
  * "sleep" to simulate computations, it only effects Elapsed Time (not CPU
  * Time).
- * 
+ *
  */
 public class OpenNavigatorFolderTest extends PerformanceTestCase {
 	/*

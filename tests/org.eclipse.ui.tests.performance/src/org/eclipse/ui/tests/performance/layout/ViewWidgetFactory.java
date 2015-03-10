@@ -35,12 +35,12 @@ public class ViewWidgetFactory extends TestWidgetFactory {
     private String viewId;
     private Control ctrl;
     private IWorkbenchWindow window;
-    
+
     public ViewWidgetFactory(String viewId) {
         this.viewId = viewId;
         Assert.assertNotNull(viewId);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getMaxSize()
      */
@@ -53,7 +53,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
 		MPart modelPart = site.getModel();
 		return (Composite) modelPart.getWidget();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
@@ -64,16 +64,16 @@ public class ViewWidgetFactory extends TestWidgetFactory {
         Assert.assertNotNull(page);
 
 		IViewPart part = page.showView(viewId, null, IWorkbenchPage.VIEW_ACTIVATE);
-        
+
         BasicPerformanceTest.waitForBackgroundJobs();
-        
+
 		ctrl = getControl(part);
-        
+
         Point size = getMaxSize();
         ctrl.setBounds(0,0,size.x, size.y);
         window.getShell().setSize(size);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */
@@ -87,7 +87,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
     public Composite getControl() throws CoreException, WorkbenchException {
         return (Composite)ctrl;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
      */
@@ -95,5 +95,5 @@ public class ViewWidgetFactory extends TestWidgetFactory {
     	window.close();
     	super.done();
     }
-    
+
 }

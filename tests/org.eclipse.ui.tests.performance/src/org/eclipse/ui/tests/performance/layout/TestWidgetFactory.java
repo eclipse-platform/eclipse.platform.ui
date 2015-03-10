@@ -23,7 +23,7 @@ public abstract class TestWidgetFactory {
 	public Point getMaxSize() throws CoreException, WorkbenchException {
 	    Composite control = getControl();
 	    Composite parent = control.getParent();
-	    
+
 	    if (parent == null) {
 	        return new Point(800, 600);
 	    }

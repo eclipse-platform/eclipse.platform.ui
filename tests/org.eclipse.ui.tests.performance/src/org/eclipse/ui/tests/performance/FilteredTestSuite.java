@@ -68,7 +68,7 @@ public class FilteredTestSuite extends TestSuite {
 				filterTestClassName = null;
 			else
 				filterTestClassName = filterString.substring(0, methodSeparator);
-			
+
 			if (methodSeparator + 1 < filterString.length())
 				filterTestName = filterString.substring(methodSeparator + 1);
 			else
@@ -96,7 +96,7 @@ public class FilteredTestSuite extends TestSuite {
     private void addFilteredTestSuite(TestSuite testSuite) {
 		for(Enumeration allTests = testSuite.tests(); allTests.hasMoreElements(); ) {
 			Object subTest = allTests.nextElement();
-			
+
 			if (subTest instanceof TestSuite) {
 				addFilteredTestSuite((TestSuite)subTest);
 				continue;

@@ -33,17 +33,17 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
     protected void runTest() throws Throwable {
         IWorkbenchWindow window = openTestWindow();
         final IWorkbenchPage page = window.getActivePage();
-        
+
         // prime it
         IViewPart view1 = page.showView(viewId);
         page.hideView(view1);
         waitForBackgroundJobs();
         processEvents();
-        
+
        	tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
        	if ("org.eclipse.ui.views.BookmarkView".equals(viewId))
        		setDegradationComment("The test results are influenced by the test machine setup. See bug 340136.");
-        	
+
 		for (int j = 0; j < 100; j++) {
 
 			startMeasuring();

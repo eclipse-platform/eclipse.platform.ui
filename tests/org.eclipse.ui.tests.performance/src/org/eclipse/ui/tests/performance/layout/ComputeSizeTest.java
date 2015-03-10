@@ -19,7 +19,7 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * Measures the performance of a widget's computeSize method
- * 
+ *
  * @since 3.1
  */
 public class ComputeSizeTest extends BasicPerformanceTest {
@@ -27,13 +27,13 @@ public class ComputeSizeTest extends BasicPerformanceTest {
     private TestWidgetFactory widgetFactory;
     private int xIterations = 10;
     private int yIterations = 10;
-    
+
     /**
      * @param testName
      */
     public ComputeSizeTest(TestWidgetFactory widgetFactory) {
         super(widgetFactory.getName() + " computeSize");
-        
+
         this.widgetFactory = widgetFactory;
     }
 
@@ -46,11 +46,11 @@ public class ComputeSizeTest extends BasicPerformanceTest {
         final Composite widget = widgetFactory.getControl();
         //Rectangle initialBounds = widget.getBounds();
         final Point maxSize = widgetFactory.getMaxSize();
-        
-        // Iteration counter. We increment this each pass through the loop in order to 
+
+        // Iteration counter. We increment this each pass through the loop in order to
         // generate slightly different test data each time
         final int[] counter = new int[] {0};
- 
+
 		for (int j = 0; j < 100; j++) {
 	        // This counter determines whether we're computing a width,
 			// height, or fixed
@@ -65,7 +65,7 @@ public class ComputeSizeTest extends BasicPerformanceTest {
 			for (int i = 0; i < 200; i++) {
 
                for (int xIteration = 0; xIteration < xIterations; xIteration++) {
-                   
+
                    for (int yIteration = 0; yIteration < yIterations; yIteration++) {
                        // Avoid giving the same x value twice in a row in order to make it hard to cache
                        int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
@@ -73,8 +73,8 @@ public class ComputeSizeTest extends BasicPerformanceTest {
 
                        // Alternate between flushing and not flushing the cache
                        boolean flushState = (count % 2) != 0;
-                       
-                       // Alternate between width, height, and fixed, and default size queries 
+
+                       // Alternate between width, height, and fixed, and default size queries
                        // (note: we need to alternate in order to make the result hard to cache)
                        switch(count % 4) {
                            case 0: widget.computeSize(xSize, SWT.DEFAULT, flushState); break;

@@ -15,9 +15,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Runs a test specified by the org.eclipse.ui.performance.test property.  
+ * Runs a test specified by the org.eclipse.ui.performance.test property.
  * This test is prepped via the UIPerformanceTestSetup test setup.
- * 
+ *
  * @since 3.1
  */
 public class PerformanceTestRunner extends TestSuite {

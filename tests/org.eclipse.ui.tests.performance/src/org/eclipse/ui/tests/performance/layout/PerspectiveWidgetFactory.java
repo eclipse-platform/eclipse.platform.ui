@@ -28,11 +28,11 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
 
     private String perspectiveId;
     private IWorkbenchWindow window;
-    
+
     public PerspectiveWidgetFactory(String initialPerspective) {
         perspectiveId = initialPerspective;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getMaxSize()
      */
@@ -49,7 +49,7 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
 		IWorkbenchPage page = window.getActivePage();
         Assert.assertNotNull(page);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */

@@ -59,7 +59,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.tests.performance.ViewerTest#createViewer(org.eclipse.swt.widgets.Shell)
 	 */
 	protected StructuredViewer createViewer(Shell shell) {
@@ -73,7 +73,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
@@ -95,7 +95,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRefreshSorted() throws Throwable {
@@ -118,7 +118,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRefreshPreSorted() throws Throwable {
@@ -145,7 +145,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testUpdate() throws Throwable {

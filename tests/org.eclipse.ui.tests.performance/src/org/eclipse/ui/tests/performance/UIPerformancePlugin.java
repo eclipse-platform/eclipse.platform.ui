@@ -21,7 +21,7 @@ public class UIPerformancePlugin extends AbstractUIPlugin {
 
 	//The shared instance.
 	private static UIPerformancePlugin plugin;
-	
+
 	private BundleContext context;
 
 	/**

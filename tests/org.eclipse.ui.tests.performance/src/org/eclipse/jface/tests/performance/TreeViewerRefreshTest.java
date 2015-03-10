@@ -17,12 +17,12 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * The TreeViewerRefreshTest is the refresh test for 
+ * The TreeViewerRefreshTest is the refresh test for
  * tree viewers.
  *
  */
 public class TreeViewerRefreshTest extends ViewerTest {
-    
+
     TreeViewer viewer;
     private RefreshTestTreeContentProvider contentProvider;
 
@@ -58,10 +58,10 @@ public class TreeViewerRefreshTest extends ViewerTest {
             processEvents();
             stopMeasuring();
         }
-        
+
         commitMeasurements();
         assertPerformance();
     }
-    
+
 
 }

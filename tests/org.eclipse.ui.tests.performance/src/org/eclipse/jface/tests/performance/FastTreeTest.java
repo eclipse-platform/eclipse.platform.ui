@@ -27,7 +27,7 @@ public class FastTreeTest extends TreeAddTest {
 	public FastTreeTest(String testName) {
 		super(testName);
 	}
-	
+
 	/**
 	 * @throws CoreException
 	 *             Test addition to the tree one element at a time.
@@ -37,7 +37,7 @@ public class FastTreeTest extends TreeAddTest {
 		doTestAdd(10, TEST_COUNT, false);
 	}
 
-	
+
 	/**
 	 * @throws CoreException
 	 *             Test addition to the tree one element at a time.
@@ -55,13 +55,13 @@ public class FastTreeTest extends TreeAddTest {
 
 		tagIfNecessary("JFace - Add 10000 items 100 at a time TreeViewer 10 times",
 				Dimension.ELAPSED_PROCESS);
-		
+
 		doTestAdd(100, TEST_COUNT, false);
 	}
 
 	/**
 	 * Run the test for one of the fast insertions.
-	 * 
+	 *
 	 * @param count
 	 * @throws CoreException
 	 */
@@ -96,7 +96,7 @@ public class FastTreeTest extends TreeAddTest {
 						processEvents();
 					}
 				}
-				
+
 
 				stopMeasuring();
 

@@ -21,7 +21,7 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 /**
  * Measures the time to resize the widget 10 times, including the time required
  * to redraw.
- * 
+ *
  * @since 3.1
  */
 public class ResizeTest extends BasicPerformanceTest {
@@ -34,8 +34,8 @@ public class ResizeTest extends BasicPerformanceTest {
 
 	private String tagString;
 
-	
-	
+
+
 	/**
 	 * Create a new instance of the receiver.
 	 * @param factory
@@ -44,8 +44,8 @@ public class ResizeTest extends BasicPerformanceTest {
 		this(factory, NONE, factory.getName() + " setSize");
 	}
 
-	
-	
+
+
 	/**
 	 * Create a new instance of the receiver.
 	 * @param factory

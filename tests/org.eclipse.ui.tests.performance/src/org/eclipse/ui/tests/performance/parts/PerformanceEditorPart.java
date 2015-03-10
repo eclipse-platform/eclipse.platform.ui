@@ -31,13 +31,13 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 public class PerformanceEditorPart extends EditorPart {
 
     private static final String PARAM_OUTLINE = "outline";
-    
+
     private boolean dirty;
     private Label control;
     private boolean useOutline = false;
 
     /**
-     * 
+     *
      */
     public PerformanceEditorPart() {
         super();
@@ -70,7 +70,7 @@ public class PerformanceEditorPart extends EditorPart {
     public boolean isDirty() {
         return dirty;
     }
-    
+
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
     }
@@ -78,7 +78,7 @@ public class PerformanceEditorPart extends EditorPart {
     /* (non-Javadoc)
      * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
      */
-    public boolean isSaveAsAllowed() {        
+    public boolean isSaveAsAllowed() {
         return false;
     }
 
@@ -103,15 +103,15 @@ public class PerformanceEditorPart extends EditorPart {
     public void setInitializationData(IConfigurationElement cfig,
             String propertyName, Object data) {
         super.setInitializationData(cfig, propertyName, data);
-        
+
         if (data instanceof String) {
            for (StringTokenizer toker = new StringTokenizer((String) data, ","); toker.hasMoreTokens(); ) {
                String token = toker.nextToken();
                if (token.equals(PARAM_OUTLINE))
                    useOutline = true;
            }
-           
-        }        
+
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)

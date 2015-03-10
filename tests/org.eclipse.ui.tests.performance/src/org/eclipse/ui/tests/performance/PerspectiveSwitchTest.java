@@ -32,7 +32,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      */
     public PerspectiveSwitchTest(String [] ids, int tagging) {
@@ -41,9 +41,9 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         this.id2 = ids[1];
         this.activeEditor = ids[2];
     }
-	
+
     /**
-     * Test perspective switching performance. 
+     * Test perspective switching performance.
      */
     protected void runTest() throws CoreException, WorkbenchException {
         // Get the two perspectives to switch between.
@@ -66,15 +66,15 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
             System.out.println("Unknown perspective ID: " + id2);
             return;
         }
-        
+
         // Open the two perspectives and the file, in a new window.
         // Do this outside the loop so as not to include
-        // the initial time to open, just switching.        
+        // the initial time to open, just switching.
         IWorkbenchWindow window = openTestWindow(id1);
         final IWorkbenchPage page = window.getActivePage();
         assertNotNull(page);
         page.setPerspective(perspective2);
-        
+
         //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
         IFile aFile = getProject().getFile(activeEditor);
         assertTrue(aFile.exists());
@@ -82,20 +82,20 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         IDE.openEditor(page, aFile, true);
 
        	tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
-        
+
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 processEvents();
-                
+
                 startMeasuring();
                 page.setPerspective(perspective1);
                 processEvents();
                 page.setPerspective(perspective2);
                 processEvents();
                 stopMeasuring();
-            } 
+            }
         });
-        
+
         commitMeasurements();
         assertPerformance();
     }

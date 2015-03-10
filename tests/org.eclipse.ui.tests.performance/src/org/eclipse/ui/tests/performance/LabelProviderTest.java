@@ -49,9 +49,9 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		private String name;
 		private String cupYear;
 		private String baseName;
-		
+
 		// Those are an OS resources and should not be freed
-		private Image image; 
+		private Image image;
 		private Color bkColor;
 		private Color fgColor;
 
@@ -59,19 +59,19 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			name = "\u00D6sterreich";
 			cupYear = "Austria";
 			baseName = Integer.toString(i + 100);
-			
-			switch (i % 3) { 
-				case 0:	
+
+			switch (i % 3) {
+				case 0:
 					image = display.getSystemImage(SWT.ICON_WARNING);
 					bkColor = display.getSystemColor(SWT.COLOR_BLUE);
 					fgColor = display.getSystemColor(SWT.COLOR_RED);
 					break;
-				case 1:	
+				case 1:
 					image = display.getSystemImage(SWT.ICON_ERROR);
 					bkColor = display.getSystemColor(SWT.COLOR_GREEN);
 					fgColor = display.getSystemColor(SWT.COLOR_BLUE);
 					break;
-				case 2:	
+				case 2:
 					image = display.getSystemImage(SWT.ICON_QUESTION);
 					bkColor = display.getSystemColor(SWT.COLOR_RED);
 					fgColor = display.getSystemColor(SWT.COLOR_GREEN);
@@ -82,20 +82,20 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		public Image getImage() {
 			return image;
 		}
-		
+
 		public Color getBackgroundColor() {
 			return bkColor;
 		}
-		
+
 		public Color getForegroundColor() {
 			return fgColor;
 		}
-		
+
 		public String toString() {
 			return name + " " + cupYear + " " + baseName;
 		}
 	}
-	
+
 	private class TestCellLabelProvider extends CellLabelProvider implements IStyledLabelProvider, IFontProvider {
 
 		private boolean useColor;
@@ -105,7 +105,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		}
 
 		public void update(ViewerCell cell) {
-			// NOTE: this method is not called in the current performance 
+			// NOTE: this method is not called in the current performance
 			// test so its contents has no effect on the performance results.
 			Object element = cell.getElement();
 			if (!(element instanceof CountryEntry))
@@ -140,7 +140,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	private CountryEntry[] entries;
 	private Shell fShell;
 	private StructuredViewer fViewer;
-	
+
 	private boolean styled;
 	private boolean colors;
 
@@ -153,7 +153,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		this.styled = styled;
 		this.colors = colors;
 	}
-	
+
     protected void runTest() throws Throwable {
 		if (styled)
 			fViewer.setLabelProvider(getDecoratingStyledCellLabelProvider(colors));
@@ -205,16 +205,16 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
-		
+
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
 		viewer.setSelection(new StructuredSelection(entries[1]));
 		return viewer;
 	}
-	
+
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		
+
 		Display display = Display.getCurrent();
 		if (display == null)
 			display = new Display();
@@ -223,7 +223,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		for (int i = 0; i < entries.length; i++) {
 			entries[i] = new CountryEntry(display, i);
 		}
-		
+
 		fShell = new Shell(display);
 		fShell.setSize(500, 500);
 		fShell.setLayout(new FillLayout());

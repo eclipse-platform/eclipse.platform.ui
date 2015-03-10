@@ -61,27 +61,27 @@ public class EditorTestHelper {
 		if (runEventQueue)
 			runEventQueue(editor);
 	}
-	
+
 	public static void closeAllEditors() {
 		IWorkbenchPage page= getActivePage();
 		if (page != null)
 			page.closeAllEditors(false);
 	}
-	
+
 	public static void runEventQueue() {
 		IWorkbenchWindow window= getActiveWorkbenchWindow();
 		if (window != null)
 			runEventQueue(window.getShell());
 	}
-	
+
 	public static void runEventQueue(IWorkbenchPart part) {
 		runEventQueue(part.getSite().getShell());
 	}
-	
+
 	public static void runEventQueue(Shell shell) {
 		while (shell.getDisplay().readAndDispatch());
 	}
-	
+
 	public static void runEventQueue(long minTime) {
 		long nextCheck= System.currentTimeMillis() + minTime;
 		while (System.currentTimeMillis() < nextCheck) {
@@ -89,7 +89,7 @@ public class EditorTestHelper {
 			sleep(1);
 		}
 	}
-	
+
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
@@ -109,7 +109,7 @@ public class EditorTestHelper {
 		runEventQueue();
 		while (System.currentTimeMillis() < startTime)
 			runEventQueue(intervalTime);
-		
+
 		long endTime= maxTime > 0 ? System.currentTimeMillis() + maxTime : Long.MAX_VALUE;
 		boolean calm= isCalm();
 		while (!calm && System.currentTimeMillis() < endTime) {

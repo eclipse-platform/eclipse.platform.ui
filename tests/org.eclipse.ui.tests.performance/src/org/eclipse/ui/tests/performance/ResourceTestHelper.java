@@ -72,14 +72,14 @@ public class ResourceTestHelper {
 		};
 		getRoot().getFile(new Path(dest)).create(stream, true, null);
 	}
-	
+
 
 	public static void replicate(String src, String destPrefix, String destSuffix, int n, String srcName, String destNamePrefix) throws IOException, CoreException {
-		
+
 		StringBuffer s= read(src);
-		
+
 		List positions= identifierPositions(s, srcName);
-		
+
 		for (int j= 0; j < n; j++) {
 			StringBuffer c= new StringBuffer(s.toString());
 			replacePositions(c, srcName.length(), destNamePrefix + j, positions);

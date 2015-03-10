@@ -24,9 +24,9 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class CollatorPerformanceTest extends BasicPerformanceTest {
 
-	private static final int ARRAYSIZE=100000; 
+	private static final int ARRAYSIZE=100000;
 	private static String[] fArray;
-	
+
 	/**
 	 * @param testName
 	 */
@@ -34,7 +34,7 @@ public class CollatorPerformanceTest extends BasicPerformanceTest {
 		super(testName);
 		generateArray();
 	}
-	
+
 	/**
 	 *  test Collator by sorting the array
 	 */
@@ -49,7 +49,7 @@ public class CollatorPerformanceTest extends BasicPerformanceTest {
         commitMeasurements();
         assertPerformance();
 	}
-	
+
 	/**
 	 * Generate a large sized array for sorting
 	 */
@@ -76,10 +76,10 @@ public class CollatorPerformanceTest extends BasicPerformanceTest {
 								});
 							--count;
 						}
-						
+
 					}
 				}
-				
+
 			}
 		}
 	}

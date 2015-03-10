@@ -33,7 +33,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 	protected void runTest() throws Throwable {
 		final IFile file = getProject().getFile("1." + extension);
 		assertTrue(file.exists());
-		
+
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
 
@@ -45,12 +45,12 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
                     processEvents();
                     activePage.closeEditor(part, false);
                     processEvents();
-                    
+
                 }
                 stopMeasuring();
-            } 
+            }
         });
-        
+
 		tagIfNecessary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);
 		commitMeasurements();
 		assertPerformance();

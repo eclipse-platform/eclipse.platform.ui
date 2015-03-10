@@ -40,7 +40,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public ViewPerformanceSuite() {
 		addOpenCloseTests();
@@ -49,7 +49,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void addOpenCloseTests() {
 		String[] ids = getAllTestableViewIds();

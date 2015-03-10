@@ -39,23 +39,23 @@ public class EditorWidgetFactory extends TestWidgetFactory {
     private String filename;
     private IWorkbenchWindow window;
     private Composite ctrl;
-    
+
     public EditorWidgetFactory(String filename) {
         this.filename = filename;
         this.editorId = null;
     }
-    
+
     public EditorWidgetFactory(String filename, String editorId) {
         this.filename = filename;
         this.editorId = editorId;
     }
-    
+
     public static Composite getControl(IEditorPart part) {
 		EditorSite site = (EditorSite)part.getSite();
 		MPart modelPart = site.getModel();
 		return (Composite) modelPart.getWidget();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#getName()
      */
@@ -72,26 +72,26 @@ public class EditorWidgetFactory extends TestWidgetFactory {
         window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
 		IWorkbenchPage activePage = window.getActivePage();
         Assert.assertNotNull(activePage);
-		
+
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IProject testProject = workspace.getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
         IFile file = testProject.getFile(filename);
-		
+
         if (editorId == null) {
             editorId = IDE.getEditorDescriptor(file).getId();
         }
-        
+
         IEditorPart part = IDE.openEditor(activePage, file, editorId, true);
         ctrl = getControl(part);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#getControl()
      */
     public Composite getControl() throws CoreException, WorkbenchException {
         return ctrl;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
      */

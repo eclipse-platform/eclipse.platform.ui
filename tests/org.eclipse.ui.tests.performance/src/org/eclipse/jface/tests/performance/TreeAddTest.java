@@ -87,7 +87,7 @@ public class TreeAddTest extends TreeTest {
 
 	/**
 	 * Run the test for one of the fast insertions.
-	 * 
+	 *
 	 * @param count
 	 * @throws CoreException
 	 */

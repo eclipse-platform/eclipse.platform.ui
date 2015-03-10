@@ -46,7 +46,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         super("testOpenClosePerspectives:" + id, tagging);
         this.id = id;
     }
-    
+
     protected void runTest() throws Throwable {
         // Get the two perspectives to switch between.
         final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
@@ -61,12 +61,12 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             System.out.println("Unknown perspective id: " + id);
             return;
         }
-        
+
         // create a nice clean window.
-        IWorkbenchWindow window = openTestWindow();          
+        IWorkbenchWindow window = openTestWindow();
         final IWorkbenchPage activePage = window.getActivePage();
-        
-        //causes creation of all views 
+
+        //causes creation of all views
         activePage.setPerspective(perspective1);
         IViewReference [] refs = activePage.getViewReferences();
         //get the IDs now - after we close hte perspective the view refs will be partiall disposed and their IDs will be null
@@ -78,24 +78,24 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         //populate the empty perspective with all view that will be shown in the test view
         for (int i = 0; i < ids.length; i++) {
             activePage.showView(ids[i]);
-        }      
+        }
 
         tagIfNecessary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);
-        
+
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 processEvents();
                 EditorTestHelper.calmDown(500, 30000, 500);
-                
+
                 startMeasuring();
                 activePage.setPerspective(perspective1);
-                processEvents();      
+                processEvents();
                 closePerspective(activePage);
-                processEvents(); 
+                processEvents();
                 stopMeasuring();
-            } 
+            }
         });
-        
+
         commitMeasurements();
         assertPerformance();
     }

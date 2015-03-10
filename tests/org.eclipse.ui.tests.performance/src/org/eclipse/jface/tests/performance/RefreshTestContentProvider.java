@@ -28,36 +28,36 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	static TestElement[] allElements;
 	public static int ELEMENT_COUNT = 10000;
 	TestElement[] currentElements;
-	
+
 	static{
 		allElements = new TestElement[ELEMENT_COUNT];
 		for (int i = 0; i < ELEMENT_COUNT; i++) {
-			allElements[i] = new TestElement(i);			
+			allElements[i] = new TestElement(i);
 		}
 	}
-	
+
 	void preSortElements(Viewer viewer, ViewerSorter sorter){
 		sorter.sort(viewer,currentElements);
-		
+
 	}
-	
+
 	public RefreshTestContentProvider(int size){
 		Assert.isTrue(size <= ELEMENT_COUNT);
 		setSize(size);
 	}
-	
+
 	/**
-	 * Set the size of the amount we are currently displaying 
+	 * Set the size of the amount we are currently displaying
 	 * to size.
 	 * @param size
 	 */
 	public void setSize(int size) {
-		
+
 		currentElements = new TestElement[size];
 		for (int i = 0; i < currentElements.length; i++) {
 			currentElements[i] = allElements[i];
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -89,13 +89,13 @@ public class RefreshTestContentProvider implements IStructuredContentProvider {
 	 */
 	public void refreshElements() {
 		for (int i = 0; i < ELEMENT_COUNT; i++) {
-			currentElements[i] = new TestElement(i + seed);			
+			currentElements[i] = new TestElement(i + seed);
 		}
 		seed += 257;
-		
-		
+
+
 	}
-	
+
 	public void cloneElements(){
 		currentElements = currentElements.clone();
 	}

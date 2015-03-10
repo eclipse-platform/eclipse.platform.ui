@@ -22,12 +22,12 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * The LinearViewerTest is a test that tests viewers.
- * 
+ *
  */
 public abstract class ViewerTest extends BasicPerformanceTest {
 
 	Shell browserShell;
-	
+
 	public static int ITERATIONS = 100;
 	public static int MIN_ITERATIONS = 20;
 
@@ -73,7 +73,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 		return new LabelProvider() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
@@ -82,7 +82,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 
 		};
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
 	 */
@@ -93,7 +93,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 			browserShell = null;
 		}
 	}
-	
+
 	/**
 	 * Return the number of iterations for tests that are slow on Linux
 	 * @return int
@@ -103,8 +103,8 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 			return ITERATIONS / 5;
 		return ITERATIONS;
 	}
-	
-	
+
+
 	/**
 	 * Return the number of iterations for tests that are slow on Linux
 	 * @return int

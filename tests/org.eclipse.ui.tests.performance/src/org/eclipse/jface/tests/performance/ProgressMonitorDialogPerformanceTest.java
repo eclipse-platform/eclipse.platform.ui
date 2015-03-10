@@ -41,12 +41,12 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 	 */
 	public ProgressMonitorDialogPerformanceTest(String testName, int tagging) {
 		super(testName, tagging);
-		
+
 	}
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testLongNames() throws Throwable {
@@ -54,27 +54,27 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 		tagIfNecessary("JFace - 10000 element task name in progress dialog",
 				Dimension.ELAPSED_PROCESS);
 		setDegradationComment("The test changed in 3.7. For details, consult bug 298952.");
-		
+
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = new Display();
 		}
-		
+
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell(display));
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
-				
+
 				char[] chars = new char[10000];
 				for (int i = 0; i < chars.length; i++) {
 					chars[i] = 'A';
 				}
 				final String taskName = new String(chars);
-				
+
 				// warm up
 				monitor.setTaskName(taskName);
 				processEvents();
-				
+
 				// test
 				for (int testCounter = 0; testCounter < 20; testCounter++) {
 					startMeasuring();
@@ -95,9 +95,9 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 		} catch (InterruptedException e) {
 			fail(e.getMessage(), e);
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 }

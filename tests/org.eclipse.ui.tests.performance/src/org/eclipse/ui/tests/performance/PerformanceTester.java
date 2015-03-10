@@ -34,7 +34,7 @@ final class PerformanceTester {
 	/**
 	 * Asserts default properties of the measurements captured for this test
 	 * case.
-	 * 
+	 *
 	 * @throws RuntimeException if the properties do not hold
 	 */
 	public void assertPerformance() {
@@ -45,7 +45,7 @@ final class PerformanceTester {
 	 * Asserts that the measurement specified by the given dimension is within a
 	 * certain range with respect to some reference value. If the specified
 	 * dimension isn't available, the call has no effect.
-	 * 
+	 *
 	 * @param dim
 	 *            the Dimension to check
 	 * @param lowerPercentage
@@ -87,7 +87,7 @@ final class PerformanceTester {
 	 * Mark the scenario of this test case to be included both into the global
 	 * and the local (component) performance summary. The summary shows the given dimension of the
 	 * scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName
 	 *            a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimension
@@ -101,7 +101,7 @@ final class PerformanceTester {
 	 * Mark the scenario represented by the given PerformanceMeter to be
 	 * included into the global and the local (component) performance summary. The summary shows the given
 	 * dimensions of the scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName
 	 *            a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimensions
@@ -115,7 +115,7 @@ final class PerformanceTester {
 	 * Mark the scenario of this test case to be included into the local (component)
 	 * performance summary. The summary shows the given dimension of the
 	 * scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName
 	 *            a short (shorter than 40 characters) descriptive name of the scenario
 	 * @param dimension
@@ -129,7 +129,7 @@ final class PerformanceTester {
 	 * Mark the scenario represented by the given PerformanceMeter to be
 	 * included into the local (component) performance summary. The summary shows the given
 	 * dimensions of the scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName
 	 *            a short (shorter than 40 characters) descriptive name of the scenario
 	 * @param dimensions
@@ -145,9 +145,9 @@ final class PerformanceTester {
 	 */
 	public void setDegradationComment(String string) {
 		Performance.getDefault().setComment(
-				fPerformanceMeter, 
-				Performance.EXPLAINS_DEGRADATION_COMMENT, 
+				fPerformanceMeter,
+				Performance.EXPLAINS_DEGRADATION_COMMENT,
 				string);
-		
+
 	}
 }

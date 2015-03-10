@@ -23,7 +23,7 @@ public class TestTreeElement extends TestElement {
 
 	/**
 	 * Create a new instance of the receiver .
-	 * 
+	 *
 	 * @param index
 	 * @param treeParent
 	 */
@@ -35,7 +35,7 @@ public class TestTreeElement extends TestElement {
 
 	/**
 	 * Generate a random string.
-	 * 
+	 *
 	 * @return String
 	 */
 	static String generateFirstEntry() {
@@ -49,7 +49,7 @@ public class TestTreeElement extends TestElement {
 
 	/**
 	 * Create count number of children in the receiver.
-	 * 
+	 *
 	 * @param count
 	 */
 	public void createChildren(int count) {

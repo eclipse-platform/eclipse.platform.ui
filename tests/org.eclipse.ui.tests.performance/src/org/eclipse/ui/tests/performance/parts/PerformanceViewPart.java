@@ -21,9 +21,9 @@ import org.eclipse.ui.part.ViewPart;
 public class PerformanceViewPart extends ViewPart {
 
 	private Label control;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public PerformanceViewPart() {
 		super();

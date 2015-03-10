@@ -49,7 +49,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
@@ -71,7 +71,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 * 
+	 *
 	 * @throws Throwable
 	 */
 	public void testRefreshSmall() throws Throwable {

@@ -24,9 +24,9 @@ public class RefreshTestTreeContentProvider implements ITreeContentProvider {
         elements = new TestTreeElement[RefreshTestContentProvider.ELEMENT_COUNT];
         for (int i = 0; i < RefreshTestContentProvider.ELEMENT_COUNT; i++) {
            elements[i] = (new TestTreeElement(i,null));
-            
+
         }
-     
+
     }
 
     public RefreshTestTreeContentProvider() {

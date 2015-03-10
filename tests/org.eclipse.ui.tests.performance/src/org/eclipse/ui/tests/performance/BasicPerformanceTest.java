@@ -30,7 +30,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * Baseclass for simple performance tests.
- * 
+ *
  * @since 3.1
  */
 public abstract class BasicPerformanceTest extends UITestCase {
@@ -54,7 +54,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	private static long startMeasuringTime;
 
 	private static long stopMeasuringTime;
-	
+
 	// whether we are displaying iterations per timebox in the console. default is false
 	private static boolean interactive;
 
@@ -82,7 +82,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	/**
 	 * Answers whether this test should be tagged globally.
-	 * 
+	 *
 	 * @return whether this test should be tagged globally
 	 */
 	private boolean shouldGloballyTag() {
@@ -91,7 +91,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	/**
 	 * Answers whether this test should be tagged locally.
-	 * 
+	 *
 	 * @return whether this test should be tagged locally
 	 */
 	private boolean shouldLocallyTag() {
@@ -100,7 +100,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
 	 */
 	protected void doSetUp() throws Exception {
@@ -113,7 +113,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
 	 */
 	protected void doTearDown() throws Exception {
@@ -136,7 +136,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	/**
 	 * Asserts default properties of the measurements captured for this test
 	 * case.
-	 * 
+	 *
 	 * @throws RuntimeException
 	 *             if the properties do not hold
 	 */
@@ -151,7 +151,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * Asserts that the measurement specified by the given dimension is within a
 	 * certain range with respect to some reference value. If the specified
 	 * dimension isn't available, the call has no effect.
-	 * 
+	 *
 	 * @param dim
 	 *            the Dimension to check
 	 * @param lowerPercentage
@@ -205,7 +205,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * Mark the scenario of this test case to be included into the global
 	 * performance summary. The summary shows the given dimension of the
 	 * scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName
 	 *            a short (shorter than 40 characters) descritive name of the
 	 *            scenario
@@ -270,7 +270,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	/**
 	 * Runs the given runnable until either 100 iterations or 4s has elapsed.
 	 * Runs a minimum of 3 times.
-	 * 
+	 *
 	 * @param runnable
 	 * @since 3.1
 	 */
@@ -281,7 +281,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	/**
 	 * Exercises the given runnable until either the given number of iterations
 	 * or the given amount of time has elapsed, whatever occurs first.
-	 * 
+	 *
 	 * @param runnable
 	 * @param maxIterations
 	 * @param maxTime
@@ -358,7 +358,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	/**
 	 * Set the comment for the receiver to string. Note this is added to the
 	 * output as is so you will need to add markup if you need a link.
-	 * 
+	 *
 	 * @param string
 	 *            The comment to write out for the test.
 	 */

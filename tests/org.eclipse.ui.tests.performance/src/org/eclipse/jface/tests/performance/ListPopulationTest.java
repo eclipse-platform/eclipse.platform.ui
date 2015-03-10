@@ -29,7 +29,7 @@ public class ListPopulationTest extends BasicPerformanceTest {
 	List list;
 
 	public ListPopulationTest(String testName, int tagging) {
-		super(testName, tagging);		
+		super(testName, tagging);
 	}
 
 	public ListPopulationTest(String testName) {
@@ -48,39 +48,39 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		shell.open();
 		// processEvents();
 	}
-	
+
 	public void testSmallAdd() throws Throwable {
 		addBench(100);
 	}
-	
+
 	public void testSmallSetItems() throws Throwable {
 		setItemsBench(100);
 	}
-	
+
 	public void testMediumAdd() throws Throwable {
 		addBench(5000);
 	}
-	
+
 	public void testMediumSetItems() throws Throwable {
 		setItemsBench(5000);
 	}
-	
+
 	public void testLargeAdd() throws Throwable {
 		addBench(50000);
 	}
-	
+
 	public void testLargeSetItems() throws Throwable {
 		setItemsBench(50000);
 	}
-	
+
 	/**
 	 * Test the time for adding elements using add.
 	 * @throws Throwable
 	 */
 	public void addBench(int count) throws Throwable {
-		openBrowser();		
+		openBrowser();
 		final String [] items = getItems(count);
-        
+
         exercise(new TestRunnable() {
             public void run() {
     			list.removeAll();
@@ -92,17 +92,17 @@ public class ListPopulationTest extends BasicPerformanceTest {
     			stopMeasuring();
     		}
         });
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 	/**
 	 * Test the time for adding elements using setItem.
 	 * @throws Throwable
 	 */
 	public void setItemsBench(int count) throws Throwable {
-		openBrowser();		
+		openBrowser();
 		final String [] items = getItems(count);
         exercise(new TestRunnable() {
             public void run() {
@@ -113,7 +113,7 @@ public class ListPopulationTest extends BasicPerformanceTest {
     			stopMeasuring();
             }
         });
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
@@ -127,10 +127,10 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		String[] items = new String[count];
 		for (int j = 0; j < items.length; j++) {
 			items[j] = "Element " + String.valueOf(j);
-			
+
 		}
 		return items;
 	}
-	
+
 
 }

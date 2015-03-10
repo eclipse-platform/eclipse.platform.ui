@@ -40,7 +40,7 @@ import org.eclipse.jface.util.Util;
  * on JFace code and lower. See the method comments for descriptions of the
  * currently supported performance tests.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class CommandsPerformanceTest extends BasicPerformanceTest {
@@ -54,7 +54,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * <p>
 	 * TODO This should add a bit of breadth to the tree.
 	 * </p>
-	 * 
+	 *
 	 * @param contextManager
 	 *            The context manager in which the contexts should be defined;
 	 *            must not be <code>null</code>.
@@ -95,7 +95,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * <p>
 	 * TODO This should add a bit of breadth to the tree.
 	 * </p>
-	 * 
+	 *
 	 * @param bindingManager
 	 *            The binding manager in which the schemes should be defined;
 	 *            must not be <code>null</code>.
@@ -144,7 +144,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 	/**
 	 * Constructs an instance of <code>CommandsPerformanceTest</code>.
-	 * 
+	 *
 	 * @param testName
 	 *            Test's name.
 	 */
@@ -174,7 +174,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * ever be anything but four elements, or why the platform list would ever
 	 * be anything but three elements.
 	 * </p>
-	 * 
+	 *
 	 * @throws NotDefinedException
 	 *             If something went wrong initializing the active scheme.
 	 */
@@ -360,7 +360,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * changed. It measures how long it takes to look up the computation from
 	 * the cache one million times.
 	 * </p>
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
@@ -389,7 +389,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * the cache one million times. In this test, the look-up is done in reverse --
 	 * from command identifier to trigger.
 	 * </p>
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
@@ -417,7 +417,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * changed, but the cache contains a matching entry. It measures how long it
 	 * takes to look up the computation from the cache forty thousand times.
 	 * </p>
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
@@ -456,7 +456,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * an exceptionally large set of bindings. The binding set tries to mimick
 	 * some of the same properties of a "real" binding set.
 	 * </p>
-	 * 
+	 *
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */

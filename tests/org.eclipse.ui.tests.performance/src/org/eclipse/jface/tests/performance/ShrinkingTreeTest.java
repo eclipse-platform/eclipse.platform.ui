@@ -25,7 +25,7 @@ public class ShrinkingTreeTest extends TreeTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param testName
 	 */
 	public ShrinkingTreeTest(String testName) {
@@ -37,10 +37,10 @@ public class ShrinkingTreeTest extends TreeTest {
 	}
 
 	public void testTreeViewerRefresh() throws CoreException {
-		
+
 		tagIfNecessary("JFace - Refresh from 1000 items to 100 items",
 				Dimension.ELAPSED_PROCESS);
-		
+
 		openBrowser();
 //		int smallCount = 1;
 //		for (int i = 0; i < 3; i++) {
@@ -58,7 +58,7 @@ public class ShrinkingTreeTest extends TreeTest {
 
 	/**
 	 * Run the test for one of the fast insertions.
-	 * 
+	 *
 	 * @param count
 	 * @throws CoreException
 	 */
@@ -89,6 +89,6 @@ public class ShrinkingTreeTest extends TreeTest {
 
 	}
 
-	
+
 
 }

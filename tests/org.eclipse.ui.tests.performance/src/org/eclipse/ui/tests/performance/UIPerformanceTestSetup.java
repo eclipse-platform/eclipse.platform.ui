@@ -36,9 +36,9 @@ public class UIPerformanceTestSetup extends TestSetup {
 	private static final String INTRO_VIEW= "org.eclipse.ui.internal.introview";
 
     private IProject testProject;
-	
+
 	public UIPerformanceTestSetup(Test test) {
-		super(test);		
+		super(test);
 	}
 
 	/*
@@ -48,11 +48,11 @@ public class UIPerformanceTestSetup extends TestSetup {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow activeWindow= workbench.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage= activeWindow.getActivePage();
-		
+
 		activePage.hideView(activePage.findViewReference(INTRO_VIEW));
-		
+
 		workbench.showPerspective(PERSPECTIVE1, activeWindow);
-		
+
 		boolean wasAutobuilding= ResourceTestHelper.disableAutoBuilding();
 		setUpProject();
 		ResourceTestHelper.fullBuild();
@@ -61,14 +61,14 @@ public class UIPerformanceTestSetup extends TestSetup {
 			EditorTestHelper.calmDown(2000, 30000, 1000);
 		}
 	}
-	
+
 	/*
 	 * @see junit.extensions.TestSetup#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		// do nothing, the set up workspace will be used by the open editor tests
-		
-		/* 
+
+		/*
 		 * ensure the workbench state gets saved when running with the Automated Testing Framework
                  * TODO: remove when https://bugs.eclipse.org/bugs/show_bug.cgi?id=71362 is fixed
                  */
@@ -81,14 +81,14 @@ public class UIPerformanceTestSetup extends TestSetup {
 			}
 		}
 	}
-	
+
 	private void setUpProject() throws CoreException {
-   
+
         // Create a java project.
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         testProject = workspace.getRoot().getProject(PROJECT_NAME);
         testProject.create(null);
-        testProject.open(null);        
+        testProject.open(null);
         /*IProjectDescription projectDescription = testProject.getDescription();
         String[] natureIds = { "org.eclipse.jdt.core.javanature" };
         projectDescription.setNatureIds(natureIds);*/
@@ -96,13 +96,13 @@ public class UIPerformanceTestSetup extends TestSetup {
         buildCommand.setBuilderName("org.eclipse.jdt.core.javabuilder");
         projectDescription.setBuildSpec(new ICommand[] { buildCommand });
         testProject.setDescription(projectDescription, null);*/
-        
+
         for (int i = 0; i < EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS.length; i++) {
             createFiles(EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[i]);
         }
 	}
 
-    
+
     /**
      * @param ext
      * @throws CoreException
