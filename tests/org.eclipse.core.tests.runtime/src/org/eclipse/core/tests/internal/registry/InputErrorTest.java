@@ -26,7 +26,7 @@ public class InputErrorTest extends TestCase {
 	static private final String DATA_LOCATION = "Plugin_Testing/registry/errorHandling/";
 
 	/**
-	 * Use customized registry strategy to both check error processing 
+	 * Use customized registry strategy to both check error processing
 	 * and to remove expected error messages from test log.
 	 */
 	private class RegistryStrategyLog extends RegistryStrategyOSGI {

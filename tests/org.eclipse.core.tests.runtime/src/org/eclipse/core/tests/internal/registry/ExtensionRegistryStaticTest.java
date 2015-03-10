@@ -57,7 +57,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 
 	public void testBFromCache() throws IOException, BundleException {
-		// Test the addition of an extension point when orphans extension exists 
+		// Test the addition of an extension point when orphans extension exists
 		assertNull(Platform.getExtensionRegistry().getExtension("testB2", "xptB2", "ext1"));
 		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testB/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
@@ -169,7 +169,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 
 	public void testF() throws IOException, BundleException {
-		//test the addition of the extension through a fragment then the addition of an extension point 
+		//test the addition of the extension through a fragment then the addition of an extension point
 		Bundle bundle02 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testF/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
 		Bundle bundle01 = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testF/1");
@@ -308,7 +308,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 
 	public void testSingletonFragment() throws MalformedURLException, BundleException, IOException {
-		//Fragments to non singleton host can not contribute extension or extension points 
+		//Fragments to non singleton host can not contribute extension or extension points
 		Bundle fragmentToNonSingleton = BundleTestingHelper.installBundle("", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/fragmentToNonSingleton");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {fragmentToNonSingleton});
 		assertNull(Platform.getExtensionRegistry().getExtensionPoint("NonSingleton.Bar"));

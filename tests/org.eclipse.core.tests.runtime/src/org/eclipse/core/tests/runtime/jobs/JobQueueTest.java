@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * 
+ *
  */
 public class JobQueueTest extends TestCase {
 	class Entry extends InternalJob {

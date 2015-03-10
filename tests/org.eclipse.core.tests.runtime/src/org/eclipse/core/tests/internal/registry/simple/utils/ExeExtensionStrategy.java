@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.core.runtime.spi.RegistryStrategy;
 
 /**
- * Registry strategy that uses class loader from this bundle to process executable 
+ * Registry strategy that uses class loader from this bundle to process executable
  * extensions.
  * @since 3.2
  */

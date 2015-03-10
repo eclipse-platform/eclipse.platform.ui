@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -276,7 +276,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testBug57656() {
 		TestJob jobA = new TestJob("Job1");
 		TestJob jobB = new TestJob("Job2");
-		//schedule jobA 
+		//schedule jobA
 		jobA.schedule(5000);
 		//schedule jobB so it gets behind jobA in the queue
 		jobB.schedule(10000);
@@ -287,7 +287,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
-	 * This is a regression test for bug 71448. IJobManager.currentJob was not 
+	 * This is a regression test for bug 71448. IJobManager.currentJob was not
 	 * returning the correct value when executed in a thread that is performing
 	 * asynchronous completion of a job (i.e., a UI Job)
 	 */
@@ -397,7 +397,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	/**
 	 * Runs a sequence of begin/end rules and asserts that the
 	 * job rule is always returned by {@link IJobManager#currentRule()}.
-	 * Returns <code>false</code> if not invoked from within a job with 
+	 * Returns <code>false</code> if not invoked from within a job with
 	 * a scheduling rule.
 	 */
 	private boolean runRuleSequenceInJobWithRule() {
@@ -480,7 +480,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			assertState("1." + i, jobs[i], Job.WAITING);
 		}
 
-		//cancel the first family of jobs		
+		//cancel the first family of jobs
 		manager.cancel(first);
 		waitForFamilyCancel(jobs, first);
 
@@ -682,7 +682,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		manager.cancel(third);
 		waitForFamilyCancel(jobs, third);
 
-		//all jobs should now be in the NONE state		
+		//all jobs should now be in the NONE state
 		for (int i = 0; i < NUM_JOBS; i++) {
 			assertState("12." + i, jobs[i], Job.NONE);
 		}
@@ -745,7 +745,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			}
 		});
 
-		//start the thread that will join the first family of jobs and be blocked until they finish execution		
+		//start the thread that will join the first family of jobs and be blocked until they finish execution
 		t.start();
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
 		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
@@ -924,7 +924,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
-	 * Asserts that the LockListener is called correctly during invocation of 
+	 * Asserts that the LockListener is called correctly during invocation of
 	 * {@link IJobManager#join(Object, IProgressMonitor)}.
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=195839.
 	 */
@@ -1395,7 +1395,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			assertState("1." + i, jobs[i], Job.WAITING);
 		}
 
-		//set the first family of jobs to sleep	
+		//set the first family of jobs to sleep
 		manager.sleep(first);
 
 		//the running job should still be running
@@ -1543,7 +1543,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			assertState("8." + i, family1[i], Job.NONE);
 		}
 
-		//all jobs should now be in the NONE state		
+		//all jobs should now be in the NONE state
 		for (int i = 0; i < JOBS_PER_FAMILY; i++)
 			assertState("9.1." + i, family1[i], Job.NONE);
 		for (int i = 0; i < JOBS_PER_FAMILY; i++)

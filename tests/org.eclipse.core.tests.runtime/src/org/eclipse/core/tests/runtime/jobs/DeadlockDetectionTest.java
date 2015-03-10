@@ -387,7 +387,7 @@ public class DeadlockDetectionTest extends TestCase {
 		//let the job finish
 		status[1] = TestBarrier.STATUS_RUNNING;
 
-		//now wait until the third job gets the rule 
+		//now wait until the third job gets the rule
 		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
 		status[2] = TestBarrier.STATUS_RUNNING;
@@ -565,7 +565,7 @@ public class DeadlockDetectionTest extends TestCase {
 				return Status.OK_STATUS;
 			}
 		};
-		//schedule all the jobs	
+		//schedule all the jobs
 		for (int i = 0; i < jobs.length; i++) {
 			jobs[i].schedule();
 		}

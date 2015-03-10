@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Stefan Xenos - initial API and implementation
- *     Stefan Xenos - bug 174539 - add a 1-argument convert(...) method     
+ *     Stefan Xenos - bug 174539 - add a 1-argument convert(...) method
  *     Stefan Xenos - bug 174040 - SubMonitor#convert doesn't always set task name
  *     Stefan Xenos - bug 206942 - Regression test for infinite progress reporting rate
  *     IBM Corporation - bug 252446 - SubMonitor.newChild passes zero ticks to child
@@ -22,17 +22,17 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.junit.Assert;
 
 /**
- * 
+ *
  */
 public class SubMonitorTest extends TestCase {
 
 	private long startTime;
 	/**
-	 * <p>Number of calls to worked() within each test. This was chosen to be significantly larger 
+	 * <p>Number of calls to worked() within each test. This was chosen to be significantly larger
 	 * than 1000 to test how well the monitor can optimize unnecessary resolution
 	 * in reported progress, but small enough that the test completes in a reasonable
 	 * amount of time.</p>
-	 * 
+	 *
 	 * <p>Note: changing this constant will invalidate comparisons with old performance data.</p>
 	 */
 	public static final int PROGRESS_SIZE = SubProgressTest.PROGRESS_SIZE;
@@ -42,7 +42,7 @@ public class SubMonitorTest extends TestCase {
 	 * scalability under recursion. We pick a number representing a moderately deep
 	 * recursion, but is still small enough that it could correspond to a real call stack
 	 * without causing overflow.</p>
-	 * 
+	 *
 	 * <p>Note: changing this constant will invalidate comparisons with old performance data.</p>
 	 */
 	public static final int CHAIN_DEPTH = SubProgressTest.CHAIN_DEPTH;
@@ -66,10 +66,10 @@ public class SubMonitorTest extends TestCase {
 		super.tearDown();
 	}
 
-	/** 
-	 * Reports progress by iterating over a loop of the given size, reporting 1 progress 
+	/**
+	 * Reports progress by iterating over a loop of the given size, reporting 1 progress
 	 * at each iteration. Simulates the progress of worked(int) in loops.
-	 * 
+	 *
 	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
 	 * @param loopSize size of the loop
 	 */
@@ -80,10 +80,10 @@ public class SubMonitorTest extends TestCase {
 		}
 	}
 
-	/** 
-	 * Reports progress by iterating over a loop of the given size, reporting 1 progress 
+	/**
+	 * Reports progress by iterating over a loop of the given size, reporting 1 progress
 	 * at each iteration. Simulates the progress of internalWorked(double) in loops.
-	 * 
+	 *
 	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
 	 * @param loopSize size of the loop
 	 */
@@ -98,7 +98,7 @@ public class SubMonitorTest extends TestCase {
 	 * Runs an "infinite progress" loop. Each iteration will consume 1/ratio
 	 * of the remaining work, and will run for the given number of iterations.
 	 * Retuns the number of ticks reported (out of 1000).
-	 * 
+	 *
 	 * @param ratio
 	 * @return the number of ticks reported
 	 */
@@ -143,7 +143,7 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
-	 * Ensures that we don't lose any progress when calling setWorkRemaining  
+	 * Ensures that we don't lose any progress when calling setWorkRemaining
 	 */
 	public void testSetWorkRemaining() {
 		TestProgressMonitor monitor = new TestProgressMonitor();
@@ -156,7 +156,7 @@ public class SubMonitorTest extends TestCase {
 			mon.setWorkRemaining(i);
 			mon.internalWorked(0.5);
 
-			mon.internalWorked(-0.5); // should not affect progress 
+			mon.internalWorked(-0.5); // should not affect progress
 		}
 
 		monitor.done();
@@ -208,7 +208,7 @@ public class SubMonitorTest extends TestCase {
 	/**
 	 * Tests creating a tree of SubMonitors. This is the same
 	 * as the performance test as the same name, but it verifies correctness
-	 * rather than performance. 
+	 * rather than performance.
 	 */
 	public void testCreateTree() {
 		TestProgressMonitor monitor = new TestProgressMonitor();
@@ -340,7 +340,7 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
-	 * Tests the style bits in SubProgressMonitor 
+	 * Tests the style bits in SubProgressMonitor
 	 */
 	public void testStyles() {
 
@@ -636,7 +636,7 @@ public class SubMonitorTest extends TestCase {
 
 	/**
 	 * Tests creating progress monitors under a custom progress monitor
-	 * parent. This is the same as the performance test as the same name, 
+	 * parent. This is the same as the performance test as the same name,
 	 * but it verifies correctness rather than performance.
 	 */
 	public void testCreateChildrenUnderCustomParent() {
@@ -654,7 +654,7 @@ public class SubMonitorTest extends TestCase {
 	/**
 	 * Creates a chain of n nested progress monitors. Calls beginTask on all monitors
 	 * except for the innermost one.
-	 * 
+	 *
 	 * @param parent
 	 * @param depth
 	 * @return the innermost SubMonitor
@@ -675,7 +675,7 @@ public class SubMonitorTest extends TestCase {
 	 * Creates a balanced binary tree of progress monitors, without calling worked. Tests
 	 * progress monitor creation and cleanup time, and ensures that excess progress is
 	 * being collected when IProgressMonitor.done() is called.
-	 * 
+	 *
 	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
 	 * @param loopSize total size of the recursion tree
 	 */
@@ -696,9 +696,9 @@ public class SubMonitorTest extends TestCase {
 	/**
 	 * <p>The innermost loop for the create tree test. We make this a static method so
 	 * that it can be used both in this performance test and in the correctness test.</p>
-	 * 
+	 *
 	 * <p>The performance test ensures that it is fast to create a lot of progress monitors.</p>
-	 * 
+	 *
 	 * <p>The correctness test ensures that creating and destroying SubMonitors
 	 * is enough to report progress, even if worked(int) and worked(double) are never called</p>
 	 */
@@ -713,11 +713,11 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
-	 * Reports progress by creating a balanced binary tree of progress monitors. Simulates 
-	 * mixed usage of IProgressMonitor in a typical usage. Calls isCanceled once each time work 
+	 * Reports progress by creating a balanced binary tree of progress monitors. Simulates
+	 * mixed usage of IProgressMonitor in a typical usage. Calls isCanceled once each time work
 	 * is reported. Half of the work is reported using internalWorked and half is reported using worked,
 	 * to simulate mixed usage of the progress monitor.
-	 * 
+	 *
 	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
 	 * @param loopSize total size of the recursion tree
 	 */
@@ -794,7 +794,7 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
-	 * Tests reporting of progress by sub-monitors created via newChild() 
+	 * Tests reporting of progress by sub-monitors created via newChild()
 	 */
 	public void testBug252446() {
 		int children = 12;
@@ -811,9 +811,9 @@ public class SubMonitorTest extends TestCase {
 			for (int j = 1; j <= cyclesPerChild; j++) {
 				mon.worked(1);
 				double expectedTopMonitorWork = expectedTicksPerIteration * (i * cyclesPerChild + j);
-				// Progress is passed to the parent monitor as integer leading to rounding 
+				// Progress is passed to the parent monitor as integer leading to rounding
 				// errors. The parent's progress has to follow child's progress "close enough"
-				// and then it will catch up when next child is created. Hence, a relatively large delta 
+				// and then it will catch up when next child is created. Hence, a relatively large delta
 				// value in this check:
 				assertEquals(expectedTopMonitorWork, monitor.getTotalWork(), 2.0d);
 			}
@@ -824,9 +824,9 @@ public class SubMonitorTest extends TestCase {
 
 	/**
 	 * Creates and destroys the given number of child progress monitors under the given parent.
-	 * 
+	 *
 	 * @param parent monitor to create children under. The caller must call done on this monitor
-	 * if necessary. 
+	 * if necessary.
 	 * @param progressSize total number of children to create.
 	 */
 	private static void createChildrenUnderParent(IProgressMonitor parent, int progressSize) {

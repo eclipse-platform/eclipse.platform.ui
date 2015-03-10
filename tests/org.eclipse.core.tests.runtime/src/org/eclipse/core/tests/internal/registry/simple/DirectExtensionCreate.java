@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,12 +18,12 @@ import org.eclipse.core.internal.registry.spi.ConfigurationElementDescription;
 import org.eclipse.core.runtime.*;
 
 /**
- * Tests programmatic creation of extension and extension point by using direct 
+ * Tests programmatic creation of extension and extension point by using direct
  * methods on the ExtensionRegistry.
- * 
+ *
  * Note that in present those methods are internal, but might be exposed as
  * APIs in the future.
- * 
+ *
  * @since 3.2
  */
 public class DirectExtensionCreate extends BaseExtensionRegistryRun {
@@ -37,18 +37,18 @@ public class DirectExtensionCreate extends BaseExtensionRegistryRun {
 	}
 
 	public void testExtensionPointAddition() {
-		IContributor contributor = ContributorFactorySimple.createContributor("1"); //$NON-NLS-1$ 
+		IContributor contributor = ContributorFactorySimple.createContributor("1"); //$NON-NLS-1$
 		String extensionPointId = "DirectExtPoint"; //$NON-NLS-1$
 		String extensionPointLabel = "Direct Extension Point"; //$NON-NLS-1$
 		String extensionPointSchemaRef = "schema/ExtensionPointTest.exsd"; //$NON-NLS-1$
 
-		/********************************************************************************************** 
+		/**********************************************************************************************
 		 * Add extension point:
-		 * 
-		 * <extension-point id="DirectExtPoint" 
-		 * 		name="Direct Extension Point" 
+		 *
+		 * <extension-point id="DirectExtPoint"
+		 * 		name="Direct Extension Point"
 		 * 		schema="schema/ExtensionPointTest.exsd"/>
-		 * 
+		 *
 		 *********************************************************************************************/
 
 		((ExtensionRegistry) simpleRegistry).addExtensionPoint(extensionPointId, contributor, false, extensionPointLabel, extensionPointSchemaRef, userToken);

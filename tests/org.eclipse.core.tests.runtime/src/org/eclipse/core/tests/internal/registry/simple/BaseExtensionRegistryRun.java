@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class BaseExtensionRegistryRun extends TestCase {
 	protected IExtensionRegistry simpleRegistry;
 	protected Object masterToken = new Object();
 	protected Object userToken = new Object();
-	
+
 	// Path to the XML files
 	private final static String xmlPath = "Plugin_Testing/registry/testSimple/"; //$NON-NLS-1$
 
@@ -35,7 +35,7 @@ public class BaseExtensionRegistryRun extends TestCase {
 	public BaseExtensionRegistryRun(String name) {
 		super(name);
 	}
-	
+
 	protected URL getXML(String fileName) {
 		return RuntimeTestsPlugin.getContext().getBundle().getEntry(xmlPath + fileName);
 	}
@@ -61,7 +61,7 @@ public class BaseExtensionRegistryRun extends TestCase {
 	protected IExtensionRegistry startRegistry() {
 		return startRegistry(this.getClass().getName());
 	}
-	
+
 	/**
 	 * @return - open extension registry
 	 */
@@ -76,7 +76,7 @@ public class BaseExtensionRegistryRun extends TestCase {
 		RegistryStrategy registryStrategy = new RegistryStrategy(registryLocations, readOnly);
 		return RegistryFactory.createRegistry(registryStrategy, masterToken, userToken);
 	}
-	
+
 	/**
 	 * Stops the extension registry.
 	 */
@@ -88,7 +88,7 @@ public class BaseExtensionRegistryRun extends TestCase {
 	protected void processXMLContribution(IContributor nonBundleContributor, URL url) {
 		processXMLContribution(nonBundleContributor, url, false);
 	}
-	
+
 	protected void processXMLContribution(IContributor nonBundleContributor, URL url, boolean persist) {
 		try {
 			InputStream is = url.openStream();
@@ -98,9 +98,9 @@ public class BaseExtensionRegistryRun extends TestCase {
 			return;
 		}
 	}
-	
+
 	protected String qualifiedName(String namespace, String simpleName) {
 		return namespace + "." + simpleName; //$NON-NLS-1$
 	}
-	
+
 }

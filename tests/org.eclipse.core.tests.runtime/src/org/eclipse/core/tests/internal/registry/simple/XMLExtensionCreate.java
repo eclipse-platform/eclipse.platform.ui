@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.core.tests.internal.registry.simple.utils.SimpleRegistryListe
  * Tests addition of extension point and the extension to the registry via
  * XML contribution. Makes sure that items are actually added; checks
  * listener notification; reloads registry from cache and re-checks the data.
- * 
+ *
  * @since 3.2
  */
 public class XMLExtensionCreate extends BaseExtensionRegistryRun {

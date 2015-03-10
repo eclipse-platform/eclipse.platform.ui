@@ -32,7 +32,7 @@ public abstract class RuntimeTest extends CoreTest {
 	public RuntimeTest() {
 		super();
 	}
-	
+
 	public BundleContext getContext() {
 		return RuntimeTestsPlugin.getContext();
 	}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -118,7 +118,7 @@ public class LogSerializationTest extends RuntimeTest {
 			// each line (except the first one) starts with a tab
 			else if (lastChar == NEW_LINE)
 				sb.insert(i, TAB);
-			// only ' ' is used as space, with no consecutive occurrences				
+			// only ' ' is used as space, with no consecutive occurrences
 			else if (SPACES.indexOf(sb.charAt(i)) != -1)
 				if (SPACES.indexOf(lastChar) != -1) {
 					sb.deleteCharAt(i);

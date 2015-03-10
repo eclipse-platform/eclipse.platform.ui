@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class NamespaceTest extends TestCase {
 		Bundle bundle01 = BundleTestingHelper.installBundle("Plugin", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testNamespace/1");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
 
-		// Extension point and extension should be present 
+		// Extension point and extension should be present
 		IExtensionPoint extpt = Platform.getExtensionRegistry().getExtensionPoint("org.abc.xptNS1");
 		assertNotNull(extpt);
 		assertTrue(extpt.getNamespaceIdentifier().equals("org.abc"));
@@ -94,7 +94,7 @@ public class NamespaceTest extends TestCase {
 		IExtension[] namespaceExtensions2 = Platform.getExtensionRegistry().getExtensions("org.abc");
 		assertTrue(namespaceExtensions2.length == 1);
 		assertTrue(namespaceExtensions2[0].equals(ext2));
-		
+
 		// remove the second bundle
 		anotherNamespaceBundle.uninstall();
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {anotherNamespaceBundle});

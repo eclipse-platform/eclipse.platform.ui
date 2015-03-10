@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,9 +22,9 @@ import org.osgi.framework.Bundle;
 /**
  * Tests addition of extensions and extension points with duplicate IDs.
  * The duplicate extension points should be ignored.
- * The duplicate extensions should be added. 
+ * The duplicate extensions should be added.
  * The rest of the XML contribution should not be affected.
- * 
+ *
  * @since 3.2
  */
 public class DuplicatePoints extends BaseExtensionRegistryRun {

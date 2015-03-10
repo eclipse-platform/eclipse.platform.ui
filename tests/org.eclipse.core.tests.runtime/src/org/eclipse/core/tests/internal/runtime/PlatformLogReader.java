@@ -62,7 +62,7 @@ public class PlatformLogReader {
 	}
 
 	/**
-	 * Reads the given log file and returns the contained status objects. 
+	 * Reads the given log file and returns the contained status objects.
 	 * If the log file could not be read, a status object indicating this fact
 	 * is returned.
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
@@ -17,7 +17,7 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.*;
 
 /**
- * Allows test cases to wait for the extension registry notifications.  
+ * Allows test cases to wait for the extension registry notifications.
  * This listener checks navigability to related elements from extensions.
  * @since 3.4
  */

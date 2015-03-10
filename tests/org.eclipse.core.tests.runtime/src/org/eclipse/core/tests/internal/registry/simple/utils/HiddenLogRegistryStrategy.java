@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.spi.RegistryStrategy;
 
 /**
- * Registry strategy that keeps log output in an accessible string. 
+ * Registry strategy that keeps log output in an accessible string.
  * @since 3.2
  */
 public class HiddenLogRegistryStrategy extends RegistryStrategy {
@@ -26,7 +26,7 @@ public class HiddenLogRegistryStrategy extends RegistryStrategy {
 	public HiddenLogRegistryStrategy(File[] theStorageDir, boolean[] cacheReadOnly) {
 		super(theStorageDir, cacheReadOnly);
 	}
-	
+
 	public boolean debug() {
 		return true;
 	}

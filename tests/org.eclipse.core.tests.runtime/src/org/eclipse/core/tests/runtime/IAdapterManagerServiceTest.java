@@ -19,7 +19,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Tests API on the IAdapterManager class accessed via an OSGi service.
- * 
+ *
  * This class is a copy of IAdapterManagerTest modified to use an OSGi service
  * instead of the Platform API.
  */

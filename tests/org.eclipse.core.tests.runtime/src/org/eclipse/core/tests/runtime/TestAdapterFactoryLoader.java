@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
 /**
- * The adaptor factory to test scenario described in the bug 200068: adapting to 
+ * The adaptor factory to test scenario described in the bug 200068: adapting to
  * a class not reachable be the default class loader.
- * 
+ *
  * This is a test code so almost all sanity checks are omitted (it is working on a known
  * hard-coded set of extensions and extension points). Also, for simplicity no trackers
  * or caching is done.

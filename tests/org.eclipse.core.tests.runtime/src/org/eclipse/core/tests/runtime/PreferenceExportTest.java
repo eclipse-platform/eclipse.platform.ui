@@ -93,7 +93,7 @@ public class PreferenceExportTest extends RuntimeTest {
 				fail("1.2", e);
 			}
 
-			//ensure the imported preference is set		
+			//ensure the imported preference is set
 			assertEquals("2.0", Preferences.STRING_DEFAULT_DEFAULT, prefs.getString(key1));
 			assertEquals("2.1", Preferences.INT_DEFAULT_DEFAULT, prefs.getInt(key2));
 

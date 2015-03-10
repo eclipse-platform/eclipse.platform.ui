@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class DirectExtensionRemove extends BaseExtensionRegistryRun {
 
 	/**
 	 * Tests that configuration elements associated with the removed extension
-	 * are removed. 
+	 * are removed.
 	 */
 	public void testAssociatedConfigElements() {
 		IContributor nonBundleContributor = ContributorFactorySimple.createContributor("CETest"); //$NON-NLS-1$

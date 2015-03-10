@@ -23,9 +23,9 @@ public class Bug_307391 extends AbstractJobManagerTest {
 	/**
 	 * Threads: main, j, t2
 	 * Locks: idSchedRule
-	 * 
+	 *
 	 * j owns idSchedRule with beginRule, t2 tries to acquire it
-	 * 
+	 *
 	 * Trips assertion:
 	 * java.lang.IllegalArgumentException: Cannot yieldRule job that is YIELDING
 	 * 		in JobManager#yieldRule

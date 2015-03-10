@@ -17,7 +17,7 @@ import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.eclipse.core.tests.session.SessionTestSuite;
 
 /**
- * @since 3.1 
+ * @since 3.1
  */
 public class AllTests extends TestCase {
 	public static Test suite() {

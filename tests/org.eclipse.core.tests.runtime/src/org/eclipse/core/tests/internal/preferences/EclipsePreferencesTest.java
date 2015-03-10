@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -1090,15 +1090,15 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	/*
 	 * Bug 60590 - Flush on dirty child settings node fails if parent clean.
-	 * 
-	 * After changing a preference value, we call #makeDirty which does a 
+	 *
+	 * After changing a preference value, we call #makeDirty which does a
 	 * recursive call marking itself dirty as well as all its parents. As a short
 	 * circuit, if a parent was already dirty then it stopped the recursion.
-	 * 
+	 *
 	 * Unfortuanatly the #makeClean method only marks the load level as
 	 * clean and not all children since it doesn't know which child triggered
 	 * the dirtiness.
-	 * 
+	 *
 	 * Changed the makeDirty call to mark all parent nodes as dirty.
 	 */
 	public void test_60590() {
@@ -1308,7 +1308,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	public void testGetSegment() {
-		String[][] data = new String[][] {new String[] {"instance", "/instance/foo", "0"}, //	
+		String[][] data = new String[][] {new String[] {"instance", "/instance/foo", "0"}, //
 				new String[] {"instance", "instance/foo", "0"}, //
 				new String[] {"instance", "instance", "0"}, //
 				new String[] {"instance", "instance", "0"}, //

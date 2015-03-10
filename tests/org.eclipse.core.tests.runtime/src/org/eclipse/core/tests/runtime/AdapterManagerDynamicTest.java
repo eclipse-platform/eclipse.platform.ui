@@ -27,14 +27,14 @@ public class AdapterManagerDynamicTest extends TestCase {
 
 	final private static int MAX_TIME_PER_BUNDLE = 10000; // maximum time to wait for bundle event in milliseconds
 
-	// Provided by bundle1; has an extension ID 
+	// Provided by bundle1; has an extension ID
 	private static final String BUNDLE1_TYPE_ID = "abc.SomethingElseA1";
-	// Provided by bundle1; has no extension ID 
+	// Provided by bundle1; has no extension ID
 	private static final String BUNDLE1_TYPE_NO_ID = "abc.SomethingElseA2";
 
-	// Provided by bundle2; has an extension ID 
+	// Provided by bundle2; has an extension ID
 	private static final String BUNDLE2_TYPE_ID = "abc.SomethingElseB1";
-	// Provided by bundle2; has no extension ID 
+	// Provided by bundle2; has no extension ID
 	private static final String BUNDLE2_TYPE_NO_ID = "abc.SomethingElseB2";
 
 	private IAdapterManager manager;
@@ -120,7 +120,7 @@ public class AdapterManagerDynamicTest extends TestCase {
 
 		} finally {
 			listener.unregister();
-			// in case of exception in the process 
+			// in case of exception in the process
 			if (bundle01 != null)
 				bundle01.uninstall();
 			if (bundle02 != null)

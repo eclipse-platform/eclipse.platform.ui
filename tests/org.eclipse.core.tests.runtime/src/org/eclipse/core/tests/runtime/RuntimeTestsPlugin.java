@@ -73,7 +73,7 @@ public class RuntimeTestsPlugin extends Plugin {
 
 	/*
 	 * Look up and return a file handle to the given entry in the bundle.
-	 * 
+	 *
 	 * Code copied from AbstractProvisioningTest in the p2 tests.
 	 */
 	public static File getTestData(String entry) {
@@ -102,7 +102,7 @@ public class RuntimeTestsPlugin extends Plugin {
 	 * Copy
 	 * - if we have a file, then copy the file
 	 * - if we have a directory then merge
-	 * 
+	 *
 	 * Copied from AbstractProvisioningTest.
 	 */
 	public static void copy(File source, File target, FileFilter filter) throws IOException {

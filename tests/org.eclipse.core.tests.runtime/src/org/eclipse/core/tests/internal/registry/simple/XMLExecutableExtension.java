@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class XMLExecutableExtension extends BaseExtensionRegistryRun {
 	}
 
 	/**
-	 * Provide own class loader to the registry executable element strategry 
+	 * Provide own class loader to the registry executable element strategry
 	 * @return - open extension registry
 	 */
 	protected IExtensionRegistry startRegistry() {
@@ -55,7 +55,7 @@ public class XMLExecutableExtension extends BaseExtensionRegistryRun {
 
 		fillRegistry(nonBundleContributor);
 		assertFalse(ExecutableRegistryObject.createCalled);
-		
+
 		checkRegistry(nonBundleContributor.getName());
 		assertTrue(ExecutableRegistryObject.createCalled);
 	}

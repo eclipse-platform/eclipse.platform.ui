@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -843,7 +843,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		Preferences ps = new PreferenceForwarder(id);
 		ps.setValue("key", "value");
 
-		// add a property change listener which will cause one to be 
+		// add a property change listener which will cause one to be
 		// added at the preference node level
 		IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

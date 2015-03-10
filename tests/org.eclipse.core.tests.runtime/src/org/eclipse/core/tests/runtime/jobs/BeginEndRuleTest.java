@@ -110,7 +110,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			assertEquals("3.0", TestBarrier.STATUS_BLOCKED, status[order[1]]);
 			assertEquals("3.0", TestBarrier.STATUS_BLOCKED, status[order[2]]);
 
-			//let the first job finish			
+			//let the first job finish
 			status[order[0]] = TestBarrier.STATUS_WAIT_FOR_DONE;
 			TestBarrier.waitForStatus(status, order[0], TestBarrier.STATUS_DONE);
 
@@ -142,7 +142,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 
 		for (int i = 0; i < jobs.length; i++) {
-			//check that the final status of all jobs is correct		
+			//check that the final status of all jobs is correct
 			assertEquals("9." + i, TestBarrier.STATUS_DONE, status[i]);
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
 			assertEquals("11." + i, IStatus.OK, jobs[i].getResult().getSeverity());
@@ -228,7 +228,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		waitForEnd(jobs[second]);
 		waitForEnd(jobs[first]);
 
-		//check that the final status of both jobs is correct		
+		//check that the final status of both jobs is correct
 		assertEquals("6.1", TestBarrier.STATUS_DONE, status[0]);
 		assertEquals("6.2", TestBarrier.STATUS_DONE, status[1]);
 		assertEquals("6.3", Job.NONE, jobs[0].getState());

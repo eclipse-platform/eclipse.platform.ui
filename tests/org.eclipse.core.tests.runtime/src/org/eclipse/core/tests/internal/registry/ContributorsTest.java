@@ -23,7 +23,7 @@ import org.osgi.framework.BundleException;
 
 /**
  * Tests contributor resolution for Bundle-based contributors.
- * 
+ *
  * @since 3.3
  */
 public class ContributorsTest extends TestCase {
@@ -68,7 +68,7 @@ public class ContributorsTest extends TestCase {
 	 * bundleA, bundleB, and fragment on bundleA all use the same namespace. Verify that getting
 	 * elements by contributor returns all elements from the contributor and only from that
 	 * contributor.
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws BundleException
 	 */
@@ -122,7 +122,7 @@ public class ContributorsTest extends TestCase {
 	/**
 	 * Checks {@link IDynamicExtensionRegistry#removeContributor(IContributor, Object)}. A separate
 	 * registry is created as removal functionality is not allowed by the default Eclipse registry.
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws BundleException
 	 */

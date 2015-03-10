@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
@@ -67,7 +67,7 @@ public class MultiLanguageTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		// install test bundles 
+		// install test bundles
 		bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/multiLang/bundleA");
 		bundleFragment = BundleTestingHelper.installBundle("0.2", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/multiLang/fragmentA");
 		getBundleAdmin().resolveBundles(new Bundle[] {bundle});

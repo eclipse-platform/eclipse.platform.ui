@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     James Blackburn (Broadcom Corp.) - initial API and implementation
  *******************************************************************************/
@@ -24,13 +24,13 @@ public class Bug_307282 extends AbstractJobManagerTest {
 	/**
 	 * Threads: main, t1, t2
 	 * Locks: l1, l2
-	 * 
+	 *
 	 * t1 owns l1; t2 own l2
 	 * t2 attempts acquire of l1
 	 * main interrupt()s t2
 	 * t1 release l1
 	 * main attempt acquire() l1
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInterruptDuringLockAcquireint() throws Exception {

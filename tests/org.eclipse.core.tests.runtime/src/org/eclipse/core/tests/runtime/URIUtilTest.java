@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -73,7 +73,7 @@ public class URIUtilTest extends RuntimeTest {
 
 	/**
 	 * Tests for {@link URIUtil#toFile(URI)}.
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
 	public void testToFile() throws URISyntaxException {
 		File base = new File(System.getProperty("java.io.tmpdir"));
@@ -87,7 +87,7 @@ public class URIUtilTest extends RuntimeTest {
 
 	/**
 	 * Tests for {@link URIUtil#toFile(URI)} involving UNC paths.
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
 	public void testToFileUNC() throws URISyntaxException {
 		if (!WINDOWS)
@@ -263,7 +263,7 @@ public class URIUtilTest extends RuntimeTest {
 
 	/**
 	 * Tests for {@link URIUtil#append(URI, String)}.
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
 	public void testAppend() throws URISyntaxException {
 		URI base = new URI("http://a.b.c/a%20b/");
@@ -292,7 +292,7 @@ public class URIUtilTest extends RuntimeTest {
 
 	/**
 	 * Tests for {@link URIUtil#append(URI, String)} when dealing with paths containing brackets.
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
 	public void testAppendWithBrackets() throws URISyntaxException {
 		//append a simple string

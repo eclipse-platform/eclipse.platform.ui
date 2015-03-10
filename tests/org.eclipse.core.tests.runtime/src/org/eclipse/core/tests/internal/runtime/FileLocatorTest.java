@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -55,10 +55,10 @@ public class FileLocatorTest extends CoreTest {
 		URL[] solutions = FileLocator.findEntries(bundle, path, map);
 
 		// expected:
-		// Bundle/nl/aa/BB/intro/messages.properties, 
-		// Fragment/nl/aa/BB/intro/messages.properties, 
-		// Bundle/nl/aa/intro/messages.properties, 
-		// Fragment/nl/aa/intro/messages.properties, 
+		// Bundle/nl/aa/BB/intro/messages.properties,
+		// Fragment/nl/aa/BB/intro/messages.properties,
+		// Bundle/nl/aa/intro/messages.properties,
+		// Fragment/nl/aa/intro/messages.properties,
 		// Bundle/121/intro/messages.properties
 
 		assertTrue(solutions.length == 5);

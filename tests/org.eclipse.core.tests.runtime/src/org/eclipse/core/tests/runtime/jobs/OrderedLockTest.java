@@ -120,7 +120,7 @@ public class OrderedLockTest extends TestCase {
 	}
 
 	/**
-	 * test that an acquire call that times out does not 
+	 * test that an acquire call that times out does not
 	 * become the lock owner (regression test)
 	 */
 	public void testLockTimeout() {
@@ -212,7 +212,7 @@ public class OrderedLockTest extends TestCase {
 			}
 		};
 
-		//third runnable which is going to submit a request for this lock but not wait 
+		//third runnable which is going to submit a request for this lock but not wait
 		//because the hook is going to force it to be given the lock (implicitly)
 		Runnable forceGetLock = new Runnable() {
 			public void run() {

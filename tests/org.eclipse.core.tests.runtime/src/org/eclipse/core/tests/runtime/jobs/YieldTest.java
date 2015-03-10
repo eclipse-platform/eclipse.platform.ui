@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -312,7 +312,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		conflictingJob1.schedule();
 		barrier1.setStatus(TestBarrier.STATUS_START);
 		// we are testing a race-condition here... (This test will not catch all conditions)
-		// make sure starting a non-conflicting job does not cause 
+		// make sure starting a non-conflicting job does not cause
 		// the yielding job to resume before conflicting job has a chance to run
 		nonConflict.schedule(1);
 
@@ -334,7 +334,7 @@ public class YieldTest extends AbstractJobManagerTest {
 				while (yieldRule(null) == null) {
 					//loop until yield succeeds
 				}
-				// ensure that the other job ran 
+				// ensure that the other job ran
 				barrier.waitForStatus(TestBarrier.STATUS_DONE);
 				return Status.OK_STATUS;
 			}
@@ -370,7 +370,7 @@ public class YieldTest extends AbstractJobManagerTest {
 					while (yieldRule(null) == null) {
 						//loop until yield succeeds
 					}
-					// ensure that the other job ran 
+					// ensure that the other job ran
 					barrier.waitForStatus(TestBarrier.STATUS_DONE);
 				} finally {
 					Job.getJobManager().endRule(rule);
@@ -413,7 +413,7 @@ public class YieldTest extends AbstractJobManagerTest {
 					while (j.yieldRule(null) == null) {
 						//loop until yield succeeds
 					}
-					// ensure that the other job ran 
+					// ensure that the other job ran
 					barrier.waitForStatus(TestBarrier.STATUS_DONE);
 				} finally {
 					m.endRule(rule);
@@ -450,7 +450,7 @@ public class YieldTest extends AbstractJobManagerTest {
 					while (Job.getJobManager().currentJob().yieldRule(null) == null) {
 						//loop until yield succeeds
 					}
-					// ensure that the other job ran 
+					// ensure that the other job ran
 					barrier.waitForStatus(TestBarrier.STATUS_DONE);
 				} finally {
 					Job.getJobManager().endRule(rule);

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *     Stephan Wahlbrink  - Test fix for bug 200997.
@@ -1017,7 +1017,7 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	/**
-	 * Asserts that the LockListener is called correctly during invocation of 
+	 * Asserts that the LockListener is called correctly during invocation of
 	 * {@link Job#join()}.
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=195839.
 	 */
@@ -1598,11 +1598,11 @@ public class JobTest extends AbstractJobTest {
 	//			try {
 	//				Thread.sleep(100);
 	//			} catch (InterruptedException e) {
-	//				
-	//			} 
-	//			
+	//
+	//			}
+	//
 	//			//sanity test to avoid hanging tests
 	//			assertTrue("Timeout waiting for job to end", i++ < 1000);
 	//		}
-	//	}	
+	//	}
 }

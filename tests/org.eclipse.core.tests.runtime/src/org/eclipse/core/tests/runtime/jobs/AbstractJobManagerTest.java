@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Thirumala Reddy Mutchukota - Bug 432049, JobGroup API and implementation
@@ -47,7 +47,7 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 	 * Will return a list (snapshot) of all jobs that are currently running, at
 	 * *this* exact moment in time, excluding the calling thread's Job (if it is
 	 * within one)
-	 * 
+	 *
 	 * @param family
 	 *            The job family to search for, or null for all jobs.
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.junit.Assert;
 
 /**
- * 
+ *
  */
 public class TestProgressMonitor implements IProgressMonitor {
 
@@ -23,7 +23,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Records the number of times worked or internalWorked was called with
-	 * an argument of 0. 
+	 * an argument of 0.
 	 */
 	private int redundantWorkCalls;
 
@@ -96,9 +96,9 @@ public class TestProgressMonitor implements IProgressMonitor {
 	}
 
 	/**
-	 * Returns the number of times beginTask() was called. For a correctly written job, 
+	 * Returns the number of times beginTask() was called. For a correctly written job,
 	 * this should equal 1 on completion.
-	 * 
+	 *
 	 * @return the number of calls to beginTask
 	 */
 	public int getBeginTaskCalls() {
@@ -106,9 +106,9 @@ public class TestProgressMonitor implements IProgressMonitor {
 	}
 
 	/**
-	 * Returns the number of times done() was called. For a correctly written job, 
-	 * this should equal 1 on completion. 
-	 * 
+	 * Returns the number of times done() was called. For a correctly written job,
+	 * this should equal 1 on completion.
+	 *
 	 * @return the number of calls to done
 	 */
 	public int getDoneCalls() {
@@ -117,10 +117,10 @@ public class TestProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Returns the number of times worked was called as a no-op.
-	 * That is, it counts the number of times worked() or internalWorked() had 
-	 * ever been called with a value of 0. This should return 0 for an 
+	 * That is, it counts the number of times worked() or internalWorked() had
+	 * ever been called with a value of 0. This should return 0 for an
 	 * optimally-written job.
-	 * 
+	 *
 	 * @return true iff redundant calls were ever made to *worked() on this
 	 * monitor.
 	 */
@@ -131,7 +131,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 	/**
 	 * Returns the number of calls to isCancelled(). Optimally-written
 	 * jobs may call this an unbounded number of times.
-	 * 
+	 *
 	 * @return the number of calls to isCancelled().
 	 */
 	public int getIsCanceledCalls() {
@@ -159,7 +159,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 	 * have jumpy progress, and a job that reports work more often than this is reporting
 	 * progress that won't be visible to the user and is wasting time in progress monitoring
 	 * code.
-	 *  
+	 *
 	 * @return the number of calls to worked(int) or internalWorked(double)
 	 */
 	public int getWorkCalls() {
@@ -169,8 +169,8 @@ public class TestProgressMonitor implements IProgressMonitor {
 	/**
 	 * Returns the number of calls to internalWorked. For an optimally-written job,
 	 * this should be 0, since integer work is faster and has no chance
-	 * of floating-point rounding errors. 
-	 *  
+	 * of floating-point rounding errors.
+	 *
 	 * @return the number of calls to internalWorked
 	 */
 	public int getDoubleWorkedCalls() {
@@ -181,7 +181,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 	 * Returns the number of calls to worked(int). For an optimally-written job,
 	 * this should equal getWorkCalls, since integer work is faster and has no
 	 * chance of floating-point rounding errors.
-	 * 
+	 *
 	 * @return the number of calls to worked(int)
 	 */
 	public int getIntWorkedCalls() {
@@ -199,7 +199,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 	/**
 	 * Returns the total work reported on this monitor. For an optimally-written job,
 	 * this should be +/- a small epsilon to account for floating point error.
-	 * 
+	 *
 	 * @return the total work reported on this job
 	 */
 	public double getTotalWork() {

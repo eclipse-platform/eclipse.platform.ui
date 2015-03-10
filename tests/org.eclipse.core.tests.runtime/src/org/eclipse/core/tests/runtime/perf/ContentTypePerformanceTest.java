@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 458490
@@ -31,7 +31,7 @@ import org.osgi.framework.BundleException;
 
 public class ContentTypePerformanceTest extends RuntimeTest {
 
-	private final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
+	private final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
 	private static final String DEFAULT_NAME = "file_" + ContentTypePerformanceTest.class.getName();
 	private static final int ELEMENTS_PER_LEVEL = 4;
 	private static final int NUMBER_OF_LEVELS = 4;
@@ -213,7 +213,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	}
 
 	/**
-	 * Warms up the content type registry. 
+	 * Warms up the content type registry.
 	 */
 	private void loadChildren() {
 		final IContentTypeManager manager = Platform.getContentTypeManager();
@@ -233,7 +233,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	 * be called outside the scope of performance monitoring.
 	 */
 	private IContentTypeManager loadContentTypeManager() {
-		// any cheap interaction that causes the catalog to be built				
+		// any cheap interaction that causes the catalog to be built
 		Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 		return Platform.getContentTypeManager();
 	}
@@ -300,7 +300,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	}
 
 	public void testIsKindOf() {
-		// warm up preference service		
+		// warm up preference service
 		loadPreferences();
 		// warm up content type registry
 		final IContentTypeManager manager = loadContentTypeManager();
@@ -322,7 +322,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	 * This test is intended for running as a session test.
 	 */
 	public void testLoadCatalog() {
-		// warm up preference service		
+		// warm up preference service
 		loadPreferences();
 		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			protected void test() {
@@ -331,13 +331,13 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			}
 		};
 		runner.run(this, 1, /* must run only once - the suite controls how many sessions are run */1);
-		// sanity check to make sure we are running with good data		
+		// sanity check to make sure we are running with good data
 		assertEquals("missing content types", TOTAL_NUMBER_OF_ELEMENTS, countTestContentTypes(Platform.getContentTypeManager().getAllContentTypes()));
 	}
 
 	/** Tests how much the size of the catalog affects the performance of content type matching by name */
 	public void testNameMatching() {
-		// warm up preference service		
+		// warm up preference service
 		loadPreferences();
 		// warm up content type registry
 		final IContentTypeManager manager = loadContentTypeManager();

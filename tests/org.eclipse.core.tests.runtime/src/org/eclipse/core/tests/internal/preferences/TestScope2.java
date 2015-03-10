@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.core.tests.harness.CoreTest;
 import org.osgi.service.prefs.BackingStoreException;
 
 /*
- * Test scope used for testing the file format on disk. 
+ * Test scope used for testing the file format on disk.
  * Specifically in EclipsePreferencesTest.test_342709.
  */
 public class TestScope2 extends EclipsePreferences implements IScopeContext {

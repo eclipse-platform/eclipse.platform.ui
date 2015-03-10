@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564     
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
@@ -164,7 +164,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		actual = test.get(key, null);
 		assertEquals("3.2", newOldValue, actual);
 
-		// import 
+		// import
 		ByteArrayInputStream input = new ByteArrayInputStream(bytes);
 		try {
 			service.importPreferences(input);
@@ -241,7 +241,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testLookupOrder() {
 		IPreferencesService service = Platform.getPreferencesService();
-		String[] defaultOrder = new String[] {"project", //$NON-NLS-1$ 
+		String[] defaultOrder = new String[] {"project", //$NON-NLS-1$
 				InstanceScope.SCOPE, //
 				ConfigurationScope.SCOPE, //
 				DefaultScope.SCOPE};
@@ -1091,8 +1091,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	/*
 	 * See Bug 208564 - [Preferences] preferenceTransfer: Allow wildcards on keys
-	 * Since 3.6 preferenceTransfer allows to define common prefix for group of 
-	 * preferences 
+	 * Since 3.6 preferenceTransfer allows to define common prefix for group of
+	 * preferences
 	 */
 	public void testExportWithTransfers4() {
 		final String VALID_QUALIFIER = getUniqueString();
