@@ -177,7 +177,7 @@ public class ExpressionTests extends TestCase {
         assertTrue(result == EvaluationResult.TRUE);
     }
 
-	
+
 	public void testAdaptExpressionNotEqual() throws Exception {
 		AdaptExpression expression1 = new AdaptExpression(
 				"org.eclipse.core.internal.expressions.tests.Adapter"); //$NON-NLS-1$
@@ -750,7 +750,7 @@ public class ExpressionTests extends TestCase {
 		EvaluationContext context= new EvaluationContext(null, input);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
-	
+
 	public void testIterateExpressionEmptyOr() throws Exception {
 		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
 		List input= new ArrayList();
@@ -991,7 +991,7 @@ public class ExpressionTests extends TestCase {
 		context= new EvaluationContext(context, Collections.singletonList(probExpr));
 		assertEquals(EvaluationResult.TRUE, probExpr.evaluate(context));
 	}
-	
+
 	public void testSubType() throws Exception {
 		EvaluationContext context= new EvaluationContext(null, IEvaluationContext.UNDEFINED_VARIABLE);
 		ArrayList list= new ArrayList();
@@ -1027,7 +1027,7 @@ public class ExpressionTests extends TestCase {
 
 	public void testSubTypeTiming() throws Exception {
 		HashSet o1= new HashSet();
-		
+
 		System.gc();
 		long cachedStart= System.currentTimeMillis();
 		for (int i= 0; i < TYPE_ITERATIONS; i++) {
@@ -1043,7 +1043,7 @@ public class ExpressionTests extends TestCase {
 			assertFalse(Expressions.uncachedIsSubtype(o1.getClass(), "java.util.List"));
 		}
 		long instanceDelta= System.currentTimeMillis() - instanceStart;
-		
+
 		assertTrue("cachedDelta: " + cachedDelta + ", instanceDelta: " + instanceDelta, cachedDelta * 2 < instanceDelta);
 	}
 

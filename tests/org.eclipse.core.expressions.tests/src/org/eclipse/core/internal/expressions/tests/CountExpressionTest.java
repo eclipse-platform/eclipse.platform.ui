@@ -28,7 +28,7 @@ public class CountExpressionTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(CountExpressionTest.class);
 	}
-	
+
 	private static EvaluationContext evaluationContext(int size) {
 		List variable = new ArrayList(size + 1);
 		for (int i = 0; i < size; ++i)
@@ -89,5 +89,5 @@ public class CountExpressionTest extends TestCase {
 		Assert.assertEquals(EvaluationResult.FALSE, e.evaluate(evaluationContext(3)));
 		Assert.assertEquals(EvaluationResult.FALSE, e.evaluate(evaluationContext(2)));
 	}
-	
+
 }

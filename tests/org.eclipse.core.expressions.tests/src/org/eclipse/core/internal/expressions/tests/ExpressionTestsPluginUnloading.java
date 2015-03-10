@@ -65,7 +65,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 
 		bundle.stop();
 		assertEquals(Bundle.RESOLVED, bundle.getState());
-		
+
 		bundle.start();
 		assertEquals(Bundle.ACTIVE, bundle.getState());
 
@@ -75,39 +75,39 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	public void test02MultipleClassloaders() throws Exception {
 		Bundle expr= getBundle("org.eclipse.core.expressions.tests");
 		Bundle icu= getBundle("com.ibm.icu");
-		
+
 		Class exprClass= expr.loadClass("com.ibm.icu.text.DecimalFormat");
 		Class icuClass= icu.loadClass("com.ibm.icu.text.DecimalFormat");
 		assertNotSame(exprClass, icuClass);
-		
+
 		Object exprObj= exprClass.newInstance();
 		Object icuObj= icuClass.newInstance();
-		
+
 		assertInstanceOf(exprObj, "java.lang.Runnable", "java.lang.String");
 		assertInstanceOf(exprObj, "java.lang.Object", "java.io.Serializable");
-		
+
 		assertInstanceOf(icuObj, "java.io.Serializable", "java.lang.String");
 		assertInstanceOf(icuObj, "java.text.Format", "java.lang.Runnable");
 	}
 
 	private void assertInstanceOf(Object obj, String isInstance, String isNotInstance) throws Exception {
 		Class clazz= obj.getClass();
-		
+
 		System.out.println("ExpressionTestsPluginUnloading#" + getName() + "() - " + clazz.getName() + ": " + clazz.hashCode());
 		System.out.println("ExpressionTestsPluginUnloading#" + getName() + "() - ClassLoader: " + clazz.getClassLoader().hashCode());
-		
+
 		for (int i= 0; i < 2; i++) { // test twice, second time is cached:
 			assertTrue(Expressions.isInstanceOf(obj, isInstance));
 			assertFalse(Expressions.isInstanceOf(obj, isNotInstance));
 		}
 	}
-	
+
 	private void doTestInstanceofICUDecimalFormat(Bundle bundle) throws Exception {
 		Class clazz= bundle.loadClass("com.ibm.icu.text.DecimalFormat");
 		Object decimalFormat= clazz.newInstance();
 		assertInstanceOf(decimalFormat, "com.ibm.icu.text.DecimalFormat", "java.text.NumberFormat");
 	}
-	
+
 	private static Bundle getBundle(String bundleName) {
 		BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
 		Bundle[] bundles= bundleContext.getBundles();
