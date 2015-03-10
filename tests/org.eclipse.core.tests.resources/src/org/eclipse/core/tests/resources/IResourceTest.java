@@ -271,7 +271,7 @@ public class IResourceTest extends ResourceTest {
 
 	/**
 	 * Returns an array of all projects in the given resource array.
-     */
+	 */
 	protected IProject[] getProjects(IResource[] resources) {
 		ArrayList<IProject> list = new ArrayList<IProject>();
 		for (int i = 0; i < resources.length; i++) {
@@ -313,8 +313,8 @@ public class IResourceTest extends ResourceTest {
 	 * Returns interesting resource states. */
 	protected Integer[] interestingStates() {
 		return new Integer[] {new Integer(S_WORKSPACE_ONLY), new Integer(S_FILESYSTEM_ONLY), new Integer(S_UNCHANGED), new Integer(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
-		//		new Integer(S_FOLDER_TO_FILE),
-		//		new Integer(S_FILE_TO_FOLDER),
+				//		new Integer(S_FOLDER_TO_FILE),
+				//		new Integer(S_FILE_TO_FOLDER),
 		};
 	}
 
@@ -2504,5 +2504,32 @@ public class IResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			// pass
 		}
+	}
+
+	// https://bugs.eclipse.org/461838
+	public void testAcceptProxyVisitorAlphabetic() throws CoreException {
+		IProject project = getWorkspace().getRoot().getProject("P");
+		IFolder a = project.getFolder("a");
+		IFile a1 = a.getFile("a1.txt");
+		IFile a2 = a.getFile("a2.txt");
+		IFolder b = a.getFolder("b");
+		IFile b1 = b.getFile("b1.txt");
+		IFile b2 = b.getFile("B2.txt");
+
+		ensureExistsInWorkspace(new IResource[] {project, a, a1, a2, b, b1, b2}, true);
+
+		final List<IResource> actualOrder = new ArrayList<IResource>();
+		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+			@Override
+			public boolean visit(IResourceProxy proxy) {
+				actualOrder.add(proxy.requestResource());
+				return true;
+			}
+		};
+
+		project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
+
+		List<IResource> expectedOrder = Arrays.asList(project, project.getFile(".project"), a, a1, a2, b, b2, b1);
+		assertEquals("1.0", expectedOrder.toString(), actualOrder.toString());
 	}
 }

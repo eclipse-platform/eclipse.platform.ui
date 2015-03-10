@@ -82,7 +82,8 @@ public class ElementTreeIterator implements IPathRequestor {
 		if (visitor.visitElement(tree, this, node.getData())) {
 			//recurse
 			AbstractDataTreeNode[] children = node.getChildren();
-			for (int i = children.length; --i >= 0;) {
+			int len = children.length;
+			for (int i = 0; i < len; i++) {
 				doIteration((DataTreeNode) children[i], visitor);
 			}
 		}
@@ -116,7 +117,8 @@ public class ElementTreeIterator implements IPathRequestor {
 				if (treeRoot == null)
 					return;
 				AbstractDataTreeNode[] children = treeRoot.getChildren();
-				for (int i = children.length; --i >= 0;) {
+				int len = children.length;
+				for (int i = 0; i < len; i++) {
 					doIteration((DataTreeNode) children[i], visitor);
 				}
 			}
