@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableValue}.
- * 
+ *
  * @since 3.3
  */
 public class BeanObservableValueDecorator extends DecoratingObservableValue

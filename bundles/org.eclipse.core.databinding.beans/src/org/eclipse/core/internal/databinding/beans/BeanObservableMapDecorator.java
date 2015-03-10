@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableMap}.
- * 
+ *
  * @since 3.3
  */
 public class BeanObservableMapDecorator extends DecoratingObservableMap

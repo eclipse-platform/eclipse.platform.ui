@@ -28,7 +28,7 @@ import org.eclipse.core.databinding.property.set.SetProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class BeanSetPropertyDecorator extends SetProperty implements
 		IBeanSetProperty {

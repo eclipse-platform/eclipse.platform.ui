@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.property.map.IMapProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class AnonymousPojoMapProperty extends DelegatingMapProperty {
 	private final String propertyName;

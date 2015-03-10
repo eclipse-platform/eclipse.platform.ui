@@ -26,7 +26,7 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class PojoSetProperty extends SimpleSetProperty {
 	private final PropertyDescriptor propertyDescriptor;

@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.property.list.ListProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class BeanListPropertyDecorator extends ListProperty implements
 		IBeanListProperty {

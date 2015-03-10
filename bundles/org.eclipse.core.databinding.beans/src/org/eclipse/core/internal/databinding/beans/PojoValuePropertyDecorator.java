@@ -29,7 +29,7 @@ import org.eclipse.core.databinding.property.value.ValueProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class PojoValuePropertyDecorator extends ValueProperty implements
 		IBeanValueProperty {

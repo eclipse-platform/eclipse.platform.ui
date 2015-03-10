@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class AnonymousBeanListProperty extends DelegatingListProperty {
 	private final String propertyName;

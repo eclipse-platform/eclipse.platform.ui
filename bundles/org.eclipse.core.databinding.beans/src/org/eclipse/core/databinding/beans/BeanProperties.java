@@ -38,7 +38,7 @@ import org.eclipse.core.internal.databinding.beans.BeanValuePropertyDecorator;
  * A factory for creating properties for Java objects that conform to the <a
  * href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
  * specification</a> for bound properties.
- * 
+ *
  * @since 1.2
  */
 public class BeanProperties {
@@ -46,7 +46,7 @@ public class BeanProperties {
 	 * Returns a value property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains null.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name. May be nested e.g. "parent.name"
 	 * @return a value property for the given property name of an arbitrary bean
@@ -60,7 +60,7 @@ public class BeanProperties {
 	 * Returns a value property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains null.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name. May be nested e.g. "parent.name"
 	 * @param valueType
@@ -75,7 +75,7 @@ public class BeanProperties {
 	/**
 	 * Returns a value property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -90,7 +90,7 @@ public class BeanProperties {
 	/**
 	 * Returns a value property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -143,7 +143,7 @@ public class BeanProperties {
 	/**
 	 * Returns a value property array for the given property names of the given
 	 * bean class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyNames
@@ -162,7 +162,7 @@ public class BeanProperties {
 	/**
 	 * Returns a value property array for the given property names of an
 	 * arbitrary bean class.
-	 * 
+	 *
 	 * @param propertyNames
 	 *            array of property names. May be nested e.g. "parent.name"
 	 * @return a value property array for the given property names of the given
@@ -176,7 +176,7 @@ public class BeanProperties {
 	 * Returns a set property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains an empty set.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @return a set property for the given property name of an arbitrary bean
@@ -190,7 +190,7 @@ public class BeanProperties {
 	 * Returns a set property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains an empty set.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @param elementType
@@ -205,7 +205,7 @@ public class BeanProperties {
 	/**
 	 * Returns a set property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -220,7 +220,7 @@ public class BeanProperties {
 	/**
 	 * Returns a set property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -249,7 +249,7 @@ public class BeanProperties {
 	 * Returns a list property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains an empty list.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @return a list property for the given property name of an arbitrary bean
@@ -263,7 +263,7 @@ public class BeanProperties {
 	 * Returns a list property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains an empty list.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @param elementType
@@ -278,7 +278,7 @@ public class BeanProperties {
 	/**
 	 * Returns a list property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -293,7 +293,7 @@ public class BeanProperties {
 	/**
 	 * Returns a list property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -322,7 +322,7 @@ public class BeanProperties {
 	 * Returns a map property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains an empty map.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @return a map property for the given property name of an arbitrary bean
@@ -336,7 +336,7 @@ public class BeanProperties {
 	 * Returns a map property for the given property name of an arbitrary bean
 	 * class. Objects lacking the named property are treated the same as if the
 	 * property always contains an empty map.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @param keyType
@@ -354,7 +354,7 @@ public class BeanProperties {
 	/**
 	 * Returns a map property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
@@ -369,7 +369,7 @@ public class BeanProperties {
 	/**
 	 * Returns a map property for the given property name of the given bean
 	 * class.
-	 * 
+	 *
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName

@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.Status;
 /**
  * This is a helper that will hook up and listen for
  * <code>PropertyChangeEvent</code> events for a set of target JavaBeans
- * 
+ *
  * @since 1.0
  */
 public class BeanPropertyListenerSupport {
 	/**
 	 * Start listen to target (if it supports the JavaBean property change
 	 * listener pattern)
-	 * 
+	 *
 	 * @param bean
 	 * @param propertyName
 	 * @param listener
@@ -47,7 +47,7 @@ public class BeanPropertyListenerSupport {
 
 	/**
 	 * Stop listen to target
-	 * 
+	 *
 	 * @param bean
 	 * @param propertyName
 	 * @param listener
@@ -68,7 +68,7 @@ public class BeanPropertyListenerSupport {
 	/**
 	 * Invokes the method for the provided <code>methodName</code> attempting to
 	 * first use the method with the property name and then the unnamed version.
-	 * 
+	 *
 	 * @param bean
 	 *            object to invoke the method on
 	 * @param methodName
@@ -76,7 +76,7 @@ public class BeanPropertyListenerSupport {
 	 *            removePropertyChangeListener
 	 * @param message
 	 *            string that will be prefixed to the target in an error message
-	 * 
+	 *
 	 * @return <code>true</code> if the method was invoked successfully
 	 */
 	private static boolean processListener(Object bean, String propertyName,

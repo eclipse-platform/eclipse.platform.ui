@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.property.map.MapProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class BeanMapPropertyDecorator extends MapProperty implements
 		IBeanMapProperty {

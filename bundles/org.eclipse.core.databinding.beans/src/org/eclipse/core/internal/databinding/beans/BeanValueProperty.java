@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class BeanValueProperty extends SimpleValueProperty {
 	private final PropertyDescriptor propertyDescriptor;

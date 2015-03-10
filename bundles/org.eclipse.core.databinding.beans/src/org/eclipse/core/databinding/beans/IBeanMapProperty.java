@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.property.map.IMapProperty;
 /**
  * An {@link IMapProperty} extension interface with convenience methods for
  * creating nested bean properties.
- * 
+ *
  * @since 1.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -27,7 +27,7 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * value property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the value property to observe. May be nested e.g.
 	 *            "parent.name"
@@ -40,7 +40,7 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * value property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the value property to observe. May be nested e.g.
 	 *            "parent.name"
@@ -59,7 +59,7 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	 * property, mapping from this map property's {@link Map#keySet() key set}
 	 * to the specified value property's value for each element in the master
 	 * property's {@link Map#values() values} collection.
-	 * 
+	 *
 	 * @param property
 	 *            the detail property to observe
 	 * @return a master-detail combination of this property and the specified

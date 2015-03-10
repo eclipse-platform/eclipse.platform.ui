@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableSet}.
- * 
+ *
  * @since 3.3
  */
 public class BeanObservableSetDecorator extends DecoratingObservableSet

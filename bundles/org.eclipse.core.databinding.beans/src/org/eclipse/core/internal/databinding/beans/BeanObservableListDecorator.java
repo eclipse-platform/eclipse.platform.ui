@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableList}.
- * 
+ *
  * @since 3.3
  */
 public class BeanObservableListDecorator extends DecoratingObservableList

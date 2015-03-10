@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class AnonymousPojoValueProperty extends DelegatingValueProperty {
 	private final String propertyName;

@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.property.NativePropertyListener;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class BeanPropertyListener extends NativePropertyListener
 		implements PropertyChangeListener {

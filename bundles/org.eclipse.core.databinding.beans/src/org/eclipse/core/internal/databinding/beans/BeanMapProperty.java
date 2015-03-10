@@ -25,7 +25,7 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class BeanMapProperty extends SimpleMapProperty {
 	private final PropertyDescriptor propertyDescriptor;

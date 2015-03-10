@@ -26,7 +26,7 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class PojoListProperty extends SimpleListProperty {
 	private final PropertyDescriptor propertyDescriptor;

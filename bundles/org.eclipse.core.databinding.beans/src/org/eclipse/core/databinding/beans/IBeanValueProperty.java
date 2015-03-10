@@ -16,7 +16,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 /**
  * An {@link IValueProperty} extension interface with convenience methods for
  * creating nested bean properties.
- * 
+ *
  * @since 1.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -25,7 +25,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * value property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the value property to observe. May be nested e.g.
 	 *            "parent.name"
@@ -38,7 +38,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * value property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the value property to observe. May be nested e.g.
 	 *            "parent.name"
@@ -56,7 +56,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * value property for the value of the master value property.
 	 * <p>
 	 * Example:
-	 * 
+	 *
 	 * <pre>
 	 * // Observes the Node-typed &quot;parent&quot; property of a Node object
 	 * IBeanValueProperty parent = BeanProperties.value(Node.class, &quot;parent&quot;);
@@ -65,7 +65,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * // Observes the name of the parent of a Node object.
 	 * IBeanValueProperty parentName = parent.value(name);
 	 * </pre>
-	 * 
+	 *
 	 * @param property
 	 *            the detail property to observe
 	 * @return a master-detail combination of this property and the specified
@@ -76,7 +76,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * list property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the list property to observe
 	 * @return a master-detail combination of this property and the specified
@@ -88,7 +88,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * list property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the list property to observe
 	 * @param elementType
@@ -105,7 +105,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * property for the value of the master property.
 	 * <p>
 	 * Example:
-	 * 
+	 *
 	 * <pre>
 	 * // Observes the Node-typed &quot;parent&quot; property of a Node object.
 	 * IBeanValueProperty parent = BeanProperties.value(Node.class, &quot;parent&quot;);
@@ -116,7 +116,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * // Observes the children of the parent (siblings) of a Node object.
 	 * IBeanListProperty siblings = parent.list(children);
 	 * </pre>
-	 * 
+	 *
 	 * @param property
 	 *            the detail property to observe
 	 * @return a master-detail combination of this property and the specified
@@ -127,7 +127,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * set property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the set property to observe
 	 * @return a master-detail combination of this property and the specified
@@ -139,7 +139,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * set property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the set property to observe
 	 * @param elementType
@@ -156,7 +156,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * property for the value of the master property.
 	 * <p>
 	 * Example:
-	 * 
+	 *
 	 * <pre>
 	 * // Observes the Node-typed &quot;parent&quot; property of a Node object.
 	 * IBeanValueProperty parent = BeanProperties.value(Node.class, &quot;parent&quot;);
@@ -167,7 +167,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * // Observes the children of the parent (siblings) of a Node object.
 	 * IBeanSetProperty siblings = parent.set(children);
 	 * </pre>
-	 * 
+	 *
 	 * @param property
 	 *            the detail property to observe
 	 * @return a master-detail combination of this property and the specified
@@ -178,7 +178,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * map property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the map property to observe
 	 * @return a master-detail combination of this property and the specified
@@ -190,7 +190,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	/**
 	 * Returns a master-detail combination of this property and the specified
 	 * map property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the map property to observe
 	 * @param keyType
@@ -210,10 +210,10 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * property for the value of the master property.
 	 * <p>
 	 * Example:
-	 * 
+	 *
 	 * <pre>
 	 * // Observes the Contact-typed &quot;supervisor&quot; property of a
-	 * // Contact class 
+	 * // Contact class
 	 * IBeanValueProperty supervisor = BeanProperties.value(Contact.class,
 	 * 		&quot;supervisor&quot;);
 	 * // Observes the property &quot;phoneNumbers&quot; of a Contact object--a property mapping
@@ -223,7 +223,7 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 * // Observes the phone numbers of a contact's supervisor:
 	 * IBeanMapProperty supervisorPhoneNumbers = supervisor.map(phoneNumbers);
 	 * </pre>
-	 * 
+	 *
 	 * @param property
 	 *            the detail property to observe
 	 * @return a master-detail combination of this property and the specified
