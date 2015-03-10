@@ -32,7 +32,7 @@ public class Screenshots {
 
 	/**
 	 * Takes a screenshot and dumps other debugging information to the given stream.
-	 * 
+	 *
 	 * @param testClass test class that takes the screenshot
 	 * @param name screenshot identifier (e.g. test name)
 	 * @param out print stream to use for diagnostics.
@@ -40,14 +40,14 @@ public class Screenshots {
 	 */
 	public static String takeScreenshot(Class<?> testClass, String name, PrintStream out) {
 		File resultsHtmlDir= getJunitReportOutput(); // ends up in testresults/linux.gtk.x86_6.0/<class>.<test>.png
-		
+
 		if (resultsHtmlDir == null) { // Fallback. Warning: uses same file location on all test platforms:
 			File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
 			resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile(); // ends up in testresults/html/<class>.<test>.png
 		}
-		
+
 		Display display= Display.getCurrent();
-		
+
 		// Wiggle the mouse:
 		Event mouseMove= new Event();
 		mouseMove.x= 10;
@@ -58,7 +58,7 @@ public class Screenshots {
 		mouseMove.y= 20;
 		display.post(mouseMove);
 		runEventQueue();
-		
+
 		// Dump focus control, parents, and shells:
 		Control focusControl = display.getFocusControl();
 		out.println("FocusControl: ");
@@ -82,7 +82,7 @@ public class Screenshots {
 				out.println(" @ " + shell.getBounds().toString());
 			}
 		}
-		
+
 		// Take a screenshot:
 		GC gc = new GC(display);
 		Rectangle displayBounds= display.getBounds();
@@ -93,7 +93,7 @@ public class Screenshots {
 
 		resultsHtmlDir.mkdirs();
 		String filename = new File(
-				resultsHtmlDir.getAbsolutePath(), 
+				resultsHtmlDir.getAbsolutePath(),
 				testClass.getName() + "." + name + ".png").getAbsolutePath();
 		ImageLoader loader = new ImageLoader();
 		loader.data = new ImageData[] { image.getImageData() };

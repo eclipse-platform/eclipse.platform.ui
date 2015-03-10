@@ -61,8 +61,8 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Returns a new shell to be used in a test. This method is called by {@link #getShell()}.
-	 * It should not be called by test code, but it can be overridden to configure the created shell. 
-	 * 
+	 * It should not be called by test code, but it can be overridden to configure the created shell.
+	 *
 	 * @return shell
 	 */
 	protected Shell createShell() {
