@@ -217,7 +217,7 @@ public class TextSearchVisitor {
 		int maxThreads= fCollector.canRunInParallel() ? NUMBER_OF_LOGICAL_THREADS : 1;
 		int jobCount= 1;
 		if (maxThreads > 1) {
-			jobCount= Math.round((files.length + FILES_PER_JOB - 1) / FILES_PER_JOB);
+			jobCount= (files.length + FILES_PER_JOB - 1) / FILES_PER_JOB;
 		}
 		final JobGroup jobGroup= new TextSearchJobGroup("Text Search", maxThreads, jobCount); //$NON-NLS-1$
 		long startTime= TRACING ? System.currentTimeMillis() : 0;
