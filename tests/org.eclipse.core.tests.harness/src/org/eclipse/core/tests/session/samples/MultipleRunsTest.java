@@ -22,10 +22,10 @@ public class MultipleRunsTest extends TestCase {
 		test.setApplicationId(SessionTestSuite.CORE_TEST_APPLICATION);
 		test.setPluginId(CoreTest.PI_HARNESS);
 		test.setTestRunner(new SessionTestRunner());
-		// setup the command line to be passed to the multiple runs so it has the right system properties			
+		// setup the command line to be passed to the multiple runs so it has the right system properties
 		test.setSetup(SetupManager.getInstance().getDefaultSetup());
 		test.getSetup().setSystemProperty("eclipse.perf.dbloc", System.getProperty("eclipse.perf.dbloc"));
-		test.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));		
+		test.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));
 		// runs the test case several times - only to collect data, won't do any assertions
 		TestResult result = new TestResult();
 		for (int i = 0; i < 5; i++) {
@@ -40,7 +40,7 @@ public class MultipleRunsTest extends TestCase {
 			}
 		}
 		// create a performance meter whose scenario id matches the one used in the test case run
-		// our convention: scenario IDs are <test case class name> + '.' + <test case method name> 
+		// our convention: scenario IDs are <test case class name> + '.' + <test case method name>
 		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(test.getTestClass() + '.' + test.getTestMethod());
 		// finally do the assertion
 		Performance.getDefault().assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -50, 5);

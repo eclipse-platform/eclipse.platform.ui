@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 public class SessionTestSuite extends TestSuite {
-	public static final String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$	
-	public static final String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$	
+	public static final String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
+	public static final String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	protected String applicationId = CORE_TEST_APPLICATION;
 	private Set crashTests = new HashSet();
 	private Set localTests = new HashSet();
@@ -122,7 +122,7 @@ public class SessionTestSuite extends TestSuite {
 	}
 
 	/**
-	 * Runs this session test suite.  
+	 * Runs this session test suite.
 	 */
 	public void run(TestResult result) {
 		if (!sharedSession) {
@@ -176,8 +176,8 @@ public class SessionTestSuite extends TestSuite {
 			// find and run the test cases that make up the suite
 			runTestSuite((TestSuite) test, result);
 		else
-			// we don't support session tests for things that are not TestCases 
-			// or TestSuites (e.g. TestDecorators) 
+			// we don't support session tests for things that are not TestCases
+			// or TestSuites (e.g. TestDecorators)
 			test.run(result);
 	}
 

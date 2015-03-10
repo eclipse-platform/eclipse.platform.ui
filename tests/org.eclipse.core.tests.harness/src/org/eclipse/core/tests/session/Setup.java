@@ -49,7 +49,7 @@ public class Setup implements Cloneable {
 	public static final String VM = "vm";
 
 	private static final String WS = "ws";
-	
+
 	private static final String PROP_BOOT_DELEGATION = "org.osgi.framework.bootdelegation";
 
 	public static String getDefaultArchOption() {
@@ -94,7 +94,7 @@ public class Setup implements Cloneable {
 	/**
 	 * Creates a setup containing default settings. The default settings will
 	 * vary depending on the running environment.
-	 * 
+	 *
 	 * @see #getDefaultConfiguration()
 	 * @see #getDefaultDebugOption()
 	 * @see #getDefaultDevOption()
@@ -126,7 +126,7 @@ public class Setup implements Cloneable {
 		if (defaultOS != null) {
 			defaultSetup.setEclipseArgument(OS, defaultOS);
 			if (Platform.OS_MACOSX.equals(defaultOS))
-				// see bug 98508 
+				// see bug 98508
 				defaultSetup.setVMArgument("XstartOnFirstThread", "");
 		}
 		if (Setup.getDefaultWSOption() != null)
@@ -176,7 +176,7 @@ public class Setup implements Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() {

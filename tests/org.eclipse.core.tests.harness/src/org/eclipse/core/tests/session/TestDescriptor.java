@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -13,10 +13,10 @@ package org.eclipse.core.tests.session;
 import junit.framework.*;
 
 /**
- * A test descriptor represents a test case. It is used by the session 
- * test framework to run tests remotely. Using test descriptors, one 
+ * A test descriptor represents a test case. It is used by the session
+ * test framework to run tests remotely. Using test descriptors, one
  * can run any test case provided by any plug-in by just providing the
- * plug-in id, the test class and the test case name.  
+ * plug-in id, the test class and the test case name.
  */
 public class TestDescriptor extends TestCase {
 	private String applicationId;

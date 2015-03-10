@@ -96,7 +96,7 @@ public class EclipseTestHarnessApplication implements IPlatformRunnable {
 				tests.add(arg);
 			}
 
-			// done checking for args.  Remember where an arg was found 
+			// done checking for args.  Remember where an arg was found
 			if (found) {
 				configArgs[configArgIndex++] = i - 1;
 				configArgs[configArgIndex++] = i;

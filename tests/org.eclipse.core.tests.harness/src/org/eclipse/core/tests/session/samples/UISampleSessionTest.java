@@ -22,9 +22,9 @@ public class UISampleSessionTest extends TestCase {
 	public UISampleSessionTest(String methodName) {
 		super(methodName);
 	}
-	
+
 	/**
-	 * Print a debug message to the console. 
+	 * Print a debug message to the console.
 	 * Pre-pend the message with the current date and the name of the current thread.
 	 */
 	public static void message(String message) {

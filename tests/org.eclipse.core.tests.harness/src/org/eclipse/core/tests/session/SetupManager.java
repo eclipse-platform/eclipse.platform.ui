@@ -122,7 +122,7 @@ public class SetupManager {
 	/**
 	 * Returns a brand new setup object configured according to the current
 	 * default setup settings.
-	 * 
+	 *
 	 * @return a new setup object
 	 */
 	public Setup getDefaultSetup() {
@@ -197,7 +197,7 @@ public class SetupManager {
 				// No setup descriptions found, only the default setup will be available
 				return;
 			}
-			// no setup files found, and we are not running in Eclipse...  
+			// no setup files found, and we are not running in Eclipse...
 			throw new SetupException("No setup descriptions found. Ensure you are specifying the path for an existing setup file (e.g. -Dsetup.files=<setup-file-location1>[...,<setup-file-locationN>])");
 		}
 		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

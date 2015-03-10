@@ -43,7 +43,7 @@ public class TestJob extends Job {
 	}
 
 	/**
-	 * Returns the number of times this job instance has been run, possibly including 
+	 * Returns the number of times this job instance has been run, possibly including
 	 * the current invocation if the job is currently running.
 	 */
 	public synchronized int getRunCount() {

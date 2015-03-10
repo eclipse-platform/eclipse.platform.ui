@@ -13,7 +13,7 @@ package org.eclipse.core.tests.session;
 import java.io.*;
 
 /**
- * Executes an external process synchronously, allowing the client to define 
+ * Executes an external process synchronously, allowing the client to define
  * a maximum amount of time for the process to complete.
  */
 public class ProcessController {
@@ -49,8 +49,8 @@ public class ProcessController {
 	/**
 	 * Constructs an instance of ProcessController. This does not creates an
 	 * OS process. <code>run()</code> does that.
-	 * 
-	 * @param timeout the maximum time the process should take to run 
+	 *
+	 * @param timeout the maximum time the process should take to run
 	 * @param params the parameters to be passed to the controlled process
 	 */
 	public ProcessController(long timeout, String[] params) {
@@ -75,13 +75,13 @@ public class ProcessController {
 	}
 
 	/**
-	 * Causes the process to start executing. This call will block until the 
-	 * process has completed. If <code>timeout</code> is specified, the 
-	 * process will be interrupted if it takes more than the specified amount 
-	 * of time to complete, causing a <code>TimedOutException</code> to be thrown. 
-	 * Specifying zero as <code>timeout</code> means 
-	 * the process is not time constrained.  
-	 * 
+	 * Causes the process to start executing. This call will block until the
+	 * process has completed. If <code>timeout</code> is specified, the
+	 * process will be interrupted if it takes more than the specified amount
+	 * of time to complete, causing a <code>TimedOutException</code> to be thrown.
+	 * Specifying zero as <code>timeout</code> means
+	 * the process is not time constrained.
+	 *
 	 * @return the process exit value
 	 * @throws InterruptedException
 	 * @throws IOException
@@ -98,7 +98,7 @@ public class ProcessController {
 		if (forwardStdIn != null)
 			forwardStream("stdin", forwardStdIn, process.getOutputStream());
 		if (timeLimit > 0)
-			// ensures process execution time does not exceed the time limit 
+			// ensures process execution time does not exceed the time limit
 			controlProcess();
 		try {
 			return process.waitFor();
@@ -112,8 +112,8 @@ public class ProcessController {
 	/**
 	 * Forwards the process standard error output to the given output stream.
 	 * Must be called before execution has started.
-	 * 
-	 * @param err an output stream where to forward the process 
+	 *
+	 * @param err an output stream where to forward the process
 	 * standard error output to
 	 */
 	public void forwardErrorOutput(OutputStream err) {
@@ -123,8 +123,8 @@ public class ProcessController {
 	/**
 	 * Forwards the process standard output to the given output stream.
 	 * Must be called before execution has started.
-	 * 
-	 * @param out an output stream where to forward the process 
+	 *
+	 * @param out an output stream where to forward the process
 	 * standard output to
 	 */
 	public void forwardOutput(OutputStream out) {
@@ -155,9 +155,9 @@ public class ProcessController {
 	}
 
 	/**
-	 * Returns the controled process. Will return <code>null</code> before 
-	 * <code>execute</code> is called. 
-	 * 
+	 * Returns the controled process. Will return <code>null</code> before
+	 * <code>execute</code> is called.
+	 *
 	 * @return the underlying process
 	 */
 	public Process getProcess() {
@@ -191,8 +191,8 @@ public class ProcessController {
 
 	/**
 	 * Returns whether the process was killed due to a time out.
-	 * 
-	 * @return <code>true</code> if the process was killed, 
+	 *
+	 * @return <code>true</code> if the process was killed,
 	 * <code>false</code> if the completed normally
 	 */
 	public boolean wasKilled() {
@@ -202,9 +202,9 @@ public class ProcessController {
 	/**
 	 * Forwards the given input stream to the process standard input.
 	 * Must be called before execution has started.
-	 * 
-	 * @param in an input stream where the process 
-	 * standard input will be forwarded to 
+	 *
+	 * @param in an input stream where the process
+	 * standard input will be forwarded to
 	 */
 	public void forwardInput(InputStream in) {
 		forwardStdIn = in;

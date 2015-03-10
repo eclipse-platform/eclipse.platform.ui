@@ -33,7 +33,7 @@ import org.eclipse.core.tests.harness.CoreTest;
 
 /**
  * This class is responsible for launching JUnit tests on a separate Eclipse session and collect
- * the tests results sent back through a socket . 
+ * the tests results sent back through a socket .
  */
 public class SessionTestRunner {
 
@@ -255,15 +255,15 @@ public class SessionTestRunner {
 
 	/**
 	 * Runs the setup. Returns a status object indicating the outcome of the operation.
-	 *   
-	 * @return a status object indicating the outcome 
+	 *
+	 * @return a status object indicating the outcome
 	 */
 	private IStatus launch(Setup setup) {
 		Assert.isNotNull(setup.getEclipseArgument(Setup.APPLICATION), "test application is not defined");
 		Assert.isNotNull(setup.getEclipseArgument("testpluginname"), "test plug-in id not defined");
 		Assert.isTrue(setup.getEclipseArgument("classname") != null ^ setup.getEclipseArgument("test") != null, "either a test suite or a test case must be provided");
-		// to prevent changes in the protocol from breaking us, 
-		// force the version we know we can work with 
+		// to prevent changes in the protocol from breaking us,
+		// force the version we know we can work with
 		setup.setEclipseArgument("version", "3");
 		IStatus outcome = Status.OK_STATUS;
 		try {

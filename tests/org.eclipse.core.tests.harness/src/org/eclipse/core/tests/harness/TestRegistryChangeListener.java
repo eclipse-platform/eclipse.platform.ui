@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Allows test cases to wait for event notification.  
+ * Allows test cases to wait for event notification.
  */
 public class TestRegistryChangeListener implements IRegistryChangeListener {
 
 	/**
-	 * Indicates that no matching even has been received 
+	 * Indicates that no matching even has been received
 	 */
 	public static final int NO_EVENT = -1;
 
@@ -35,8 +35,8 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	private String extId;
 
 	/**
-	 * Creates a new listener. The parameters allow filtering events based on extension point/extension's 
-	 * namespaces/ids.	
+	 * Creates a new listener. The parameters allow filtering events based on extension point/extension's
+	 * namespaces/ids.
 	 */
 	public TestRegistryChangeListener(String xpNamespace, String xpId, String extNamespace, String extId) {
 		if (xpId != null && xpNamespace == null)
@@ -80,11 +80,11 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 * invalid. Method is preserved for backward compatibility, but users are strongly encouraged
 	 * to switch to {@link #eventTypeReceived(long)}.
 	 * </p>
-	 * 
-	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
-	 * block until an event is received 
+	 *
+	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will
+	 * block until an event is received
 	 * @return the first event received, or <code>null</code> if none was received
-	 * 
+	 *
 	 * @deprecated use {@link #eventTypeReceived(long)} instead
 	 */
 	public synchronized IRegistryChangeEvent getEvent(long timeout) {
@@ -99,17 +99,17 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	}
 
 	/**
-	 * Wait for a registry event that fits IDs specified in the constructor, blocking for 
+	 * Wait for a registry event that fits IDs specified in the constructor, blocking for
 	 * at most <code>timeout</code> milliseconds.
 	 * <p>
-	 * Note: do NOT mix calls to {@link #getEvent(long)} with calls to this method in the same 
+	 * Note: do NOT mix calls to {@link #getEvent(long)} with calls to this method in the same
 	 * instance of this class.
 	 * </p>
-	 * 
-	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
-	 * block until an event is received 
+	 *
+	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will
+	 * block until an event is received
 	 * @return event type
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public synchronized int eventTypeReceived(long timeout) {
@@ -128,17 +128,17 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	}
 
 	/**
-	 * Wait for a registry event that fits IDs specified in the constructor, blocking for 
+	 * Wait for a registry event that fits IDs specified in the constructor, blocking for
 	 * at most <code>timeout</code> milliseconds.
 	 * <p>
-	 * Note: do NOT mix calls to {@link #getEvent(long)} with calls to this method in the same 
+	 * Note: do NOT mix calls to {@link #getEvent(long)} with calls to this method in the same
 	 * instance of this class.
 	 * </p>
-	 * 
-	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
-	 * block until an event is received 
+	 *
+	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will
+	 * block until an event is received
 	 * @return <code>true</code> if event was received; <code>false</code> otherwise
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public synchronized boolean eventReceived(long timeout) {

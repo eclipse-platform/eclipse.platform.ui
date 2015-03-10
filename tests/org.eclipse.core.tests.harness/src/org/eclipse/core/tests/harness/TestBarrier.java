@@ -64,7 +64,7 @@ public class TestBarrier {
 
 	/**
 	 * Blocks the calling thread until the status integer at the given index
-	 * is set to the given value. Fails if the status change does not occur in 
+	 * is set to the given value. Fails if the status change does not occur in
 	 * a reasonable amount of time.
 	 * @param statuses the array of statuses that represent the states of
 	 * an array of jobs or threads
@@ -137,7 +137,7 @@ public class TestBarrier {
 	}
 
 	/**
-	 * Creates a new test barrier on the provided status array, suitable for 
+	 * Creates a new test barrier on the provided status array, suitable for
 	 * acting as a barrier for multiple threads.
 	 */
 	public TestBarrier(int[] location, int index) {

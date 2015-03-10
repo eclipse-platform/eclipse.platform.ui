@@ -60,7 +60,7 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param reason java.lang.String
 	 * @param condition boolean
 	 */
@@ -76,7 +76,7 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		}
 		//Assert.assert(reason, condition);
 	}
-	
+
 	/**
 	 * Asserts that this progress monitor is all used up
 	 */

@@ -61,7 +61,7 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 				super.run(result);
 				return;
 			}
-			// we have to sort the tests cases 			
+			// we have to sort the tests cases
 			Test[] allTests = getTests(true);
 			// now run the tests in order
 			for (int i = 0; i < allTests.length && !result.shouldStop(); i++)

@@ -40,7 +40,7 @@ public abstract class PerformanceTestRunner {
 	 * the inner loop for very fast tests that would otherwise be difficult to measure
 	 * due to Java's poor timer granularity.  The inner loop is not needed for long
 	 * tests that typically take more than a second to execute.
-	 * 
+	 *
 	 * @param testCase The test that is running (used to obtain an appropriate meter)
 	 * @param outer The number of repetitions of the test.
 	 * @param inner The number of repetitions within the performance timer.
@@ -55,7 +55,7 @@ public abstract class PerformanceTestRunner {
 	 * the inner loop for very fast tests that would otherwise be difficult to measure
 	 * due to Java's poor timer granularity.  The inner loop is not needed for long
 	 * tests that typically take more than a second to execute.
-	 * 
+	 *
 	 * @param testCase The test that is running (used to obtain an appropriate meter)
 	 * @param localName the short name used to tag the local test
 	 * @param outer The number of repetitions of the test.

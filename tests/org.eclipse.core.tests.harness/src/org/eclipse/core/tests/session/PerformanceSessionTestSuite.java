@@ -14,14 +14,14 @@ import junit.framework.*;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 /**
- * Runs perfomance test cases multiple times (if they don't fail), 
+ * Runs perfomance test cases multiple times (if they don't fail),
  * enabling assertions for the first run.
  */
 public class PerformanceSessionTestSuite extends SessionTestSuite {
 
 	/**
-	 * This custom test result allows multiple test runs to show up as a 
-	 * single run. 
+	 * This custom test result allows multiple test runs to show up as a
+	 * single run.
 	 */
 	private static class ConsolidatedTestResult extends TestResult {
 		private boolean failed;

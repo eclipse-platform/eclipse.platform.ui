@@ -16,7 +16,7 @@ import junit.framework.*;
 
 /**
  * Test result for a performance test.  Keeps track of all timers that
- * have been created within the test. 
+ * have been created within the test.
  */
 public class PerformanceTestResult extends TestResult {
 	protected PrintWriter output;

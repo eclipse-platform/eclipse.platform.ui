@@ -52,10 +52,10 @@ public class BundleTestingHelper {
 
 	/**
 	 * Do PackageAdmin.refreshPackages() in a synchronous way.  After installing
-	 * all the requested bundles we need to do a refresh and want to ensure that 
+	 * all the requested bundles we need to do a refresh and want to ensure that
 	 * everything is done before returning.
 	 * @param bundles
-	 * TODO remove this since all we wanted was to resolve bundles, what is done by #resolveBundles in this class 
+	 * TODO remove this since all we wanted was to resolve bundles, what is done by #resolveBundles in this class
 	 */
 	//copied from EclipseStarter
 	public static void refreshPackages(BundleContext context, Bundle[] bundles) {

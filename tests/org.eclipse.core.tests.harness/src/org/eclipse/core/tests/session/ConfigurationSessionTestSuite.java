@@ -25,7 +25,7 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 
 public class ConfigurationSessionTestSuite extends SessionTestSuite {
-	// include configurator as it is required by compatibility, but do not set it to start 	
+	// include configurator as it is required by compatibility, but do not set it to start
 	public static String[] MINIMAL_BUNDLE_SET = {"org.eclipse.equinox.common@2:start", //
 			"org.eclipse.core.runtime@:start", //
 			"org.eclipse.core.jobs", //
@@ -151,7 +151,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 				externalForm = path.substring(0, path.length() - 2);
 			} else
 				externalForm = url.toExternalForm();
-			// workaround for bug 88070		
+			// workaround for bug 88070
 			externalForm = "reference:" + externalForm;
 			result.add(externalForm + suffix);
 		}
@@ -199,7 +199,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			}
 			// we have to sort the tests cases
 			Test[] allTests = getTests(true);
-			// now run the tests in order			
+			// now run the tests in order
 			for (int i = 0; i < allTests.length && !result.shouldStop(); i++) {
 				// KLUDGE: this is a  work around update.configurator's
 				// class PlatformConfiguration.initializeCurrent(). That method will overwrite

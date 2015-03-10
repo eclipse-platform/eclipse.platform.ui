@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *		Danail Nachev - Bug 197605 [Test Harness] FileSystemComparator use timestamp as size
@@ -15,9 +15,9 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Assert;
 
-/** 
- * A utility class that compares file system states. It is able to take snapshot of the file system and save it into a 
- * text file for later comparison. 
+/**
+ * A utility class that compares file system states. It is able to take snapshot of the file system and save it into a
+ * text file for later comparison.
  */
 public class FileSystemComparator {
 
@@ -125,7 +125,7 @@ public class FileSystemComparator {
 	}
 
 	/**
-	 * It is a good idea to skip the root location because when the snapshot file is saved, it may cause 
+	 * It is a good idea to skip the root location because when the snapshot file is saved, it may cause
 	 * the timestamp for the parent direcotry to change on some OSes.
 	 */
 	public Object takeSnapshot(File rootLocation, boolean skip) {
