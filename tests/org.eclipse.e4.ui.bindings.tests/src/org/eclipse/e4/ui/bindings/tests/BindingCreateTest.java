@@ -165,5 +165,5 @@ public class BindingCreateTest {
 		assertNull(b.getPlatform());
 		assertTrue(b.getType() == Binding.USER);
 	}
-	
+
 }

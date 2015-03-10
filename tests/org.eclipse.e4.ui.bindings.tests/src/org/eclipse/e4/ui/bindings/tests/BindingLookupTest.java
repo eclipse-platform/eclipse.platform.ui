@@ -506,7 +506,7 @@ public class BindingLookupTest {
 			String contextId) {
 		Map<String, String> attrs = new HashMap<String,String>();
 		attrs.put("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
-		
+
 		return bs.createBinding(sequence, command, contextId, attrs);
 	}
 

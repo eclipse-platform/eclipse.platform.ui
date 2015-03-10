@@ -28,7 +28,7 @@ public class Activator implements BundleActivator {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	private IEclipseContext appContext;
 	private IEclipseContext serviceContext;
 
