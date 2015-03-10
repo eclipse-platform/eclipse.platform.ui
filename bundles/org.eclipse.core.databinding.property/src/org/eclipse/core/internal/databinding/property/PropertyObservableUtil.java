@@ -18,13 +18,13 @@ import org.eclipse.core.databinding.observable.IObservable;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class PropertyObservableUtil {
 	/**
 	 * Causes the target observable to be disposed when the source observable is
 	 * disposed.
-	 * 
+	 *
 	 * @param source
 	 *            the source observable
 	 * @param target

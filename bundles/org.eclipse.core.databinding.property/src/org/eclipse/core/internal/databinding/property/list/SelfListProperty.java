@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class SelfListProperty extends SimpleListProperty {
 	private final Object elementType;

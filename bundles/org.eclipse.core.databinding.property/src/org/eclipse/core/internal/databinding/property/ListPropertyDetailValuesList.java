@@ -28,7 +28,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ListPropertyDetailValuesList extends ListProperty {
 	private final IListProperty masterProperty;

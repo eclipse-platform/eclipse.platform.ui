@@ -27,7 +27,7 @@ import org.eclipse.core.internal.databinding.identity.IdentityMap;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class MapPropertyDetailValuesMap extends MapProperty {
 	private final IMapProperty masterProperty;

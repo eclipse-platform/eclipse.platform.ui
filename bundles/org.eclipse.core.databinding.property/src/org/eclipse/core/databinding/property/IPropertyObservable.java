@@ -15,13 +15,13 @@ import org.eclipse.core.databinding.observable.IObserving;
 
 /**
  * Provides access to the details of property observables
- * 
+ *
  * @since 1.2
  */
 public interface IPropertyObservable extends IObserving {
 	/**
 	 * Returns the property being observed
-	 * 
+	 *
 	 * @return the property being observed
 	 */
 	IProperty getProperty();

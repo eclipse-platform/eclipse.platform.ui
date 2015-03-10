@@ -32,7 +32,7 @@ import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
 
 /**
  * @since 3.3
- * 
+ *
  */
 abstract class DelegatingCache {
 	private Realm realm;

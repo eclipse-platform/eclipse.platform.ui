@@ -23,7 +23,7 @@ import org.eclipse.core.internal.databinding.property.PropertyObservableUtil;
 /**
  * A set property for observing the union of multiple set properties a combined
  * set.
- * 
+ *
  * @since 1.2
  */
 public class UnionSetProperty extends SetProperty {

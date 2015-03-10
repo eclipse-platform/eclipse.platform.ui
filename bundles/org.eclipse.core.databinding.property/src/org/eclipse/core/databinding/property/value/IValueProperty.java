@@ -25,7 +25,7 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
 
 /**
  * Interface for value-typed properties
- * 
+ *
  * @since 1.2
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
@@ -38,7 +38,7 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
 public interface IValueProperty extends IProperty {
 	/**
 	 * Returns the value type of the property, or <code>null</code> if untyped.
-	 * 
+	 *
 	 * @return the value type of the property, or <code>null</code> if untyped.
 	 */
 	public Object getValueType();
@@ -46,7 +46,7 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns the current value of this property on the specified property
 	 * source.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @return the current value of this property on the specified property
@@ -64,7 +64,7 @@ public interface IValueProperty extends IProperty {
 	 * notification, then observables on the source object may not be notified
 	 * of the change. In most cases it is preferable to call
 	 * {@link IObservableValue#setValue(Object)} on the observable instead.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @param value
@@ -76,7 +76,7 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns an observable value observing this value property on the given
 	 * property source.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return an observable value observing this value property on the given
@@ -87,7 +87,7 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns an observable value observing this value property on the given
 	 * property source
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param source
@@ -100,7 +100,7 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns a factory for creating observable values tracking this property
 	 * of a particular property source.
-	 * 
+	 *
 	 * @return a factory for creating observable values tracking this property
 	 *         of a particular property source.
 	 */
@@ -109,10 +109,10 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns a factory for creating observable values in the given realm,
 	 * tracking this property of a particular property source.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm
-	 * 
+	 *
 	 * @return a factory for creating observable values in the given realm,
 	 *         tracking this property of a particular property source.
 	 */
@@ -121,7 +121,7 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns an observable value on the master observable's realm which tracks
 	 * this property on the current value of <code>master</code>.
-	 * 
+	 *
 	 * @param master
 	 *            the master observable
 	 * @return an observable value which tracks this property of the current
@@ -132,7 +132,7 @@ public interface IValueProperty extends IProperty {
 	/**
 	 * Returns an observable list on the master observable's realm which tracks
 	 * this property on each element of <code>master</code>.
-	 * 
+	 *
 	 * @param master
 	 *            the master observable
 	 * @return an observable list which tracks this property on each element of
@@ -144,7 +144,7 @@ public interface IValueProperty extends IProperty {
 	 * Returns an observable map on the master observable's realm where the
 	 * map's key set is the specified master set, and where each key maps to the
 	 * current property value for each element.
-	 * 
+	 *
 	 * @param master
 	 *            the master observable
 	 * @return an observable map that tracks the current value of this property
@@ -157,7 +157,7 @@ public interface IValueProperty extends IProperty {
 	 * map's key set is the same as the master observable map, and where each
 	 * value is the property value of the corresponding value in the master
 	 * observable map.
-	 * 
+	 *
 	 * @param master
 	 *            the master observable
 	 * @return an observable map on the master observable's realm which tracks
@@ -171,7 +171,7 @@ public interface IValueProperty extends IProperty {
 	 * value property. Value modifications made through the returned property
 	 * are delegated to the detail property, using the value of this property as
 	 * the source.
-	 * 
+	 *
 	 * @param detailValue
 	 *            the detail property
 	 * @return the nested combination of the master and detail properties
@@ -183,7 +183,7 @@ public interface IValueProperty extends IProperty {
 	 * list property. List modifications made through the returned property are
 	 * delegated to the detail property, using the value of the master property
 	 * as the source.
-	 * 
+	 *
 	 * @param detailList
 	 *            the detail property
 	 * @return the nested combination of the master value and detail list
@@ -196,7 +196,7 @@ public interface IValueProperty extends IProperty {
 	 * set property. Set modifications made through the returned property are
 	 * delegated to the detail property, using the value of the master property
 	 * as the source.
-	 * 
+	 *
 	 * @param detailSet
 	 *            the detail property
 	 * @return the nested combination of the master value and detail set
@@ -209,7 +209,7 @@ public interface IValueProperty extends IProperty {
 	 * map property. Map modifications made through the returned property are
 	 * delegated to the detail property, using the value of the master property
 	 * as the source.
-	 * 
+	 *
 	 * @param detailMap
 	 *            the detail property
 	 * @return the nested combination of the master value and detial map

@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 
 /**
  * Interface for list-typed properties.
- * 
+ *
  * @since 1.2
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
@@ -38,7 +38,7 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns the type of the elements in the collection or <code>null</code>
 	 * if untyped
-	 * 
+	 *
 	 * @return the type of the elements in the collection or <code>null</code>
 	 *         if untyped
 	 */
@@ -47,7 +47,7 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns an unmodifiable List with the current contents of the source's
 	 * list property
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @return an unmodifiable List with the current contents of the source's
@@ -65,7 +65,7 @@ public interface IListProperty extends IProperty {
 	 * of the change. In most cases it is preferable to modify the source
 	 * through an {@link IObservableList} than through the property directly.
 	 * </p>
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @param list
@@ -82,7 +82,7 @@ public interface IListProperty extends IProperty {
 	 * notification, then observables on the source object may not be notified
 	 * of the change. In most cases it is preferable to modify the source
 	 * through an {@link IObservableList} than through the property directly.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @param diff
@@ -94,7 +94,7 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns an observable list observing this list property on the given
 	 * property source
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return an observable list observing this list property on the given
@@ -105,7 +105,7 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns an observable list observing this list property on the given
 	 * property source
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param source
@@ -118,7 +118,7 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns a factory for creating observable lists tracking this property of
 	 * a particular property source.
-	 * 
+	 *
 	 * @return a factory for creating observable lists tracking this property of
 	 *         a particular property source.
 	 */
@@ -127,10 +127,10 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns a factory for creating observable lists in the given realm,
 	 * tracking this property of a particular property source.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm
-	 * 
+	 *
 	 * @return a factory for creating observable lists in the given realm,
 	 *         tracking this property of a particular property source.
 	 */
@@ -139,7 +139,7 @@ public interface IListProperty extends IProperty {
 	/**
 	 * Returns an observable list on the master observable's realm which tracks
 	 * this property of the current value of <code>master</code>.
-	 * 
+	 *
 	 * @param master
 	 *            the master observable
 	 * @return an observable list on the given realm which tracks this property
@@ -154,7 +154,7 @@ public interface IListProperty extends IProperty {
 	 * {@link IObservableList#set(int, Object)} method. Modifications made
 	 * through the returned property are delegated to the detail property, using
 	 * the corresponding list element from the master property as the source.
-	 * 
+	 *
 	 * @param detailValue
 	 *            the detail property
 	 * @return the nested combination of the master list and detail value

@@ -17,7 +17,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class SelfValueProperty extends SimpleValueProperty {
 	private final Object valueType;

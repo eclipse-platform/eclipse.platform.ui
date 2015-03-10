@@ -35,7 +35,7 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
  * @since 1.2
- * 
+ *
  */
 public class SimplePropertyObservableList extends AbstractObservableList
 		implements IPropertyObservable {

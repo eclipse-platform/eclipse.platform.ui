@@ -30,7 +30,7 @@ import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesLi
 
 /**
  * Abstract implementation of IListProperty.
- * 
+ *
  * @since 1.2
  */
 public abstract class ListProperty implements IListProperty {
@@ -39,14 +39,14 @@ public abstract class ListProperty implements IListProperty {
 	 * By default, this method returns <code>Collections.EMPTY_LIST</code> in
 	 * case the source object is <code>null</code>. Otherwise, this method
 	 * delegates to {@link #doGetList(Object)}.
-	 * 
+	 *
 	 * <p>
 	 * Clients may override this method if they e.g. want to return a specific
 	 * default list in case the source object is <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #doGetList(Object)
-	 * 
+	 *
 	 * @since 1.3
 	 */
 	@Override
@@ -59,7 +59,7 @@ public abstract class ListProperty implements IListProperty {
 
 	/**
 	 * Returns a List with the current contents of the source's list property
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return a List with the current contents of the source's list property
@@ -87,7 +87,7 @@ public abstract class ListProperty implements IListProperty {
 
 	/**
 	 * Updates the property on the source with the specified change.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param list
@@ -111,7 +111,7 @@ public abstract class ListProperty implements IListProperty {
 
 	/**
 	 * Updates the property on the source with the specified change
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param diff

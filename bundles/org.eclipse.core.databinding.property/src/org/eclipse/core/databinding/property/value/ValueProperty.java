@@ -31,7 +31,7 @@ import org.eclipse.core.internal.databinding.property.ValuePropertyDetailValue;
 
 /**
  * Abstract implementation of IValueProperty
- * 
+ *
  * @since 1.2
  */
 public abstract class ValueProperty implements IValueProperty {
@@ -40,14 +40,14 @@ public abstract class ValueProperty implements IValueProperty {
 	 * By default, this method returns <code>null</code> in case the source
 	 * object is itself <code>null</code>. Otherwise, this method delegates to
 	 * {@link #doGetValue(Object)}.
-	 * 
+	 *
 	 * <p>
 	 * Clients may override this method if they e.g. want to return a specific
 	 * default value in case the source object is <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #doGetValue(Object)
-	 * 
+	 *
 	 * @since 1.3
 	 */
 	@Override
@@ -60,7 +60,7 @@ public abstract class ValueProperty implements IValueProperty {
 
 	/**
 	 * Returns the value of the property on the specified source object
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return the current value of the source's value property
@@ -88,7 +88,7 @@ public abstract class ValueProperty implements IValueProperty {
 
 	/**
 	 * Sets the source's value property to the specified vlaue
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param value

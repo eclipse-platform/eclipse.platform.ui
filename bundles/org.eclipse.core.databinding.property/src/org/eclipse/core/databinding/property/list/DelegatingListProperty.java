@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 
 /**
  * @since 1.2
- * 
+ *
  */
 public abstract class DelegatingListProperty extends ListProperty {
 	private final IListProperty nullProperty;
@@ -42,7 +42,7 @@ public abstract class DelegatingListProperty extends ListProperty {
 	 * Returns the property to delegate to for the specified source object.
 	 * Repeated calls to this method with the same source object returns the
 	 * same delegate instance.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @return the property to delegate to for the specified source object.
@@ -60,7 +60,7 @@ public abstract class DelegatingListProperty extends ListProperty {
 	 * Returns the property to delegate to for the specified source object.
 	 * Implementers must ensure that repeated calls to this method with the same
 	 * source object returns the same delegate instance.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return the property to delegate to for the specified source object.

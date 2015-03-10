@@ -25,7 +25,7 @@ import org.eclipse.core.internal.databinding.property.value.SetDelegatingValueOb
 
 /**
  * @since 1.2
- * 
+ *
  */
 public abstract class DelegatingValueProperty extends ValueProperty {
 	private final Object valueType;
@@ -43,7 +43,7 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 	 * Returns the property to delegate to for the specified source object.
 	 * Repeated calls to this method with the same source object returns the
 	 * same delegate instance.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @return the property to delegate to for the specified source object.
@@ -61,7 +61,7 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 	 * Returns the property to delegate to for the specified source object.
 	 * Implementers must ensure that repeated calls to this method with the same
 	 * source object returns the same delegate instance.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return the property to delegate to for the specified source object.

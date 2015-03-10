@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * object using the source's "native" listener API. Events received from the
  * source objects are parlayed to the {@link ISimplePropertyListener} provided
  * to the method that constructed this native listener instance.
- * 
+ *
  * @since 1.2
  * @see NativePropertyListener
  * @see SimpleValueProperty#adaptListener(ISimplePropertyListener)
@@ -34,7 +34,7 @@ public interface INativePropertyListener {
 	/**
 	 * Adds the receiver as a listener for property events on the specified
 	 * property source.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @noreference This method is not intended to be referenced by clients.
@@ -44,7 +44,7 @@ public interface INativePropertyListener {
 	/**
 	 * Removes the receiver as a listener for property events on the specified
 	 * property source.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @noreference This method is not intended to be referenced by clients.

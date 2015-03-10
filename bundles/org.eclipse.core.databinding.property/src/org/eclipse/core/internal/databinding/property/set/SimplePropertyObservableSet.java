@@ -32,7 +32,7 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
  * @since 1.2
- * 
+ *
  */
 public class SimplePropertyObservableSet extends AbstractObservableSet
 		implements IPropertyObservable {

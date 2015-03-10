@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.property.value.ValueProperty;
 
 /**
  * @since 1.2
- * 
+ *
  */
 public class ValuePropertyDetailValue extends ValueProperty implements
 		IValueProperty {

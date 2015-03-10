@@ -33,7 +33,7 @@ import org.eclipse.core.internal.databinding.property.value.SelfValueProperty;
 
 /**
  * Contains static methods to operate on or return IProperty objects.
- * 
+ *
  * @since 1.2
  */
 public class Properties {
@@ -41,7 +41,7 @@ public class Properties {
 	 * Returns an array of observable maps where each map observes the
 	 * corresponding value property on all elements in the given domain set, for
 	 * each property in the given array.
-	 * 
+	 *
 	 * @param domainSet
 	 *            the set of elements whose properties will be observed
 	 * @param properties
@@ -63,7 +63,7 @@ public class Properties {
 	 * corresponding value property on all elements in the given domain map's
 	 * {@link Map#values() values} collection, for each property in the given
 	 * array.
-	 * 
+	 *
 	 * @param domainMap
 	 *            the map of elements whose properties will be observed
 	 * @param properties
@@ -86,7 +86,7 @@ public class Properties {
 	 * Returns a value property which takes the source object itself as the
 	 * property value. This property may be used to wrap an object in an
 	 * unmodifiable {@link IObservableValue}.
-	 * 
+	 *
 	 * @param valueType
 	 *            the value type of the property
 	 * @return a value property which takes the source object itself as the
@@ -100,7 +100,7 @@ public class Properties {
 	 * Returns a list property which takes the source object (a {@link List}) as
 	 * the property list. This property may be used to wrap an arbitrary List
 	 * instance in an {@link IObservableList}.
-	 * 
+	 *
 	 * @param elementType
 	 *            the element type of the property
 	 * @return a list property which takes the source object (a {@link List}) as
@@ -114,7 +114,7 @@ public class Properties {
 	 * Returns a set property which takes the source object (a {@link Set}) as
 	 * the property set. This property may be used to wrap an arbitrary Set
 	 * instance in an {@link IObservableSet}.
-	 * 
+	 *
 	 * @param elementType
 	 *            the element type of the property
 	 * @return a set property which takes the source object (a {@link Set}) as
@@ -128,7 +128,7 @@ public class Properties {
 	 * Returns a map property which takes the source object (a {@link Map}) as
 	 * the property map. This property may be used to wrap an arbitrary Map
 	 * instance in an {@link IObservableMap}.
-	 * 
+	 *
 	 * @param keyType
 	 *            the key type of the property
 	 * @param valueType
@@ -149,7 +149,7 @@ public class Properties {
 	 * Calls to {@link IValueProperty#observe(Object)} or
 	 * {@link IValueProperty#observe(Realm, Object)} just cast the argument to
 	 * {@link IObservableValue} and return it (the realm argument is ignored).
-	 * 
+	 *
 	 * @param valueType
 	 *            the value type of the property
 	 * @return a value property which observes the value of an

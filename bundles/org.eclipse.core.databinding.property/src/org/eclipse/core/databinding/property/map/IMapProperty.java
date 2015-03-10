@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 
 /**
  * Interface for map-typed properties
- * 
+ *
  * @since 1.2
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
@@ -38,7 +38,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns the element type of the map's key set or <code>null</code> if the
 	 * key set is untyped.
-	 * 
+	 *
 	 * @return the element type of the map's key set or <code>null</code> if the
 	 *         key set is untyped.
 	 */
@@ -47,7 +47,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns the element type of the map's values collection or
 	 * <code>null</code> if the collection is untyped.
-	 * 
+	 *
 	 * @return the element type of the map's values collection or
 	 *         <code>null</code> if the collection is untyped.
 	 */
@@ -56,7 +56,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns an unmodifiable Map with the current contents of the source's map
 	 * property.
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @return a Map with the current contents of the source's map property
@@ -73,7 +73,7 @@ public interface IMapProperty extends IProperty {
 	 * of the change. In most cases it is preferable to modify the source
 	 * through an {@link IObservableMap} than through the property directly.
 	 * </p>
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @param map
@@ -91,7 +91,7 @@ public interface IMapProperty extends IProperty {
 	 * of the change. In most cases it is preferable to modify the source
 	 * through an {@link IObservableMap} than through the property directly.
 	 * </p>
-	 * 
+	 *
 	 * @param source
 	 *            the property source (may be null)
 	 * @param diff
@@ -103,7 +103,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns an observable map observing this map property on the given
 	 * property source
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return an observable map observing this map-typed property on the given
@@ -114,7 +114,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns an observable map observing this map property on the given
 	 * property source
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param source
@@ -127,7 +127,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns a factory for creating observable maps tracking this property of
 	 * a particular property source.
-	 * 
+	 *
 	 * @return a factory for creating observable maps tracking this property of
 	 *         a particular property source.
 	 */
@@ -136,10 +136,10 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns a factory for creating observable maps in the given realm,
 	 * tracking this property of a particular property source.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm
-	 * 
+	 *
 	 * @return a factory for creating observable maps in the given realm,
 	 *         tracking this property of a particular property source.
 	 */
@@ -148,7 +148,7 @@ public interface IMapProperty extends IProperty {
 	/**
 	 * Returns an observable map on the master observable's realm which tracks
 	 * this property of the values in the entry set of <code>master</code>.
-	 * 
+	 *
 	 * @param master
 	 *            the master observable
 	 * @return an observable map on the master observable's realm which tracks
@@ -167,7 +167,7 @@ public interface IMapProperty extends IProperty {
 	 * master map's key set. Modifications made through the returned property
 	 * are delegated to the detail property, using the corresponding entry value
 	 * from the master property as the source.
-	 * 
+	 *
 	 * @param detailValues
 	 *            the detail property
 	 * @return the nested combination of the master map and detail value

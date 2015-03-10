@@ -19,7 +19,7 @@ import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * Event object events in the properties API
- * 
+ *
  * @since 1.2
  */
 public final class SimplePropertyEvent extends EventObject {
@@ -57,7 +57,7 @@ public final class SimplePropertyEvent extends EventObject {
 
 	/**
 	 * Constructs a PropertyChangeEvent with the given attributes
-	 * 
+	 *
 	 * @param type
 	 *            the property type
 	 * @param source

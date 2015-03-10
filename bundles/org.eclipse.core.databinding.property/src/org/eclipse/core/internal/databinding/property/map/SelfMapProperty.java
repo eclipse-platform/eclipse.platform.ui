@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class SelfMapProperty extends SimpleMapProperty {
 	private final Object keyType;

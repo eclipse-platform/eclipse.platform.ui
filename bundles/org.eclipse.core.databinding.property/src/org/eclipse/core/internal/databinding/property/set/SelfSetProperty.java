@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class SelfSetProperty extends SimpleSetProperty {
 	private final Object elementType;

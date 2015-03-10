@@ -39,7 +39,7 @@ import org.eclipse.core.internal.databinding.property.set.SimplePropertyObservab
  * <p>
  * In addition, we recommended overriding {@link #toString()} to return a
  * description suitable for debugging purposes.
- * 
+ *
  * @since 1.2
  */
 public abstract class SimpleSetProperty extends SetProperty {
@@ -57,7 +57,7 @@ public abstract class SimpleSetProperty extends SetProperty {
 
 	/**
 	 * Updates the property on the source with the specified change.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param set
@@ -73,7 +73,7 @@ public abstract class SimpleSetProperty extends SetProperty {
 
 	/**
 	 * Updates the property on the source with the specified change.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param set
@@ -107,7 +107,7 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 * <p>
 	 * This method returns null if the source object has no listener APIs for
 	 * this property.
-	 * 
+	 *
 	 * @param listener
 	 *            the property listener to receive events
 	 * @return a native listener which parlays property change events to the

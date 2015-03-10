@@ -30,7 +30,7 @@ import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap
 
 /**
  * Abstract implementation of IMapProperty
- * 
+ *
  * @since 1.2
  */
 public abstract class MapProperty implements IMapProperty {
@@ -39,14 +39,14 @@ public abstract class MapProperty implements IMapProperty {
 	 * By default, this method returns <code>Collections.EMPTY_MAP</code> in
 	 * case the source object is <code>null</code>. Otherwise, this method
 	 * delegates to {@link #doGetMap(Object)}.
-	 * 
+	 *
 	 * <p>
 	 * Clients may override this method if they e.g. want to return a specific
 	 * default map in case the source object is <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #doGetMap(Object)
-	 * 
+	 *
 	 * @since 1.3
 	 */
 	@Override
@@ -59,7 +59,7 @@ public abstract class MapProperty implements IMapProperty {
 
 	/**
 	 * Returns a Map with the current contents of the source's map property
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @return a Map with the current contents of the source's map property
@@ -87,7 +87,7 @@ public abstract class MapProperty implements IMapProperty {
 
 	/**
 	 * Updates the property on the source with the specified change.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param map
@@ -112,7 +112,7 @@ public abstract class MapProperty implements IMapProperty {
 
 	/**
 	 * Updates the property on the source with the specified change.
-	 * 
+	 *
 	 * @param source
 	 *            the property source
 	 * @param diff

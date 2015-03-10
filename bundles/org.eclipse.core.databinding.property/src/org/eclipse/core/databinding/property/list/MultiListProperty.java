@@ -26,7 +26,7 @@ import org.eclipse.core.internal.databinding.property.PropertyObservableUtil;
 /**
  * A list property for observing multiple list properties in sequence in a
  * combined list.
- * 
+ *
  * @since 1.2
  */
 public class MultiListProperty extends ListProperty {
@@ -36,7 +36,7 @@ public class MultiListProperty extends ListProperty {
 	/**
 	 * Constructs a MultiListProperty for observing the specified list
 	 * properties in sequence
-	 * 
+	 *
 	 * @param properties
 	 *            the list properties
 	 */
@@ -47,7 +47,7 @@ public class MultiListProperty extends ListProperty {
 	/**
 	 * Constructs a MultiListProperty for observing the specified list
 	 * properties in sequence.
-	 * 
+	 *
 	 * @param properties
 	 *            the list properties
 	 * @param elementType

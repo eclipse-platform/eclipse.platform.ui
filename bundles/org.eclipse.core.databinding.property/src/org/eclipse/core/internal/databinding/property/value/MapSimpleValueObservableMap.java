@@ -44,7 +44,7 @@ import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @since 1.2
- * 
+ *
  */
 public class MapSimpleValueObservableMap extends AbstractObservableMap
 		implements IPropertyObservable {
