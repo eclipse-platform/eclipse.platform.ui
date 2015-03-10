@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 
 /**
  * Tests for the dynamic tab and section support.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -101,7 +101,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 
 	/**
 	 * Set the selection in the view to cause the properties view to change.
-	 * 
+	 *
 	 * @param selectedNodes
 	 *            nodes to select in the view.
 	 */

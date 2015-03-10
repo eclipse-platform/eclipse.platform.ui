@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 /**
  * An element for the dynamic tests view. We build an element for one of the
  * icons. For example, "icons/blue_circle.gif" becomes a "Blue Circle" element.
- * 
+ *
  * @author Anthony Hunter
  */
 public class DynamicTestsElement implements

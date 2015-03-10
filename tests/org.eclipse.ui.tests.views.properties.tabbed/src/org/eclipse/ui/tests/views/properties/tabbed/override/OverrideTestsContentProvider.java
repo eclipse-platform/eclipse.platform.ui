@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Warning;
 
 /**
  * The content provider for the override tests view.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -31,7 +31,7 @@ public class OverrideTestsContentProvider implements IStructuredContentProvider 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
@@ -40,7 +40,7 @@ public class OverrideTestsContentProvider implements IStructuredContentProvider 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object parent) {
@@ -54,7 +54,7 @@ public class OverrideTestsContentProvider implements IStructuredContentProvider 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */

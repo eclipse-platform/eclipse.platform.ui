@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 
 /**
  * A tab descriptor for the dynamic tests view.
- * 
+ *
  * @author Anthony Hunter
  */
 public class DynamicTestsBlackTabDescriptor extends AbstractTabDescriptor {
@@ -46,7 +46,7 @@ public class DynamicTestsBlackTabDescriptor extends AbstractTabDescriptor {
 	public Image getImage() {
 		if (image == null) {
 			image = Activator
-					.getImageDescriptor("icons/black_triangle.gif").createImage(); //$NON-NLS-1$ 
+					.getImageDescriptor("icons/black_triangle.gif").createImage(); //$NON-NLS-1$
 		}
 		return image;
 	}

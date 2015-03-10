@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTest
  * <p>
  * The overridable tab list is a content provider that provides both the
  * sections and the tab labels.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -39,7 +39,7 @@ public class EmptyTabList extends AbstractTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.AbstractTabList#appliesTo(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
 	 */
 	public boolean appliesTo(Element element) {
@@ -51,7 +51,7 @@ public class EmptyTabList extends AbstractTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#getItems()
 	 */
 	public IOverrideTestsItem[] getItems() {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.views.properties.tabbed.dynamic.model;
 /**
  * A shape enumeration for the dynamic tests view. (Should use an enum when we
  * can use Java 5).
- * 
+ *
  * @author Anthony Hunter
  */
 public class DynamicTestsShape {

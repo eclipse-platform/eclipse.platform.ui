@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabItem;
  * <p>
  * The overridable tab list is a content provider that provides both the
  * sections and the tab labels.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -41,7 +41,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#appliesTo(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
 	 */
 	public boolean appliesTo(Element element) {
@@ -50,7 +50,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#createControls(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControls(Composite parent) {
@@ -61,7 +61,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#dispose()
 	 */
 	public void dispose() {
@@ -71,7 +71,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.IOverridableTabList#getTabs()
 	 */
 	public ITabItem[] getTabs() {
@@ -90,7 +90,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#selectionChanged(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
 	 */
 	public void selectionChanged(Element element) {
@@ -105,7 +105,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.IOverridableTabList#selectTab(int)
 	 */
 	public void selectTab(int index) {

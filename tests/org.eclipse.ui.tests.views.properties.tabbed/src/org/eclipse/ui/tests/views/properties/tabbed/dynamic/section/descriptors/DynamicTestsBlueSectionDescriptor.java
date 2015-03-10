@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
 
 /**
  * A section descriptor for the dynamic tests view.
- * 
+ *
  * @author Anthony Hunter
  */
 public class DynamicTestsBlueSectionDescriptor extends
@@ -27,7 +27,7 @@ public class DynamicTestsBlueSectionDescriptor extends
 
 	/**
 	 * Constructor for DynamicTestsBlueSectionDescriptor.
-	 * 
+	 *
 	 * @param typeMapper
 	 *            the optional type mapper for the section.
 	 */

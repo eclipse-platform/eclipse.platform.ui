@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabItem;
  * <p>
  * The overridable tab list is a content provider that provides both the
  * sections and the tab labels.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -38,7 +38,7 @@ public class OverrideTestsTabItem implements ITabItem {
 
 	/**
 	 * Constructor for OverrideTestsTabItem
-	 * 
+	 *
 	 * @param anItem
 	 *            the item.
 	 */
@@ -48,7 +48,7 @@ public class OverrideTestsTabItem implements ITabItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabItem#getImage()
 	 */
 	public Image getImage() {
@@ -57,7 +57,7 @@ public class OverrideTestsTabItem implements ITabItem {
 
 	/**
 	 * Get the item.
-	 * 
+	 *
 	 * @return the item.
 	 */
 	public IOverrideTestsItem getItem() {
@@ -66,7 +66,7 @@ public class OverrideTestsTabItem implements ITabItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabItem#getText()
 	 */
 	public String getText() {
@@ -75,7 +75,7 @@ public class OverrideTestsTabItem implements ITabItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabItem#isIndented()
 	 */
 	public boolean isIndented() {
@@ -84,7 +84,7 @@ public class OverrideTestsTabItem implements ITabItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabItem#isSelected()
 	 */
 	public boolean isSelected() {
@@ -92,7 +92,7 @@ public class OverrideTestsTabItem implements ITabItem {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	public void setSelected(boolean newSelected) {
 		this.selected = newSelected;

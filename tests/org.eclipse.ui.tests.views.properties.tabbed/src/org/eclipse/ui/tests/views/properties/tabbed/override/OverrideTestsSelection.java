@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
 
 /**
  * The selection in the override tests view.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -25,7 +25,7 @@ public class OverrideTestsSelection implements ISelection {
 
 	/**
 	 * Constructor for OverrideTestsSelection
-	 * 
+	 *
 	 * @param newElement
 	 *            the selected element.
 	 */
@@ -35,7 +35,7 @@ public class OverrideTestsSelection implements ISelection {
 
 	/**
 	 * Get the selected element.
-	 * 
+	 *
 	 * @return the selected element.
 	 */
 	public Element getElement() {
@@ -44,7 +44,7 @@ public class OverrideTestsSelection implements ISelection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 	 */
 	public boolean isEmpty() {
@@ -57,7 +57,7 @@ public class OverrideTestsSelection implements ISelection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.views.properties.tabbed.TabContents;
 
 /**
  * Tests for the text tests view.
- * 
+ *
  * @since 3.4
  */
 public class TabbedPropertySheetPageTextTest extends TestCase {
@@ -86,7 +86,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
         IDocument document = textTestsView.getViewer().getDocument();
         document.set("This is a test");
         textTestsView.getViewer().setSelectedRange(0, 14);
-        
+
 		ITabDescriptor[] tabDescriptors= waitForActiveTabs();
         /**
          * First tab is "This"
@@ -117,7 +117,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	    IDocument document = textTestsView.getViewer().getDocument();
 	    document.set("The fifth tab is selected");
 	    textTestsView.getViewer().setSelectedRange(0, 26);
-	    
+
 		ITabDescriptor[] tabDescriptors= waitForActiveTabs();
 
 	    /**
@@ -130,12 +130,12 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	     * Fifth tab is "selected"
 	     */
 	    assertEquals("selected", tabDescriptors[4].getLabel());//$NON-NLS-1$
-	    
-	    /** 
+
+	    /**
 	     * Set the new selected tab.
 	     */
 	    textTestsView.getTabbedPropertySheetPage().setSelectedTab(tabDescriptors[4].getId());
-	    
+
 	    tabDescriptors = textTestsView.getTabbedPropertySheetPage().getActiveTabs();
 	    /**
 	     * First tab is "the"

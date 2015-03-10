@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,14 +22,14 @@ import org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTest
  * properties view before the migration to the tabbed properties view and the
  * override tabs support. When elements are selected in the OverrideTestsView,
  * TabFolder/TabItem are displayed for the elements.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
 public interface IOverrideTestsTabFolder {
 	/**
 	 * Add the listener from the item selection listeners.
-	 * 
+	 *
 	 * @param listener
 	 *            the item selection listener.
 	 */
@@ -38,7 +38,7 @@ public interface IOverrideTestsTabFolder {
 
 	/**
 	 * Determines if this folder applies to the element.
-	 * 
+	 *
 	 * @param element
 	 *            the element.
 	 * @return <code>true</code> if this folder applies to the element.
@@ -47,7 +47,7 @@ public interface IOverrideTestsTabFolder {
 
 	/**
 	 * Creates the controls for the folder.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite for the contents.
 	 */
@@ -60,14 +60,14 @@ public interface IOverrideTestsTabFolder {
 
 	/**
 	 * Get the items for this folder.
-	 * 
+	 *
 	 * @return the items for this folder.
 	 */
 	public IOverrideTestsItem[] getItem();
 
 	/**
 	 * Remove the listener from the item selection listeners.
-	 * 
+	 *
 	 * @param listener
 	 *            the item selection listener.
 	 */
@@ -76,7 +76,7 @@ public interface IOverrideTestsTabFolder {
 
 	/**
 	 * Notifies the folder that the selected element has changed.
-	 * 
+	 *
 	 * @param element
 	 *            the selected element.
 	 */

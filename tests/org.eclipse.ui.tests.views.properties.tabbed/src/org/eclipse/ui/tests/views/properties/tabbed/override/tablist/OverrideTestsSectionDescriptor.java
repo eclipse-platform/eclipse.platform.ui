@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.views.properties.tabbed.ISection;
  * <p>
  * The overridable tab list is a content provider that provides both the
  * sections and the tab labels.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -39,7 +39,7 @@ public class OverrideTestsSectionDescriptor extends AbstractSectionDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.AbstractSectionDescriptor#appliesTo(org.eclipse.ui.IWorkbenchPart,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
@@ -49,7 +49,7 @@ public class OverrideTestsSectionDescriptor extends AbstractSectionDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getId()
 	 */
 	public String getId() {
@@ -58,7 +58,7 @@ public class OverrideTestsSectionDescriptor extends AbstractSectionDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getSectionClass()
 	 */
 	public ISection getSectionClass() {
@@ -70,7 +70,7 @@ public class OverrideTestsSectionDescriptor extends AbstractSectionDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getTargetTab()
 	 */
 	public String getTargetTab() {

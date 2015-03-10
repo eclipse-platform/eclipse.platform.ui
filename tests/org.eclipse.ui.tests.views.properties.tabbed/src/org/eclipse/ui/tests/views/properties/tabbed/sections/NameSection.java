@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 /**
  * The name section on the element tab.
- * 
+ *
  * @author Anthony Hunter
  */
 public class NameSection
@@ -69,7 +69,7 @@ public class NameSection
 
     /**
      * Get the element.
-     * 
+     *
      * @return the element.
      */
     public TreeNode getTreeNode() {

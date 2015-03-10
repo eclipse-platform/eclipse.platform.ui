@@ -20,7 +20,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.text.TextTestsView;
 
 /**
  * Perspective used by the tabbed properties view test JUnit tests.
- * 
+ *
  * @since 3.3
  */
 public class TestsPerspective implements IPerspectiveFactory {

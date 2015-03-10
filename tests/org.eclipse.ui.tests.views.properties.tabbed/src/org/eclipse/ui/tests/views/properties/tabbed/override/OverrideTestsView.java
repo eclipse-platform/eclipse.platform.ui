@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 /**
  * The override tests view.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -50,7 +50,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -68,7 +68,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
@@ -88,7 +88,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
 	 */
 	public String getContributorId() {
@@ -97,7 +97,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/**
 	 * Get the currently selected element in the view.
-	 * 
+	 *
 	 * @return the currently selected element in the view.
 	 */
 	public ISelection getSelection() {
@@ -106,7 +106,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/**
 	 * Get the tabbed property sheet page for the view.
-	 * 
+	 *
 	 * @return the tabbed property sheet page for the view.
 	 */
 	public TabbedPropertySheetPage getTabbedPropertySheetPage() {
@@ -115,7 +115,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -126,7 +126,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
@@ -135,7 +135,7 @@ public class OverrideTestsView extends ViewPart implements
 
 	/**
 	 * Set the selected element to be the same type as the provided class.
-	 * 
+	 *
 	 * @param elementClass
 	 *            the provided class.
 	 */

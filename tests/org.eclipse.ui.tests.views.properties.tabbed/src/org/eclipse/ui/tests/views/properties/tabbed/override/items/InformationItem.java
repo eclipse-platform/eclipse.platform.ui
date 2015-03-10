@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Information;
 /**
  * An item for when the Information element is the selected element in the
  * override tests view.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -42,7 +42,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#createControls(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControls(Composite parent) {
@@ -120,7 +120,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#dispose()
 	 */
 	public void dispose() {
@@ -136,7 +136,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getElement()
 	 */
 	public Class getElement() {
@@ -145,7 +145,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getImage()
 	 */
 	public Image getImage() {
@@ -155,7 +155,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getText()
 	 */
 	public String getText() {

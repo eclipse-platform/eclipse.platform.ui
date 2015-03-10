@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -95,7 +95,7 @@ public class TabbedPropertySheetPageTest
 
     /**
      * Set the selection in the view to cause the properties view to change.
-     * 
+     *
      * @param selectedNodes
      *            nodes to select in the view.
      */
@@ -114,7 +114,7 @@ public class TabbedPropertySheetPageTest
          */
         setSelection(new TreeNode[] {treeNodes[0]});
         ITabDescriptor[] tabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
-        
+
         /**
          * First tab is Name
          */

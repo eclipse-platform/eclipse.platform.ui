@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -57,7 +57,7 @@ public class Activator
     /**
      * Returns an image descriptor for the image file at the given plug-in
      * relative path.
-     * 
+     *
      * @param path
      *            the path
      * @return the image descriptor

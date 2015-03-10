@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.ui.views.properties.tabbed.IOverridableTabList;
  * <p>
  * The overridable tab list is a content provider that provides both the
  * sections and the tab labels.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -38,7 +38,7 @@ public interface IOverrideTestsTabList extends IOverridableTabList {
 
 	/**
 	 * Determines if this tab list applies to the element.
-	 * 
+	 *
 	 * @param element
 	 *            the element.
 	 * @return <code>true</code> if this folder applies to the element.
@@ -47,7 +47,7 @@ public interface IOverrideTestsTabList extends IOverridableTabList {
 
 	/**
 	 * Creates the controls for the tab list.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite for the contents.
 	 */
@@ -60,14 +60,14 @@ public interface IOverrideTestsTabList extends IOverridableTabList {
 
 	/**
 	 * Get the items for this tab list.
-	 * 
+	 *
 	 * @return the items for this tab list.
 	 */
 	public IOverrideTestsItem[] getItems();
 
 	/**
 	 * Notifies the tab list that the selected element has changed.
-	 * 
+	 *
 	 * @param element
 	 *            the selected element.
 	 */

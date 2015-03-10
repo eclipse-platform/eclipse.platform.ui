@@ -92,7 +92,7 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 
     /**
      * Set the selection in the view to cause the properties view to change.
-     * 
+     *
      * @param selectedNodes
      *            nodes to select in the view.
      */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
  * has three modes of providing tabs and sections to the tabbed properties view:
  * use static contributions from plugin.xml, use dynamic section contributions
  * from code, or use dynamic tab (and section) contributions from code.
- * 
+ *
  * @author Anthony Hunter
  */
 public class DynamicTestsView extends ViewPart implements

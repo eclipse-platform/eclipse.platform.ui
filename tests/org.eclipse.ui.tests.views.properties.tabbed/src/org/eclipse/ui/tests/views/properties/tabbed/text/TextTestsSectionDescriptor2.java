@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.IFilter;
 /**
  * A section descriptor for the text test view that should be filtered and not
  * shown.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
