@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.Realm;
 /**
  * Allows for the toggling of the current status of the realm. The
  * asyncExec(...) implementations do nothing.
- * 
+ *
  * @since 3.2
  */
 public class CurrentRealm extends Realm {

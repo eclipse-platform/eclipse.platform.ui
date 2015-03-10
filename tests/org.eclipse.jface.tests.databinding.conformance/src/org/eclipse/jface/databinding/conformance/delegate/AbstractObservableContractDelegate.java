@@ -16,7 +16,7 @@ import org.eclipse.core.databinding.observable.IObservable;
 
 /**
  * Abstract implementation of {@link IObservableContractDelegate}.
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractObservableContractDelegate implements

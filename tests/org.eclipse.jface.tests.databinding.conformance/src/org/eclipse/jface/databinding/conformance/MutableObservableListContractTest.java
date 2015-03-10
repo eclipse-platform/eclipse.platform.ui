@@ -39,7 +39,7 @@ import org.junit.Assert;
  * and not final in order to allow for consumers to turn off a test if needed by
  * subclassing.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class MutableObservableListContractTest extends

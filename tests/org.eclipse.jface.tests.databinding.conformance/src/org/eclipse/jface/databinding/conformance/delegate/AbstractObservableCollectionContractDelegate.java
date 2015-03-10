@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Abstract implementation of {@link IObservableCollectionContractDelegate}.
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractObservableCollectionContractDelegate extends
@@ -29,7 +29,7 @@ public abstract class AbstractObservableCollectionContractDelegate extends
 	 * Invokes
 	 * {@link IObservableCollectionContractDelegate#createObservableCollection(Realm, int)}
 	 * .
-	 * 
+	 *
 	 * @param realm
 	 * @return observable
 	 */

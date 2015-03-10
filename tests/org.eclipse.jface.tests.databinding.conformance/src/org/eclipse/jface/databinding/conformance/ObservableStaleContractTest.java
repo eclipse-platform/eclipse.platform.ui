@@ -136,7 +136,7 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 	/**
 	 * Ensures that stale is set to the provided state. Will throw an
 	 * AssertionFailedError if setting of the state is unsuccessful.
-	 * 
+	 *
 	 * @param observable
 	 * @param stale
 	 */

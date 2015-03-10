@@ -36,7 +36,7 @@ import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
  * and not final in order to allow for consumers to turn off a test if needed by
  * subclassing.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class MutableObservableCollectionContractTest extends
@@ -299,7 +299,7 @@ public class MutableObservableCollectionContractTest extends
 	 * Asserts that a ChangeEvent is fired once when the provided
 	 * <code>runnable</code> is invoked and the source is the provided
 	 * <code>collection</code>.
-	 * 
+	 *
 	 * @param runnable
 	 * @param methodName
 	 * @param collection
@@ -322,7 +322,7 @@ public class MutableObservableCollectionContractTest extends
 	 * Asserts that when the change event is fired for the action contained in
 	 * the <code>runnable</code> the change will have been applied to the
 	 * <code>collection</code>.
-	 * 
+	 *
 	 * @param runnable
 	 * @param methodName
 	 * @param collection
@@ -350,7 +350,7 @@ public class MutableObservableCollectionContractTest extends
 	 * Asserts that when the change event is fired for the action contained in
 	 * the <code>runnable</code> the change will have been applied to the
 	 * <code>collection</code>.
-	 * 
+	 *
 	 * @param runnable
 	 * @param methodName
 	 * @param collection

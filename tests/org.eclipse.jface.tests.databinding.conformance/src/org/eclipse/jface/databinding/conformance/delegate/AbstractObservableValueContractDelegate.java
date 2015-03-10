@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
  * Abstract implementation of {@link IObservableValueContractDelegate}.
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractObservableValueContractDelegate extends
@@ -27,7 +27,7 @@ public abstract class AbstractObservableValueContractDelegate extends
 
 	/**
 	 * Invokes {@link #createObservableValue(Realm)}.
-	 * 
+	 *
 	 * @param realm
 	 * @return observable
 	 */
@@ -38,7 +38,7 @@ public abstract class AbstractObservableValueContractDelegate extends
 
 	/**
 	 * Default implementation returns <code>null</code>.
-	 * 
+	 *
 	 * @param observable
 	 * @return value type
 	 */
@@ -50,7 +50,7 @@ public abstract class AbstractObservableValueContractDelegate extends
 
 	/**
 	 * Default implementation returns <code>null</code>.
-	 * 
+	 *
 	 * @param observable
 	 * @return value
 	 */

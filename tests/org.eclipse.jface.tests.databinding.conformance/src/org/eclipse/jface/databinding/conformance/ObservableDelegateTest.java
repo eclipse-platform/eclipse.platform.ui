@@ -25,7 +25,7 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 /**
  * TestCase that provides the standard behavior expected for delegating test
  * cases.
- * 
+ *
  * @since 3.2
  */
 public class ObservableDelegateTest extends TestCase {
@@ -73,7 +73,7 @@ public class ObservableDelegateTest extends TestCase {
 	 * Creates a new observable with a default realm. Invoked from
 	 * {@link #setUp()}. Override to customize the creation of observables (e.g.
 	 * specifying a different Realm).
-	 * 
+	 *
 	 * @return observable
 	 */
 	protected IObservable doCreateObservable() {
@@ -84,7 +84,7 @@ public class ObservableDelegateTest extends TestCase {
 	 * Returns the created observable. The observable is created in
 	 * {@link #setUp()}. If invoked before {@link #setUp()} will be
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @return observable
 	 */
 	protected IObservable getObservable() {
@@ -93,7 +93,7 @@ public class ObservableDelegateTest extends TestCase {
 
 	/**
 	 * Returns the delegate in use.
-	 * 
+	 *
 	 * @return delegate
 	 */
 	protected IObservableContractDelegate getObservableContractDelegate() {
@@ -116,7 +116,7 @@ public class ObservableDelegateTest extends TestCase {
 	/**
 	 * Asserts that ObservableTracker.getterCalled(...) is invoked when the
 	 * provided <code>runnable</code> is invoked.
-	 * 
+	 *
 	 * @param runnable
 	 * @param methodName
 	 *            method name to display when displaying a message

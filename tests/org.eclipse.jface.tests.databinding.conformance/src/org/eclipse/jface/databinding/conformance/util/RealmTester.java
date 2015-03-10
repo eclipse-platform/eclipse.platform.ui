@@ -18,7 +18,7 @@ import org.junit.Assert;
 
 /**
  * Aids in the testing of Realms.
- * 
+ *
  * @since 3.2
  */
 public class RealmTester {
@@ -26,7 +26,7 @@ public class RealmTester {
 	/**
 	 * Sets the default realm without using Realm.runWithDefault() for testing
 	 * purposes.
-	 * 
+	 *
 	 * @param realm
 	 */
 	public static void setDefault(Realm realm) {
@@ -40,7 +40,7 @@ public class RealmTester {
 	 * of an observable created before the method was invoked must be of type
 	 * {@link CurrentRealm}. The default realm during the runnable invocation is
 	 * set to an instance of {@link CurrentRealm} when the runnable is invoked.
-	 * 
+	 *
 	 * @param runnable
 	 */
 	public static void exerciseCurrent(Runnable runnable) {
@@ -79,7 +79,7 @@ public class RealmTester {
 	 * Runs the provided <code>runnable</code> when the realm is both current
 	 * and not current. It checks for AssertionFailedExceptions and if an
 	 * exception occurs or doesn't occur as expected the test fails.
-	 * 
+	 *
 	 * @param runnable
 	 * @param realm
 	 */

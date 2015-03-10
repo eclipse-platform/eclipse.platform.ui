@@ -300,7 +300,7 @@ public class MutableObservableSetContractTest extends
 
 	/**
 	 * Asserts the set diff entry for an add operation.
-	 * 
+	 *
 	 * @param runnable
 	 * @param methodName
 	 * @param set
@@ -324,7 +324,7 @@ public class MutableObservableSetContractTest extends
 
 	/**
 	 * Asserts the set diff entry for a remove operation.
-	 * 
+	 *
 	 * @param runnable
 	 * @param methodName
 	 * @param set

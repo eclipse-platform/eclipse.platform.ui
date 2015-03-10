@@ -51,7 +51,7 @@ public class DisposeEventTracker implements IDisposeListener {
 
 	/**
 	 * Convenience method to register a new listener.
-	 * 
+	 *
 	 * @param observable
 	 * @return tracker
 	 */

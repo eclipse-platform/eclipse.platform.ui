@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Mutability tests for IObservableValue for a SWT widget.
- * 
+ *
  * <p>
  * This class is experimental and can change at any time. It is recommended to
  * not subclass or assume the test names will not change. The only API that is
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Display;
  * and not final in order to allow for consumers to turn off a test if needed by
  * subclassing.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class SWTMutableObservableValueContractTest extends
@@ -57,7 +57,7 @@ public class SWTMutableObservableValueContractTest extends
 
 	/**
 	 * Creates a new observable passing the realm for the current display.
-	 * 
+	 *
 	 * @return observable
 	 */
 	@Override

@@ -16,14 +16,14 @@ import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Delegate interface for observables.
- * 
+ *
  * <p>
  * This interface is not intended to be implemented by clients. Clients should
  * instead subclass one of the classes that implement this interface. Note that
  * direct implementers of this interface outside of the framework will be broken
  * in future releases when methods are added to this interface.
  * </p>
- * 
+ *
  * @since 1.1
  */
 public interface IObservableContractDelegate {
@@ -40,7 +40,7 @@ public interface IObservableContractDelegate {
 	/**
 	 * Invokes an operation to set the stale state of the provided
 	 * <code>observable</code>.
-	 * 
+	 *
 	 * @param observable
 	 * @param stale
 	 */
@@ -48,7 +48,7 @@ public interface IObservableContractDelegate {
 
 	/**
 	 * Creates a new observable.
-	 * 
+	 *
 	 * @param realm realm of the observable
 	 * @return observable
 	 */
@@ -60,7 +60,7 @@ public interface IObservableContractDelegate {
 	 * resulting in an observable event. There is no guaranteed as to the state
 	 * of the observable when invoked. The observable could be disposed to
 	 * assert the proper behavior of dispose.
-	 * 
+	 *
 	 * @param observable
 	 */
 	public void change(IObservable observable);

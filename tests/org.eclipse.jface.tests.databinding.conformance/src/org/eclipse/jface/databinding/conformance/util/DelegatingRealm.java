@@ -17,7 +17,7 @@ import org.eclipse.core.databinding.observable.Realm;
  * Realm that will delegate to another for all operations except calls to
  * {@link #isCurrent()}. The current status can be set by the consumer to enable
  * testing of realm checks.
- * 
+ *
  * @since 3.2
  */
 public class DelegatingRealm extends CurrentRealm {

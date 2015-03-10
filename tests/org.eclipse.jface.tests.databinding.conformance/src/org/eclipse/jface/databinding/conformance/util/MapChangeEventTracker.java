@@ -48,7 +48,7 @@ public class MapChangeEventTracker implements IMapChangeListener {
 
 	/**
 	 * Convenience method to register a new listener.
-	 * 
+	 *
 	 * @param observable
 	 * @return tracker
 	 */

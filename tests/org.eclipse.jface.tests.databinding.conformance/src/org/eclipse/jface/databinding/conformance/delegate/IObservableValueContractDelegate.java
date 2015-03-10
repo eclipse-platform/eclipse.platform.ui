@@ -16,14 +16,14 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
  * Delegate interface for an observable value.
- * 
+ *
  * <p>
  * This interface is not intended to be implemented by clients. Clients should
  * instead subclass one of the classes that implement this interface. Note that
  * direct implementers of this interface outside of the framework will be broken
  * in future releases when methods are added to this interface.
  * </p>
- * 
+ *
  * @since 1.1
  */
 public interface IObservableValueContractDelegate extends
@@ -31,7 +31,7 @@ public interface IObservableValueContractDelegate extends
 
 	/**
 	 * Creates a new observable value.
-	 * 
+	 *
 	 * @param realm
 	 *            realm of the observable
 	 * @return observable value
@@ -40,15 +40,15 @@ public interface IObservableValueContractDelegate extends
 
 	/**
 	 * Returns the expected type of the observable.
-	 * 
+	 *
 	 * @param observable
 	 * @return type
 	 */
 	public Object getValueType(IObservableValue observable);
-	
+
 	/**
 	 * Returns a valid value that is not the current value of the observable.
-	 * 
+	 *
 	 * @param observable
 	 * @return value
 	 */

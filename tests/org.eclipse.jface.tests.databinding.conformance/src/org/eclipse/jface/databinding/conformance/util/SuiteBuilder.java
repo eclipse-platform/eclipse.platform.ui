@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 
 /**
  * Builds a test suite.
- * 
+ *
  * @since 1.1
  */
 public class SuiteBuilder {
@@ -37,7 +37,7 @@ public class SuiteBuilder {
 	/**
 	 * Adds all test methods from the provided <code>testCase</code> to the
 	 * suite.
-	 * 
+	 *
 	 * @param testCase
 	 * @return builder
 	 */
@@ -52,7 +52,7 @@ public class SuiteBuilder {
 	 * testCase that accepts a String as the first parameter followed by
 	 * parameters matching the provided parameters. If an appropriate
 	 * constructor is not found an exception will be thrown.
-	 * 
+	 *
 	 * @param testCase
 	 * @param parameters
 	 * @return builder
@@ -75,7 +75,7 @@ public class SuiteBuilder {
 	/**
 	 * Convenience method for invoking
 	 * {@link #addParameterizedTests(Class, Object[])} with a delegate.
-	 * 
+	 *
 	 * @param testCase
 	 * @param delegate
 	 * @return builder
@@ -89,7 +89,7 @@ public class SuiteBuilder {
 
 	/**
 	 * Builds a new TestSuite out of the tests.
-	 * 
+	 *
 	 * @return suite
 	 */
 	public TestSuite build() {
@@ -143,7 +143,7 @@ public class SuiteBuilder {
 	/**
 	 * Returns the constructor that has a String as the first parameters and
 	 * then matches the type of the parameters.
-	 * @param clazz 
+	 * @param clazz
 	 * @param parameters
 	 * @return constructor
 	 */

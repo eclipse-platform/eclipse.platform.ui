@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.StaleEvent;
 
 /**
  * Listener for tracking the firing of StaleEvents.
- * 
+ *
  * @since 1.1
  */
 public class StaleEventTracker implements IStaleListener {
@@ -55,7 +55,7 @@ public class StaleEventTracker implements IStaleListener {
 
 	/**
 	 * Convenience method to register a new listener.
-	 * 
+	 *
 	 * @param observable
 	 * @return tracker
 	 */
