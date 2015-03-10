@@ -24,9 +24,9 @@ import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.internal.forms.widgets.ColumnLayoutUtils;
 
 public class TestColumnWrapLayout extends TestCase {
-	
-	private final Point p20 = new Point(100, 20);		
-	private final Point p30 = new Point(100, 30);	
+
+	private final Point p20 = new Point(100, 20);
+	private final Point p30 = new Point(100, 30);
 	private final Point p50 = new Point(100, 50);
 	private final Point p100 = new Point(100, 100);
 	private final Point p200 = new Point(100, 200);
@@ -35,7 +35,7 @@ public class TestColumnWrapLayout extends TestCase {
 		Point[] sizes = { p20, p30, p30, p20, p20, p30 };
 		assertEquals(50, ColumnLayoutUtils.computeColumnHeight(3, sizes, 237, 0));
 	}
-	
+
 	public void testEqualSizeColumnsWithMargins() {
 		Point[] sizes = { p20, p30, p30, p20, p20, p30 };
 		assertEquals(60, ColumnLayoutUtils.computeColumnHeight(3, sizes, 200, 10));
@@ -50,26 +50,26 @@ public class TestColumnWrapLayout extends TestCase {
 		Point[] sizes = { p50, p30, p30, p30, p50, p50, p100 };
 		assertEquals(100, ColumnLayoutUtils.computeColumnHeight(4, sizes, 100, 0));
 	}
-	
+
 	public void testLargeMargins() {
 		Point[] sizes = { p20, p20, p20, p20, p20, p50, p50};
 		assertEquals(260, ColumnLayoutUtils.computeColumnHeight(3, sizes, 100, 100));
 	}
-	
+
 	private class SizedComposite extends Composite {
-		
+
 		int height;
 
 		public SizedComposite(Composite parent, int style, int height) {
 			super(parent, style);
 			this.height = height;
 		}
-		
+
 		public Point computeSize(int wHint, int hHint, boolean changed) {
-			return new Point( 20, height); 
-		}		
+			return new Point( 20, height);
+		}
 	}
-	
+
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */

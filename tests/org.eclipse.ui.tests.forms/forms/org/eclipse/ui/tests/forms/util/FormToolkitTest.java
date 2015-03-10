@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ui.tests.forms.util;
 
 import junit.framework.TestCase;
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class FormToolkitTest extends TestCase {
-	
+
 	/*
 	 * Verify that calling dispose twice does not cause an NPE
 	 */
@@ -26,6 +26,6 @@ public class FormToolkitTest extends TestCase {
 		FormToolkit toolkit = new FormToolkit(display);
 		toolkit.dispose();
 		toolkit.dispose();
-    }   
-	
+    }
+
 }

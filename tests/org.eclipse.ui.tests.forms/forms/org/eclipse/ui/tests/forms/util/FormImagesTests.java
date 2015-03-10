@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ui.tests.forms.util;
 
 import java.lang.reflect.Field;
@@ -36,7 +36,7 @@ public class FormImagesTests extends TestCase {
 		Assert.assertTrue("getInstance() returned a different FormImages instance after creation and disposal of one image", instance.equals(FormImages.getInstance()));
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testDisposeOne() throws Exception {
 		Display display = Display.getCurrent();
 		Image gradient = FormImages.getInstance().getGradient(new Color(display, 255, 255, 255), new Color(display, 0, 0, 0), 21, 21, 0, display);
@@ -45,7 +45,7 @@ public class FormImagesTests extends TestCase {
 		Assert.assertTrue("markFinished(...) did not dispose an image after a single getGradient()", gradient.isDisposed());
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testMultipleSimpleInstances() throws Exception {
 		Display display = Display.getCurrent();
 		Image gradient = FormImages.getInstance().getGradient(new Color(display, 200, 200, 200), new Color(display, 0, 0, 0), 30, 16, 3, display);
@@ -65,7 +65,7 @@ public class FormImagesTests extends TestCase {
 		}
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testMultipleComplexInstances() throws Exception {
 		Display display = Display.getCurrent();
 		Image gradient = FormImages.getInstance().getGradient(new Color[] {new Color(display, 200, 200, 200), new Color(display, 0, 0, 0)},
@@ -87,7 +87,7 @@ public class FormImagesTests extends TestCase {
 		}
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testMultipleUniqueInstances() throws Exception {
 		Display display = Display.getCurrent();
 		Image[] images = new Image[24];
@@ -141,7 +141,7 @@ public class FormImagesTests extends TestCase {
 		}
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testComplexEquality() throws Exception {
 		Display display = Display.getCurrent();
 		Image image1 = FormImages.getInstance().getGradient(new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
@@ -160,11 +160,11 @@ public class FormImagesTests extends TestCase {
 		FormImages.getInstance().markFinished(image2, display);
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testToolkitColors() throws Exception {
 		String blueKey = "blue";
 		String redKey = "red";
-		
+
 		Display display = Display.getCurrent();
 		FormToolkit kit1 = new FormToolkit(display);
 		kit1.getColors().createColor(blueKey, new RGB(0,0,255));
@@ -189,7 +189,7 @@ public class FormImagesTests extends TestCase {
 		Assert.assertTrue("image was not disposed", image3.isDisposed());
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
-	
+
 	public void testDisposeUnknown() throws Exception {
 		Display display = Display.getCurrent();
 		Image image = new Image(display, 10, 10);

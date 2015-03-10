@@ -23,7 +23,7 @@ public class FormsTestPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static FormsTestPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */

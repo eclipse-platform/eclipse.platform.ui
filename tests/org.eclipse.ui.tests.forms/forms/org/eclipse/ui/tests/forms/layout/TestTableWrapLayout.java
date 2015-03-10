@@ -31,13 +31,13 @@ public class TestTableWrapLayout extends TestCase {
 	private final String A20 = A10 + " " + A10;
 	private final String A40 = A20 + " " + A20;
 	private final String A80 = A40 + " " + A40;
-	
+
 	// Returns the width + left
 	private int rightEdge(Label lab) {
 		Rectangle r = lab.getBounds();
 		return r.x + r.width;
 	}
-	
+
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
@@ -57,7 +57,7 @@ public class TestTableWrapLayout extends TestCase {
 		assertTrue(l2.getSize().x > 100);
 		shell.dispose();
 	}
-	
+
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
@@ -86,11 +86,11 @@ public class TestTableWrapLayout extends TestCase {
 		assertTrue(l1.getSize().y > originalHeight);
 		shell.dispose();
 	}
-	
+
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
-	// Test suppressed for now, see Bug 196686 
+	// Test suppressed for now, see Bug 196686
 	public void suppressed_testTableWrapLayoutWrappingLabels() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
@@ -109,7 +109,7 @@ public class TestTableWrapLayout extends TestCase {
 		assertTrue("Labels overlap", l2.getBounds().y >= l1.getBounds().y + l1.getBounds().height);
 		shell.dispose();
 	}
-	
+
 	/**
 	 * Test a 2x2 grid with unequal sizes
 	 */
@@ -142,11 +142,11 @@ public class TestTableWrapLayout extends TestCase {
 		assertTrue("Labels overlap", l4.getBounds().y >= l2.getBounds().y + l2.getBounds().height);
 		shell.dispose();
 	}
-	
+
 	/**
 	 * Test alignments and margins
 	 */
-	// Suppressed for now - see Bug 196686 
+	// Suppressed for now - see Bug 196686
 	public void suppressed_testTableWrapLayoutAlignment() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
@@ -190,18 +190,18 @@ public class TestTableWrapLayout extends TestCase {
 		assertEquals(LEFT_MARGIN , labLeft.getBounds().x);
 		assertTrue(rightEdge(lab0) > rightEdge(labLeft));
 		assertTrue(rightEdge(labLeft) + tableWrapLayout.rightMargin < 100);
-		
+
 		assertEquals(rightEdge(labRight), rightEdge(lab0));
 		assertTrue(labRight.getBounds().x > LEFT_MARGIN);
-		
+
 		assertTrue(labCenter.getBounds().x > LEFT_MARGIN);
 		assertTrue(rightEdge(lab0) > rightEdge(labCenter));
-		
-		int offCenter = rightEdge(labCenter) + labCenter.getBounds().x 
+
+		int offCenter = rightEdge(labCenter) + labCenter.getBounds().x
 		   - rightEdge(lab0) + lab0.getBounds().x;
 		assertTrue(offCenter >= -2);
 		assertTrue(offCenter <= 2);
-		
+
 		assertEquals(LEFT_MARGIN , labFill.getBounds().x);
 		assertEquals(rightEdge(labFill), rightEdge(lab0));
 		shell.dispose();

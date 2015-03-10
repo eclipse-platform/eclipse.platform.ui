@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ui.tests.forms.util;
 
 import junit.framework.TestCase;
@@ -30,7 +30,7 @@ public class FormFontsTests extends TestCase {
 		// ensure the singleton is returning the same instance after creating and disposing one gradient
 		Assert.assertTrue("getInstance() returned a different FormFonts instance after creation and disposal of one bold font", instance.equals(FormFonts.getInstance()));
 	}
-	
+
 	public void testDisposeOne() {
 		Display display = Display.getCurrent();
 		Font boldSystemFont = FormFonts.getInstance().getBoldFont(display, display.getSystemFont());
@@ -38,7 +38,7 @@ public class FormFontsTests extends TestCase {
 		// ensure that getting a single gradient and marking it as finished disposed it
 		Assert.assertTrue("markFinished(...) did not dispose a font after a single getBoldFont()", boldSystemFont.isDisposed());
 	}
-	
+
 	public void testMultipleInstances() {
 		Display display = Display.getCurrent();
 		Font boldSystemFont = FormFonts.getInstance().getBoldFont(display, display.getSystemFont());
@@ -57,7 +57,7 @@ public class FormFontsTests extends TestCase {
 				Assert.assertTrue("markFinished(...) did not dispose a shared font on the last call",boldSystemFont.isDisposed());
 		}
 	}
-	
+
 	public void testMultipleFonts() {
 		Display display = Display.getCurrent();
 		Font veranda = new Font(display, "Veranda",12,SWT.NORMAL);
@@ -73,7 +73,7 @@ public class FormFontsTests extends TestCase {
 		veranda.dispose();
 		arial.dispose();
 	}
-	
+
 	public void testDisposeUnknown() {
 		Display display = Display.getCurrent();
 		Font system = new Font(display, display.getSystemFont().getFontData());

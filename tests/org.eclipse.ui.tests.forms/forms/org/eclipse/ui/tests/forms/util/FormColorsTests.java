@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ui.tests.forms.util;
 
 import junit.framework.TestCase;
@@ -45,7 +45,7 @@ public class FormColorsTests extends TestCase {
 
 	private static String TEST_KEY_1 = "testKey1";
 	private static String TEST_KEY_2 = "testKey2";
-	
+
 	public void testStandalone() {
 		FormColors fColors = new FormColors(Display.getCurrent());
 		Color[] colors = new Color[KEYS_NON_NULL.length];
@@ -78,7 +78,7 @@ public class FormColorsTests extends TestCase {
 		if (testBorderDispose)
 			Assert.assertFalse("FormColors disposed getBorderColor() when it shouldn't have", bc.isDisposed());
 	}
-	
+
 	public void testMultiple() {
 		FormColors fColors = new FormColors(Display.getCurrent());
 		Color[] colors = new Color[KEYS_NON_NULL.length];
@@ -165,7 +165,7 @@ public class FormColorsTests extends TestCase {
 			Assert.assertFalse("Last FormToolkit with shared FormColors disposed getBorderColor() when it shouldn't have", bc.isDisposed());
 		fColors.dispose();
 	}
-	
+
 	public void testCustom() {
 		FormColors fColors = new FormColors(Display.getCurrent());
 		Color test1 = fColors.createColor(TEST_KEY_1, 255, 155, 55);
