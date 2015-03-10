@@ -19,7 +19,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 public class DynamicPerspective implements IPerspectiveFactory {
 
 	/**
-	 * 
+	 *
 	 */
 	public DynamicPerspective() {
 		super();

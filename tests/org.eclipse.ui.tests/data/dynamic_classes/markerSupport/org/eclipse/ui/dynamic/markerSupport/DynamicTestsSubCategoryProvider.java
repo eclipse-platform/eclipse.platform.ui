@@ -16,15 +16,15 @@ import org.eclipse.ui.views.markers.ISubCategoryProvider;
 
 /**
  * DynamicTestsSubCategoryProvider is test class for the dynamic tests.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class DynamicTestsSubCategoryProvider implements ISubCategoryProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.markers.ISubCategoryProvider#categoryFor(org.eclipse.core.resources.IMarker)
 	 */
 	public String categoryFor(IMarker marker) {

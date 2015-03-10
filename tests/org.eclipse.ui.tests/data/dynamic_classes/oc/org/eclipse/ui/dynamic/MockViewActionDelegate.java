@@ -21,7 +21,7 @@ import org.eclipse.ui.IViewPart;
 public class MockViewActionDelegate implements IViewActionDelegate {
 
 	/**
-	 * 
+	 *
 	 */
 	public MockViewActionDelegate() {
 		super();

@@ -21,7 +21,7 @@ public class DynamicLightweightLabelDecorator implements
 		ILightweightLabelDecorator {
 
 	/**
-	 * 
+	 *
 	 */
 	public DynamicLightweightLabelDecorator() {
 		super();

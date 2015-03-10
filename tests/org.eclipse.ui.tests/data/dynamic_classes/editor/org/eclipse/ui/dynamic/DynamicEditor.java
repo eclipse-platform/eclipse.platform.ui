@@ -23,7 +23,7 @@ import org.eclipse.ui.part.EditorPart;
 public class DynamicEditor extends EditorPart {
 
 	/**
-	 * 
+	 *
 	 */
 	public DynamicEditor() {
 		super();
@@ -33,13 +33,13 @@ public class DynamicEditor extends EditorPart {
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
-	public void doSaveAs() {		
+	public void doSaveAs() {
 	}
 
 	/* (non-Javadoc)
@@ -67,12 +67,12 @@ public class DynamicEditor extends EditorPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public void createPartControl(Composite parent) {		
+	public void createPartControl(Composite parent) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
-	public void setFocus() {	
+	public void setFocus() {
 	}
 }

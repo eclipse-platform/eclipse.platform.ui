@@ -19,7 +19,7 @@ import org.eclipse.ui.part.ViewPart;
 public class DynamicView extends ViewPart {
 
 	/**
-	 * 
+	 *
 	 */
 	public DynamicView() {
 		super();
@@ -34,7 +34,7 @@ public class DynamicView extends ViewPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
-	public void setFocus() {	
+	public void setFocus() {
 	}
 
 }

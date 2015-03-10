@@ -20,7 +20,7 @@ import org.eclipse.ui.browser.IWebBrowser;
 public class DynamicBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
     /**
-     * 
+     *
      */
     public DynamicBrowserSupport() {
         super();

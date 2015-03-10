@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class DynamicPreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * 
+	 *
 	 */
 	public DynamicPreferencePage() {
 		super();
@@ -67,22 +67,22 @@ public class DynamicPreferencePage implements IWorkbenchPreferencePage {
 
 	public void setContainer(IPreferencePageContainer preferencePageContainer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setSize(Point size) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void createControl(Composite parent) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Control getControl() {
@@ -117,27 +117,27 @@ public class DynamicPreferencePage implements IWorkbenchPreferencePage {
 
 	public void performHelp() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setDescription(String description) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setImageDescriptor(ImageDescriptor image) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setTitle(String title) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setVisible(boolean visible) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 public class DynamicLabelDecorator implements ILabelDecorator {
 
 	/**
-	 * 
+	 *
 	 */
 	public DynamicLabelDecorator() {
 		super();

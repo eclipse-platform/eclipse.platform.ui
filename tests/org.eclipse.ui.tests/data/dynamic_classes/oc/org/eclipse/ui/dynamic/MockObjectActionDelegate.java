@@ -20,9 +20,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.1
  */
 public class MockObjectActionDelegate implements IObjectActionDelegate, IActionDelegate {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public MockObjectActionDelegate() {
 		super();

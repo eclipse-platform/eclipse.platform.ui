@@ -32,11 +32,11 @@ public class DynamicWorkingSetElementAdapter implements
 			}
 
 			public void createPartControl(Composite parent) {
-				
+
 			}
 
 			public void dispose() {
-				
+
 			}
 
 			public IIntroSite getIntroSite() {
@@ -56,27 +56,27 @@ public class DynamicWorkingSetElementAdapter implements
 			public void init(IIntroSite site, IMemento memento)
 					throws PartInitException {
 
-				
+
 			}
 
 			public void removePropertyListener(IPropertyListener listener) {
 
-				
+
 			}
 
 			public void saveState(IMemento memento) {
 
-				
+
 			}
 
 			public void setFocus() {
 
-				
+
 			}
 
 			public void standbyStateChanged(boolean standby) {
 
-				
+
 			}
 
 			public Object getAdapter(Class adapter) {
@@ -85,7 +85,7 @@ public class DynamicWorkingSetElementAdapter implements
 	}
 
 	public void dispose() {
-		
+
 	}
 
 }
