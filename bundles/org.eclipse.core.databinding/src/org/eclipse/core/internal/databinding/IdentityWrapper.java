@@ -17,9 +17,9 @@ package org.eclipse.core.internal.databinding;
  * Used for wrapping objects that define their own implementations of equals()
  * and hashCode() when putting them in sets or hashmaps to ensure identity
  * comparison.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class IdentityWrapper {
 

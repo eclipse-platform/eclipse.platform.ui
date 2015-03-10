@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005, 2007 db4objects Inc.  http://www.db4o.com
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import com.ibm.icu.text.NumberFormat;
 /**
  * @since 1.0
  */
-public class StringToByteConverter extends NumberFormatConverter {	
+public class StringToByteConverter extends NumberFormatConverter {
 	private String outOfRangeMessage;
 	private NumberFormat numberFormat;
 	private boolean primitive;
-	
+
 	/**
 	 * @param numberFormat
 	 * @param toType
@@ -73,13 +73,13 @@ public class StringToByteConverter extends NumberFormatConverter {
 		if (StringToNumberParser.inByteRange(result.getNumber())) {
 			return new Byte(result.getNumber().byteValue());
 		}
-		
+
 		synchronized (this) {
 			if (outOfRangeMessage == null) {
 				outOfRangeMessage = StringToNumberParser
 				.createOutOfRangeMessage(new Byte(Byte.MIN_VALUE), new Byte(Byte.MAX_VALUE), numberFormat);
 			}
-						
+
 			throw new IllegalArgumentException(outOfRangeMessage);
 		}
 	}

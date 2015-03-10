@@ -23,7 +23,7 @@ import com.ibm.icu.text.NumberFormat;
 /**
  * Converts a Number to a String using <code>NumberFormat.format(...)</code>.
  * This class is thread safe.
- * 
+ *
  * @since 1.0
  */
 public class NumberToStringConverter extends Converter {
@@ -35,34 +35,34 @@ public class NumberToStringConverter extends Converter {
 	private boolean fromTypeIsBigDecimal;
 
 	static Class icuBigDecimal = null;
-	static Constructor icuBigDecimalCtr = null; 
-	
+	static Constructor icuBigDecimalCtr = null;
+
 	{
 		/*
 		 * If the full ICU4J library is available, we use the ICU BigDecimal
 		 * class to support proper formatting and parsing of java.math.BigDecimal.
-		 * 
-		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes 
+		 *
+		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes
 		 * support for java.math.BigDecimal, and if used falls back to converting as
 		 * an unknown Number type via doubleValue(), which is undesirable.
-		 * 
+		 *
 		 * See Bug #180392.
 		 */
 		try {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal"); //$NON-NLS-1$
 			icuBigDecimalCtr = icuBigDecimal.getConstructor(new Class[] {BigInteger.class, int.class});
 //			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+(icuBigDecimal != null)+", icuBigDecimalCtr="+(icuBigDecimalCtr != null)); //$NON-NLS-1$ //$NON-NLS-2$
-		} 
+		}
 		catch(ClassNotFoundException e) {}
 		catch(NoSuchMethodException e) {}
-	}	
-	
+	}
+
 	/**
 	 * Constructs a new instance.
 	 * <p>
 	 * Private to restrict public instantiation.
 	 * </p>
-	 * 
+	 *
 	 * @param numberFormat
 	 * @param fromType
 	 */
@@ -93,7 +93,7 @@ public class NumberToStringConverter extends Converter {
 	 * If the converter was constructed for an object type, non primitive, a
 	 * <code>fromObject</code> of <code>null</code> will be converted to an
 	 * empty string.
-	 * 
+	 *
 	 * @param fromObject
 	 *            value to convert. May be <code>null</code> if the converter
 	 *            was constructed for a non primitive type.
@@ -136,7 +136,7 @@ public class NumberToStringConverter extends Converter {
 				result = numberFormat.format(fromObject);
 			}
 		}
-		
+
 
 		return result;
 	}
@@ -236,7 +236,7 @@ public class NumberToStringConverter extends Converter {
 			NumberFormat numberFormat) {
 		return new NumberToStringConverter(numberFormat, BigInteger.class);
 	}
-	
+
 	/**
 	 * @return BigDecimal convert for the default locale
 	 * @since 1.2
@@ -254,7 +254,7 @@ public class NumberToStringConverter extends Converter {
 			NumberFormat numberFormat) {
 		return new NumberToStringConverter(numberFormat, BigDecimal.class);
 	}
-	
+
 	/**
 	 * @param primitive
 	 *            <code>true</code> if the type is a short
@@ -276,7 +276,7 @@ public class NumberToStringConverter extends Converter {
 		return new NumberToStringConverter(numberFormat,
 				(primitive) ? Short.TYPE : Short.class);
 	}
-	
+
 	/**
 	 * @param primitive
 	 *            <code>true</code> if the type is a byte
@@ -298,5 +298,5 @@ public class NumberToStringConverter extends Converter {
 		return new NumberToStringConverter(numberFormat,
 				(primitive) ? Byte.TYPE : Byte.class);
 	}
-	
+
 }

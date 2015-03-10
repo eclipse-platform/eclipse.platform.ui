@@ -26,7 +26,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  * This abstract class represents a binding between a model and a target. Newly
  * created instances need to be added to a data binding context using
  * {@link #init(DataBindingContext)}.
- * 
+ *
  * @since 1.0
  */
 public abstract class Binding extends ValidationStatusProvider {
@@ -35,10 +35,10 @@ public abstract class Binding extends ValidationStatusProvider {
 	private IObservable target;
 	private IObservable model;
 	private IDisposeListener disposeListener;
-	
+
 	/**
 	 * Creates a new binding.
-	 * 
+	 *
 	 * @param target target observable
 	 * @param model model observable
 	 */
@@ -46,14 +46,14 @@ public abstract class Binding extends ValidationStatusProvider {
 		this.target = target;
 		this.model = model;
 	}
-	
+
 	/**
 	 * Initializes this binding with the given context and adds it to the list
 	 * of bindings of the context.
 	 * <p>
 	 * Subclasses may extend, but must call the super implementation.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 */
 	public final void init(DataBindingContext context) {
@@ -80,7 +80,7 @@ public abstract class Binding extends ValidationStatusProvider {
 		context.addBinding(this);
 		postInit();
 	}
-	
+
 	/**
 	 * Called by {@link #init(DataBindingContext)} after setting
 	 * {@link #context} but before adding this binding to the context.
@@ -89,7 +89,7 @@ public abstract class Binding extends ValidationStatusProvider {
 	 * while running this method.
 	 */
 	protected abstract void preInit();
-	
+
 	/**
 	 * Called by {@link #init(DataBindingContext)} after adding this binding to
 	 * the context. Subclasses may use this method to perform initialization
@@ -111,21 +111,21 @@ public abstract class Binding extends ValidationStatusProvider {
 	 * by the time this call returns.
 	 */
 	public abstract void updateModelToTarget();
-	
+
 	/**
 	 * Validates the target's state at the next reasonable
 	 * opportunity. There is no guarantee that the validation status will have been updated
 	 * by the time this call returns.
 	 */
 	public abstract void validateTargetToModel();
-	
+
 	/**
 	 * Validates the model's state at the next reasonable
 	 * opportunity. There is no guarantee that the validation status will have been updated
 	 * by the time this call returns.
 	 */
 	public abstract void validateModelToTarget();
-	
+
 	/**
 	 * Disposes of this Binding. Subclasses may extend, but must call super.dispose().
 	 */
@@ -158,7 +158,7 @@ public abstract class Binding extends ValidationStatusProvider {
 
 	/**
 	 * Returns the target observable
-	 * 
+	 *
 	 * @return the target observable
 	 */
 	public IObservable getTarget() {
@@ -173,7 +173,7 @@ public abstract class Binding extends ValidationStatusProvider {
 
 	/**
 	 * Returns the model observable
-	 * 
+	 *
 	 * @return the model observable
 	 */
 	public IObservable getModel() {

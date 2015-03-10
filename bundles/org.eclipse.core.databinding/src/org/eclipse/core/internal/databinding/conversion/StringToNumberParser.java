@@ -21,7 +21,7 @@ import com.ibm.icu.text.NumberFormat;
 
 /**
  * Utility class for the parsing of strings to numbers.
- * 
+ *
  * @since 1.0
  */
 public class StringToNumberParser {
@@ -73,7 +73,7 @@ public class StringToNumberParser {
 
 	/**
 	 * The result of a parse operation.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static class ParseResult {
@@ -84,7 +84,7 @@ public class StringToNumberParser {
 		 * The number as a result of the conversion. <code>null</code> if the
 		 * value could not be converted or if the type is not a primitive and
 		 * the value was an empty string.
-		 * 
+		 *
 		 * @return number
 		 */
 		public Number getNumber() {
@@ -94,7 +94,7 @@ public class StringToNumberParser {
 		/**
 		 * ParsePosition if an error occurred while parsing. <code>null</code>
 		 * if no error occurred.
-		 * 
+		 *
 		 * @return parse position
 		 */
 		public ParsePosition getPosition() {
@@ -104,7 +104,7 @@ public class StringToNumberParser {
 
 	/**
 	 * Formats an appropriate message for a parsing error.
-	 * 
+	 *
 	 * @param value
 	 * @param position
 	 * @return message
@@ -127,7 +127,7 @@ public class StringToNumberParser {
 
 	/**
 	 * Formats an appropriate message for an out of range error.
-	 * 
+	 *
 	 * @param minValue
 	 * @param maxValue
 	 * @param numberFormat
@@ -151,7 +151,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a integer.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if a valid integer
 	 * @throws IllegalArgumentException
@@ -163,7 +163,7 @@ public class StringToNumberParser {
 
 	/**
 	 * Validates the range of the provided <code>number</code>.
-	 * 
+	 *
 	 * @param number
 	 * @param bitLength
 	 *            number of bits allowed to be in range
@@ -208,7 +208,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a long.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
@@ -221,7 +221,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a float.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
@@ -277,7 +277,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a double.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
@@ -291,7 +291,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a short.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 */
@@ -302,7 +302,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a byte.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 */

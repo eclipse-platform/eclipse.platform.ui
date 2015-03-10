@@ -28,7 +28,7 @@ public class Pair {
 
 	/**
 	 * Construct a Pair(a, b)
-	 * 
+	 *
 	 * @param a a in the pair (a, b)
 	 * @param b b in the pair (a, b)
 	 */

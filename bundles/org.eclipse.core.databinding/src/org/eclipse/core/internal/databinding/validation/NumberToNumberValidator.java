@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
  * <p>
  * Class is thread safe.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public abstract class NumberToNumberValidator implements IValidator {
@@ -87,7 +87,7 @@ public abstract class NumberToNumberValidator implements IValidator {
 
 	/**
 	 * Invoked to determine if the value is in range.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 */

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.0
- * 
+ *
  */
 class ValueBinding extends Binding {
 	private final UpdateValueStrategy targetToModel;
@@ -126,7 +126,7 @@ class ValueBinding extends Binding {
 	/**
 	 * Incorporates the provided <code>newStats</code> into the
 	 * <code>multieStatus</code>.
-	 * 
+	 *
 	 * @param multiStatus
 	 * @param newStatus
 	 * @return <code>true</code> if the update should proceed

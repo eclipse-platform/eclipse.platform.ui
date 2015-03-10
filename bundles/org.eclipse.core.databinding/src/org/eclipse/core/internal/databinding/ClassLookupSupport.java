@@ -24,7 +24,7 @@ import java.util.Set;
  *
  */
 public class ClassLookupSupport {
-	
+
 	/*
 	 * code copied from AdapterManager.java
 	 */
@@ -58,7 +58,7 @@ public class ClassLookupSupport {
 	 * value is the <b>sole<b> factory that defines that adapter. Note that
 	 * if multiple adapters technically define the same property, only the
 	 * first found in the search order is considered.
-	 * 
+	 *
 	 * Note that it is important to maintain a consistent class and interface
 	 * lookup order. See the class comment for more details.
 	 */

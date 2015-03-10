@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ValidatedObservableList extends ObservableList {
 	private IObservableList target;

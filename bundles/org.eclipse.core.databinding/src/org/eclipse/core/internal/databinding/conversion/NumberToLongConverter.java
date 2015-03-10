@@ -36,7 +36,7 @@ public class NumberToLongConverter extends NumberToNumberConverter {
 		if (StringToNumberParser.inLongRange(number)) {
 			return new Long(number.longValue());
 		}
-		
+
 		return null;
 	}
 }

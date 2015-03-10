@@ -14,7 +14,7 @@ package org.eclipse.core.databinding.conversion;
 
 /**
  * Abstract base class for converters.
- * 
+ *
  * @since 1.0
  *
  */

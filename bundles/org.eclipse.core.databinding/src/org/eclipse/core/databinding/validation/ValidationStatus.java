@@ -17,16 +17,16 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Convenience class for creating status objects.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation status with the given severity, message, and
 	 * exception.
-	 * 
+	 *
 	 * @param severity
 	 * @param message
 	 * @param exception
@@ -37,7 +37,7 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation status with the given severity and message.
-	 * 
+	 *
 	 * @param severity
 	 * @param message
 	 */
@@ -47,7 +47,7 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation error status with the given message.
-	 * 
+	 *
 	 * @param message
 	 * @return a new error status with the given message
 	 */
@@ -57,18 +57,18 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation cancel status with the given message.
-	 * 
+	 *
 	 * @param message
 	 * @return a new cancel status with the given message
 	 */
 	public static IStatus cancel(String message) {
 		return new ValidationStatus(IStatus.CANCEL, message);
 	}
-	
+
 	/**
 	 * Creates a new validation error status with the given message and
 	 * exception.
-	 * 
+	 *
 	 * @param message
 	 * @param exception
 	 * @return a new error status with the given message and exception
@@ -79,27 +79,27 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Creates a new validation warning status with the given message.
-	 * 
+	 *
 	 * @param message
 	 * @return a new warning status with the given message
 	 */
 	public static IStatus warning(String message) {
 		return new ValidationStatus(IStatus.WARNING, message);
 	}
-	
+
 	/**
 	 * Creates a new validation info status with the given message.
-	 * 
+	 *
 	 * @param message
 	 * @return a new info status with the given message
 	 */
 	public static IStatus info(String message) {
 		return new ValidationStatus(IStatus.INFO, message);
 	}
-	
+
 	/**
 	 * Returns an OK status.
-	 * 
+	 *
 	 * @return an ok status
 	 */
 	public static IStatus ok() {
@@ -124,7 +124,7 @@ public class ValidationStatus extends Status {
 
 	/**
 	 * Equality is based upon instance equality rather than identity.
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.MultiStatus;
 /**
  * A <code>MultiStatus</code> implementation that copies that state of the
  * added status to this instance if it is >= the current severity.
- * 
+ *
  * @since 1.0
  */
 public class BindingStatus extends MultiStatus {
 	/**
 	 * Constructs a new instance.
-	 * 
+	 *
 	 * @param pluginId
 	 * @param code
 	 * @param message
@@ -40,7 +40,7 @@ public class BindingStatus extends MultiStatus {
 	/**
 	 * Adds the status to the multi status. The details of the status will be
 	 * copied to the multi status if the severity is >= the current severity.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.MultiStatus#add(org.eclipse.core.runtime.IStatus)
 	 */
 	@Override
@@ -64,13 +64,13 @@ public class BindingStatus extends MultiStatus {
 	 * <li>message = ""</li>
 	 * <li>exception = null</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return status
 	 */
 	public static BindingStatus ok() {
 		return new BindingStatus(Policy.JFACE_DATABINDING, 0, "", null); //$NON-NLS-1$
 	}
-	
+
 	private static int hashCode(Object[] array) {
 		final int prime = 31;
 		if (array == null)
@@ -82,7 +82,7 @@ public class BindingStatus extends MultiStatus {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

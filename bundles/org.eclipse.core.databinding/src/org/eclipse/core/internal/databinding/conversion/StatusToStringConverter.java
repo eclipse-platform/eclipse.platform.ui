@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * Converts an IStatus into a String. The message of the status is the returned
  * value.
- * 
+ *
  * @since 1.0
  */
 public class StatusToStringConverter extends Converter implements IConverter {

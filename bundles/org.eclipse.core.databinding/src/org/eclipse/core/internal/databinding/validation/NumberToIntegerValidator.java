@@ -24,7 +24,7 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 public class NumberToIntegerValidator extends NumberToNumberValidator {
 	private static final Integer MIN = new Integer(Integer.MIN_VALUE);
 	private static final Integer MAX = new Integer(Integer.MAX_VALUE);
-	
+
 	/**
 	 * @param converter
 	 */

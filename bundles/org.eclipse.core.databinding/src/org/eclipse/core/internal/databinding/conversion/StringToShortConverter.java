@@ -22,7 +22,7 @@ import com.ibm.icu.text.NumberFormat;
 public class StringToShortConverter extends NumberFormatConverter {
 	private final NumberFormat numberFormat;
 	private final boolean primitive;
-	
+
 	private String outOfRangeMessage;
 
 	/**
@@ -55,13 +55,13 @@ public class StringToShortConverter extends NumberFormatConverter {
 		if (StringToNumberParser.inShortRange(result.getNumber())) {
 			return new Short(result.getNumber().shortValue());
 		}
-		
+
 		synchronized (this) {
 			if (outOfRangeMessage == null) {
 				outOfRangeMessage = StringToNumberParser
 				.createOutOfRangeMessage(new Short(Short.MIN_VALUE), new Short(Short.MAX_VALUE), numberFormat);
 			}
-						
+
 			throw new IllegalArgumentException(outOfRangeMessage);
 		}
 	}

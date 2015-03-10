@@ -28,7 +28,7 @@ import com.ibm.icu.text.NumberFormat;
 /**
  * Converts a String to a Number using <code>NumberFormat.parse(...)</code>.
  * This class is thread safe.
- * 
+ *
  * @since 1.0
  */
 public class StringToNumberConverter extends NumberFormatConverter {
@@ -72,23 +72,23 @@ public class StringToNumberConverter extends NumberFormatConverter {
 
 	private static final Short MIN_SHORT = new Short(Short.MIN_VALUE);
 	private static final Short MAX_SHORT = new Short(Short.MAX_VALUE);
-	
+
 	private static final Byte MIN_BYTE = new Byte(Byte.MIN_VALUE);
 	private static final Byte MAX_BYTE = new Byte(Byte.MAX_VALUE);
-	
+
 	static Class<?> icuBigDecimal = null;
 	static Method icuBigDecimalScale = null;
 	static Method icuBigDecimalUnscaledValue = null;
-	
+
 	{
 		/*
 		 * If the full ICU4J library is available, we use the ICU BigDecimal
 		 * class to support proper formatting and parsing of java.math.BigDecimal.
-		 * 
-		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes 
+		 *
+		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes
 		 * support for java.math.BigDecimal, and if used falls back to converting as
 		 * an unknown Number type via doubleValue(), which is undesirable.
-		 * 
+		 *
 		 * See Bug #180392.
 		 */
 		try {
@@ -97,11 +97,11 @@ public class StringToNumberConverter extends NumberFormatConverter {
 			icuBigDecimalUnscaledValue = icuBigDecimal.getMethod("unscaledValue"); //$NON-NLS-1$
 /*			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+ //$NON-NLS-1$
 					(icuBigDecimal != null)+", icuBigDecimalScale="+(icuBigDecimalScale != null)+ //$NON-NLS-1$
-					", icuBigDecimalUnscaledValue="+(icuBigDecimalUnscaledValue != null)); //$NON-NLS-1$ */  
-		} 
+					", icuBigDecimalUnscaledValue="+(icuBigDecimalUnscaledValue != null)); //$NON-NLS-1$ */
+		}
 		catch(ClassNotFoundException e) {}
 		catch(NoSuchMethodException e) {}
-	}		
+	}
 	/**
 	 * @param numberFormat
 	 * @param toType
@@ -129,7 +129,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	/**
 	 * Converts the provided <code>fromObject</code> to the requested
 	 * {@link #getToType() to type}.
-	 * 
+	 *
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
 	 * @throws IllegalArgumentException
 	 *             if the value isn't in the format required by the NumberFormat
@@ -343,7 +343,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	public static StringToNumberConverter toBigDecimal() {
 		return toBigDecimal(NumberFormat.getNumberInstance());
 	}
-	
+
 	/**
 	 * @param numberFormat
 	 * @return to BigDecimal converter with the provided numberFormat
@@ -353,7 +353,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 		return new StringToNumberConverter(numberFormat, BigDecimal.class,
 				null, null, BigDecimal.class);
 	}
-	
+
 	/**
 	 * @param primitive
 	 *            <code>true</code> if the convert to type is a short
@@ -376,7 +376,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 				(primitive) ? Short.TYPE : Short.class, MIN_SHORT,
 				MAX_SHORT, Short.class);
 	}
-	
+
 	/**
 	 * @param primitive
 	 *            <code>true</code> if the convert to type is a byte
@@ -399,5 +399,5 @@ public class StringToNumberConverter extends NumberFormatConverter {
 				(primitive) ? Byte.TYPE : Byte.class, MIN_BYTE,
 				MAX_BYTE, Byte.class);
 	}
-	
+
 }

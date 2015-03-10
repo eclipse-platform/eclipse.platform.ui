@@ -24,7 +24,7 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 public class NumberToLongValidator extends NumberToNumberValidator {
 	private static final Long MIN = new Long(Long.MIN_VALUE);
 	private static final Long MAX = new Long(Long.MAX_VALUE);
-	
+
 	/**
 	 * @param converter
 	 */

@@ -36,7 +36,7 @@ public class NumberToFloatConverter extends NumberToNumberConverter {
 		if (StringToNumberParser.inFloatRange(number)) {
 			return new Float(number.floatValue());
 		}
-		
+
 		return null;
 	}
 }

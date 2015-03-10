@@ -18,12 +18,12 @@ import com.ibm.icu.text.NumberFormat;
  * <p>
  * Class is thread safe.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class NumberToByteConverter extends NumberToNumberConverter {
 	/**
-	 * @param numberFormat 
+	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
@@ -37,7 +37,7 @@ public class NumberToByteConverter extends NumberToNumberConverter {
 		if (StringToNumberParser.inByteRange(number)) {
 			return new Byte(number.byteValue());
 		}
-		
+
 		return null;
 	}
 }

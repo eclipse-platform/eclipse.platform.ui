@@ -19,7 +19,7 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 public class StringToDoubleValidator extends AbstractStringToNumberValidator {
 	private static final Double MIN = new Double(-Double.MAX_VALUE);
 	private static final Double MAX = new Double(Double.MAX_VALUE);
-	
+
 	/**
 	 * @param converter
 	 */

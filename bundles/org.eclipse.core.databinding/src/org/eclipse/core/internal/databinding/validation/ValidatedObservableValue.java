@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.IStatus;
  * <li>This class will not forward {@link ValueChangingEvent} events from a
  * wrapped {@link IVetoableValue}.
  * </ul>
- * 
+ *
  * @since 1.2
  */
 public class ValidatedObservableValue extends AbstractObservableValue {
@@ -98,7 +98,7 @@ public class ValidatedObservableValue extends AbstractObservableValue {
 
 	/**
 	 * Constructs an observable value
-	 * 
+	 *
 	 * @param target
 	 *            the observable value to be wrapped
 	 * @param validationStatus

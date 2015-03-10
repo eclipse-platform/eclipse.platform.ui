@@ -20,7 +20,7 @@ import com.ibm.icu.text.NumberFormat;
  * <p>
  * This class is thread safe.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public abstract class NumberToNumberConverter extends Converter {
@@ -42,7 +42,7 @@ public abstract class NumberToNumberConverter extends Converter {
 		if (fromObject == null) {
 			if (primitive) {
 				throw new IllegalArgumentException(
-						"Parameter 'fromObject' cannot be null."); //$NON-NLS-1$	
+						"Parameter 'fromObject' cannot be null."); //$NON-NLS-1$
 			}
 
 			return null;
@@ -73,7 +73,7 @@ public abstract class NumberToNumberConverter extends Converter {
 
 	/**
 	 * Invoked when the number should converted.
-	 * 
+	 *
 	 * @param number
 	 * @return number if conversion was successfule, <code>null</code> if the
 	 *         number was out of range
@@ -83,7 +83,7 @@ public abstract class NumberToNumberConverter extends Converter {
 	/**
 	 * NumberFormat being used by the converter. Access to the format must be
 	 * synchronized on the number format instance.
-	 * 
+	 *
 	 * @return number format
 	 */
 	public NumberFormat getNumberFormat() {

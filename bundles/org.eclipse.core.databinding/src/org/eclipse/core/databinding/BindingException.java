@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 
 /**
  * An unchecked exception indicating a binding problem.
- * 
+ *
  * @since 1.0
  */
 public class BindingException extends RuntimeException {
@@ -28,7 +28,7 @@ public class BindingException extends RuntimeException {
 
 	/**
 	 * Creates a new BindingException with the given message.
-	 * 
+	 *
 	 * @param message
 	 */
 	public BindingException(String message) {
@@ -37,7 +37,7 @@ public class BindingException extends RuntimeException {
 
 	/**
 	 * Creates a new BindingException with the given message and cause.
-	 * 
+	 *
 	 * @param message
 	 * @param cause
 	 */

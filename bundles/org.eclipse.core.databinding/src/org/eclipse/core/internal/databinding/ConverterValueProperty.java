@@ -27,7 +27,7 @@ public class ConverterValueProperty extends SimpleValueProperty {
 	/**
 	 * Creates a new value property which applies the given converter on the
 	 * source object in order to produce the property's value.
-	 * 
+	 *
 	 * @param converter
 	 *            The converter to apply to the source object.
 	 */

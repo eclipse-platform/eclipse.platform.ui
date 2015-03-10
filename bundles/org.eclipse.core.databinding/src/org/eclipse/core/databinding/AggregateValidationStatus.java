@@ -32,9 +32,9 @@ import org.eclipse.core.runtime.Status;
  * into a single status value. Instances of this class can be used as an
  * observable value with a value type of {@link IStatus}, or the static methods
  * can be called directly if an aggregated status result is only needed once.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public final class AggregateValidationStatus extends ComputedValue {
 	/**
@@ -42,7 +42,7 @@ public final class AggregateValidationStatus extends ComputedValue {
 	 * status objects in a {@link MultiStatus}. Returns an OK status result if
 	 * all statuses from the given validation status providers are the an OK
 	 * status. Returns a single status if there is only one non-OK status.
-	 * 
+	 *
 	 * @see #getStatusMerged(Collection)
 	 */
 	public static final int MERGED = 1;
@@ -52,7 +52,7 @@ public final class AggregateValidationStatus extends ComputedValue {
 	 * severe status from the given validation status providers. If there is
 	 * more than one status at the same severity level, it picks the first one
 	 * it encounters.
-	 * 
+	 *
 	 * @see #getStatusMaxSeverity(Collection)
 	 */
 	public static final int MAX_SEVERITY = 2;
@@ -63,7 +63,7 @@ public final class AggregateValidationStatus extends ComputedValue {
 	/**
 	 * Creates a new aggregate validation status observable for the given data
 	 * binding context.
-	 * 
+	 *
 	 * @param dbc
 	 *            a data binding context
 	 * @param strategy
@@ -125,7 +125,7 @@ public final class AggregateValidationStatus extends ComputedValue {
 	 * {@link MultiStatus}. Returns an OK status result if all statuses from the
 	 * given validation status providers are the an OK status. Returns a single
 	 * status if there is only one non-OK status.
-	 * 
+	 *
 	 * @param validationStatusProviders
 	 *            a collection of validation status providers
 	 * @return a merged status
@@ -161,7 +161,7 @@ public final class AggregateValidationStatus extends ComputedValue {
 	 * Returns a status that always returns the most severe status from the
 	 * given validation status providers. If there is more than one status at
 	 * the same severity level, it picks the first one it encounters.
-	 * 
+	 *
 	 * @param validationStatusProviders
 	 *            a collection of validation status providers
 	 * @return a single status reflecting the most severe status from the given

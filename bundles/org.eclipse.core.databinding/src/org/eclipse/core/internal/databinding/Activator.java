@@ -25,7 +25,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class Activator implements BundleActivator {
 	/**
@@ -65,7 +65,7 @@ public class Activator implements BundleActivator {
 
 		});
 	}
-	
+
 	// Code copied from PlatformLogWriter.getLog(). Why is logging an IStatus so
 	// hard?
 	FrameworkLogEntry createLogEntry(IStatus status) {
@@ -73,7 +73,7 @@ public class Activator implements BundleActivator {
 		ArrayList childlist = new ArrayList();
 
 		int stackCode = t instanceof CoreException ? 1 : 0;
-		// ensure a substatus inside a CoreException is properly logged 
+		// ensure a substatus inside a CoreException is properly logged
 		if (stackCode == 1) {
 			IStatus coreStatus = ((CoreException) t).getStatus();
 			if (coreStatus != null) {
@@ -93,7 +93,7 @@ public class Activator implements BundleActivator {
 		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(), status.getMessage(), stackCode, t, children);
 	}
 
-	
+
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (_frameworkLogTracker != null) {

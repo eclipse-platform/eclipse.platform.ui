@@ -18,7 +18,7 @@ import com.ibm.icu.text.NumberFormat;
  * <p>
  * Class is thread safe.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class NumberToDoubleConverter extends NumberToNumberConverter {
@@ -38,7 +38,7 @@ public class NumberToDoubleConverter extends NumberToNumberConverter {
 		if (StringToNumberParser.inDoubleRange(number)) {
 			return new Double(number.doubleValue());
 		}
-		
+
 		return null;
 	}
 }

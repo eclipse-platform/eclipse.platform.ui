@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.property.list.ListProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class DataBindingContextValidationStatusProvidersProperty extends
 		ListProperty {

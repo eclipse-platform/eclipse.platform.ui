@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * Validates a number that is to be converted by a {@link NumberFormatConverter}.
  * Validation is comprised of parsing the String and range checks.
- * 
+ *
  * @since 1.0
  */
 public abstract class AbstractStringToNumberValidator implements IValidator {
@@ -35,7 +35,7 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 
 	/**
 	 * Constructs a new instance.
-	 * 
+	 *
 	 * @param converter converter and thus formatter to be used in validation
 	 * @param min minimum value, used for reporting a range error to the user
 	 * @param max maximum value, used for reporting a range error to the user
@@ -60,7 +60,7 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 	 * <li>The value cannot be parsed.</li>
 	 * <li>The value is out of range.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
 	 */
 	@Override
@@ -90,7 +90,7 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 
 	/**
 	 * Invoked by {@link #validate(Object)} when the range is to be validated.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 */

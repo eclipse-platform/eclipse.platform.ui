@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Assert;
  * This class is <i>not</i> a strict implementation the {@link Map} interface.
  * It intentionally violates the {@link Map} contract, which requires the use of
  * {@link #equals(Object)} when comparing keys.
- * 
+ *
  * @since 1.2
  */
 public class IdentityMap implements Map {
@@ -47,7 +47,7 @@ public class IdentityMap implements Map {
 	/**
 	 * Constructs an IdentityMap containing all the entries in the specified
 	 * map.
-	 * 
+	 *
 	 * @param map
 	 *            the map whose entries are to be added to this map.
 	 */

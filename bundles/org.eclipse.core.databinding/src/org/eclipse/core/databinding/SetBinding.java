@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.1
- * 
+ *
  */
 public class SetBinding extends Binding {
 
@@ -218,7 +218,7 @@ public class SetBinding extends Binding {
 	/**
 	 * Merges the provided <code>newStatus</code> into the
 	 * <code>multiStatus</code>.
-	 * 
+	 *
 	 * @param multiStatus
 	 * @param newStatus
 	 */

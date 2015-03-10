@@ -19,13 +19,13 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
  * <p>
  * Class is thread safe.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class NumberToByteValidator extends NumberToNumberValidator {
 	private static final Byte MAX = new Byte(Byte.MAX_VALUE);
 	private static final Byte MIN = new Byte(Byte.MIN_VALUE);
-	
+
 	/**
 	 * @param converter
 	 */

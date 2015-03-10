@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ValidatedObservableMap extends ObservableMap {
 	private IObservableMap target;

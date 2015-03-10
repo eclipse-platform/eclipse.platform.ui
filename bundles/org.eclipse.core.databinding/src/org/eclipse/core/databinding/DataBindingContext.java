@@ -51,7 +51,7 @@ import org.eclipse.core.runtime.IStatus;
  * could be aggregated to set the page status and fulfillment. Each page in the
  * <code>IWizard</code> would have its own context instance.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class DataBindingContext {
@@ -75,7 +75,7 @@ public class DataBindingContext {
 	/**
 	 * Creates a data binding context, using the current default realm for the
 	 * validation observables.
-	 * 
+	 *
 	 * @see Realm
 	 */
 	public DataBindingContext() {
@@ -85,10 +85,10 @@ public class DataBindingContext {
 	/**
 	 * Creates a data binding context using the given realm for the validation
 	 * observables.
-	 * 
+	 *
 	 * @param validationRealm
 	 *            the realm to be used for the validation observables
-	 * 
+	 *
 	 * @see Realm
 	 */
 	public DataBindingContext(Realm validationRealm) {
@@ -117,7 +117,7 @@ public class DataBindingContext {
 	 * {@link IObservableValue observable values}. This method is an alias for
 	 * <code>bindValue(targetObservableValue, modelObservableValue, null,
 	 * null)</code>.
-	 * 
+	 *
 	 * @param targetObservableValue
 	 *            target value, commonly a UI widget
 	 * @param modelObservableValue
@@ -137,7 +137,7 @@ public class DataBindingContext {
 	 * validation and conversion can be employed to customize the process. For
 	 * specifics on the customization of the process see
 	 * {@link UpdateValueStrategy}.
-	 * 
+	 *
 	 * @param targetObservableValue
 	 *            target value, commonly a UI widget
 	 * @param modelObservableValue
@@ -149,7 +149,7 @@ public class DataBindingContext {
 	 *            strategy to employ when the model is the source of the change
 	 *            and the target is the destination
 	 * @return created binding
-	 * 
+	 *
 	 * @see UpdateValueStrategy
 	 */
 	public final Binding bindValue(IObservableValue targetObservableValue,
@@ -171,7 +171,7 @@ public class DataBindingContext {
 	/**
 	 * Returns an update value strategy to be used for copying values from the
 	 * from value to the to value. Clients may override.
-	 * 
+	 *
 	 * @param fromValue
 	 * @param toValue
 	 * @return a update value strategy
@@ -184,7 +184,7 @@ public class DataBindingContext {
 	/**
 	 * Returns an update value strategy to be used for copying values from the
 	 * from value to the to value. Clients may override.
-	 * 
+	 *
 	 * @param fromValue
 	 * @param toValue
 	 * @return a update value strategy
@@ -193,19 +193,19 @@ public class DataBindingContext {
 			IObservableValue fromValue, IObservableValue toValue) {
 		return new UpdateValueStrategy();
 	}
-	
+
 	/**
 	 * Creates a {@link Binding} to synchronize the values of two
 	 * {@link IObservableList observable lists}. This method is an alias for
 	 * <code>bindList(targetObservableList, modelObservableList, null,
 	 * null)</code>.
-	 * 
+	 *
 	 * @param targetObservableList
 	 *            target list, commonly a list representing a list in the UI
 	 * @param modelObservableList
 	 *            model list
 	 * @return created binding
-	 * 
+	 *
 	 * @see UpdateListStrategy
 	 * @since 1.2
 	 */
@@ -220,7 +220,7 @@ public class DataBindingContext {
 	 * validation and conversion can be employed to customize the process. For
 	 * specifics on the customization of the process see
 	 * {@link UpdateListStrategy}.
-	 * 
+	 *
 	 * @param targetObservableList
 	 *            target list, commonly a list representing a list in the UI
 	 * @param modelObservableList
@@ -232,7 +232,7 @@ public class DataBindingContext {
 	 *            strategy to employ when the model is the source of the change
 	 *            and the target is the destination
 	 * @return created binding
-	 * 
+	 *
 	 * @see UpdateListStrategy
 	 */
 	public final Binding bindList(IObservableList targetObservableList,
@@ -269,7 +269,7 @@ public class DataBindingContext {
 	/**
 	 * @param targetObservableList
 	 * @param modelObservableList
-	 * @return an update list strategy 
+	 * @return an update list strategy
 	 */
 	protected UpdateListStrategy createTargetToModelUpdateListStrategy(
 			IObservableList targetObservableList,
@@ -282,7 +282,7 @@ public class DataBindingContext {
 	 * {@link IObservableSet observable sets}. This method is an alias for
 	 * <code>bindSet(targetObservableValue, modelObservableValue, null,
 	 * null)</code>.
-	 * 
+	 *
 	 * @param targetObservableSet
 	 *            target set, commonly a set representing a set in the UI
 	 * @param modelObservableSet
@@ -301,7 +301,7 @@ public class DataBindingContext {
 	 * validation and conversion can be employed to customize the process. For
 	 * specifics on the customization of the process see
 	 * {@link UpdateSetStrategy}.
-	 * 
+	 *
 	 * @param targetObservableSet
 	 *            target set, commonly a set representing a set in the UI
 	 * @param modelObservableSet
@@ -333,8 +333,8 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * @param targetObservableSet 
-	 * @param modelObservableSet 
+	 * @param targetObservableSet
+	 * @param modelObservableSet
 	 * @return a default set update strategy
 	 * @since 1.1
 	 */
@@ -345,9 +345,9 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * @param modelObservableSet 
-	 * @param targetObservableSet 
-	 * @return a default set update strategy 
+	 * @param modelObservableSet
+	 * @param targetObservableSet
+	 * @return a default set update strategy
 	 * @since 1.1
 	 */
 	protected UpdateSetStrategy createModelToTargetUpdateSetStrategy(
@@ -378,7 +378,7 @@ public class DataBindingContext {
 	/**
 	 * Returns an unmodifiable {@link IObservableList} &lt; {@link Binding} &gt;
 	 * of all bindings in order by time of addition.
-	 * 
+	 *
 	 * @return an unmodifiable {@link IObservableList} &lt; {@link Binding} &gt;
 	 *         of all bindings
 	 */
@@ -390,7 +390,7 @@ public class DataBindingContext {
 	 * Returns an unmodifiable an unmodifiable {@link IObservableList} &lt;
 	 * {@link ValidationStatusProvider} &gt; of all validation status providers
 	 * in order by time of addition.
-	 * 
+	 *
 	 * @return an unmodifiable {@link IObservableList} &lt;
 	 *         {@link ValidationStatusProvider} &gt; of all validation status
 	 *         providers
@@ -405,9 +405,9 @@ public class DataBindingContext {
 	 * &gt; mapping from bindings to current validation statuses. The keys of the
 	 * map are the bindings returned by {@link #getBindings()}, and the values
 	 * are the current IStatus objects for each binding.
-	 * 
+	 *
 	 * @return the observable map from bindings to status objects.
-	 * 
+	 *
 	 * @deprecated as of 1.1, please use {@link #getValidationStatusProviders()}
 	 */
 	@Deprecated
@@ -418,7 +418,7 @@ public class DataBindingContext {
 	/**
 	 * Adds the given binding to this data binding context. This will also add
 	 * the given binding to the list of validation status providers.
-	 * 
+	 *
 	 * @param binding
 	 *            The binding to add.
 	 * @see #addValidationStatusProvider(ValidationStatusProvider)
@@ -431,7 +431,7 @@ public class DataBindingContext {
 
 	/**
 	 * Adds the given validation status provider to this data binding context.
-	 * 
+	 *
 	 * @param validationStatusProvider
 	 *            The validation status provider to add.
 	 * @since 1.1
@@ -444,7 +444,7 @@ public class DataBindingContext {
 	/**
 	 * Updates all model observable objects to reflect the current state of the
 	 * target observable objects.
-	 * 
+	 *
 	 */
 	public final void updateModels() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
@@ -456,7 +456,7 @@ public class DataBindingContext {
 	/**
 	 * Updates all target observable objects to reflect the current state of the
 	 * model observable objects.
-	 * 
+	 *
 	 */
 	public final void updateTargets() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
@@ -467,7 +467,7 @@ public class DataBindingContext {
 
 	/**
 	 * Removes the given binding.
-	 * 
+	 *
 	 * @param binding
 	 * @return <code>true</code> if was associated with the context,
 	 *         <code>false</code> if not
@@ -478,7 +478,7 @@ public class DataBindingContext {
 
 	/**
 	 * Removes the validation status provider.
-	 * 
+	 *
 	 * @param validationStatusProvider
 	 * @return <code>true</code> if was associated with the context,
 	 *         <code>false</code> if not
@@ -491,7 +491,7 @@ public class DataBindingContext {
 
 	/**
 	 * Returns the validation realm.
-	 * 
+	 *
 	 * @return the realm for the validation observables
 	 * @see Realm
 	 */

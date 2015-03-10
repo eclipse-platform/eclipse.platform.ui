@@ -31,14 +31,14 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * A factory for creating properties for core types in the DataBinding framework
  * e.g. {@link DataBindingContext} or ValidationStatusProvider.
- * 
+ *
  * @since 1.2
  */
 public class BindingProperties {
 	/**
 	 * Returns an {@link IListProperty} &lt; {@link Binding} &gt; for observing
 	 * the bindings of a {@link DataBindingContext}.
-	 * 
+	 *
 	 * @return an {@link IListProperty} &lt; {@link Binding} &gt; for observing
 	 *         the bindings of a {@link DataBindingContext}.
 	 */
@@ -49,7 +49,7 @@ public class BindingProperties {
 	/**
 	 * Returns an {@link IValueProperty} &lt; {@link IObservable} &gt; for
 	 * observing the model of a {@link Binding}.
-	 * 
+	 *
 	 * @return an {@link IValueProperty} &lt; {@link IObservable} &gt; for
 	 *         observing the model of a {@link Binding}.
 	 */
@@ -60,7 +60,7 @@ public class BindingProperties {
 	/**
 	 * Returns an {@link IListProperty} &lt; {@link IObservable} &gt; for
 	 * observing the models of a {@link ValidationStatusProvider}.
-	 * 
+	 *
 	 * @return an {@link IListProperty} &lt; {@link IObservable} &gt; for
 	 *         observing the models of a {@link ValidationStatusProvider}.
 	 */
@@ -71,7 +71,7 @@ public class BindingProperties {
 	/**
 	 * Returns an {@link IValueProperty} &lt; {@link IObservable} &gt; for
 	 * observing the target of a {@link Binding}.
-	 * 
+	 *
 	 * @return an {@link IValueProperty} &lt; {@link IObservable} &gt; for
 	 *         observing the target of a {@link Binding}.
 	 */
@@ -82,7 +82,7 @@ public class BindingProperties {
 	/**
 	 * Returns an {@link IListProperty} &lt; {@link IObservable} &gt; for
 	 * observing the targets of a {@link ValidationStatusProvider}.
-	 * 
+	 *
 	 * @return an {@link IListProperty} &lt; {@link IObservable} &gt; for
 	 *         observing the targets of a {@link ValidationStatusProvider}.
 	 */
@@ -93,7 +93,7 @@ public class BindingProperties {
 	/**
 	 * Returns an {@link IValueProperty} &lt; {@link IStatus} &gt; for observing
 	 * the validation status of a {@link ValidationStatusProvider}.
-	 * 
+	 *
 	 * @return an {@link IValueProperty} &lt; {@link IStatus} &gt; for observing
 	 *         the validation status of a {@link ValidationStatusProvider}.
 	 */
@@ -106,7 +106,7 @@ public class BindingProperties {
 	 * Returns an {@link IListProperty} &lt; {@link ValidationStatusProvider}
 	 * &gt; for observing the validation status providers of a
 	 * {@link DataBindingContext}.
-	 * 
+	 *
 	 * @return an {@link IListProperty} &lt; {@link ValidationStatusProvider}
 	 *         &gt; for observing the validation status providers of a
 	 *         {@link DataBindingContext}.
@@ -121,14 +121,14 @@ public class BindingProperties {
 	 * Consequently, the {@link IValueProperty#getValueType() value type} of the
 	 * returned property is the same as the {@link IConverter#getToType() target
 	 * type} of the converter. Setting a value on the property is not supported.
-	 * 
+	 *
 	 * @param converter
 	 *            The converter to apply to the source object of the value
 	 *            property.
 	 * @return A new instance of a value property whose value is the result of
 	 *         applying the given converter to the source object passed to the
 	 *         value property.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IValueProperty convertedValue(IConverter converter) {

@@ -40,7 +40,7 @@ public class NumberToIntegerConverter extends NumberToNumberConverter implements
 		if (StringToNumberParser.inIntegerRange(number)) {
 			return new Integer(number.intValue());
 		}
-		
+
 		return null;
 	}
 }

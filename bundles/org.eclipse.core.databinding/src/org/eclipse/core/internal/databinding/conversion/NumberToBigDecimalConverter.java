@@ -21,7 +21,7 @@ import com.ibm.icu.text.NumberFormat;
  * <p>
  * Class is thread safe.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class NumberToBigDecimalConverter extends NumberToNumberConverter {
@@ -29,7 +29,7 @@ public class NumberToBigDecimalConverter extends NumberToNumberConverter {
 	 * @param numberFormat
 	 * @param fromType
 	 */
-	public NumberToBigDecimalConverter(NumberFormat numberFormat, Class fromType) {		
+	public NumberToBigDecimalConverter(NumberFormat numberFormat, Class fromType) {
 		super(numberFormat, fromType, BigDecimal.class);
 	}
 
@@ -38,7 +38,7 @@ public class NumberToBigDecimalConverter extends NumberToNumberConverter {
 		if (number instanceof BigInteger) {
 			return new BigDecimal((BigInteger) number);
 		}
-		
+
 		return new BigDecimal(number.doubleValue());
 	}
 }

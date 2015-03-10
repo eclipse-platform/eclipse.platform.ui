@@ -38,8 +38,8 @@ import org.eclipse.core.runtime.Status;
  * is configured via policies provided on construction of the strategy (e.g.
  * {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
- * 
- * 
+ *
+ *
  * @see DataBindingContext#bindList(IObservableList, IObservableList,
  *      UpdateListStrategy, UpdateListStrategy)
  * @see IConverter
@@ -73,7 +73,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * Helper method allowing API evolution of the above constant values. The
 	 * compiler will not inline constant values into client code if values are
 	 * "computed" using this helper.
-	 * 
+	 *
 	 * @param i
 	 *            an integer
 	 * @return the same integer
@@ -102,7 +102,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * Creates a new update list strategy with a configurable update policy. A
 	 * default converter will be provided. The defaults can be changed by
 	 * calling one of the setter methods.
-	 * 
+	 *
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, or
 	 *            {@link #POLICY_UPDATE}
@@ -116,7 +116,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * default converter will be provided if <code>provideDefaults</code> is
 	 * <code>true</code>. The defaults can be changed by calling one of the
 	 * setter methods.
-	 * 
+	 *
 	 * @param provideDefaults
 	 *            if <code>true</code>, default validators and a default
 	 *            converter will be provided based on the observable list's
@@ -137,7 +137,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * Default implementation will use the {@link #setConverter(IConverter)
 	 * converter} if one exists. If no converter exists no conversion occurs.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 * @return the converted element
 	 */
@@ -146,7 +146,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param destination
 	 */
@@ -181,7 +181,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Sets the converter to be invoked when converting added elements from the
 	 * source element type to the destination element type.
-	 * 
+	 *
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -193,7 +193,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Adds the given element at the given index to the given observable list.
 	 * Clients may extend but must call the super implementation.
-	 * 
+	 *
 	 * @param observableList
 	 * @param element
 	 * @param index
@@ -216,7 +216,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Removes the element at the given index from the given observable list.
 	 * Clients may extend but must call the super implementation.
-	 * 
+	 *
 	 * @param observableList
 	 * @param index
 	 * @return a status
@@ -254,7 +254,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * <p>
 	 * To enable use of these methods in subclasses, override this method to
 	 * return true.
-	 * 
+	 *
 	 * @return whether ListBinding should call doMove() and doReplace() instead
 	 *         of paired calls of doRemove() and doAdd()
 	 * @since 1.2
@@ -267,7 +267,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Moves the element in the observable list located at the given old index
 	 * to the given new index.
-	 * 
+	 *
 	 * @param observableList
 	 * @param oldIndex
 	 * @param newIndex
@@ -291,7 +291,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Replaces the element in the observable list located at the given index to
 	 * with the given element.
-	 * 
+	 *
 	 * @param observableList
 	 * @param index
 	 * @param element
