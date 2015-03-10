@@ -28,7 +28,7 @@ import java.util.Set;
  * This class is <i>not</i> a strict implementation the {@link Set} interface.
  * It intentionally violates the {@link Set} contract, which requires the use of
  * {@link #equals(Object)} when comparing elements.
- * 
+ *
  * @since 1.2
  */
 public class IdentitySet implements Set {
@@ -44,7 +44,7 @@ public class IdentitySet implements Set {
 	/**
 	 * Constructs an IdentitySet containing all the unique instances in the
 	 * specified collection.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection whose elements are to be added to this set.
 	 */

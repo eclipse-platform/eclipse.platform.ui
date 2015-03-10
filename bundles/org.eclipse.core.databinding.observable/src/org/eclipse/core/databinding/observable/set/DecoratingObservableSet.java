@@ -16,7 +16,7 @@ import org.eclipse.core.databinding.observable.DecoratingObservableCollection;
 
 /**
  * An observable set which decorates another observable set.
- * 
+ *
  * @since 1.2
  */
 public class DecoratingObservableSet extends DecoratingObservableCollection
@@ -29,7 +29,7 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	/**
 	 * Constructs a DecoratingObservableSet which decorates the given
 	 * observable.
-	 * 
+	 *
 	 * @param decorated
 	 *            the observable set being decorated
 	 * @param disposeDecoratedOnDispose
@@ -96,7 +96,7 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	 * observable. By default, this method fires the set change event again,
 	 * with the decorating observable as the event source. Subclasses may
 	 * override to provide different behavior.
-	 * 
+	 *
 	 * @param event
 	 *            the change event received from the decorated observable
 	 */

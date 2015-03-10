@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208332)
  *     Brad Reynolds - initial API and implementation
@@ -26,7 +26,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  * ObservableList implementation that prevents modification by consumers. Events
  * in the originating wrapped list are propagated and thrown from this instance
  * when appropriate. All mutators throw an UnsupportedOperationException.
- * 
+ *
  * @since 1.1
  */
 public class UnmodifiableObservableSet extends DecoratingObservableSet {

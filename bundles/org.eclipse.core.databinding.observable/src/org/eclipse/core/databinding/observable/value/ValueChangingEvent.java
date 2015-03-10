@@ -18,14 +18,14 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
  * Value changing event describing a pending change of an
  * {@link IObservableValue} object's current value. Listeners can veto the
  * pending change by setting {@link #veto} to <code>true</code>.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class ValueChangingEvent extends ObservableEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 2305345286999701156L;
 
@@ -45,7 +45,7 @@ public class ValueChangingEvent extends ObservableEvent {
 
 	/**
 	 * Creates a new value changing event.
-	 * 
+	 *
 	 * @param source
 	 *            the source observable value
 	 * @param diff

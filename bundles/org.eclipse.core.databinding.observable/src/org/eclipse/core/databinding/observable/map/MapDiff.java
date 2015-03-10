@@ -25,12 +25,12 @@ import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @since 1.1
- * 
+ *
  */
 public abstract class MapDiff implements IDiff {
 	/**
 	 * Returns true if the diff has no added, removed or changed entries.
-	 * 
+	 *
 	 * @return true if the diff has no added, removed or changed entries.
 	 * @since 1.2
 	 */
@@ -41,7 +41,7 @@ public abstract class MapDiff implements IDiff {
 
 	/**
 	 * Applies the changes in this diff to the given map
-	 * 
+	 *
 	 * @param map
 	 *            the map to which the diff will be applied
 	 * @since 1.2
@@ -66,7 +66,7 @@ public abstract class MapDiff implements IDiff {
 	 * <p>
 	 * <b>Note</b>: the returned map is only valid until structural changes are
 	 * made to the passed-in map.
-	 * 
+	 *
 	 * @param map
 	 *            the map over which the diff will be simulated
 	 * @return an unmodifiable map showing what <code>map</code> would look like
@@ -309,7 +309,7 @@ public abstract class MapDiff implements IDiff {
 	/**
 	 * Returns the old value for the given key, which must be an element of
 	 * {@link #getRemovedKeys()} or {@link #getChangedKeys()}.
-	 * 
+	 *
 	 * @param key
 	 * @return the old value for the given key.
 	 */
@@ -318,7 +318,7 @@ public abstract class MapDiff implements IDiff {
 	/**
 	 * Returns the new value for the given key, which must be an element of
 	 * {@link #getChangedKeys()} or {@link #getAddedKeys()}.
-	 * 
+	 *
 	 * @param key
 	 * @return the new value for the given key.
 	 */

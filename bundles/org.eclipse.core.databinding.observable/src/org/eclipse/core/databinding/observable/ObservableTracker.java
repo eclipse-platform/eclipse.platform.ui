@@ -22,20 +22,20 @@ import org.eclipse.core.runtime.Status;
 /**
  * This class makes it possible to monitor whenever an IObservable is read from.
  * This can be used to automatically attach and remove listeners. How to use it:
- * 
+ *
  * <p>
  * If you are implementing an IObservable, invoke getterCalled(this) whenever a
  * getter is called - that is, whenever your observable is read from. You only
  * need to do this once per method call. If one getter delegates to another, the
  * outer getter doesn't need to call the method since the inner one will.
  * </p>
- * 
+ *
  * <p>
  * If you want to determine what observables were used in a particular block of
  * code, call runAndMonitor(Runnable). This will execute the given runnable and
  * return the set of observables that were read from.
  * </p>
- * 
+ *
  * <p>
  * This can be used to automatically attach listeners. For example, imagine you
  * have a block of code that updates some widget by reading from a bunch of
@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.Status;
  * code is repetitive and requires updating the listener code whenever you
  * refactor the widget updating code.
  * </p>
- * 
+ *
  * <p>
  * Alternatively, you could use a utility class that runs the code in a
  * runAndMonitor block and automatically attach listeners to any observable used
@@ -54,7 +54,7 @@ import org.eclipse.core.runtime.Status;
  * eliminates the code for attaching and detaching listeners and will always
  * stay in synch with changes to the widget update logic.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class ObservableTracker {
@@ -80,7 +80,7 @@ public class ObservableTracker {
 	 * read by the runnable. If the runnable calls this method recursively, the
 	 * result will not contain IObservables that were used within the inner
 	 * runnable.
-	 * 
+	 *
 	 * @param runnable
 	 *            runnable to execute
 	 * @param changeListener
@@ -132,7 +132,7 @@ public class ObservableTracker {
 	 * <a href="https://bugs.eclipse.org/278550">bug 278550</a>. If we cannot
 	 * find a way to make this API work, it will be deprecated as of 3.6.</em>
 	 * </p>
-	 * 
+	 *
 	 * @param runnable
 	 *            runnable to execute
 	 * @return an array of unique observable objects
@@ -183,14 +183,14 @@ public class ObservableTracker {
 	 * {@link #getterCalled(IObservable)} and
 	 * {@link #observableCreated(IObservable)} will resume gathering
 	 * observables. Nested calls to this method are stacked.
-	 * 
+	 *
 	 * @param ignore
 	 *            the new ignore state
-	 * 
+	 *
 	 * @exception IllegalStateException
 	 *                if
 	 *                <code>ignore<code> is false and the ignore count is already zero.
-	 * 
+	 *
 	 * @see #getterCalled(IObservable)
 	 * @see #observableCreated(IObservable)
 	 * @since 1.3
@@ -209,9 +209,9 @@ public class ObservableTracker {
 
 	/**
 	 * Runs the given runnable without tracking dependencies.
-	 * 
+	 *
 	 * @param runnable
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static void runAndIgnore(Runnable runnable) {
@@ -244,7 +244,7 @@ public class ObservableTracker {
 	 * receiver has been read from". This lets callers know that they can rely
 	 * on automatic updates from the object without explicitly attaching a
 	 * listener.
-	 * 
+	 *
 	 * @param observable
 	 */
 	public static void getterCalled(IObservable observable) {
@@ -275,7 +275,7 @@ public class ObservableTracker {
 
 	/**
 	 * Notifies the ObservableTracker that an observable was created.
-	 * 
+	 *
 	 * @param observable
 	 *            the observable that was created
 	 * @since 1.2

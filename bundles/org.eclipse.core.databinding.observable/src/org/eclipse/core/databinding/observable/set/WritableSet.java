@@ -24,13 +24,13 @@ import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Mutable (writable) implementation of {@link IObservableSet}.
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class WritableSet extends ObservableSet {
@@ -38,7 +38,7 @@ public class WritableSet extends ObservableSet {
 	/**
 	 * Constructs a new empty instance in the default realm with a
 	 * <code>null</code> element type.
-	 * 
+	 *
 	 */
 	public WritableSet() {
 		this(Realm.getDefault());
@@ -48,7 +48,7 @@ public class WritableSet extends ObservableSet {
 	 * Constructs a new instance in the default realm containing the
 	 * elements of the given collection. Changes to the given collection after
 	 * calling this method do not affect the contents of the created WritableSet.
-	 * 
+	 *
 	 * @param c
 	 * @param elementType
 	 *            can be <code>null</code>
@@ -60,7 +60,7 @@ public class WritableSet extends ObservableSet {
 	/**
 	 * Constructs a new empty instance in the given realm and a
 	 * <code>null</code> element type.
-	 * 
+	 *
 	 * @param realm
 	 */
 	public WritableSet(Realm realm) {
@@ -72,7 +72,7 @@ public class WritableSet extends ObservableSet {
 	 * type, containing the elements of the given collection. Changes to the
 	 * given collection after calling this method do not affect the contents of
 	 * the created WritableSet.
-	 * 
+	 *
 	 * @param realm
 	 * @param c
 	 * @param elementType

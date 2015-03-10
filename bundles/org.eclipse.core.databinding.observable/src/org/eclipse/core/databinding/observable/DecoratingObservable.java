@@ -17,9 +17,9 @@ import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * An observable which decorates another observable
- * 
+ *
  * @since 1.2
- * 
+ *
  */
 public class DecoratingObservable extends AbstractObservable implements
 		IDecoratingObservable {
@@ -32,7 +32,7 @@ public class DecoratingObservable extends AbstractObservable implements
 
 	/**
 	 * Constructs a DecoratingObservable which decorates the given observable.
-	 * 
+	 *
 	 * @param decorated
 	 *            the observable being decorated.
 	 * @param disposeDecoratedOnDispose
@@ -93,7 +93,7 @@ public class DecoratingObservable extends AbstractObservable implements
 	 * By default, this method fires the stale event again, with the decorating
 	 * observable as the event source. Subclasses may override to provide
 	 * different behavior.
-	 * 
+	 *
 	 * @param event
 	 *            the stale event received from the decorated observable
 	 */

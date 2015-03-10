@@ -16,7 +16,7 @@ import org.eclipse.core.databinding.observable.DecoratingObservable;
 
 /**
  * An observable value which decorates another observable value.
- * 
+ *
  * @since 1.2
  */
 public class DecoratingObservableValue extends DecoratingObservable implements
@@ -28,10 +28,10 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 	/**
 	 * Constructs a DecoratingObservableValue which decorates the given
 	 * observable.
-	 * 
+	 *
 	 * @param decorated
 	 *            the observable value being decorated
-	 * @param disposeDecoratedOnDispose 
+	 * @param disposeDecoratedOnDispose
 	 */
 	public DecoratingObservableValue(IObservableValue decorated,
 			boolean disposeDecoratedOnDispose) {
@@ -91,7 +91,7 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 	 * observable. By default, this method fires the value change event again,
 	 * with the decorating observable as the event source. Subclasses may
 	 * override to provide different behavior.
-	 * 
+	 *
 	 * @param event
 	 *            the change event received from the decorated observable
 	 */

@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * @since 1.1
- * 
+ *
  */
 public class DetailObservableMap extends ObservableMap implements IObserving {
 	private boolean updating = false;
@@ -74,14 +74,14 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 
 	/**
 	 * Constructs a new DetailObservableMap
-	 * 
+	 *
 	 * @param detailFactory
 	 *            observable factory that creates IObservableMap instances given
 	 *            the current value of master observable value
 	 * @param master
 	 * @param keyType
 	 * @param valueType
-	 * 
+	 *
 	 */
 	public DetailObservableMap(IObservableFactory detailFactory,
 			IObservableValue master, Object keyType, Object valueType) {

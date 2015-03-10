@@ -17,14 +17,14 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
 /**
  * Map change event describing an incremental change of an
  * {@link IObservableMap} object.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class MapChangeEvent extends ObservableEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8092347212410548463L;
 	static final Object TYPE = new Object();
@@ -37,7 +37,7 @@ public class MapChangeEvent extends ObservableEvent {
 
 	/**
 	 * Creates a new map change event
-	 * 
+	 *
 	 * @param source
 	 *            the source observable map
 	 * @param diff
@@ -50,7 +50,7 @@ public class MapChangeEvent extends ObservableEvent {
 
 	/**
 	 * Returns the observable map from which this event originated.
-	 * 
+	 *
 	 * @return the observable map from which this event originated
 	 */
 	public IObservableMap getObservableMap() {

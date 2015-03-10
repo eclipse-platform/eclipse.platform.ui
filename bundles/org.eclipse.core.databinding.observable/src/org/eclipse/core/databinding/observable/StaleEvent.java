@@ -18,17 +18,17 @@ package org.eclipse.core.databinding.observable;
  * unstale should always fire a change event. Staleness can be used (for
  * example) to notify listeners when an observable has started a background
  * thread for updating its state. Clients can safely ignore staleness.
- * 
+ *
  * @see IObservable#isStale()
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class StaleEvent extends ObservableEvent {
 
 	/**
 	 * Creates a new stale event.
-	 * 
+	 *
 	 * @param source
 	 *            the source observable
 	 */
@@ -37,7 +37,7 @@ public class StaleEvent extends ObservableEvent {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3491012225431471077L;
 

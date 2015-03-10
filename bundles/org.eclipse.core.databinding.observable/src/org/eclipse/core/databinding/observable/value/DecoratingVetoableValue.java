@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.observable.Diffs;
 
 /**
  * An {@link IVetoableValue} decorator for an observable value.
- * 
+ *
  * @since 1.2
  */
 public class DecoratingVetoableValue extends DecoratingObservableValue
@@ -56,7 +56,7 @@ public class DecoratingVetoableValue extends DecoratingObservableValue
 	/**
 	 * Notifies listeners about a pending change, and returns true if no
 	 * listener vetoed the change.
-	 * 
+	 *
 	 * @param diff
 	 * @return false if the change was vetoed, true otherwise
 	 */

@@ -31,15 +31,15 @@ import org.eclipse.core.runtime.Assert;
  * Customer objects to their "last name" property of type String. The composite
  * map of map1 and map2 would then map Order objects to their customers' last
  * names.
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.1
- * 
+ *
  */
 public class CompositeMap extends ObservableMap {
 	// adds that need to go through the second map and thus will be picked up by
@@ -284,7 +284,7 @@ public class CompositeMap extends ObservableMap {
 	 * <code>firstMap</code>, it cannot be passed in as an argument. Instead,
 	 * the second map will be created by calling
 	 * <code>secondMapFactory.createObservable(valueSet())</code>.
-	 * 
+	 *
 	 * @param firstMap
 	 *            the first map
 	 * @param secondMapFactory

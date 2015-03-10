@@ -21,24 +21,24 @@ import org.eclipse.core.databinding.observable.IObservable;
 
 /**
  * Observable Map.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
  *              implement this interface. Note that direct implementers of this
  *              interface outside of the framework will be broken in future
  *              releases when methods are added to this interface.
- *              
+ *
  * @see AbstractObservableMap
  * @see ObservableMap
- * 
+ *
  * @since 1.1
  */
 public interface IObservableMap extends Map, IObservable {
-	
+
 	/**
 	 * Returns the element type for the {@link #keySet() keyset} of this
 	 * observable map, or <code>null</code> if the keyset is untyped.
-	 * 
+	 *
 	 * @return the element type for the {@link #keySet() keyset} of this
 	 *         observable map, or <code>null</code> if the keyset is untyped.
 	 * @since 1.2
@@ -48,7 +48,7 @@ public interface IObservableMap extends Map, IObservable {
 	/**
 	 * Returns the element type for the {@link #values() values} of this
 	 * observable map, or <code>null</code> if the values collection is untyped.
-	 * 
+	 *
 	 * @return the element type for the {@link #values() values} of this
 	 *         observable map, or <code>null</code> if the values collection is
 	 *         untyped.
@@ -65,7 +65,7 @@ public interface IObservableMap extends Map, IObservable {
 	 * @param listener
 	 */
 	public void removeMapChangeListener(IMapChangeListener listener);
-	
+
 	/**
 	 * @TrackedGetter
 	 */
@@ -97,13 +97,13 @@ public interface IObservableMap extends Map, IObservable {
 	public Object get(Object key);
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public Object put(Object key, Object value);
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public Object remove(Object key);

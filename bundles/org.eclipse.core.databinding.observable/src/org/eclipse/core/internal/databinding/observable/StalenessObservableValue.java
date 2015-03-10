@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 
 /**
  * An observable value that tracks the staleness of an {@link IObservable}.
- * 
+ *
  * @since 1.1
  */
 public class StalenessObservableValue extends AbstractObservableValue {
@@ -53,7 +53,7 @@ public class StalenessObservableValue extends AbstractObservableValue {
 	/**
 	 * Constructs a StalenessObservableValue that tracks the staleness of the
 	 * given {@link IObservable}.
-	 * 
+	 *
 	 * @param observable
 	 *            the observable to track
 	 */

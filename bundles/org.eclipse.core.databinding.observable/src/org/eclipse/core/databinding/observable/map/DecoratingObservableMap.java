@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.DecoratingObservable;
 
 /**
  * An observable map which decorates another observable map.
- * 
+ *
  * @since 1.2
  */
 public class DecoratingObservableMap extends DecoratingObservable implements
@@ -33,7 +33,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 	/**
 	 * Constructs a DecoratingObservableMap which decorates the given
 	 * observable.
-	 * 
+	 *
 	 * @param decorated
 	 *            the observable map being decorated
 	 * @param disposeDecoratedOnDispose
@@ -104,7 +104,7 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 	 * observable. By default, this method fires the map change event again,
 	 * with the decorating observable as the event source. Subclasses may
 	 * override to provide different behavior.
-	 * 
+	 *
 	 * @param event
 	 *            the change event received from the decorated observable
 	 */

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
  * Clients may provide their own implementation to change how errors are logged
  * from within JFace Data Binding.
  * </p>
- * 
+ *
  * @see Policy#getLog()
  * @see Policy#setLog(ILogger)
  * @since 1.1
@@ -29,7 +29,7 @@ public interface ILogger {
 
 	/**
 	 * Logs the given status.
-	 * 
+	 *
 	 * @param status
 	 *            the status to log
 	 */

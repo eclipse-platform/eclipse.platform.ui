@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * A visitor for processing differences in a ListDiff.
- * 
+ *
  * @see ListDiff#accept(ListDiffVisitor)
  * @since 1.1
  */
@@ -23,7 +23,7 @@ public abstract class ListDiffVisitor {
 	/**
 	 * Notifies the visitor that <code>element</code> was added to the list at
 	 * position <code>index</code>.
-	 * 
+	 *
 	 * @param index
 	 *            the index where the element was added
 	 * @param element
@@ -34,7 +34,7 @@ public abstract class ListDiffVisitor {
 	/**
 	 * Notifies the visitor that <code>element</code> was removed from the
 	 * list at position <code>index</code>.
-	 * 
+	 *
 	 * @param index
 	 *            the index where the element was removed
 	 * @param element
@@ -51,7 +51,7 @@ public abstract class ListDiffVisitor {
 	 * {@link #handleAdd(int, Object)} with the new position. Clients which are
 	 * interested in recognizing "moves" in a list (i.e. calls to
 	 * {@link IObservableList#move(int, int)}) should override this method.
-	 * 
+	 *
 	 * @param oldIndex
 	 *            the index that the element was moved from.
 	 * @param newIndex
@@ -74,7 +74,7 @@ public abstract class ListDiffVisitor {
 	 * {@link #handleAdd(int, Object)} with the new element. Clients which are
 	 * interested in recognizing "replaces" in a list (i.e. calls to
 	 * {@link List#set(int, Object)}) should override this method.
-	 * 
+	 *
 	 * @param index
 	 *            the index where the element was replaced.
 	 * @param oldElement

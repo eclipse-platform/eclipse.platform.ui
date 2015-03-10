@@ -29,7 +29,7 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 	/**
 	 * Returns a DuplexingObservableValue implementation with predefined values
 	 * to use if the list is empty or contains multiple different values.
-	 * 
+	 *
 	 * @param target
 	 *            the observable list
 	 * @param emptyValue

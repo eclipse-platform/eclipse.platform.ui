@@ -39,7 +39,7 @@ public class EmptyObservableSet implements IObservableSet {
 	/**
 	 * Creates a singleton empty set. This set may be disposed multiple times
 	 * without any side-effects.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the constructed set
 	 */
@@ -50,7 +50,7 @@ public class EmptyObservableSet implements IObservableSet {
 	/**
 	 * Creates a singleton empty set. This set may be disposed multiple times
 	 * without any side-effects.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the constructed set
 	 * @param elementType

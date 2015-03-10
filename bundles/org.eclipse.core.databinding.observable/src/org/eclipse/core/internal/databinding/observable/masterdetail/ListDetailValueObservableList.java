@@ -96,7 +96,7 @@ public class ListDetailValueObservableList extends AbstractObservableList
 	};
 
 	/**
-	 * 
+	 *
 	 * @param masterList
 	 * @param detailFactory
 	 * @param detailType

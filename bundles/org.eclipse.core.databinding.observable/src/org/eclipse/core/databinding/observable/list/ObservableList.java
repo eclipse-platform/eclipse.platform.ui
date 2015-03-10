@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * 
+ *
  * Abstract implementation of {@link IObservableList}, based on an underlying
  * regular list.
  * <p>
@@ -32,9 +32,9 @@ import org.eclipse.core.databinding.observable.Realm;
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public abstract class ObservableList extends AbstractObservable implements
 		IObservableList {
@@ -288,7 +288,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * notification for the remove and add operations in the same
 	 * ListChangeEvent, as this allows {@link ListDiff#accept(ListDiffVisitor)}
 	 * to recognize the operation as a move.
-	 * 
+	 *
 	 * @param oldIndex
 	 *            the element's position before the move. Must be within the
 	 *            range <code>0 &lt;= oldIndex &lt; size()</code>.
@@ -365,7 +365,7 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	/**
 	 * Returns the stale state. Must be invoked from the current realm.
-	 * 
+	 *
 	 * @return stale state
 	 */
 	@Override
@@ -376,7 +376,7 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	/**
 	 * Sets the stale state. Must be invoked from the current realm.
-	 * 
+	 *
 	 * @param stale
 	 *            The stale state to list. This will fire a stale event if the
 	 *            given boolean is true and this observable list was not already

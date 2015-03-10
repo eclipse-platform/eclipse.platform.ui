@@ -17,13 +17,13 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
 /**
  * List change event describing an incremental change of an
  * {@link IObservableList} object.
- * 
+ *
  * @since 1.0
  */
 public class ListChangeEvent extends ObservableEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -9154315534258776672L;
 
@@ -37,7 +37,7 @@ public class ListChangeEvent extends ObservableEvent {
 
 	/**
 	 * Creates a new list change event.
-	 * 
+	 *
 	 * @param source
 	 *            the source observable list
 	 * @param diff
@@ -50,7 +50,7 @@ public class ListChangeEvent extends ObservableEvent {
 
 	/**
 	 * Returns the observable list from which this event originated.
-	 * 
+	 *
 	 * @return the observable list from which this event originated
 	 */
 	public IObservableList getObservableList() {

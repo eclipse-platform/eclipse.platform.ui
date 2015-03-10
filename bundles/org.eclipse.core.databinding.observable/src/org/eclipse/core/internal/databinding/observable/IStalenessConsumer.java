@@ -13,12 +13,12 @@ package org.eclipse.core.internal.databinding.observable;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public interface IStalenessConsumer {
 	/**
 	 * @param stale
-	 * 
+	 *
 	 */
 	public void setStale(boolean stale);
 }

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * An immutable {@link IObservableValue}.
- * 
+ *
  * @see WritableValue
  */
 public class ConstantObservableValue implements IObservableValue {
@@ -33,7 +33,7 @@ public class ConstantObservableValue implements IObservableValue {
 
 	/**
 	 * Construct a constant value of the given type, in the default realm.
-	 * 
+	 *
 	 * @param value
 	 *            immutable value
 	 * @param type
@@ -45,7 +45,7 @@ public class ConstantObservableValue implements IObservableValue {
 
 	/**
 	 * Construct a constant value of the given type, in the given realm.
-	 * 
+	 *
 	 * @param realm
 	 *            Realm
 	 * @param value

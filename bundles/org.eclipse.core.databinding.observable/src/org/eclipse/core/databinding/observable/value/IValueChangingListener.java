@@ -14,9 +14,9 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
 
 /**
  * Listener for pre-change events for observable values.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public interface IValueChangingListener extends IObservablesListener {
 
@@ -26,7 +26,7 @@ public interface IValueChangingListener extends IObservablesListener {
 	 * locally in this method because it may be reused for other change
 	 * notifications. The diff object referenced by the event is immutable and
 	 * may be used non-locally.
-	 * 
+	 *
 	 * @param event
 	 */
 	public void handleValueChanging(ValueChangingEvent event);

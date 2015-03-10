@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * @since 3.2
- * 
+ *
  */
 
 public class DetailObservableList extends ObservableList implements IObserving {

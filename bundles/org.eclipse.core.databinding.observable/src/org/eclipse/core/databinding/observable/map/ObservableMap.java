@@ -22,13 +22,13 @@ import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class ObservableMap extends AbstractObservable implements IObservableMap {
@@ -142,7 +142,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	/**
 	 * Returns the stale state. Must be invoked from the current realm.
-	 * 
+	 *
 	 * @return stale state
 	 */
 	@Override
@@ -153,7 +153,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	/**
 	 * Sets the stale state. Must be invoked from the current realm.
-	 * 
+	 *
 	 * @param stale
 	 *            The stale state to set. This will fire a stale event if the
 	 *            given boolean is true and this observable set was not already

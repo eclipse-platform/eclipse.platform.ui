@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.value.ValueDiff;
 
 /**
  * Marker interface for objects which describe a difference in state.
- * 
+ *
  * @since 1.2
  * @see ValueDiff
  * @see ListDiff

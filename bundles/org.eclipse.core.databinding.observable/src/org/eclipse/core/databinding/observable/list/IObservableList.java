@@ -22,30 +22,30 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 
 /**
  * A list whose changes can be tracked by list change listeners.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the framework classes
  *              that implement this interface. Note that direct implementers of
  *              this interface outside of the framework will be broken in future
  *              releases when methods are added to this interface.
- * 
+ *
  * @see AbstractObservableList
  * @see ObservableList
- * 
+ *
  * @since 1.0
  */
 public interface IObservableList extends List, IObservableCollection {
-	
+
 	/**
 	 * Adds the given list change listener to the list of list change listeners.
 	 * @param listener
 	 */
 	public void addListChangeListener(IListChangeListener listener);
-	
+
 	/**
 	 * Removes the given list change listener from the list of list change listeners.
 	 * Has no effect if the given listener is not registered as a list change listener.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removeListChangeListener(IListChangeListener listener);
@@ -87,13 +87,13 @@ public interface IObservableList extends List, IObservableCollection {
 	public Object[] toArray(Object a[]);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public boolean add(Object o);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public boolean remove(Object o);
@@ -105,19 +105,19 @@ public interface IObservableList extends List, IObservableCollection {
 	public boolean containsAll(Collection c);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public boolean addAll(Collection c);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public boolean addAll(int index, Collection c);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public boolean removeAll(Collection c);
@@ -147,7 +147,7 @@ public interface IObservableList extends List, IObservableCollection {
 	public Object get(int index);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public Object set(int index, Object element);
@@ -161,7 +161,7 @@ public interface IObservableList extends List, IObservableCollection {
 	 * add operations in the same ListChangeEvent, as this allows
 	 * {@link ListDiff#accept(ListDiffVisitor)} to recognize the operation as a
 	 * move.
-	 * 
+	 *
 	 * @param oldIndex
 	 *            the element's position before the move. Must be within the
 	 *            range <code>0 &lt;= oldIndex &lt; size()</code>.
@@ -178,7 +178,7 @@ public interface IObservableList extends List, IObservableCollection {
 	public Object move(int oldIndex, int newIndex);
 
 	/**
-	 * 
+	 *
 	 */
     @Override
 	public Object remove(int index);

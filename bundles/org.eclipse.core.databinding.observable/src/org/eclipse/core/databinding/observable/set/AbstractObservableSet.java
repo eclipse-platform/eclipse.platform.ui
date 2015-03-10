@@ -21,15 +21,15 @@ import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * 
+ *
  * Abstract implementation of {@link IObservableSet}.
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public abstract class AbstractObservableSet extends AbstractObservable implements
@@ -40,7 +40,7 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	protected AbstractObservableSet() {
 		this(Realm.getDefault());
 	}
-	
+
 	@Override
 	protected void firstListenerAdded() {
 		super.firstListenerAdded();
@@ -50,11 +50,11 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
 	}
-	
+
 	protected AbstractObservableSet(Realm realm) {
 		super(realm);
 	}
-	
+
 	@Override
 	public synchronized void addSetChangeListener(ISetChangeListener listener) {
 		addListener(SetChangeEvent.TYPE, listener);
@@ -66,14 +66,14 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	}
 
 	protected abstract Set getWrappedSet();
-	
+
 	protected void fireSetChange(SetDiff diff) {
 		// fire general change event first
 		super.fireChange();
 
 		fireEvent(new SetChangeEvent(this, diff));
 	}
-	
+
 	@Override
 	public boolean contains(Object o) {
 		getterCalled();

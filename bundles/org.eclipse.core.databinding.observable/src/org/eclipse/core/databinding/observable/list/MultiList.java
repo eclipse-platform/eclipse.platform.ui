@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
  * supports all removal methods (including {@link #clear()}), as well as the
  * {@link #set(int, Object)} method. All other mutator methods (addition methods
  * and {@link #move(int, int)}) throw an {@link UnsupportedOperationException}.
- * 
+ *
  * @since 1.2
  */
 public class MultiList extends AbstractObservableList {
@@ -43,7 +43,7 @@ public class MultiList extends AbstractObservableList {
 	/**
 	 * Constructs a MultiList in the default realm, and backed by the given
 	 * observable lists.
-	 * 
+	 *
 	 * @param lists
 	 *            the array of observable lists backing this MultiList.
 	 */
@@ -54,7 +54,7 @@ public class MultiList extends AbstractObservableList {
 	/**
 	 * Constructs a MultiList in the default realm backed by the given
 	 * observable lists.
-	 * 
+	 *
 	 * @param lists
 	 *            the array of observable lists backing this MultiList.
 	 * @param elementType
@@ -67,7 +67,7 @@ public class MultiList extends AbstractObservableList {
 	/**
 	 * Constructs a MultiList belonging to the given realm, and backed by the
 	 * given observable lists.
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param lists
@@ -80,7 +80,7 @@ public class MultiList extends AbstractObservableList {
 	/**
 	 * Constructs a MultiList belonging to the given realm, and backed by the
 	 * given observable lists.
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param lists

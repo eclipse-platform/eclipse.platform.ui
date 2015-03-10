@@ -17,14 +17,14 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
  * @since 1.0
- * 
+ *
  */
 public abstract class AbstractVetoableValue extends AbstractObservableValue
 		implements IVetoableValue {
@@ -52,7 +52,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 			throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
 		}
 		doSetApprovedValue(value);
-		
+
 		if (!Util.equals(diff.getOldValue(), diff.getNewValue())) {
 			fireValueChange(diff);
 		}
@@ -60,7 +60,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 
 	/**
 	 * Sets the value. Invoked after performing veto checks.  Should not fire change events.
-	 * 
+	 *
 	 * @param value
 	 */
 	protected abstract void doSetApprovedValue(Object value);
@@ -80,7 +80,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	/**
 	 * Notifies listeners about a pending change, and returns true if no
 	 * listener vetoed the change.
-	 * 
+	 *
 	 * @param diff
 	 * @return false if the change was vetoed, true otherwise
 	 */

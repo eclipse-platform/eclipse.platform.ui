@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.DecoratingObservableCollection;
 
 /**
  * An observable list which decorates another observable list.
- * 
+ *
  * @since 1.2
  */
 public class DecoratingObservableList extends DecoratingObservableCollection
@@ -33,7 +33,7 @@ public class DecoratingObservableList extends DecoratingObservableCollection
 	/**
 	 * Constructs a DecoratingObservableList which decorates the given
 	 * observable.
-	 * 
+	 *
 	 * @param decorated
 	 *            the observable list being decorated
 	 * @param disposeDecoratedOnDispose
@@ -95,7 +95,7 @@ public class DecoratingObservableList extends DecoratingObservableCollection
 	 * observable. By default, this method fires the list change event again,
 	 * with the decorating observable as the event source. Subclasses may
 	 * override to provide different behavior.
-	 * 
+	 *
 	 * @param event
 	 *            the change event received from the decorated observable
 	 */

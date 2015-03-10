@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
 
 /**
  * Listener for changes to observable lists.
- * 
+ *
  * @since 1.0
  */
 public interface IListChangeListener extends IObservablesListener {
@@ -25,7 +25,7 @@ public interface IListChangeListener extends IObservablesListener {
 	 * diff object. The given event object must only be used locally in this
 	 * method because it may be reused for other change notifications. The diff
 	 * object referenced by the event is immutable and may be used non-locally.
-	 * 
+	 *
 	 * @param event
 	 */
 	void handleListChange(ListChangeEvent event);

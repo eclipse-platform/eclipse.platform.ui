@@ -27,13 +27,13 @@ import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Mutable observable list backed by an ArrayList.
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public class WritableList extends ObservableList {
@@ -41,7 +41,7 @@ public class WritableList extends ObservableList {
 	/**
 	 * Creates an empty writable list in the default realm with a
 	 * <code>null</code> element type.
-	 * 
+	 *
 	 */
 	public WritableList() {
 		this(Realm.getDefault());
@@ -49,7 +49,7 @@ public class WritableList extends ObservableList {
 
 	/**
 	 * Creates an empty writable list with a <code>null</code> element type.
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 */
@@ -63,7 +63,7 @@ public class WritableList extends ObservableList {
 	 * change with the contents of the given list. If this is not desired,
 	 * {@link #WritableList(Collection, Object)} should be used by casting the
 	 * first argument to {@link Collection}.
-	 * 
+	 *
 	 * @param toWrap
 	 *            The java.util.List to wrap
 	 * @param elementType
@@ -77,7 +77,7 @@ public class WritableList extends ObservableList {
 	 * Constructs a new instance in the default realm containing the elements of
 	 * the given collection. Changes to the given collection after calling this
 	 * method do not affect the contents of the created WritableList.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection to copy
 	 * @param elementType
@@ -95,7 +95,7 @@ public class WritableList extends ObservableList {
 	 * contents of the given list. If this is not desired,
 	 * {@link #WritableList(Realm, Collection, Object)} should be used by
 	 * casting the second argument to {@link Collection}.
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param toWrap
@@ -111,7 +111,7 @@ public class WritableList extends ObservableList {
 	 * Constructs a new instance in the default realm containing the elements of
 	 * the given collection. Changes to the given collection after calling this
 	 * method do not affect the contents of the created WritableList.
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param collection

@@ -17,14 +17,14 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
 /**
  * Value change event describing a change of an {@link IObservableValue}
  * object's current value.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class ValueChangeEvent extends ObservableEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 2305345286999701156L;
 
@@ -38,7 +38,7 @@ public class ValueChangeEvent extends ObservableEvent {
 
 	/**
 	 * Creates a new value change event.
-	 * 
+	 *
 	 * @param source
 	 *            the source observable value
 	 * @param diff
@@ -51,7 +51,7 @@ public class ValueChangeEvent extends ObservableEvent {
 
 	/**
 	 * Returns the observable value from which this event originated.
-	 * 
+	 *
 	 * @return returns the observable value from which this event originated
 	 */
 	public IObservableValue getObservableValue() {

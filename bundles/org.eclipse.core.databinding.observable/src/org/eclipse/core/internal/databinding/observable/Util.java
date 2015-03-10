@@ -13,14 +13,14 @@ package org.eclipse.core.internal.databinding.observable;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class Util {
 
 	/**
 	 * Checks whether the two objects are <code>null</code> -- allowing for
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param left
 	 *            The left object to compare; may be <code>null</code>.
 	 * @param right

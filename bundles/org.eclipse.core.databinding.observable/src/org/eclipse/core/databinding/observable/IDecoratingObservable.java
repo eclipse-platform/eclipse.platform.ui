@@ -13,7 +13,7 @@ package org.eclipse.core.databinding.observable;
 
 /**
  * Interface for observables which decorate other observables.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes in the
  *              framework that implement this interface. Note that direct

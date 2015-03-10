@@ -25,7 +25,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 /**
  * An {@link IObservableValue} that tracks the value of an entry in an
  * {@link IObservableMap}, identified by the entry's key.
- * 
+ *
  * @since 1.1
  */
 public class MapEntryObservableValue extends AbstractObservableValue {
@@ -62,7 +62,7 @@ public class MapEntryObservableValue extends AbstractObservableValue {
 
 	/**
 	 * Creates a map entry observable.
-	 * 
+	 *
 	 * @param map
 	 *            the observable map whose entry will be tracked
 	 * @param key

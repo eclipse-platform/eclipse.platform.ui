@@ -20,18 +20,18 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 
 /**
  * A set whose changes can be tracked by set change listeners.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
  *              implement this interface. Note that direct implementers of this
  *              interface outside of the framework will be broken in future
  *              releases when methods are added to this interface.
- * 
+ *
  * @see AbstractObservableSet
  * @see ObservableSet
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public interface IObservableSet extends Set, IObservableCollection {
 

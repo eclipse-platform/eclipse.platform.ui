@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public class DetailObservableValue extends AbstractObservableValue implements
 		IObserving {

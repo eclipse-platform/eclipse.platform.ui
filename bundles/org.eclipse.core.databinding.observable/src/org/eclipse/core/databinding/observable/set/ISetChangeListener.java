@@ -15,9 +15,9 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
 
 /**
  * Listener for changes to observable sets.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public interface ISetChangeListener extends IObservablesListener {
 
@@ -26,7 +26,7 @@ public interface ISetChangeListener extends IObservablesListener {
 	 * used locally in this method because it may be reused for other change
 	 * notifications. The diff object referenced by the event is immutable and
 	 * may be used non-locally.
-	 * 
+	 *
 	 * @param event
 	 *            the event
 	 */

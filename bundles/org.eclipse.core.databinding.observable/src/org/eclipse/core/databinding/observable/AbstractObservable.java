@@ -85,7 +85,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public synchronized void dispose() {
@@ -98,7 +98,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 
 	/**
 	 * Asserts that the realm is the current realm.
-	 * 
+	 *
 	 * @see Realm#isCurrent()
 	 * @throws AssertionFailedException if the realm is not the current realm
 	 */

@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.ListenerList;
 /**
  * Listener management implementation. Exposed to subclasses in form of
  * {@link AbstractObservable} and {@link ChangeSupport}.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 /* package */class ChangeManager {
 
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.ListenerList;
 
 	/**
 	 * @param realm
-	 * 
+	 *
 	 */
 	/* package */ChangeManager(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
@@ -122,19 +122,19 @@ import org.eclipse.core.runtime.ListenerList;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void firstListenerAdded() {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void lastListenerRemoved() {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void dispose() {
 		listenerLists = null;

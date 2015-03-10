@@ -29,13 +29,13 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
 
 /**
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
  */
 public abstract class AbstractObservableMap extends AbstractMap implements
@@ -75,13 +75,13 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void lastListenerRemoved() {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void firstListenerAdded() {
 	}
@@ -213,7 +213,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 
 	/**
 	 * Sets the stale state. Must be invoked from the current realm.
-	 * 
+	 *
 	 * @param stale
 	 */
 	public void setStale(boolean stale) {
@@ -242,7 +242,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 
 	/**
 	 * Fires map change events. Must be invoked from current realm.
-	 * 
+	 *
 	 * @param diff
 	 */
 	protected void fireMapChange(MapDiff diff) {
@@ -253,7 +253,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 
 	/**
 	 * Asserts that the realm is the current realm.
-	 * 
+	 *
 	 * @see Realm#isCurrent()
 	 * @throws AssertionFailedException
 	 *             if the realm is not the current realm

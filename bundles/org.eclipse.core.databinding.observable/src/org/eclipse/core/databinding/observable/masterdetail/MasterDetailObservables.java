@@ -29,7 +29,7 @@ import org.eclipse.core.internal.databinding.observable.masterdetail.SetDetailVa
 /**
  * Allows for the observation of an attribute, the detail, of an observable
  * representing selection or another transient instance, the master.
- * 
+ *
  * @since 1.0
  */
 public class MasterDetailObservables {
@@ -38,7 +38,7 @@ public class MasterDetailObservables {
 	 * Creates a detail observable value from a master observable value and a
 	 * factory. This can be used to create observable values that represent a
 	 * property of a selected object in a table.
-	 * 
+	 *
 	 * @param master
 	 *            the observable value to track
 	 * @param detailFactory
@@ -60,7 +60,7 @@ public class MasterDetailObservables {
 	 * Creates a detail observable list from a master observable value and a
 	 * factory. This can be used to create observable lists that represent a
 	 * list property of a selected object in a table.
-	 * 
+	 *
 	 * @param master
 	 *            the observable value to track
 	 * @param detailFactory
@@ -83,7 +83,7 @@ public class MasterDetailObservables {
 	 * Creates a detail observable set from a master observable value and a
 	 * factory. This can be used to create observable sets that represent a set
 	 * property of a selected object in a table.
-	 * 
+	 *
 	 * @param master
 	 *            the observable value to track
 	 * @param detailFactory
@@ -105,7 +105,7 @@ public class MasterDetailObservables {
 	 * Creates a detail observable map from a master observable value and a
 	 * factory. This can be used to create observable maps that represent a map
 	 * property of a selected object in a table.
-	 * 
+	 *
 	 * @param master
 	 *            the observable value to track
 	 * @param detailFactory
@@ -125,7 +125,7 @@ public class MasterDetailObservables {
 	 * Creates a detail observable map from a master observable value and a
 	 * factory. This can be used to create observable maps that represent a map
 	 * property of a selected object in a table.
-	 * 
+	 *
 	 * @param master
 	 *            the observable value to track
 	 * @param detailFactory
@@ -156,7 +156,7 @@ public class MasterDetailObservables {
 	 * used to create the detail observable values for every master element
 	 * which then define the elements of the detail list. The detail list
 	 * resides in the same realm as the given master list.
-	 * 
+	 *
 	 * <p>
 	 * Note that since the values of the returned list are detail values of the
 	 * elements of the master list, the only modifications supported are through
@@ -164,7 +164,7 @@ public class MasterDetailObservables {
 	 * through the returned list are made through the detail observables created
 	 * by the specified observable factory.
 	 * </p>
-	 * 
+	 *
 	 * @param masterList
 	 *            The master observable list.
 	 * @param detailFactory
@@ -176,7 +176,7 @@ public class MasterDetailObservables {
 	 *            <code>java.lang.Class</code>. May be <code>null</code>.
 	 * @return A detail observable list with elements which correspond to the
 	 *         detail values of the elements of the master list.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IObservableList detailValues(IObservableList masterList,
@@ -192,7 +192,7 @@ public class MasterDetailObservables {
 	 * create the detail observable values for every master key which then
 	 * define the values of the detail map. The detail map resides in the same
 	 * realm as the given master set.
-	 * 
+	 *
 	 * <p>
 	 * Note that since the values of the returned map are detail values of the
 	 * elements of the master set, the only modifications supported are through
@@ -203,7 +203,7 @@ public class MasterDetailObservables {
 	 * made through the detail observables created by the specified observable
 	 * factory.
 	 * </p>
-	 * 
+	 *
 	 * @param masterSet
 	 *            The master observable set.
 	 * @param detailFactory
@@ -216,7 +216,7 @@ public class MasterDetailObservables {
 	 * @return A detail observable map with the given master set as key set and
 	 *         with values which correspond to the detail values of the elements
 	 *         of the master set.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IObservableMap detailValues(IObservableSet masterSet,
@@ -232,7 +232,7 @@ public class MasterDetailObservables {
 	 * provided factory is used to create the detail observable values for every
 	 * master value which then define the values of the detail map. The detail
 	 * map resides in the same realm as the given master map.
-	 * 
+	 *
 	 * <p>
 	 * Note that since the values of the returned map are detail values of the
 	 * values of the master map, the only modifications supported are through
@@ -243,7 +243,7 @@ public class MasterDetailObservables {
 	 * are made through the detail observables created by the specified
 	 * observable factory.
 	 * </p>
-	 * 
+	 *
 	 * @param masterMap
 	 *            The master observable map.
 	 * @param detailFactory
@@ -256,7 +256,7 @@ public class MasterDetailObservables {
 	 * @return A detail observable map with the same key set as the given master
 	 *         observable map and with values which correspond to the detail
 	 *         values of the values of the master map.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IObservableMap detailValues(IObservableMap masterMap,

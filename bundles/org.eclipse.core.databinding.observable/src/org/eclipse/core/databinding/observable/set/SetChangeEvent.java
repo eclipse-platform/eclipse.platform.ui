@@ -17,14 +17,14 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
 /**
  * List change event describing an incremental change of an
  * {@link IObservableSet} object.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class SetChangeEvent extends ObservableEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7436547103857482256L;
 	static final Object TYPE = new Object();
@@ -37,7 +37,7 @@ public class SetChangeEvent extends ObservableEvent {
 
 	/**
 	 * Creates a new set change event.
-	 * 
+	 *
 	 * @param source
 	 *            the source observable set
 	 * @param diff
@@ -50,7 +50,7 @@ public class SetChangeEvent extends ObservableEvent {
 
 	/**
 	 * Returns the observable set from which this event originated.
-	 * 
+	 *
 	 * @return the observable set from which this event originated
 	 */
 	public IObservableSet getObservableSet() {

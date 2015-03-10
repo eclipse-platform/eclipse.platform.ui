@@ -31,14 +31,14 @@ import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public class Diffs {
 
 	/**
 	 * Returns a {@link ListDiff} describing the change between the specified
 	 * old and new list states.
-	 * 
+	 *
 	 * @param oldList
 	 *            the old list state
 	 * @param newList
@@ -56,7 +56,7 @@ public class Diffs {
 	/**
 	 * Returns a lazily computed {@link ListDiff} describing the change between
 	 * the specified old and new list states.
-	 * 
+	 *
 	 * @param oldList
 	 *            the old list state
 	 * @param newList
@@ -176,7 +176,7 @@ public class Diffs {
 	/**
 	 * Checks whether the two objects are <code>null</code> -- allowing for
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param left
 	 *            The left object to compare; may be <code>null</code>.
 	 * @param right
@@ -192,7 +192,7 @@ public class Diffs {
 	/**
 	 * Returns a {@link SetDiff} describing the change between the specified old
 	 * and new set states.
-	 * 
+	 *
 	 * @param oldSet
 	 *            the old set state
 	 * @param newSet
@@ -211,7 +211,7 @@ public class Diffs {
 	/**
 	 * Returns a lazily computed {@link SetDiff} describing the change between
 	 * the specified old and new set states.
-	 * 
+	 *
 	 * @param oldSet
 	 *            the old set state
 	 * @param newSet
@@ -248,7 +248,7 @@ public class Diffs {
 	/**
 	 * Returns a {@link MapDiff} describing the change between the specified old
 	 * and new map states.
-	 * 
+	 *
 	 * @param oldMap
 	 *            the old map state
 	 * @param newMap
@@ -316,7 +316,7 @@ public class Diffs {
 	/**
 	 * Returns a lazily computed {@link MapDiff} describing the change between
 	 * the specified old and new map states.
-	 * 
+	 *
 	 * @param oldMap
 	 *            the old map state
 	 * @param newMap

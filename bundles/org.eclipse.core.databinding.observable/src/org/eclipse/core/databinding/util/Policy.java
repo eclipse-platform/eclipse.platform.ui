@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * The Policy class handles settings for behaviour, debug flags and logging
  * within JFace Data Binding.
- * 
+ *
  * @since 1.1
  */
 public class Policy {
@@ -53,7 +53,7 @@ public class Policy {
 
 	/**
 	 * Sets the logger used by JFace Data Binding to log errors.
-	 * 
+	 *
 	 * @param logger
 	 *            the logger to use, or <code>null</code> to use the default
 	 *            logger
@@ -67,7 +67,7 @@ public class Policy {
 	 * <p>
 	 * The default logger prints the status to <code>System.err</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the logger
 	 */
 	public static synchronized ILogger getLog() {

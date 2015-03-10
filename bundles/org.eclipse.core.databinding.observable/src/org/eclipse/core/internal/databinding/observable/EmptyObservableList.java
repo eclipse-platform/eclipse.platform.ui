@@ -40,7 +40,7 @@ public class EmptyObservableList implements IObservableList {
 	/**
 	 * Creates an empty list. This list may be disposed multiple times
 	 * without any side-effects.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the constructed list
 	 */
@@ -51,7 +51,7 @@ public class EmptyObservableList implements IObservableList {
 	/**
 	 * Creates an empty list. This list may be disposed multiple times
 	 * without any side-effects.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the constructed list
 	 * @param elementType

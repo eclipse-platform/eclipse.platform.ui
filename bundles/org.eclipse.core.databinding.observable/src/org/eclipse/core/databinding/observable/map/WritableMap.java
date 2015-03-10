@@ -25,7 +25,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
@@ -43,10 +43,10 @@ public class WritableMap extends ObservableMap {
 	public WritableMap() {
 		this(Realm.getDefault(), null, null);
 	}
-	
+
 	/**
 	 * Constructs a new WritableMap on the given realm.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm
 	 */
@@ -57,7 +57,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * Constructs a new WritableMap on the default realm with the specified key
 	 * and value types.
-	 * 
+	 *
 	 * @param keyType
 	 * @param valueType
 	 * @since 1.2
@@ -69,7 +69,7 @@ public class WritableMap extends ObservableMap {
 	/**
 	 * Constructs a new WritableMap on the given realm with the specified key
 	 * and value types.
-	 * 
+	 *
 	 * @param realm
 	 * @param keyType
 	 * @param valueType

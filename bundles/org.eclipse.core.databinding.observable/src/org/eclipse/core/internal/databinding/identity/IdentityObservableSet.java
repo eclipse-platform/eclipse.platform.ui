@@ -32,7 +32,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  * This class is <i>not</i> a strict implementation the {@link IObservableSet}
  * interface. It intentionally violates the {@link Set} contract, which requires
  * the use of {@link #equals(Object)} when comparing elements.
- * 
+ *
  * @since 1.2
  */
 public class IdentityObservableSet extends AbstractObservableSet {
@@ -41,7 +41,7 @@ public class IdentityObservableSet extends AbstractObservableSet {
 
 	/**
 	 * Constructs an IdentityObservableSet on the given {@link Realm}.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the constructed set.
 	 * @param elementType

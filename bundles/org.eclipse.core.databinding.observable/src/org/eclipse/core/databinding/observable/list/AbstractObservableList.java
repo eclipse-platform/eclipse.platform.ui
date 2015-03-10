@@ -32,15 +32,15 @@ import org.eclipse.core.runtime.AssertionFailedException;
 
 /**
  * Subclasses should override at least get(int index) and size().
- * 
+ *
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public abstract class AbstractObservableList extends AbstractList implements
 		IObservableList {
@@ -70,8 +70,8 @@ public abstract class AbstractObservableList extends AbstractList implements
 	private volatile boolean disposed = false;
 
 	/**
-	 * @param realm 
-	 * 
+	 * @param realm
+	 *
 	 */
 	public AbstractObservableList(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
@@ -81,15 +81,15 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractObservableList() {
 		this(Realm.getDefault());
 	}
-	
+
 	/**
 	 * Returns whether this observable list has any registered listeners.
-	 * 
+	 *
 	 * @return whether this observable list has any registered listeners.
 	 * @since 1.2
 	 */
@@ -188,13 +188,13 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void firstListenerAdded() {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void lastListenerRemoved() {
 	}
@@ -208,7 +208,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public synchronized void dispose() {
@@ -233,7 +233,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	protected abstract int doGetSize();
 
 	/**
-	 * 
+	 *
 	 */
 	private void getterCalled() {
 		ObservableTracker.getterCalled(this);
@@ -302,7 +302,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 * notification for the remove and add operations in the same
 	 * ListChangeEvent, as this allows {@link ListDiff#accept(ListDiffVisitor)}
 	 * to recognize the operation as a move.
-	 * 
+	 *
 	 * @param oldIndex
 	 *            the element's position before the move. Must be within the
 	 *            range <code>0 &lt;= oldIndex &lt; size()</code>.
@@ -399,10 +399,10 @@ public abstract class AbstractObservableList extends AbstractList implements
 	public Realm getRealm() {
 		return realm;
 	}
-	
+
 	/**
 	 * Asserts that the realm is the current realm.
-	 * 
+	 *
 	 * @see Realm#isCurrent()
 	 * @throws AssertionFailedException
 	 *             if the realm is not the current realm

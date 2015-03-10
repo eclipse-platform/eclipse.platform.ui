@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.IDiff;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public abstract class SetDiff implements IDiff {
 
@@ -37,7 +37,7 @@ public abstract class SetDiff implements IDiff {
 
 	/**
 	 * Returns true if the diff has no added or removed elements.
-	 * 
+	 *
 	 * @return true if the diff has no added or removed elements.
 	 * @since 1.2
 	 */
@@ -47,7 +47,7 @@ public abstract class SetDiff implements IDiff {
 
 	/**
 	 * Applies the changes in this diff to the given set
-	 * 
+	 *
 	 * @param set
 	 *            the set to which the diff will be applied
 	 * @since 1.2
@@ -65,7 +65,7 @@ public abstract class SetDiff implements IDiff {
 	 * <p>
 	 * <b>Note</b>:the returned list is only guaranteed to be valid while the
 	 * passed in set remains unchanged.
-	 * 
+	 *
 	 * @param set
 	 *            the set over which the diff will be simulated
 	 * @return a {@link Set} showing what <code>set</code> would look like if it

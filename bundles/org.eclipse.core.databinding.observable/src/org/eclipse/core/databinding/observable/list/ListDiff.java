@@ -21,7 +21,7 @@ import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * Object describing a diff between two lists.
- * 
+ *
  * @since 1.0
  */
 public abstract class ListDiff implements IDiff {
@@ -29,7 +29,7 @@ public abstract class ListDiff implements IDiff {
 	/**
 	 * Returns a ListDiffEntry array representing the differences in the list,
 	 * in the order they are to be processed.
-	 * 
+	 *
 	 * @return a ListDiffEntry array representing the differences in the list,
 	 *         in the order they are to be processed.
 	 */
@@ -50,7 +50,7 @@ public abstract class ListDiff implements IDiff {
 	 * <li>{@link ListDiffVisitor#handleAdd(int, Object)} is called whenever an
 	 * add entry does not match conditions in 1 or 2.
 	 * </ol>
-	 * 
+	 *
 	 * @param visitor
 	 *            the visitor to receive callbacks.
 	 * @see ListDiffVisitor
@@ -143,7 +143,7 @@ public abstract class ListDiff implements IDiff {
 	/**
 	 * Returns true if the diff contains no added, removed, moved or replaced
 	 * elements.
-	 * 
+	 *
 	 * @return true if the diff contains no added, removed, moved or replaced
 	 *         elements.
 	 * @since 1.2
@@ -154,7 +154,7 @@ public abstract class ListDiff implements IDiff {
 
 	/**
 	 * Applies the changes in this diff to the given list
-	 * 
+	 *
 	 * @param list
 	 *            the list to which the diff will be applied
 	 * @since 1.2
@@ -185,7 +185,7 @@ public abstract class ListDiff implements IDiff {
 	 * <p>
 	 * <b>Note</b>: the returned list is only valid until structural changes are
 	 * made to the passed-in list.
-	 * 
+	 *
 	 * @param list
 	 *            the list over which the diff will be simulated
 	 * @return an unmodifiable list showing what <code>list</code> would look

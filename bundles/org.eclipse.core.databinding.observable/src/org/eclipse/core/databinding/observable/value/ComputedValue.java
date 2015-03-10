@@ -35,13 +35,13 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  * Example: compute the sum of all elements in an {@link IObservableList} &lt;
  * {@link Integer} &gt;.
  * </p>
- * 
+ *
  * <pre>
  * final IObservableList addends = WritableValue.withValueType(Integer.TYPE);
  * addends.add(new Integer(0));
  * addends.add(new Integer(1));
  * addends.add(new Integer(2));
- * 
+ *
  * IObservableValue sum = new ComputedValue() {
  * 	protected Object calculate() {
  * 		int sum = 0;
@@ -52,13 +52,13 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  * 		return sum;
  * 	}
  * };
- * 
+ *
  * System.out.println(sum.getValue()); // =&gt; 3
- * 
+ *
  * addends.add(new Integer(10));
  * System.out.println(sum.getValue()); // =&gt; 13
  * </pre>
- * 
+ *
  * @since 1.0
  */
 public abstract class ComputedValue extends AbstractObservableValue {
@@ -76,7 +76,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private IObservable[] dependencies = null;
 
 	/**
-	 * 
+	 *
 	 */
 	public ComputedValue() {
 		this(Realm.getDefault(), null);
@@ -92,7 +92,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	/**
 	 * @param realm
-	 * 
+	 *
 	 */
 	public ComputedValue(Realm realm) {
 		this(realm, null);
@@ -112,21 +112,21 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * public API. Each interface could have been implemented using a separate
 	 * anonymous class, but we combine them here to reduce the memory overhead
 	 * and number of classes.
-	 * 
+	 *
 	 * <p>
 	 * The Runnable calls computeValue and stores the result in cachedValue.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The IChangeListener stores each observable in the dependencies list. This
 	 * is registered as the listener when calling ObservableTracker, to detect
 	 * every observable that is used by computeValue.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The IChangeListener is attached to every dependency.
 	 * </p>
-	 * 
+	 *
 	 */
 	private class PrivateInterface implements Runnable, IChangeListener,
 			IStaleListener {
@@ -187,7 +187,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * dependencies used to calculate the value must be {@link IObservable}, and
 	 * implementers must use one of the interface methods tagged TrackedGetter
 	 * for ComputedValue to recognize it as a dependency.
-	 * 
+	 *
 	 * @return the object's value
 	 */
 	protected abstract Object calculate();
@@ -218,7 +218,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void stopListening() {
 		// Stop listening for dependency changes.

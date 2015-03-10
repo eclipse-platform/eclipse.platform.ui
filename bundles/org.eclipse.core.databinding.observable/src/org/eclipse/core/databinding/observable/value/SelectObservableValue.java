@@ -22,9 +22,9 @@ import org.eclipse.core.internal.databinding.observable.Util;
  * value of the SelectObservableValue is the value of whichever option's
  * observable has a value of Boolean.TRUE, or null if none of the observable's
  * values are Boolean.TRUE.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  * @since 1.2
  */
 public class SelectObservableValue extends AbstractObservableValue {
@@ -66,7 +66,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 
 	/**
 	 * Constructs a SelectObservableValue on the specified realm.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm
 	 */
@@ -77,7 +77,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 	/**
 	 * Constructs a SelectObservableValue on the default realm, with the given
 	 * value type.
-	 * 
+	 *
 	 * @param valueType
 	 *            the value type
 	 */
@@ -88,7 +88,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 	/**
 	 * Constructs a SelectObservableValue on the given realm, with the given
 	 * value type.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm
 	 * @param valueType
@@ -135,7 +135,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 	/**
 	 * Adds an option to this SelectObservableValue. If the observable contains
 	 * Boolean.TRUE then the selection changes immediately to the given value.
-	 * 
+	 *
 	 * @param value
 	 *            The value associated with the provided observable
 	 * @param observable

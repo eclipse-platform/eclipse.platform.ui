@@ -23,7 +23,7 @@ import org.eclipse.core.internal.databinding.identity.IdentityMap;
 
 /**
  * @since 1.0
- * 
+ *
  */
 public class StalenessTracker {
 
@@ -49,7 +49,7 @@ public class StalenessTracker {
 
 	/**
 	 * @param observables
-	 * @param stalenessConsumer 
+	 * @param stalenessConsumer
 	 */
 	public StalenessTracker(IObservable[] observables,
 			IStalenessConsumer stalenessConsumer) {

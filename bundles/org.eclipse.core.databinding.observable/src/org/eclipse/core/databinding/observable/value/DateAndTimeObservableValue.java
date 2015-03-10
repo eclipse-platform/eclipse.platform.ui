@@ -54,7 +54,7 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * One use for this class is binding a date-and-time value to two separate user
  * interface elements, one for editing date and one for editing time:
- * 
+ *
  * <pre>
  * DataBindingContext dbc = new DataBindingContext();
  * IObservableValue beanValue = BeansObservables.observeValue(...);
@@ -65,12 +65,12 @@ import org.eclipse.core.runtime.Assert;
  * dbc.bindValue(new DateAndTimeObservableValue(dateObservable, timeObservable),
  * 		beanValue);
  * </pre>
- * 
+ *
  * A second use is editing only the date or time value of a date-and-time value.
  * This can be accomplished by using a widget-specific observable for the
  * editable value and a WritableValue as a container for the fixed value. The
  * example below allows editing the date while preserving the time:
- * 
+ *
  * <pre>
  * DataBindingContext dbc = new DataBindingContext();
  * IObservableValue beanValue = BeansObservables.observeValue(...);
@@ -79,9 +79,9 @@ import org.eclipse.core.runtime.Assert;
  * IObservableValue timeObservable = new WritableValue(dateObservable.getRealm(),
  * 		beanValue.getValue(), Date.class);
  * dbc.bindValue(new DateAndTimeObservableValue(dateObservable, timeObservable), beanValue);
- * 
+ *
  * <pre>
- * 
+ *
  * @since 1.2
  */
 public class DateAndTimeObservableValue extends AbstractObservableValue {
@@ -122,7 +122,7 @@ public class DateAndTimeObservableValue extends AbstractObservableValue {
 	/**
 	 * Constructs a DateAndTimeObservableValue with the specified constituent
 	 * observables.
-	 * 
+	 *
 	 * @param dateObservable
 	 *            the observable used for the date component (year, month and
 	 *            day) of the constructed observable.
