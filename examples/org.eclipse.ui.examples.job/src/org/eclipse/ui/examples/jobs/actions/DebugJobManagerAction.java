@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * This class is not really sample code.  This action is used to gather debugging
- * information about the internal state of the background job scheduling 
+ * information about the internal state of the background job scheduling
  * mechanism.
  */
 public class DebugJobManagerAction implements IWorkbenchWindowActionDelegate {

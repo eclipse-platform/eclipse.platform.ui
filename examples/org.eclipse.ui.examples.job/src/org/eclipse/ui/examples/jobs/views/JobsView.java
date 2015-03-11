@@ -164,7 +164,7 @@ public class JobsView extends ViewPart {
 
 	/**
 	 * Create all push button parts for the jobs view.
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createPushButtonGroup(Composite parent) {
@@ -289,7 +289,7 @@ public class JobsView extends ViewPart {
 
 	/**
 	 * Test the showInDialog API
-	 * 
+	 *
 	 */
 	protected void showInDialog() {
 
@@ -522,7 +522,7 @@ public class JobsView extends ViewPart {
 		Job runtimeExceptionJob = new Job("Job with Runtime exception") { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
@@ -621,7 +621,7 @@ public class JobsView extends ViewPart {
 
 	/**
 	 * Run a workspace runnable in the application window.
-	 * 
+	 *
 	 */
 
 	public void runnableInWindow() {
@@ -632,7 +632,7 @@ public class JobsView extends ViewPart {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected void execute(IProgressMonitor monitor)

@@ -44,7 +44,7 @@ public class TestJob extends Job {
 
 	/**
 	 * Creates a new test job
-	 * 
+	 *
 	 * @param duration
 	 *            Total time that the test job should sleep, in milliseconds.
 	 * @param lock
@@ -73,7 +73,7 @@ public class TestJob extends Job {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
 	 */
 	public boolean belongsTo(Object family) {
@@ -85,7 +85,7 @@ public class TestJob extends Job {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {

@@ -25,7 +25,7 @@ public class ProgressExamplesPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ProgressExamplesPlugin plugin;
 	public static String ID = "org.eclipse.ui.examples.job"; //$NON-NLS-1$
-	
+
 	/**
 	 * The constructor.
 	 */

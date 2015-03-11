@@ -19,26 +19,26 @@ public class SlowElement extends PlatformObject {
 	private SlowElement parent;
 
 	SlowElement(String name) {
-		this(null, name, null);	
+		this(null, name, null);
 	}
-	
+
 	SlowElement(String name, SlowElement[] children) {
-		this(null, name, children);	
+		this(null, name, children);
 	}
-	
+
 	SlowElement(SlowElement parent, String name, SlowElement[] children) {
 		this.name = name;
 		this.parent = parent;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public SlowElement getParent() {
 		return parent;
 	}
-	
+
 	public SlowElement[] getChildren() {
 		Random r = new Random();
 		int random = r.nextInt(15);

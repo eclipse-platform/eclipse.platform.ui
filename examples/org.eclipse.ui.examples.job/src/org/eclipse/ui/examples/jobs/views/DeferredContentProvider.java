@@ -18,7 +18,7 @@ import org.eclipse.ui.progress.DeferredTreeContentManager;
 public class DeferredContentProvider extends BaseWorkbenchContentProvider {
 
 	private DeferredTreeContentManager manager;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */

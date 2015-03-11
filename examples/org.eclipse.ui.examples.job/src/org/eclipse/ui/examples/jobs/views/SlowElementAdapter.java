@@ -32,7 +32,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
 	 *           org.eclipse.jface.progress.IElementCollector,
 	 *           org.eclipse.core.runtime.IProgressMonitor)
@@ -65,7 +65,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
 	 */
 	public boolean isContainer() {
@@ -74,7 +74,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
 	 */
 	public ISchedulingRule getRule(final Object object) {
@@ -86,7 +86,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object object) {
@@ -98,7 +98,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
@@ -108,7 +108,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
@@ -120,7 +120,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object o) {
