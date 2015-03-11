@@ -96,7 +96,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 					}
 				}
 			}
-			return (IIndexContribution[])contributions.toArray(new IIndexContribution[contributions.size()]);
+			return contributions.toArray(new IIndexContribution[contributions.size()]);
 		}
 		return new IIndexContribution[0];
 	}

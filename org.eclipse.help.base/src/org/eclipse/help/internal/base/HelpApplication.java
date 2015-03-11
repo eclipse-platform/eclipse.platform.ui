@@ -116,7 +116,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
 	public void setInitializationData(IConfigurationElement configElement, String propertyName, Object data) {
-		String value = (String)((Map)data).get("mode"); //$NON-NLS-1$
+		String value = (String)((Map<?, ?>)data).get("mode"); //$NON-NLS-1$
 		if ("infocenter".equalsIgnoreCase(value)) { //$NON-NLS-1$
 			BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		}

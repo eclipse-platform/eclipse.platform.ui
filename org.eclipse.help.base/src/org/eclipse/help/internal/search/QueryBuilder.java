@@ -245,7 +245,7 @@ public class QueryBuilder {
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
 
-		CharTermAttribute termAttribute = (CharTermAttribute) tStream.getAttribute(CharTermAttribute.class);
+		CharTermAttribute termAttribute = tStream.getAttribute(CharTermAttribute.class);
 		try {
 			while (tStream.incrementToken()) {
 				String term = termAttribute.toString();

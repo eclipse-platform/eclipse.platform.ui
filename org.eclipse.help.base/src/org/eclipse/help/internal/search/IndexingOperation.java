@@ -439,7 +439,7 @@ class IndexingOperation {
 		// get the list of indexed docs. This is a hashtable (url, plugin)
 		HelpProperties indexedDocs = index.getIndexedDocs();
 		Set<URL> removedDocs = new HashSet<URL>(indexedDocs.size());
-		for (Iterator docs = indexedDocs.keySet().iterator(); docs.hasNext();) {
+		for (Iterator<?> docs = indexedDocs.keySet().iterator(); docs.hasNext();) {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
 			int i = doc.indexOf('/', 1);

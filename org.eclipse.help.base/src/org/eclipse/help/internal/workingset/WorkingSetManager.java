@@ -68,7 +68,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	private AdaptableTocsArray root;
 
-	private Map allCriteriaValues;
+	private Map<String, Set<String>> allCriteriaValues;
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
@@ -492,7 +492,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		}
 		List<String> valueIds = new ArrayList<String>();
 		if(null != criterionName && null != allCriteriaValues) {
-			Set<String> criterionValues = (Set<String>)allCriteriaValues.get(criterionName);
+			Set<String> criterionValues = allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {
 				valueIds.addAll(criterionValues);
 				Collections.sort(valueIds);

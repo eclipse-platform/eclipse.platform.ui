@@ -78,7 +78,7 @@ public class PluginVersionInfo extends HelpProperties {
 			}
 			StringBuffer pluginVersionAndFragments = new StringBuffer();
 			appendBundleInformation(pluginVersionAndFragments, bundleId,
-					(String) pluginBundle.getHeaders().get(
+					pluginBundle.getHeaders().get(
 							Constants.BUNDLE_VERSION));
 			Bundle[] fragmentBundles = Platform.getFragments(pluginBundle);
 			if (fragmentBundles != null) {
@@ -88,7 +88,7 @@ public class PluginVersionInfo extends HelpProperties {
 						continue;
 					appendBundleInformation(pluginVersionAndFragments,
 							fragmentBundles[f].getSymbolicName(),
-							(String) fragmentBundles[f].getHeaders().get(
+							fragmentBundles[f].getHeaders().get(
 									Constants.BUNDLE_VERSION));
 				}
 			}
@@ -136,7 +136,7 @@ public class PluginVersionInfo extends HelpProperties {
 				}
 			}
 		}
-		for (Enumeration keysEnum = oldContrs.keys(); keysEnum
+		for (Enumeration<?> keysEnum = oldContrs.keys(); keysEnum
 				.hasMoreElements();) {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!this.containsKey(oneContr)) {

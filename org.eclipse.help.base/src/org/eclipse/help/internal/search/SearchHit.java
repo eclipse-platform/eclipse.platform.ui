@@ -57,8 +57,8 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		if (o == this) {
 			return 0;
 		}
-		float s1 = ((SearchHit)this).getScore();
-		float s2 = ((SearchHit)o).getScore();
+		float s1 = this.getScore();
+		float s2 = o.getScore();
 		return (s1 < s2 ? 1 : s1 > s2 ? -1 : 0);
 	}
 

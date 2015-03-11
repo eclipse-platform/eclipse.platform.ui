@@ -465,7 +465,7 @@ public class LocalSearchManager {
 					continue;
 				//ArrayList participants = (ArrayList) entry;
 				for (int j = 0; j < participants.size(); j++) {
-					ParticipantDescriptor desc = (ParticipantDescriptor) participants.get(j);
+					ParticipantDescriptor desc = participants.get(j);
 					if (desc.contains(refEl)) {
 						// found the matching descriptor - add it to the list
 						if (list == null)
@@ -538,7 +538,7 @@ public class LocalSearchManager {
 		}
 		if (result == PARTICIPANTS_NOT_FOUND)
 			return null;
-		return (ArrayList<ParticipantDescriptor>) result;
+		return result;
 	}
 
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)

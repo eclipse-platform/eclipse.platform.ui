@@ -58,7 +58,7 @@ public class JettyHelpServer extends HelpServer {
 
 		public void run() {
 			try {
-				final Dictionary<String, Comparable> d = new Hashtable<String, Comparable>();
+				final Dictionary<String, Object> d = new Hashtable<String, Object>();
 				final int SESSION_TIMEOUT_INTERVAL_IN_SECONDS = 30*60;  // 30 minutes
 				configurePort();
 				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class JettyHelpServer extends HelpServer {
 		}
 		if (port == -1) {
 			// Jetty selected a port number for us
-			ServiceReference[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=" + getOtherInfo() + ')'); //$NON-NLS-1$ //$NON-NLS-2$
+			ServiceReference<?>[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=" + getOtherInfo() + ')'); //$NON-NLS-1$ //$NON-NLS-2$
 			Object assignedPort = reference[0].getProperty("http.port"); //$NON-NLS-1$
 			port = Integer.parseInt((String)assignedPort);
 		}

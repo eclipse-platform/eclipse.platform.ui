@@ -57,11 +57,11 @@ public class Eclipse extends Thread {
 		cmdarray[1] = "-vm"; //$NON-NLS-1$
 		cmdarray[2] = Options.getVm();
 		for (int i = 0; i < eclipseArgs.size(); i++) {
-			cmdarray[3 + i] = (String) eclipseArgs.get(i);
+			cmdarray[3 + i] = eclipseArgs.get(i);
 		}
 		cmdarray[3 + eclipseArgs.size()] = "-vmargs"; //$NON-NLS-1$
 		for (int i = 0; i < vmArgs.size(); i++) {
-			cmdarray[4 + eclipseArgs.size() + i] = (String) vmArgs.get(i);
+			cmdarray[4 + eclipseArgs.size() + i] = vmArgs.get(i);
 		}
 	}
 	private void prepareJavaCommand() throws Exception {
@@ -70,13 +70,13 @@ public class Eclipse extends Thread {
 		cmdarray = new String[1 + vmArgs.size() + 3 + eclipseArgs.size()];
 		cmdarray[0] = Options.getVm();
 		for (int i = 0; i < vmArgs.size(); i++) {
-			cmdarray[1 + i] = (String) vmArgs.get(i);
+			cmdarray[1 + i] = vmArgs.get(i);
 		}
 		cmdarray[1 + vmArgs.size()] = "-cp"; //$NON-NLS-1$
 		cmdarray[2 + vmArgs.size()] = getStartupJar();
 		cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 		for (int i = 0; i < eclipseArgs.size(); i++) {
-			cmdarray[4 + vmArgs.size() + i] = (String) eclipseArgs.get(i);
+			cmdarray[4 + vmArgs.size() + i] = eclipseArgs.get(i);
 		}
 	}
 	/**

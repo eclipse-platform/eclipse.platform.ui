@@ -94,9 +94,9 @@ public class SearchResults implements ISearchHitCollector {
 					// topic outside of scope
 					continue;
 				} else if ((scope instanceof AdaptableToc) || (scope instanceof AdaptableSelectedToc)) {
-					toc = (IToc) scope.getAdapter(IToc.class);
+					toc = scope.getAdapter(IToc.class);
 				} else if((scope instanceof AdaptableTopic) || (scope instanceof AdaptableSelectedTopic)){ // scope is AdaptableTopic or AdaptableSelectedTopic
-					toc = (IToc) scope.getParent().getAdapter(IToc.class);
+					toc = scope.getParent().getAdapter(IToc.class);
 				}
 			}
 
@@ -192,8 +192,8 @@ public class SearchResults implements ISearchHitCollector {
 			return null;
 		}
         String href = scope.getHref();
-		if(scope.getAdapter(IToc.class) instanceof IToc){
-			IToc toc=(IToc)scope.getAdapter(IToc.class);
+        IToc toc=scope.getAdapter(IToc.class);
+		if (toc != null){
 			href=toc.getTopic(null).getHref();
 		}
 
@@ -205,7 +205,7 @@ public class SearchResults implements ISearchHitCollector {
 				for (int i = 0; i < childrenScopes.length; i++) {
 					// To find the target toc recursively because scope.getHref
 					// may be null.
-					IToc toc = getTocForScope(childrenScopes[i], locale);
+					toc = getTocForScope(childrenScopes[i], locale);
 					if (toc != null)
 						return toc;
 				}

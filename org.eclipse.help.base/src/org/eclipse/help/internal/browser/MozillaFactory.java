@@ -106,7 +106,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
 		try {
-			Hashtable params = (Hashtable) data;
+			Hashtable<?, ?> params = (Hashtable<?, ?>) data;
 			executable = (String) params.get("executable"); //$NON-NLS-1$
 			executableName = (String) params.get("executableName"); //$NON-NLS-1$
 			osList = (String) params.get("os"); //$NON-NLS-1$

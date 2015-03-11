@@ -479,8 +479,8 @@ public class SearchIndex implements IHelpSearchIndex {
 
 				HelpProperties prebuiltDocs = new HelpProperties(INDEXED_DOCS_FILE, new File(indexPath));
 				prebuiltDocs.restore();
-				Set prebuiltHrefs = prebuiltDocs.keySet();
-				for (Iterator it = prebuiltHrefs.iterator(); it.hasNext();) {
+				Set<?> prebuiltHrefs = prebuiltDocs.keySet();
+				for (Iterator<?> it = prebuiltHrefs.iterator(); it.hasNext();) {
 					String href = (String) it.next();
 					if (i == 0) {
 						// optimization for first prebuilt index of a plug-in
@@ -725,7 +725,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		String luceneVersionString = ""; //$NON-NLS-1$
 		Bundle luceneBundle = Platform.getBundle(LUCENE_BUNDLE_ID);
 		if (luceneBundle != null) {
-			luceneVersionString += (String) luceneBundle.getHeaders()
+			luceneVersionString += luceneBundle.getHeaders()
 					.get(Constants.BUNDLE_VERSION);
 		}
 		Version luceneVersion = new Version(luceneVersionString);

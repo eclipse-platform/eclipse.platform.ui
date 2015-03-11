@@ -49,7 +49,7 @@ public class HTMLSearchParticipant extends SearchParticipant {
 			if (participant == null) {
 				participant = getXhtmlParticipant();
 			}
-			return participant.addDocument((IHelpSearchIndex) index, pluginId, name, url, id, doc);
+			return participant.addDocument(index, pluginId, name, url, id, doc);
 		}
 		// otherwise, treat it as HTML
 		else {

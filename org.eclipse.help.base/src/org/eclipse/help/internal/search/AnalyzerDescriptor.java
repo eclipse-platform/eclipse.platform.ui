@@ -110,7 +110,7 @@ public class AnalyzerDescriptor {
 				else
 					continue;
 				String pluginId = configElements[i].getContributor().getName();
-				String pluginVersion = (String) Platform.getBundle(pluginId).getHeaders()
+				String pluginVersion = Platform.getBundle(pluginId).getHeaders()
 						.get(Constants.BUNDLE_VERSION);
 				this.id = pluginId + "#" + pluginVersion + "?locale=" + locale; //$NON-NLS-1$ //$NON-NLS-2$
 				this.lang = locale;

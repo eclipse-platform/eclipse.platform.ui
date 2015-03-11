@@ -19,7 +19,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -690,7 +689,7 @@ public class HelpIndexBuilder {
 			try {
 				Manifest OSGiManifest = new Manifest(new FileInputStream(
 						OSGiFile));
-				Dictionary headers = manifestToProperties(OSGiManifest
+				Properties headers = manifestToProperties(OSGiManifest
 						.getMainAttributes());
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME)
 						.toString();
@@ -768,7 +767,7 @@ public class HelpIndexBuilder {
 	}
 
 	private Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
+		Iterator<Object> iter = d.keySet().iterator();
 		Properties result = new Properties();
 		while (iter.hasNext()) {
 			Attributes.Name key = (Attributes.Name) iter.next();

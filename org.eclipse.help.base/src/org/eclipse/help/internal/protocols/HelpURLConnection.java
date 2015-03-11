@@ -185,7 +185,9 @@ public class HelpURLConnection extends URLConnection {
 				if (existing == null)
 					arguments.put(arg, val);
 				else if (existing instanceof Vector) {
-					((Vector<String>) existing).add(val);
+					@SuppressWarnings("unchecked")
+					Vector<String> vector = (Vector<String>) existing;
+					vector.add(val);
 					arguments.put(arg, existing);
 				} else {
 					Vector<Object> v = new Vector<Object>(2);
@@ -234,11 +236,14 @@ public class HelpURLConnection extends URLConnection {
 	/**
 	 *
 	 */
-	public Vector getMultiValue(String name) {
+	public Vector<String> getMultiValue(String name) {
 		if (arguments != null) {
 			Object value = arguments.get(name);
-			if (value instanceof Vector)
-				return (Vector) value;
+			if (value instanceof Vector) {
+				@SuppressWarnings("unchecked")
+				Vector<String> vector = (Vector<String>) value;
+				return vector;
+			}
 			return null;
 		}
 		return null;
@@ -254,9 +259,11 @@ public class HelpURLConnection extends URLConnection {
 		String stringValue = null;
 		if (value instanceof String)
 			stringValue = (String) value;
-		else if (value instanceof Vector)
-			stringValue = (String) ((Vector) value).firstElement();
-		else
+		else if (value instanceof Vector) {
+			@SuppressWarnings("unchecked")
+			Vector<String> vector = (Vector<String>) value;
+			stringValue = vector.firstElement();
+		} else
 			return null;
 		try {
 			return URLCoder.decode(stringValue);

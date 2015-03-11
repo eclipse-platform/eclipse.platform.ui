@@ -63,7 +63,7 @@ public class AdaptableTocsArray implements IAdaptable {
 			for (int i = 0; i < children.length; i++)
 				map.put(children[i].getHref(), children[i]);
 		}
-		return (AdaptableToc) map.get(href);
+		return map.get(href);
 	}
 
 	IToc[] asArray() {
