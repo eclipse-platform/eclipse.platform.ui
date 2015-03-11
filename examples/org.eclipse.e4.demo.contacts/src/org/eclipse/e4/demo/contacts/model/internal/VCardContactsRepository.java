@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2009, 2012 Siemens AG and others.
- * 
- * All rights reserved. This program and the accompanying materials 
+ *
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Kai Tödter - initial implementation
  ******************************************************************************/
@@ -64,13 +64,13 @@ public class VCardContactsRepository implements IContactsRepository {
 			IPath path = BundleActivatorImpl.getInstance().getStateLocation();
 			byte[] buffer = new byte[8192];
 			Bundle bundle = Platform.getBundle("org.eclipse.e4.demo.contacts"); //$NON-NLS-1$
-			
+
 			for (Enumeration<?> contacts = getStoredContacts(); contacts.hasMoreElements();) {
 				String bundlePath = (String) contacts.nextElement();
 				if (!bundlePath.endsWith(".vcf")) { //$NON-NLS-1$
 					continue;
 				}
-				
+
 				InputStream inputStream = FileLocator.openStream(bundle, new Path(bundlePath), false);
 				FileOutputStream outputStream = new FileOutputStream(path
 						.append(bundlePath.substring(bundlePath.indexOf('/') + 1)).toFile());
@@ -122,7 +122,7 @@ public class VCardContactsRepository implements IContactsRepository {
 	 * but can only parse VCards created with Microsoft Outlook. The intention
 	 * is not to provide a generic VCard reader but an easy way to get contact
 	 * data (including pictures) in the repository.
-	 * 
+	 *
 	 * @param fileName
 	 *            the vcard file
 	 * @return the created Contact
@@ -147,7 +147,7 @@ public class VCardContactsRepository implements IContactsRepository {
 		 * ';') { endIndex += 1; } charSet = line.substring(index + 8,
 		 * endIndex); break; } } } catch (FileNotFoundException e) { // TODO
 		 * Auto-generated catch block e.printStackTrace();
-		 * 
+		 *
 		 * } catch (IOException e) { // TODO Auto-generated catch block
 		 * e.printStackTrace(); } finally { try { if (bufferedReader != null) {
 		 * bufferedReader.close(); } } catch (IOException e) { // TODO

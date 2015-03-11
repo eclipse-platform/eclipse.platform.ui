@@ -46,9 +46,9 @@ public class SaveHandler {
 
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		dialog.open();
-		
+
 		ThemeUtil.applyDialogStyles(engine, dialog.getShell());
-		
+
 		dialog.run(true, true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
@@ -58,7 +58,7 @@ public class SaveHandler {
 						pmContext, null);
 			}
 		});
-		
+
 		if (pmContext != null)
 			pmContext.dispose();
 	}

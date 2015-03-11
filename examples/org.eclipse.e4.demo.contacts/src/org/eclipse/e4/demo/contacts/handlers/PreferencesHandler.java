@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 public class PreferencesHandler {
 	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
-		MessageDialog.openInformation(shell, "E4 Contacts", 
+		MessageDialog.openInformation(shell, "E4 Contacts",
 				"This should open the preferences");
 	}
 

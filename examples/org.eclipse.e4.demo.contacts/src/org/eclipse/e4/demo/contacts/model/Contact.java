@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2009, 2012 Siemens AG and others.
- * 
- * All rights reserved. This program and the accompanying materials 
+ *
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Kai Tödter - initial implementation
  ******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.ImageData;
 public class Contact implements Cloneable {
 
 	private PropertyChangeSupport changeSupport;
-	
+
 	private String sourceFile = null;
 	private String firstName = ""; //$NON-NLS-1$
 	private String middleName = ""; //$NON-NLS-1$
@@ -43,7 +43,7 @@ public class Contact implements Cloneable {
 	public Contact() {
 		changeSupport=new PropertyChangeSupport(this);
 	}
-	
+
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(propertyName, listener);
@@ -53,11 +53,11 @@ public class Contact implements Cloneable {
 			PropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(propertyName, listener);
 	}
-	
+
 	public void setSourceFile(String sourceFile) {
 		this.sourceFile = sourceFile;
 	}
-	
+
 	public String getSourceFile() {
 		return sourceFile;
 	}
@@ -201,11 +201,11 @@ public class Contact implements Cloneable {
 	public void setImage(ImageData image) {
 		this.image = image;
 	}
-	
+
 	public void setJpegString(String jpegString) {
 		this.jpegString = jpegString;
 	}
-	
+
 	public String getJpegString() {
 		return jpegString;
 	}

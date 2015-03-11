@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class FragmentHandler {
 
-	@Execute 
+	@Execute
 	public void run(Shell shell){
 		MessageDialog.openInformation(shell, "Hello", "See us at #eclipse-e4 !");
 	}
