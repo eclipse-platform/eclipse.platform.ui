@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
@@ -18,7 +18,7 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This class should be mixed into UI elements such as InputParts that need to 
+ * This class should be mixed into UI elements such as InputParts that need to
  * reference an external resource (files...).
  * </p>
  * @since 1.0

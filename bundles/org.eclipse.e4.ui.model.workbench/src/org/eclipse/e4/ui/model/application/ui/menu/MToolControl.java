@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This is a concrete class representing a widget hosted directly in the trim 
+ * This is a concrete class representing a widget hosted directly in the trim
  * or as an item in a Toolbar.
  * </p>
  * @since 1.0

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *      IBM Corporation - initial API and implementation
@@ -278,18 +278,18 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		result.append(')');
 		return result.toString();
 	}
-	
+
 	@Override
 	public List<MApplicationElement> merge(MApplication application) {
 		MApplicationElement o =  ModelUtils.findElementById(application, getParentElementId());
 		if( o != null ) {
 			EStructuralFeature feature = ((EObject)o).eClass().getEStructuralFeature(getFeaturename());
 			if( feature != null ) {
-				return ModelUtils.merge(o, feature, getElements(), getPositionInList());	
+				return ModelUtils.merge(o, feature, getElements(), getPositionInList());
 			}
-			
+
 		}
-		
+
 		return Collections.emptyList();
 	}
 

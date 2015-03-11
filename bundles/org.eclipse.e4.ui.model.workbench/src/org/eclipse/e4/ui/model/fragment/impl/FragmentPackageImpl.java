@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *      IBM Corporation - initial API and implementation
@@ -234,7 +234,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link FragmentPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -264,7 +264,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theFragmentPackage.freeze();
 
-  
+
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(FragmentPackageImpl.eNS_URI, theFragmentPackage);
 		return theFragmentPackage;

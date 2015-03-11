@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This defines a logical grouping of Commands in order to facilitate showing 
+ * This defines a logical grouping of Commands in order to facilitate showing
  * the current set of Commands in dialogs, lists etc
  * </p>
  * @since 1.0

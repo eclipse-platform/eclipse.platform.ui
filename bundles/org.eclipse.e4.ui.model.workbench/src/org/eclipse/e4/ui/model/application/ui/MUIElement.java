@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
@@ -140,8 +140,8 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * Add more detailed documentation by editing this comment in
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -205,7 +205,7 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <p>
 	 * This field is a reference to this element's container. Note that while this field is valid
 	 * for most UIElements there are a few (such as TrimBars and the Windows associated
-	 * with top level windows and perspectives) where this will return 'null' 
+	 * with top level windows and perspectives) where this will return 'null'
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parent</em>' container reference.
@@ -292,8 +292,8 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * Add more detailed documentation by editing this comment in
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

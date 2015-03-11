@@ -15,7 +15,7 @@ package org.eclipse.e4.ui.model.internal;
 /**
  * All the possible positioning values which can be used to contribute
  * elements into the wanted place of a list.
- * 
+ *
  * @author René Brandstetter
  */
 public enum Position {
@@ -45,7 +45,7 @@ public enum Position {
   /**
    * Find the {@link Position} enum value used in the given positioning
    * string.
-   * 
+   *
    * @param positionInfo
    *          the positioning string (can be <code>null</code>, which would
    *          result in <code>null</code>)

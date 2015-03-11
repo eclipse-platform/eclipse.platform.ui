@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
@@ -20,7 +20,7 @@ import java.util.List;
  * <!-- begin-model-doc -->
  * <p>
  * This is the base for the two different types of containment used in the model;
- * 'Stacks' (where only one element would be visible at a time) and 'Tiles' (where 
+ * 'Stacks' (where only one element would be visible at a time) and 'Tiles' (where
  * all the ele elements are visible at the same time.
  * </p><p>
  * All containers define the type of element that they are to contain. By design this is

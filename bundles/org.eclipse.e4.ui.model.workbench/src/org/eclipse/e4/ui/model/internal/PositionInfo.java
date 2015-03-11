@@ -14,7 +14,7 @@ package org.eclipse.e4.ui.model.internal;
 
 /**
  * A holder class for the full information to position an element in a list.
- * 
+ *
  * @author René Brandstetter
  */
 public final class PositionInfo {
@@ -41,7 +41,7 @@ public final class PositionInfo {
 
   /**
    * Creates an instance of the PositionInfo.
-   * 
+   *
    * @param position
    *          the kind of the positioning
    * @param positionReference
@@ -61,7 +61,7 @@ public final class PositionInfo {
 
   /**
    * Returns the kind/type of positioning which should be used.
-   * 
+   *
    * @return the position
    */
   public Position getPosition() {
@@ -70,7 +70,7 @@ public final class PositionInfo {
 
   /**
    * Returns additional information which is needed to place an element.
-   * 
+   *
    * @return the positionReference, or <code>null</code> if no additional information is given
    */
   public String getPositionReference() {
@@ -80,7 +80,7 @@ public final class PositionInfo {
   /**
    * Returns the additional information which is needed to place an element as
    * an int.
-   * 
+   *
    * @return the positionReference as an int
    * @throws NumberFormatException
    *           if the {@link #positionReference} can't be parsed to an int
@@ -94,7 +94,7 @@ public final class PositionInfo {
   /**
    * Creates a {@link PositionInfo} object out of the given positioning
    * string.
-   * 
+   *
    * <p>
    * <b>Examples for a positioning string:</b>
    * <ul>
@@ -108,7 +108,7 @@ public final class PositionInfo {
    * after the element with the ID "org.eclipse.test.id"</li>
    * </ul>
    * </p>
-   * 
+   *
    * @param positionInfo
    *          the positioning string
    * @return a {@link PositionInfo} which holds all the data mentioned in the

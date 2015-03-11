@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
@@ -60,9 +60,9 @@ public interface MPart extends MUIElement, MPartSashContainerElement, MStackElem
 	 * This defines the list of the menus associated with this part. There are two specific menus
 	 * that are managed by the core UI;
 	 * <ul>
-	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the 
+	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the
 	 * drop down menu available from the view's toolbar.</li>
-	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the 
+	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the
 	 * ddefault context menu for this view.</li>
 	 * </ul>
 	 * Other menus can be added here but have to be managed by the part itsefl...
