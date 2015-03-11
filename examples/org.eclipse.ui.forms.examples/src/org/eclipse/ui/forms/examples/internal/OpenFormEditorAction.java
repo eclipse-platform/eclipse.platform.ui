@@ -21,7 +21,7 @@ public abstract class OpenFormEditorAction extends AbstractHandler {
 	protected Object openEditor(String inputName, String editorId, IWorkbenchWindow window) {
 		return openEditor(new FormEditorInput(inputName), editorId, window);
 	}
-	
+
 	protected Object openEditor(IEditorInput input, String editorId, IWorkbenchWindow window) {
 		IWorkbenchPage page = window.getActivePage();
 		try {

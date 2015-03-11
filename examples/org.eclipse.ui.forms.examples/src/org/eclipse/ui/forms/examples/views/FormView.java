@@ -57,7 +57,7 @@ public class FormView extends ViewPart {
 		form.setText("Hello, Eclipse Forms");
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
-		
+
 		Hyperlink link = toolkit.createHyperlink(form.getBody(), "Click here.",
 				SWT.WRAP);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
@@ -79,50 +79,50 @@ public class FormView extends ViewPart {
 		td = new TableWrapData();
 		td.colspan = 2;
 		button.setLayoutData(td);
-		
+
 		ih = toolkit.createImageHyperlink(form.getBody(), SWT.NULL);
 		ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
 		ih.setText("Image Hyperlink with image and text");
 		td = new TableWrapData();
 		td.colspan = 2;
 		ih.setLayoutData(td);
-				
+
 		enableHyperlink = toolkit.createButton(form.getBody(), "Hyperlink Enabled", SWT.CHECK);
 		enableHyperlink.setSelection(true);
-		enableHyperlink.addSelectionListener(new SelectionListener() {		
+		enableHyperlink.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				ih.setEnabled(enableHyperlink.getSelection());					
+				ih.setEnabled(enableHyperlink.getSelection());
 				form.reflow(true);
 			}
-			
-			public void widgetDefaultSelected(SelectionEvent e) {	
+
+			public void widgetDefaultSelected(SelectionEvent e) {
 			}
-		});		
-		
+		});
+
 		td = new TableWrapData();
 		td.colspan = 2;
 		enableHyperlink.setLayoutData(td);
-		
+
 		clearHyperlinkImage = toolkit.createButton(form.getBody(), "Hyperlink has image", SWT.CHECK);
 		clearHyperlinkImage.setSelection(true);
 		clearHyperlinkImage.addSelectionListener(new SelectionListener() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				if (clearHyperlinkImage.getSelection()) {
-					ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));	
+					ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
 				} else {
-					ih.setImage(null);		
+					ih.setImage(null);
 				}
 				form.reflow(true);
 			}
-			
-			public void widgetDefaultSelected(SelectionEvent e) {	
+
+			public void widgetDefaultSelected(SelectionEvent e) {
 			}
-		});		
+		});
 		td = new TableWrapData();
 		td.colspan = 2;
 		clearHyperlinkImage.setLayoutData(td);
-		
+
 		ExpandableComposite ec = toolkit.createExpandableComposite(form.getBody(), ExpandableComposite.TREE_NODE|ExpandableComposite.CLIENT_INDENT);
 		ImageHyperlink eci = toolkit.createImageHyperlink(ec, SWT.NULL);
 		eci.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
@@ -199,7 +199,7 @@ public class FormView extends ViewPart {
 /*		layout.numColumns = 3;
 		Label label;
 		TableWrapData td;
-		
+
 		label = toolkit.createLabel(form.getBody(), "Some text to put in the first column", SWT.WRAP);
 		label = toolkit.createLabel(form.getBody() ,"Some text to put in the second column and make it a bit longer so that we can see what happens with column distribution. This text must be the longest so that it can get more space allocated to the columns it belongs to.", SWT.WRAP);
 		td = new TableWrapData();
@@ -218,7 +218,7 @@ public class FormView extends ViewPart {
 		label = toolkit.createLabel(form.getBody(), "This text goes into column 3 and consumes only one cell too", SWT.WRAP);
 		label.setLayoutData(new TableWrapData(TableWrapData.FILL));
 		form.getBody().setBackground(form.getBody().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));*/
-		
+
 		toolkit.paintBordersFor(form.getBody());
 	}
 	/**

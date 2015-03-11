@@ -54,7 +54,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * @author dejan
- * 
+ *
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
@@ -65,7 +65,7 @@ public class NewStylePage extends FormPage {
 	private static final String LONG_MESSAGE = "This {0} message is longer and will also compete with other header regions";
 	private static final String[] MESSAGE_NAMES = { "text", "info", "warning",
 			"error" };
-	
+
 	/**
 	 * @param id
 	 * @param title
@@ -146,7 +146,7 @@ public class NewStylePage extends FormPage {
 
 		final Button tbbutton = toolkit.createButton(client, "Add tool bar",
 				SWT.CHECK);
-		
+
 		final Button albutton = toolkit.createButton(client, "Set tool bar allignment to SWT.BOTTOM",
 				SWT.CHECK);
 		albutton.addSelectionListener(new SelectionAdapter() {
@@ -272,7 +272,7 @@ public class NewStylePage extends FormPage {
 					form.getForm().removeMessageHyperlinkListener(listener);
 			}
 		});
-		
+
 		Control[] children = client.getChildren();
 		ArrayList buttons = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
@@ -284,13 +284,13 @@ public class NewStylePage extends FormPage {
 			}
 		}
 		final Button[] checkboxes = (Button[]) buttons.toArray(new Button[buttons.size()]);
-		
+
 		final Button manageMessage = toolkit.createButton(client2,
 				"Use message manager", SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 4;
 		manageMessage.setLayoutData(gd);
-		
+
 		SelectionAdapter mmListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (manageMessage.getSelection() && e.widget instanceof Button)
@@ -312,7 +312,7 @@ public class NewStylePage extends FormPage {
 				form.getMessageManager().setAutoUpdate(autoUpdate.getSelection());
 			}
 		});
-		
+
 		shortMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(form.getMessageType(),
@@ -459,7 +459,7 @@ public class NewStylePage extends FormPage {
 		else
 			form.setImage(null);
 	}
-	
+
 	private void addRemoveMessage(Button button, IMessageManager mm) {
 		if (button.getSelection())
 			mm.addMessage(button, button.getText() + " is checked.", null, IMessageProvider.INFORMATION, button);

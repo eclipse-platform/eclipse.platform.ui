@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class PageWithSubPages extends FormPage {
 	private CTabFolder tabFolder;
 	private Text text;
-	
+
 	class TextSection {
 		String text;
 		public TextSection(String text) {this.text = text;}
@@ -64,7 +64,7 @@ public class PageWithSubPages extends FormPage {
 			}
 		});
 		tabFolder.setSelection(0);
-		updateSelection();		
+		updateSelection();
 	}
 	private void createTabs(FormToolkit toolkit) {
 		createTab(toolkit, "Copyright", "Copyright 2004 IBM and others.");

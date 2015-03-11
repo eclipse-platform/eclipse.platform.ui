@@ -19,7 +19,7 @@ public class FormEditorInput implements IEditorInput {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
 	public boolean exists() {
@@ -27,7 +27,7 @@ public class FormEditorInput implements IEditorInput {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
@@ -36,7 +36,7 @@ public class FormEditorInput implements IEditorInput {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
@@ -44,7 +44,7 @@ public class FormEditorInput implements IEditorInput {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
 	public IPersistableElement getPersistable() {
@@ -52,7 +52,7 @@ public class FormEditorInput implements IEditorInput {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
@@ -60,7 +60,7 @@ public class FormEditorInput implements IEditorInput {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {

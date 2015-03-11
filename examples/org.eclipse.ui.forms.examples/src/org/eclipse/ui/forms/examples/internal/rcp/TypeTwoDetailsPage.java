@@ -29,7 +29,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	private TypeTwo input;
 	private Button flag1;
 	private Button flag2;
-	
+
 	public TypeTwoDetailsPage() {
 	}
 	/* (non-Javadoc)
@@ -63,7 +63,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 		GridLayout glayout = new GridLayout();
 		glayout.marginWidth = glayout.marginHeight = 0;
 		client.setLayout(glayout);
-		
+
 		flag1 = toolkit.createButton(client, "Value of the flag1 property", SWT.CHECK);
 		flag1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -71,7 +71,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 					input.setFlag1(flag1.getSelection());
 			}
 		});
-		
+
 		flag2 = toolkit.createButton(client, "Value of the flag2 property", SWT.CHECK);
 		flag2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -119,7 +119,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	public boolean isDirty() {
 		return false;
 	}
-	
+
 	public boolean isStale() {
 		return false;
 	}

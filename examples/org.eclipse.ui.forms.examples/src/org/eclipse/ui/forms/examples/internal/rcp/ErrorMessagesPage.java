@@ -49,7 +49,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 /**
  * This page shows how to use the message manager to handle errors in a form
  * page.
- * 
+ *
  * @since 3.3
  */
 public class ErrorMessagesPage extends FormPage {
@@ -132,7 +132,7 @@ public class ErrorMessagesPage extends FormPage {
 			}
 		}
 	}
-	
+
 	*/
 
 	/**

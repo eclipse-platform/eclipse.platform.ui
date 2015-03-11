@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
- * 
+ *
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
@@ -64,7 +64,7 @@ public class FreeFormPage extends FormPage {
 		createExpandable(form, toolkit);
 		createFormTextSection(form, toolkit);
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		createSharedFormContent(managedForm);
 	}
@@ -99,7 +99,7 @@ public class FreeFormPage extends FormPage {
 		//td.align = TableWrapData.FILL;
 		exp.setLayoutData(td);
 	}
-	
+
 	private static void createFormTextSection(final ScrolledForm form, FormToolkit toolkit) {
 		Section section =
 			toolkit.createSection(
@@ -132,7 +132,7 @@ public class FreeFormPage extends FormPage {
 	private static void loadFormText(final FormText rtext, FormToolkit toolkit) {
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				MessageDialog.openInformation(rtext.getShell(), "Eclipse Forms", 
+				MessageDialog.openInformation(rtext.getShell(), "Eclipse Forms",
 				"Link activated: href=" + e.getHref());
 			}
 		});

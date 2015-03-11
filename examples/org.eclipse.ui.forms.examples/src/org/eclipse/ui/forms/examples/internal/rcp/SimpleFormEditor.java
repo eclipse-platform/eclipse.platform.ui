@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class SimpleFormEditor extends FormEditor {
 	/**
-	 *  
+	 *
 	 */
 	public SimpleFormEditor() {
 	}
@@ -40,7 +40,7 @@ public class SimpleFormEditor extends FormEditor {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
 	protected void addPages() {
@@ -61,21 +61,21 @@ public class SimpleFormEditor extends FormEditor {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
 	public void doSaveAs() {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {

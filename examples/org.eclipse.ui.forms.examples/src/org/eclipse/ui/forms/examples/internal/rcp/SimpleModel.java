@@ -12,7 +12,7 @@ package org.eclipse.ui.forms.examples.internal.rcp;
 import java.util.ArrayList;
 /**
  * @author dejan
- * 
+ *
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */

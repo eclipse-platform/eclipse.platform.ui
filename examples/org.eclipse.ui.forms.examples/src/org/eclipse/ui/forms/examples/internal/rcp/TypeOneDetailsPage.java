@@ -34,7 +34,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 			"<form><p>An example of a free-form text that should be "+
 			"wrapped below the section with widgets.</p>"+
 			"<p>It can contain simple tags like <a>links</a> and <b>bold text</b>.</p></form>";
-	
+
 	public TypeOneDetailsPage() {
 	}
 	/* (non-Javadoc)
@@ -69,7 +69,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		glayout.numColumns = 2;
 		client.setLayout(glayout);
 		//client.setBackground(client.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-		
+
 		SelectionListener choiceListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Integer value = (Integer)e.widget.getData();
@@ -100,7 +100,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		gd.horizontalSpan = 2;
 		flag.setLayoutData(gd);
 		createSpacer(toolkit, client, 2);
-		
+
 		toolkit.createLabel(client, "Text property:");
 		text = toolkit.createText(client, "", SWT.SINGLE);
 		text.addModifyListener(new ModifyListener() {
@@ -112,15 +112,15 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.widthHint = 10;
 		text.setLayoutData(gd);
-		
+
 		createSpacer(toolkit, client, 2);
-		
+
 		FormText rtext = toolkit.createFormText(parent, false);
 		rtext.setText(RTEXT_DATA, true, false);
 		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		rtext.setLayoutData(td);
-		
+
 		toolkit.paintBordersFor(client);
 		s1.setClient(client);
 	}

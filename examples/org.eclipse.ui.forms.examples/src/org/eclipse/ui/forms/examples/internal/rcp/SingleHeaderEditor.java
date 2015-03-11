@@ -33,14 +33,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class SingleHeaderEditor extends SharedHeaderFormEditor {
 	/**
-	 * 
+	 *
 	 */
 	public SingleHeaderEditor() {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
 	 */
 	protected FormToolkit createToolkit(Display display) {
@@ -66,7 +66,7 @@ public class SingleHeaderEditor extends SharedHeaderFormEditor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
 	protected void addPages() {
@@ -81,7 +81,7 @@ public class SingleHeaderEditor extends SharedHeaderFormEditor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
@@ -89,7 +89,7 @@ public class SingleHeaderEditor extends SharedHeaderFormEditor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
 	public void doSaveAs() {
@@ -97,7 +97,7 @@ public class SingleHeaderEditor extends SharedHeaderFormEditor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
