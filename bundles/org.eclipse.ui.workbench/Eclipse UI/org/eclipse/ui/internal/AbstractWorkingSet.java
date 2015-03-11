@@ -194,14 +194,8 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 
 		this.label = label == null ? getName() : label;
 		labelBoundToName = Util.equals(label, name);  // rebind the label to the name
-<<<<<<< HEAD
-
-		fireWorkingSetChanged(
-				IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, null);
-=======
 		
 		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, oldWorkingSet);
->>>>>>> 6c67a76... Bug 37183: need "oldValue" for IWorkingSet PropertyChangeEvent
 	}
 
 	@Override
@@ -223,8 +217,6 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		this.uniqueId = uniqueId;
 	}
 
-<<<<<<< HEAD
-=======
 	@Override
 	protected AbstractWorkingSet clone() {
 		try {
@@ -236,6 +228,4 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		}
 		return null;
 	}
-
->>>>>>> 6c67a76... Bug 37183: need "oldValue" for IWorkingSet PropertyChangeEvent
 }
