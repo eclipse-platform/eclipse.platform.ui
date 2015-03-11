@@ -137,6 +137,11 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	 */
 	public static final String MRU_CONTROLLED_BY_CSS_KEY = "MRUControlledByCSS"; //$NON-NLS-1$
 
+	/**
+	 * Default default value for MRU behavior.
+	 */
+	public static final boolean MRU_DEFAULT = false;
+
 	/*
 	 * org.eclipse.ui.internal.dialogs.ViewsPreferencePage controls currently
 	 * the MRU behavior via IEclipsePreferences, so that CSS values from the
@@ -671,7 +676,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	}
 
 	private boolean getMRUValueFromPreferences() {
-		boolean initialMRUValue = preferences.getBoolean(MRU_KEY_DEFAULT, true);
+		boolean initialMRUValue = preferences.getBoolean(MRU_KEY_DEFAULT, MRU_DEFAULT);
 		boolean actualValue = preferences.getBoolean(MRU_KEY, initialMRUValue);
 		return actualValue;
 	}
