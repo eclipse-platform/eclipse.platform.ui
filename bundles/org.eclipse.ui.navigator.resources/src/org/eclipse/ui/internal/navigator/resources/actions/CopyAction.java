@@ -35,7 +35,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 /*package*/class CopyAction extends SelectionListenerAction {
@@ -67,12 +67,12 @@ import org.eclipse.ui.part.ResourceTransfer;
      * @param clipboard a platform clipboard
      */
     public CopyAction(Shell shell, Clipboard clipboard) {
-        super(WorkbenchNavigatorMessages.CopyAction_Cop_); 
+        super(WorkbenchNavigatorMessages.CopyAction_Cop_);
         Assert.isNotNull(shell);
         Assert.isNotNull(clipboard);
         this.shell = shell;
         this.clipboard = clipboard;
-        setToolTipText(WorkbenchNavigatorMessages.CopyAction_Copy_selected_resource_s_); 
+        setToolTipText(WorkbenchNavigatorMessages.CopyAction_Copy_selected_resource_s_);
         setId(CopyAction.ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "CopyHelpId"); //$NON-NLS-1$
 				// TODO INavigatorHelpContextIds.COPY_ACTION);
@@ -84,7 +84,7 @@ import org.eclipse.ui.part.ResourceTransfer;
      * @param shell the shell for any dialogs
      * @param clipboard a platform clipboard
      * @param pasteAction a paste action
-     * 
+     *
      * @since 2.0
      */
     public CopyAction(Shell shell, Clipboard clipboard, PasteAction pasteAction) {
@@ -93,8 +93,8 @@ import org.eclipse.ui.part.ResourceTransfer;
     }
 
     /**
-     * The <code>CopyAction</code> implementation of this method defined 
-     * on <code>IAction</code> copies the selected resources to the 
+     * The <code>CopyAction</code> implementation of this method defined
+     * on <code>IAction</code> copies the selected resources to the
      * clipboard.
      */
     @Override
@@ -138,7 +138,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 
     /**
      * Set the clipboard contents. Prompt to retry if clipboard is busy.
-     * 
+     *
      * @param resources the resources to copy to the clipboard
      * @param fileNames file names of the resources to copy to the clipboard
      * @param names string representation of all names
@@ -174,7 +174,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 
     /**
      * The <code>CopyAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables this action if 
+     * <code>SelectionListenerAction</code> method enables this action if
      * one or more resources of compatible types are selected.
      */
     @Override
@@ -204,7 +204,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 			return false;
 		}
 
-        // must have a common parent	
+        // must have a common parent
         IContainer firstParent = selectedResources.get(0).getParent();
         if (firstParent == null) {
 			return false;

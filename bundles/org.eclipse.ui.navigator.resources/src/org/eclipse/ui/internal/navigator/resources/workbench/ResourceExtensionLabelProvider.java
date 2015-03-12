@@ -26,14 +26,14 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
  * @since 3.2
  */
 public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider implements ICommonLabelProvider {
- 
- 
+
+
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 		//init
 	}
 
- 
+
 	@Override
 	public String getDescription(Object anElement) {
 
@@ -44,11 +44,11 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
 	}
 
 	@Override
-	public void restoreState(IMemento aMemento) { 
-		
+	public void restoreState(IMemento aMemento) {
+
 	}
 
 	@Override
-	public void saveState(IMemento aMemento) { 
+	public void saveState(IMemento aMemento) {
 	}
 }

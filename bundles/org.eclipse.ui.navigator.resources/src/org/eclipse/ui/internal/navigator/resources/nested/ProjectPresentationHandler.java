@@ -25,7 +25,7 @@ import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorFilterService;
 
 public class ProjectPresentationHandler extends AbstractHandler {
-	
+
 	public static final String COMMAND_ID = "org.eclipse.ui.navigator.resources.nested.changeProjectPresentation"; //$NON-NLS-1$
 	private static final String NEST_PARAMETER = WorkbenchNavigatorPlugin.PLUGIN_ID + ".nested.enabled"; //$NON-NLS-1$
 
@@ -65,10 +65,10 @@ public class ProjectPresentationHandler extends AbstractHandler {
 			}
 
 			HandlerUtil.updateRadioState(event.getCommand(), Boolean.toString(newNest));
-			
+
 			return Boolean.valueOf(newNest);
 		}
-		
+
 		return false;
 	}
 

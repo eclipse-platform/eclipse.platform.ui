@@ -56,7 +56,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ResourceMgmtActionProvider extends CommonActionProvider {
 
@@ -105,7 +105,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 	 * <p>
 	 * No disabled action should be on the context menu.
 	 * </p>
-	 * 
+	 *
 	 * @param menu
 	 *            context menu to add actions to
 	 */
@@ -168,7 +168,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 
 	/**
 	 * Returns whether there are builders configured on the given project.
-	 * 
+	 *
 	 * @return <code>true</code> if it has builders, <code>false</code> if not,
 	 *         or if this could not be determined
 	 */

@@ -19,7 +19,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 /**
  * An property sheet page adapter factory for the Project Explorer.
- *  
+ *
  * @since 3.2
  */
 public class TabbedPropertySheetAdapterFactory

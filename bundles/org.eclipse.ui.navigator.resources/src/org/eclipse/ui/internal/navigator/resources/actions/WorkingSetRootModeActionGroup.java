@@ -35,16 +35,16 @@ import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
- * 
+ *
  * Provides the radio buttons at the top of the view menu that control the root
  * of the ProjectExplorer, which is either working sets of projects.  When the
  * state is changed through the actions, the WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS
  * property in the extension state model is updated.
- * 
+ *
  * This is installed by the WorkingSetActionProvider.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class WorkingSetRootModeActionGroup extends ActionGroup {
 
@@ -65,7 +65,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		/**
 		 * Construct an Action that represents a toggle-able state between
 		 * Showing top level Working Sets and Projects.
-		 * 
+		 *
 		 * @param toGroupWorkingSets
 		 */
 		public TopLevelContentAction(boolean toGroupWorkingSets) {
@@ -97,7 +97,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	/**
 	 * Create an action group that will listen to the stateModel and update the
 	 * structuredViewer when necessary.
-	 * 
+	 *
 	 * @param aStructuredViewer
 	 * @param aStateModel
 	 */
@@ -197,11 +197,11 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	/**
 	 * Toggle whether top level working sets should be displayed as a group or
 	 * collapse to just show their contents.
-	 * 
+	 *
 	 * @param showTopLevelWorkingSets
 	 */
 	public void setShowTopLevelWorkingSets(boolean showTopLevelWorkingSets) {
-		if (actions == null) 
+		if (actions == null)
 			actions = createActions();
 
 		currentSelection = showTopLevelWorkingSets ? 1 : 0;

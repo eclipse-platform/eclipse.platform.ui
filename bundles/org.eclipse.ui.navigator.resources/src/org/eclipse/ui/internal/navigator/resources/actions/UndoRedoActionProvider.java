@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation 
+ *     IBM Corporation - initial API and implementation
  *       (was originally RefactorActionProvider.java)
- *     Oakland Software (Francis Upton - francisu@ieee.org) 
+ *     Oakland Software (Francis Upton - francisu@ieee.org)
  *        bug 214271 Undo/redo not enabled if nothing selected
  ******************************************************************************/
 
@@ -26,7 +26,7 @@ import org.eclipse.ui.operations.UndoRedoActionGroup;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class UndoRedoActionProvider extends CommonActionProvider {
 

@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
 /**
  * Shows a list of resources to the user with a text entry field for a string
  * pattern used to filter the list of resources.
- * 
+ *
  */
 /* package */class GotoResourceDialog extends FilteredResourcesSelectionDialog {
 

@@ -32,16 +32,16 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Clients may reference this class in the <b>dragAssistant</b> element of a
  * <b>org.eclipse.ui.navigator.viewer</b> extension point.
- * 
+ *
  * <p>
  * Clients may not extend or instantiate this class for any purpose other than
  * {@link INavigatorDnDService#bindDragAssistant(CommonDragAdapterAssistant)}.
  * Clients may have no direct dependencies on the contract of this class.
  * </p>
- * 
+ *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  */
 public class ResourceDragAdapterAssistant extends
 		CommonDragAdapterAssistant {
@@ -70,8 +70,8 @@ public class ResourceDragAdapterAssistant extends
 							.println("ResourceDragAdapterAssistant.dragSetData set ResourceTransfer"); //$NON-NLS-1$
 				}
 				return true;
-			} 
-				
+			}
+
 			if (FileTransfer.getInstance().isSupportedType(anEvent.dataType)) {
 				// Get the path of each file and set as the drag data
 				final int length = resources.length;
@@ -84,7 +84,7 @@ public class ResourceDragAdapterAssistant extends
 						fileNames[actualLength++] = location.toOSString();
 					}
 				}
-				if (actualLength > 0) { 
+				if (actualLength > 0) {
 					// was one or more of the locations null?
 					if (actualLength < length) {
 						String[] tempFileNames = fileNames;
@@ -93,7 +93,7 @@ public class ResourceDragAdapterAssistant extends
 							fileNames[i] = tempFileNames[i];
 					}
 					anEvent.data = fileNames;
-		
+
 					if (Policy.DEBUG_DND)
 						System.out
 								.println("ResourceDragAdapterAssistant.dragSetData set FileTransfer"); //$NON-NLS-1$

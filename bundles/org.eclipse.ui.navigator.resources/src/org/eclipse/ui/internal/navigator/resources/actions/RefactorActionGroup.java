@@ -31,7 +31,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 /**
  * This is the action group for refactor actions, including global action
  * handlers for copy, paste and delete.
- * 
+ *
  * @since 2.0
  */
 public class RefactorActionGroup extends ActionGroup {
@@ -45,7 +45,7 @@ public class RefactorActionGroup extends ActionGroup {
 	private Tree tree;
 
 	/**
-	 * 
+	 *
 	 * @param aShell
 	 * @param aTree
 	 */
@@ -82,7 +82,7 @@ public class RefactorActionGroup extends ActionGroup {
 
 	/**
 	 * Handles a key pressed event by invoking the appropriate action.
-	 * 
+	 *
 	 * @param event
 	 *            The Key Event
 	 */

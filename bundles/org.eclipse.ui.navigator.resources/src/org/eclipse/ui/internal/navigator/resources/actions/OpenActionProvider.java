@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     mark.melvin@onsemi.com - bug 288997 [CommonNavigator] Double-clicking an adapted resource in 
+ *     mark.melvin@onsemi.com - bug 288997 [CommonNavigator] Double-clicking an adapted resource in
  *        Common Navigator does not open underlying IFile
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
@@ -33,9 +33,9 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 /**
  * Provides the open and open with menus for IResources.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class OpenActionProvider extends CommonActionProvider {
 
@@ -113,7 +113,7 @@ public class OpenActionProvider extends CommonActionProvider {
 					WorkbenchNavigatorMessages.OpenActionProvider_OpenWithMenu_label,
 					ICommonMenuConstants.GROUP_OPEN_WITH);
 			submenu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
-			submenu.add(new OpenWithMenu(viewSite.getPage(), openable)); 
+			submenu.add(new OpenWithMenu(viewSite.getPage(), openable));
 			submenu.add(new GroupMarker(ICommonMenuConstants.GROUP_ADDITIONS));
 
 			// Add the submenu.

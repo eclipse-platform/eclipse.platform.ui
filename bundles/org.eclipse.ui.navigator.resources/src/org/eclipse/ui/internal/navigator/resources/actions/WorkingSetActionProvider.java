@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     anton.leherbauer@windriver.com - bug 212389 [CommonNavigator] working set issues: 
+ *     anton.leherbauer@windriver.com - bug 212389 [CommonNavigator] working set issues:
  *         missing project, window working set inconsistency
  *******************************************************************************/
 
@@ -41,14 +41,14 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private static final String TAG_CURRENT_WORKING_SET_NAME = "currentWorkingSetName"; //$NON-NLS-1$
 
 	private static final String WORKING_SET_FILTER_ID = "org.eclipse.ui.navigator.resources.filters.workingSet"; //$NON-NLS-1$
-	
+
 	private boolean contributedToViewMenu = false;
 
 	private CommonViewer viewer;
@@ -56,7 +56,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private INavigatorContentService contentService;
 
 	private NavigatorFilterService filterService;
-	
+
 	private WorkingSetFilterActionGroup workingSetActionGroup;
 	private WorkingSetRootModeActionGroup workingSetRootModeActionGroup;
 
@@ -68,12 +68,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private IWorkingSet workingSet;
 
 	private IPropertyChangeListener topLevelModeListener;
-	
+
 	private boolean ignoreFilterChangeEvents;
 
 	/**
 	 * Provides a smart listener to monitor changes to the Working Set Manager.
-	 * 
+	 *
 	 */
 	public class WorkingSetManagerListener implements IPropertyChangeListener {
 
@@ -141,10 +141,10 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private IPropertyChangeListener filterChangeListener = new IPropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-			
+
 			if (ignoreFilterChangeEvents)
 				return;
-			
+
 			IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 
 			setWorkingSet(newWorkingSet);
@@ -261,9 +261,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private void setWorkingSetFilter(IWorkingSet workingSet) {
 		setWorkingSetFilter(workingSet, FIRST_TIME);
 	}
-	
+
 	private static final boolean FIRST_TIME = true;
-	
+
 	private void setWorkingSetFilter(IWorkingSet workingSet, boolean firstTime) {
 		ResourceWorkingSetFilter workingSetFilter = null;
 		ViewerFilter[] filters = viewer.getFilters();
@@ -290,7 +290,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	/**
 	 * Set current active working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            working set to be activated, may be <code>null</code>
 	 */
@@ -303,8 +303,8 @@ public class WorkingSetActionProvider extends CommonActionProvider {
         	workingSetActionGroup.setWorkingSet(workingSet);
         } finally {
         	ignoreFilterChangeEvents = false;
-       	}		
-		
+       	}
+
 		if (viewer != null) {
 			setWorkingSetFilter(workingSet);
 			if (workingSet == null || emptyWorkingSet
@@ -403,7 +403,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	/**
 	 * This is used only for the tests.
-	 * 
+	 *
 	 * @return a PropertyChangeListener
 	 */
 	public IPropertyChangeListener getFilterChangeListener() {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton - francisu@ieee.org) 
+ *     Oakland Software (Francis Upton - francisu@ieee.org)
  *        bug 214271 Undo/redo not enabled if nothing selected
  ******************************************************************************/
 
@@ -23,9 +23,9 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 /**
  * Provides the Go Into action for the {@link ProjectExplorer}
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class GoIntoActionProvider extends CommonActionProvider {
 

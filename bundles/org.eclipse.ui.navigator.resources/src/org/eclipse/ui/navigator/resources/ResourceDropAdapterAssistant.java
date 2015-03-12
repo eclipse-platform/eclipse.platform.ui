@@ -70,17 +70,17 @@ import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 
 /**
- * 
+ *
  * Clients may reference this class in the <b>dropAssistant</b> element of a
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
- * 
+ *
  * <p>
  * Clients may not extend or instantiate this class for any purpose.
  * Clients may have no direct dependencies on the contract of this class.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
@@ -88,7 +88,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	private RefactoringStatus refactoringStatus;
 	private IStatus returnStatus;
-	
+
 	@Override
 	public boolean isSupportedType(TransferData aTransferType) {
 		return super.isSupportedType(aTransferType)
@@ -127,7 +127,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		// drag within Eclipse?
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 			IResource[] selectedResources = getSelectedResources();
-			
+
 			boolean bProjectDrop = false;
 			for (int iRes = 0; iRes < selectedResources.length; iRes++) {
 				IResource res = selectedResources[iRes];
@@ -149,7 +149,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 							System.out
 									.println("ResourceDropAdapterAssistant.validateDrop validating COPY."); //$NON-NLS-1$
 						}
-	
+
 						operation = new CopyFilesAndFoldersOperation(getShell());
 					} else {
 						if (Policy.DEBUG_DND) {
@@ -285,13 +285,13 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
 	public IStatus handlePluginTransferDrop(IStructuredSelection aDragSelection, Object aDropTarget) {
 
 		IContainer target = getActualTarget((IResource) aDropTarget);
 		IResource[] resources = getSelectedResources(aDragSelection);
-		
+
 		MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(
 				 getShell());
 		operation.copyResources(resources, target);
@@ -323,7 +323,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	/**
 	 * Returns the resource selection from the LocalSelectionTransfer.
-	 * 
+	 *
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources() {
@@ -338,7 +338,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	/**
 	 * Returns the resource selection from the LocalSelectionTransfer.
-	 * 
+	 *
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources(IStructuredSelection selection) {
@@ -469,7 +469,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				descriptor.setDestination(target);
 				refactoringStatus = new RefactoringStatus();
 				final Refactoring refactoring = descriptor.createRefactoring(refactoringStatus);
-				
+
 				returnStatus = null;
 				IRunnableWithProgress checkOp = new IRunnableWithProgress() {
 					@Override
@@ -480,7 +480,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 						returnStatus = WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
 					}}
 				};
-				
+
 				if (returnStatus != null)
 					return returnStatus;
 
@@ -491,14 +491,14 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				} catch (InvocationTargetException e) {
 					return WorkbenchNavigatorPlugin.createErrorStatus(0, e.getLocalizedMessage(), e);
 				}
-				
+
 				if (refactoringStatus.hasEntries()) {
 					Dialog dialog= RefactoringUI.createLightWeightStatusDialog(refactoringStatus, getShell(), WorkbenchNavigatorMessages.MoveResourceAction_title);
 					int result = dialog.open();
 					if (result != IStatus.OK)
 						return Status.CANCEL_STATUS;
 				}
-				
+
 				final PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring,
 						CheckConditionsOperation.ALL_CONDITIONS);
 
@@ -520,10 +520,10 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 						}
 					}
 				};
-				
+
 				if (returnStatus != null)
 					return returnStatus;
-				
+
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(false, false, refactorOp);
 				} catch (InterruptedException e) {

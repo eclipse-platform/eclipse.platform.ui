@@ -39,7 +39,7 @@ public class SelectProjectForFolderAction extends Action {
 		this.viewer = viewer;
 		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(SharedImages.IMG_OBJ_PROJECT));
 	}
-	
+
 	@Override
 	public void run() {
 		viewer.setSelection(new StructuredSelection( new Object[] { this.project } ));

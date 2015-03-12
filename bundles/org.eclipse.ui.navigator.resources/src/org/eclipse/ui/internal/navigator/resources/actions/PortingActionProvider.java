@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *      IBM Corporation - initial API and implementation 
+ *      IBM Corporation - initial API and implementation
  *  	Sebastian Davids <sdavids@gmx.de> - Collapse all action
  *      Sebastian Davids <sdavids@gmx.de> - Images for menu items
  *******************************************************************************/
@@ -42,21 +42,21 @@ import org.eclipse.ui.navigator.WizardActionGroup;
  * options available (as defined by <b>org.eclipse.ui.navigator.commonWizard</b>),
  * then it will compound these options into a submenu with the appropriate lead
  * text ("Import" or "Export").
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class PortingActionProvider extends CommonActionProvider {
 
 	private static final String COMMON_NAVIGATOR_IMPORT_MENU = "common.import.menu"; //$NON-NLS-1$
 
-	private static final String COMMON_NAVIGATOR_EXPORT_MENU = "common.export.menu"; //$NON-NLS-1$	
+	private static final String COMMON_NAVIGATOR_EXPORT_MENU = "common.export.menu"; //$NON-NLS-1$
 
 	private ImportResourcesAction importAction;
 
@@ -127,7 +127,7 @@ public class PortingActionProvider extends CommonActionProvider {
 	 * Returns the image descriptor with the given relative path.
 	 */
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$ 
+		String iconPath = "icons/full/"; //$NON-NLS-1$
 		URL url = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(), new Path(iconPath + relativePath), Collections.EMPTY_MAP);
 		if (url == null) {
 			return ImageDescriptor.getMissingImageDescriptor();

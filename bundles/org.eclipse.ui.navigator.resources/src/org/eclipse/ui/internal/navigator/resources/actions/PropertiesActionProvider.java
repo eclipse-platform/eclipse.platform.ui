@@ -34,9 +34,9 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * Adds the properties action to the menu.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class PropertiesActionProvider extends CommonActionProvider {
 
@@ -45,7 +45,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 
 	@Override
 	public void init(final ICommonActionExtensionSite aSite) {
-		
+
 		delegateSelectionProvider = new DelegateSelectionProvider( aSite.getViewSite().getSelectionProvider());
 		propertiesAction = new PropertyDialogAction(new IShellProvider() {
 			@Override
@@ -53,7 +53,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 				return aSite.getViewSite().getShell();
 			}
 		},delegateSelectionProvider);
-		propertiesAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES); 
+		propertiesAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES);
 	}
 
 	@Override

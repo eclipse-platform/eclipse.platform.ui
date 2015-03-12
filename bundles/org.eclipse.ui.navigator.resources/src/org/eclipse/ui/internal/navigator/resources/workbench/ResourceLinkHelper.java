@@ -22,9 +22,9 @@ import org.eclipse.ui.navigator.ILinkHelper;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
- * 
+ *
  * Links IFileEditorInput to IFiles, and vice versa.
- * 
+ *
  * @since 3.2
  *
  */

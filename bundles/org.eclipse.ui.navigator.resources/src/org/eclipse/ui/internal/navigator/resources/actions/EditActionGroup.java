@@ -31,7 +31,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class EditActionGroup extends ActionGroup {
 
@@ -48,7 +48,7 @@ public class EditActionGroup extends ActionGroup {
 	private Shell shell;
 
 	/**
-	 * 
+	 *
 	 * @param aShell
 	 */
 	public EditActionGroup(Shell aShell) {
@@ -103,7 +103,7 @@ public class EditActionGroup extends ActionGroup {
 
 	/**
 	 * Handles a key pressed event by invoking the appropriate action.
-	 * 
+	 *
 	 * @param event
 	 *            The Key Event
 	 */

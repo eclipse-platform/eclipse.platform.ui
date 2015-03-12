@@ -14,8 +14,8 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Utility class which helps managing messages
- * 
- * 
+ *
+ *
  * @since 3.2
  */
 public class WorkbenchNavigatorMessages extends NLS {
@@ -42,17 +42,17 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String MoveResourceAction_title;
 	public static String MoveResourceAction_checkMoveMessage;
-	
+
 	public static String ResourceMgmtActionProvider_logTitle;
 
 	public static String WorkingSetRootModeActionGroup_Top_Level_Element_;
 	public static String WorkingSetRootModeActionGroup_Project_;
 	public static String WorkingSetRootModeActionGroup_Working_Set_;
 	public static String WorkingSetActionProvider_multipleWorkingSets;
-	
+
 	public static String CopyAction_Cop_;
 	public static String CopyAction_Copy_selected_resource_s_;
-	
+
 	public static String PasteAction_Past_;
 	public static String PasteAction_Paste_selected_resource_s_;
 
@@ -61,16 +61,16 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String ProjectExplorer_toolTip;
 	public static String ProjectExplorer_toolTip2;
 	public static String ProjectExplorer_toolTip3;
-	
+
 	public static String ProjectExplorerPart_workspace;
 	public static String ProjectExplorerPart_workingSetModel;
-	
+
 	public static String OpenProjectAction_OpenExistingProject;
 	public static String OpenProjectAction_OpenExistingProject_desc;
 
 	public static String SelectProjectForFolderAction_SelectProject;
-	
-	
+
+
 	static {
 		initializeMessages(BUNDLE_NAME, WorkbenchNavigatorMessages.class);
 	}

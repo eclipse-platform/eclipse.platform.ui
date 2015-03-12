@@ -24,14 +24,14 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
  * Handles all images and icons for the ui.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is a guarantee neither that this API will work
  * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class NavigatorUIPluginImages {
@@ -43,13 +43,13 @@ public class NavigatorUIPluginImages {
 
 	// Create the icon location
 	static {
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$ 
+		String pathSuffix = "icons/full/"; //$NON-NLS-1$
 		fgIconLocation = FileLocator.find(NavigatorPlugin.getDefault().getBundle(), new Path(pathSuffix), Collections.EMPTY_MAP);
 	}
 
 	/**
 	 * Gets the current image.
-	 * 
+	 *
 	 * @param key
 	 *            - Name of the icon.
 	 * @return Image
@@ -60,7 +60,7 @@ public class NavigatorUIPluginImages {
 
 	/**
 	 * Create and returns a image descriptor.
-	 * 
+	 *
 	 * @param prefix
 	 *            - Icon dir structure.
 	 * @param name
@@ -73,7 +73,7 @@ public class NavigatorUIPluginImages {
 
 	/**
 	 * Creates the icon url
-	 * 
+	 *
 	 * @param prefix
 	 *            - Icon dir structure.
 	 * @param name
@@ -94,7 +94,7 @@ public class NavigatorUIPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an
 	 * action. The actions are retrieved from the *lcl16 folders.
-	 * 
+	 *
 	 * @param action
 	 *            the action
 	 * @param iconName
@@ -106,7 +106,7 @@ public class NavigatorUIPluginImages {
 
 	/**
 	 * Sets all available image descriptors for the given action.
-	 * 
+	 *
 	 * @param action
 	 *            - The action associated with the icon.
 	 * @param type
