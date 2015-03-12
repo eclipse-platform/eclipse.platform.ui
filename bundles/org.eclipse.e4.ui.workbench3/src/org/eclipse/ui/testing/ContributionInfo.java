@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 /**
  * Instances of this class describe a contribution of an element of a certain
  * type to the UI.
- * 
+ *
  * @since 3.6
  */
 public class ContributionInfo {
@@ -26,7 +26,7 @@ public class ContributionInfo {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param bundleId
 	 * @param elementType
 	 *            a localized string describing the contribution (e.g., 'view',

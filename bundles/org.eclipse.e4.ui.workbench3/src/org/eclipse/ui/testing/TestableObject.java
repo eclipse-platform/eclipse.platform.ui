@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Assert;
  * The workbench provides an implementation of this facade, available
  * via <code>PlatformUI.getTestableObject()</code>.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class TestableObject {
@@ -33,7 +33,7 @@ public class TestableObject {
 
     /**
      * Returns the test harness, or <code>null</code> if it has not yet been set.
-     * 
+     *
      * @return the test harness or <code>null</code>
      */
     public ITestHarness getTestHarness() {
@@ -42,7 +42,7 @@ public class TestableObject {
 
     /**
      * Sets the test harness.
-     * 
+     *
      * @param testHarness the test harness
      */
     public void setTestHarness(ITestHarness testHarness) {
@@ -54,7 +54,7 @@ public class TestableObject {
      * Runs the given test runnable.
      * The default implementation simply invokes <code>run</code> on the
      * given test runnable.  Subclasses may extend.
-     * 
+     *
      * @param testRunnable the test runnable to run
      */
     public void runTest(Runnable testRunnable) {
