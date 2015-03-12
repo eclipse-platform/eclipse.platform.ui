@@ -421,8 +421,8 @@ public class OleEditor extends EditorPart {
 
     /* (non-Javadoc)
      * Initializes the editor when created from scratch.
-     * 
-     * This method is called soon after part construction and marks 
+     *
+     * This method is called soon after part construction and marks
      * the start of the extension lifecycle.  At the end of the
      * extension lifecycle <code>shutdown</code> will be invoked
      * to terminate the lifecycle.
@@ -434,7 +434,7 @@ public class OleEditor extends EditorPart {
      */
     public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
-    	
+
     	validatePathEditorInput(input);
 
         // Save input.
@@ -454,10 +454,10 @@ public class OleEditor extends EditorPart {
         site.getPage().addPartListener(partListener);
 
     }
-    
+
     /**
      * Validates the given input
-     * 
+     *
      * @param input the editor input to validate
      * @throws PartInitException if the editor input is not OK
      */
@@ -467,7 +467,7 @@ public class OleEditor extends EditorPart {
         if (pathEditorInput == null)
             throw new PartInitException(OleMessages.format(
                     "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
-        
+
         IPath path = pathEditorInput.getPath();
 
         //Cannot create this with a file and no physical location
@@ -478,7 +478,7 @@ public class OleEditor extends EditorPart {
                                     "OleEditor.noFileInput", new Object[] { path.toOSString() })); //$NON-NLS-1$
         return true;
     }
-    
+
     /**
      *	Initialize the workbench menus for proper merging
      */
@@ -529,12 +529,12 @@ public class OleEditor extends EditorPart {
      * @see org.eclipse.ui.ISaveablePart#isDirty()
      */
     public boolean isDirty() {
-        /*Return only if we have a clientSite which is dirty 
+        /*Return only if we have a clientSite which is dirty
          as this can be asked before anything is opened*/
         return clientSite != null && clientSite.isDirty();
     }
 
-    /* 
+    /*
      * (non-Javadoc)
      * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
      */
@@ -544,7 +544,7 @@ public class OleEditor extends EditorPart {
 
     /**
      *Since we don't know when a change has been made, always answer true
-     * @return <code>false</code> if it was not opened and <code>true</code> 
+     * @return <code>false</code> if it was not opened and <code>true</code>
      * only if it is dirty
      */
     public boolean isSaveNeeded() {
@@ -591,11 +591,11 @@ public class OleEditor extends EditorPart {
                 if (sFile != null) {
                     dialog.setOriginalFile(sFile);
                     dialog.open();
-    
+
                     IPath newPath = dialog.getResult();
                     if (newPath == null)
                         return;
-    
+
                     if (dialog.getReturnCode() == Window.OK) {
                         String projectName = newPath.segment(0);
                         newPath = newPath.removeFirstSegments(1);
@@ -657,7 +657,7 @@ public class OleEditor extends EditorPart {
     	IPathEditorInput pathEditorInput = (IPathEditorInput)input.getAdapter(IPathEditorInput.class);
     	if (pathEditorInput != null)
     		source = new File(pathEditorInput.getPath().toOSString());
-    	
+
         if (input instanceof IFileEditorInput) {
         	if (resource == null)
         		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
@@ -666,7 +666,7 @@ public class OleEditor extends EditorPart {
         	ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
         	resource = null;
         }
-        
+
         super.setInputWithNotify(input);
     }
 
@@ -696,8 +696,8 @@ public class OleEditor extends EditorPart {
 
     }
 
-    /* 
-     * See IEditorPart.isSaveOnCloseNeeded() 
+    /*
+     * See IEditorPart.isSaveOnCloseNeeded()
      */
     public boolean isSaveOnCloseNeeded() {
         return !sourceDeleted && super.isSaveOnCloseNeeded();
@@ -723,7 +723,7 @@ public class OleEditor extends EditorPart {
     	final Runnable dirtyFlagUpdater = new Runnable() {
 			public void run() {
 				if (clientSite == null || resource == null) return;
-				boolean dirty = isDirty(); 
+				boolean dirty = isDirty();
 				if (isDirty != dirty) {
 					isDirty = dirty;
 					firePropertyChange(PROP_DIRTY);

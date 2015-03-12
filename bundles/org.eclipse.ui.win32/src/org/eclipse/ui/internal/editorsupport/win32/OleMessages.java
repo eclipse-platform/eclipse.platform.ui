@@ -29,7 +29,7 @@ public class OleMessages {
 
     /**
      * Returns the formatted message for the given key in the resource bundle.
-     * 
+     *
      * @param key
      *            the resource name
      * @param args
@@ -43,7 +43,7 @@ public class OleMessages {
     /**
      * Returns the resource object with the given key in the resource bundle. If
      * there isn't any value under the given key, the key is returned.
-     * 
+     *
      * @param key
      *            the resource name
      * @return the string
@@ -59,7 +59,7 @@ public class OleMessages {
     /**
      * Returns the resource object with the given key in the resource bundle. If
      * there isn't any value under the given key, the default value is returned.
-     * 
+     *
      * @param key
      *            the resource name
      * @param def
