@@ -194,7 +194,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 
 		this.label = label == null ? getName() : label;
 		labelBoundToName = Util.equals(label, name);  // rebind the label to the name
-		
+
 		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, oldWorkingSet);
 	}
 
