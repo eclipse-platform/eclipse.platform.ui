@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ControlSizeProperty extends WidgetValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ControlSizeProperty() {
 		super(SWT.Resize);

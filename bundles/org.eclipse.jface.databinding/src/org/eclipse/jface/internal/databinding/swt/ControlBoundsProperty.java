@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ControlBoundsProperty extends WidgetValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ControlBoundsProperty() {
 		super(new int[] { SWT.Resize, SWT.Move });

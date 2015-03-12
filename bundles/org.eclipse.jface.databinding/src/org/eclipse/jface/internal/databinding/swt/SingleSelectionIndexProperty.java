@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.swt;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class SingleSelectionIndexProperty extends
 		WidgetIntValueProperty {

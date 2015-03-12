@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.Viewer;
  * elements of a tree. Object of this class listen for changes to each
  * {@link IObservableList} created by the factory, and will insert and remove
  * viewer elements to reflect the observed changes.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 1.2
  */
@@ -194,7 +194,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	/**
 	 * Constructs an ObservableListTreeContentProvider using the given list
 	 * factory. Must be called from the display thread.
-	 * 
+	 *
 	 * @param listFactory
 	 *            observable factory that produces an IObservableList of
 	 *            children for a given parent element. Observable lists created
@@ -260,7 +260,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 * before the viewer sees the added element, and notified about removals
 	 * after the element was removed from the viewer. This is intended for use
 	 * by label providers, as it will always return the items that need labels.
-	 * 
+	 *
 	 * @return readableSet of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
@@ -271,7 +271,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 * Returns the set of known elements which have been realized in the viewer.
 	 * Clients may track this set in order to perform custom actions on elements
 	 * while they are known to be present in the viewer.
-	 * 
+	 *
 	 * @return the set of known elements which have been realized in the viewer.
 	 * @since 1.3
 	 */

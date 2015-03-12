@@ -25,19 +25,19 @@ import org.eclipse.swt.widgets.Menu;
  * wrapping a block of code in a MenuUpdater, clients can rely on the fact that
  * the block of code will be re-executed whenever anything changes in the model
  * that might affect its behavior.
- * 
+ *
  * <p>
  * MenuUpdaters only execute once their menus are shown. If something changes in
  * the model, the updater is flagged as dirty and it stops listening to the
  * model until the next time the menu is shown. If the menu is visible while the
  * model changes, it will be updated right away.
  * </p>
- * 
+ *
  * <p>
  * Clients should subclass this when copying information from the model to a
  * menu. Typical usage:
  * </p>
- * 
+ *
  * <ul>
  * <li>Override updateMenu. It should do whatever is necessary to display the
  * contents of the model in the menu.</li>
@@ -49,12 +49,12 @@ import org.eclipse.swt.widgets.Menu;
  * <li>(optional)Extend dispose() to remove any listeners attached in the
  * constructor</li>
  * </ul>
- * 
+ *
  * @since 1.1
  */
 public abstract class MenuUpdater {
-	
-	private class PrivateInterface implements MenuListener, 
+
+	private class PrivateInterface implements MenuListener,
 		DisposeListener, Runnable, IChangeListener {
 
 		// DisposeListener implementation
@@ -62,7 +62,7 @@ public abstract class MenuUpdater {
 		public void widgetDisposed(DisposeEvent e) {
 			MenuUpdater.this.dispose();
 		}
-		
+
 		// Runnable implementation. This method runs at most once per repaint whenever the
 		// value gets marked as dirty.
 		@Override
@@ -71,11 +71,11 @@ public abstract class MenuUpdater {
 				updateIfNecessary();
 			}
 		}
-		
+
 		// IChangeListener implementation (listening to the ComputedValue)
 		@Override
 		public void handleChange(ChangeEvent event) {
-			// Whenever this updator becomes dirty, schedule the run() method 
+			// Whenever this updator becomes dirty, schedule the run() method
 			makeDirty();
 		}
 
@@ -88,34 +88,34 @@ public abstract class MenuUpdater {
 		public void menuShown(MenuEvent e) {
 			updateIfNecessary();
 		}
-		
+
 	}
-	
+
 	private Runnable updateRunnable = new Runnable() {
 		@Override
 		public void run() {
 			updateMenu();
 		}
 	};
-	
+
 	private PrivateInterface privateInterface = new PrivateInterface();
 	private Menu theMenu;
 	private IObservable[] dependencies = new IObservable[0];
 	private boolean dirty = false;
-	
+
 	/**
-	 * Creates an updator for the given menu.  
-	 * 
+	 * Creates an updator for the given menu.
+	 *
 	 * @param toUpdate menu to update
 	 */
 	public MenuUpdater(Menu toUpdate) {
 		theMenu = toUpdate;
-		
+
 		theMenu.addDisposeListener(privateInterface);
 		theMenu.addMenuListener(privateInterface);
 		makeDirty();
 	}
-	
+
 	private void updateIfNecessary() {
 		if (dirty) {
 			dependencies = ObservableTracker.runAndMonitor(updateRunnable, privateInterface, null);
@@ -140,23 +140,23 @@ public abstract class MenuUpdater {
 		// Stop listening for dependency changes
 		for (int i = 0; i < dependencies.length; i++) {
 			IObservable observable = dependencies[i];
-				
+
 			observable.removeChangeListener(privateInterface);
 		}
 	}
 
 	/**
 	 * Updates the menu. This method will be invoked once after the
-	 * updater is created, and once for any SWT.Show event if this 
+	 * updater is created, and once for any SWT.Show event if this
 	 * updater is marked as dirty at that time.
-	 *  
+	 *
 	 * <p>
-	 * Subclasses should overload this method to provide any code that 
+	 * Subclasses should overload this method to provide any code that
 	 * udates the menu.
 	 * </p>
 	 */
 	protected abstract void updateMenu();
-	
+
 	/**
 	 * Marks this updator as dirty. Causes the updateControl method to
 	 * be invoked before the next time the control is repainted.
@@ -168,5 +168,5 @@ public abstract class MenuUpdater {
 			SWTUtil.runOnce(theMenu.getDisplay(), privateInterface);
 		}
 	}
-	
+
 }

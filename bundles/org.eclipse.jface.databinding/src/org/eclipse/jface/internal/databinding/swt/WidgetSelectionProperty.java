@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class WidgetSelectionProperty extends
 		WidgetDelegatingValueProperty {

@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CheckboxTableViewerUpdater extends TableViewerUpdater {
 	private final CheckboxTableViewer checkboxViewer;

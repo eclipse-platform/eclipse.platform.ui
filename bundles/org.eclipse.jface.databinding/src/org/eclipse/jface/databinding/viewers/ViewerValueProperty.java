@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
  * <li>All <code>observe()</code> methods should return an
  * {@link IViewerObservableValue}
  * </ul>
- * 
+ *
  * @since 1.3
  */
 public abstract class ViewerValueProperty extends SimpleValueProperty implements

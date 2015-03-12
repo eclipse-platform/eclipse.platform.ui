@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.AbstractListViewer;
 /**
  * NON-API - A {@link ViewerUpdater} that updates {@link AbstractListViewer}
  * instances.
- * 
+ *
  * @since 1.2
  */
 class ListViewerUpdater extends ViewerUpdater {

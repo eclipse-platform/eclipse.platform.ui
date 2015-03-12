@@ -15,7 +15,7 @@ import org.eclipse.swt.custom.CLabel;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CLabelTextProperty extends WidgetStringValueProperty {
 	@Override

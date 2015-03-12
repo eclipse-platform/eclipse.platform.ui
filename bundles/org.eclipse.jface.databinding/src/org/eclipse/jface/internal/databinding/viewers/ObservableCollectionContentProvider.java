@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * NON-API - Abstract base class for content providers where the viewer input is
  * expected to be an {@link IObservableCollection}.
- * 
+ *
  * @since 1.2
  */
 public abstract class ObservableCollectionContentProvider implements
@@ -81,7 +81,7 @@ public abstract class ObservableCollectionContentProvider implements
 
 	/**
 	 * Constructs an ObservableCollectionContentProvider
-	 * 
+	 *
 	 * @param explicitViewerUpdater
 	 */
 	protected ObservableCollectionContentProvider(
@@ -207,7 +207,7 @@ public abstract class ObservableCollectionContentProvider implements
 
 	/**
 	 * Throws an exception if the input is not the correct type.
-	 * 
+	 *
 	 * @param input
 	 *            the input to check
 	 */
@@ -215,7 +215,7 @@ public abstract class ObservableCollectionContentProvider implements
 
 	/**
 	 * Register for change event notification from the given collection.
-	 * 
+	 *
 	 * @param collection
 	 *            observable collection to listen to
 	 */
@@ -224,7 +224,7 @@ public abstract class ObservableCollectionContentProvider implements
 
 	/**
 	 * Deregisters from change events notification on the given collection.
-	 * 
+	 *
 	 * @param collection
 	 *            observable collection to stop listening to
 	 */
@@ -235,7 +235,7 @@ public abstract class ObservableCollectionContentProvider implements
 	 * Returns whether the viewer is disposed. Collection change listeners in
 	 * subclasses should verify that the viewer is not disposed before sending
 	 * any updates to the {@link ViewerUpdater viewer updater}.
-	 * 
+	 *
 	 * @return whether the viewer is disposed.
 	 */
 	protected final boolean isViewerDisposed() {
@@ -250,7 +250,7 @@ public abstract class ObservableCollectionContentProvider implements
 	 * before the viewer sees the added element, and notified about removals
 	 * after the element was removed from the viewer. This is intended for use
 	 * by label providers, as it will always return the items that need labels.
-	 * 
+	 *
 	 * @return unmodifiable observable set of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
@@ -261,7 +261,7 @@ public abstract class ObservableCollectionContentProvider implements
 	 * Returns the set of known elements which have been realized in the viewer.
 	 * Clients may track this set in order to perform custom actions on elements
 	 * while they are known to be present in the viewer.
-	 * 
+	 *
 	 * @return the set of known elements which have been realized in the viewer.
 	 * @since 1.3
 	 */

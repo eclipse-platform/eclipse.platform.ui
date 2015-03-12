@@ -31,14 +31,14 @@ import org.eclipse.jface.viewers.ViewerCell;
 /**
  * {@link EditingSupport} using the JFace Data Binding concepts to handle the
  * updating of an element from a {@link CellEditor}.
- * 
+ *
  * @since 1.2
  */
 public abstract class ObservableValueEditingSupport extends EditingSupport {
 	/**
 	 * Returns an ObservableValueEditingSupport instance which binds the given
 	 * cell editor property to the given element property.
-	 * 
+	 *
 	 * @param viewer
 	 *            the column viewer
 	 * @param dbc
@@ -93,7 +93,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	/**
 	 * Constructs a new instance with the provided <code>viewer</code> and
 	 * <code>dbc</code>.
-	 * 
+	 *
 	 * @param viewer
 	 *            viewer to edit
 	 * @param dbc
@@ -113,7 +113,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 
 	/**
 	 * Default implementation always returns <code>true</code>.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
 	 */
 	@Override
@@ -124,7 +124,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	/**
 	 * Default implementation always returns <code>null</code> as this will be
 	 * handled by the Binding.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
 	 */
 	@Override
@@ -136,7 +136,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	/**
 	 * Default implementation does nothing as this will be handled by the
 	 * Binding.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -184,7 +184,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 
 	/**
 	 * Creates the observable value for the CellEditor.
-	 * 
+	 *
 	 * @param cellEditor
 	 * @return observable value
 	 */
@@ -193,7 +193,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 
 	/**
 	 * Creates the observable value for the element.
-	 * 
+	 *
 	 * @param element
 	 * @param cell
 	 * @return observable value
@@ -206,7 +206,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * <code>model</code>. Default {@link UpdateValueStrategy value update
 	 * strategies} are used with the target to model updating on
 	 * {@link UpdateValueStrategy#POLICY_CONVERT}.
-	 * 
+	 *
 	 * @param target
 	 * @param model
 	 * @return binding

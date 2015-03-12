@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Widget;
  * {@link ValidationStatusProvider} with {@link ControlDecoration}s mirroring
  * the current validation status. Only those target observables which implement
  * {@link ISWTObservable} or {@link IViewerObservable} are decorated.
- * 
+ *
  * @since 1.4
  */
 public class ControlDecorationSupport {
@@ -55,7 +55,7 @@ public class ControlDecorationSupport {
 	 * {@link ControlDecoration} over the underlying SWT control of all target
 	 * observables that implement {@link ISWTObservable} or
 	 * {@link IViewerObservable}.
-	 * 
+	 *
 	 * @param validationStatusProvider
 	 *            the {@link ValidationStatusProvider} to monitor.
 	 * @param position
@@ -79,7 +79,7 @@ public class ControlDecorationSupport {
 	 * {@link ControlDecoration} over the underlying SWT control of all target
 	 * observables that implement {@link ISWTObservable} or
 	 * {@link IViewerObservable}.
-	 * 
+	 *
 	 * @param validationStatusProvider
 	 *            the {@link ValidationStatusProvider} to monitor.
 	 * @param position
@@ -107,7 +107,7 @@ public class ControlDecorationSupport {
 	 * {@link ControlDecoration} over the underlying SWT control of all target
 	 * observables that implement {@link ISWTObservable} or
 	 * {@link IViewerObservable}.
-	 * 
+	 *
 	 * @param validationStatusProvider
 	 *            the {@link ValidationStatusProvider} to monitor.
 	 * @param position

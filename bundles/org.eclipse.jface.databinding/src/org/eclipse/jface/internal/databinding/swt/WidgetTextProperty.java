@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class WidgetTextProperty extends WidgetDelegatingValueProperty {
 	private IValueProperty button;
@@ -43,7 +43,7 @@ public class WidgetTextProperty extends WidgetDelegatingValueProperty {
 	private IValueProperty group;
 
 	/**
-	 * 
+	 *
 	 */
 	public WidgetTextProperty() {
 		super(String.class);

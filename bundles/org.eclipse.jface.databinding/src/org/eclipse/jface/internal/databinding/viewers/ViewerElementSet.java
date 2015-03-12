@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * {@link #equals(Object)} when comparing elements. This class is designed for
  * use with {@link StructuredViewer} which uses {@link IElementComparer} for
  * element comparisons.
- * 
+ *
  * @since 1.2
  */
 public class ViewerElementSet implements Set {
@@ -41,7 +41,7 @@ public class ViewerElementSet implements Set {
 
 	/**
 	 * Constructs a ViewerElementSet using the given {@link IElementComparer}.
-	 * 
+	 *
 	 * @param comparer
 	 *            the {@link IElementComparer} used for comparing elements.
 	 */
@@ -54,7 +54,7 @@ public class ViewerElementSet implements Set {
 	/**
 	 * Constructs a ViewerElementSet containing all the elements in the
 	 * specified collection.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection whose elements are to be added to this set.
 	 * @param comparer
@@ -205,7 +205,7 @@ public class ViewerElementSet implements Set {
 	/**
 	 * Returns a Set for holding viewer elements, using the given
 	 * {@link IElementComparer} for comparisons.
-	 * 
+	 *
 	 * @param comparer
 	 *            the element comparer to use in element comparisons. If null,
 	 *            the returned set will compare elements according to the

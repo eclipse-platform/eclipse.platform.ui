@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.IElementComparer;
 
 /**
- * 
+ *
  * @since 1.2
  */
 public class CheckableCheckedElementsObservableSet extends
@@ -40,7 +40,7 @@ public class CheckableCheckedElementsObservableSet extends
 
 	/**
 	 * Constructs a new instance of the given realm, and checkable,
-	 * 
+	 *
 	 * @param realm
 	 *            the observable's realm
 	 * @param wrappedSet

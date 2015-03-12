@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * 		Matthew Hall - initial API and implementation (bug 180746)
  * 		Boris Bokowski, IBM - initial API and implementation
@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Widget;
  * validation until the user stops typing. To notify about pending changes, a
  * delayed observable value will fire a stale event when the wrapped observable
  * value fires a change event, but this change is being delayed.
- * 
+ *
  * Note that this class will not forward {@link ValueChangingEvent} events from
  * a wrapped {@link IVetoableValue}.
- * 
+ *
  * @since 1.2
  */
 public class SWTDelayedObservableValueDecorator extends
@@ -46,7 +46,7 @@ public class SWTDelayedObservableValueDecorator extends
 	 * <code>ISWTObservableValue</code> and configured to fire change events
 	 * once there have been no value changes in the observable for
 	 * <code>delay</code> milliseconds.
-	 * 
+	 *
 	 * @param decorated
 	 * @param widget
 	 * @throws IllegalArgumentException

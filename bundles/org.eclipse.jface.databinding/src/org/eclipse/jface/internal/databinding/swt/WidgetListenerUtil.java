@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class WidgetListenerUtil {
 	/**

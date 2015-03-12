@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Factory methods for creating observables for JFace viewers
- * 
+ *
  * @since 1.1
  */
 public class ViewersObservables {
@@ -49,7 +49,7 @@ public class ViewersObservables {
 	 * pending changes, the returned observable value will fire a stale event
 	 * when the wrapped observable value fires a change event, but this change
 	 * is being delayed.
-	 * 
+	 *
 	 * @param delay
 	 *            the delay in milliseconds
 	 * @param observable
@@ -57,7 +57,7 @@ public class ViewersObservables {
 	 * @return an observable which delays notification of value change events
 	 *         from <code>observable</code> until <code>delay</code>
 	 *         milliseconds have passed since the last change event.
-	 * 
+	 *
 	 * @since 1.3
 	 */
 	public static IViewerObservableValue observeDelayedValue(int delay,
@@ -72,7 +72,7 @@ public class ViewersObservables {
 	 * of type {@link IStructuredSelection}, the observable value will be the
 	 * first element of the structured selection as returned by
 	 * {@link IStructuredSelection#getFirstElement()}.
-	 * 
+	 *
 	 * @param selectionProvider
 	 * @return the observable value tracking the (single) selection of the given
 	 *         selection provider
@@ -89,13 +89,13 @@ public class ViewersObservables {
 	 * selections of type {@link IStructuredSelection}, the observable value
 	 * will be the first element of the structured selection as returned by
 	 * {@link IStructuredSelection#getFirstElement()}.
-	 * 
+	 *
 	 * @param selectionProvider
 	 *            The selection provider on which to track the <i>post</i>
 	 *            selection.
 	 * @return the observable value tracking the (single) <i>post</i> selection
 	 *         of the given post selection provider
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IObservableValue observeSinglePostSelection(
@@ -116,11 +116,11 @@ public class ViewersObservables {
 	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
 	 * based on the requested change to the observable list. The affected
 	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
-	 * 
+	 *
 	 * @param selectionProvider
 	 * @return the observable value tracking the (multi) selection of the given
 	 *         selection provider
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public static IObservableList observeMultiSelection(
@@ -140,13 +140,13 @@ public class ViewersObservables {
 	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
 	 * based on the requested change to the observable list. The affected
 	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
-	 * 
+	 *
 	 * @param selectionProvider
 	 *            The selection provider on which to track the <i>post</i>
 	 *            selection.
 	 * @return the observable value tracking the (multi) <i>post</i> selection
 	 *         of the given post selection provider
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IObservableList observeMultiPostSelection(
@@ -162,7 +162,7 @@ public class ViewersObservables {
 	 * {@link IStructuredSelection}, the observable value will be the first
 	 * element of the structured selection as returned by
 	 * {@link IStructuredSelection#getFirstElement()}.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 * @return the observable value tracking the (single) selection of the given
@@ -180,12 +180,12 @@ public class ViewersObservables {
 	 * {@link IStructuredSelection}, the observable value will be the first
 	 * element of the structured selection as returned by
 	 * {@link IStructuredSelection#getFirstElement()}.
-	 * 
+	 *
 	 * @param viewer
 	 *            The viewer on which to track the <i>post</i> selection.
 	 * @return the observable value tracking the (single) <i>post</i> selection
 	 *         of the given structured viewer
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IViewerObservableValue observeSinglePostSelection(
@@ -204,11 +204,11 @@ public class ViewersObservables {
 	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
 	 * based on the requested change to the observable list. The affected
 	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
-	 * 
+	 *
 	 * @param viewer
 	 * @return the observable value tracking the (multi) selection of the given
 	 *         selection provider
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public static IViewerObservableList observeMultiSelection(Viewer viewer) {
@@ -226,12 +226,12 @@ public class ViewersObservables {
 	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
 	 * based on the requested change to the observable list. The affected
 	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
-	 * 
+	 *
 	 * @param viewer
 	 *            The viewer on which to track the <i>post</i> selection.
 	 * @return the observable value tracking the (multi) <i>post</i> selection
 	 *         of the given structured viewer
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IViewerObservableList observeMultiPostSelection(
@@ -245,7 +245,7 @@ public class ViewersObservables {
 	 * <p>
 	 * The returned observer is blind to changes in the viewer's input unless
 	 * its {@link IObservableValue#setValue(Object)} method is called directly.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer to observe
 	 * @return an observable value tracking the input of the given viewer
@@ -259,7 +259,7 @@ public class ViewersObservables {
 	/**
 	 * Returns an observable set that tracks the checked elements of the given
 	 * <code>ICheckable</code>.
-	 * 
+	 *
 	 * @param checkable
 	 *            {@link ICheckable} containing the checked elements to track
 	 * @param elementType
@@ -277,7 +277,7 @@ public class ViewersObservables {
 	/**
 	 * Returns an observable set that tracks the checked elements of the given
 	 * viewer. Assumes that the viewer implements {@link ICheckable}.
-	 * 
+	 *
 	 * @param viewer
 	 *            {@link CheckboxTableViewer} containing the checked elements to
 	 *            track.
@@ -296,7 +296,7 @@ public class ViewersObservables {
 	/**
 	 * Returns an observable set that tracks the checked elements of the given
 	 * viewer. Assumes that the viewer implements {@link ICheckable}.
-	 * 
+	 *
 	 * @param viewer
 	 *            {@link CheckboxTreeViewer} containing the checked elements to
 	 *            track.
@@ -323,7 +323,7 @@ public class ViewersObservables {
 	 * {@link StructuredViewer#setFilters(org.eclipse.jface.viewers.ViewerFilter[])
 	 * setFilters()}) -- it is assumed that filters are only changed through the
 	 * returned set.
-	 * 
+	 *
 	 * @param viewer
 	 *            viewer containing the filters to be tracked
 	 * @return an observable set that tracks the filters of the given viewer.

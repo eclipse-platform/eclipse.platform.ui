@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ControlForegroundProperty extends WidgetValueProperty {
 	@Override

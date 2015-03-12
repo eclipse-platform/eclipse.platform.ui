@@ -16,7 +16,7 @@ import org.eclipse.swt.custom.CTabItem;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CTabItemTooltipTextProperty extends WidgetStringValueProperty {
 	@Override

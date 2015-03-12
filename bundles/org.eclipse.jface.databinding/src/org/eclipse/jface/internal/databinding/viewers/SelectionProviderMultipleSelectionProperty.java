@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class SelectionProviderMultipleSelectionProperty extends
 		ViewerListProperty {
@@ -36,7 +36,7 @@ public class SelectionProviderMultipleSelectionProperty extends
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param isPostSelection
 	 *            Whether the post selection or the normal selection is to be
 	 *            observed.

@@ -16,9 +16,9 @@ package org.eclipse.jface.databinding.viewers;
  * {@link ObservableListTreeContentProvider} or an
  * {@link ObservableSetTreeContentProvider}. This class is intended to be
  * subclassed by clients.
- * 
+ *
  * @since 1.2
- * 
+ *
  */
 public abstract class TreeStructureAdvisor {
 
@@ -27,7 +27,7 @@ public abstract class TreeStructureAdvisor {
 	 * that the parent can't be computed. In this case the tree-structured
 	 * viewer can't expand a given node correctly if requested. The default
 	 * implementation returns null; clients should override.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return the parent element, or <code>null</code> if it has none or if the
@@ -46,7 +46,7 @@ public abstract class TreeStructureAdvisor {
 	 * children. Clients may be able to implement this more efficiently than
 	 * <code>getChildren</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return <code>Boolean.TRUE</code> if the given element has children,

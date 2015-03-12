@@ -36,7 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
  * elements of an {@link IObservableList} when set as the viewer's input.
  * Objects of this class listen for changes to the observable list, and will
  * insert and remove viewer elements to reflect observed changes.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 1.1
  */
@@ -169,7 +169,7 @@ public class ObservableListContentProvider implements
 	/**
 	 * Constructs an ObservableListContentProvider with the given viewer
 	 * updater. Must be called from the display thread.
-	 * 
+	 *
 	 * @param viewerUpdater
 	 *            the viewer updater to use when elements are added, removed,
 	 *            moved or replaced in the input observable list.
@@ -212,7 +212,7 @@ public class ObservableListContentProvider implements
 	 * before the viewer sees the added element, and notified about removals
 	 * after the element was removed from the viewer. This is intended for use
 	 * by label providers, as it will always return the items that need labels.
-	 * 
+	 *
 	 * @return readableSet of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
@@ -223,7 +223,7 @@ public class ObservableListContentProvider implements
 	 * Returns the set of known elements which have been realized in the viewer.
 	 * Clients may track this set in order to perform custom actions on elements
 	 * while they are known to be present in the viewer.
-	 * 
+	 *
 	 * @return the set of known elements which have been realized in the viewer.
 	 * @since 1.3
 	 */

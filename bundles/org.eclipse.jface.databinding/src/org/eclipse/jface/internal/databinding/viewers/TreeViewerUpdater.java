@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * NON-API - An interface for sending updates to an {@link AbstractTreeViewer}.
- * 
+ *
  * @since 1.2
  */
 public class TreeViewerUpdater {
@@ -30,7 +30,7 @@ public class TreeViewerUpdater {
 
 	/**
 	 * Constructs an ITreeViewerUpdater for updating the given viewer.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer that will be updated
 	 */
@@ -45,7 +45,7 @@ public class TreeViewerUpdater {
 	/**
 	 * Insert the element into the viewer as a child of the specified parent
 	 * element, at the specified position.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the element being inserted
 	 * @param element
@@ -60,7 +60,7 @@ public class TreeViewerUpdater {
 	/**
 	 * Replaces the specified element whenever it appears as a child of the
 	 * specified parent element, at the given position with the new element.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the element being replaced
 	 * @param oldElement
@@ -91,7 +91,7 @@ public class TreeViewerUpdater {
 	 * specified new position, whenever it appears as a child of the specified
 	 * parent element. No action is taken if the viewer has a sorter or
 	 * filter(s).
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the element being moved
 	 * @param element
@@ -143,7 +143,7 @@ public class TreeViewerUpdater {
 	/**
 	 * Removes the element from the from whenever it appears as a child of the
 	 * specified parent element, at the specified position.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the element being removed
 	 * @param element
@@ -154,7 +154,7 @@ public class TreeViewerUpdater {
 	public void remove(Object parent, Object element, int position) {
 		if (treeViewer != null && viewer.getComparator() == null
 				&& viewer.getFilters().length == 0) {
-			// Only TreeViewer has a remove-by-index method.  
+			// Only TreeViewer has a remove-by-index method.
 			treeViewer.remove(parent, position);
 		} else {
 			viewer.remove(parent, new Object[] { element });
@@ -164,7 +164,7 @@ public class TreeViewerUpdater {
 	/**
 	 * Add the elements into the viewer as children of the specified parent
 	 * element.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the element being inserted
 	 * @param elements
@@ -177,7 +177,7 @@ public class TreeViewerUpdater {
 	/**
 	 * Remove the elements from the viewer wherever they appear as children of
 	 * the specified parent element.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the elements being removed
 	 * @param elements

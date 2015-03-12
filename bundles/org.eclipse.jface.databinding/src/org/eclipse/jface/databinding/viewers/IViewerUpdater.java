@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * Many structured viewer classes have similar methods for adding and removing
  * elements, few of which are defined in common ancestor classes. This interface
  * serves as a universal adapter for updating the elements in a viewer
- * 
+ *
  * @since 1.3
  * @see ObservableListContentProvider#ObservableListContentProvider(IViewerUpdater)
  * @see ObservableSetContentProvider#ObservableSetContentProvider(IViewerUpdater)
@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 public interface IViewerUpdater {
 	/**
 	 * Insert the element into the viewer at the specified position.
-	 * 
+	 *
 	 * @param element
 	 *            the element to add
 	 * @param position
@@ -36,7 +36,7 @@ public interface IViewerUpdater {
 
 	/**
 	 * Remove the element from the viewer
-	 * 
+	 *
 	 * @param element
 	 *            the element to remove
 	 * @param position
@@ -46,7 +46,7 @@ public interface IViewerUpdater {
 
 	/**
 	 * Replace the specified element at the given position with the new element.
-	 * 
+	 *
 	 * @param oldElement
 	 *            the element being replaced
 	 * @param newElement
@@ -60,7 +60,7 @@ public interface IViewerUpdater {
 	 * Moves the specified element from the specified old position to the
 	 * specified new position. No action is taken if the viewer has a sorter or
 	 * filter(s).
-	 * 
+	 *
 	 * @param element
 	 *            the element being moved
 	 * @param oldPosition
@@ -72,7 +72,7 @@ public interface IViewerUpdater {
 
 	/**
 	 * Adds the elements to the viewer.
-	 * 
+	 *
 	 * @param elements
 	 *            the elements to add
 	 */
@@ -80,7 +80,7 @@ public interface IViewerUpdater {
 
 	/**
 	 * Removes the elements from the viewer
-	 * 
+	 *
 	 * @param elements
 	 *            the elements to remove
 	 */

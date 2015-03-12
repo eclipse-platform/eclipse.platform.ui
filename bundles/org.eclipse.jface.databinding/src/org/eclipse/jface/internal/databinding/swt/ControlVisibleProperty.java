@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ControlVisibleProperty extends WidgetBooleanValueProperty {
 	@Override

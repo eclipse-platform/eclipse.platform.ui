@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ShellTextProperty extends WidgetStringValueProperty {
 	@Override

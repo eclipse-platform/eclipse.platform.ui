@@ -30,13 +30,13 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * NON-API - This class can be used to update a table with automatic dependency
  * tracking.
- * 
+ *
  * @since 1.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients. (We do
  *           encourage experimentation for non-production code and are
  *           interested in feedback though.)
- * 
+ *
  */
 public abstract class TableUpdater {
 
@@ -175,7 +175,7 @@ public abstract class TableUpdater {
 
 	/**
 	 * Creates an updator for the given control.
-	 * 
+	 *
 	 * @param table
 	 *            table to update
 	 * @param list
@@ -212,12 +212,12 @@ public abstract class TableUpdater {
 	 * Updates the control. This method will be invoked once after the updator
 	 * is created, and once before any repaint during which the control is
 	 * visible and dirty.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses should overload this method to provide any code that changes
 	 * the appearance of the widget.
 	 * </p>
-	 * 
+	 *
 	 * @param index
 	 * @param item
 	 *            the item to update

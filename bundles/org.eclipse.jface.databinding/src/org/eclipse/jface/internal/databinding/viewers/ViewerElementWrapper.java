@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.IElementComparer;
  * A wrapper class for viewer elements, which uses an {@link IElementComparer}
  * for computing {@link Object#equals(Object) equality} and
  * {@link Object#hashCode() hashes}.
- * 
+ *
  * @since 1.2
  */
 public class ViewerElementWrapper {
@@ -26,7 +26,7 @@ public class ViewerElementWrapper {
 
 	/**
 	 * Constructs a ViewerElementWrapper wrapping the given element
-	 * 
+	 *
 	 * @param element
 	 *            the element being wrapped
 	 * @param comparer

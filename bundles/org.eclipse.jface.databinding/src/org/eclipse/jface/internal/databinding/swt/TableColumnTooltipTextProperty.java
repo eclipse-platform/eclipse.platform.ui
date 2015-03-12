@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class TableColumnTooltipTextProperty extends WidgetStringValueProperty {
 	@Override

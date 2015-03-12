@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class WidgetImageValueProperty extends WidgetValueProperty {
 	@Override

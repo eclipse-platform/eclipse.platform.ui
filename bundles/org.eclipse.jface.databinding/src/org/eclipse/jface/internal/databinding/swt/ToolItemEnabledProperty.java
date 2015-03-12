@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.swt;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * 
+ *
  */
 public class ToolItemEnabledProperty extends WidgetBooleanValueProperty {
 	@Override

@@ -16,11 +16,11 @@ import org.eclipse.swt.custom.CCombo;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CComboSelectionProperty extends WidgetStringValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public CComboSelectionProperty() {
 		super(SWT.Modify);

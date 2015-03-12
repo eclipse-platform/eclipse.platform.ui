@@ -17,12 +17,12 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 /**
  * Simple interface to provide a validation message text and a message type for
  * a given {@link ValidationStatusProvider}.
- * 
+ *
  * <p>
  * Can be used in dialogs to display a message text along with an icon
  * reflecting the validation status.
  * </p>
- * 
+ *
  * @since 1.4
  */
 public interface IValidationMessageProvider {
@@ -30,7 +30,7 @@ public interface IValidationMessageProvider {
 	/**
 	 * Returns the validation message text for the given validation status
 	 * provider.
-	 * 
+	 *
 	 * @param statusProvider
 	 *            the {@link ValidationStatusProvider} for which to provide a
 	 *            message text. May be <code>null</code>.
@@ -42,7 +42,7 @@ public interface IValidationMessageProvider {
 	/**
 	 * Returns the validation message type as one of the constants defined in
 	 * {@link IMessageProvider} for the given validation status provider.
-	 * 
+	 *
 	 * @param statusProvider
 	 *            the {@link ValidationStatusProvider} for which to provide a
 	 *            message type. May be <code>null</code>.

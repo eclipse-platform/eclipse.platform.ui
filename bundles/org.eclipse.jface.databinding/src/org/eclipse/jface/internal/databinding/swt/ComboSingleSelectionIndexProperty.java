@@ -16,12 +16,12 @@ import org.eclipse.swt.widgets.Combo;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ComboSingleSelectionIndexProperty extends
 		SingleSelectionIndexProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ComboSingleSelectionIndexProperty() {
 		super(new int[] { SWT.Selection, SWT.DefaultSelection });

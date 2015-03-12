@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class TextMessageProperty extends WidgetStringValueProperty {
 	@Override

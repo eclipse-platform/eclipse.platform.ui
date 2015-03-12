@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 	@Override

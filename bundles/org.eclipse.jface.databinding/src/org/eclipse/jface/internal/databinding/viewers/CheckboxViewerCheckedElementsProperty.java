@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class CheckboxViewerCheckedElementsProperty extends
 		ViewerSetProperty {

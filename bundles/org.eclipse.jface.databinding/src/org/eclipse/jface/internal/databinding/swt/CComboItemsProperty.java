@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CComboItemsProperty extends ControlStringListProperty {
 	@Override

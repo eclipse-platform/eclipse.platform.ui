@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Display;
  * {@link IObservableFactory observable collection factory} to provide the
  * elements of a tree. Each observable collection obtained from the factory is
  * observed such that changes in the collection are reflected in the viewer.
- * 
+ *
  * @since 1.2
  */
 public abstract class ObservableCollectionTreeContentProvider implements
@@ -96,7 +96,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	/**
 	 * Constructs an ObservableCollectionTreeContentProvider using the given
 	 * parent provider and collection factory.
-	 * 
+	 *
 	 * @param collectionFactory
 	 *            observable factory that produces an IObservableList of
 	 *            children for a given parent element.
@@ -298,7 +298,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * before the viewer sees the added element, and notified about removals
 	 * after the element was removed from the viewer. This is intended for use
 	 * by label providers, as it will always return the items that need labels.
-	 * 
+	 *
 	 * @return unmodifiable observable set of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
@@ -309,7 +309,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * Returns the set of known elements which have been realized in the viewer.
 	 * Clients may track this set in order to perform custom actions on elements
 	 * while they are known to be present in the viewer.
-	 * 
+	 *
 	 * @return the set of known elements which have been realized in the viewer.
 	 * @since 1.3
 	 */
@@ -328,7 +328,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * Returns the set of all elements that would be removed from the known
 	 * elements set if the given elements were removed as children of the given
 	 * parent element.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent element of the elements being removed
 	 * @param elementsToBeRemoved
@@ -365,7 +365,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * Returns a listener which, when a collection change event is received,
 	 * updates the tree viewer through the {@link #viewerUpdater} field, and
 	 * maintains the adds and removes parents from the appropriate tree nodes.
-	 * 
+	 *
 	 * @param parentElement
 	 *            the element that is the parent element of all elements in the
 	 *            observable collection.
@@ -377,7 +377,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	/**
 	 * Registers the change listener to receive change events for the specified
 	 * observable collection.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection to observe for changes
 	 * @param listener
@@ -389,7 +389,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	/**
 	 * Unregisters the change listener from receving change events for the
 	 * specified observable collection.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection to stop observing.
 	 * @param listener

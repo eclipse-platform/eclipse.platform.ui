@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CheckboxTreeViewerCheckedElementsProperty extends
 		CheckboxViewerCheckedElementsProperty {

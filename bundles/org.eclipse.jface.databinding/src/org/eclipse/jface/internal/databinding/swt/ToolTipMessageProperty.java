@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.ToolTip;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ToolTipMessageProperty extends WidgetStringValueProperty {
 	@Override

@@ -18,7 +18,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 
 /**
  * Standard implementation of the {@link IValidationMessageProvider} interface.
- * 
+ *
  * @since 1.4
  */
 public class ValidationMessageProvider implements IValidationMessageProvider {

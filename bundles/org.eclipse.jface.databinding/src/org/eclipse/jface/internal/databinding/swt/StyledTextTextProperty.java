@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class StyledTextTextProperty extends WidgetStringValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public StyledTextTextProperty() {
 		this(null);

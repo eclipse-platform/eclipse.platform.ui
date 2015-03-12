@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ItemTextProperty extends WidgetStringValueProperty {
 	@Override

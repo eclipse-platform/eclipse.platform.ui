@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class SWTObservableListDecorator extends DecoratingObservableList
 		implements ISWTObservableList {

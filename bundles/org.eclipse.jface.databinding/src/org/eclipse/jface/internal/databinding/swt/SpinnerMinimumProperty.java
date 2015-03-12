@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class SpinnerMinimumProperty extends WidgetIntValueProperty {
 	@Override

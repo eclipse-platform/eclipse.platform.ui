@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CLabelImageProperty extends WidgetImageValueProperty {
 	@Override

@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Widget;
  * <li>All <code>observe()</code> methods should return an
  * {@link ISWTObservable}
  * </ul>
- * 
+ *
  * @since 1.3
  */
 public abstract class WidgetListProperty extends SimpleListProperty implements

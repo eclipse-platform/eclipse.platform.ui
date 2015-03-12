@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class SelectionProviderSingleSelectionProperty extends
 		ViewerValueProperty {
@@ -33,7 +33,7 @@ public class SelectionProviderSingleSelectionProperty extends
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param isPostSelection
 	 *            Whether the post selection or the normal selection is to be
 	 *            observed.

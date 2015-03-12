@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * 
+ *
  */
 public class WidgetEnabledProperty extends WidgetDelegatingValueProperty {
 	IValueProperty control;
@@ -29,7 +29,7 @@ public class WidgetEnabledProperty extends WidgetDelegatingValueProperty {
 	IValueProperty toolItem;
 
 	/**
-	 * 
+	 *
 	 */
 	public WidgetEnabledProperty() {
 		super(Boolean.TYPE);

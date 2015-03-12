@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.Combo;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ComboSelectionProperty extends WidgetStringValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ComboSelectionProperty() {
 		super(SWT.Modify);

@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ViewerCheckedElementsProperty extends DelegatingSetProperty
 		implements IViewerSetProperty {

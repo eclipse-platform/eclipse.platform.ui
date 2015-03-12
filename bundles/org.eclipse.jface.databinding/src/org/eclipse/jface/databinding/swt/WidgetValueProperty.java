@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Widget;
  * {@link Listener untyped listener API}. Subclasses may pass one or more SWT
  * event type constants to the super constructor to indicate which events signal
  * a property change.
- * 
+ *
  * @since 1.3
  */
 public abstract class WidgetValueProperty extends SimpleValueProperty implements
@@ -54,7 +54,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 
 	/**
 	 * Constructs a WidgetValueProperty with the specified SWT event type
-	 * 
+	 *
 	 * @param changeEvent
 	 *            SWT event type constant of the event that signifies a property
 	 *            change.
@@ -65,7 +65,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 
 	/**
 	 * Constructs a WidgetValueProperty with the specified SWT event type(s).
-	 * 
+	 *
 	 * @param changeEvents
 	 *            array of SWT event type constants of the events that signify a
 	 *            property change.
@@ -76,7 +76,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 
 	/**
 	 * Constructs a WidgetValueProperty with the specified SWT event types.
-	 * 
+	 *
 	 * @param changeEvents
 	 *            array of SWT event type constants of the events that signify a
 	 *            property change.

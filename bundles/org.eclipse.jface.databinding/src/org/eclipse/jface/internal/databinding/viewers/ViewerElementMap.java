@@ -34,16 +34,16 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * {@link #equals(Object)} when comparing keys. This class is designed for use
  * with {@link StructuredViewer} which uses {@link IElementComparer} for element
  * comparisons.
- * 
+ *
  * @since 1.2
  */
-public class ViewerElementMap implements Map { 
+public class ViewerElementMap implements Map {
 	private Map wrappedMap;
 	private IElementComparer comparer;
 
 	/**
 	 * Constructs a ViewerElementMap using the given {@link IElementComparer}.
-	 * 
+	 *
 	 * @param comparer
 	 *            the {@link IElementComparer} used for comparing keys.
 	 */
@@ -56,7 +56,7 @@ public class ViewerElementMap implements Map {
 	/**
 	 * Constructs a ViewerElementMap containing all the entries in the specified
 	 * map.
-	 * 
+	 *
 	 * @param map
 	 *            the map whose entries are to be added to this map.
 	 * @param comparer
@@ -476,7 +476,7 @@ public class ViewerElementMap implements Map {
 	/**
 	 * Returns a Map for mapping viewer elements as keys to values, using the
 	 * given {@link IElementComparer} for key comparisons.
-	 * 
+	 *
 	 * @param comparer
 	 *            the element comparer to use in key comparisons. If null, the
 	 *            returned map will compare keys according to the standard

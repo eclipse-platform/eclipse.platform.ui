@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ToolItemTooltipTextProperty extends WidgetStringValueProperty {
 	@Override

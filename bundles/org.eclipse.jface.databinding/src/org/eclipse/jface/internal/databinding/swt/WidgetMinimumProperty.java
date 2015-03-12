@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class WidgetMinimumProperty extends WidgetDelegatingValueProperty {
 	private IValueProperty scale;
@@ -26,7 +26,7 @@ public class WidgetMinimumProperty extends WidgetDelegatingValueProperty {
 	private IValueProperty spinner;
 
 	/**
-	 * 
+	 *
 	 */
 	public WidgetMinimumProperty() {
 		super(Integer.TYPE);

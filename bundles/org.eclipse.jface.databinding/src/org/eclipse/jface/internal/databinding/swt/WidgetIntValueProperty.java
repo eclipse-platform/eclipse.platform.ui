@@ -16,7 +16,7 @@ import org.eclipse.jface.databinding.swt.WidgetValueProperty;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class WidgetIntValueProperty extends WidgetValueProperty {
 	WidgetIntValueProperty() {

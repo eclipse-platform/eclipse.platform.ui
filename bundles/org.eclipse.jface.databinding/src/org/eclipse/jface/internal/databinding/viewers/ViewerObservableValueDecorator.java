@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ViewerObservableValueDecorator extends DecoratingObservableValue
 		implements IViewerObservableValue, Listener {

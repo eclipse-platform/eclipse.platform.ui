@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
  * {@link IObservableValue} observing an SWT widget.
- * 
+ *
  * @since 1.1
  *
  */

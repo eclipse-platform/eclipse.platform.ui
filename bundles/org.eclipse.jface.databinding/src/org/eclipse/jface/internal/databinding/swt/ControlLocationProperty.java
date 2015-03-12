@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ControlLocationProperty extends WidgetValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ControlLocationProperty() {
 		super(SWT.Move);

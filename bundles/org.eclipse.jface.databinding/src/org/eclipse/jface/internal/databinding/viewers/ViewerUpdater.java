@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 
 /**
  * NON-API - An interface for updating a viewer's elements.
- * 
+ *
  * @since 1.2
  */
 public abstract class ViewerUpdater implements IViewerUpdater {
@@ -30,7 +30,7 @@ public abstract class ViewerUpdater implements IViewerUpdater {
 
 	/**
 	 * Constructs a ViewerUpdater for updating the specified viewer.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer which will be updated through this instance.
 	 */

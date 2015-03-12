@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Button;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ButtonTextProperty extends WidgetStringValueProperty {
 	@Override

@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Scale;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ScaleMaximumProperty extends WidgetIntValueProperty {
 	@Override

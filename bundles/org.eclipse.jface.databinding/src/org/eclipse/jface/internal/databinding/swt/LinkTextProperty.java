@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Link;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class LinkTextProperty extends WidgetStringValueProperty {
 	@Override

@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * NON-API - This class can be used to update a composite with automatic
  * dependency tracking.
- * 
+ *
  * @since 1.1
- * 
+ *
  */
 public abstract class CompositeUpdater {
 
@@ -129,7 +129,7 @@ public abstract class CompositeUpdater {
 	 * To be called from {@link #updateWidget(Widget, Object)} or
 	 * {@link #createWidget(int)} if this updater's composite's layout may need
 	 * to be updated.
-	 * 
+	 *
 	 * @param control
 	 * @since 1.2
 	 */
@@ -173,7 +173,7 @@ public abstract class CompositeUpdater {
 	 * Creates an updater for the given control and list. For each element of
 	 * the list, a child widget of the composite will be created using
 	 * {@link #createWidget(int)}.
-	 * 
+	 *
 	 * @param toUpdate
 	 *            composite to update
 	 * @param model
@@ -219,7 +219,7 @@ public abstract class CompositeUpdater {
 
 	/**
 	 * Creates a new child widget for the target composite at the given index.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses should implement this method to provide the code that creates
 	 * a child widget at a specific index. Note that
@@ -227,7 +227,7 @@ public abstract class CompositeUpdater {
 	 * returns. Only those properties of the widget that don't change over time
 	 * should be set in this method.
 	 * </p>
-	 * 
+	 *
 	 * @param index
 	 *            the at which to create the widget
 	 * @return the widget
@@ -238,12 +238,12 @@ public abstract class CompositeUpdater {
 	 * Updates the given widget based on the element found in the model list.
 	 * This method will be invoked once after the widget is created, and once
 	 * before any repaint during which the control is visible and dirty.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses should implement this method to provide any code that changes
 	 * the appearance of the widget.
 	 * </p>
-	 * 
+	 *
 	 * @param widget
 	 *            the widget to update
 	 * @param element

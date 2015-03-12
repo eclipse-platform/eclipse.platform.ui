@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.DateTime;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class DateTimeSelectionProperty extends WidgetValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public DateTimeSelectionProperty() {
 		super(SWT.Selection);

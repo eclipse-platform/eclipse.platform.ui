@@ -22,11 +22,11 @@ import org.eclipse.swt.widgets.Event;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ControlFocusedProperty extends WidgetBooleanValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ControlFocusedProperty() {
 		super();

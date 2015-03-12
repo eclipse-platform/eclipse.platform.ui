@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.List;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ListSelectionProperty extends WidgetStringValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ListSelectionProperty() {
 		super(SWT.Selection);

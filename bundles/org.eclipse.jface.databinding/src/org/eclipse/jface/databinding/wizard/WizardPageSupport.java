@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Boris Bokowski - bug 218269
  *     Matthew Hall - bug 218269, 240444, 239900
- *     Ashley Cambrell - bug 199179 
+ *     Ashley Cambrell - bug 199179
  *     Ovidio Mallo - bug 235195, 237856
  *******************************************************************************/
 package org.eclipse.jface.databinding.wizard;
@@ -23,7 +23,7 @@ import org.eclipse.jface.wizard.WizardPage;
  * Connects the validation result from the given data binding context to the
  * given wizard page, updating the wizard page's completion state and its error
  * message accordingly.
- * 
+ *
  * <p>
  * The completion state of the wizard page will only be set to <code>true</code>
  * if <i>all</i> of the following conditions are met:
@@ -34,7 +34,7 @@ import org.eclipse.jface.wizard.WizardPage;
  * stale.</li>
  * </ul>
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 1.1
@@ -53,7 +53,7 @@ public class WizardPageSupport extends DialogPageSupport {
 	 * change, {@link WizardPage#setPageComplete(boolean)} will be called
 	 * reflecting the new validation result, and the wizard page's error message
 	 * will be updated according to the current validation result.
-	 * 
+	 *
 	 * @param wizardPage
 	 * @param dbc
 	 * @return an instance of WizardPageSupport

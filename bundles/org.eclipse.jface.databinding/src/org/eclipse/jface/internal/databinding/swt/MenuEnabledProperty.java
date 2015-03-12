@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.swt;
 import org.eclipse.swt.widgets.Menu;
 
 /**
- * 
+ *
  */
 public class MenuEnabledProperty extends WidgetBooleanValueProperty {
 	@Override

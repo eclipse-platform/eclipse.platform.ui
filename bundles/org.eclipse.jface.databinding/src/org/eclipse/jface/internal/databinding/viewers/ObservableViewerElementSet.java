@@ -36,8 +36,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * the use of {@link #equals(Object)} when comparing elements. This class is
  * designed for use with {@link StructuredViewer} which uses
  * {@link IElementComparer} for element comparisons.
- * 
- * 
+ *
+ *
  * @since 1.2
  */
 public class ObservableViewerElementSet extends AbstractObservableSet {
@@ -48,7 +48,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 	/**
 	 * Constructs an ObservableViewerElementSet on the given {@link Realm} which
 	 * uses the given {@link IElementComparer} to compare elements.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the constructed set.
 	 * @param elementType
@@ -191,7 +191,7 @@ public class ObservableViewerElementSet extends AbstractObservableSet {
 	/**
 	 * Returns an {@link IObservableSet} for holding viewer elements, using the
 	 * given {@link IElementComparer} for comparisons.
-	 * 
+	 *
 	 * @param realm
 	 *            the realm of the returned observable
 	 * @param elementType

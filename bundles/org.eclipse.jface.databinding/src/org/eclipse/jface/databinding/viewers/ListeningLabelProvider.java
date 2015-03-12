@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelPro
 
 /**
  * @since 1.1
- * 
+ *
  */
 public abstract class ListeningLabelProvider extends ViewerLabelProvider {
 

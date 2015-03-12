@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * A factory for creating properties of JFace {@link Viewer viewers}.
- * 
+ *
  * @since 1.3
  */
 public class ViewerProperties {
@@ -36,10 +36,10 @@ public class ViewerProperties {
 	 * Returns a set property for observing the checked elements of a
 	 * {@link CheckboxTableViewer}, {@link CheckboxTreeViewer} or
 	 * {@link ICheckable}.
-	 * 
+	 *
 	 * @param elementType
 	 *            the element type of the returned property
-	 * 
+	 *
 	 * @return a set property for observing the checked elements of a
 	 *         {@link CheckboxTableViewer}, {@link CheckboxTreeViewer} or
 	 *         {@link ICheckable}.
@@ -51,7 +51,7 @@ public class ViewerProperties {
 	/**
 	 * Returns a value property for observing the input of a
 	 * {@link StructuredViewer}.
-	 * 
+	 *
 	 * @return a value property for observing the input of a
 	 *         {@link StructuredViewer}.
 	 */
@@ -61,7 +61,7 @@ public class ViewerProperties {
 
 	/**
 	 * Returns a value property for observing the input of a {@link Viewer}.
-	 * 
+	 *
 	 * @return a value property for observing the input of a {@link Viewer}.
 	 */
 	public static IViewerValueProperty input() {
@@ -71,7 +71,7 @@ public class ViewerProperties {
 	/**
 	 * Returns a list property for observing the multiple selection of an
 	 * {@link ISelectionProvider}.
-	 * 
+	 *
 	 * @return a list property for observing the multiple selection of an
 	 *         {@link ISelectionProvider}.
 	 */
@@ -82,10 +82,10 @@ public class ViewerProperties {
 	/**
 	 * Returns a list property for observing the multiple <i>post</i> selection
 	 * of an {@link IPostSelectionProvider}.
-	 * 
+	 *
 	 * @return a list property for observing the multiple <i>post</i> selection
 	 *         of an {@link IPostSelectionProvider}.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IViewerListProperty multiplePostSelection() {
@@ -95,7 +95,7 @@ public class ViewerProperties {
 	/**
 	 * Returns a value property for observing the single selection of a
 	 * {@link ISelectionProvider}.
-	 * 
+	 *
 	 * @return a value property for observing the single selection of a
 	 *         {@link ISelectionProvider}.
 	 */
@@ -106,10 +106,10 @@ public class ViewerProperties {
 	/**
 	 * Returns a value property for observing the single <i>post</i> selection
 	 * of a {@link IPostSelectionProvider}.
-	 * 
+	 *
 	 * @return a value property for observing the single <i>post</i> selection
 	 *         of a {@link IPostSelectionProvider}.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	public static IViewerValueProperty singlePostSelection() {

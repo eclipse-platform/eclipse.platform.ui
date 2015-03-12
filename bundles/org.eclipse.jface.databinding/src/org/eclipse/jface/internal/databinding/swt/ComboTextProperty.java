@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.Combo;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class ComboTextProperty extends WidgetStringValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public ComboTextProperty() {
 		super(SWT.Modify);

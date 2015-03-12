@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class WidgetTextWithEventsProperty extends WidgetDelegatingValueProperty {
 	private final int[] events;

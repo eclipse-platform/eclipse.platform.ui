@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.AbstractTableViewer;
 /**
  * NON-API - A {@link ViewerUpdater} that updates {@link AbstractTableViewer}
  * instances.
- * 
+ *
  * @since 1.2
  */
 class TableViewerUpdater extends ViewerUpdater {

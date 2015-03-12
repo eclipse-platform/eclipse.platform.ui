@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * {@link IValueProperty} for observing a JFace viewer
- * 
+ *
  * @since 1.3
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,7 +24,7 @@ public interface IViewerValueProperty extends IValueProperty {
 	/**
 	 * Returns an {@link IViewerObservableValue} observing this value property
 	 * on the given viewer
-	 * 
+	 *
 	 * @param viewer
 	 *            the source viewer
 	 * @return an observable value observing this value property on the given
@@ -41,7 +41,7 @@ public interface IViewerValueProperty extends IValueProperty {
 	 * <p>
 	 * This method is equivalent to
 	 * <code>ViewersObservables.observeDelayedValue(delay, observe(viewer))</code>.
-	 * 
+	 *
 	 * @param delay
 	 *            the delay in milliseconds.
 	 * @param viewer

@@ -27,16 +27,16 @@ import org.eclipse.jface.viewers.ViewerCell;
  * that this label provider uses for display. The default behavior is to display
  * the first attribute's value. Clients may customize by subclassing and
  * overriding {@link #update(ViewerCell)}.
- * 
+ *
  * @since 1.3
- * 
+ *
  */
 public class ObservableMapCellLabelProvider extends CellLabelProvider {
 
 	/**
 	 * Observable maps typically mapping from viewer elements to label values.
 	 * Subclasses may use these maps to provide custom labels.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	protected IObservableMap[] attributeMaps;
@@ -54,7 +54,7 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 
 	/**
 	 * Creates a new label provider that tracks changes to one attribute.
-	 * 
+	 *
 	 * @param attributeMap
 	 */
 	public ObservableMapCellLabelProvider(IObservableMap attributeMap) {
@@ -65,7 +65,7 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 	 * Creates a new label provider that tracks changes to more than one
 	 * attribute. This constructor should be used by subclasses that override
 	 * {@link #update(ViewerCell)} and make use of more than one attribute.
-	 * 
+	 *
 	 * @param attributeMaps
 	 */
 	protected ObservableMapCellLabelProvider(IObservableMap[] attributeMaps) {

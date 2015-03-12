@@ -27,14 +27,14 @@ import org.eclipse.jface.viewers.StructuredViewer;
 /**
  * Helper methods for binding observables to a {@link StructuredViewer} or
  * {@link AbstractTableViewer}.
- * 
+ *
  * @since 1.3
  */
 public class ViewerSupport {
 	/**
 	 * Binds the viewer to the specified input, using the specified label
 	 * property to generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer to set up
 	 * @param input
@@ -50,7 +50,7 @@ public class ViewerSupport {
 	/**
 	 * Binds the viewer to the specified input, using the specified label
 	 * properties to generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer to set up
 	 * @param input
@@ -75,7 +75,7 @@ public class ViewerSupport {
 	/**
 	 * Binds the viewer to the specified input, using the specified label
 	 * property to generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer to set up
 	 * @param input
@@ -91,7 +91,7 @@ public class ViewerSupport {
 	/**
 	 * Binds the viewer to the specified input, using the specified label
 	 * properties to generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer to set up
 	 * @param input
@@ -117,7 +117,7 @@ public class ViewerSupport {
 	 * Binds the viewer to the specified input, using the specified children
 	 * property to generate child nodes, and the specified label property to
 	 * generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to set up
 	 * @param input
@@ -137,7 +137,7 @@ public class ViewerSupport {
 	 * Binds the viewer to the specified input, using the specified children
 	 * property to generate child nodes, and the specified label properties to
 	 * generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to set up
 	 * @param input
@@ -167,7 +167,7 @@ public class ViewerSupport {
 	 * Binds the viewer to the specified input, using the specified children
 	 * property to generate child nodes, and the specified label property to
 	 * generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to set up
 	 * @param input
@@ -187,7 +187,7 @@ public class ViewerSupport {
 	 * Binds the viewer to the specified input, using the specified children
 	 * property to generate child nodes, and the specified label properties to
 	 * generate labels.
-	 * 
+	 *
 	 * @param viewer
 	 *            the tree viewer to set up
 	 * @param input

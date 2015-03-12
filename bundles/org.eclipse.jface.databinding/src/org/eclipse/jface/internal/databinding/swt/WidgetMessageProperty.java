@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.ToolTip;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class WidgetMessageProperty extends WidgetDelegatingValueProperty {
 	private IValueProperty text;
 	private IValueProperty toolTip;
 
 	/**
-	 * 
+	 *
 	 */
 	public WidgetMessageProperty() {
 		super(String.class);

@@ -25,35 +25,35 @@ import org.eclipse.swt.widgets.Control;
  * By wrapping a block of code in a ControlUpdater, clients can rely on the fact
  * that the block of code will be re-executed whenever anything changes in the
  * model that might affect its behavior.
- *  
+ *
  * <p>
  * ControlUpdaters only execute when their controls are visible. If something changes
  * in the model while the control is invisible, the updator is flagged as dirty and
  * the updator stops listening to the model until the next time the control repaints.
  * This saves CPU cycles by deferring UI updates to widgets that are currently invisible.
  * </p>
- * 
+ *
  * <p>
  * Clients should subclass this when copying information from the model to
  * a control. Typical usage:
  * </p>
- * 
+ *
  * <ul>
  * <li>Override updateControl. It should do whatever is necessary to display
  *     the contents of the model in the control.</li>
- * <li>In the constructor, attach listeners to the model. The listeners should 
- *     call markDirty whenever anything changes in the model that affects 
+ * <li>In the constructor, attach listeners to the model. The listeners should
+ *     call markDirty whenever anything changes in the model that affects
  *     updateControl. Note: this step can be omitted when calling any method
  *     tagged with "@TrackedGetter" since ControlUpdater will automatically attach
  *     a listener to any object if a "@TrackedGetter" method is called in
  *     updateControl.</li>
  * <li>(optional)Extend dispose() to remove any listeners attached in the constructor</li>
  * </ul>
- * 
+ *
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <code>
  * // Displays an observable value in a label and keeps the label in synch with changes
  * // in the value.
@@ -67,14 +67,14 @@ import org.eclipse.swt.widgets.Control;
  * // myLabel will display the value of someValue the next time it repaints, and will automatically
  * // be updated whenever someValue changes and the label is visible
  * </code>
- * 
+ *
  * @since 1.1
  */
 public abstract class ControlUpdater {
-	
-	private class PrivateInterface implements PaintListener, 
+
+	private class PrivateInterface implements PaintListener,
 		DisposeListener, Runnable, IChangeListener {
-		
+
 		// PaintListener implementation
 		@Override
 		public void paintControl(PaintEvent e) {
@@ -86,7 +86,7 @@ public abstract class ControlUpdater {
 		public void widgetDisposed(DisposeEvent e) {
 			ControlUpdater.this.dispose();
 		}
-		
+
 		// Runnable implementation. This method runs at most once per repaint whenever the
 		// value gets marked as dirty.
 		@Override
@@ -95,41 +95,41 @@ public abstract class ControlUpdater {
 				updateIfNecessary();
 			}
 		}
-		
+
 		// IChangeListener implementation (listening to the ComputedValue)
 		@Override
 		public void handleChange(ChangeEvent event) {
-			// Whenever this updator becomes dirty, schedule the run() method 
+			// Whenever this updator becomes dirty, schedule the run() method
 			makeDirty();
 		}
-		
+
 	}
-	
+
 	private Runnable updateRunnable = new Runnable() {
 		@Override
 		public void run() {
 			updateControl();
 		}
 	};
-	
+
 	private PrivateInterface privateInterface = new PrivateInterface();
 	private Control theControl;
 	private IObservable[] dependencies = new IObservable[0];
 	private boolean dirty = false;
-	
+
 	/**
-	 * Creates an updater for the given control.  
-	 * 
+	 * Creates an updater for the given control.
+	 *
 	 * @param toUpdate control to update
 	 */
 	public ControlUpdater(Control toUpdate) {
 		theControl = toUpdate;
-		
+
 		theControl.addDisposeListener(privateInterface);
 		theControl.addPaintListener(privateInterface);
 		makeDirty();
 	}
-	
+
 	private void updateIfNecessary() {
 		if (dirty) {
 			dependencies = ObservableTracker.runAndMonitor(updateRunnable, privateInterface, null);
@@ -154,23 +154,23 @@ public abstract class ControlUpdater {
 		// Stop listening for dependency changes
 		for (int i = 0; i < dependencies.length; i++) {
 			IObservable observable = dependencies[i];
-				
+
 			observable.removeChangeListener(privateInterface);
 		}
 	}
 
 	/**
 	 * Updates the control. This method will be invoked once after the
-	 * updator is created, and once before any repaint during which the 
+	 * updator is created, and once before any repaint during which the
 	 * control is visible and dirty.
-	 *  
+	 *
 	 * <p>
-	 * Subclasses should overload this method to provide any code that 
+	 * Subclasses should overload this method to provide any code that
 	 * changes the appearance of the widget.
 	 * </p>
 	 */
 	protected abstract void updateControl();
-	
+
 	/**
 	 * Marks this updator as dirty. Causes the updateControl method to
 	 * be invoked before the next time the control is repainted.
@@ -182,5 +182,5 @@ public abstract class ControlUpdater {
 			SWTUtil.runOnce(theControl.getDisplay(), privateInterface);
 		}
 	}
-	
+
 }

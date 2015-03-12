@@ -67,14 +67,14 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * A factory for creating properties of SWT {@link Widget widgets}.
- * 
+ *
  * @since 1.3
  */
 public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the background color of a
 	 * {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the background color of a
 	 *         {@link Control}.
 	 */
@@ -84,7 +84,7 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the bounds of a {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the bounds of a {@link Control}.
 	 */
 	public static IWidgetValueProperty bounds() {
@@ -95,7 +95,7 @@ public class WidgetProperties {
 	 * Returns a value property for observing the editable state of a
 	 * {@link CCombo} (since 1.6), {@link StyledText} (since 1.6), or
 	 * {@link Text}.
-	 * 
+	 *
 	 * @return a value property for observing the editable state of a
 	 *         {@link CCombo}, {@link StyledText}, or {@link Text}.
 	 */
@@ -107,7 +107,7 @@ public class WidgetProperties {
 	 * Returns a value property for observing the enablement state of a
 	 * {@link Control}, {@link Menu} (since 1.5), {@link MenuItem} (since 1.5),
 	 * {@link ScrollBar} (since 1.5) or {@link ToolItem} (since 1.5).
-	 * 
+	 *
 	 * @return a value property for observing the enablement state of a
 	 *         {@link Control}, {@link Menu}, {@link MenuItem},
 	 *         {@link ScrollBar} or {@link ToolItem}.
@@ -119,7 +119,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the focus state of a
 	 * {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the focus state of a
 	 *         {@link Control}.
 	 */
@@ -129,7 +129,7 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the font of a {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the font of a {@link Control}.
 	 */
 	public static IWidgetValueProperty font() {
@@ -139,7 +139,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the foreground color of a
 	 * {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the foreground color of a
 	 *         {@link Control}.
 	 */
@@ -150,7 +150,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the image of a {@link Button},
 	 * {@link CLabel}, {@link Item} or {@link Label}.
-	 * 
+	 *
 	 * @return a value property for observing the image of a {@link Button},
 	 *         {@link CLabel}, {@link Item} or {@link Label}.
 	 */
@@ -161,7 +161,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a list property for observing the items of a {@link CCombo},
 	 * {@link Combo} or {@link List}.
-	 * 
+	 *
 	 * @return a list property for observing the items of a {@link CCombo},
 	 *         {@link Combo} or {@link List}.
 	 */
@@ -171,7 +171,7 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the location of a {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the location of a {@link Control}.
 	 */
 	public static IWidgetValueProperty location() {
@@ -181,7 +181,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the maximum value of a
 	 * {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
-	 * 
+	 *
 	 * @return a value property for observing the maximum value of a
 	 *         {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
 	 */
@@ -192,7 +192,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the message of a {@link Text} or
 	 * {@link ToolTip}.
-	 * 
+	 *
 	 * @return a value property for observing the message of a {@link Text} or
 	 *         {@link ToolTip}.
 	 */
@@ -203,7 +203,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the minimum value of a
 	 * {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
-	 * 
+	 *
 	 * @return a value property for observing the minimum value of a
 	 *         {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
 	 */
@@ -216,7 +216,7 @@ public class WidgetProperties {
 	 * {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
 	 * {@link List}, {@link MenuItem} (since 1.5), {@link Scale}, {@link Slider}
 	 * (since 1.5) or {@link Spinner}.
-	 * 
+	 *
 	 * @return a value property for observing the selection state of a
 	 *         {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
 	 *         {@link List}, {@link MenuItem}, {@link Scale}, {@link Slider} or
@@ -229,7 +229,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the single selection index of a
 	 * {@link CCombo}, {@link Combo}, {@link List} or {@link Table}.
-	 * 
+	 *
 	 * @return a value property for the single selection index of a SWT Combo.
 	 */
 	public static IWidgetValueProperty singleSelectionIndex() {
@@ -238,7 +238,7 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the size of a {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the size of a {@link Control}.
 	 */
 	public static IWidgetValueProperty size() {
@@ -250,7 +250,7 @@ public class WidgetProperties {
 	 * {@link CCombo}, {@link CLabel}, {@link Combo}, {@link Item},
 	 * {@link Label}, {@link Link}, {@link Shell}, {@link Group},
 	 * {@link StyledText} or {@link Text}.
-	 * 
+	 *
 	 * @return a value property for observing the text of a {@link Button},
 	 *         {@link CCombo}, {@link CLabel}, {@link Combo}, {@link Group},
 	 *         {@link Item}, {@link Label}, {@link Link}, {@link Shell}, link
@@ -263,12 +263,12 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the text of a {@link StyledText}
 	 * or {@link Text}.
-	 * 
+	 *
 	 * @param event
 	 *            the SWT event type to register for change events. May be
 	 *            {@link SWT#None}, {@link SWT#Modify}, {@link SWT#FocusOut} or
 	 *            {@link SWT#DefaultSelection}.
-	 * 
+	 *
 	 * @return a value property for observing the text of a {@link StyledText}
 	 *         or {@link Text}.
 	 */
@@ -279,12 +279,12 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the text of a {@link StyledText}
 	 * or {@link Text}.
-	 * 
+	 *
 	 * @param events
 	 *            array of SWT event types to register for change events. May
 	 *            include {@link SWT#None}, {@link SWT#Modify},
 	 *            {@link SWT#FocusOut} or {@link SWT#DefaultSelection}.
-	 * 
+	 *
 	 * @return a value property for observing the text of a {@link StyledText}
 	 *         or {@link Text}.
 	 */
@@ -296,7 +296,7 @@ public class WidgetProperties {
 	 * Returns a value property for observing the tooltip text of a
 	 * {@link CTabItem}, {@link Control}, {@link TabItem}, {@link TableColumn},
 	 * {@link ToolItem}, {@link TrayItem} or {@link TreeColumn}.
-	 * 
+	 *
 	 * @return a value property for observing the tooltip text of a
 	 *         {@link CTabItem}, {@link Control}, {@link TabItem},
 	 *         {@link TableColumn}, {@link ToolItem}, {@link TrayItem} or
@@ -309,7 +309,7 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the visibility state of a
 	 * {@link Control}.
-	 * 
+	 *
 	 * @return a value property for observing the visibility state of a
 	 *         {@link Control}.
 	 */

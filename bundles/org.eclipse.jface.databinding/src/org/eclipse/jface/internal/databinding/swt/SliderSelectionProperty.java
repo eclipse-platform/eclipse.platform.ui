@@ -15,11 +15,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Slider;
 
 /**
- * 
+ *
  */
 public class SliderSelectionProperty extends WidgetIntValueProperty {
 	/**
-	 * 
+	 *
 	 */
 	public SliderSelectionProperty() {
 		super(SWT.Selection);

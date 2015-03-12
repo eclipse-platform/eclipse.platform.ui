@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Table;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public final class WidgetSingleSelectionIndexProperty extends
 		WidgetDelegatingValueProperty {
@@ -29,7 +29,7 @@ public final class WidgetSingleSelectionIndexProperty extends
 	private IValueProperty table;
 
 	/**
-	 * 
+	 *
 	 */
 	public WidgetSingleSelectionIndexProperty() {
 		super(Integer.TYPE);

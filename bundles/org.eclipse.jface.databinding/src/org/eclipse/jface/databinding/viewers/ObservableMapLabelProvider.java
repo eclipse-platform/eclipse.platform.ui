@@ -30,16 +30,16 @@ import org.eclipse.swt.graphics.Image;
  * subclassing and overriding {@link #getColumnText(Object, int)},
  * {@link #getColumnImage(Object, int)}, for tables or trees with columns, or by
  * implementing additional mixin interfaces for colors, fonts etc.
- * 
+ *
  * @since 1.1
- * 
+ *
  */
 public class ObservableMapLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	/**
 	 * Observable maps typically mapping from viewer elements to label values.
 	 * Subclasses may reference these maps to provide custom labels.
-	 * 
+	 *
 	 * @since 1.4
 	 */
 	protected IObservableMap[] attributeMaps;

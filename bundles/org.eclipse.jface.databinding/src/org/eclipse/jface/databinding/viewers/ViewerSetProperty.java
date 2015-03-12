@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
  * <li>All <code>observe()</code> methods should return an
  * {@link IViewerObservableSet}
  * </ul>
- * 
+ *
  * @since 1.3
  */
 public abstract class ViewerSetProperty extends SimpleSetProperty implements

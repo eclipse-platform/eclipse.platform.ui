@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class CheckboxTreeViewerUpdater extends TreeViewerUpdater {
 	private final CheckboxTreeViewer checkboxViewer;
