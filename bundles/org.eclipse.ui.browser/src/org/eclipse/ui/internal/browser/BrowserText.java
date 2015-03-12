@@ -73,7 +73,7 @@ public class BrowserText {
         scomp = new ReflowScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         Composite client = new Composite(scomp, SWT.NULL);
         fillContent(client, bg);
-        scomp.setContent(client);        
+        scomp.setContent(client);
         scomp.setBackground(bg);
     }
 

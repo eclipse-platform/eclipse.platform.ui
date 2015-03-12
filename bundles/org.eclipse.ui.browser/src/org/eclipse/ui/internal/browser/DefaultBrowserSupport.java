@@ -80,7 +80,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int,
 	 *      java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -104,14 +104,14 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		// preference
 		// The help editor will open in an editor regardless of the user preferences
 		boolean isHelpEditor = ((style & AS_EDITOR) != 0) && HELP_BROWSER_ID.equals(browserId);
-		if ((style & AS_EXTERNAL) != 0 || 
+		if ((style & AS_EXTERNAL) != 0 ||
 		    (WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL && !isHelpEditor)
 		    || !WebBrowserUtil.canUseInternalWebBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance()
 					.getCurrentWebBrowser();
 			if (ewb == null)
 				throw new PartInitException(Messages.errorNoBrowser);
-			
+
 			if (ewb instanceof SystemBrowserDescriptor)
 				webBrowser = new SystemBrowserInstance(browserId);
 			else {
@@ -155,7 +155,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(java.lang.String)
 	 */
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
@@ -164,7 +164,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
 	 */
 	public boolean isInternalWebBrowserAvailable() {
@@ -188,7 +188,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		} else
 			browserIdMap.remove(baseId);
 	}
-	
+
 	private String getDefaultId() {
 		String id = null;
 		for (int i = 0; i < Integer.MAX_VALUE; i++) {

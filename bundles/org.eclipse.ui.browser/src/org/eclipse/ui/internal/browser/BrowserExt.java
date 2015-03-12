@@ -36,7 +36,7 @@ public class BrowserExt implements IBrowserExt {
 
 	/**
 	 * Returns the id of this browser.
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	public String getId() {
@@ -101,7 +101,7 @@ public class BrowserExt implements IBrowserExt {
 
 	/**
 	 * Checks whether the factory can work on the user system.
-	 * 
+	 *
 	 * @return false if the factory cannot work on this system; for example the
 	 *         required native browser required by browser adapters that it
 	 *         creates is not installed
@@ -110,7 +110,7 @@ public class BrowserExt implements IBrowserExt {
 		if (delegate == null && (element.getAttribute(ATTR_FACTORY_CLASS) == null
 				|| element.getAttribute(ATTR_FACTORY_CLASS).length() == 0))
 			return true;
-		
+
 		try {
 			return getDelegate().isAvailable();
 		} catch (Exception e) {
@@ -124,7 +124,7 @@ public class BrowserExt implements IBrowserExt {
 
 	/**
 	 * Obtains a new instance of a web browser.
-	 * 
+	 *
 	 * @return instance of IBrowser
 	 */
 	public IWebBrowser createBrowser(String id, String location,
@@ -142,7 +142,7 @@ public class BrowserExt implements IBrowserExt {
 
 	/**
 	 * Return a string representation of this object.
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	public String toString() {

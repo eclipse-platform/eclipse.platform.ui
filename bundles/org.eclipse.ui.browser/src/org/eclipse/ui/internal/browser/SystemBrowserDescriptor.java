@@ -34,7 +34,7 @@ public class SystemBrowserDescriptor implements IBrowserDescriptor {
 	public IBrowserDescriptorWorkingCopy getWorkingCopy() {
 		return null;
 	}
-	
+
 	public boolean equals(Object obj) {
 		return obj instanceof SystemBrowserDescriptor;
 	}

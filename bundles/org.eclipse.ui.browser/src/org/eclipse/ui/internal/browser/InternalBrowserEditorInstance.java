@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -30,15 +30,15 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 		input.setName(this.name);
 		input.setToolTipText(this.tooltip);
 		WebBrowserEditor editor = (WebBrowserEditor)part;
-		
+
 		IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = null;
 		if (workbenchWindow != null)
 			page = workbenchWindow.getActivePage();
-		
+
 		if (page == null)
 			throw new PartInitException(Messages.errorCouldNotLaunchInternalWebBrowser);
-		
+
 		if (editor != null) {
 			editor.init(editor.getEditorSite(), input);
 			page.activate(editor);

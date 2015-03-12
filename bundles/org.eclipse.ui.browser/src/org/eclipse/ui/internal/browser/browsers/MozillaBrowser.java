@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Shawn Minto, patch for Bug 247731
@@ -34,14 +34,14 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	private BrowserThread lastBrowserThread = null;
 
 	protected String executable;
-	
+
 	protected boolean firstLaunch = true;
 
 	private String parameters;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @executable executable filename to launch
 	 * @executableName name of the program to display when error occurs
 	 */
@@ -54,7 +54,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		    this.parameters = parameters;
 		}
 	}
-	
+
 	String getExecutable() {
 		return executable;
 	}
@@ -132,7 +132,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		/**
 		 * On some OSes 0 is always returned by netscape -remote. It is
 		 * necessary to examine ouput to find out failure
-		 * 
+		 *
 		 * @param outputs
 		 * @param errors
 		 * @return @throws
@@ -179,7 +179,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 			if (openBrowser(executable, parameters + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
 					== 0)
 				return;
-			
+
 			if (exitRequested)
 				return;
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;

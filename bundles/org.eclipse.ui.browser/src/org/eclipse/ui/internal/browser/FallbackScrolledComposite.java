@@ -29,7 +29,7 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 
     /**
      * Creates the new instance.
-     * 
+     *
      * @param parent
      *            the parent composite
      * @param style
@@ -49,7 +49,7 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 
     /**
      * Sets the foreground of the control and its content.
-     * 
+     *
      * @param fg
      *            the new foreground color
      */
@@ -61,7 +61,7 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 
     /**
      * Sets the background of the control and its content.
-     * 
+     *
      * @param bg
      *            the new background color
      */
@@ -106,7 +106,7 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
      * Recomputes the body layout and the scroll bars. The method should be used
      * when changes somewhere in the form body invalidate the current layout
      * and/or scroll bars.
-     * 
+     *
      * @param flushCache
      *            if <code>true</code>, drop the cached data
      */

@@ -122,7 +122,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	/**
 	 * Returns true if this page can reuse the browser that the given input is
 	 * being displayed in, or false if it should open up in a new page.
-	 * 
+	 *
 	 * @param input
 	 *            org.eclipse.ui.internal.browser.IWebBrowserEditorInput
 	 * @return boolean
@@ -146,7 +146,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	/**
 	 * Creates an <code>IElement</code> from the state captured within an
 	 * <code>IMemento</code>.
-	 * 
+	 *
 	 * @param memento
 	 *            a memento containing the state for an element
 	 * @return an element, or <code>null</code> if the element could not be
@@ -174,7 +174,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 		String id = memento.getString(MEMENTO_ID);
 		String name = memento.getString(MEMENTO_NAME);
 		String tooltip = memento.getString(MEMENTO_TOOLTIP);
-		
+
 		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style, id);
 		input.setName(name);
 		input.setToolTipText(tooltip);
@@ -216,7 +216,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	/**
 	 * Returns an object which is an instance of the given class associated with
 	 * this object. Returns <code>null</code> if no such object can be found.
-	 * 
+	 *
 	 * @param adapter
 	 *            the adapter class to look up
 	 * @return a object castable to the given class, or <code>null</code> if
@@ -230,7 +230,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 * Returns the ID of an element factory which can be used to recreate this
 	 * object. An element factory extension with this ID must exist within the
 	 * workbench registry.
-	 * 
+	 *
 	 * @return the element factory ID
 	 */
 	public String getFactoryId() {
@@ -241,10 +241,10 @@ public class WebBrowserEditorInput implements IEditorInput,
 		return ImageResource
 				.getImageDescriptor(ImageResource.IMG_INTERNAL_BROWSER);
 	}
-	
+
 	/**
 	 * Returns true if the name is locked and cannot be changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the name of the browser should not change
 	 */
 	protected boolean isNameLocked() {
@@ -257,7 +257,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 * For instance, if the fully qualified input name is
 	 * <code>"a\b\MyFile.gif"</code>, the return value would be just
 	 * <code>"MyFile.gif"</code>.
-	 * 
+	 *
 	 * @return the file name string
 	 */
 	public String getName() {
@@ -291,7 +291,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	/**
 	 * Returns the url.
-	 * 
+	 *
 	 * @return java.net.URL
 	 */
 	public URL getURL() {
@@ -301,7 +301,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	/**
 	 * Returns the browser id. Browsers with a set id will always & only be
 	 * replaced by browsers with the same id.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getBrowserId() {
@@ -310,7 +310,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	/**
 	 * Returns true if the status bar should be shown.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isStatusbarVisible() {
@@ -319,7 +319,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	/**
 	 * Returns true if the toolbar should be shown.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isLocationBarLocal() {
@@ -342,7 +342,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	/**
 	 * Saves the state of an element within a memento.
-	 * 
+	 *
 	 * @param memento
 	 *            the storage area for element state
 	 */
@@ -364,13 +364,13 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	/**
 	 * Converts this object to a string.
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	public String toString() {
 		return "WebBrowserEditorInput[" + url + " " + style + " " + id + "]";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	public int hashCode() {
 		int result = 0;
 		if (url != null) {

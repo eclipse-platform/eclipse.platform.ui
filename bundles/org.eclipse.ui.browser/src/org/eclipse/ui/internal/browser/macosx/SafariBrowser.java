@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 import org.eclipse.ui.internal.browser.browsers.DefaultBrowser;
 
 public class SafariBrowser extends DefaultBrowser {
-	
+
 	public SafariBrowser(String id, String location, String parameters) {
 		super(id, location, parameters);
 		this.location = location;
@@ -25,7 +25,7 @@ public class SafariBrowser extends DefaultBrowser {
 
 	/**
 	 * Creates the final command to launch.
-	 * 
+	 *
 	 * @param path
 	 * @param url
 	 * @return String[]
@@ -34,7 +34,7 @@ public class SafariBrowser extends DefaultBrowser {
 		if (url != null && url.toLowerCase().startsWith("file:")) { //$NON-NLS-1$
 			url = url.substring(5);
 		}
-		
+
 		ArrayList<String> tokenList = new ArrayList<String>();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(path.trim(),

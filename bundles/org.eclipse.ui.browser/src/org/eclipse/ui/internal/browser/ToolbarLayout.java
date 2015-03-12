@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  **********************************************************************/
@@ -31,14 +31,14 @@ public class ToolbarLayout extends Layout {
 	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 		if (hHint != SWT.DEFAULT)
 			return new Point(wHint, hHint);
-		
+
 		Control[] children = composite.getChildren();
 		int h = 0;
 		int size = children.length;
 		for (int i = 0; i < size; i++) {
 			h = Math.max(h, children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		}
-		
+
 		return new Point(wHint, h + MARGIN * 2);
 	}
 
@@ -48,7 +48,7 @@ public class ToolbarLayout extends Layout {
 	protected void layout(Composite composite, boolean flushCache) {
 		Control[] children = composite.getChildren();
 		Rectangle r = composite.getClientArea();
-		
+
 		int size = children.length;
 		Point[] sizes = new Point[size];
 		for (int i = 0; i < size; i++) {
@@ -56,13 +56,13 @@ public class ToolbarLayout extends Layout {
 		}
 
 		int h = r.height - MARGIN * 2;
-		
+
 		// put busy icon at right with a little extra spacing
 		int busy = size - 1;
 		children[busy].setBounds(r.x + r.width - MARGIN - sizes[busy].x,
-				r.y + MARGIN + (h-sizes[busy].y) / 2, 
+				r.y + MARGIN + (h-sizes[busy].y) / 2,
 				sizes[busy].x, sizes[busy].y);
-		
+
 		// find combo
 		int combo = -1;
 		int tw = r.width - MARGIN * 2 - (size - 1) * SPACING
@@ -75,7 +75,7 @@ public class ToolbarLayout extends Layout {
 		}
 		if (combo >= 0)
 			sizes[combo].x = tw;
-		
+
 		// space out other children with their standard size, give combo all
 		// remaining space (if it exists)
 		int x = MARGIN;

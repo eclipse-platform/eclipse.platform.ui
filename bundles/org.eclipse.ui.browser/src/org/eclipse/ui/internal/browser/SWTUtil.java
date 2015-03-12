@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class SWTUtil {
 
 	/**
 	 * Create a new button with the standard size.
-	 * 
+	 *
 	 * @param comp a component to add the button to
 	 * @param label the button label
 	 * @return a button
@@ -60,10 +60,10 @@ public class SWTUtil {
 		b.setLayoutData(data);
 		return b;
 	}
-	
+
 	/**
 	 * Create a new standard label.
-	 * 
+	 *
 	 * @param comp a component to add the label to
 	 * @param text the label text
 	 * @return a label

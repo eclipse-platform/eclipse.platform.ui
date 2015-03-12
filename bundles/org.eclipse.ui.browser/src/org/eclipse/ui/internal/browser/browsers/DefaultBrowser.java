@@ -23,12 +23,12 @@ import org.eclipse.ui.internal.browser.Messages;
 import org.eclipse.ui.internal.browser.Trace;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 /**
- * 
+ *
  */
 public class DefaultBrowser extends AbstractWebBrowser {
 	protected String location;
 	protected String parameters;
-	
+
 	public DefaultBrowser(String id, String location, String parameters) {
 		super(id);
 		this.location = location;
@@ -67,7 +67,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 
 	/**
 	 * Creates the final command to launch.
-	 * 
+	 *
 	 * @param path
 	 * @param url
 	 * @return String[]
@@ -124,11 +124,11 @@ public class DefaultBrowser extends AbstractWebBrowser {
 		tokenList.toArray(command);
 		return command;
 	}
-	
+
 	/**
 	 * Replaces any occurrences of <code>"%1"</code> or <code>%1</code> with
 	 * the URL.
-	 * 
+	 *
 	 * @param token
 	 *            The token in which the substitutions should be made; must not
 	 *            be <code>null</code>.

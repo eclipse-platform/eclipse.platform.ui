@@ -84,7 +84,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	protected Label location;
 
 	protected Label parameters;
-	
+
 	protected IBrowserDescriptor checkedBrowser;
 
 	class BrowserContentProvider implements IStructuredContentProvider {
@@ -151,7 +151,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 	/**
 	 * Create the preference options.
-	 * 
+	 *
 	 * @param parent
 	 *            org.eclipse.swt.widgets.Composite
 	 * @return org.eclipse.swt.widgets.Control
@@ -224,7 +224,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				checkNewDefaultBrowser(e.getElement());
 				checkedBrowser = (IBrowserDescriptor) e.getElement();
-				
+
 				// if no other browsers are checked, don't allow the single one
 				// currently checked to become unchecked, and lose a current
 				// browser. That is, don't permit unchecking if no other item
@@ -456,7 +456,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					browser2.save();
 				}
 				tableViewer.refresh();
-				
+
 				if (checkedBrowser != null)
 					tableViewer.setChecked(checkedBrowser, true);
 			}
@@ -499,7 +499,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 	/**
 	 * Initializes this preference page using the passed workbench.
-	 * 
+	 *
 	 * @param workbench
 	 *            the current workbench
 	 */
@@ -508,7 +508,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -549,7 +549,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 		monitor.subTask(NLS.bind(Messages.searching,
 				new String[] { Integer.toString(foundBrowsers.size()), directory.getAbsolutePath()}));
-		
+
 		String[] names = directory.list();
 		List<File> subDirs = new ArrayList<File>();
 
@@ -566,7 +566,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					.createExternalBrowser(file);
 			if (wc != null)
 				foundBrowsers.add(wc);
-			
+
 			if (file.isDirectory()) {
 				if (monitor.isCanceled())
 					return;
@@ -591,15 +591,15 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				.isDefaultUseInternalBrowser());
 		external.setSelection(!WebBrowserPreference.
 				isDefaultUseInternalBrowser());
-		
+
 		BrowserManager.getInstance().currentBrowser = null;
 		BrowserManager.getInstance().setupDefaultBrowsers();
 		tableViewer.refresh();
-		
+
 		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
 		if (checkedBrowser != null)
 			tableViewer.setChecked(checkedBrowser, true);
-		
+
 		super.performDefaults();
 	}
 
@@ -621,7 +621,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 		return true;
 	}
-	
+
 	public boolean performCancel() {
 		BrowserManager.getInstance().loadBrowsers();
 		return super.performCancel();

@@ -35,7 +35,7 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
     * The last valid operation.
     */
    private int lastValidOperation = DND.DROP_NONE;
-   
+
    protected WebBrowserViewDropAdapter(BrowserViewer view) {
 		this.view = view;
 	}
@@ -50,13 +50,13 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
        //update last valid operation
        if (event.detail != DND.DROP_NONE)
            lastValidOperation = event.detail;
-       
+
        //valid drop and set event detail accordingly
        if (validateDrop(event.detail, event.currentDataType))
            currentOperation = lastValidOperation;
        else
            currentOperation = DND.DROP_NONE;
-       
+
        event.detail = currentOperation;
    }
 
@@ -91,7 +91,7 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
        //perform the drop behaviour
        if (!performDrop(event.data))
            event.detail = DND.DROP_NONE;
-       
+
        currentOperation = event.detail;
    }
 
@@ -118,7 +118,7 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
     * </p>
     *
     * @param data the drop data
-    * @return <code>true</code> if the drop was successful, and 
+    * @return <code>true</code> if the drop was successful, and
     *   <code>false</code> otherwise
     */
 	protected boolean performDrop(Object data) {
@@ -133,17 +133,17 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 				// TODO
 			}
 		}
-		
+
 		return true;
 	}
 
 	/**
-    * Validates dropping on the given object. This method is called whenever some 
+    * Validates dropping on the given object. This method is called whenever some
     * aspect of the drop operation changes.
     * <p>
     * Subclasses must implement this method to define which drops make sense.
     * </p>
-    * 
+    *
     * @param target the object that the mouse is currently hovering over, or
     *   <code>null</code> if the mouse is hovering over empty space
     * @param operation the current drag operation (copy, move, etc.)
@@ -158,7 +158,7 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 			return true;
 		if (LocalSelectionTransfer.getInstance().isSupportedType(transferType))
 			return true;*/
-		
+
 		return false;
 	}
 }

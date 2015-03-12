@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -37,7 +37,7 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 				    view.setBrowserViewName(name);
 				}
 				hookPart(page, view);
-                
+
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 			}

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 /**
- * 
+ *
  */
 public class BrowserDescriptorWorkingCopy extends BrowserDescriptor implements IBrowserDescriptorWorkingCopy {
 	protected BrowserDescriptor browser;
@@ -52,7 +52,7 @@ public class BrowserDescriptorWorkingCopy extends BrowserDescriptor implements I
 	public boolean isWorkingCopy() {
 		return true;
 	}
-	
+
 	public IBrowserDescriptorWorkingCopy getWorkingCopy() {
 		return this;
 	}

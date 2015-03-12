@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  * Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
@@ -51,7 +51,7 @@ public class WebBrowserUtil {
 
 	/**
 	 * Returns true if we're running on Windows.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static boolean isWindows() {
@@ -63,7 +63,7 @@ public class WebBrowserUtil {
 
 	/**
 	 * Returns true if we're running on linux.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static boolean isLinux() {
@@ -75,7 +75,7 @@ public class WebBrowserUtil {
 
 	/**
 	 * Open a dialog window.
-	 * 
+	 *
 	 * @param message
 	 *            java.lang.String
 	 */
@@ -90,7 +90,7 @@ public class WebBrowserUtil {
 
 	/**
 	 * Open a dialog window.
-	 * 
+	 *
 	 * @param message
 	 *            java.lang.String
 	 */
@@ -117,7 +117,7 @@ public class WebBrowserUtil {
 	 * bother adding the Internal Web ExternalBrowserInstance that uses this
 	 * widget. Designed to be attemped only once and the flag set used
 	 * throughout.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static boolean canUseInternalWebBrowser() {
@@ -288,7 +288,7 @@ public class WebBrowserUtil {
 	/**
 	 * Create an external Web browser if the file matches the default (known)
 	 * browsers.
-	 * 
+	 *
 	 * @param file
 	 * @return an external browser working copy
 	 */
@@ -315,7 +315,7 @@ public class WebBrowserUtil {
 
 	/**
 	 * Encodes browser style in the secondary id as id-style
-	 * 
+	 *
 	 * @param browserId
 	 * @param style
 	 * @return secondaryId
@@ -326,7 +326,7 @@ public class WebBrowserUtil {
 
 	/**
 	 * Decodes secondary id into a browser style.
-	 * 
+	 *
 	 * @param secondaryId
 	 * @return style
 	 */
@@ -352,7 +352,7 @@ public class WebBrowserUtil {
 		}
 		return encodedId;
 	}
-	
+
 	public static String createParameterString(String parameters, String urlText) {
 		String params = parameters;
 		String url = urlText;
@@ -370,7 +370,7 @@ public class WebBrowserUtil {
 							+ IBrowserDescriptor.URL_PARAMETER.length());
 		else {
 			if (params.length() != 0 && !params.endsWith(" ")) //$NON-NLS-1$
-				params += " "; //$NON-NLS-1$ 
+				params += " "; //$NON-NLS-1$
 			params += url;
 		}
 		return params;

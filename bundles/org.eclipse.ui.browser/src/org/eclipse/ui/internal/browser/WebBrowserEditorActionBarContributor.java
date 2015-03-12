@@ -50,12 +50,12 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 		} else
 			editor = null;
 	}
-	
+
 	protected BrowserViewer getWebBrowser() {
 		if (editor == null)
 			return null;
-		
-		return editor.webBrowser; 
+
+		return editor.webBrowser;
 	}
 
 	/*
@@ -68,7 +68,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
    	if (input.isLocationBarGlobal()) {
 	   	final LocationContributionItem location = new LocationContributionItem();
 	   	toolBarManager.add(location);
-	   
+
 	   	Action go = new Action() {
 	   		public void run() {
 	   			getWebBrowser().setURL(location.getText());
@@ -80,11 +80,11 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	go.setToolTipText(Messages.actionWebBrowserGo"));
 	   	toolBarManager.add(go);
    	}
-   	
+
    	if (input.isLocationBarGlobal() && input.isToolbarGlobal()) {
    		toolBarManager.add(new Separator());
    	}
-   	
+
    	if (input.isToolbarGlobal()) {
 	   	Action favorites = new Action(Messages.actionWebBrowserFavorites"), IAction.AS_DROP_DOWN_MENU) {
 	   		public void run() {
@@ -95,10 +95,10 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 						public void dispose() {
 							// do nothing
 						}
-	
+
 						public Menu getMenu(final Control parent) {
 							Menu menu = new Menu(parent);
-							
+
 							// locked favorites
 							Iterator iterator = WebBrowserUtil.getLockedFavorites().iterator();
 							if (iterator.hasNext()) {
@@ -113,10 +113,10 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 										}
 									});
 								}
-								
+
 								new MenuItem(menu, SWT.SEPARATOR);
 							}
-							
+
 							iterator = WebBrowserPreference.getInternalWebBrowserFavorites().iterator();
 							if (!iterator.hasNext()) {
 								MenuItem item = new MenuItem(menu, SWT.NONE);
@@ -133,9 +133,9 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 									}
 								});
 							}
-							
+
 							new MenuItem(menu, SWT.SEPARATOR);
-					
+
 							MenuItem item = new MenuItem(menu, SWT.NONE);
 							item.setText(Messages.actionWebBrowserOrganizeFavorites"));
 							item.addSelectionListener(new SelectionAdapter() {
@@ -146,10 +146,10 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 							});
 							return menu;
 						}
-	
+
 						public Menu getMenu(final Menu parent) {
 							Menu menu = new Menu(parent);
-							
+
 							// locked favorites
 							Iterator iterator = WebBrowserUtil.getLockedFavorites().iterator();
 							if (iterator.hasNext()) {
@@ -164,10 +164,10 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 										}
 									});
 								}
-								
+
 								new MenuItem(menu, SWT.SEPARATOR);
 							}
-							
+
 							iterator = WebBrowserPreference.getInternalWebBrowserFavorites().iterator();
 							if (!iterator.hasNext()) {
 								MenuItem item = new MenuItem(menu, SWT.NONE);
@@ -184,9 +184,9 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 									}
 								});
 							}
-							
+
 							new MenuItem(menu, SWT.SEPARATOR);
-					
+
 							MenuItem item = new MenuItem(menu, SWT.NONE);
 							item.setText(Messages.actionWebBrowserOrganizeFavorites"));
 							item.addSelectionListener(new SelectionAdapter() {
@@ -205,7 +205,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	favorites.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_FAVORITES));
 	   	favorites.setToolTipText(Messages.actionWebBrowserFavorites"));
 	   	toolBarManager.add(favorites);
-	   	
+
 	   	back = new Action() {
 	   		public void run() {
 	   			getWebBrowser().back();
@@ -216,7 +216,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 			back.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_BACKWARD));
 			back.setToolTipText(Messages.actionWebBrowserBack"));
 	   	toolBarManager.add(back);
-	   	
+
 	   	forward = new Action() {
 	   		public void run() {
 	   			getWebBrowser().forward();
@@ -227,7 +227,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 			forward.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_FORWARD));
 			forward.setToolTipText(Messages.actionWebBrowserForward"));
 	   	toolBarManager.add(forward);
-	   	
+
 	   	Action stop = new Action() {
 	   		public void run() {
 	   			getWebBrowser().stop();
@@ -238,7 +238,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	stop.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_STOP));
 	   	stop.setToolTipText(Messages.actionWebBrowserStop"));
 	   	toolBarManager.add(stop);
-	   	
+
 	   	Action refresh = new Action() {
 	   		public void run() {
 	   			getWebBrowser().refresh();
@@ -250,9 +250,9 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	refresh.setToolTipText(Messages.actionWebBrowserRefresh"));
 	   	toolBarManager.add(refresh);
    	}*/
-   	
+
    	/*toolBarManager.add(new Separator());
-   	
+
    	ControlContribution busyCont = new ControlContribution("webbrowser.busy") {
    	   protected Control createControl(Composite parent) {
    	   	busy = new BusyIndicator(parent, SWT.NONE);

@@ -114,7 +114,7 @@ public class WebBrowserView extends ViewPart implements
 		getSite().getWorkbenchWindow().getSelectionService()
 				.addPostSelectionListener(listener);
 	}
-	
+
 	private void onSelectionChange(ISelection selection) {
 		if (!(selection instanceof IStructuredSelection))
 			return;
@@ -127,7 +127,7 @@ public class WebBrowserView extends ViewPart implements
 				setURL(url.toExternalForm());
 		}
 	}
-	
+
 	private URL getURLFromAdaptable(IAdaptable adapt) {
 		// test for path
 		IPath path= adapt.getAdapter(IPath.class);
@@ -153,7 +153,7 @@ public class WebBrowserView extends ViewPart implements
 
 	/**
 	 * Return true if the filename has a "web" extension.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -184,7 +184,7 @@ public class WebBrowserView extends ViewPart implements
 	public void setBrowserViewName(String name) {
 		setPartName(name);
 	}
-	
+
 	public void setBrowserViewTooltip(String tip) {
 		setTitleToolTip(tip);
 	}

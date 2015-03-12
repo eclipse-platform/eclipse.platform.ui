@@ -29,7 +29,7 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 	protected IWorkbenchPart part;
 
 	protected IPartListener listener;
-	
+
 	private Integer windowKey;
 
 	public InternalBrowserInstance(String id, int style, String name,

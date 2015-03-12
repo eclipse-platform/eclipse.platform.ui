@@ -39,7 +39,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 		ArrayList<String> cmdOptions = new ArrayList<String>();
 		String location = browser.getLocation();
 		cmdOptions.add(location);
-		String parameters = browser.getParameters();		
+		String parameters = browser.getParameters();
 		Trace
 		.trace(
 				Trace.FINEST,

@@ -4,9 +4,9 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     IBM Corporation - initial API and implementation    
+ *     IBM Corporation - initial API and implementation
  *     Shawn Minto, patch for Bug 247731
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.browsers;
@@ -16,14 +16,14 @@ import org.eclipse.ui.browser.IWebBrowser;
 
 public class MozillaFactory extends BrowserFactory {
 	private MozillaBrowser browserInstance = null;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public MozillaFactory() {
 		super();
 	}
-	
+
 	/*
 	 * @see BrowserFactory#isAvailable()
 	 */
@@ -35,7 +35,7 @@ public class MozillaFactory extends BrowserFactory {
 			StreamConsumer errors = new StreamConsumer(pr.getErrorStream());
 			(errors).start();
 			pr.waitFor();
-			
+
 			int ret = pr.exitValue();
 			if (ret == 0)
 				return !errorsInOutput(outputs, errors);
@@ -47,11 +47,11 @@ public class MozillaFactory extends BrowserFactory {
 			return true;
 		}
 	}*/
-	
+
 	/**
 	 * On some OSes 0 is always returned by "which" command it is necessary to
 	 * examine ouput to find out failure.
-	 * 
+	 *
 	 * @param outputs
 	 * @param errors
 	 * @return @throws

@@ -13,18 +13,18 @@ package org.eclipse.ui.internal.browser;
 import org.eclipse.ui.browser.IWebBrowser;
 
 /**
- * A 
- * 
+ * A
+ *
  * <p>This interface is not intended to be implemented by clients.</p>
- * 
+ *
  * @since 1.0
  */
 public interface IBrowserExt {
 	/**
-	 * Returns the id of this client. Each known client has a distinct id. 
+	 * Returns the id of this client. Each known client has a distinct id.
 	 * Ids are intended to be used internally as keys; they are not
 	 * intended to be shown to end users.
-	 * 
+	 *
 	 * @return the client id
 	 */
 	public String getId();
@@ -52,24 +52,24 @@ public interface IBrowserExt {
 	 * @return the browser's executable
 	 */
 	public String getExecutable();
-	
+
 	/**
 	 * Returns the OSs that this browser is available on.
 	 *
 	 * @return an array of OSs that this browser runs on
 	 */
 	public String getOS();
-	
+
 	/**
 	 * Returns the default install locations of this browser.
 	 *
 	 * @return the default install locations of this browser
 	 */
 	public String[] getDefaultLocations();
-	
+
 	/**
 	 * Checks whether the factory can work on the user system.
-	 * 
+	 *
 	 * @return false if the factory cannot work on this system; for example the
 	 *    required native browser required by browser adapters that it
 	 *    creates is not installed
@@ -78,7 +78,7 @@ public interface IBrowserExt {
 
 	/**
 	 * Obtains a new instance of a web browser.
-	 * 
+	 *
 	 * @return instance of IBrowser
 	 */
 	public IWebBrowser createBrowser(String id, String location, String parameters);
