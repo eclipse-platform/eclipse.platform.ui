@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.log.LogService;
 
 public class Services {
-	
+
 	// TODO E4 synchronization needed ?
 
 	@Inject
@@ -45,58 +45,58 @@ public class Services {
 
 	@Inject
 	private MApplication mApplication;
-	
+
 	@Inject
 	@Optional
 	@Active
 	private MWindow window;
-	
+
 	@Inject
 	private EHandlerService eHandlerService;
-	
+
 	@Inject
 	private IProgressService progressService;
-	
+
 	@Inject
 	private EModelService modelService;
-	
+
 	@Inject
 	private EPartService partService;
 
 	@Inject
 	private LogService logService;
-	
+
 	@Inject
 	private StatusReporter statusReporter;
 
 	@Inject
 	private UISynchronize uiSynchronize;
-	
+
 	@Inject
 	IEclipseContext localContext;
-	
+
 	IEclipseContext appContext;
-	
+
 	protected static Services instance;
 
 	Services() {
 		instance = this;
 	}
-	
+
 	@PostConstruct
 	void init() {
 		appContext = mApplication.getContext();
 		appContext.set(Services.class, this);
 	}
-	
+
 	public <T> T getService(Class<T> clazz) {
 		return localContext.get(clazz);
 	}
-	
+
 	public <T> void registerService(Class<T> clazz, T value) {
 		appContext.set(clazz, value);
 	}
-	
+
 	public static Services getInstance() {
 	    return instance;
     }
@@ -104,7 +104,7 @@ public class Services {
 	public Display getDisplay() {
 		return display != null ? display : getDefaultDisplay();
 	}
-	
+
 	private Display getDefaultDisplay() {
 		Display display = Display.getCurrent();
 		if (display == null) {
@@ -112,7 +112,7 @@ public class Services {
 		}
 		return display;
 	}
-	
+
 	public Shell getShell() {
 		return shell;
 	}
@@ -148,7 +148,7 @@ public class Services {
 	public MWindow getMWindow() {
 	    return window;
     }
-	
+
 	public MApplication getMApplication() {
 		return mApplication;
 	}

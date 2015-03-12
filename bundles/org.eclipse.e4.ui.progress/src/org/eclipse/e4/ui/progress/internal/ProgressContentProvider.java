@@ -24,14 +24,14 @@ public abstract class ProgressContentProvider implements
 	 * Return whether or not we check the preferences or overide.
 	 */
     private boolean canShowDebug = false;
-    
+
     protected ProgressViewUpdater progressViewUpdater;
-    
+
     private ProgressManager progressManager;
 
     /**
      * Create a new instance of the receiver with all of the
-     * default values.  
+     * default values.
      */
 	public ProgressContentProvider(ProgressViewUpdater progressViewUpdater,
 	        ProgressManager progressManager) {
@@ -41,7 +41,7 @@ public abstract class ProgressContentProvider implements
     }
 
     /**
-     * Create a new instance of the receiver with a flag to 
+     * Create a new instance of the receiver with a flag to
      * indicate if there will be debug info shown or not.
      * @param debug If true debug information will be shown
      * if the debug flag in the ProgressManager is true.
@@ -54,7 +54,7 @@ public abstract class ProgressContentProvider implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
      */
     public Object[] getElements(Object inputElement) {
@@ -64,7 +64,7 @@ public abstract class ProgressContentProvider implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.IContentProvider#dispose()
      */
     public void dispose() {
@@ -73,14 +73,14 @@ public abstract class ProgressContentProvider implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
      *      java.lang.Object, java.lang.Object)
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         //No change when input changes
     }
-    
+
     /**
      * Return whether or not we are debugging. Check the
      * system settings unless we are overiding them.
@@ -92,7 +92,7 @@ public abstract class ProgressContentProvider implements
 			return false;
 		}
     	return progressViewUpdater.showsDebug();
-    	
+
     }
 
 }

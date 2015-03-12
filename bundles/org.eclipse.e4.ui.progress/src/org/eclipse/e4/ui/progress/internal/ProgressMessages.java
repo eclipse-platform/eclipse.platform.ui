@@ -40,7 +40,7 @@ public class ProgressMessages extends NLS {
 	public static String ProgressView_CancelAction;
 	public static String ProgressView_ClearAllAction;
 	public static String ProgressView_NoOperations;
-	
+
 	public static String NewProgressView_RemoveAllJobsToolTip;
 	public static String NewProgressView_CancelJobToolTip;
 	public static String NewProgressView_ClearJobToolTip;
@@ -71,16 +71,16 @@ public class ProgressMessages extends NLS {
 	public static String JobErrorDialog_CloseDialogTitle;
 	public static String JobsViewPreferenceDialog_Title;
 	public static String JobErrorDialog_DoNotShowAgainMessage;
-	
+
 	public static String EventLoopProgressMonitor_OpenDialogJobName;
-	
+
 	public static String WorkbenchPreference_RunInBackgroundButton;
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
-	
+
 	public static String TrimCommon_Progress_TrimName;
-	
+
 	public static String StatusUtil_errorOccurred;
-	
+
 //	public static String ProgressView_ClearAll; //TODO E4
 
 	static {

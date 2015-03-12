@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * The UIJob is a Job that runs within the UI Thread via an asyncExec.
- * 
+ *
  * @since 3.0
  */
 public abstract class UIJob extends Job {
@@ -35,10 +35,10 @@ public abstract class UIJob extends Job {
      * Create a new instance of the receiver with the supplied name. The display
      * used will be the one from the workbench if this is available. UIJobs with
      * this constructor will determine their display at runtime.
-     * 
+     *
      * @param name
      *            the job name
-     *  
+     *
      */
     public UIJob(String name) {
         super(name);
@@ -46,7 +46,7 @@ public abstract class UIJob extends Job {
 
     /**
      * Create a new instance of the receiver with the supplied Display.
-     * 
+     *
      * @param jobDisplay
      *            the display
      * @param name
@@ -60,7 +60,7 @@ public abstract class UIJob extends Job {
 
     /**
      * Convenience method to return a status for an exception.
-     * 
+     *
      * @param exception
      * @return IStatus an error status built from the exception
      * @see Job
@@ -118,7 +118,7 @@ public abstract class UIJob extends Job {
 
     /**
      * Run the job in the UI Thread.
-     * 
+     *
      * @param monitor
      * @return IStatus
      */
@@ -127,7 +127,7 @@ public abstract class UIJob extends Job {
     /**
      * Sets the display to execute the asyncExec in. Generally this is not'
      * used if there is a valid display available via PlatformUI.isWorkbenchRunning().
-     * 
+     *
      * @param runDisplay
      *            Display
      * @see UIJob#getDisplay()
@@ -143,7 +143,7 @@ public abstract class UIJob extends Job {
      * asyncExec. If it is not set then the display set in the workbench
      * is used.
      * If the display is null the job will not be run.
-     * 
+     *
      * @return Display or <code>null</code>.
      */
     public Display getDisplay() {
@@ -180,9 +180,9 @@ public abstract class UIJob extends Job {
         return new Status(IStatus.ERROR, pluginId, errorCode, message,
                 StatusUtil.getCause(t));
     }
-    
+
     protected UISynchronize getUiSynchronize() {
         return Services.getInstance().getUISynchronize();
     }
-    
+
 }

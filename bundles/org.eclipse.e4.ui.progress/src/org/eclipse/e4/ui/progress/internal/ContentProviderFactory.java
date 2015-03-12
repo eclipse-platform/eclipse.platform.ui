@@ -20,10 +20,10 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 @Creatable
 @Singleton
 public class ContentProviderFactory {
-	
+
 	@Inject
 	Services services;
-	
+
 	@PostConstruct
 	void init() {
 		services.registerService(ContentProviderFactory.class, this);
@@ -39,5 +39,5 @@ public class ContentProviderFactory {
 		        services.getService(ProgressViewUpdater.class),
 		        services.getService(ProgressManager.class), debug, showFinished);
 	}
-	
+
 }

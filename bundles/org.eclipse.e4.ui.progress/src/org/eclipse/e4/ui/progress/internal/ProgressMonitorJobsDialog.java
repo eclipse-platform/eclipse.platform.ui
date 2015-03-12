@@ -58,22 +58,22 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     protected boolean alreadyClosed = false;
 
     private IProgressMonitor wrapperedMonitor;
-    
+
     private IProgressService progressService;
 
     private ProgressManager progressManager;
-    
+
     private ContentProviderFactory contentProviderFactory;
 
     private FinishedJobs finishedJobs;
-    
+
     //Cache initial enablement in case the enablement state is set
     //before the button is created
     protected boolean enableDetailsButton = false;
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param parent
      */
 	public ProgressMonitorJobsDialog(Shell parent,
@@ -88,7 +88,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
@@ -116,7 +116,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     /**
      * The details button has been selected. Open or close the progress viewer
      * as appropriate.
-     *  
+     *
      */
     void handleDetailsButtonSelect() {
         Shell shell = getShell();
@@ -140,7 +140,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             viewer.setComparator(new ViewerComparator() {
                 /*
                  * (non-Javadoc)
-                 * 
+                 *
                  * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
                  *      java.lang.Object, java.lang.Object)
                  */
@@ -161,14 +161,14 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             viewerComposite.layout(true);
             viewer.getControl().setVisible(true);
             viewerHeight = viewerComposite.computeTrim(0, 0, 0, viewerCompositeData.heightHint).height;
-            detailsButton.setText(ProgressMessages.ProgressMonitorJobsDialog_HideTitle); 
+            detailsButton.setText(ProgressMessages.ProgressMonitorJobsDialog_HideTitle);
             shell.setSize(shellSize.x, shellSize.y + viewerHeight);
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
     protected void createButtonsForButtonBar(Composite parent) {
@@ -178,7 +178,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /**
      * Create a spacer label to get the layout to not bunch the widgets.
-     * 
+     *
      * @param parent
      *            The parent of the new button.
      */
@@ -191,18 +191,18 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /**
      * Create the details button for the receiver.
-     * 
+     *
      * @param parent
      *            The parent of the new button.
      */
     protected void createDetailsButton(Composite parent) {
         detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
-                ProgressMessages.ProgressMonitorJobsDialog_DetailsTitle, 
+                ProgressMessages.ProgressMonitorJobsDialog_DetailsTitle,
                 false);
         detailsButton.addSelectionListener(new SelectionAdapter() {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             public void widgetSelected(SelectionEvent e) {
@@ -215,7 +215,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
      */
     protected Control createButtonBar(Composite parent) {
@@ -246,7 +246,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#clearCursors()
      */
     protected void clearCursors() {
@@ -258,13 +258,13 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#updateForSetBlocked(org.eclipse.core.runtime.IStatus)
      */
     protected void updateForSetBlocked(IStatus reason) {
     	if(alreadyClosed)
     		return;
-    	
+
         super.updateForSetBlocked(reason);
         enableDetails(true);
         if (viewer == null) {
@@ -274,7 +274,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#run(boolean,
      *      boolean, org.eclipse.jface.operation.IRunnableWithProgress)
      */
@@ -291,7 +291,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     /**
      * Set the enable state of the details button now or when it will be
      * created.
-     * 
+     *
      * @param enableState
      *            a boolean to indicate the preferred' state
      */
@@ -304,7 +304,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     }
 
     /**
-     * Start watching the ticks. When the long operation time has 
+     * Start watching the ticks. When the long operation time has
      * passed open the dialog.
      */
     public void watchTicks() {
@@ -313,7 +313,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /**
      * Create a monitor for the receiver that wrappers the superclasses monitor.
-     *  
+     *
      */
     public void createWrapperedMonitor() {
         wrapperedMonitor = new IProgressMonitorWithBlocking() {
@@ -323,7 +323,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
              *      int)
              */
@@ -372,7 +372,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 			/*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#done()
              */
             public void done() {
@@ -382,7 +382,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
              */
             public void internalWorked(double work) {
@@ -392,7 +392,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
              */
             public boolean isCanceled() {
@@ -401,7 +401,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
              */
             public void setCanceled(boolean value) {
@@ -411,7 +411,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
              */
             public void setTaskName(String name) {
@@ -422,7 +422,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
              */
             public void subTask(String name) {
@@ -432,7 +432,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
              */
             public void worked(int work) {
@@ -443,7 +443,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
              */
             public void clearBlocked() {
@@ -457,7 +457,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
              */
             public void setBlocked(IStatus reason) {
@@ -474,7 +474,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#getProgressMonitor()
      */
     public IProgressMonitor getProgressMonitor() {
@@ -486,7 +486,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#close()
      */
     public boolean close() {
@@ -497,7 +497,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
         }
         return result;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()
@@ -505,7 +505,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     protected boolean isResizable() {
     	return true;
     }
-    
+
     protected Display getUISynchronize() {
         return Services.getInstance().getDisplay();
     }

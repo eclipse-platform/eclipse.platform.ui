@@ -26,7 +26,7 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Create a new instance of the receiver with the supplied total work and
 	 * task name.
-	 * 
+	 *
 	 * @param parentJobInfo
 	 * @param infoName
 	 * @param total
@@ -38,7 +38,7 @@ public class TaskInfo extends SubTaskInfo {
 
 	/**
 	 * Add the work increment to the total.
-	 * 
+	 *
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
@@ -54,7 +54,7 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Add the amount of work to the recevier. Update a parent monitor by the
 	 * increment scaled to the amount of ticks this represents.
-	 * 
+	 *
 	 * @param workIncrement
 	 *            int the amount of work in the receiver
 	 * @param parentMonitor
@@ -75,7 +75,7 @@ public class TaskInfo extends SubTaskInfo {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString(boolean)
 	 */
 	String getDisplayString(boolean showProgress) {
@@ -108,10 +108,10 @@ public class TaskInfo extends SubTaskInfo {
 
 	/**
 	 * Get the display String without the task name.
-	 * 
+	 *
 	 * @param showProgress
 	 *            Whether or not we are showing progress
-	 * 
+	 *
 	 * @return String
 	 */
 	String getDisplayStringWithoutTask(boolean showProgress) {
@@ -127,7 +127,7 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Return an integer representing the amount of work completed. If progress
 	 * is indeterminate return IProgressMonitor.UNKNOWN.
-	 * 
+	 *
 	 * @return int IProgressMonitor.UNKNOWN or a value between 0 and 100.
 	 */
 	int getPercentDone() {
@@ -141,7 +141,7 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Return the progress for a monitor whose totalWork is
 	 * <code>IProgressMonitor.UNKNOWN</code>.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String unknownProgress() {

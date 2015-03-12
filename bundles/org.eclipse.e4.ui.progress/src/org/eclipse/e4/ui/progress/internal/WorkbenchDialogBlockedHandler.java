@@ -29,31 +29,31 @@ import org.eclipse.swt.widgets.Shell;
 @Singleton
 public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
     IProgressMonitor outerMonitor;
-    
+
     @Inject
     @Optional
     IProgressService progressService;
-    
+
     @Inject
     @Optional
     ProgressManager progressManager;
-    
+
     @Inject
     @Optional
     FinishedJobs finishedJobs;
-    
+
     @Inject
     @Optional
     ProgressViewUpdater progressViewUpdater;
-    
-    
-    
+
+
+
 
     int nestingDepth = 0;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#clearBlocked()
      */
     public void clearBlocked() {
@@ -73,7 +73,7 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#showBlocked(org.eclipse.swt.widgets.Shell,
      *      org.eclipse.core.runtime.IProgressMonitor,
      *      org.eclipse.core.runtime.IStatus, java.lang.String)
@@ -98,7 +98,7 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#showBlocked(org.eclipse.core.runtime.IProgressMonitor,
      *      org.eclipse.core.runtime.IStatus, java.lang.String)
      */

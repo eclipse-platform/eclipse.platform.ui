@@ -84,7 +84,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * NE: Copied from ContentViewer.  We don't want the OpenStrategy hooked
      * in StructuredViewer.hookControl otherwise the canvas will take focus
      * since it has a key listener.  We don't want this included in the window's
-     * tab traversal order.  Defeating it here is more self-contained then 
+     * tab traversal order.  Defeating it here is more self-contained then
      * setting the tab list on the shell or other parent composite.
      */
     protected void hookControl(Control control) {
@@ -97,7 +97,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
      */
     protected Widget doFindInputItem(Object element) {
@@ -106,7 +106,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
      */
     protected Widget doFindItem(Object element) {
@@ -115,7 +115,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
      *      java.lang.Object, boolean)
      */
@@ -125,7 +125,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
      */
     protected List<Object> getSelectionFromWidget() {
@@ -135,7 +135,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
      */
     protected void internalRefresh(Object element) {
@@ -145,7 +145,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
      */
     public void reveal(Object element) {
@@ -154,7 +154,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List,
      *      boolean)
      */
@@ -164,7 +164,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.Viewer#getControl()
      */
     public Control getControl() {
@@ -175,7 +175,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
         canvas.addPaintListener(new PaintListener() {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
              */
             public void paintControl(PaintEvent event) {
@@ -233,7 +233,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     }
 
     /**
-     * Get the size hints for the receiver. These are used for 
+     * Get the size hints for the receiver. These are used for
      * layout data.
      * @return Point - the preferred x and y coordinates
      */
@@ -264,7 +264,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	 */
 	public void add(Object[] elements) {
 		refresh(true);
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -272,7 +272,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	 */
 	public void remove(Object[] elements) {
 		refresh(true);
-		
+
 	}
 
 

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Opens the progress view preference dialog.
- * 
+ *
  * @noreference
  */
 public class OpenPreferenceDialogHandler {

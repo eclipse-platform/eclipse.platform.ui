@@ -42,7 +42,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
     UpdatesInfo currentInfo = new UpdatesInfo();
 
     Object updateLock = new Object();
-    
+
     @Inject
     ProgressManager progressManager;
 
@@ -56,7 +56,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	MutableBoolean updateScheduled = new MutableBoolean();
 
-   
+
     /**
      * The UpdatesInfo is a private class for keeping track of the updates
      * required.
@@ -77,7 +77,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
         /**
          * Add an add update
-         * 
+         *
          * @param addition
          */
         void add(JobTreeElement addition) {
@@ -86,7 +86,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
         /**
          * Add a remove update
-         * 
+         *
          * @param removal
          */
         void remove(JobTreeElement removal) {
@@ -95,7 +95,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
         /**
          * Add a refresh update
-         * 
+         *
          * @param refresh
          */
         void refresh(JobTreeElement refresh) {
@@ -137,14 +137,14 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
                         || additions.contains(treeElement)) {
 					obsoleteRefresh.add(treeElement);
 				}
-                
+
                 //Also check for groups that are being added
                Object parent = treeElement.getParent();
                if(parent != null && (deletions.contains(parent)
                        || additions.contains(parent))){
             	   obsoleteRefresh.add(treeElement);
                }
-               
+
                 if (!treeElement.isActive()) {
                     //If it is done then delete it
                     obsoleteRefresh.add(treeElement);
@@ -164,7 +164,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
         createUpdateJob();
         collectors = new IProgressUpdateCollector[0];
     }
-    
+
     @PostConstruct
     void init(MApplication application) {
     	progressManager.addListener(this);
@@ -173,7 +173,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /**
      * Add the new collector to the list of collectors.
-     * 
+     *
      * @param newCollector
      */
     void addCollector(IProgressUpdateCollector newCollector) {
@@ -185,7 +185,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /**
      * Remove the collector from the list of collectors.
-     * 
+     *
      * @param provider
      */
     void removeCollector(IProgressUpdateCollector provider) {
@@ -229,7 +229,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
         updateJob = new UIJob(ProgressMessages.ProgressContentProvider_UpdateProgressJob) {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
              */
             public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -286,7 +286,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.jobs.Job#canceling()
 			 */
 			protected void canceling() {
@@ -303,7 +303,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /**
      * Get the updates info that we are using in the receiver.
-     * 
+     *
      * @return Returns the currentInfo.
      */
     UpdatesInfo getCurrentInfo() {
@@ -375,7 +375,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
      */
     public void refreshAll() {
@@ -391,7 +391,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
      */
     public void addJob(JobInfo info) {
@@ -415,7 +415,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#removeJob(org.eclipse.ui.internal.progress.JobInfo)
      */
     public void removeJob(JobInfo info) {
@@ -448,7 +448,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
      */
     public boolean showsDebug() {
@@ -458,9 +458,9 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
     /**
      * Return whether or not this is the update job. This is used to determine
      * if a final refresh is required.
-     * 
+     *
      * @param job
-     * @return boolean <code>true</true> if this is the 
+     * @return boolean <code>true</true> if this is the
      * update job
      */
     boolean isUpdateJob(Job job) {

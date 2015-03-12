@@ -21,7 +21,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param parentJob
 	 * @param name
 	 */
@@ -50,7 +50,7 @@ class SubTaskInfo extends JobTreeElement {
 
 	/**
 	 * Set the taskName of the receiver.
-	 * 
+	 *
 	 * @param name
 	 */
 	void setTaskName(String name) {

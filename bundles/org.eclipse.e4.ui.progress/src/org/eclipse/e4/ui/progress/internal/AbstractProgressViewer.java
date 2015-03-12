@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 /**
  * The AbstractProgressViewer is the abstract superclass of the viewers that
  * show progress.
- * 
+ *
  */
 public abstract class AbstractProgressViewer extends StructuredViewer {
 

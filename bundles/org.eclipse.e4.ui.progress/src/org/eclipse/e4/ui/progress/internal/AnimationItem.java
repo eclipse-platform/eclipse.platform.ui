@@ -24,17 +24,17 @@ import org.eclipse.swt.widgets.Control;
  * The AnimationItem is the class that manages the animation for the progress.
  */
 public abstract class AnimationItem {
-	
+
 	private AnimationManager animationManager;
 
     interface IAnimationContainer {
         /**
-         * The animation has started. 
+         * The animation has started.
          */
         public abstract void animationStart();
 
         /**
-         * The animation has ended. 
+         * The animation has ended.
          */
         public abstract void animationDone();
     }
@@ -58,7 +58,7 @@ public abstract class AnimationItem {
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param workbenchWindow
      *            the window being created
      */
@@ -68,7 +68,7 @@ public abstract class AnimationItem {
 
     /**
      * Create the canvas that will display the image.
-     * 
+     *
      * @param parent
      */
     public void createControl(Composite parent) {
@@ -78,7 +78,7 @@ public abstract class AnimationItem {
         animationItem.addMouseListener(new MouseListener() {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
              */
             public void mouseDoubleClick(MouseEvent arg0) {
@@ -87,7 +87,7 @@ public abstract class AnimationItem {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
              */
             public void mouseDown(MouseEvent arg0) {
@@ -96,7 +96,7 @@ public abstract class AnimationItem {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
              */
             public void mouseUp(MouseEvent arg0) {
@@ -120,7 +120,7 @@ public abstract class AnimationItem {
 
     /**
      * Paint the image in the canvas.
-     * 
+     *
      * @param event
      *            The PaintEvent that generated this call.
      * @param image
@@ -134,7 +134,7 @@ public abstract class AnimationItem {
 
     /**
      * Get the SWT control for the receiver.
-     * 
+     *
      * @return Control
      */
     public abstract Control getControl();
@@ -155,7 +155,7 @@ public abstract class AnimationItem {
 
     /**
      * Get the preferred width of the receiver.
-     * 
+     *
      * @return int
      */
     public int getPreferredWidth() {

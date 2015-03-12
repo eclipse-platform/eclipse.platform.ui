@@ -36,18 +36,18 @@ public class ProgressRegion {
     ProgressCanvasViewer viewer;
 
     ProgressAnimationItem animationItem;
-    
+
     Composite region;
 
 	private int fWidthHint = SWT.DEFAULT;
-	
+
 	private int fHeightHint = SWT.DEFAULT;
 
 	/**
 	 * the side the receiver is placed on
 	 */
 	private int side = SWT.BOTTOM;
-	
+
 	private boolean forceHorizontal;
 
     /**
@@ -56,20 +56,20 @@ public class ProgressRegion {
     public ProgressRegion() {
         //No default behavior.
     }
-    
+
     @Inject
     AnimationManager animationManager;
-    
+
     @Inject
     ContentProviderFactory contentProviderfactory;
 
     @Inject
     FinishedJobs finishedJobs;
-    
+
     /**
      * Create the contents of the receiver in the parent. Use the window for the
      * animation item.
-     * 
+     *
      * @param parent
      *            The parent widget of the composite.
      * @param window
@@ -86,11 +86,11 @@ public class ProgressRegion {
         gc.setAdvanced(true);
         forceHorizontal = !gc.getAdvanced();
         gc.dispose();
-        
+
         region = new Composite(parent, SWT.NONE) {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int,
 			 *      boolean)
 			 */
@@ -104,7 +104,7 @@ public class ProgressRegion {
 				return size;
 			}
 		};
-		
+
         GridLayout gl = new GridLayout();
         gl.marginHeight = 0;
         gl.marginWidth = 0;
@@ -166,7 +166,7 @@ public class ProgressRegion {
         viewerControl.addMouseListener(new MouseAdapter() {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
              */
             public void mouseDoubleClick(MouseEvent e) {
@@ -191,14 +191,14 @@ public class ProgressRegion {
                 }
                 return true;
             }
-        	
+
 		});
         return region;
     }
 
     /**
      * Return the animationItem for the receiver.
-     * 
+     *
      * @return AnimationItem
      */
     public AnimationItem getAnimationItem() {
@@ -207,7 +207,7 @@ public class ProgressRegion {
 
     /**
      * Return the control for the receiver.
-     * 
+     *
      * @return Control
      */
     public Control getControl() {
@@ -230,12 +230,12 @@ public class ProgressRegion {
 		if (oldSide == dropSide || (isVertical(oldSide) && isVertical(dropSide)) || (isHorizontal(oldSide) && isHorizontal(dropSide)))
 			return;
 		recreate();
-		
+
 	}
 
 	/**
 	 * Answer true if the side is a horizonal one
-	 * 
+	 *
 	 * @param dropSide
 	 * @return <code>true</code> if the side is horizontal
 	 */
@@ -248,7 +248,7 @@ public class ProgressRegion {
 
 	/**
 	 * Answer true if the side is a horizonal one
-	 * 
+	 *
 	 * @param dropSide
 	 * @return <code>true</code> if the side is horizontal
 	 */
@@ -307,13 +307,13 @@ public class ProgressRegion {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
 	 */
 	public int getWidthHint() {
 		return fWidthHint;
 	}
-	
+
 	/**
 	 * Update the width hint for this control.
 	 * @param w pixels, or SWT.DEFAULT
@@ -324,13 +324,13 @@ public class ProgressRegion {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
 	 */
 	public int getHeightHint() {
 		return fHeightHint;
 	}
-	
+
 	/**
 	 * Update the height hint for this control.
 	 * @param h pixels, or SWT.DEFAULT

@@ -49,7 +49,7 @@ interface IAnimationProcessor {
     void animationFinished();
 
     /**
-     * Get the preferred width of the types of items this 
+     * Get the preferred width of the types of items this
      * processor manages.
      * @return
      */

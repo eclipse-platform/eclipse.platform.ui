@@ -43,14 +43,14 @@ public class FinishedJobs extends EventManager {
 
 		/**
 		 * A job to be kept has finished
-		 * 
+		 *
 		 * @param jte
 		 */
 		void finished(JobTreeElement jte);
 
 		/**
 		 * A kept job has been removed.
-		 * 
+		 *
 		 * @param jte
 		 */
 		void removed(JobTreeElement jte);
@@ -63,7 +63,7 @@ public class FinishedJobs extends EventManager {
 	private HashMap<Object, Long> finishedTime = new HashMap<Object, Long>();
 
 	private static JobTreeElement[] EMPTY_INFOS;
-	
+
 	@Inject
 	ProgressManager progressManager;
 
@@ -71,7 +71,7 @@ public class FinishedJobs extends EventManager {
 	void init(MApplication application) {
 		progressManager.addListener(listener);
 		EMPTY_INFOS = new JobTreeElement[0];
-		// TODO E4 workaround for @creatable problem 
+		// TODO E4 workaround for @creatable problem
 		application.getContext().set(FinishedJobs.class, this);
 	}
 
@@ -364,13 +364,13 @@ public class FinishedJobs extends EventManager {
 			all = keptjobinfos
 					.toArray(new JobTreeElement[keptjobinfos.size()]);
 		}
-		
+
 		return all;
 	}
 
 	/**
 	 * Get the date that indicates the finish time.
-	 * 
+	 *
 	 * @param jte
 	 * @return Date
 	 */
@@ -384,7 +384,7 @@ public class FinishedJobs extends EventManager {
 
 	/**
 	 * Return whether or not the kept infos have the element.
-	 * 
+	 *
 	 * @param element
 	 * @return boolean
 	 */

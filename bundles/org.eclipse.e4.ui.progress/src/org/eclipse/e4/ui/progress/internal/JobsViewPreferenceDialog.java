@@ -56,26 +56,26 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite top = (Composite) super.createDialogArea(parent);
-		
+
 		Composite editArea = new Composite(top, SWT.NONE);
 		editArea.setLayout(new GridLayout());
 		editArea.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
-		
+
 		runInBackground = new BooleanFieldEditor(IProgressConstants.RUN_IN_BACKGROUND, ProgressMessages.JobsViewPreferenceDialog_RunInBackground, editArea);
 		runInBackground.setPreferenceName(IProgressConstants.RUN_IN_BACKGROUND);
 		runInBackground.setPreferenceStore(preferenceStore);
 		runInBackground.load();
-		
+
 		showSystemJob = new BooleanFieldEditor(IProgressConstants.SHOW_SYSTEM_JOBS, ProgressMessages.JobsViewPreferenceDialog_ShowSystemJobs, editArea);
 		showSystemJob.setPreferenceName(IProgressConstants.SHOW_SYSTEM_JOBS);
 		showSystemJob.setPreferenceStore(preferenceStore);
 		showSystemJob.load();
-		
+
 		Dialog.applyDialogFont(top);
-		
+
 		return top;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -84,7 +84,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 		showSystemJob.store();
 		super.okPressed();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.preferences.ViewSettingsDialog#performDefaults()
 	 */

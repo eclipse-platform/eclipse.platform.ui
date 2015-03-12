@@ -17,11 +17,11 @@ import org.eclipse.e4.ui.progress.internal.ProgressManagerUtil;
 
 /**
  * Opens the progress view.
- * 
+ *
  * @noreference
  */
 public class OpenProgressViewHandler {
-	
+
 	@Execute
 	public void openProgressView() {
 		ProgressManagerUtil.openProgressView();
