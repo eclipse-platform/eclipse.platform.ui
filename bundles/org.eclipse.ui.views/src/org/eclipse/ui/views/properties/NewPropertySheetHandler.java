@@ -43,7 +43,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	/**
 	 * First tries to find a suitable instance to reuse for the given context,
 	 * then creates a new instance if necessary.
-	 * 
+	 *
 	 * @param event
 	 * @return an instance for the given context
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -96,7 +96,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 
 	/**
 	 * Returns a PropertySheet instance
-	 * 
+	 *
 	 * @param event
 	 * @param context
 	 *            a {@link ShowInContext} to handle

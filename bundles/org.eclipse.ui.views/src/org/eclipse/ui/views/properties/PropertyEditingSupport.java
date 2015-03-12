@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Composite;
  * {@link TableViewer}) based on an {@link IPropertySourceProvider},
  * forwarding requests to the {@link IPropertySource} or
  * {@link IPropertyDescriptor} for the given property ID.
- * 
+ *
  * @since 3.3
- * 
+ *
  * @see PropertyColumnLabelProvider
  */
 public class PropertyEditingSupport extends EditingSupport {
@@ -36,7 +36,7 @@ public class PropertyEditingSupport extends EditingSupport {
 	/**
 	 * Creates a new instance to be used with the given viewer, based on the
 	 * given property source provider and property ID.
-	 * 
+	 *
 	 * @param viewer
 	 *            the column viewer
 	 * @param propertySourceProvider

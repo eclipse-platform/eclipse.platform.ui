@@ -13,11 +13,11 @@ package org.eclipse.ui.views.properties;
 import org.eclipse.jface.viewers.LabelProvider;
 
 /**
- * An <code>ILabelProvider</code> that assists in rendering labels for 
- * <code>ComboBoxPropertyDescriptors</code>.  The label for a given 
- * <code>Integer</code> value is the <code>String</code> at the value in 
- * the provided values array.  
- * 
+ * An <code>ILabelProvider</code> that assists in rendering labels for
+ * <code>ComboBoxPropertyDescriptors</code>.  The label for a given
+ * <code>Integer</code> value is the <code>String</code> at the value in
+ * the provided values array.
+ *
  * @since 3.0
  */
 public class ComboBoxLabelProvider extends LabelProvider {
@@ -28,7 +28,7 @@ public class ComboBoxLabelProvider extends LabelProvider {
     private String[] values;
 
     /**
-     * @param values the possible label values that this 
+     * @param values the possible label values that this
      * <code>ILabelProvider</code> may return.
      */
     public ComboBoxLabelProvider(String[] values) {
@@ -36,7 +36,7 @@ public class ComboBoxLabelProvider extends LabelProvider {
     }
 
     /**
-     * @return the possible label values that this 
+     * @return the possible label values that this
      * <code>ILabelProvider</code> may return.
      */
     public String[] getValues() {
@@ -44,7 +44,7 @@ public class ComboBoxLabelProvider extends LabelProvider {
     }
 
     /**
-     * @param values the possible label values that this 
+     * @param values the possible label values that this
      * <code>ILabelProvider</code> may return.
      */
     public void setValues(String[] values) {
@@ -52,13 +52,13 @@ public class ComboBoxLabelProvider extends LabelProvider {
     }
 
     /**
-     * Returns the <code>String</code> that maps to the given 
+     * Returns the <code>String</code> that maps to the given
      * <code>Integer</code> offset in the values array.
-     * 
-     * @param element an <code>Integer</code> object whose value is a valid 
+     *
+     * @param element an <code>Integer</code> object whose value is a valid
      * location within the values array of the receiver
-     * @return a <code>String</code> from the provided values array, or the 
-     * empty <code>String</code> 
+     * @return a <code>String</code> from the provided values array, or the
+     * empty <code>String</code>
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
     @Override

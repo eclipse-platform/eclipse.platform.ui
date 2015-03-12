@@ -40,7 +40,7 @@ public class PropertySheetSorter  {
 
 	/**
 	 * Creates a new sorter, which uses the given collator to sort strings.
-	 * 
+	 *
 	 * @param collator
 	 *            the collator to use to sort strings
 	 */
@@ -55,7 +55,7 @@ public class PropertySheetSorter  {
 	 * The default implementation of this method uses the collator to
 	 * compare the display names. Subclasses may override.
 	 * </p>
-	 * 
+	 *
 	 * @param entryA
 	 *            the first element
 	 * @param entryB
@@ -77,7 +77,7 @@ public class PropertySheetSorter  {
 	 * The default implementation of this method uses the collator to
 	 * compare the strings. Subclasses may override.
 	 * </p>
-	 * 
+	 *
 	 * @param categoryA
 	 *            the first element
 	 * @param categoryB
@@ -93,7 +93,7 @@ public class PropertySheetSorter  {
 
 	/**
 	 * Returns the collator used to sort strings.
-	 * 
+	 *
 	 * @return the collator used to sort strings
 	 */
 	protected Collator getCollator() {
@@ -111,7 +111,7 @@ public class PropertySheetSorter  {
 	 * Subclasses may reimplement this method to provide a more optimized
 	 * implementation.
 	 * </p>
-	 * 
+	 *
 	 * @param entries
 	 *            the elements to sort
 	 */
@@ -127,7 +127,7 @@ public class PropertySheetSorter  {
 
 	/**
 	 * Sorts the given categories in-place, modifying the given array.
-	 * 
+	 *
 	 * @param categories
 	 *            the categories to sort
 	 */

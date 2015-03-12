@@ -30,18 +30,18 @@ import org.eclipse.swt.widgets.Composite;
  *   <li><code>setHelpContexts</code></li>
  * </ul>
  * Subclasses should reimplement <code>getPropertyEditor</code> to provide a
- * cell editor for changing the value; otherwise the property will be 
+ * cell editor for changing the value; otherwise the property will be
  * effectively read only.
  * </p>
  * <p>
  * There are several concrete subclasses provided in this package that cover
  * the most common cases:
  * <ul>
- *   <li><code>TextPropertyDescriptor</code> - edits with a 
+ *   <li><code>TextPropertyDescriptor</code> - edits with a
  *      <code>TextCellEditor</code></li>
  *   <li><code>ComboBoxPropertyDescriptor - edits with a
  *      <code>ComboBoxCellEditor</code></code></li>
- *   <li><code>ColorPropertyDescriptor - edits with a 
+ *   <li><code>ColorPropertyDescriptor - edits with a
  *      <code>ColorCellEditor</code></code></li>
  * </ul>
  * </p>
@@ -64,12 +64,12 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     private String category = null;
 
     /**
-     * Description of the property, or <code>null</code> if none (the default). 
+     * Description of the property, or <code>null</code> if none (the default).
      */
     private String description = null;
 
     /**
-     * The help context ids, or <code>null</code> if none (the default). 
+     * The help context ids, or <code>null</code> if none (the default).
      */
     private Object helpIds;
 
@@ -79,7 +79,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     private String[] filterFlags;
 
     /**
-     * The object that provides the property value's text and image, or 
+     * The object that provides the property value's text and image, or
      * <code>null</code> if the default label provider is used (the default).
      */
     private ILabelProvider labelProvider = null;
@@ -98,8 +98,8 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 
     /**
      * Creates a new property descriptor with the given id and display name
-     * @param id 
-     * @param displayName 
+     * @param id
+     * @param displayName
      */
     public PropertyDescriptor(Object id, String displayName) {
         Assert.isNotNull(id);
@@ -109,7 +109,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>PropertyDescriptor</code> implementation of this 
+     * The <code>PropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns <code>null</code>.
      * <p>
      * Since no cell editor is returned, the property is read only.
@@ -121,9 +121,9 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * Returns <code>true</code> if this property descriptor is to be always 
+     * Returns <code>true</code> if this property descriptor is to be always
      * considered incompatible with any other property descriptor.
-     * This prevents a property from displaying during multiple 
+     * This prevents a property from displaying during multiple
      * selection.
      *
      * @return <code>true</code> to indicate always incompatible
@@ -133,7 +133,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>PropertyDescriptor</code> implementation of this 
+     * The <code>PropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value set by
      * the <code>setCategory</code> method. If unset, this method returns
      * <code>null</code> indicating the default category.
@@ -146,7 +146,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>PropertyDescriptor</code> implementation of this 
+     * The <code>PropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value set by
      * the <code>setDescription</code> method. If unset, this method returns
      * <code>null</code> indicating no description.
@@ -159,7 +159,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>SimplePropertyDescriptor</code> implementation of this 
+     * The <code>SimplePropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value supplied
      * on the constructor.
      */
@@ -169,12 +169,12 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>SimplePropertyDescriptor</code> implementation of this 
+     * The <code>SimplePropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value set by
      * the <code>setFilterFlags</code> method. If unset, this method returns
      * <code>null</code>.
      * <p>
-     * Valid values for these flags are declared as constants on 
+     * Valid values for these flags are declared as constants on
      *  <code>IPropertySheetEntry</code>
      */
     @Override
@@ -183,7 +183,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>SimplePropertyDescriptor</code> implementation of this 
+     * The <code>SimplePropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value set by
      * the <code>setHelpContextId</code> method. If unset, this method returns
      * <code>null</code>.
@@ -196,7 +196,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>PropertyDescriptor</code> implementation of this 
+     * The <code>PropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value supplied
      * on the constructor.
      */
@@ -206,7 +206,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>PropertyDescriptor</code> implementation of this 
+     * The <code>PropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns the value set by
      * the <code>setProvider</code> method or, if no value has been set
      * it returns a <code>LabelProvider</code>
@@ -231,7 +231,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
         return validator;
     }
 
-    /** 
+    /**
      * Returns whether a label provider has been set on the receiver.
      * @return whether a label provider has been set on the receiver.
      * @see #setLabelProvider
@@ -242,7 +242,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * The <code>SimplePropertyDescriptor</code> implementation of this 
+     * The <code>SimplePropertyDescriptor</code> implementation of this
      * <code>IPropertyDescriptor</code> method returns true if the other
      * property has the same id and category and <code>getAlwaysIncompatible()</code>
      * returns false
@@ -253,7 +253,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 			return false;
 		}
 
-        // Compare id		
+        // Compare id
         Object id1 = getId();
         Object id2 = anotherProperty.getId();
         if (!id1.equals(id2)) {
@@ -275,9 +275,9 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     }
 
     /**
-     * Sets a flag indicating whether this property descriptor is to be always 
+     * Sets a flag indicating whether this property descriptor is to be always
      * considered incompatible with any other property descriptor.
-     * Setting this flag prevents a property from displaying during multiple 
+     * Setting this flag prevents a property from displaying during multiple
      * selection.
      *
      * @param flag <code>true</code> to indicate always incompatible
@@ -288,7 +288,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 
     /**
      * Sets the category for this property descriptor.
-     * 
+     *
      * @param category the category for the descriptor, or <code>null</code> if none
      * @see #getCategory
      */
@@ -300,7 +300,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      * Sets the description for this property descriptor.
      * The description should be limited to a single line so that it can be
      * displayed in the status line.
-     * 
+     *
      * @param description the description, or <code>null</code> if none
      * @see #getDescription
      */
@@ -313,10 +313,10 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      * The description should be limited to a single line so that it can be
      * displayed in the status line.
      * <p>
-     * Valid values for these flags are declared as constants on 
+     * Valid values for these flags are declared as constants on
      *  <code>IPropertySheetEntry</code>
      * </p>
-     * 
+     *
      * @param value the filter flags
      * @see #getFilterFlags
      */
@@ -332,11 +332,11 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      * </p>
      * <p>
      * Thus the only valid parameter type for this method
-     * is a <code>String</code> representing a context id. 
-     * The previously valid parameter types are deprecated. 
+     * is a <code>String</code> representing a context id.
+     * The previously valid parameter types are deprecated.
      * The plural name for this method is unfortunate.
      * </p>
-     * 
+     *
      * @param contextIds the help context ids, or <code>null</code> if none
      * @see #getHelpContextIds
      */
@@ -350,8 +350,8 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      * If no label provider is set an instance of <code>LabelProvider</code>
      * will be created as the default when needed.
      * </p>
-     * 
-     * @param provider the label provider for the descriptor, or 
+     *
+     * @param provider the label provider for the descriptor, or
      *   <code>null</code> if the default label provider should be used
      * @see #getLabelProvider
      */
@@ -366,7 +366,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      *  validator is used.
      * ]
      * </p>
-     * 
+     *
      * @param validator the cell input validator, or <code>null</code> if none
      */
     public void setValidator(ICellEditorValidator validator) {

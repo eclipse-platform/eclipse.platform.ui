@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 
 /**
  * Pins the properties view instance to the current selection.
- * 
+ *
  * @since 3.4
  */
 public class PinPropertySheetAction extends Action {

@@ -11,7 +11,7 @@
 package org.eclipse.ui.views.properties;
 
 /**
- * Listener for changes in objects of type 
+ * Listener for changes in objects of type
  * <code>IPropertySheetEntry</code>.
  * <p>
  * This interface is public since it appears in the api
@@ -22,7 +22,7 @@ package org.eclipse.ui.views.properties;
  */
 public interface IPropertySheetEntryListener {
     /**
-     * A node's children have changed (children added or removed) 
+     * A node's children have changed (children added or removed)
      *
      * @param node the node whose's children have changed
      */
@@ -36,7 +36,7 @@ public interface IPropertySheetEntryListener {
     void errorMessageChanged(IPropertySheetEntry entry);
 
     /**
-     * A entry's value has changed 
+     * A entry's value has changed
      *
      * @param entry the entry whose's value has changed
      */

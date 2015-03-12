@@ -17,7 +17,7 @@ package org.eclipse.ui.views.properties;
  * allow an easier indication of properties that have a default value and can be
  * resetted.
  * </p>
- * 
+ *
  * @since 3.0
  * @see org.eclipse.ui.views.properties.IPropertySource
  */
@@ -26,7 +26,7 @@ public interface IPropertySource2 extends IPropertySource {
     /**
      * Returns whether the value of the property with the specified id is
      * resettable to a default value.
-     * 
+     *
      * @param id
      *            the id of the property
      * @return <code>true</code> if the property with the specified id has a
@@ -38,12 +38,12 @@ public interface IPropertySource2 extends IPropertySource {
     boolean isPropertyResettable(Object id);
 
     /**
-     * <code>IPropertySource2</code> overrides the specification of this <code>IPropertySource</code> 
-     * method to return <code>true</code> instead of <code>false</code> if the specified 
+     * <code>IPropertySource2</code> overrides the specification of this <code>IPropertySource</code>
+     * method to return <code>true</code> instead of <code>false</code> if the specified
      * property does not have a meaningful default value.
      * <code>isPropertyResettable</code> will only be called if <code>isPropertySet</code> returns
      * <code>true</code>.
-     * <p> 
+     * <p>
      * Returns whether the value of the property with the given id has changed
      * from its default value. Returns <code>false</code> if this source does
      * not have the specified property.
@@ -52,7 +52,7 @@ public interface IPropertySource2 extends IPropertySource {
      * If the notion of default value is not meaningful for the specified
      * property then <code>true</code> is returned.
      * </p>
-     * 
+     *
      * @param id
      *            the id of the property
      * @return <code>true</code> if the value of the specified property has

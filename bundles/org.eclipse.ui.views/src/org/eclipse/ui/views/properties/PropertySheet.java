@@ -99,7 +99,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * Extension point used to modify behavior of the view
      */
     private static final String EXT_POINT = "org.eclipse.ui.propertiesView"; //$NON-NLS-1$
-    
+
     /**
      * The initial selection when the property sheet opens
      */
@@ -124,7 +124,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * Set of workbench parts, which should not be used as a source for PropertySheet
 	 */
 	private HashSet ignoredViews;
-	
+
     /**
      * Creates a property sheet view.
      */
@@ -153,7 +153,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
     @Override
 	public void createPartControl(Composite parent) {
         super.createPartControl(parent);
-         
+
         pinPropertySheetAction.addPropertyChangeListener(new IPropertyChangeListener(){
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
@@ -171,7 +171,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 				.getToolBarManager();
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		toolBarManager.add(pinPropertySheetAction);
-		
+
         getSite().getPage().getWorkbenchWindow().getWorkbench().getHelpSystem()
 				.setHelp(getPageBook(),
 						IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW);
@@ -185,7 +185,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         // remove ourselves as a selection and registry listener
         getSite().getPage().removePostSelectionListener(this);
         RegistryFactory.getRegistry().removeListener(this);
-        
+
         currentPart = null;
         currentSelection = null;
         pinPropertySheetAction = null;
@@ -264,19 +264,19 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		}
 		super.partClosed(part);
 	}
-    
+
 	@Override
 	protected void partVisible(IWorkbenchPart part) {
 	    super.partVisible(part);
 	}
-	
+
     @Override
 	protected void partHidden(IWorkbenchPart part) {
     	// Explicitly ignore parts becoming hidden as this
     	// can cause issues when the Property View is maximized
     	// See bug 325743 for more details
     }
-    
+
 	/**
      * The <code>PropertySheet</code> implementation of this <code>IPartListener</code>
      * method first sees if the active part is an <code>IContributedContentsView</code>
@@ -303,7 +303,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         	// reset the selection (to allow selectionChanged() accept part change for empty selections)
         	currentSelection = null;
         }
-        
+
         // When the view is first opened, pass the selection to the page
         if (bootstrapSelection != null) {
             IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
@@ -320,21 +320,21 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		if (sel == null || !isImportant(part) || sel.equals(currentSelection)) {
 			return;
 		}
-		
+
 		// we ignore selection if we are hidden OR selection is coming from another source as the last one
 		if(part == null || !part.equals(currentPart)){
 		    return;
 		}
-        
+
         currentPart = part;
         currentSelection = sel;
-        
+
         // pass the selection to the page
         IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
         if (page != null) {
 			page.selectionChanged(currentPart, currentSelection);
 		}
-        
+
         updateContentDescription();
     }
 
@@ -345,12 +345,12 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 			setContentDescription(""); //$NON-NLS-1$
 		}
 	}
-    
+
     /**
 	 * The <code>PropertySheet</code> implementation of this
 	 * <code>PageBookView</code> method handles the <code>ISaveablePart</code>
 	 * adapter case by calling <code>getSaveablePart()</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -365,7 +365,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * Returns an <code>ISaveablePart</code> that delegates to the source part
 	 * for the current page if it implements <code>ISaveablePart</code>, or
 	 * <code>null</code> otherwise.
-	 * 
+	 *
 	 * @return an <code>ISaveablePart</code> or <code>null</code>
 	 * @since 3.2
 	 */
@@ -376,7 +376,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return whether this property sheet is currently pinned
 	 * @since 3.4
@@ -387,17 +387,17 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	@Override
 	public ShowInContext getShowInContext() {
 		return new PropertyShowInContext(currentPart, currentSelection);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	@Override
@@ -420,7 +420,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		pinPropertySheetAction.setChecked(pinned);
 		updateContentDescription();
 	}
-	
+
 	private HashSet getIgnoredViews() {
 		if (ignoredViews == null) {
 			ignoredViews = new HashSet();
@@ -446,7 +446,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	private boolean isViewIgnored(String partID) {
 		return getIgnoredViews().contains(partID);
 	}
-	
+
 	/**
 	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtension[])
 	 * @since 3.5
@@ -482,5 +482,5 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	public void removed(IExtensionPoint[] extensionPoints) {
 		ignoredViews = null;
 	}
-	
+
 }

@@ -13,7 +13,7 @@ package org.eclipse.ui.views.properties;
 import org.eclipse.jface.viewers.CellEditor;
 
 /**
- * A listener which is notified when a cell editor is 
+ * A listener which is notified when a cell editor is
  * activated/deactivated
  */
 /*package*/interface ICellEditorActivationListener {

@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
     /**
      * Create the Filter action. This action is used to show
      * or hide expert properties.
-     * 
+     *
      * @param viewer the viewer
      * @param name the name
      */

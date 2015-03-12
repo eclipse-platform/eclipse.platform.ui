@@ -26,7 +26,7 @@ package org.eclipse.ui.views.properties;
  * will also need to register a suitable adapter factory with the platform's
  * adapter manager (<code>Platform.getAdapterManager</code>).
  * </p>
- * 
+ *
  * @see org.eclipse.core.runtime.IAdaptable
  * @see org.eclipse.core.runtime.Platform#getAdapterManager()
  * @see org.eclipse.ui.views.properties.PropertySheetPage
@@ -70,7 +70,7 @@ public interface IPropertySource {
 	 * editable value and using it to update the state of the original property
 	 * source object, one is able to edit several property source objects at
 	 * once (multiple selection).
-	 * 
+	 *
 	 * @return a value that can be edited
 	 */
 	public Object getEditableValue();
@@ -85,7 +85,7 @@ public interface IPropertySource {
 	 * descriptors with any edit/update. Since descriptors provide cell editors,
 	 * returning the same descriptors if possible allows for efficient updating.
 	 * </p>
-	 * 
+	 *
 	 * @return the property descriptors
 	 */
 	public IPropertyDescriptor[] getPropertyDescriptors();
@@ -94,7 +94,7 @@ public interface IPropertySource {
 	 * Returns the value of the property with the given id if it has one.
 	 * Returns <code>null</code> if the property's value is <code>null</code>
 	 * value or if this source does not have the specified property.
-	 * 
+	 *
 	 * @see #setPropertyValue
 	 * @param id
 	 *            the id of the property being set
@@ -110,7 +110,7 @@ public interface IPropertySource {
 	 * If the notion of default value is not meaningful for the specified
 	 * property then <code>false</code> is returned.
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            the id of the property
 	 * @return <code>true</code> if the value of the specified property has
@@ -136,7 +136,7 @@ public interface IPropertySource {
 	 * <code>IPropertySource2#isPropertyResettable(Object)</code> returns
 	 * <code>true</code> for the property with the given id.
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            the id of the property being reset
 	 * @see #isPropertySet(Object)
@@ -180,7 +180,7 @@ public interface IPropertySource {
 	 * <code>getEditableValue</code>. It is this editable value that will be
 	 * passed back via this method when it has been editted
 	 * </p>
-	 * 
+	 *
 	 * @see #getPropertyValue
 	 * @see #getEditableValue
 	 * @param id

@@ -17,7 +17,7 @@ import org.eclipse.ui.part.ShowInContext;
 
 /**
  * @since 3.4
- * 
+ *
  */
 public class PropertyShowInContext extends ShowInContext {
 

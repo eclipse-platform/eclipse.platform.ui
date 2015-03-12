@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
     /**
      * Create the Defaults action. This action is used to set
      * the properties back to their default values.
-     * 
+     *
      * @param viewer the viewer
      * @param name the name
      */

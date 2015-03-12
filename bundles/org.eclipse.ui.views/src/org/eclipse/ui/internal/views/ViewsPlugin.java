@@ -23,7 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * This class provides static methods and fields only; it is not intended to be
  * instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @since 2.1
  */
 public final class ViewsPlugin extends AbstractUIPlugin {
@@ -31,14 +31,14 @@ public final class ViewsPlugin extends AbstractUIPlugin {
      * Views UI plug-in id (value <code>"org.eclipse.ui.views"</code>).
      */
     public static final String PLUGIN_ID = "org.eclipse.ui.views"; //$NON-NLS-1$
-	
+
 	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
     private static ViewsPlugin instance;
 
     /**
      * Returns the singleton instance.
-     * 
+     *
      * @return the singleton instance.
      */
     public static ViewsPlugin getDefault() {
@@ -47,14 +47,14 @@ public final class ViewsPlugin extends AbstractUIPlugin {
 
     /**
      * Creates a new instance of the receiver.
-     * 
+     *
      * @see org.eclipse.core.runtime.Plugin#Plugin()
      */
     public ViewsPlugin() {
         super();
         instance = this;
     }
-	
+
 	/**
 	 * Get the workbench image with the given path relative to
 	 * ICON_PATH.
@@ -64,11 +64,11 @@ public final class ViewsPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getViewImageDescriptor(String relativePath){
 		return imageDescriptorFromPlugin(PLUGIN_ID, ICONS_PATH + relativePath);
 	}
-    
+
     /**
      * If it is possible to adapt the given object to the given type, this
      * returns the adapter. Performs the following checks:
-     * 
+     *
      * <ol>
      * <li>Returns <code>sourceObject</code> if it is an instance of the
      * adapter type.</li>
@@ -76,14 +76,14 @@ public final class ViewsPlugin extends AbstractUIPlugin {
      * <li>If sourceObject is not an instance of PlatformObject (which would have
      * already done so), the adapter manager is queried for adapters</li>
      * </ol>
-     * 
+     *
      * Otherwise returns null.
-     * 
+     *
      * @param sourceObject
      *            object to adapt, or null
      * @param adapter
      *            type to adapt to
-     * @param activatePlugins 
+     * @param activatePlugins
      *            true if IAdapterManager.loadAdapter should be used (may trigger plugin activation)
      * @return a representation of sourceObject that is assignable to the
      *         adapter type, or null if no such representation exists
@@ -106,8 +106,8 @@ public final class ViewsPlugin extends AbstractUIPlugin {
                 Assert.isTrue(adapter.isInstance(result));
                 return result;
             }
-        } 
-        
+        }
+
         if (!(sourceObject instanceof PlatformObject)) {
         	Object result;
         	if (activatePlugins) {
