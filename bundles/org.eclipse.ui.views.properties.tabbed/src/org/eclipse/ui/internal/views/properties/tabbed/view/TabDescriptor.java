@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 /**
  * Represents the default implementation of a tab descriptor on the tabbed
  * property tabs extensions.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabDescriptor extends AbstractTabDescriptor {
@@ -64,7 +64,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Constructor for TabDescriptor.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            the configuration element for the tab descriptor.
 	 */
@@ -95,7 +95,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Get the unique identifier for the tab.
-	 * 
+	 *
 	 * @return the unique identifier for the tab.
 	 */
 	public String getId() {
@@ -104,7 +104,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Get the text label for the tab.
-	 * 
+	 *
 	 * @return the text label for the tab.
 	 */
 	public String getLabel() {
@@ -115,7 +115,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	 * Get the identifier of the tab after which this tab should be displayed.
 	 * When two or more tabs belong to the same category, they are sorted by the
 	 * after tab values.
-	 * 
+	 *
 	 * @return the identifier of the tab.
 	 */
 	public String getAfterTab() {
@@ -127,7 +127,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Get the category this tab belongs to.
-	 * 
+	 *
 	 * @return Get the category this tab belongs to.
 	 */
 	public String getCategory() {
@@ -138,7 +138,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	 * Returns whether the given section was added to this tab. The section can
 	 * be appended if its tab attribute matches the tab id. The afterSection
 	 * attribute indicates the order in which the section should be appended.
-	 * 
+	 *
 	 * @param target
 	 *            the section descriptor to append.
 	 */
@@ -157,7 +157,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Insert the section descriptor into the section descriptor list.
-	 * 
+	 *
 	 * @param target
 	 *            the section descriptor to insert.
 	 * @return <code>true</code> if the target descriptor was added to the
@@ -192,7 +192,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	/**
 	 * Handle the tab error when an issue is found loading from the
 	 * configuration element.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            the configuration element
 	 * @param exception
@@ -211,7 +211,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Set the image for the tab.
-	 * 
+	 *
 	 * @param image
 	 *            the image for the tab.
 	 */
@@ -222,7 +222,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	/**
 	 * Set the indicator to determine if the tab should be displayed as
 	 * indented.
-	 * 
+	 *
 	 * @param indented
 	 *            <code>true</code> if the tab should be displayed as
 	 *            indented.
@@ -234,7 +234,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	/**
 	 * Set the indicator to determine if the tab should be the selected tab in
 	 * the list.
-	 * 
+	 *
 	 * @param selected
 	 *            <code>true</code> if the tab should be the selected tab in
 	 *            the list.
@@ -245,7 +245,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Set the text label for the tab.
-	 * 
+	 *
 	 * @param label
 	 *            the text label for the tab.
 	 */
@@ -255,7 +255,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Get the image for the tab.
-	 * 
+	 *
 	 * @return the image for the tab.
 	 */
 	public Image getImage() {
@@ -264,7 +264,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Determine if the tab is selected.
-	 * 
+	 *
 	 * @return <code>true</code> if the tab is selected.
 	 */
 	public boolean isSelected() {
@@ -273,7 +273,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Determine if the tab should be displayed as indented.
-	 * 
+	 *
 	 * @return <code>true</code> if the tab should be displayed as indented.
 	 */
 	public boolean isIndented() {
@@ -282,7 +282,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Get the text label for the tab.
-	 * 
+	 *
 	 * @return the text label for the tab.
 	 */
 	public String getText() {
@@ -291,7 +291,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	/**
 	 * Disposes this descriptor.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public void dispose() {

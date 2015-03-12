@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 /**
  * The title in the tabbed property sheet page.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabbedPropertyTitle
@@ -42,16 +42,16 @@ public class TabbedPropertyTitle
 	private Image image = null;
 
 	private String text = null;
-	
+
 	private static final String BLANK = ""; //$NON-NLS-1$
 
 	private static final String TITLE_FONT = "org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle"; //$NON-NLS-1$
-	
+
 	private TabbedPropertySheetWidgetFactory factory;
 
 	/**
 	 * Constructor for TabbedPropertyTitle.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite.
 	 * @param factory
@@ -87,12 +87,12 @@ public class TabbedPropertyTitle
 		if (! JFaceResources.getFontRegistry().hasValueFor(TITLE_FONT)) {
 			FontData[] fontData = JFaceResources.getFontRegistry().getBold(
 					JFaceResources.DEFAULT_FONT).getFontData();
-			/* title font is 2pt larger than that used in the tabs. */  
+			/* title font is 2pt larger than that used in the tabs. */
 			fontData[0].setHeight(fontData[0].getHeight() + 2);
 			JFaceResources.getFontRegistry().put(TITLE_FONT, fontData);
 		}
 		font = JFaceResources.getFont(TITLE_FONT);
-		
+
 		label = factory.createCLabel(this, BLANK);
 		label.setBackground(new Color[] {
 				factory.getColors().getColor(IFormColors.H_GRADIENT_END),
@@ -142,7 +142,7 @@ public class TabbedPropertyTitle
 
 	/**
 	 * Set the text label.
-	 * 
+	 *
 	 * @param text
 	 *            the text label.
 	 * @param image
@@ -154,7 +154,7 @@ public class TabbedPropertyTitle
 		if (text != null) {
 			label.setText(text);
 		} else {
-			label.setText(BLANK); 
+			label.setText(BLANK);
 		}
 		label.setImage(image);
 		redraw();

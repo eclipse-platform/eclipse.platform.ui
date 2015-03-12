@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,8 +12,8 @@ package org.eclipse.ui.views.properties.tabbed;
 
 /**
  * Constants used by the implementors of ITabbedPropertySection.
- * 
- * @author Anthony Hunter 
+ *
+ * @author Anthony Hunter
  */
 public interface ITabbedPropertyConstants {
 
@@ -22,26 +22,26 @@ public interface ITabbedPropertyConstants {
 	 * Each section should use a margin of 0, 0.
 	 */
 	public static final int HMARGIN = 6;
-	
+
 	/**
 	 * These horizontal margin around the composite.
 	 */
 	public static final int VMARGIN = 6;
 
 	/**
-	 * Horizontal space to leave between related widgets. 
-	 * Each section should use these values for spacing its widgets. 
-	 * For example, you can use +/- HSPACE as the offset of a left or 
+	 * Horizontal space to leave between related widgets.
+	 * Each section should use these values for spacing its widgets.
+	 * For example, you can use +/- HSPACE as the offset of a left or
 	 * right FlatFormAttachment.
-	 * 
-	 * The tabbed property composite also inserts VSPACE pixels between 
-	 * section composites if more than one section is displayed.  
+	 *
+	 * The tabbed property composite also inserts VSPACE pixels between
+	 * section composites if more than one section is displayed.
 	 */
 	public static final int HSPACE = 5;
-	
+
 	/**
 	 * Horizontal space to leave between related widgets.
-	 */ 
+	 */
 	public static final int VSPACE = 4;
 
 	/**

@@ -31,7 +31,7 @@ import org.eclipse.ui.IActionBars;
  * The most frequent use of setActionBars() is to retarget the global actions
  * for undo and redo based on the active tabbed properties view contributor.
  * </p>
- * 
+ *
  * @author Anthony Hunter
  * @since 3.2.1
  */
@@ -40,7 +40,7 @@ public interface IActionProvider {
     /**
      * Allows the page to make contributions to the given action bars. The
      * contributions will be visible when the page is visible.
-     * 
+     *
      * @param contributor
      *            the tabbed property sheet page contributor.
      * @param actionBars

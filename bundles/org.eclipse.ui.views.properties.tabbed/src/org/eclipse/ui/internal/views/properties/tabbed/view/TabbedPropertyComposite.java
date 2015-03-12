@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 /**
  * Composite responsible for drawing the tabbed property sheet page.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabbedPropertyComposite
@@ -45,7 +45,7 @@ public class TabbedPropertyComposite
 
 	/**
 	 * Constructor for a TabbedPropertyComposite
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget.
 	 * @param factory
@@ -140,7 +140,7 @@ public class TabbedPropertyComposite
 	/**
 	 * Get the tabbed property list, which is the list of tabs on the left hand
 	 * side of this composite.
-	 * 
+	 *
 	 * @return the tabbed property list.
 	 */
 	public TabbedPropertyList getList() {
@@ -149,7 +149,7 @@ public class TabbedPropertyComposite
 
 	/**
 	 * Get the tabbed property title bar.
-	 * 
+	 *
 	 * @return the tabbed property title bar or <code>null</code> if not used.
 	 */
 	public TabbedPropertyTitle getTitle() {
@@ -158,7 +158,7 @@ public class TabbedPropertyComposite
 
 	/**
 	 * Get the tab composite where sections display their property contents.
-	 * 
+	 *
 	 * @return the tab composite.
 	 */
 	public Composite getTabComposite() {
@@ -168,7 +168,7 @@ public class TabbedPropertyComposite
 	/**
 	 * Get the scrolled composite which surrounds the title bar and tab
 	 * composite.
-	 * 
+	 *
 	 * @return the scrolled composite.
 	 */
 	public ScrolledComposite getScrolledComposite() {
@@ -177,7 +177,7 @@ public class TabbedPropertyComposite
 
 	/**
 	 * Get the widget factory.
-	 * 
+	 *
 	 * @return the widget factory.
 	 */
 	protected TabbedPropertySheetWidgetFactory getFactory() {

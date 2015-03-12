@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,7 +60,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * should be created using <code>AbstractPropertySection</code>.
  * </p>
  * @see org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage
- * 
+ *
  * @author Anthony Hunter
  */
 public interface ISection {
@@ -72,7 +72,7 @@ public interface ISection {
 	 * framework to achieve a common look between property sections.
 	 * </p>
 	 * @see org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage#getWidgetFactory()
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite for the section.
 	 * @param tabbedPropertySheetPage
@@ -82,7 +82,7 @@ public interface ISection {
 			TabbedPropertySheetPage tabbedPropertySheetPage);
 
 	/**
-	 * Notifies the section that the workbench selection has changed. 
+	 * Notifies the section that the workbench selection has changed.
 	 * @param part The active workench part.
 	 * @param selection The active selection in the workbench part.
 	 */
@@ -114,7 +114,7 @@ public interface ISection {
 	/**
 	 * Returns the minimum height needed by this section. A return value of
 	 * <code>SWT.DEFAULT</code> indicates that no minimum height is defined.
-	 * 
+	 *
 	 * @return the minimum height needed by this section.
 	 */
 	public abstract int getMinimumHeight();

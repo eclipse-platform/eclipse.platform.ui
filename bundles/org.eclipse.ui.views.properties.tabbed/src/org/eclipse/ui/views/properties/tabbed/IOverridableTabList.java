@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ package org.eclipse.ui.views.properties.tabbed;
  * <p>
  * The overridable tab list is a content provider that provides both the
  * sections and the tab labels.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -24,14 +24,14 @@ public interface IOverridableTabList {
 
 	/**
 	 * Returns the list of tabs.
-	 * 
+	 *
 	 * @return the list of tabs.
 	 */
 	public ITabItem[] getTabs();
 
 	/**
 	 * Select the tab at the provided index.
-	 * 
+	 *
 	 * @param index
 	 *            the index in the list of tabs to select.
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
 /**
  * Provides information about the tabbed property extension points. Each tabbed
  * property registry is associated with a unique contributor ID.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabbedPropertyRegistry {
@@ -167,7 +167,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Gets the categories that are valid for this contributor.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            the configuration element for this contributor.
 	 */
@@ -184,7 +184,7 @@ public class TabbedPropertyRegistry {
 	/**
 	 * Handle the error when an issue is found loading from the configuration
 	 * element.
-	 * 
+	 *
 	 * @param id
 	 *            the configuration id.
 	 * @param exception
@@ -267,7 +267,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Returns all section descriptors for the provided selection.
-	 * 
+	 *
 	 * @param part
 	 *            the workbench part containing the selection
 	 * @param selection
@@ -485,7 +485,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Gets the type mapper for the contributor.
-	 * 
+	 *
 	 * @return the type mapper for the contributor.
 	 */
 	public ITypeMapper getTypeMapper() {
@@ -494,7 +494,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Gets the label provider for the contributor.
-	 * 
+	 *
 	 * @return the label provider for the contributor.
 	 */
 	public ILabelProvider getLabelProvider() {
@@ -503,7 +503,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Gets the action provider for the contributor.
-	 * 
+	 *
 	 * @return the action provider for the contributor.
 	 */
 	public IActionProvider getActionProvider() {
@@ -512,7 +512,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Gets the tab list content provider for the contributor.
-	 * 
+	 *
 	 * @return the tab list content provider for the contributor.
 	 */
 	public IStructuredContentProvider getTabListContentProvider() {
@@ -525,7 +525,7 @@ public class TabbedPropertyRegistry {
 	/**
 	 * Handle the tab error when an issue is found loading from the
 	 * configuration element.
-	 * 
+	 *
 	 * @param configurationElement
 	 *            the configuration element
 	 */
@@ -542,7 +542,7 @@ public class TabbedPropertyRegistry {
 
 	/**
 	 * Disposes this registry.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public void dispose() {

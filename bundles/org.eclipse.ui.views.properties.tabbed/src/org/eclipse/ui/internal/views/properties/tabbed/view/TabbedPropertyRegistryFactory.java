@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 /**
  * tabbed property registry factory. Caches the tabbed property registry by
  * tabbed property contributor ID.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabbedPropertyRegistryFactory {
@@ -37,7 +37,7 @@ public class TabbedPropertyRegistryFactory {
 
 	/**
 	 * get the singleton instance of this class.
-	 * 
+	 *
 	 * @return the TabbedPropertyRegistryFactory instance.
 	 */
 	public static TabbedPropertyRegistryFactory getInstance() {
@@ -56,7 +56,7 @@ public class TabbedPropertyRegistryFactory {
 
 	/**
 	 * Creates a registry for the given contributor.
-	 * 
+	 *
 	 * @param target
 	 *            the contributor.
 	 * @return a registry for the given contributor.
@@ -84,7 +84,7 @@ public class TabbedPropertyRegistryFactory {
 	 * Indicates that the given contributor no longer needs a registry. The
 	 * registry will be disposed when no other contributor of the same type
 	 * needs it.
-	 * 
+	 *
 	 * @param target
 	 *            the contributor;
 	 */

@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 
 /**
  * An abstract implementation of a tab descriptor for the tabbed property view.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -123,7 +123,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 
 	/**
 	 * Get the list of section descriptors for the tab.
-	 * 
+	 *
 	 * @return the list of section descriptors for the tab.
 	 */
 	public List getSectionDescriptors() {
@@ -168,7 +168,7 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 
 	/**
 	 * Set the list of section descriptors for the tab.
-	 * 
+	 *
 	 * @param sectionDescriptors
 	 *            the list of section descriptors for the tab.
 	 */

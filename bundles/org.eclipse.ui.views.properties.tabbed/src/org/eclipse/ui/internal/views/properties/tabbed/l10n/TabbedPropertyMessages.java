@@ -14,9 +14,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Message Bundle class for the tabbed properties view plug-in.
- * 
+ *
  * @author Anthony Hunter
- * 
+ *
  */
 public final class TabbedPropertyMessages
 	extends NLS {
@@ -39,7 +39,7 @@ public final class TabbedPropertyMessages
      * Message when a property section extension causes a class not found exception.
      */
 	public static String SectionDescriptor_class_not_found_error;
-	
+
     /**
      * Message when a property tab extension is in error.
      */

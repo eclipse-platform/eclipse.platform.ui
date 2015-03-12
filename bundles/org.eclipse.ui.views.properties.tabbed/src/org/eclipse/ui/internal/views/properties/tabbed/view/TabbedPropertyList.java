@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mariot Chauvin <mariot.chauvin@obeo.fr> - bug 259553
@@ -57,7 +57,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 /**
  * Shows the list of tabs in the tabbed property sheet page.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabbedPropertyList
@@ -147,7 +147,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Constructor for ListElement.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent Composite.
 		 * @param tab
@@ -207,7 +207,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Constructor for ListElement.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent Composite.
 		 * @param tab
@@ -233,7 +233,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Set selected value for this element.
-		 * 
+		 *
 		 * @param selected
 		 *            the selected value.
 		 */
@@ -247,7 +247,7 @@ public class TabbedPropertyList
 		 * image width should not be more than 16 pixels. The caller is
 		 * responsible for loading the image appropriately and managing it's
 		 * resources.
-		 * 
+		 *
 		 * @param index
 		 * @param image
 		 */
@@ -264,7 +264,7 @@ public class TabbedPropertyList
 		 * Hide the dynamic image at specified index in dynamicImages array. The
 		 * caller is responsible for managing image resources and disposing it
 		 * appropriately.
-		 * 
+		 *
 		 * @param index
 		 */
 		public void hideDynamicImage(int index) {
@@ -280,7 +280,7 @@ public class TabbedPropertyList
 		 * Sets color to be used for drawing tab label text. The caller is
 		 * responsible for managing the color's resources and disposing it
 		 * appropriately after setDefaultTextColor() is later invoked.
-		 * 
+		 *
 		 * @param textColor
 		 */
 		public void setTextColor(Color textColor) {
@@ -302,7 +302,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Paint the element.
-		 * 
+		 *
 		 * @param e
 		 *            the paint event.
 		 */
@@ -419,7 +419,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Get the tab item.
-		 * 
+		 *
 		 * @return the tab item.
 		 */
 		public ITabItem getTabItem() {
@@ -440,7 +440,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Constructor for TopNavigationElement.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent Composite.
 		 */
@@ -470,7 +470,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Paint the element.
-		 * 
+		 *
 		 * @param e
 		 *            the paint event.
 		 */
@@ -527,7 +527,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Constructor for BottomNavigationElement.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent Composite.
 		 */
@@ -557,7 +557,7 @@ public class TabbedPropertyList
 
 		/**
 		 * Paint the element.
-		 * 
+		 *
 		 * @param e
 		 *            the paint event.
 		 */
@@ -606,7 +606,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Constructor for TabbedPropertyList.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget.
 	 * @param factory
@@ -683,7 +683,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Returns the number of elements in this list viewer.
-	 * 
+	 *
 	 * @return number of elements
 	 */
 	public int getNumberOfElements() {
@@ -693,7 +693,7 @@ public class TabbedPropertyList
 	/**
 	 * Returns the element with the given index from this list viewer. Returns
 	 * <code>null</code> if the index is out of range.
-	 * 
+	 *
 	 * @param index
 	 *            the zero-based index
 	 * @return the element at the given index, or <code>null</code> if the
@@ -709,7 +709,7 @@ public class TabbedPropertyList
 	/**
 	 * Returns the zero-relative index of the item which is currently selected
 	 * in the receiver, or -1 if no item is selected.
-	 * 
+	 *
 	 * @return the index of the selected item
 	 */
 	public int getSelectionIndex() {
@@ -747,7 +747,7 @@ public class TabbedPropertyList
 	 * images. Individual dynamic images are displayed/removed from a tab by
 	 * using the showDynamicImage() and hideDynamicImage() methods on the tab's
 	 * ListElement object.
-	 * 
+	 *
 	 * @param tabToDynamicImageCountMap
 	 */
 	public void setDynamicImageCount(Map tabToDynamicImageCountMap) {
@@ -756,7 +756,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Sets the new list elements.
-	 * 
+	 *
 	 * @param children
 	 */
 	public void setElements(Object[] children) {
@@ -828,7 +828,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Selects one of the elements in the list.
-	 * 
+	 *
 	 * @param index
 	 *            the index of the element to select.
 	 */
@@ -898,7 +898,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Get the dimensions of the provided string.
-	 * 
+	 *
 	 * @param text
 	 *            the string.
 	 * @return the dimensions of the provided string.
@@ -1002,11 +1002,11 @@ public class TabbedPropertyList
 	/**
 	 * Get the height of a tab. The height of the tab is the height of the text
 	 * plus buffer.
-	 * 
+	 *
 	 * @return the height of a tab.
 	 */
 	private int getTabHeight() {
-		int tabHeight = getTextDimension("").y + INDENT; //$NON-NLS-1$ 
+		int tabHeight = getTextDimension("").y + INDENT; //$NON-NLS-1$
 		if (tabsThatFitInComposite == 1) {
 			/*
 			 * if only one tab will fix, reduce the size of the tab height so
@@ -1022,7 +1022,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Determine if a downward scrolling is required.
-	 * 
+	 *
 	 * @return true if downward scrolling is required.
 	 */
 	private boolean isDownScrollRequired() {
@@ -1032,7 +1032,7 @@ public class TabbedPropertyList
 
 	/**
 	 * Determine if an upward scrolling is required.
-	 * 
+	 *
 	 * @return true if upward scrolling is required.
 	 */
 	private boolean isUpScrollRequired() {

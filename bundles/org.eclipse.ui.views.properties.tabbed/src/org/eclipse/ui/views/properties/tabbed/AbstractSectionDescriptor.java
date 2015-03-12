@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegist
 /**
  * An abstract implementation of a section descriptor for the tabbed property
  * view.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -40,7 +40,7 @@ public abstract class AbstractSectionDescriptor implements ISectionDescriptor {
 
 	/**
 	 * Constructor for AbstractSectionDescriptor.
-	 * 
+	 *
 	 * @param typeMapper
 	 *            the type mapper for the section.
 	 */

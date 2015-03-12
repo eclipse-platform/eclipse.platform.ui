@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * A property tab is composed by one or more property sections and is used to
  * categorize sections.
- * 
+ *
  * @author Anthony Hunter
  * @since 3.4
  */
@@ -34,7 +34,7 @@ public final class TabContents {
     private boolean controlsCreated;
 
     /**
-     * 
+     *
      */
     public TabContents() {
         controlsCreated = false;
@@ -68,7 +68,7 @@ public final class TabContents {
 
     /**
      * Retrieve the sections on the tab.
-     * 
+     *
      * @return the sections on the tab.
      */
     public ISection[] getSections() {
@@ -77,7 +77,7 @@ public final class TabContents {
 
     /**
      * Creates page's sections controls.
-     * 
+     *
      * @param parent
      * @param page
      */
@@ -167,7 +167,7 @@ public final class TabContents {
 
     /**
      * Sets page's sections input objects.
-     * 
+     *
      * @param part
      * @param selection
      */
@@ -187,7 +187,7 @@ public final class TabContents {
 
     /**
      * Set the sections for the tab.
-     * 
+     *
      * @param sections the sections for the tab.
      */
     public void setSections(ISection[] sections) {
@@ -196,7 +196,7 @@ public final class TabContents {
 
     /**
      * Determine if the controls have been created.
-     * 
+     *
      * @return <code>true</code> if controls have been created.
      */
     public boolean controlsHaveBeenCreated() {

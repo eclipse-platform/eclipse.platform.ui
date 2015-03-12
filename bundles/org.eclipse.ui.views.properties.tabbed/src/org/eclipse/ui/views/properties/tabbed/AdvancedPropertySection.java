@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,8 +22,8 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 /**
  * An advanced section that is intended to show the original table format properties view
  * provided by base Eclipse.
- * 
- * @author Anthony Hunter 
+ *
+ * @author Anthony Hunter
  */
 public class AdvancedPropertySection
 	extends AbstractPropertySection {
@@ -51,7 +51,7 @@ public class AdvancedPropertySection
 		data.top = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(100, 0);
 		page.getControl().setLayoutData(data);
-		
+
 		page.getControl().addControlListener(new ControlAdapter() {
 
 			public void controlResized(ControlEvent e) {

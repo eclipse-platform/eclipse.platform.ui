@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -61,7 +61,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
 
 /**
  * A property sheet page that provides a tabbed UI.
- * 
+ *
  * @author Anthony Hunter
  */
 public class TabbedPropertySheetPage
@@ -138,7 +138,7 @@ public class TabbedPropertySheetPage
 
 		/**
 		 * Constructor that takes in a contributor id taken from a selection.
-		 * 
+		 *
 		 * @param contributorId
 		 *            the contributor id.
 		 */
@@ -265,7 +265,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * create a new tabbed property sheet page.
-	 * 
+	 *
 	 * @param tabbedPropertySheetPageContributor
 	 *            the tabbed property sheet page contributor.
 	 */
@@ -273,15 +273,15 @@ public class TabbedPropertySheetPage
 			ITabbedPropertySheetPageContributor tabbedPropertySheetPageContributor) {
 		this(tabbedPropertySheetPageContributor, true);
 	}
-	
+
 	/**
 	 * create a new tabbed property sheet page.
 	 *
 	 * @param tabbedPropertySheetPageContributor
-	 *            the tabbed property sheet page contributor.	  
+	 *            the tabbed property sheet page contributor.
 	 * @param showTitleBar
-	 *            boolean indicating if the title bar should be shown; 
-	 *            default value is <code>true</code> 	
+	 *            boolean indicating if the title bar should be shown;
+	 *            default value is <code>true</code>
 	 * @since 3.5
 	 */
 	public TabbedPropertySheetPage(
@@ -297,7 +297,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Handle the part activated event.
-	 * 
+	 *
 	 * @param part
 	 *            the new activated part.
 	 */
@@ -392,7 +392,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Initialize the contributor with the provided contributor id.
-	 * 
+	 *
 	 * @param contributorId
 	 *            the contributor id.
 	 */
@@ -432,7 +432,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Gets the tab list content provider for the contributor.
-	 * 
+	 *
 	 * @return the tab list content provider for the contributor.
 	 */
 	protected IStructuredContentProvider getTabListContentProvider() {
@@ -500,7 +500,7 @@ public class TabbedPropertySheetPage
 				contributor);
 			registry = null;
 		}
-        
+
         contributor = null;
         currentSelection = null;
 	}
@@ -525,8 +525,8 @@ public class TabbedPropertySheetPage
 		} else if (contributor instanceof IViewPart) {
             IViewPart viewPart = (IViewPart) contributor;
             partActionBars = viewPart.getViewSite().getActionBars();
-        } 
-        
+        }
+
         if (partActionBars != null) {
             IAction action = partActionBars.getGlobalActionHandler(ActionFactory.UNDO
                 .getId());
@@ -534,7 +534,7 @@ public class TabbedPropertySheetPage
                 actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
             }
             action = partActionBars.getGlobalActionHandler(ActionFactory.REDO
-                .getId()); 
+                .getId());
             if (action != null) {
                 actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
             }
@@ -571,9 +571,9 @@ public class TabbedPropertySheetPage
 	}
 
 	/**
-	 * Resize the scrolled composite enclosing the sections, which may result in the 
+	 * Resize the scrolled composite enclosing the sections, which may result in the
 	 * addition or removal of scroll bars.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void resizeScrolledComposite() {
@@ -582,7 +582,7 @@ public class TabbedPropertySheetPage
 			Composite sizeReference = (Composite) tabToComposite
 				.get(currentTab);
 			if (sizeReference != null) {
-				currentTabSize = sizeReference.computeSize(SWT.DEFAULT, SWT.DEFAULT); 
+				currentTabSize = sizeReference.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 		}
 		tabbedPropertyComposite.getScrolledComposite().setMinSize(
@@ -614,7 +614,7 @@ public class TabbedPropertySheetPage
 	 * this method. Also, the caller needs to ensure that descriptorToTab map
 	 * entries corresponding to the disposed TabContents objects are also
 	 * removed.
-	 * 
+	 *
 	 * @param tabs
 	 * @since 3.6
 	 */
@@ -685,7 +685,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Create the tab contents for the provided tab descriptor.
-	 * 
+	 *
 	 * @param tabDescriptor
 	 *            the tab descriptor.
 	 * @return the tab contents.
@@ -697,7 +697,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Helper method for creating property tab composites.
-	 * 
+	 *
 	 * @return the property tab composite.
 	 */
 	private Composite createTabComposite() {
@@ -763,7 +763,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Get the currently active tab.
-	 * 
+	 *
 	 * @return the currently active tab.
 	 * @since 3.4
 	 */
@@ -773,7 +773,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Handle the tab selected change event.
-	 * 
+	 *
 	 * @param tabDescriptor
 	 *            the new selected tab.
 	 */
@@ -792,7 +792,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Add a tab selection listener.
-	 * 
+	 *
 	 * @param listener
 	 *            a tab selection listener.
 	 */
@@ -802,7 +802,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Remove a tab selection listener.
-	 * 
+	 *
 	 * @param listener
 	 *            a tab selection listener.
 	 */
@@ -825,7 +825,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Get the widget factory.
-	 * 
+	 *
 	 * @return the widget factory.
 	 */
 	public TabbedPropertySheetWidgetFactory getWidgetFactory() {
@@ -863,7 +863,7 @@ public class TabbedPropertySheetPage
 
     /**
      * Retrieve the contributor from the selection.
-     * 
+     *
      * @param object -
      *            the selected element
      * @return the TabbedPropertySheetPageContributor or null if not applicable
@@ -900,7 +900,7 @@ public class TabbedPropertySheetPage
 	 * It is possible for elements in a selection to implement
 	 * ITabbedPropertySheetPageContributor to provide a different contributor id
 	 * and thus a differenent registry.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection in the active workbench part.
 	 */
@@ -919,14 +919,14 @@ public class TabbedPropertySheetPage
 		}
 
         ITabbedPropertySheetPageContributor newContributor = getTabbedPropertySheetPageContributor(structuredSelection.getFirstElement());
-        
+
 		if (newContributor == null) {
 			/**
 			 * selection does not implement or adapt ITabbedPropertySheetPageContributor.
 			 */
 			newContributor = contributor;
 		}
-		
+
         String selectionContributorId = newContributor.getContributorId();
 		if (selectionContributorId.equals(currentContributorId)) {
 			/**
@@ -982,7 +982,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Returns the currently selected tab.
-	 * 
+	 *
 	 * @return the currently selected tab or <code>null</code> if there is no
 	 *         tab selected.
 	 * @since 3.5
@@ -1000,7 +1000,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Returns the list of currently active tabs.
-	 * 
+	 *
 	 * @return the currently active tabs.
 	 * @since 3.5
 	 */
@@ -1013,10 +1013,10 @@ public class TabbedPropertySheetPage
 		}
 		return new ITabDescriptor[] {};
 	}
-	
+
 	/**
 	 * Set the currently selected tab to be that of the provided tab id.
-	 * 
+	 *
 	 * @param id
 	 *            The string id of the tab to select.
 	 * @since 3.5
@@ -1034,26 +1034,26 @@ public class TabbedPropertySheetPage
 			}
 		}
 	}
-	
+
 	/**
      * Returns text of the properties title for given selection. If selection is null,
      * then currentSelection is used
-     * 
-	 * @param selection Selection whose properties title text is to be returned 
+     *
+	 * @param selection Selection whose properties title text is to be returned
      * @return String representing title text.
 	 * @since 3.5
-     */	
+     */
     public String getTitleText(ISelection selection) {
     	if (selection == null) {
     		selection = currentSelection;
     	}
     	return registry.getLabelProvider().getText(selection);
     }
-    
+
     /**
      * Returns the title image for given selection. If selection is null,
-     * then currentSelection is used. 
-     * 
+     * then currentSelection is used.
+     *
      * @param selection Selection whose properties title image is to be returned
      * @return Image that is used as a title image.
      * @since 3.5
@@ -1067,7 +1067,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Returns the TabContents object corresponding to the given tab-descriptor.
-	 * 
+	 *
 	 * @param tabDescriptor
 	 *            tab-descriptor whose TabContents object is to be returned
 	 * @return TabContents object corresponding to the given tab-descriptor key
@@ -1085,7 +1085,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Get the current selection-contributor if any
-	 * 
+	 *
 	 * @return The selection-contributor, or null.
 	 * @since 3.6
 	 */
@@ -1100,7 +1100,7 @@ public class TabbedPropertySheetPage
 	 * ITabbedPropertySheetPageContributor and they all return the same unique
 	 * contributor ID, then tabs and sections associated with that contributor
 	 * ID are used by the tabbed property view for that selection.
-	 * 
+	 *
 	 * @return contributor id
 	 * @since 3.6
 	 */
@@ -1110,7 +1110,7 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Get the current selection
-	 * 
+	 *
 	 * @return selection
 	 * @since 3.6
 	 */
