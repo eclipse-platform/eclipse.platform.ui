@@ -40,7 +40,7 @@ public class HandlerServiceImpl implements EHandlerService {
 	/**
 	 * The static context key under which a command 'trigger' from legacy code is stored during
 	 * calls to {@link #executeHandler(ParameterizedCommand, IEclipseContext)}
-	 * 
+	 *
 	 * @see IEclipseContext
 	 * @see HandlerServiceImpl#executeHandler(ParameterizedCommand, IEclipseContext)
 	 */
@@ -102,7 +102,7 @@ public class HandlerServiceImpl implements EHandlerService {
 
 	/**
 	 * Fill in a temporary static context for execution.
-	 * 
+	 *
 	 * @param command
 	 */
 	@SuppressWarnings("rawtypes")
@@ -123,7 +123,7 @@ public class HandlerServiceImpl implements EHandlerService {
 
 	/**
 	 * Convert the parameter's value according to it's type.
-	 * 
+	 *
 	 * @param command
 	 * @param parameterId
 	 * @param value

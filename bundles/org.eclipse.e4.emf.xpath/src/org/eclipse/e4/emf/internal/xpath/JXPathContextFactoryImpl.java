@@ -16,7 +16,7 @@ import org.eclipse.e4.emf.xpath.XPathContextFactory;
 
 /**
  * Factory creating context using JXPath
- * 
+ *
  * @param <Type>
  *            the object the XPath is created for
  */

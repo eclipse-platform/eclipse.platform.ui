@@ -185,11 +185,11 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
     @Override
 	public boolean isCollection() {
         EStructuralFeature pd = getPropertyDescriptor();
-        
+
         if (pd == null) {
             return false;
         }
-        
+
         if( pd.isMany() ) {
         	return true;
         }
@@ -221,7 +221,7 @@ public class EObjectPropertyPointer extends EStructuralFeaturePointer {
         if (pd == null) {
             return 1;
         }
-        
+
         if( pd.isMany() ) {
         	return ((List<?>)getBean().eGet(pd)).size();
         }

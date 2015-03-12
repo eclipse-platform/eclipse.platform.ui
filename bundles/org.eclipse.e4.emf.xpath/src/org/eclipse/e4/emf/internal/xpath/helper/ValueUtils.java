@@ -65,7 +65,7 @@ public class ValueUtils {
         }
         return false;
     }
-    
+
     /**
      * If the parameter is a container, opens the container and
      * return the contents.  The method is recursive.
@@ -78,7 +78,7 @@ public class ValueUtils {
         }
         return object;
     }
-    
+
     /**
      * Returns the length of the supplied collection. If the supplied object
      * is not a collection, returns 1. If collection is null, returns 0.
@@ -98,7 +98,7 @@ public class ValueUtils {
         }
         return 1;
     }
-    
+
     /**
      * Remove the index'th element from the supplied collection.
      * @param collection to edit
@@ -181,7 +181,7 @@ public class ValueUtils {
 
         return getValue(getValue(bean, pd), index);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static Object getValue(Object collection, int index) {
         collection = getValue(collection);
@@ -215,7 +215,7 @@ public class ValueUtils {
         }
         return value;
     }
-	
+
 	public static int getCollectionHint(Class<?> clazz) {
         if (clazz.isArray()) {
             return 1;
@@ -249,7 +249,7 @@ public class ValueUtils {
 				l.clear();
 				l.addAll((Collection<Object>)value);
 			} else {
-				bean.eSet(pd, value);	
+				bean.eSet(pd, value);
 			}
         }
         catch (Exception ex) {
@@ -291,7 +291,7 @@ public class ValueUtils {
                 "Not a collection: " + pd.getName());
         }
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static void setValue(Object collection, int index, Object value) {
         collection = getValue(collection);
@@ -312,7 +312,7 @@ public class ValueUtils {
             }
         }
     }
-	
+
 	private static Object convert(Object value, Class<?> type) {
         try {
             return TypeUtils.convert(value, type);
@@ -326,7 +326,7 @@ public class ValueUtils {
                 ex);
         }
     }
-	
+
 	public static Object expandCollection(Object collection, int size) {
         if (collection == null) {
             return null;
@@ -350,7 +350,7 @@ public class ValueUtils {
         }
         if (collection instanceof Collection) {
         	@SuppressWarnings("unchecked")
-			Collection<Object> c = (Collection<Object>) collection; 
+			Collection<Object> c = (Collection<Object>) collection;
             while (c.size() < size) {
                 c.add(null);
             }

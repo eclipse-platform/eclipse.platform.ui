@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 public class JXPathEObjectInfo {
 	private final EClass eClass;
-	
+
 	public JXPathEObjectInfo(EClass eClass) {
 		this.eClass = eClass;
 	}

@@ -45,7 +45,7 @@ import org.eclipse.e4.emf.internal.xpath.helper.ValueUtils;
  */
 public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
     /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

@@ -34,7 +34,7 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  * A Pointer that points to the "lang" attribute of a JavaBean. The value
  * of the attribute is based on the locale supplied to it in the constructor.
  *
- * 
+ *
  */
 public class LangAttributePointer extends NodePointer {
 

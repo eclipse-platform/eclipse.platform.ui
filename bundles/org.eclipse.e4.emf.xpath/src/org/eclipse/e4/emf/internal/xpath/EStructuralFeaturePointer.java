@@ -42,7 +42,7 @@ import org.eclipse.emf.ecore.EObject;
  */
 public abstract class EStructuralFeaturePointer extends NodePointer {
     /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

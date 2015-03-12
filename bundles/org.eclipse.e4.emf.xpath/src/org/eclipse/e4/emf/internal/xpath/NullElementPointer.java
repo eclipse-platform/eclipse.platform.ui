@@ -38,7 +38,7 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  * regular NodePointer into an invalid state.  Just create a NullElementPointer
  * with index 2 (= 3 - 1) and a "foo" pointer as the parent.
  *
- * 
+ *
  */
 public class NullElementPointer extends CollectionPointer {
 

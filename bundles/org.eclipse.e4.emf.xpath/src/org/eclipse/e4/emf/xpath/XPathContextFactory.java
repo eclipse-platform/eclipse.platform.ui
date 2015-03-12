@@ -14,7 +14,7 @@ import org.eclipse.e4.emf.internal.xpath.JXPathContextFactoryImpl;
 
 /**
  * Factory responsible to create an XPath-Context
- * 
+ *
  * @param <Type>
  *            the object type the XPath is created for
  */
@@ -22,7 +22,7 @@ public abstract class XPathContextFactory<Type extends Object> {
 
 	/**
 	 * Creates a new XPathContext with the specified object as the root node.
-	 * 
+	 *
 	 * @param contextBean
 	 *            Object
 	 * @return XPathContext
@@ -33,7 +33,7 @@ public abstract class XPathContextFactory<Type extends Object> {
 	 * Creates a new XPathContext with the specified bean as the root node and
 	 * the specified parent context. Variables defined in a parent context can
 	 * be referenced in XPaths passed to the child context.
-	 * 
+	 *
 	 * @param parentContext
 	 *            parent context
 	 * @param contextBean

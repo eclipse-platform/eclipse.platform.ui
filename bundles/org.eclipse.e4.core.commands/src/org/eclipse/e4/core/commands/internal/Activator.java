@@ -36,7 +36,7 @@ public class Activator implements BundleActivator {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {

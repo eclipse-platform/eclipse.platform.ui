@@ -46,14 +46,14 @@ public final class JXPathContextImpl implements XPathContext {
 					return eClassName(((Pointer) o).getValue());
 				}
 			}
-			
+
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Create a new context
-	 * 
+	 *
 	 * @param contextBean
 	 *            the context bean (=root of the xpath expression)
 	 */
@@ -64,7 +64,7 @@ public final class JXPathContextImpl implements XPathContext {
 
 	/**
 	 * Create a new child context
-	 * 
+	 *
 	 * @param parentContext
 	 *            the parent
 	 * @param contextBean
