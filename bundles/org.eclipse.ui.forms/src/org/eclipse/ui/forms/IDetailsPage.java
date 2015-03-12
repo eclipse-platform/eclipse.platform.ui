@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
  * life cycle is the same as for the IFormPart. The page is
  * a part selection listener since selections in the master
  * part will be passed to the currently visible page.
- * 
+ *
  * @see DetailsPart
  * @see MasterDetailsBlock
  * @since 3.0

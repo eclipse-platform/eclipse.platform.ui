@@ -52,7 +52,7 @@ public class FormUtil {
 	public static final String DEBUG_FOCUS = DEBUG + "/focus"; //$NON-NLS-1$
 
 	public static final String FOCUS_SCROLLING = "focusScrolling"; //$NON-NLS-1$
-	
+
 	public static final String IGNORE_BODY = "__ignore_body__"; //$NON-NLS-1$
 
 	public static Text createText(Composite parent, String label,
@@ -503,10 +503,10 @@ public class FormUtil {
 		} while (index < length);
 		return '\0';
 	}
-	
+
 	public static void setFocusScrollingEnabled(Control c, boolean enabled) {
 		ScrolledComposite scomp = null;
-		
+
 		if (c instanceof ScrolledComposite)
 			scomp = (ScrolledComposite)c;
 		else
@@ -514,7 +514,7 @@ public class FormUtil {
 		if (scomp!=null)
 			scomp.setData(FormUtil.FOCUS_SCROLLING, enabled?null:Boolean.FALSE);
 	}
-	
+
 	public static void setAntialias(GC gc, int style) {
 		if (!gc.getAdvanced()) {
 			gc.setAdvanced(true);

@@ -20,19 +20,19 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 /**
- * This managed form part handles the 'details' portion of the 
+ * This managed form part handles the 'details' portion of the
  * 'master/details' block. It has a page book that manages pages
  * of details registered for the current selection.
  * <p>By default, details part accepts any number of pages.
  * If dynamic page provider is registered, this number may
- * be excessive. To avoid running out of steam (by creating 
+ * be excessive. To avoid running out of steam (by creating
  * a large number of pages with widgets on each), maximum
  * number of pages can be set to some reasonable value (e.g. 10).
  * When this number is reached, old pages (those created first)
  * will be removed and disposed as new ones are added. If
  * the disposed pages are needed again after that, they
  * will be created again.
- * 
+ *
  * @since 3.0
  */
 public final class DetailsPart implements IFormPart, IPartSelectionListener {
@@ -43,13 +43,13 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private Hashtable pages;
 	private IDetailsPageProvider pageProvider;
 	private int pageLimit=Integer.MAX_VALUE;
-	
+
 	private static class PageBag {
 		private static int counter;
 		private int ticket;
 		private IDetailsPage page;
 		private boolean fixed;
-		
+
 		public PageBag(IDetailsPage page, boolean fixed) {
 			this.page= page;
 			this.fixed = fixed;
@@ -76,14 +76,14 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  * Creates a details part by wrapping the provided page book.
  * @param mform the parent form
  * @param pageBook the page book to wrap
- */	
+ */
 	public DetailsPart(IManagedForm mform, ScrolledPageBook pageBook) {
 		this.pageBook = pageBook;
 		pages = new Hashtable();
 		initialize(mform);
 	}
 /**
- * Creates a new details part in the provided form by creating 
+ * Creates a new details part in the provided form by creating
  * the page book.
  * @param mform the parent form
  * @param parent the composite to create the page book in
@@ -95,14 +95,14 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 /**
  * Registers the details page to be used for all the objects of
  * the provided object class.
- * @param objectClass an object of type 'java.lang.Class' to be used 
+ * @param objectClass an object of type 'java.lang.Class' to be used
  * as a key for the provided page
  * @param page the page to show for objects of the provided object class
  */
 	public void registerPage(Object objectClass, IDetailsPage page) {
 		registerPage(objectClass, page, true);
 	}
-	
+
 	private void registerPage(Object objectClass, IDetailsPage page, boolean fixed) {
 		pages.put(objectClass, new PageBag(page, fixed));
 		page.initialize(managedForm);
@@ -140,7 +140,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IFormPart#dispose()
 	 */
 	public void dispose() {
@@ -151,7 +151,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
 	public void initialize(IManagedForm form) {
@@ -170,7 +170,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 /**
  * Tests if the currently visible page is stale and needs refreshing.
  * @return <code>true</code> if the page is stale, <code>false</code> otherwise.
- */	
+ */
 	public boolean isStale() {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
@@ -196,7 +196,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object input) {
@@ -204,7 +204,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
@@ -279,7 +279,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 			}
 		}
 		// If we are switching from an old page to nothing,
-		// don't loose data 
+		// don't loose data
 		if (oldPage!=null && oldPage.isDirty())
 			oldPage.commit(false);
 		pageBook.showEmptyPage();
@@ -298,7 +298,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 					// drop it
 					pageBag.dispose();
 					pages.remove(key);
-					pageBook.removePage(key, false);				
+					pageBook.removePage(key, false);
 				}
 			}
 		}
@@ -308,7 +308,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	 * maintained in this part. When an attempt is made to
 	 * add more pages, old pages are removed and disposed
 	 * based on the order of creation (the oldest pages
-	 * are removed). The exception is made for the 
+	 * are removed). The exception is made for the
 	 * page that should otherwise be disposed but is
 	 * currently active.
 	 * @return maximum number of pages for this part
@@ -317,7 +317,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		return pageLimit;
 	}
 	/**
-	 * Sets the page limit for this part. 
+	 * Sets the page limit for this part.
 	 * @see #getPageLimit()
 	 * @param pageLimit the maximum number of pages that
 	 * should be maintained in this part.

@@ -29,23 +29,23 @@ public class FormFonts {
 			instance = new FormFonts();
 		return instance;
 	}
-	
+
 	private ResourceManagerManger manager = new ResourceManagerManger();
 	private HashMap descriptors;
-	
+
 	private FormFonts() {
 	}
-	
+
 	private class BoldFontDescriptor extends FontDescriptor {
 		private FontData[] fFontData;
-		
+
 		BoldFontDescriptor (Font font) {
 			fFontData = font.getFontData();
 			for (int i = 0; i < fFontData.length; i++) {
 				fFontData[i].setStyle(fFontData[i].getStyle() | SWT.BOLD);
 			}
 		}
-		
+
 		public boolean equals(Object obj) {
 			if (obj instanceof BoldFontDescriptor) {
 				BoldFontDescriptor desc = (BoldFontDescriptor)obj;
@@ -58,7 +58,7 @@ public class FormFonts {
 			}
 			return false;
 		}
-		
+
 		public int hashCode() {
 			int hash = 0;
 			for (int i = 0; i < fFontData.length; i++)
@@ -74,7 +74,7 @@ public class FormFonts {
 			previouslyCreatedFont.dispose();
 		}
 	}
-	
+
 	public Font getBoldFont(Display display, Font font) {
 		checkHashMaps();
 		BoldFontDescriptor desc = new BoldFontDescriptor(font);
@@ -82,7 +82,7 @@ public class FormFonts {
 		descriptors.put(result, desc);
 		return result;
 	}
-	
+
 	public boolean markFinished(Font boldFont, Display display) {
 		checkHashMaps();
 		BoldFontDescriptor desc = (BoldFontDescriptor)descriptors.get(boldFont);
@@ -94,7 +94,7 @@ public class FormFonts {
 				validateHashMaps();
 			}
 			return true;
-			
+
 		}
 		// if the image was not found, dispose of it for the caller
 		boldFont.dispose();
@@ -105,7 +105,7 @@ public class FormFonts {
 		if (descriptors == null)
 			descriptors = new HashMap();
 	}
-	
+
 	private void validateHashMaps() {
 		if (descriptors.size() == 0)
 			descriptors = null;

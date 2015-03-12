@@ -27,19 +27,19 @@ import org.eclipse.ui.internal.forms.Messages;
  * <dt><b>Styles:</b></dt>
  * <dd>None</dd>
  * </dl>
- * 
+ *
  * @since 3.0
  */
 public abstract class ToggleHyperlink extends AbstractHyperlink {
 	protected int innerWidth;
 	protected int innerHeight;
 	protected boolean hover;
-	private boolean expanded;	
+	private boolean expanded;
 	private Color decorationColor;
 	private Color hoverColor;
 	/**
 	 * Creates a control in a provided composite.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent
 	 * @param style
@@ -76,7 +76,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	}
 	/**
 	 * Sets the color of the decoration.
-	 * 
+	 *
 	 * @param decorationColor
 	 */
 	public void setDecorationColor(Color decorationColor) {
@@ -84,7 +84,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	}
 	/**
 	 * Returns the color of the decoration.
-	 * 
+	 *
 	 * @return decoration color
 	 */
 	public Color getDecorationColor() {
@@ -93,7 +93,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	/**
 	 * Sets the hover color of decoration. Hover color will be used when mouse
 	 * enters the decoration area.
-	 * 
+	 *
 	 * @param hoverColor
 	 *            the hover color to use
 	 */
@@ -102,17 +102,17 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	}
 	/**
 	 * Returns the hover color of the decoration.
-	 * 
+	 *
 	 * @return the hover color of the decoration.
 	 * @since 3.1
 	 */
 	public Color getHoverDecorationColor() {
 		return hoverColor;
 	}
-	
+
 	/**
 	 * Returns the hover color of the decoration.
-	 * 
+	 *
 	 * @return the hover color of the decoration.
 	 * @deprecated use <code>getHoverDecorationColor</code>
 	 * @see #getHoverDecorationColor()
@@ -122,7 +122,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	}
 	/**
 	 * Computes the size of the control.
-	 * 
+	 *
 	 * @param wHint
 	 *            width hint
 	 * @param hHint
@@ -148,7 +148,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 * Returns the expansion state of the toggle control. When toggle is in the
 	 * normal (downward) state, the value is <samp>true </samp>. Collapsed
 	 * control will return <samp>false </samp>.
-	 * 
+	 *
 	 * @return <samp>false </samp> if collapsed, <samp>true </samp> otherwise.
 	 */
 	public boolean isExpanded() {
@@ -156,7 +156,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	}
 	/**
 	 * Sets the expansion state of the twistie control
-	 * 
+	 *
 	 * @param expanded the expansion state
 	 */
 	public void setExpanded(boolean expanded) {
@@ -192,14 +192,14 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 						e.height = location.height;
 					}
 					public void getSelection (AccessibleControlEvent e) {
-						if (ToggleHyperlink.this.getSelection()) 
+						if (ToggleHyperlink.this.getSelection())
 							e.childID = ACC.CHILDID_SELF;
 					}
-					
+
 					public void getFocus (AccessibleControlEvent e) {
-						if (ToggleHyperlink.this.getSelection()) 
+						if (ToggleHyperlink.this.getSelection())
 							e.childID = ACC.CHILDID_SELF;
-					}					
+					}
 					public void getChildCount(AccessibleControlEvent e) {
 						e.detail = 0;
 					}
@@ -233,7 +233,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	private int getAccessibleChildID() {
 		return ToggleHyperlink.this.isExpanded() ? 1 : 2;
 	}
-	
+
 	private void onKeyDown(Event e) {
 		if (e.keyCode==SWT.ARROW_RIGHT) {
 			// expand if collapsed

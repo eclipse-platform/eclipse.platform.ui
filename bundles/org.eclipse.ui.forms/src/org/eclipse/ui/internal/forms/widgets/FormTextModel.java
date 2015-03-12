@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public class FormTextModel {
-	
+
 	/*
 	 * This class prevents parse errors from being written to standard output
 	 */
@@ -58,7 +58,7 @@ public class FormTextModel {
 	private IFocusSelectable[] selectableSegments;
 
 	private int selectedSegmentIndex = -1;
-	
+
 	private int savedSelectedLinkIndex = -1;
 
 	private HyperlinkSettings hyperlinkSettings;
@@ -448,7 +448,7 @@ public class FormTextModel {
 			segment.setFontId(boldFontId);
 			Node alt = atts.getNamedItem("alt"); //$NON-NLS-1$
 			if (alt!=null)
-				segment.setTooltipText(alt.getNodeValue());			
+				segment.setTooltipText(alt.getNodeValue());
 			segment.setWordWrapAllowed(wrapAllowed);
 			return segment;
 		} else {
@@ -600,7 +600,7 @@ public class FormTextModel {
 				.toArray(new IFocusSelectable[result.size()]);
 		return selectableSegments;
 	}
-	
+
 	public IHyperlinkSegment getHyperlink(int index) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		if (selectables.length>index) {
@@ -610,7 +610,7 @@ public class FormTextModel {
 		}
 		return null;
 	}
-	
+
 	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		for (int i = 0; i < selectables.length; i++) {
@@ -623,11 +623,11 @@ public class FormTextModel {
 		}
 		return null;
 	}
-	
+
 	public int getHyperlinkCount() {
 		return getFocusSelectableSegments().length;
 	}
-	
+
 	public int indexOf(IHyperlinkSegment link) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		for (int i = 0; i < selectables.length; i++) {
@@ -650,7 +650,7 @@ public class FormTextModel {
 		}
 		return null;
 	}
-	
+
 	public void clearCache(String fontId) {
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph p = (Paragraph) paragraphs.get(i);
@@ -663,11 +663,11 @@ public class FormTextModel {
 			return null;
 		return selectableSegments[selectedSegmentIndex];
 	}
-	
+
 	public int getSelectedSegmentIndex() {
 		return selectedSegmentIndex;
 	}
-	
+
 	public boolean linkExists(IHyperlinkSegment link) {
 		if (selectableSegments==null)
 			return false;
@@ -693,7 +693,7 @@ public class FormTextModel {
 		}
 		return selectedSegmentIndex != -1;
 	}
-	
+
 	public IFocusSelectable getNextFocusSegment(boolean next) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		if (selectables == null)
@@ -705,7 +705,7 @@ public class FormTextModel {
 		}
 		return selectables[nextIndex];
 	}
-	
+
 	public boolean restoreSavedLink() {
 		if (savedSelectedLinkIndex!= -1) {
 			selectedSegmentIndex = savedSelectedLinkIndex;
@@ -716,7 +716,7 @@ public class FormTextModel {
 
 	public void selectLink(IHyperlinkSegment link) {
 		if (link == null) {
-			savedSelectedLinkIndex = selectedSegmentIndex;	
+			savedSelectedLinkIndex = selectedSegmentIndex;
 			selectedSegmentIndex = -1;
 		}
 		else {
@@ -724,7 +724,7 @@ public class FormTextModel {
 
 		}
 	}
-	
+
 	public void select(IFocusSelectable selectable) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		selectedSegmentIndex = -1;

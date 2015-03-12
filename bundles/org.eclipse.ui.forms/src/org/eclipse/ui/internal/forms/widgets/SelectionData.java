@@ -25,7 +25,7 @@ public class SelectionData {
 	private Point stop;
 	private ArrayList segments;
 	private boolean newLineNeeded;
-	
+
 	public SelectionData(MouseEvent e) {
 		display = e.display;
 		segments = new ArrayList();
@@ -34,7 +34,7 @@ public class SelectionData {
 		bg = e.display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 		fg = e.display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 	}
-	
+
 	public void markNewLine() {
 		newLineNeeded=true;
 	}
@@ -64,7 +64,7 @@ public class SelectionData {
 	public boolean canCopy() {
 		return segments.size()>0;
 	}
-	
+
 	private int getTopOffset() {
 		return start.y<stop.y?start.y:stop.y;
 	}
@@ -94,7 +94,7 @@ public class SelectionData {
 			return deltaY>0;
 		}
 		// intra-row selection
-		return start.x > stop.x; 
+		return start.x > stop.x;
 	}
 	public boolean isEnclosed() {
 		return !start.equals(stop);
@@ -129,13 +129,13 @@ public class SelectionData {
 		if (!isEnclosed())
 			return false;
 		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
-		return (locator.y + rowHeight >=getBottomOffset() && 
+		return (locator.y + rowHeight >=getBottomOffset() &&
 				locator.y <= getBottomOffset());
 	}
 	public boolean isLastSelectionRow(int y, int rowHeight) {
 		if (!isEnclosed())
 			return false;
-		return (y + rowHeight >=getBottomOffset() && 
+		return (y + rowHeight >=getBottomOffset() &&
 				y <= getBottomOffset());
 	}
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.*;
  * end-result will be similar to the one provided by GridLayout. The difference
  * will show up for layouts that contain controls whose minimum and maximum
  * widths are not the same.
- * 
+ *
  * @see TableWrapData
  * @since 3.0
  */
@@ -140,7 +140,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	/**
 	 * Implements ILayoutExtension. Should not be called directly.
-	 * 
+	 *
 	 * @see ILayoutExtension
 	 */
 	public int computeMinimumWidth(Composite parent, boolean changed) {
@@ -173,7 +173,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	/**
 	 * Implements ILayoutExtension. Should not be called directly.
-	 * 
+	 *
 	 * @see ILayoutExtension
 	 */
 	public int computeMaximumWidth(Composite parent, boolean changed) {
@@ -445,11 +445,11 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		Vector growingCols = new Vector();
 		Vector growingRows = new Vector();
 		rowspans = new Hashtable();
-		// 
+		//
 		children = composite.getChildren();
 		if (children.length == 0)
 			return;
-		// 
+		//
 		grid.addElement(createEmptyRow());
 		row = 0;
 		column = 0;
@@ -600,10 +600,10 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		resetColumnWidths();
 		int minWidth = internalGetMinimumWidth(parent, changed);
 		int maxWidth = internalGetMaximumWidth(parent, changed);
-		
+
 		if (wHint == SWT.DEFAULT)
 			parentWidth = maxWidth;
-		
+
 		int tableWidth = parentWidth;
 		int[] columnWidths;
 		if (parentWidth <= minWidth) {
@@ -755,7 +755,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			maxColumnWidths[i] = 0;
 		}
 	}
-	
+
 	void calculateColumnWidths(Composite parent, int [] columnWidths, boolean max, boolean changed, boolean makeColumnsEqualWidth2) {
 		boolean secondPassNeeded=false;
 		int widestColumnWidth = 0;
@@ -765,7 +765,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				TableWrapData td = row[j];
 				if (td.isItemData == false)
 					continue;
-				
+
 				if (td.colspan>1) {
 					// we will not do controls with multiple column span
 					// here - increment and continue
@@ -791,7 +791,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			}
 		}
 		if (!secondPassNeeded) return;
-		
+
 		// Second pass for controls with multi-column horizontal span
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
@@ -843,15 +843,15 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 					}
 				}
 			}
-		}		
-	}	
-	
+		}
+	}
+
 	boolean isWrap(Control control) {
 		if (control instanceof Composite
 				&& ((Composite) control).getLayout() instanceof ILayoutExtension)
 			return true;
 		return (control.getStyle() & SWT.WRAP) != 0;
-	}	
+	}
 
 	private void initializeIfNeeded(Composite parent, boolean changed) {
 		if (changed)

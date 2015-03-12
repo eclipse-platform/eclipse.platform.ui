@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.forms.widgets.ColumnLayoutUtils;
  * Child controls are layed out according to their 'natural' (preferred) size.
  * For 'stretchy' controls that do not have natural preferred size, it is
  * possible to set width and/or height hints using ColumnLayoutData objects.
- * 
+ *
  * @see ColumnLayoutData
  * @since 3.0
  */
@@ -117,9 +117,9 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 		int colHeight = 0;
 		int[] heights = new int[ncolumns];
 		int ncol = 0;
-		
+
 		boolean fillIn = false;
-		
+
 		for (int i = 0; i < sizes.length; i++) {
 			int childHeight = sizes[i].y;
 			if (i>0 && colHeight + childHeight > perColHeight) {
@@ -137,7 +137,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			colHeight += childHeight;
 		}
 		heights[ncol] = Math.max(heights[ncol],colHeight);
-		
+
 		Point size = new Point(0, 0);
 		for (int i = 0; i < ncolumns; i++) {
 			size.y = Math.max(size.y, heights[i]);
@@ -170,7 +170,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
 	 *      boolean)
 	 */
@@ -186,7 +186,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			cheight += sizes[i].y;
 		}
 		int ncolumns = (carea.width - leftMargin - rightMargin + horizontalSpacing) / (cwidth + horizontalSpacing);
-		ncolumns = Math.min(ncolumns, children.length);		
+		ncolumns = Math.min(ncolumns, children.length);
 		ncolumns = Math.max(ncolumns, minNumColumns);
 		ncolumns = Math.min(ncolumns, maxNumColumns);
 		int realWidth = (carea.width - leftMargin - rightMargin + horizontalSpacing) / ncolumns - horizontalSpacing;
@@ -195,16 +195,16 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 //			childrenPerColumn++;
 //		int colWidth = 0;
 
-		int fillWidth = Math.max(cwidth, realWidth);	
+		int fillWidth = Math.max(cwidth, realWidth);
 		int perColHeight = ColumnLayoutUtils.computeColumnHeight(ncolumns, sizes, cheight, verticalSpacing);
 
-		
+
 		int colHeight = 0;
 		int[] heights = new int[ncolumns];
 		int ncol = 0;
 		int x = leftMargin;
 		boolean fillIn = false;
-		
+
 		for (int i = 0; i < sizes.length; i++) {
 			Control child = children[i];
 			Point csize = sizes[i];
@@ -218,7 +218,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 					// overflow - start filling in
 					fillIn = true;
 					ncol = findShortestColumn(heights);
-					
+
 					x = leftMargin + ncol * (fillWidth + horizontalSpacing);
 
 				}
@@ -230,8 +230,8 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			}
 			if (colHeight > 0)
 				colHeight += verticalSpacing;
-			
-			
+
+
 			switch (align) {
 				case ColumnLayoutData.LEFT :
 				case ColumnLayoutData.FILL :
@@ -244,14 +244,14 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 					child.setBounds(x + fillWidth / 2 - childWidth / 2, topMargin+colHeight, childWidth, csize.y);
 					break;
 			}
-			
+
 			colHeight += csize.y;
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.widgets.ILayoutExtension#computeMaximumWidth(org.eclipse.swt.widgets.Composite,
 	 *      boolean)
 	 */
@@ -261,7 +261,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.widgets.ILayoutExtension#computeMinimumWidth(org.eclipse.swt.widgets.Composite,
 	 *      boolean)
 	 */

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ import org.eclipse.ui.forms.widgets.Form;
  * This interface should only be referenced. It must not be implemented or
  * extended.
  * </p>
- * 
+ *
  * @since 3.3
  * @see IMessageProvider
  * @see IManagedForm
@@ -58,11 +58,11 @@ public interface IMessageManager {
 	 * Note that subsequent calls using the same key will not result in
 	 * duplicate messages. Instead, the previous message with the same key will
 	 * be replaced with the new message.
-	 * 
+	 *
 	 * @param key
 	 *            a unique message key that will be used to look the message up
 	 *            later
-	 * 
+	 *
 	 * @param messageText
 	 *            the message to add
 	 * @param data
@@ -77,7 +77,7 @@ public interface IMessageManager {
 	 * that subsequent calls using the same key will not result in duplicate
 	 * messages. Instead, the previous message with the same key will be
 	 * replaced with the new message.
-	 * 
+	 *
 	 * @param key
 	 *            the unique message key
 	 * @param messageText
@@ -95,7 +95,7 @@ public interface IMessageManager {
 	/**
 	 * Removes the general message with the provided key. Does nothing if
 	 * message for the key does not exist.
-	 * 
+	 *
 	 * @param key
 	 *            the key of the message to remove
 	 */
@@ -112,7 +112,7 @@ public interface IMessageManager {
 	/**
 	 * Removes a keyed message associated with the provided control. Does
 	 * nothing if the message for that key does not exist.
-	 * 
+	 *
 	 * @param key
 	 *            the id of the message to remove
 	 * @param control
@@ -123,7 +123,7 @@ public interface IMessageManager {
 	/**
 	 * Removes all the messages associated with the provided control. Does
 	 * nothing if there are no messages for this control.
-	 * 
+	 *
 	 * @param control
 	 *            the control the messages are associated with
 	 */
@@ -144,7 +144,7 @@ public interface IMessageManager {
 	 * </ol>
 	 * In all other situations, the manager will keep the form in sync
 	 * automatically.
-	 * 
+	 *
 	 * @see #setAutoUpdate(boolean)
 	 */
 	void update();
@@ -154,7 +154,7 @@ public interface IMessageManager {
 	 * added or removed. By default, auto update is on. Clients can turn it off
 	 * prior to adding or removing a number of messages as a batch. Turning it
 	 * back on will trigger an update.
-	 * 
+	 *
 	 * @param enabled
 	 *            sets the state of the automatic update
 	 */
@@ -163,7 +163,7 @@ public interface IMessageManager {
 	/**
 	 * Tests whether the form will be automatically updated when messages are
 	 * added or removed.
-	 * 
+	 *
 	 * @return <code>true</code> if auto update is active, <code>false</code>
 	 *         otherwise.
 	 */
@@ -172,7 +172,7 @@ public interface IMessageManager {
 	/**
 	 * Sets the alternative message prefix provider. The default prefix provider
 	 * is set by the manager.
-	 * 
+	 *
 	 * @param provider
 	 *            the new prefix provider or <code>null</code> to turn the
 	 *            prefix generation off.
@@ -188,7 +188,7 @@ public interface IMessageManager {
 	/**
 	 * Message manager uses SWT.LEFT|SWT.BOTTOM for the default decoration
 	 * position. Use this method to change it.
-	 * 
+	 *
 	 * @param position
 	 *            the decoration position
 	 * @see ControlDecoration
@@ -197,7 +197,7 @@ public interface IMessageManager {
 
 	/**
 	 * Returns the currently used decoration position for all control messages.
-	 * 
+	 *
 	 * @return the current decoration position
 	 */
 
@@ -209,7 +209,7 @@ public interface IMessageManager {
 	 * carry an object of type <code>IMessage[]</code> as an href. You can use
 	 * this method to create a summary text from this array consistent with the
 	 * tool tip used by the form header.
-	 * 
+	 *
 	 * @param messages
 	 *            an array of messages
 	 * @return a textual representation of the messages with one message per

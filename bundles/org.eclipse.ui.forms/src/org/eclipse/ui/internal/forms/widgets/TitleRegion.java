@@ -425,7 +425,7 @@ public class TitleRegion extends Canvas {
 	/**
 	 * Sets the form's busy state. Busy form will display 'busy' animation in
 	 * the area of the title image.
-	 * 
+	 *
 	 * @param busy
 	 *            the form's busy state
 	 */

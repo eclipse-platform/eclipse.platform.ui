@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
  */
 
 public class ResourceManagerManger {
-	
+
 	private HashMap resourceManagers;
 
 	public LocalResourceManager getResourceManager(Display display) {

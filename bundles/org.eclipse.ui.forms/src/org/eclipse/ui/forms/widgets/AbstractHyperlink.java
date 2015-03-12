@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * <dt><b>Styles:</b></dt>
  * <dd>None</dd>
  * </dl>
- * 
+ *
  * @since 3.0
  */
 public abstract class AbstractHyperlink extends Canvas {
@@ -64,7 +64,7 @@ public abstract class AbstractHyperlink extends Canvas {
 
 	/**
 	 * Creates a new hyperlink in the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the control parent
 	 * @param style
@@ -142,7 +142,7 @@ public abstract class AbstractHyperlink extends Canvas {
 
 	/**
 	 * Adds the event listener to this hyperlink.
-	 * 
+	 *
 	 * @param listener
 	 *            the event listener to add
 	 */
@@ -154,7 +154,7 @@ public abstract class AbstractHyperlink extends Canvas {
 
 	/**
 	 * Removes the event listener from this hyperlink.
-	 * 
+	 *
 	 * @param listener
 	 *            the event listener to remove
 	 */
@@ -168,7 +168,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * Returns the selection state of the control. When focus is gained, the
 	 * state will be <samp>true </samp>; it will switch to <samp>false </samp>
 	 * when the control looses focus.
-	 * 
+	 *
 	 * @return <code>true</code> if the widget has focus, <code>false</code>
 	 *         otherwise.
 	 */
@@ -246,7 +246,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * Sets the object associated with this hyperlink. Concrete implementation
 	 * of this class can use if to store text, URLs or model objects that need
 	 * to be processed on hyperlink events.
-	 * 
+	 *
 	 * @param href
 	 *            the hyperlink object reference
 	 */
@@ -256,7 +256,7 @@ public abstract class AbstractHyperlink extends Canvas {
 
 	/**
 	 * Returns the object associated with this hyperlink.
-	 * 
+	 *
 	 * @see #setHref
 	 * @return the hyperlink object reference
 	 */
@@ -267,7 +267,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	/**
 	 * Returns the textual representation of this hyperlink suitable for showing
 	 * in tool tips or on the status line.
-	 * 
+	 *
 	 * @return the hyperlink text
 	 */
 	public String getText() {
@@ -276,7 +276,7 @@ public abstract class AbstractHyperlink extends Canvas {
 
 	/**
 	 * Paints the hyperlink as a reaction to the provided paint event.
-	 * 
+	 *
 	 * @param gc
 	 *            graphic context
 	 */
@@ -284,7 +284,7 @@ public abstract class AbstractHyperlink extends Canvas {
 
 	/**
 	 * Paints the control as a reaction to the provided paint event.
-	 * 
+	 *
 	 * @param e
 	 *            the paint event
 	 */
@@ -334,7 +334,7 @@ public abstract class AbstractHyperlink extends Canvas {
 			armed = (e.x >= 0 && e.y >= 0 && e.x < size.x && e.y < size.y);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)

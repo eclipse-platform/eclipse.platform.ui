@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Composite;
  * to 'flow' wrapped text proportionally (similar to the way web browser
  * renders tables). Custom layout managers that implement this interface will
  * allow TableWrapLayout to properly compute width hint to pass.
- * 
+ *
  * @see TableWrapLayout
  * @see ColumnLayout
  * @since 3.0
@@ -27,7 +27,7 @@ public interface ILayoutExtension {
 	 * Computes the minimum width of the parent. All widgets capable of word
 	 * wrapping should return the width of the longest word that cannot be
 	 * broken any further.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param changed <code>true</code> if the cached information should be
 	 * flushed, <code>false</code> otherwise.
@@ -38,7 +38,7 @@ public interface ILayoutExtension {
 	 * Computes the maximum width of the parent. All widgets capable of word
 	 * wrapping should return the length of the entire text with wrapping
 	 * turned off.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param changed <code>true</code> if the cached information
 	 * should be flushed, <code>false</code> otherwise.

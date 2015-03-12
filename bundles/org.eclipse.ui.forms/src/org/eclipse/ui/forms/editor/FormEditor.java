@@ -50,7 +50,7 @@ import org.eclipse.ui.part.MultiPageSelectionProvider;
  * FormEditor is a page change provider. It allows listeners to attach to it and
  * get notified when pages are changed. This new API in JFace allows dynamic
  * help to update on page changes.
- * 
+ *
  * @since 3.0
  */
 public abstract class FormEditor extends MultiPageEditorPart  {
@@ -131,7 +131,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Creates the common toolkit for this editor and adds pages to the editor.
-	 * 
+	 *
 	 * @see #addPages
 	 */
 	protected void createPages() {
@@ -153,7 +153,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * use of this method would be to create the form toolkit using one shared
 	 * <code>FormColors</code> object to share resources across the multiple
 	 * editor instances.
-	 * 
+	 *
 	 * @param display
 	 *            the display to use when creating the toolkit
 	 * @return the newly created toolkit instance
@@ -170,7 +170,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
 	 */
 	public Object getSelectedPage() {
@@ -181,7 +181,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * Adds the form page to this editor. Form page will be loaded lazily. Its
 	 * part control will not be created until it is activated for the first
 	 * time.
-	 * 
+	 *
 	 * @param page
 	 *            the form page to add
 	 */
@@ -195,7 +195,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * Adds the form page to this editor at the specified index (0-based). Form
 	 * page will be loaded lazily. Its part control will not be created until it
 	 * is activated for the first time.
-	 * 
+	 *
 	 * @param index
 	 *            the position to add the page at (0-based)
 	 * @param page
@@ -211,7 +211,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	/**
 	 * Adds a simple SWT control as a page. Overrides superclass implementation
 	 * to keep track of pages.
-	 * 
+	 *
 	 * @param control
 	 *            the page control to add
 	 * @return the 0-based index of the newly added page
@@ -229,7 +229,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	/**
 	 * Adds a simple SWT control as a page. Overrides superclass implementation
 	 * to keep track of pages.
-	 * 
+	 *
 	 * @param control
 	 *            the page control to add
 	 * @param index
@@ -250,7 +250,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * Tests whether the editor is dirty by checking all the pages that
 	 * implement <code>IFormPage</code>. If none of them is dirty, the method
 	 * delegates further processing to <code>super.isDirty()</code>.
-	 * 
+	 *
 	 * @return <code>true</code> if any of the pages in the editor are dirty,
 	 *         <code>false</code> otherwise.
 	 * @since 3.1
@@ -275,7 +275,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 		}
 		return super.isDirty();
 	}
-	
+
 	/**
 	 * Commits all dirty pages in the editor. This method should
 	 * be called as a first step of a 'save' operation.
@@ -295,12 +295,12 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 						mform.commit(onSave);
 				}
 			}
-		}	
+		}
 	}
 
 	/**
 	 * Adds a complete editor part to the multi-page editor.
-	 * 
+	 *
 	 * @see MultiPageEditorPart#addPage(IEditorPart, IEditorInput)
 	 */
 	public int addPage(IEditorPart editor, IEditorInput input)
@@ -316,7 +316,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	/**
 	 * Adds a complete editor part to the multi-page editor at the specified
 	 * position.
-	 * 
+	 *
 	 * @see MultiPageEditorPart#addPage(int, IEditorPart, IEditorInput)
 	 * @since 3.1
 	 */
@@ -332,7 +332,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Configures the form page.
-	 * 
+	 *
 	 * @param index
 	 *            the page index
 	 * @param page
@@ -350,7 +350,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Overrides the superclass to remove the page from the page table.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the 0-based index of the page in the editor
 	 */
@@ -414,7 +414,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Returns the toolkit owned by this editor.
-	 * 
+	 *
 	 * @return the toolkit object
 	 */
 	public FormToolkit getToolkit() {
@@ -423,7 +423,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Widens the visibility of the method in the superclass.
-	 * 
+	 *
 	 * @return the active nested editor
 	 */
 	public IEditorPart getActiveEditor() {
@@ -438,7 +438,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * Another important difference is during the editor closing. When the tab
 	 * folder is disposed, 'getActivePage()' will return -1, while this method
 	 * will still return the last active page.
-	 * 
+	 *
 	 * @see #getActivePage
 	 * @return the currently selected page or -1 if no page is currently
 	 *         selected
@@ -485,7 +485,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 				&& pages.get(newPageIndex) instanceof IFormPage)
 			((IFormPage) pages.get(newPageIndex)).setActive(true);
 		if (oldPageIndex != -1 && pages.size() > oldPageIndex
-				&& newPageIndex != oldPageIndex && 
+				&& newPageIndex != oldPageIndex &&
 				pages.get(oldPageIndex) instanceof IFormPage)
 			((IFormPage) pages.get(oldPageIndex)).setActive(false);
 		// Call super - this will cause pages to switch
@@ -495,7 +495,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Sets the active page using the unique page identifier.
-	 * 
+	 *
 	 * @param pageId
 	 *            the id of the page to switch to
 	 * @return page that was set active or <samp>null </samp> if not found.
@@ -516,7 +516,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Finds the page instance that has the provided id.
-	 * 
+	 *
 	 * @param pageId
 	 *            the id of the page to find
 	 * @return page with the matching id or <code>null</code> if not found.
@@ -536,7 +536,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	/**
 	 * Sets the active page using the unique page identifier and sets its input
 	 * to the provided object.
-	 * 
+	 *
 	 * @param pageId
 	 *            the id of the page to switch to
 	 * @param pageInput
@@ -556,7 +556,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	/**
 	 * Iterates through the pages calling similar method until a page is found
 	 * that contains the desired page input.
-	 * 
+	 *
 	 * @param pageInput
 	 *            the object to select and reveal
 	 * @return the page that accepted the request or <code>null</code> if no
@@ -578,7 +578,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	/**
 	 * Returns active page instance if the currently selected page index is not
 	 * -1, or <code>null</code> if it is.
-	 * 
+	 *
 	 * @return active page instance if selected, or <code>null</code> if no
 	 *         page is currently active.
 	 */
@@ -610,7 +610,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Notifies action bar contributor about page change.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the index of the new page
 	 */
@@ -628,7 +628,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Closes the editor programmatically.
-	 * 
+	 *
 	 * @param save
 	 *            if <code>true</code>, the content should be saved before
 	 *            closing.

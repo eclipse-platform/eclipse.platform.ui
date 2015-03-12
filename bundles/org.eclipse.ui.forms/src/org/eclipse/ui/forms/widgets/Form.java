@@ -74,7 +74,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * Children of the form should typically be created using FormToolkit to match
  * the appearance and behaviour. When creating children, use the form body as a
  * parent by calling 'getBody()' on the form instance. Example:
- * 
+ *
  * <pre>
  * FormToolkit toolkit = new FormToolkit(parent.getDisplay());
  * Form form = toolkit.createForm(parent);
@@ -82,13 +82,13 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * form.getBody().setLayout(new GridLayout());
  * toolkit.createButton(form.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
  * </pre>
- * 
+ *
  * <p>
  * No layout manager has been set on the body. Clients are required to set the
  * desired layout manager explicitly.
  * <p>
  * Although the class is not final, it should not be subclassed.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -130,9 +130,9 @@ public class Form extends Composite {
 					head), SWT.DEFAULT);
 			width = Math.max(hsize.x, width);
 			height = hsize.y;
-			
+
 			boolean ignoreBody=getData(FormUtil.IGNORE_BODY)!=null;
-			
+
 			Point bsize;
 			if (ignoreBody)
 				bsize = new Point(0,0);
@@ -162,7 +162,7 @@ public class Form extends Composite {
 
 	/**
 	 * Creates the form content control as a child of the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 */
@@ -177,7 +177,7 @@ public class Form extends Composite {
 
 	/**
 	 * Passes the menu to the form body.
-	 * 
+	 *
 	 * @param menu
 	 *            the parent menu
 	 */
@@ -203,7 +203,7 @@ public class Form extends Composite {
 
 	/**
 	 * Returns the title text that will be rendered at the top of the form.
-	 * 
+	 *
 	 * @return the title text
 	 */
 	public String getText() {
@@ -212,7 +212,7 @@ public class Form extends Composite {
 
 	/**
 	 * Returns the title image that will be rendered to the left of the title.
-	 * 
+	 *
 	 * @return the title image or <code>null</code> if not set.
 	 * @since 3.2
 	 */
@@ -223,7 +223,7 @@ public class Form extends Composite {
 	/**
 	 * Sets the foreground color of the form. This color will also be used for
 	 * the body.
-	 * 
+	 *
 	 * @param fg
 	 *            the foreground color
 	 */
@@ -236,7 +236,7 @@ public class Form extends Composite {
 	/**
 	 * Sets the background color of the form. This color will also be used for
 	 * the body.
-	 * 
+	 *
 	 * @param bg
 	 *            the background color
 	 */
@@ -248,7 +248,7 @@ public class Form extends Composite {
 
 	/**
 	 * Sets the font of the header text.
-	 * 
+	 *
 	 * @param font
 	 *            the new font
 	 */
@@ -268,7 +268,7 @@ public class Form extends Composite {
 	 * The mnemonic indicator character '&amp;' can be escaped by doubling it in
 	 * the string, causing a single '&amp;' to be displayed.
 	 * </p>
-	 * 
+	 *
 	 * @param text
 	 *            the title text
 	 */
@@ -281,13 +281,13 @@ public class Form extends Composite {
 	/**
 	 * Sets the image to be rendered to the left of the title. This image will
 	 * be temporarily hidden in two cases:
-	 * 
+	 *
 	 * <ol>
 	 * <li>When the form is busy - replaced with a busy animation</li>
 	 * <li>When the form has message set - replaced with the image indicating
 	 * message severity</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param image
 	 *            the title image or <code>null</code> to show no image.
 	 * @since 3.2
@@ -303,7 +303,7 @@ public class Form extends Composite {
 	 * gradient. Note that this method will reset color previously set by
 	 * {@link #setBackground(Color)}. This is necessary for the simulated
 	 * transparency of the heading in all of its children control.
-	 * 
+	 *
 	 * @param gradientColors
 	 *            the array of colors that form the gradient
 	 * @param percents
@@ -321,7 +321,7 @@ public class Form extends Composite {
 
 	/**
 	 * Returns the optional background image of the form head.
-	 * 
+	 *
 	 * @return the background image or <code>null</code> if not specified.
 	 */
 	public Image getBackgroundImage() {
@@ -332,14 +332,14 @@ public class Form extends Composite {
 	 * Sets the optional background image to be rendered behind the title
 	 * starting at the position 0,0. If the image is smaller than the container
 	 * in any dimension, it will be tiled.
-	 * 
+	 *
 	 * As of version 3.2, this method only supports SWT.BITMAP image types. This is
 	 * because the rendering is now delegated to SWT which imposes this restriction
-	 * on background images, 
-	 * 
+	 * on background images,
+	 *
 	 * @param backgroundImage
 	 *            the head background image.
-	 * 
+	 *
 	 */
 	public void setBackgroundImage(Image backgroundImage) {
 		head.setHeadingBackgroundImage(backgroundImage);
@@ -348,7 +348,7 @@ public class Form extends Composite {
 	/**
 	 * Returns the tool bar manager that is used to manage tool items in the
 	 * form's title area.
-	 * 
+	 *
 	 * @return form tool bar manager
 	 */
 	public IToolBarManager getToolBarManager() {
@@ -359,7 +359,7 @@ public class Form extends Composite {
 	 * Sets the tool bar vertical alignment relative to the header. Can be
 	 * useful when there is more free space at the second row (with the head
 	 * client).
-	 * 
+	 *
 	 * @param alignment
 	 *            SWT.TOP or SWT.BOTTOM
 	 * @since 3.3
@@ -371,7 +371,7 @@ public class Form extends Composite {
 
 	/**
 	 * Returns the current tool bar alignment (if used).
-	 * 
+	 *
 	 * @return SWT.TOP or SWT.BOTTOM
 	 * @since 3.3
 	 */
@@ -383,7 +383,7 @@ public class Form extends Composite {
 	/**
 	 * Returns the menu manager that is used to manage title area drop-down menu
 	 * items.
-	 * 
+	 *
 	 * @return title area drop-down menu manager
 	 * @since 3.3
 	 */
@@ -402,7 +402,7 @@ public class Form extends Composite {
 	/**
 	 * Returns the container that occupies the head of the form (the form area
 	 * above the body). Use this container as a parent for the head client.
-	 * 
+	 *
 	 * @return the head of the form.
 	 * @since 3.2
 	 */
@@ -412,7 +412,7 @@ public class Form extends Composite {
 
 	/**
 	 * Returns the optional head client if set.
-	 * 
+	 *
 	 * @return the head client or <code>null</code> if not set.
 	 * @see #setHeadClient(Control)
 	 * @since 3.2
@@ -428,7 +428,7 @@ public class Form extends Composite {
 	 * <p>
 	 * The head client must be a child of the composite returned by
 	 * <code>getHead()</code> method.
-	 * 
+	 *
 	 * @param headClient
 	 *            the optional child of the head
 	 * @since 3.2
@@ -442,7 +442,7 @@ public class Form extends Composite {
 	 * Returns the container that occupies the body of the form (the form area
 	 * below the title). Use this container as a parent for the controls that
 	 * should be in the form. No layout manager has been set on the form body.
-	 * 
+	 *
 	 * @return Returns the body of the form.
 	 */
 	public Composite getBody() {
@@ -452,7 +452,7 @@ public class Form extends Composite {
 	/**
 	 * Tests if the background image is tiled to cover the entire area of the
 	 * form heading.
-	 * 
+	 *
 	 * @return <code>true</code> if heading background image is tiled,
 	 *         <code>false</code> otherwise.
 	 */
@@ -463,7 +463,7 @@ public class Form extends Composite {
 	/**
 	 * Sets whether the header background image is repeated to cover the entire
 	 * heading area or not.
-	 * 
+	 *
 	 * @param backgroundImageTiled
 	 *            set <code>true</code> to tile the image, or
 	 *            <code>false</code> to paint the background image only once
@@ -475,7 +475,7 @@ public class Form extends Composite {
 
 	/**
 	 * Returns the background image alignment.
-	 * 
+	 *
 	 * @deprecated due to the underlying widget limitations, background image is
 	 *             either painted at 0,0 and/or tiled.
 	 * @return SWT.LEFT
@@ -486,7 +486,7 @@ public class Form extends Composite {
 
 	/**
 	 * Sets the background image alignment.
-	 * 
+	 *
 	 * @deprecated due to the underlying widget limitations, background image is
 	 *             always tiled and alignment cannot be controlled.
 	 * @param backgroundImageAlignment
@@ -498,7 +498,7 @@ public class Form extends Composite {
 
 	/**
 	 * Tests if background image is clipped.
-	 * 
+	 *
 	 * @deprecated due to the underlying widget limitations, background image is
 	 *             always clipped.
 	 * @return true
@@ -510,7 +510,7 @@ public class Form extends Composite {
 
 	/**
 	 * Sets whether the background image is clipped.
-	 * 
+	 *
 	 * @deprecated due to the underlying widget limitations, background image is
 	 *             always clipped.
 	 * @param backgroundImageClipped
@@ -522,7 +522,7 @@ public class Form extends Composite {
 
 	/**
 	 * Tests if the form head separator is visible.
-	 * 
+	 *
 	 * @return <code>true</code> if the head/body separator is visible,
 	 *         <code>false</code> otherwise
 	 * @since 3.2
@@ -535,7 +535,7 @@ public class Form extends Composite {
 	 * If set, adds a separator between the head and body. Since 3.3, the colors
 	 * that are used to render it are {@link IFormColors#H_BOTTOM_KEYLINE1} and
 	 * {@link IFormColors#H_BOTTOM_KEYLINE2}.
-	 * 
+	 *
 	 * @param addSeparator
 	 *            <code>true</code> to make the separator visible,
 	 *            <code>false</code> otherwise.
@@ -549,7 +549,7 @@ public class Form extends Composite {
 	 * Returns the color used to render the optional head separator. If gradient
 	 * text background is used additional colors from the gradient will be used
 	 * to render the separator.
-	 * 
+	 *
 	 * @return separator color or <code>null</code> if not set.
 	 * @since 3.2
 	 * @deprecated use <code>getHeadColor(IFormColors.H_BOTTOM_KEYLINE2)</code>
@@ -561,7 +561,7 @@ public class Form extends Composite {
 
 	/**
 	 * Sets the color to be used to render the optional head separator.
-	 * 
+	 *
 	 * @param separatorColor
 	 *            the color to render the head separator or <code>null</code>
 	 *            to use the default color.
@@ -575,7 +575,7 @@ public class Form extends Composite {
 
 	/**
 	 * Sets the color used to paint an aspect of the form heading.
-	 * 
+	 *
 	 * @param key
 	 *            a valid form heading color key as defined in
 	 *            {@link IFormColors}. Relevant keys all start with an H_
@@ -592,7 +592,7 @@ public class Form extends Composite {
 	/**
 	 * Returns the color that is currently use to paint an aspect of the form
 	 * heading, or <code>null</code> if not defined.
-	 * 
+	 *
 	 * @param key
 	 *            the color key
 	 * @return the color object or <code>null</code> if not set.
@@ -606,7 +606,7 @@ public class Form extends Composite {
 	/**
 	 * Sets the message for this form. Message text is rendered in the form head
 	 * when shown.
-	 * 
+	 *
 	 * @param message
 	 *            the message, or <code>null</code> to clear the message
 	 * @see #setMessage(String, int)
@@ -624,7 +624,7 @@ public class Form extends Composite {
 	 * <code>INFORMATION</code>,<code>WARNING</code>, or
 	 * <code>ERROR</code> defined in IMessageProvider interface.
 	 * </p>
-	 * 
+	 *
 	 * @param newMessage
 	 *            the message, or <code>null</code> to clear the message
 	 * @param newType
@@ -648,8 +648,8 @@ public class Form extends Composite {
 	 * <p>
 	 * In addition to the summary message, this method also sets an array of
 	 * individual messages.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param newMessage
 	 *            the message, or <code>null</code> to clear the message
 	 * @param newType
@@ -669,7 +669,7 @@ public class Form extends Composite {
 	/**
 	 * Adds a message hyperlink listener. If at least one listener is present,
 	 * messages will be rendered as hyperlinks.
-	 * 
+	 *
 	 * @param listener
 	 * @see #removeMessageHyperlinkListener(IHyperlinkListener)
 	 * @since 3.3
@@ -680,7 +680,7 @@ public class Form extends Composite {
 
 	/**
 	 * Remove the message hyperlink listener.
-	 * 
+	 *
 	 * @param listener
 	 * @see #addMessageHyperlinkListener(IHyperlinkListener)
 	 * @since 3.3
@@ -692,7 +692,7 @@ public class Form extends Composite {
 	/**
 	 * Tests if the form is in the 'busy' state. Busy form displays 'busy'
 	 * animation in the area of the title image.
-	 * 
+	 *
 	 * @return <code>true</code> if busy, <code>false</code> otherwise.
 	 * @since 3.2
 	 */
@@ -704,7 +704,7 @@ public class Form extends Composite {
 	/**
 	 * Sets the form's busy state. Busy form will display 'busy' animation in
 	 * the area of the title image.
-	 * 
+	 *
 	 * @param busy
 	 *            the form's busy state
 	 * @since 3.2
@@ -717,7 +717,7 @@ public class Form extends Composite {
 	/**
 	 * Adds support for dragging items out of the form title area via a user
 	 * drag-and-drop operation.
-	 * 
+	 *
 	 * @param operations
 	 *            a bitwise OR of the supported drag and drop operation types (
 	 *            <code>DROP_COPY</code>,<code>DROP_LINK</code>, and
@@ -738,7 +738,7 @@ public class Form extends Composite {
 	/**
 	 * Adds support for dropping items into the form title area via a user
 	 * drag-and-drop operation.
-	 * 
+	 *
 	 * @param operations
 	 *            a bitwise OR of the supported drag and drop operation types (
 	 *            <code>DROP_COPY</code>,<code>DROP_LINK</code>, and
@@ -758,7 +758,7 @@ public class Form extends Composite {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
 	 */
 	public String getMessage() {
@@ -767,7 +767,7 @@ public class Form extends Composite {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
 	 */
 	public int getMessageType() {
@@ -777,7 +777,7 @@ public class Form extends Composite {
 	/**
 	 * Returns the children messages that the cause of the summary message
 	 * currently set on the form.
-	 * 
+	 *
 	 * @return an array of children messages or <code>null</code> if not set.
 	 * @see #setMessage(String, int, IMessage[])
 	 * @since 3.3
@@ -792,11 +792,11 @@ public class Form extends Composite {
 		}
 		this.selectionText = text;
 	}
-	
+
 	/**
 	 * Returns the message manager that will keep track of messages in this
-	 * form. 
-	 * 
+	 * form.
+	 *
 	 * @return the message manager instance
 	 * @since org.eclipse.ui.forms 3.4
 	 */

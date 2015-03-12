@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * methods like <code>refresh</code>, <code>commit</code>,
  * <code>setFocus</code> etc. Note that most of these methods are not empty -
  * calling <code>super</code> is required.
- * 
+ *
  * @see Section
  * @since 3.0
  */
@@ -34,7 +34,7 @@ public class SectionPart extends AbstractFormPart {
 
 	/**
 	 * Creates a new section part based on the provided section.
-	 * 
+	 *
 	 * @param section
 	 *            the section to use
 	 */
@@ -46,7 +46,7 @@ public class SectionPart extends AbstractFormPart {
 	/**
 	 * Creates a new section part inside the provided parent and using the
 	 * provided toolkit. The section part will create the section widget.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent
 	 * @param toolkit
@@ -78,7 +78,7 @@ public class SectionPart extends AbstractFormPart {
 
 	/**
 	 * Returns the section widget used in this part.
-	 * 
+	 *
 	 * @return the section widget
 	 */
 	public Section getSection() {
@@ -87,7 +87,7 @@ public class SectionPart extends AbstractFormPart {
 
 	/**
 	 * The section is about to expand or collapse.
-	 * 
+	 *
 	 * @param expanding
 	 *            <code>true</code> for expansion, <code>false</code> for
 	 *            collapse.
@@ -97,7 +97,7 @@ public class SectionPart extends AbstractFormPart {
 
 	/**
 	 * The section has expanded or collapsed.
-	 * 
+	 *
 	 * @param expanded
 	 *            <code>true</code> for expansion, <code>false</code> for
 	 *            collapse.

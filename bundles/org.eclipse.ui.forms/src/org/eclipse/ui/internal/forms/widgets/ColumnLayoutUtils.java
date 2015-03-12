@@ -14,10 +14,10 @@ package org.eclipse.ui.internal.forms.widgets;
 import org.eclipse.swt.graphics.Point;
 
 public class ColumnLayoutUtils {
-	
+
 	/*
 	 * Compute the minimum required height by iteration. The first guess is to
-	 * 
+	 *
 	 * This method is public to allow for JUnit testing
 	 */
 	public static int computeColumnHeight(int ncolumns, Point[] sizes, int totalHeight, int verticalMargin) {
@@ -36,7 +36,7 @@ public class ColumnLayoutUtils {
 		}
 		return requiredHeight;
 	}
-	
+
 	private static int computeActualHeight(int ncolumns, Point[] sizes, int candidateHeight, int verticalMargin ) {
 		int colHeight = 0;
 		int maxHeight = 0;
@@ -46,7 +46,7 @@ public class ColumnLayoutUtils {
 			if (i > 0 && column < ncolumns && colHeight + childHeight + verticalMargin > candidateHeight) {
 				maxHeight = Math.max(colHeight, maxHeight);
 				column++;
-				colHeight = 0; 
+				colHeight = 0;
 			}
 			if (colHeight > 0)
 				colHeight += verticalMargin;

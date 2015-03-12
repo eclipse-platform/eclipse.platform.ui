@@ -26,7 +26,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
@@ -35,7 +35,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getHref()
 	 */
 	public String getHref() {
@@ -60,7 +60,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#isWordWrapAllowed()
 	 */
 	public boolean isWordWrapAllowed() {
@@ -69,7 +69,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setWordWrapAllowed(boolean)
 	 */
 	public void setWordWrapAllowed(boolean value) {
@@ -78,13 +78,13 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getText()
 	 */
 	public String getText() {
 		return text!=null?text:""; //$NON-NLS-1$
 	}
-	
+
 	public void setText(String text) {
 		this.text = text;
 	}
@@ -103,7 +103,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	public void setTooltipText(String tooltipText) {
 		this.tooltipText = tooltipText;
 	}
-	
+
 	public boolean isSelectable() {
 		return true;
 	}

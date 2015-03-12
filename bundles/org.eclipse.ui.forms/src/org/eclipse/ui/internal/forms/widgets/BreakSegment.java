@@ -31,7 +31,7 @@ public class BreakSegment extends ParagraphSegment {
 			FontMetrics fm = gc.getFontMetrics();
 			locator.rowHeight = fm.getHeight();
 		}
-		if (computeHeightOnly) locator.collectHeights();		
+		if (computeHeightOnly) locator.collectHeights();
 		locator.resetCaret();
 		locator.width = locator.x;
 		locator.y += locator.rowHeight;
@@ -61,7 +61,7 @@ public class BreakSegment extends ParagraphSegment {
 		}
 		locator.y += locator.rowHeight;
 		locator.rowHeight = 0;
-		locator.rowCounter++;		
+		locator.rowCounter++;
 	}
 
 	/* (non-Javadoc)

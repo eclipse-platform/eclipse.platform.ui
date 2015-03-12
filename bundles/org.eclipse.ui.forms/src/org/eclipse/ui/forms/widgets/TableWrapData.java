@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Point;
  * Children in a composite that uses this layout should call <samp>setLayoutData
  * </samp> and pass an instance of this class to control physical placement in
  * the parent.
- * 
+ *
  * @see TableWrapLayout
  * @since 3.0
  */
@@ -137,7 +137,7 @@ public final class TableWrapData {
 	/**
 	 * The convenience constructor - allows passing the horizontal alignment
 	 * style.
-	 * 
+	 *
 	 * @param align
 	 *            horizontal alignment (LEFT, CENTER, RIGHT, FILL or FILL_GRAB).
 	 */
@@ -147,7 +147,7 @@ public final class TableWrapData {
 
 	/**
 	 * The convenience constructor - allows passing the alignment styles.
-	 * 
+	 *
 	 * @param align
 	 *            horizontal alignment (LEFT, CENTER, RIGHT, FILL or FILL_GRAB).
 	 * @param valign
@@ -160,7 +160,7 @@ public final class TableWrapData {
 	/**
 	 * The convenience constructor - allows passing the alignment styles, column
 	 * and row spans.
-	 * 
+	 *
 	 * @param align
 	 *            horizontal alignment (LEFT, CENTER, RIGHT, FILL or FILL_GRAB).
 	 * @param valign

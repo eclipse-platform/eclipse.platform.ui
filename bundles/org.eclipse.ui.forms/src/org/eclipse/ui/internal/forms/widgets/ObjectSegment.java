@@ -43,7 +43,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 	void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
+
 	protected abstract Point getObjectSize(Hashtable resourceTable, int wHint);
 
 	public boolean advanceLocator(GC gc, int wHint, Locator loc,
@@ -77,7 +77,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 	}
 
 	public boolean contains(int x, int y) {
-		if (bounds==null) 
+		if (bounds==null)
 			return false;
 		return bounds.contains(x, y);
 	}
@@ -132,7 +132,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		}
 		int ix = loc.x;
 		int iy = loc.y;
-		
+
 		if (alignment==MIDDLE)
 			iy = loc.getMiddle(objHeight, false);
 		else if (alignment==BOTTOM)
@@ -145,7 +145,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#computeSelection(org.eclipse.swt.graphics.GC, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
 	 */
 	public void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData) {
-		// TODO we should add this to the selection 
+		// TODO we should add this to the selection
 		// if we want to support rich text
 	}
 }

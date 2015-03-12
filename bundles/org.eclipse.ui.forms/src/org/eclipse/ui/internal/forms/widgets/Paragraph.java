@@ -104,7 +104,7 @@ public class Paragraph {
 			addSegment(new TextSegment(text, fontId, colorId, wrapAllowed));
 		}
 	}
-	
+
 	private int findUrl(String text, int startIndex) {
 		int[] locs = new int[PROTOCOLS.length];
 		for (int i = 0; i < PROTOCOLS.length; i++)
@@ -188,7 +188,7 @@ public class Paragraph {
 			segment.paint(gc, false, resourceTable, doSelect, selData, repaintRegion);
 		}
 	}
-	
+
 	public void computeSelection(GC gc,	Hashtable resourceTable, IHyperlinkSegment selectedLink,
 			SelectionData selData) {
 		ParagraphSegment[] segments = getSegments();

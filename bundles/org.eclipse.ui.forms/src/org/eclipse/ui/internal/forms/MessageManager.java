@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe (benjamin.cabe@anyware-tech.com) - patch (see Bugzilla #255466) 
+ *     Benjamin Cabe (benjamin.cabe@anyware-tech.com) - patch (see Bugzilla #255466)
  ******************************************************************************/
 
 package org.eclipse.ui.internal.forms;
@@ -83,7 +83,7 @@ public class MessageManager implements IMessageManager {
 			this.type = type;
 			this.data = data;
 		}
-		
+
 		private Message(Message message) {
 			this.key = message.key;
 			this.message = message.message;
@@ -95,7 +95,7 @@ public class MessageManager implements IMessageManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.IMessage#getKey()
 		 */
 		public Object getKey() {
@@ -104,7 +104,7 @@ public class MessageManager implements IMessageManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
 		 */
 		public String getMessage() {
@@ -113,7 +113,7 @@ public class MessageManager implements IMessageManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
 		 */
 		public int getMessageType() {
@@ -122,7 +122,7 @@ public class MessageManager implements IMessageManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.forms.messages.IMessage#getControl()
 		 */
 		public Control getControl() {
@@ -131,7 +131,7 @@ public class MessageManager implements IMessageManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.forms.messages.IMessage#getData()
 		 */
 		public Object getData() {
@@ -140,13 +140,13 @@ public class MessageManager implements IMessageManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.forms.messages.IMessage#getPrefix()
 		 */
 		public String getPrefix() {
 			return prefix;
 		}
-		
+
 		public boolean equals(Object obj) {
 			if (!(obj instanceof Message))
 				return false;
@@ -199,7 +199,7 @@ public class MessageManager implements IMessageManager {
 		ControlDecorator(Control control) {
 			this.decoration = new ControlDecoration(control, decorationPosition, form.getBody());
 		}
-		
+
 		private ControlDecorator (ControlDecorator cd) {
 			this.decoration = cd.decoration;
 			this.prefix = cd.prefix;
@@ -288,7 +288,7 @@ public class MessageManager implements IMessageManager {
 				decoration.show();
 			}
 		}
-		
+
 		public boolean equals(Object obj) {
 			if (!(obj instanceof ControlDecorator))
 				return false;
@@ -297,7 +297,7 @@ public class MessageManager implements IMessageManager {
 				return false;
 			return cd.getPrefix().equals(getPrefix());
 		}
-		
+
 		boolean hasSameMessages(ControlDecorator cd) {
 			if (cd.controlMessages.size() != controlMessages.size())
 				return false;
@@ -310,7 +310,7 @@ public class MessageManager implements IMessageManager {
 	/**
 	 * Creates a new instance of the message manager that will work with the
 	 * provided form.
-	 * 
+	 *
 	 * @param scrolledForm
 	 *            the form to control
 	 */
@@ -321,7 +321,7 @@ public class MessageManager implements IMessageManager {
 	/**
 	 * Creates a new instance of the message manager that will work with the
 	 * provided form.
-	 * 
+	 *
 	 * @param form
 	 *            the form to control
 	 * @since org.eclipse.ui.forms 3.4
@@ -332,7 +332,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#addMessage(java.lang.Object,
 	 *      java.lang.String, int)
 	 */
@@ -344,7 +344,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#addMessage(java.lang.Object,
 	 *      java.lang.String, int, org.eclipse.swt.widgets.Control)
 	 */
@@ -363,7 +363,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#removeMessage(java.lang.Object)
 	 */
 	public void removeMessage(Object key) {
@@ -377,7 +377,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#removeMessages()
 	 */
 	public void removeMessages() {
@@ -390,7 +390,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#removeMessage(java.lang.Object,
 	 *      org.eclipse.swt.widgets.Control)
 	 */
@@ -405,7 +405,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#removeMessages(org.eclipse.swt.widgets.Control)
 	 */
 	public void removeMessages(Control control) {
@@ -420,7 +420,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#removeAllMessages()
 	 */
 	public void removeAllMessages() {
@@ -472,7 +472,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#update()
 	 */
 	public void update() {
@@ -580,7 +580,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#createSummary(org.eclipse.ui.forms.IMessage[])
 	 */
 	public String createSummary(IMessage[] messages) {
@@ -597,7 +597,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#getMessagePrefixProvider()
 	 */
 	public IMessagePrefixProvider getMessagePrefixProvider() {
@@ -606,7 +606,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#setMessagePrefixProvider(org.eclipse.ui.forms.IMessagePrefixProvider)
 	 */
 	public void setMessagePrefixProvider(IMessagePrefixProvider provider) {
@@ -619,7 +619,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#getDecorationPosition()
 	 */
 	public int getDecorationPosition() {
@@ -628,7 +628,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#setDecorationPosition(int)
 	 */
 	public void setDecorationPosition(int position) {
@@ -641,7 +641,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#isAutoUpdate()
 	 */
 	public boolean isAutoUpdate() {
@@ -650,7 +650,7 @@ public class MessageManager implements IMessageManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IMessageManager#setAutoUpdate(boolean)
 	 */
 	public void setAutoUpdate(boolean autoUpdate) {
@@ -670,7 +670,7 @@ public class MessageManager implements IMessageManager {
 			}
 		}
 	}
-	
+
 	private boolean isCacheChanged() {
 		boolean result = false;
 		result = checkMessageCache() || checkDecoratorCache();
@@ -680,7 +680,7 @@ public class MessageManager implements IMessageManager {
 		oldDecorators = null;
 		return result;
 	}
-	
+
 	private boolean checkMessageCache() {
 		if (oldMessages == null)
 			return false;
@@ -690,7 +690,7 @@ public class MessageManager implements IMessageManager {
 			return true;
 		return false;
 	}
-	
+
 	private boolean checkDecoratorCache() {
 		if (oldDecorators == null)
 			return false;

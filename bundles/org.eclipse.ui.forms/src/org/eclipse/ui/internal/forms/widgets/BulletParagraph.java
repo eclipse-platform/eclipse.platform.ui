@@ -41,7 +41,7 @@ public class BulletParagraph extends Paragraph {
 
 	/**
 	 * Constructor for BulletParagraph.
-	 * 
+	 *
 	 * @param addVerticalSpace
 	 */
 	public BulletParagraph(boolean addVerticalSpace) {

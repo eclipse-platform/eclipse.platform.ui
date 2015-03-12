@@ -61,11 +61,11 @@ public class TextHyperlinkSegment extends TextSegment implements
 		Color savedFg = gc.getForeground();
 		Color newFg = hover ? settings.getActiveForeground() : settings.getForeground();
 		if (newFg!=null)
-			gc.setForeground(newFg); 
+			gc.setForeground(newFg);
 		super.paint(gc, hover, resourceTable, selected, rolloverMode, selData, repaintRegion);
 		gc.setForeground(savedFg);
 	}
-	
+
 	protected void drawText(GC gc, String s, int clipX, int clipY) {
 		gc.drawText(s, clipX, clipY, false);
 	}
@@ -77,7 +77,7 @@ public class TextHyperlinkSegment extends TextSegment implements
 	public void setTooltipText(String tooltip) {
 		this.tooltipText = tooltip;
 	}
-	
+
 	public boolean isSelectable() {
 		return true;
 	}

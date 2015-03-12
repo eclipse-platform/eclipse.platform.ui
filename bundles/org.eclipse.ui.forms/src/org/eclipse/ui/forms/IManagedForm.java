@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * <p>
  * This interface should not be extended or implemented. New form instances
  * should be created using ManagedForm.
- * 
+ *
  * @see ManagedForm
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -35,28 +35,28 @@ public interface IManagedForm {
 	/**
 	 * Initializes the form by looping through the managed parts and
 	 * initializing them. Has no effect if already called once.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void initialize();
 
 	/**
 	 * Returns the toolkit used by this form.
-	 * 
+	 *
 	 * @return the toolkit
 	 */
 	public FormToolkit getToolkit();
 
 	/**
 	 * Returns the form widget managed by this form.
-	 * 
+	 *
 	 * @return the form widget
 	 */
 	public ScrolledForm getForm();
 
 	/**
 	 * Reflows the form as a result of the layout change.
-	 * 
+	 *
 	 * @param changed
 	 *            if <code>true</code>, discard cached layout information
 	 */
@@ -65,7 +65,7 @@ public interface IManagedForm {
 	/**
 	 * A part can use this method to notify other parts that implement
 	 * IPartSelectionListener about selection changes.
-	 * 
+	 *
 	 * @param part
 	 *            the part that broadcasts the selection
 	 * @param selection
@@ -75,14 +75,14 @@ public interface IManagedForm {
 
 	/**
 	 * Returns all the parts currently managed by this form.
-	 * 
+	 *
 	 * @return the managed parts
 	 */
 	IFormPart[] getParts();
 
 	/**
 	 * Adds the new part to the form.
-	 * 
+	 *
 	 * @param part
 	 *            the part to add
 	 */
@@ -90,7 +90,7 @@ public interface IManagedForm {
 
 	/**
 	 * Removes the part from the form.
-	 * 
+	 *
 	 * @param part
 	 *            the part to remove
 	 */
@@ -98,7 +98,7 @@ public interface IManagedForm {
 
 	/**
 	 * Sets the input of this page to the provided object.
-	 * 
+	 *
 	 * @param input
 	 *            the new page input
 	 * @return <code>true</code> if the form contains this object,
@@ -108,7 +108,7 @@ public interface IManagedForm {
 
 	/**
 	 * Returns the current page input.
-	 * 
+	 *
 	 * @return page input object or <code>null</code> if not applicable.
 	 */
 	Object getInput();
@@ -116,7 +116,7 @@ public interface IManagedForm {
 	/**
 	 * Tests if form is dirty. A managed form is dirty if at least one managed
 	 * part is dirty.
-	 * 
+	 *
 	 * @return <code>true</code> if at least one managed part is dirty,
 	 *         <code>false</code> otherwise.
 	 */
@@ -125,7 +125,7 @@ public interface IManagedForm {
 	/**
 	 * Notifies the form that the dirty state of one of its parts has changed.
 	 * The global dirty state of the form can be obtained by calling 'isDirty'.
-	 * 
+	 *
 	 * @see #isDirty
 	 */
 	void dirtyStateChanged();
@@ -133,7 +133,7 @@ public interface IManagedForm {
 	/**
 	 * Commits the dirty form. All pending changes in the widgets are flushed
 	 * into the model.
-	 * 
+	 *
 	 * @param onSave
 	 */
 	void commit(boolean onSave);
@@ -143,7 +143,7 @@ public interface IManagedForm {
 	 * part is stale. This can happen when the underlying model changes,
 	 * resulting in the presentation of the part being out of sync with the
 	 * model and needing refreshing.
-	 * 
+	 *
 	 * @return <code>true</code> if the form is stale, <code>false</code>
 	 *         otherwise.
 	 */
@@ -163,7 +163,7 @@ public interface IManagedForm {
 	/**
 	 * Sets the container that owns this form. Depending on the context, the
 	 * container may be wizard, editor page, editor etc.
-	 * 
+	 *
 	 * @param container
 	 *            the container of this form
 	 */
@@ -171,7 +171,7 @@ public interface IManagedForm {
 
 	/**
 	 * Returns the container of this form.
-	 * 
+	 *
 	 * @return the form container
 	 */
 	Object getContainer();
@@ -179,7 +179,7 @@ public interface IManagedForm {
 	/**
 	 * Returns the message manager that will keep track of messages in this
 	 * form.
-	 * 
+	 *
 	 * @return the message manager instance
 	 * @since 3.3
 	 */

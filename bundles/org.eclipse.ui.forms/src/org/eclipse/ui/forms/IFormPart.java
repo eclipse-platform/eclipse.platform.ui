@@ -34,15 +34,15 @@ package org.eclipse.ui.forms;
  * When the form is disposed, each registered part is disposed as well. Parts
  * are responsible for releasing any system resources they created and for
  * removing themselves as listeners from all event providers.
- * 
+ *
  * @see IManagedForm
  * @since 3.0
- * 
+ *
  */
 public interface IFormPart {
 	/**
 	 * Initializes the part.
-	 * 
+	 *
 	 * @param form
 	 *            the managed form that manages the part
 	 */
@@ -56,7 +56,7 @@ public interface IFormPart {
 	/**
 	 * Returns true if the part has been modified with respect to the data
 	 * loaded from the model.
-	 * 
+	 *
 	 * @return true if the part has been modified with respect to the data
 	 *         loaded from the model
 	 */
@@ -65,7 +65,7 @@ public interface IFormPart {
 	/**
 	 * If part is displaying information loaded from a model, this method
 	 * instructs it to commit the new (modified) data back into the model.
-	 * 
+	 *
 	 * @param onSave
 	 *            indicates if commit is called during 'save' operation or for
 	 *            some other reason (for example, if form is contained in a
@@ -78,7 +78,7 @@ public interface IFormPart {
 	 * Notifies the part that an object has been set as overall form's input.
 	 * The part can elect to react by revealing or selecting the object, or do
 	 * nothing if not applicable.
-	 * 
+	 *
 	 * @return <code>true</code> if the part has selected and revealed the
 	 *         input object, <code>false</code> otherwise.
 	 */
@@ -102,7 +102,7 @@ public interface IFormPart {
 	 * 'dirty' if user interacted with its editable widgets and changed the
 	 * values. In contrast, part is 'stale' when the data it presents in the
 	 * widgets has been changed in the model without direct user interaction.
-	 * 
+	 *
 	 * @return <code>true</code> if the part needs refreshing,
 	 *         <code>false</code> otherwise.
 	 */

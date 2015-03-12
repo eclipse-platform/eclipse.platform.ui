@@ -16,7 +16,7 @@ package org.eclipse.ui.forms.events;
  * Classes that wish to deal with <code>HyperlinkEvent</code> s can extend
  * this class and override only the methods which they are interested in.
  * </p>
- * 
+ *
  * @see IHyperlinkListener
  * @see HyperlinkEvent
  * @since 3.0
@@ -24,7 +24,7 @@ package org.eclipse.ui.forms.events;
 public class HyperlinkAdapter implements IHyperlinkListener {
 	/**
 	 * Sent when the link is entered. The default behaviour is to do nothing.
-	 * 
+	 *
 	 * @param e
 	 *            the event
 	 */
@@ -32,7 +32,7 @@ public class HyperlinkAdapter implements IHyperlinkListener {
 	}
 	/**
 	 * Sent when the link is exited. The default behaviour is to do nothing.
-	 * 
+	 *
 	 * @param e
 	 *            the event
 	 */
@@ -40,7 +40,7 @@ public class HyperlinkAdapter implements IHyperlinkListener {
 	}
 	/**
 	 * Sent when the link is activated. The default behaviour is to do nothing.
-	 * 
+	 *
 	 * @param e
 	 *            the event
 	 */

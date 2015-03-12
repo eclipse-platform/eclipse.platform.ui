@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
  * class. You can control width and height hints, as well as horizontal
  * alignment using instances of this class. As with other layouts, they are not
  * required to get the default behaviour.
- * 
+ *
  * @see ColumnLayout
  * @since 3.0
  */
@@ -54,7 +54,7 @@ public final class ColumnLayoutData {
 	public int horizontalAlignment = FILL;
 	/**
 	 * Convinience constructor for the class.
-	 * 
+	 *
 	 * @param wHint
 	 *            width hint for the control
 	 * @param hHint
@@ -66,7 +66,7 @@ public final class ColumnLayoutData {
 	}
 	/**
 	 * Convinience constructor for the class.
-	 * 
+	 *
 	 * @param wHint
 	 *            width hint for the control
 	 */
@@ -75,7 +75,7 @@ public final class ColumnLayoutData {
 	}
 	/**
 	 * The default constructor.
-	 *  
+	 *
 	 */
 	public ColumnLayoutData() {
 	}

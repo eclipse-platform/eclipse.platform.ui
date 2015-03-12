@@ -71,7 +71,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Creates a new section instance in the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param style
@@ -150,7 +150,7 @@ public class Section extends ExpandableComposite {
 	/**
 	 * Sets the description text. Has no effect if DESCRIPTION style was not
 	 * used to create the control.
-	 * 
+	 *
 	 * @param description
 	 */
 	public void setDescription(String description) {
@@ -160,7 +160,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Returns the current description text.
-	 * 
+	 *
 	 * @return description text or <code>null</code> if DESCRIPTION style was
 	 *         not used to create the control.
 	 */
@@ -175,7 +175,7 @@ public class Section extends ExpandableComposite {
 	 * <samp>null </samp> and must be a direct child of this container. If
 	 * defined, separator will be placed below the title text and will remain
 	 * visible regardless of the expansion state.
-	 * 
+	 *
 	 * @param separator
 	 *            the separator that will be placed below the title text.
 	 */
@@ -187,7 +187,7 @@ public class Section extends ExpandableComposite {
 	/**
 	 * Returns the control that is used as a separator betweeen the title and
 	 * the client, or <samp>null </samp> if not set.
-	 * 
+	 *
 	 * @return separator control or <samp>null </samp> if not set.
 	 */
 	public Control getSeparatorControl() {
@@ -196,7 +196,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Sets the background of the section.
-	 * 
+	 *
 	 * @param bg
 	 *            the new background
 	 */
@@ -209,7 +209,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Sets the foreground of the section.
-	 * 
+	 *
 	 * @param fg
 	 *            the new foreground.
 	 */
@@ -223,7 +223,7 @@ public class Section extends ExpandableComposite {
 	/**
 	 * Returns the control used to render the description. In 3.1, this method
 	 * was promoted to public.
-	 * 
+	 *
 	 * @return description control or <code>null</code> if DESCRIPTION style
 	 *         was not used to create the control and description control was
 	 *         not set by the client.
@@ -242,7 +242,7 @@ public class Section extends ExpandableComposite {
 	 * This method and <code>DESCRIPTION</code> style are mutually exclusive.
 	 * Use the method only if you want to create the description control
 	 * yourself.
-	 * 
+	 *
 	 * @since 3.1
 	 * @param descriptionControl
 	 *            the control that will be placed below the title text.
@@ -256,7 +256,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Sets the color of the title bar border when TITLE_BAR style is used.
-	 * 
+	 *
 	 * @param color
 	 *            the title bar border color
 	 */
@@ -267,7 +267,7 @@ public class Section extends ExpandableComposite {
 	/**
 	 * Sets the color of the title bar background when TITLE_BAR style is used.
 	 * This color is used as a starting color for the vertical gradient.
-	 * 
+	 *
 	 * @param color
 	 *            the title bar border background
 	 */
@@ -279,7 +279,7 @@ public class Section extends ExpandableComposite {
 	 * Sets the color of the title bar gradient background when TITLE_BAR style
 	 * is used. This color is used at the height where title controls end
 	 * (toggle, tool bar).
-	 * 
+	 *
 	 * @param color
 	 *            the title bar gradient background
 	 */
@@ -289,7 +289,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Returns the title bar border color when TITLE_BAR style is used.
-	 * 
+	 *
 	 * @return the title bar border color
 	 */
 	public Color getTitleBarBorderColor() {
@@ -301,7 +301,7 @@ public class Section extends ExpandableComposite {
 	/**
 	 * Returns the title bar gradient background color when TITLE_BAR style is
 	 * used.
-	 * 
+	 *
 	 * @return the title bar gradient background
 	 */
 	public Color getTitleBarGradientBackground() {
@@ -314,7 +314,7 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Returns the title bar background when TITLE_BAR style is used.
-	 * 
+	 *
 	 * @return the title bar background
 	 */
 	public Color getTitleBarBackground() {

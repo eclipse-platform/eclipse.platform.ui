@@ -25,55 +25,55 @@ import org.eclipse.swt.widgets.Display;
  * chosen to make the widgets look correct in the editor area. If a different
  * set of colors is needed, subclass this class and override 'initialize' and/or
  * 'initializeColors'.
- * 
+ *
  * @since 3.0
  */
 public class FormColors {
 	/**
 	 * Key for the form title foreground color.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.TITLE</code>.
 	 */
 	public static final String TITLE = IFormColors.TITLE;
 
 	/**
 	 * Key for the tree/table border color.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.BORDER</code>
 	 */
 	public static final String BORDER = IFormColors.BORDER;
 
 	/**
 	 * Key for the section separator color.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.SEPARATOR</code>.
 	 */
 	public static final String SEPARATOR = IFormColors.SEPARATOR;
 
 	/**
 	 * Key for the section title bar background.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.TB_BG
 	 */
 	public static final String TB_BG = IFormColors.TB_BG;
 
 	/**
 	 * Key for the section title bar foreground.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.TB_FG</code>
 	 */
 	public static final String TB_FG = IFormColors.TB_FG;
 
 	/**
 	 * Key for the section title bar gradient.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.TB_GBG</code>
 	 */
 	public static final String TB_GBG = IFormColors.TB_GBG;
 
 	/**
 	 * Key for the section title bar border.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.TB_BORDER</code>.
 	 */
 	public static final String TB_BORDER = IFormColors.TB_BORDER;
@@ -81,21 +81,21 @@ public class FormColors {
 	/**
 	 * Key for the section toggle color. Since 3.1, this color is used for all
 	 * section styles.
-	 * 
+	 *
 	 * @deprecated use <code>IFormColors.TB_TOGGLE</code>.
 	 */
 	public static final String TB_TOGGLE = IFormColors.TB_TOGGLE;
 
 	/**
 	 * Key for the section toggle hover color.
-	 * 
+	 *
 	 * @since 3.1
 	 * @deprecated use <code>IFormColors.TB_TOGGLE_HOVER</code>.
 	 */
 	public static final String TB_TOGGLE_HOVER = IFormColors.TB_TOGGLE_HOVER;
 
 	protected Map colorRegistry = new HashMap(10);
-	
+
 	private LocalResourceManager resources;
 
 	protected Color background;
@@ -110,7 +110,7 @@ public class FormColors {
 
 	/**
 	 * Creates form colors using the provided display.
-	 * 
+	 *
 	 * @param display
 	 *            the display to use
 	 */
@@ -121,7 +121,7 @@ public class FormColors {
 
 	/**
 	 * Returns the display used to create colors.
-	 * 
+	 *
 	 * @return the display
 	 */
 	public Display getDisplay() {
@@ -132,7 +132,7 @@ public class FormColors {
 	 * Initializes the colors. Subclasses can override this method to change the
 	 * way colors are created. Alternatively, only the color table can be
 	 * modified by overriding <code>initializeColorTable()</code>.
-	 * 
+	 *
 	 * @see #initializeColorTable
 	 */
 	protected void initialize() {
@@ -178,7 +178,7 @@ public class FormColors {
 	 * allocated on demand. Consequently, this method will do nothing if the
 	 * colors have been already initialized. Call this method prior to using
 	 * color keys with the H_ prefix to ensure they are available.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected void initializeFormHeaderColors() {
@@ -190,7 +190,7 @@ public class FormColors {
 	/**
 	 * Returns the RGB value of the system color represented by the code
 	 * argument, as defined in <code>SWT</code> class.
-	 * 
+	 *
 	 * @param code
 	 *            the system color constant as defined in <code>SWT</code>
 	 *            class.
@@ -204,7 +204,7 @@ public class FormColors {
 	 * Creates the color for the specified key using the provided RGB object.
 	 * The color object will be returned and also put into the registry. When
 	 * the class is disposed, the color will be disposed with it.
-	 * 
+	 *
 	 * @param key
 	 *            the unique color key
 	 * @param rgb
@@ -224,10 +224,10 @@ public class FormColors {
 	 * Creates a color that can be used for areas of the form that is inactive.
 	 * These areas can contain images, links, controls and other content but are
 	 * considered auxilliary to the main content area.
-	 * 
+	 *
 	 * <p>
 	 * The color should not be disposed because it is managed by this class.
-	 * 
+	 *
 	 * @return the inactive form color
 	 * @since 3.1
 	 */
@@ -249,7 +249,7 @@ public class FormColors {
 	 * there is already another color object under the same key in the registry,
 	 * the existing object will be disposed. When the class is disposed, the
 	 * color will be disposed with it.
-	 * 
+	 *
 	 * @param key
 	 *            the unique color key
 	 * @param r
@@ -285,7 +285,7 @@ public class FormColors {
 	/**
 	 * Sets the background color. All the toolkits that use this class will
 	 * share the same background.
-	 * 
+	 *
 	 * @param bg
 	 *            background color
 	 */
@@ -298,7 +298,7 @@ public class FormColors {
 	/**
 	 * Sets the foreground color. All the toolkits that use this class will
 	 * share the same foreground.
-	 * 
+	 *
 	 * @param fg
 	 *            foreground color
 	 */
@@ -308,7 +308,7 @@ public class FormColors {
 
 	/**
 	 * Returns the current background color.
-	 * 
+	 *
 	 * @return the background color
 	 */
 	public Color getBackground() {
@@ -317,7 +317,7 @@ public class FormColors {
 
 	/**
 	 * Returns the current foreground color.
-	 * 
+	 *
 	 * @return the foreground color
 	 */
 	public Color getForeground() {
@@ -327,7 +327,7 @@ public class FormColors {
 	/**
 	 * Returns the computed border color. Border color depends on the background
 	 * and is recomputed whenever the background changes.
-	 * 
+	 *
 	 * @return the current border color
 	 */
 	public Color getBorderColor() {
@@ -337,7 +337,7 @@ public class FormColors {
 	/**
 	 * Tests if the background is white. White background has RGB value
 	 * 255,255,255.
-	 * 
+	 *
 	 * @return <samp>true</samp> if background is white, <samp>false</samp>
 	 *         otherwise.
 	 */
@@ -350,7 +350,7 @@ public class FormColors {
 	/**
 	 * Returns the color object for the provided key or <samp>null </samp> if
 	 * not in the registry.
-	 * 
+	 *
 	 * @param key
 	 *            the color key
 	 * @return color object if found, or <samp>null </samp> if not.
@@ -383,7 +383,7 @@ public class FormColors {
 
 	/**
 	 * Tests if the colors are shared.
-	 * 
+	 *
 	 * @return <code>true</code> if shared, <code>false</code> otherwise.
 	 */
 	public boolean isShared() {
@@ -392,7 +392,7 @@ public class FormColors {
 
 	/**
 	 * Blends c1 and c2 based in the provided ratio.
-	 * 
+	 *
 	 * @param c1
 	 *            first color
 	 * @param c2
@@ -411,7 +411,7 @@ public class FormColors {
 
 	/**
 	 * Tests the source RGB for range.
-	 * 
+	 *
 	 * @param rgb
 	 *            the tested RGB
 	 * @param from
@@ -435,7 +435,7 @@ public class FormColors {
 
 	/**
 	 * Tests the source RGB for range.
-	 * 
+	 *
 	 * @param rgb
 	 *            the tested RGB
 	 * @param from
@@ -460,7 +460,7 @@ public class FormColors {
 
 	/**
 	 * Blends two primary color components based on the provided ratio.
-	 * 
+	 *
 	 * @param v1
 	 *            first component
 	 * @param v2
@@ -567,7 +567,7 @@ public class FormColors {
 		}
 
 		createColor(IFormColors.TB_BG, tbBg);
-		
+
 		// for backward compatibility
 		createColor(TB_GBG, tbBg);
 	}
@@ -733,7 +733,7 @@ public class FormColors {
 		createColor(IFormColors.H_HOVER_LIGHT, light);
 		createColor(IFormColors.H_HOVER_FULL, full);
 	}
-	
+
 	private LocalResourceManager getResourceManager() {
 		if (resources == null)
 			resources = new LocalResourceManager(JFaceResources.getResources());

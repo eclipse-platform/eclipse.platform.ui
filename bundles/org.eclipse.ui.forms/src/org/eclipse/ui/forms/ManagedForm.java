@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * dialog etc.). Clients that need access to the class should not do it
  * directly. Instead, they should do it through IManagedForm interface as much
  * as possible.
- * 
+ *
  * @since 3.0
  */
 public class ManagedForm implements IManagedForm {
@@ -53,7 +53,7 @@ public class ManagedForm implements IManagedForm {
 	/**
 	 * Creates a managed form in the provided parent. Form toolkit and widget
 	 * will be created and owned by this object.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 */
@@ -65,7 +65,7 @@ public class ManagedForm implements IManagedForm {
 
 	/**
 	 * Creates a managed form that will use the provided toolkit and
-	 * 
+	 *
 	 * @param toolkit
 	 * @param form
 	 */
@@ -76,7 +76,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#addPart(org.eclipse.ui.forms.IFormPart)
 	 */
 	public void addPart(IFormPart part) {
@@ -86,7 +86,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#removePart(org.eclipse.ui.forms.IFormPart)
 	 */
 	public void removePart(IFormPart part) {
@@ -95,7 +95,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#getParts()
 	 */
 	public IFormPart[] getParts() {
@@ -104,7 +104,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#getToolkit()
 	 */
 	public FormToolkit getToolkit() {
@@ -113,7 +113,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#getForm()
 	 */
 	public ScrolledForm getForm() {
@@ -122,7 +122,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#reflow(boolean)
 	 */
 	public void reflow(boolean changed) {
@@ -132,7 +132,7 @@ public class ManagedForm implements IManagedForm {
 	/**
 	 * A part can use this method to notify other parts that implement
 	 * IPartSelectionListener about selection changes.
-	 * 
+	 *
 	 * @param part
 	 *            the part that broadcasts the selection
 	 * @param selection
@@ -213,7 +213,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
@@ -226,7 +226,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#setInput(java.lang.Object)
 	 */
 	public boolean setInput(Object input) {
@@ -244,7 +244,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#getInput()
 	 */
 	public Object getInput() {
@@ -263,7 +263,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#isDirty()
 	 */
 	public boolean isDirty() {
@@ -277,7 +277,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#isStale()
 	 */
 	public boolean isStale() {
@@ -291,7 +291,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#dirtyStateChanged()
 	 */
 	public void dirtyStateChanged() {
@@ -299,7 +299,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#staleStateChanged()
 	 */
 	public void staleStateChanged() {
@@ -307,7 +307,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#getContainer()
 	 */
 	public Object getContainer() {
@@ -316,7 +316,7 @@ public class ManagedForm implements IManagedForm {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.forms.IManagedForm#setContainer(java.lang.Object)
 	 */
 	public void setContainer(Object container) {

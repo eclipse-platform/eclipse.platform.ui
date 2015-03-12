@@ -27,7 +27,7 @@ public class Messages extends NLS {
 	public static String FormText_copy;
 	public static String Form_tooltip_minimize;
 	public static String Form_tooltip_restore;
-	/* 
+	/*
 	 * Message manager
 	 */
 	public static String MessageManager_sMessageSummary;
@@ -37,5 +37,5 @@ public class Messages extends NLS {
 	public static String MessageManager_pWarningSummary;
 	public static String MessageManager_pErrorSummary;
 	public static String ToggleHyperlink_accessibleColumn;
-	public static String ToggleHyperlink_accessibleName;		
+	public static String ToggleHyperlink_accessibleName;
 }

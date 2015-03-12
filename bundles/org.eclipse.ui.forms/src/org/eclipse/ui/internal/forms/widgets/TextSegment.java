@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Konstantin Komissarchik - Fix for  Bug 316997 
+ *     Konstantin Komissarchik - Fix for  Bug 316997
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -106,13 +106,13 @@ public class TextSegment extends ParagraphSegment {
 	public TextSegment(String text, String fontId, String colorId) {
 		this(text, fontId, colorId, true);
 	}
-	
+
 	public TextSegment(String text, String fontId, String colorId, boolean wrapAllowed) {
 		this.text = cleanup(text);
 		this.fontId = fontId;
 		this.colorId = colorId;
 		this.wrapAllowed = wrapAllowed;
-	}	
+	}
 
 	private String cleanup(String text) {
 		StringBuffer buf = new StringBuffer();
@@ -209,7 +209,7 @@ public class TextSegment extends ParagraphSegment {
 	public Rectangle getBounds() {
 		if (areaRectangles.size() == 0)
 			return new Rectangle(0, 0, 0, 0);
-		
+
 		AreaRectangle ar0 = (AreaRectangle) areaRectangles.get(0);
 		Rectangle bounds = Geometry.copy(ar0.rect);
 		for (int i = 1; i < areaRectangles.size(); i++) {
@@ -266,7 +266,7 @@ public class TextSegment extends ParagraphSegment {
 		for (int i = 0; i < textFragments.length; i++) {
 			TextFragment textFragment = textFragments[i];
 			int currentExtent = locator.x + lineExtent.x;
-			
+
 			if (isSelectable())
 				currentExtent += 1;
 
@@ -598,7 +598,7 @@ public class TextSegment extends ParagraphSegment {
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 		}
 	}
-	
+
 	protected void drawText(GC gc, String s, int clipX, int clipY) {
 		gc.drawText(s, clipX, clipY, true);
 	}
@@ -619,7 +619,7 @@ public class TextSegment extends ParagraphSegment {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC,
 	 *      int, org.eclipse.ui.internal.forms.widgets.Locator,
 	 *      java.util.Hashtable, boolean,
@@ -672,7 +672,7 @@ public class TextSegment extends ParagraphSegment {
 							lineExtent.y);
 					locator.resetCaret();
 					if (isSelectable())
-						locator.x += 1;					
+						locator.x += 1;
 					locator.y += locator.rowHeight;
 					locator.rowCounter++;
 					locator.rowHeight = 0;
@@ -689,7 +689,7 @@ public class TextSegment extends ParagraphSegment {
 			int lastWidth = lineExtent.x;
 			if (isSelectable())
 				lastWidth += 1;
-			Rectangle br = new Rectangle(isSelectable()?locator.x - 1:locator.x, ly, 
+			Rectangle br = new Rectangle(isSelectable()?locator.x - 1:locator.x, ly,
 					isSelectable()?lineExtent.x + 1:lineExtent.x,
 					lineHeight - descent + 3);
 			//int lineY = ly + lineHeight - descent + 1;
@@ -720,7 +720,7 @@ public class TextSegment extends ParagraphSegment {
 		textFragments = (TextFragment[]) list.toArray(new TextFragment[list
 				.size()]);
 	}
-	
+
 	public void clearCache(String fontId) {
 		if (fontId==null && (this.fontId==null||this.fontId.equals(FormTextModel.BOLD_FONT_ID)))
 			textFragments = null;

@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.IMessageManager;
  * Children of the form should typically be created using FormToolkit to match
  * the appearance and behaviour. When creating children, use a form body as a
  * parent by calling 'getBody()' on the form instance. Example:
- * 
+ *
  * <pre>
  * FormToolkit toolkit = new FormToolkit(parent.getDisplay());
  * ScrolledForm form = toolkit.createScrolledForm(parent);
@@ -38,13 +38,13 @@ import org.eclipse.ui.forms.IMessageManager;
  * form.getBody().setLayout(new GridLayout());
  * toolkit.createButton(form.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
  * </pre>
- * 
+ *
  * <p>
  * No layout manager has been set on the body. Clients are required to set the
  * desired layout manager explicitly.
  * <p>
  * Although the class is not final, it is not expected to be be extended.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -59,7 +59,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Creates the form control as a child of the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 */
@@ -79,7 +79,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Passes the menu to the body.
-	 * 
+	 *
 	 * @param menu
 	 */
 	public void setMenu(Menu menu) {
@@ -91,7 +91,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Returns the title text that will be rendered at the top of the form.
-	 * 
+	 *
 	 * @return the title text
 	 */
 	public String getText() {
@@ -100,7 +100,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Returns the title image that will be rendered to the left of the title.
-	 * 
+	 *
 	 * @return the title image
 	 */
 	public Image getImage() {
@@ -149,7 +149,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * The mnemonic indicator character '&amp;' can be escaped by doubling it in
 	 * the string, causing a single '&amp;' to be displayed.
 	 * </p>
-	 * 
+	 *
 	 * @param text
 	 *            the title text
 	 */
@@ -160,7 +160,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Sets the image to be rendered to the left of the title.
-	 * 
+	 *
 	 * @param image
 	 *            the title image or <code>null</code> for no image.
 	 */
@@ -172,7 +172,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	/**
 	 * Returns the optional background image of this form. The image is rendered
 	 * starting at the position 0,0 and is painted behind the title.
-	 * 
+	 *
 	 * @return Returns the background image.
 	 */
 	public Image getBackgroundImage() {
@@ -182,7 +182,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	/**
 	 * Sets the optional background image to be rendered behind the title
 	 * starting at the position 0,0.
-	 * 
+	 *
 	 * @param backgroundImage
 	 *            The backgroundImage to set.
 	 */
@@ -193,7 +193,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	/**
 	 * Returns the tool bar manager that is used to manage tool items in the
 	 * form's title area.
-	 * 
+	 *
 	 * @return form tool bar manager
 	 */
 	public IToolBarManager getToolBarManager() {
@@ -212,7 +212,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * Returns the container that occupies the body of the form (the form area
 	 * below the title). Use this container as a parent for the controls that
 	 * should be in the form. No layout manager has been set on the form body.
-	 * 
+	 *
 	 * @return Returns the body of the form.
 	 */
 	public Composite getBody() {
@@ -221,7 +221,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Returns the instance of the form owned by the scrolled form.
-	 * 
+	 *
 	 * @return the form instance
 	 */
 	public Form getForm() {
@@ -231,7 +231,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	/**
 	 * Sets the form's busy state. Busy form will display 'busy' animation in
 	 * the area of the title image.
-	 * 
+	 *
 	 * @param busy
 	 *            the form's busy state
 	 * @see Form#setBusy(boolean)
@@ -245,7 +245,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Sets the optional head client.
-	 * 
+	 *
 	 * @param headClient
 	 *            the optional child of the head
 	 * @see Form#setHeadClient(Control)
@@ -258,7 +258,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Sets the form message.
-	 * 
+	 *
 	 * @param newMessage
 	 *            the message text or <code>null</code> to reset.
 	 * @param newType
@@ -277,7 +277,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/**
 	 * Sets the form message.
-	 * 
+	 *
 	 * @param newMessage
 	 *            the message text or <code>null</code> to reset.
 	 * @param newType
@@ -291,7 +291,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
 	 */
 	public String getMessage() {
@@ -300,17 +300,17 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
 	 */
 	public int getMessageType() {
 		return content.getMessageType();
 	}
-	
+
 	/**
 	 * Returns the message manager that will keep track of messages in this
-	 * form. 
-	 * 
+	 * form.
+	 *
 	 * @return the message manager instance
 	 * @since org.eclipse.ui.forms 3.4
 	 */

@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.ArrayList;
 
-public class Locator implements Cloneable { 
+public class Locator implements Cloneable {
 	public int indent;
 	public int x, y;
 	public int width;
@@ -22,7 +22,7 @@ public class Locator implements Cloneable {
 	public int marginHeight;
 	public int rowCounter;
 	public ArrayList heights;
-	
+
 	public void newLine() {
 		resetCaret();
 		y += rowHeight;
@@ -54,7 +54,7 @@ public class Locator implements Cloneable {
 				return y + rheight/2 - segmentHeight/2 - rleading;
 			return y + rheight/2 - segmentHeight/2;
 		}
-		return y;		
+		return y;
 	}
 	public int getBaseline(int segmentHeight, boolean text) {
 		if (heights!=null && heights.size()>rowCounter) {
@@ -67,7 +67,7 @@ public class Locator implements Cloneable {
 		}
 		return y;
 	}
-	
+
 	public void resetCaret() {
 		x = getStartX();
 	}

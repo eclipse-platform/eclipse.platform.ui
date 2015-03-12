@@ -42,7 +42,7 @@ public class WrappedPageBook extends Composite {
 		}
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.forms.widgets.ILayoutExtension#computeMaximumWidth(org.eclipse.swt.widgets.Composite,
 		 *      boolean)
 		 */
@@ -51,7 +51,7 @@ public class WrappedPageBook extends Composite {
 		}
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.forms.widgets.ILayoutExtension#computeMinimumWidth(org.eclipse.swt.widgets.Composite,
 		 *      boolean)
 		 */
@@ -65,7 +65,7 @@ public class WrappedPageBook extends Composite {
 	private Control currentPage = null;
 	/**
 	 * Creates a new empty pagebook.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param style
@@ -78,7 +78,7 @@ public class WrappedPageBook extends Composite {
 	/**
 	 * Shows the given page. This method has no effect if the given page is not
 	 * contained in this pagebook.
-	 * 
+	 *
 	 * @param page
 	 *            the page to show
 	 */

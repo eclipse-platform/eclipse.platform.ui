@@ -53,7 +53,7 @@ public class ImageSegment extends ObjectSegment {
 		return SEL_IMAGE_PREFIX + getObjectId();
 	}
 */
-	
+
 	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		Image image = getImage(resourceTable);
 		int iwidth = 0;
@@ -123,7 +123,7 @@ public class ImageSegment extends ObjectSegment {
 			ix -= repaintRegion.x;
 			iy -= repaintRegion.y;
 		}
-		gc.drawImage(image, ix, iy);			
+		gc.drawImage(image, ix, iy);
 	}
 
 	protected Point getObjectSize(Hashtable resourceTable, int wHint) {

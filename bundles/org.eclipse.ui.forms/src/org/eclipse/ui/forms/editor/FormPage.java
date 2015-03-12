@@ -26,7 +26,7 @@ import org.eclipse.ui.part.EditorPart;
  * has been opened for a while (in fact, it is possible to open and close the
  * editor and never create the form because no attempt has been made to show the
  * page).
- * 
+ *
  * @since 3.0
  */
 public class FormPage extends EditorPart implements IFormPage {
@@ -34,13 +34,13 @@ public class FormPage extends EditorPart implements IFormPage {
 	private PageForm mform;
 	private int index;
 	private String id;
-	
+
 	private static class PageForm extends ManagedForm {
 		public PageForm(FormPage page, ScrolledForm form) {
 			super(page.getEditor().getToolkit(), form);
 			setContainer(page);
 		}
-		
+
 		public FormPage getPage() {
 			return (FormPage)getContainer();
 		}
@@ -54,7 +54,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * A constructor that creates the page and initializes it with the editor.
-	 * 
+	 *
 	 * @param editor
 	 *            the parent editor
 	 * @param id
@@ -69,7 +69,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	/**
 	 * The constructor. The parent editor need to be passed in the
 	 * <code>initialize</code> method if this constructor is used.
-	 * 
+	 *
 	 * @param id
 	 *            a unique page identifier
 	 * @param title
@@ -81,7 +81,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Initializes the form page.
-	 * 
+	 *
 	 * @see IEditorPart#init
 	 */
 	public void init(IEditorSite site, IEditorInput input) {
@@ -90,7 +90,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Primes the form page with the parent editor instance.
-	 * 
+	 *
 	 * @param editor
 	 *            the parent editor
 	 */
@@ -99,7 +99,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Returns the parent editor.
-	 * 
+	 *
 	 * @return parent editor instance
 	 */
 	public FormEditor getEditor() {
@@ -107,7 +107,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Returns the managed form owned by this page.
-	 * 
+	 *
 	 * @return the managed form
 	 */
 	public IManagedForm getManagedForm() {
@@ -128,7 +128,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	/**
 	 * Tests if the page is active by asking the parent editor if this page is
 	 * the currently active page.
-	 * 
+	 *
 	 * @return <code>true</code> if the page is currently active,
 	 *         <code>false</code> otherwise.
 	 */
@@ -140,7 +140,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * editor's toolkit. Subclasses should override
 	 * <code>createFormContent(IManagedForm)</code> to populate the form with
 	 * content.
-	 * 
+	 *
 	 * @param parent
 	 *            the page parent composite
 	 */
@@ -156,7 +156,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	/**
 	 * Subclasses should override this method to create content in the form
 	 * hosted in this page.
-	 * 
+	 *
 	 * @param managedForm
 	 *            the form hosted in this page.
 	 */
@@ -164,7 +164,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Returns the form page control.
-	 * 
+	 *
 	 * @return managed form's control
 	 */
 	public Control getPartControl() {
@@ -179,7 +179,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Returns the unique identifier that can be used to reference this page.
-	 * 
+	 *
 	 * @return the unique page identifier
 	 */
 	public String getId() {
@@ -188,7 +188,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	/**
 	 * Returns <code>null</code>- form page has no title image. Subclasses
 	 * may override.
-	 * 
+	 *
 	 * @return <code>null</code>
 	 */
 	public Image getTitleImage() {
@@ -221,10 +221,10 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Implemented by testing if the managed form is dirty.
-	 * 
+	 *
 	 * @return <code>true</code> if the managed form is dirty,
 	 *         <code>false</code> otherwise.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
@@ -232,7 +232,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Preserves the page index.
-	 * 
+	 *
 	 * @param index
 	 *            the assigned page index
 	 */
@@ -241,7 +241,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Returns the saved page index.
-	 * 
+	 *
 	 * @return the page index
 	 */
 	public int getIndex() {
@@ -249,7 +249,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	}
 	/**
 	 * Form pages are not editors.
-	 * 
+	 *
 	 * @return <code>false</code>
 	 */
 	public boolean isEditor() {
@@ -258,7 +258,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	/**
 	 * Attempts to select and reveal the given object by passing the request to
 	 * the managed form.
-	 * 
+	 *
 	 * @param object
 	 *            the object to select and reveal in the page if possible.
 	 * @return <code>true</code> if the page has been successfully selected

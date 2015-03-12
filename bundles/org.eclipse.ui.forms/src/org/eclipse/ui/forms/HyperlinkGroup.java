@@ -26,7 +26,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  * active colors and updates underline state depending on the underline
  * preference. Hyperlink labels are added to the group after creation and are
  * automatically removed from the group when they are disposed.
- * 
+ *
  * @since 3.0
  */
 
@@ -41,10 +41,10 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	private boolean isForegroundSet;
 
 	private class GroupListener implements Listener, IHyperlinkListener {
-		
+
 		private Color previousBackground;
 		private Color previousForeground;
-		
+
 		public void handleEvent(Event e) {
 			switch (e.type) {
 				case SWT.MouseEnter :
@@ -71,7 +71,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 				link.setForeground(getActiveForeground());
 			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
 				link.setUnderlined(true);
-			link.setCursor(getHyperlinkCursor());			
+			link.setCursor(getHyperlinkCursor());
 		}
 		private void onMouseExit(Event e) {
 			Hyperlink link = (Hyperlink) e.widget;
@@ -116,7 +116,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 * Returns the link that has been active the last, or <code>null</code>
 	 * if no link has been active yet or the last active link has been
 	 * disposed.
-	 * 
+	 *
 	 * @return the last active link or <code>null</code>
 	 */
 	public Hyperlink getLastActivated() {
@@ -126,7 +126,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 * Adds a hyperlink to the group to be jointly managed. Hyperlink will be
 	 * managed until it is disposed. Settings like colors, cursors and modes
 	 * will affect all managed hyperlinks.
-	 * 
+	 *
 	 * @param link
 	 */
 
@@ -139,10 +139,10 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 			link.setUnderlined(true);
 		hook(link);
 	}
-	
+
 	/**
 	 * Sets the new active hyperlink background for all the links.
-	 * 
+	 *
 	 * @param newActiveBackground
 	 *            the new active background
 	 */
@@ -150,10 +150,10 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		super.setActiveBackground(newActiveBackground);
 		isActiveBackgroundSet = true;
 	}
-	
+
 	/**
 	 * Sets the new active hyperlink foreground for all the links.
-	 * 
+	 *
 	 * @param newActiveForeground
 	 *            the new active foreground
 	 */
@@ -161,11 +161,11 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		super.setActiveForeground(newActiveForeground);
 		isActiveForegroundSet = true;
 	}
-	
+
 	/**
 	 * Sets the group background and also sets the background of all the
 	 * currently managed links.
-	 * 
+	 *
 	 * @param bg
 	 *            the new background
 	 */
@@ -182,7 +182,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	/**
 	 * Sets the group foreground and also sets the background of all the
 	 * currently managed links.
-	 * 
+	 *
 	 * @param fg
 	 *            the new foreground
 	 */
@@ -198,7 +198,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	}
 	/**
 	 * Sets the hyperlink underline mode.
-	 * 
+	 *
 	 * @param mode
 	 *            the new hyperlink underline mode
 	 * @see HyperlinkSettings

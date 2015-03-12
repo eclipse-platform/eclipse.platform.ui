@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Martin Donnelly (m2a3@eircom.net) - patch (see Bugzilla #145997) 
+ *     Martin Donnelly (m2a3@eircom.net) - patch (see Bugzilla #145997)
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -167,7 +167,7 @@ import org.eclipse.ui.internal.forms.widgets.TextSegment;
  * font/color styles of text segments is all you need, use StyleText widget.
  * Finally, if all you need is to wrap text, use SWT Label widget and create it
  * with SWT.WRAP style.
- * 
+ *
  * @see FormToolkit
  * @see TableWrapLayout
  * @since 3.0
@@ -194,7 +194,7 @@ public class FormText extends Canvas {
 	private static final boolean DEBUG_TEXT = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT));
 	private static final boolean DEBUG_TEXTSIZE = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXTSIZE));
 
-	private static final boolean DEBUG_FOCUS = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS));	
+	private static final boolean DEBUG_FOCUS = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS));
 
 	private boolean hasFocus;
 
@@ -317,7 +317,7 @@ public class FormText extends Canvas {
 			Rectangle carea = composite.getClientArea();
 			if (DEBUG_TEXTSIZE) {
 				System.out.println("FormText layout ("+model.getAccessibleText()+"), carea="+carea); //$NON-NLS-1$ //$NON-NLS-2$
-			}			
+			}
 			GC gc = new GC(composite);
 			gc.setFont(getFont());
 			ensureBoldFontPresent(getFont());
@@ -357,7 +357,7 @@ public class FormText extends Canvas {
 	 * <p>
 	 * The only valid style bit for <code>FormText</code> is <code>SWT.NO_FOCUS</code>.
 	 * This will cause the widget to always refuse focus.
-	 * 
+	 *
 	 * @param parent
 	 *            form text parent control
 	 * @param style
@@ -480,7 +480,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Test for focus.
-	 * 
+	 *
 	 * @return <samp>true </samp> if the widget has focus.
 	 */
 	public boolean getFocus() {
@@ -490,7 +490,7 @@ public class FormText extends Canvas {
 	/**
 	 * Test if the widget is currently processing the text it is about to
 	 * render.
-	 * 
+	 *
 	 * @return <samp>true </samp> if the widget is still loading the text,
 	 *         <samp>false </samp> otherwise.
 	 * @deprecated not used any more - returns <code>false</code>
@@ -502,7 +502,7 @@ public class FormText extends Canvas {
 	/**
 	 * Returns the text that will be shown in the control while the real content
 	 * is loading.
-	 * 
+	 *
 	 * @return loading text message
 	 * @deprecated loading text is not used since 3.1
 	 */
@@ -515,7 +515,7 @@ public class FormText extends Canvas {
 	 * loading. This is significant when content to render is loaded from the
 	 * input stream that was created from a remote URL, and the time to load the
 	 * entire content is nontrivial.
-	 * 
+	 *
 	 * @param loadingText
 	 *            loading text message
 	 * @deprecated use setText(loadingText, false, false);
@@ -528,7 +528,7 @@ public class FormText extends Canvas {
 	 * If paragraphs are separated, spacing will be added between them.
 	 * Otherwise, new paragraphs will simply start on a new line with no
 	 * spacing.
-	 * 
+	 *
 	 * @param value
 	 *            <samp>true </samp> if paragraphs are separated, </samp> false
 	 *            </samp> otherwise.
@@ -539,7 +539,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Tests if there is some inter-paragraph spacing.
-	 * 
+	 *
 	 * @return <samp>true </samp> if paragraphs are separated, <samp>false
 	 *         </samp> otherwise.
 	 */
@@ -553,7 +553,7 @@ public class FormText extends Canvas {
 	 * For <samp>img </samp> tags, an object of a type <samp>Image </samp> must
 	 * be registered using the key equivalent to the value of the <samp>href
 	 * </samp> attribute used in the tag.
-	 * 
+	 *
 	 * @param key
 	 *            unique key that matches the value of the <samp>href </samp>
 	 *            attribute.
@@ -570,7 +570,7 @@ public class FormText extends Canvas {
 	 * For <samp>span </samp> tags, an object of a type <samp>Color </samp> must
 	 * be registered using the key equivalent to the value of the <samp>color
 	 * </samp> attribute.
-	 * 
+	 *
 	 * @param key
 	 *            unique key that matches the value of the <samp>color </samp>
 	 *            attribute.
@@ -592,7 +592,7 @@ public class FormText extends Canvas {
 	 * For <samp>span </samp> tags, an object of a type <samp>Font </samp> must
 	 * be registered using the key equivalent to the value of the <samp>font
 	 * </samp> attribute.
-	 * 
+	 *
 	 * @param key
 	 *            unique key that matches the value of the <samp>font </samp>
 	 *            attribute.
@@ -615,7 +615,7 @@ public class FormText extends Canvas {
 	 * For <samp>control</samp> tags, an object of a type <samp>Control</samp>
 	 * must be registered using the key equivalent to the value of the
 	 * <samp>control</samp> attribute.
-	 * 
+	 *
 	 * @param key
 	 *            unique key that matches the value of the <samp>control</samp>
 	 *            attribute.
@@ -637,7 +637,7 @@ public class FormText extends Canvas {
 	 * Sets the font to use to render the default text (text that does not have
 	 * special font property assigned). Bold font will be constructed from this
 	 * font.
-	 * 
+	 *
 	 * @param font
 	 *            the default font to use
 	 */
@@ -656,7 +656,7 @@ public class FormText extends Canvas {
 	 * Sets the provided text. Text can be rendered as-is, or by parsing the
 	 * formatting tags. Optionally, sections of text starting with http:// will
 	 * be converted to hyperlinks.
-	 * 
+	 *
 	 * @param text
 	 *            the text to render
 	 * @param parseTags
@@ -682,7 +682,7 @@ public class FormText extends Canvas {
 	 * Sets the contents of the stream. Optionally, URLs in untagged text can be
 	 * converted into hyperlinks. The caller is responsible for closing the
 	 * stream.
-	 * 
+	 *
 	 * @param is
 	 *            stream to render
 	 * @param expandURLs
@@ -776,7 +776,7 @@ public class FormText extends Canvas {
 	 * off. We need to update the model and mark the control segment and
 	 * currently selected. Hyperlink that may have had focus must also be
 	 * exited.
-	 * 
+	 *
 	 * @param control
 	 *            the control that got focus
 	 */
@@ -870,7 +870,7 @@ public class FormText extends Canvas {
 	 * space character</li>
 	 * <li>white space characters after the opening tags and before the closing
 	 * tags will be trimmed</li>
-	 * 
+	 *
 	 * @param value
 	 *            <code>true</code> if whitespace is normalized,
 	 *            <code>false</code> otherwise.
@@ -881,7 +881,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Tests whether whitespace inside paragraph and list item is normalized.
-	 * 
+	 *
 	 * @see #setWhitespaceNormalized(boolean)
 	 * @return <code>true</code> if whitespace is normalized,
 	 *         <code>false</code> otherwise.
@@ -893,7 +893,7 @@ public class FormText extends Canvas {
 	/**
 	 * Disposes the internal menu if created and sets the menu provided as a
 	 * parameter.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu to associate with this text control
 	 */
@@ -936,7 +936,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Returns the hyperlink settings that are in effect for this control.
-	 * 
+	 *
 	 * @return current hyperlinks settings
 	 */
 	public HyperlinkSettings getHyperlinkSettings() {
@@ -946,7 +946,7 @@ public class FormText extends Canvas {
 	/**
 	 * Sets the hyperlink settings to be used for this control. Settings will
 	 * affect things like hyperlink color, rendering style, cursor etc.
-	 * 
+	 *
 	 * @param settings
 	 *            hyperlink settings for this control
 	 */
@@ -956,7 +956,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Adds a listener that will handle hyperlink events.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to add
 	 */
@@ -968,7 +968,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Removes the hyperlink listener.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 */
@@ -984,7 +984,7 @@ public class FormText extends Canvas {
 	 * <p>
 	 * <code>widgetDefaultSelected</code> is not called for FormText.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener
 	 * @exception SWTException
@@ -1012,7 +1012,7 @@ public class FormText extends Canvas {
 	/**
 	 * Removes the specified selection listener.
 	 * <p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener
 	 * @exception SWTException
@@ -1039,7 +1039,7 @@ public class FormText extends Canvas {
 	/**
 	 * Returns the selected text.
 	 * <p>
-	 * 
+	 *
 	 * @return selected text, or an empty String if there is no selection.
 	 * @exception SWTException
 	 *                <ul>
@@ -1060,7 +1060,7 @@ public class FormText extends Canvas {
 
 	/**
 	 * Tests if the text is selected and can be copied into the clipboard.
-	 * 
+	 *
 	 * @return <code>true</code> if the selected text can be copied into the
 	 *         clipboard, <code>false</code> otherwise.
 	 * @since 3.1
@@ -1072,7 +1072,7 @@ public class FormText extends Canvas {
 	/**
 	 * Copies the selected text into the clipboard. Does nothing if no text is
 	 * selected or the text cannot be copied for any other reason.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 
@@ -1090,7 +1090,7 @@ public class FormText extends Canvas {
 	 * Returns the reference of the hyperlink that currently has keyboard focus,
 	 * or <code>null</code> if there are no hyperlinks in the receiver or no
 	 * hyperlink has focus at the moment.
-	 * 
+	 *
 	 * @return href of the selected hyperlink or <code>null</code> if none
 	 *         selected.
 	 * @since 3.1
@@ -1104,7 +1104,7 @@ public class FormText extends Canvas {
 	 * Returns the text of the hyperlink that currently has keyboard focus, or
 	 * <code>null</code> if there are no hyperlinks in the receiver or no
 	 * hyperlink has focus at the moment.
-	 * 
+	 *
 	 * @return text of the selected hyperlink or <code>null</code> if none
 	 *         selected.
 	 * @since 3.1
@@ -1186,11 +1186,11 @@ public class FormText extends Canvas {
 				}
 				e.childID = childID;
 			}
-			
+
 			public void getDefaultAction (AccessibleControlEvent e) {
 				if (model.getHyperlinkCount() > 0) {
 				    e.result = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
-				} 
+				}
 			}
 
 			public void getChildCount(AccessibleControlEvent e) {
@@ -1201,7 +1201,7 @@ public class FormText extends Canvas {
 				int role = 0;
 				int childID = e.childID;
 				int linkCount = model.getHyperlinkCount();
-				if (childID == ACC.CHILDID_SELF) { 
+				if (childID == ACC.CHILDID_SELF) {
 					if (linkCount > 0) {
 					    role = ACC.ROLE_LINK;
 					} else {
@@ -1347,8 +1347,8 @@ public class FormText extends Canvas {
 			}
 		} else {
 			if (e.button == 1) {
-				endSelection(e);		
-				if (isDisposed()) return; 
+				endSelection(e);
+				if (isDisposed()) return;
 				IHyperlinkSegment segmentUnder = model
 						.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null && armed == segmentUnder && selData == null) {
@@ -1652,7 +1652,7 @@ public class FormText extends Canvas {
 	 * or height may be larger than the provider width or height hints). Callers
 	 * should be prepared that the computed width is larger than the provided
 	 * wHint.
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
 	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -1700,7 +1700,7 @@ public class FormText extends Canvas {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {

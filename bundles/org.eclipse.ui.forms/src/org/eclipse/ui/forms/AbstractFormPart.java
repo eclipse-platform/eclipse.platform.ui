@@ -14,7 +14,7 @@ package org.eclipse.ui.forms;
  * convenient base class for concrete form parts. If a method contains
  * code that must be called, look for instructions to call 'super'
  * when overriding.
- * 
+ *
  * @see org.eclipse.ui.forms.widgets.Section
  * @since 3.0
  */
@@ -30,7 +30,7 @@ public abstract class AbstractFormPart implements IFormPart {
 	}
 	/**
 	 * Returns the form that manages this part.
-	 * 
+	 *
 	 * @return the managed form
 	 */
 	public IManagedForm getManagedForm() {
@@ -44,7 +44,7 @@ public abstract class AbstractFormPart implements IFormPart {
 	}
 	/**
 	 * Commits the part. Subclasses should call 'super' when overriding.
-	 * 
+	 *
 	 * @param onSave
 	 *            <code>true</code> if the request to commit has arrived as a
 	 *            result of the 'save' action.
@@ -55,7 +55,7 @@ public abstract class AbstractFormPart implements IFormPart {
 	/**
 	 * Sets the overall form input. Subclases may elect to override the method
 	 * and adjust according to the form input.
-	 * 
+	 *
 	 * @param input
 	 *            the form input object
 	 * @return <code>false</code>
@@ -89,7 +89,7 @@ public abstract class AbstractFormPart implements IFormPart {
 	/**
 	 * Tests whether the part is dirty i.e. its widgets have state that is
 	 * newer than the data in the model.
-	 * 
+	 *
 	 * @return <code>true</code> if the part is dirty, <code>false</code>
 	 *         otherwise.
 	 */
@@ -99,7 +99,7 @@ public abstract class AbstractFormPart implements IFormPart {
 	/**
 	 * Tests whether the part is stale i.e. its widgets have state that is
 	 * older than the data in the model.
-	 * 
+	 *
 	 * @return <code>true</code> if the part is stale, <code>false</code>
 	 *         otherwise.
 	 */

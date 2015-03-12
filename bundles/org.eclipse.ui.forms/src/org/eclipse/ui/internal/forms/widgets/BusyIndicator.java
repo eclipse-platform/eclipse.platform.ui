@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Stefan Mucke - fix for Bug 156456 
+ *     Stefan Mucke - fix for Bug 156456
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -34,20 +34,20 @@ import org.osgi.framework.Bundle;
 
 public final class BusyIndicator extends Canvas {
 
-	private static final int MARGIN = 0;	
+	private static final int MARGIN = 0;
 	private static final int IMAGE_COUNT = 8;
-	private static final int MILLISECONDS_OF_DELAY = 180; 
+	private static final int MILLISECONDS_OF_DELAY = 180;
 	private Image[] imageCache;
 	private Image image;
-	
+
 	private Display dpy;
 	private Runnable timer;
 	private boolean busy;
 	private int imageIndex;
-	
+
 	/**
 	 * BusyWidget constructor comment.
-	 * 
+	 *
 	 * @param parent
 	 *            org.eclipse.swt.widgets.Composite
 	 * @param style
@@ -55,7 +55,7 @@ public final class BusyIndicator extends Canvas {
 	 */
 	public BusyIndicator(Composite parent, int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
-		
+
 		dpy = getDisplay();
 		timer = new Runnable() {
 			public void run () {
@@ -74,7 +74,7 @@ public final class BusyIndicator extends Canvas {
 				onPaint(event);
 			}
 		});
-		
+
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				clearImages();
@@ -116,7 +116,7 @@ public final class BusyIndicator extends Canvas {
 
 	/**
 	 * Returns true if it is currently busy.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isBusy() {
@@ -149,7 +149,7 @@ public final class BusyIndicator extends Canvas {
 
 	/**
 	 * Sets the indicators busy count up (true) or down (false) one.
-	 * 
+	 *
 	 * @param busy
 	 *            boolean
 	 */
@@ -169,7 +169,7 @@ public final class BusyIndicator extends Canvas {
 			redraw();
 		}
 	}
-	
+
 	private ImageDescriptor createImageDescriptor(String relativePath) {
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
 		URL url = FileLocator.find(bundle, new Path(relativePath),null);
@@ -192,7 +192,7 @@ public final class BusyIndicator extends Canvas {
 		}
 		return imageCache[index];
 	}
-	
+
 	private void clearImages() {
 		if (imageCache != null) {
 			for (int index = 0; index < IMAGE_COUNT; index++) {

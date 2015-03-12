@@ -40,7 +40,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#advanceLocator(org.eclipse.swt.graphics.GC,
 	 *      int, org.eclipse.ui.internal.forms.widgets.Locator,
 	 *      java.util.Hashtable, boolean)
@@ -74,7 +74,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#repaint(org.eclipse.swt.graphics.GC,
 	 *      boolean)
 	 */
@@ -98,7 +98,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#paintFocus(org.eclipse.swt.graphics.GC,
 	 *      org.eclipse.swt.graphics.Color, org.eclipse.swt.graphics.Color,
 	 *      boolean)
@@ -113,13 +113,13 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getBounds()
 	 */
 	public Rectangle getBounds() {
 		if (segments.size() == 0)
 			return new Rectangle(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
-			
+
 		IHyperlinkSegment segment0 = (IHyperlinkSegment) segments.get(0);
 		Rectangle bounds = segment0.getBounds();
 		for (int i = 1; i < segments.size(); i++) {
@@ -150,7 +150,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC,
 	 *      int, org.eclipse.ui.internal.forms.widgets.Locator,
 	 *      java.util.Hashtable, boolean,
@@ -166,7 +166,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#computeSelection(org.eclipse.swt.graphics.GC,
 	 *      java.util.Hashtable, boolean,
 	 *      org.eclipse.ui.internal.forms.widgets.SelectionData)

@@ -24,11 +24,11 @@ import org.eclipse.swt.widgets.*;
  * The class assumes that text to be rendered contains formatting tags. In case
  * of a string, it will enclose the text in 'form' root element if missing from
  * the text as a convinience. For example:
- * 
+ *
  * <pre>
  *  ftext.setText(&quot;&lt;p&gt;Some text here&lt;/&gt;&quot;);
  * </pre>
- * 
+ *
  * will not cause an error. The same behavior does not exist for content from
  * the input stream, however - it must be well formed in that case.
  * </p>
@@ -41,7 +41,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	private String text;
 	/**
 	 * Creates the new scrolled text instance in the provided parent
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param createFormText
@@ -53,7 +53,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	}
 	/**
 	 * Creates the new scrolled text instance in the provided parent
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param style
@@ -72,7 +72,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	 * instance must be a direct child of this class. If this method is used,
 	 * <code>false</code> must be passed in either of the constructors to
 	 * avoid creating form text instance.
-	 * 
+	 *
 	 * @param formText
 	 *            the form text instance to use.
 	 */
@@ -85,7 +85,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	}
 	/**
 	 * Sets the foreground color of the scrolled form text.
-	 * 
+	 *
 	 * @param fg
 	 *            the foreground color
 	 */
@@ -96,7 +96,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	}
 	/**
 	 * Sets the background color of the scrolled form text.
-	 * 
+	 *
 	 * @param bg
 	 *            the background color
 	 */
@@ -108,7 +108,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	/**
 	 * The class sets the content widget. This method should not be called by
 	 * classes that instantiate this widget.
-	 * 
+	 *
 	 * @param c
 	 *            content control
 	 */
@@ -117,7 +117,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	/**
 	 * Sets the text to be rendered in the scrolled form text. The text must
 	 * contain formatting tags.
-	 * 
+	 *
 	 * @param text
 	 *            the text to be rendered
 	 */
@@ -133,7 +133,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	 * from another thread and call 'reflow' when done (but make both calls
 	 * using 'Display.asyncExec' because these calls must be made in the event
 	 * dispatching thread).
-	 * 
+	 *
 	 * @param is
 	 *            content input stream
 	 */
@@ -142,7 +142,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	}
 	/**
 	 * Returns the instance of the form text.
-	 * 
+	 *
 	 * @return the form text instance
 	 */
 	public FormText getFormText() {

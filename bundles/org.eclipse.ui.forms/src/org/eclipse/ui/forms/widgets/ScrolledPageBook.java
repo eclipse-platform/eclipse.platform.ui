@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.forms.widgets.WrappedPageBook;
  * ScrolledPageBook is a class that is capable of stacking several composites
  * (pages), while showing one at a time. The content is scrolled if there is
  * not enough space to fit it in the client area.
- * 
+ *
  * @since 3.0
  */
 public class ScrolledPageBook extends SharedScrolledComposite {
@@ -29,7 +29,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	private Control currentPage;
 	/**
 	 * Creates a new instance in the provided parent
-	 * 
+	 *
 	 * @param parent
 	 */
 	public ScrolledPageBook(Composite parent) {
@@ -38,7 +38,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Creates a new instance in the provided parent and with the provided
 	 * style.
-	 * 
+	 *
 	 * @param parent
 	 *            the control parent
 	 * @param style
@@ -67,7 +67,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Removes the default size of the composite, allowing the control to
 	 * shrink to the trim.
-	 * 
+	 *
 	 * @param wHint
 	 *            the width hint
 	 * @param hHint
@@ -81,7 +81,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	}
 	/**
 	 * Tests if the page under the provided key is currently in the book.
-	 * 
+	 *
 	 * @param key
 	 *            the page key
 	 * @return <code>true</code> if page exists, <code>false</code>
@@ -93,7 +93,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Creates a new page for the provided key. Use the returned composite to
 	 * create children in it.
-	 * 
+	 *
 	 * @param key
 	 *            the page key
 	 * @return the newly created page composite
@@ -105,7 +105,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	}
 	/**
 	 * Returns the page book container.
-	 * 
+	 *
 	 * @return the page book container
 	 */
 	public Composite getContainer() {
@@ -114,7 +114,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Registers a page under the privided key to be managed by the page book.
 	 * The page must be a direct child of the page book container.
-	 * 
+	 *
 	 * @param key
 	 *            the page key
 	 * @param page
@@ -128,7 +128,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Removes the page under the provided key from the page book. Does nothing
 	 * if page with that key does not exist.
-	 * 
+	 *
 	 * @param key
 	 *            the page key.
 	 */
@@ -138,7 +138,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Removes the page under the provided key from the page book. Does nothing
 	 * if page with that key does not exist.
-	 * 
+	 *
 	 * @param key
 	 *            the page key.
 	 * @param showEmptyPage
@@ -157,7 +157,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	/**
 	 * Shows the page with the provided key and hides the page previously
 	 * showing. Does nothing if the page with that key does not exist.
-	 * 
+	 *
 	 * @param key
 	 *            the page key
 	 */
@@ -199,7 +199,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	}
 	/**
 	 * Returns the page currently showing.
-	 * 
+	 *
 	 * @return the current page
 	 */
 	public Control getCurrentPage() {

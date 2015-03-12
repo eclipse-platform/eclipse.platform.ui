@@ -55,7 +55,7 @@ public abstract class ParagraphSegment {
 	 * @param resourceTable
 	 * @param selData
 	 */
-	public abstract void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData);	
+	public abstract void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData);
 	/**
 	 * Tests if the coordinates are contained in one of the
 	 * bounding rectangles of this segment.
@@ -82,7 +82,7 @@ public abstract class ParagraphSegment {
 	/**
 	 * Clears the text metrics cache for the provided font id.
 	 * @param fontId the id of the font that the cache is kept for.
-	 * 
+	 *
 	 */
 	public void clearCache(String fontId) {
 	}

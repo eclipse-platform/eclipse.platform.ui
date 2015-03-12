@@ -12,7 +12,7 @@ package org.eclipse.ui.forms;
 
 /**
  * A place to hold all the color constants used in the forms package.
- * 
+ *
  * @since 3.3
  */
 
@@ -33,7 +33,7 @@ public interface IFormColors {
 	/*
 	 * A prefix for the section title bar color constants.
 	 */
-	String TB_PREFIX = PREFIX + "TB_"; //$NON-NLS-1$	
+	String TB_PREFIX = PREFIX + "TB_"; //$NON-NLS-1$
 	/**
 	 * Key for the form header background gradient ending color.
 	 */
@@ -41,27 +41,27 @@ public interface IFormColors {
 
 	/**
 	 * Key for the form header background gradient starting color.
-	 * 
+	 *
 	 */
 	String H_GRADIENT_START = H_PREFIX + "GRADIENT_START"; //$NON-NLS-1$
 	/**
 	 * Key for the form header bottom keyline 1 color.
-	 * 
+	 *
 	 */
 	String H_BOTTOM_KEYLINE1 = H_PREFIX + "BOTTOM_KEYLINE1"; //$NON-NLS-1$
 	/**
 	 * Key for the form header bottom keyline 2 color.
-	 * 
+	 *
 	 */
 	String H_BOTTOM_KEYLINE2 = H_PREFIX + "BOTTOM_KEYLINE2"; //$NON-NLS-1$
 	/**
 	 * Key for the form header light hover color.
-	 * 
+	 *
 	 */
 	String H_HOVER_LIGHT = H_PREFIX + "H_HOVER_LIGHT"; //$NON-NLS-1$
 	/**
 	 * Key for the form header full hover color.
-	 * 
+	 *
 	 */
 	String H_HOVER_FULL = H_PREFIX + "H_HOVER_FULL"; //$NON-NLS-1$
 
@@ -87,7 +87,7 @@ public interface IFormColors {
 
 	/**
 	 * Key for the section title bar gradient.
-	 * @deprecated Since 3.3, this color is not used any more. The 
+	 * @deprecated Since 3.3, this color is not used any more. The
 	 * tool bar gradient is created starting from {@link #TB_BG} to
 	 * the section background color.
 	 */
@@ -106,7 +106,7 @@ public interface IFormColors {
 
 	/**
 	 * Key for the section toggle hover color.
-	 * 
+	 *
 	 */
-	String TB_TOGGLE_HOVER = TB_PREFIX + "TOGGLE_HOVER"; //$NON-NLS-1$		
+	String TB_TOGGLE_HOVER = TB_PREFIX + "TOGGLE_HOVER"; //$NON-NLS-1$
 }

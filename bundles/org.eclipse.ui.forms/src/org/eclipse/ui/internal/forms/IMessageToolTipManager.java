@@ -33,7 +33,7 @@ import org.eclipse.ui.forms.widgets.Form;
  * to update whenever the message information changes in the form. For this
  * reason, the manager is expected to retain references to the tool tips and
  * update them with new content when asked.
- * 
+ *
  * @see IMessageManager
  * @see Form
  *      <p>
@@ -47,7 +47,7 @@ import org.eclipse.ui.forms.widgets.Form;
 public interface IMessageToolTipManager {
 	/**
 	 * Creates the custom tool tip for the provided control.
-	 * 
+	 *
 	 * @param control
 	 *            the control for which to create a custom tool tip
 	 * @param imageControl

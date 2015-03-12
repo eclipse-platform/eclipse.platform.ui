@@ -29,18 +29,18 @@ import org.eclipse.ui.internal.forms.Messages;
  * Since forms with wrapped text typically don't have a preferred size, it is
  * important to set the initial dialog size upon creation:
  * <p>
- * 
+ *
  * <pre>
  * MyFormDialog dialog = new MyFormDialog(shell);
  * dialog.create();
  * dialog.getShell().setSize(500, 500);
  * dialog.open();
  * </pre>
- * 
+ *
  * <p>
  * Otherwise, the dialog may open very wide.
  * <p>
- * 
+ *
  * @since 3.3
  */
 
@@ -49,7 +49,7 @@ public class FormDialog extends TrayDialog {
 
 	/**
 	 * Creates a new form dialog for a provided parent shell.
-	 * 
+	 *
 	 * @param shell
 	 *            the parent shell
 	 */
@@ -60,7 +60,7 @@ public class FormDialog extends TrayDialog {
 
 	/**
 	 * Creates a new form dialog for a provided parent shell provider.
-	 * 
+	 *
 	 * @param parentShellProvider
 	 *            the parent shell provider
 	 */
@@ -70,7 +70,7 @@ public class FormDialog extends TrayDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
 	 */
 	public boolean close() {
@@ -81,7 +81,7 @@ public class FormDialog extends TrayDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -96,7 +96,7 @@ public class FormDialog extends TrayDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
@@ -113,7 +113,7 @@ public class FormDialog extends TrayDialog {
 	/**
 	 * Configures the dialog form and creates form content. Clients should
 	 * override this method.
-	 * 
+	 *
 	 * @param mform
 	 *            the dialog form
 	 */

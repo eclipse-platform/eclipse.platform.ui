@@ -23,22 +23,22 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 	private boolean fill;
 	private int width = SWT.DEFAULT;
 	private int height = SWT.DEFAULT;
-	
+
 	public ControlSegment() {
 	}
-	
+
 	public void setFill(boolean fill) {
 		this.fill = fill;
 	}
-	
+
 	public void setWidth(int width) {
 		this.width = width;
 	}
-	
+
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
+
 	public Control getControl(Hashtable resourceTable) {
 		Object obj = resourceTable.get(getObjectId());
 		if (obj instanceof Control) {
@@ -63,7 +63,7 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 			size.y = height;
 		return size;
 	}
-	
+
 	public void layout(GC gc, int width, Locator loc, Hashtable resourceTable,
 			boolean selected) {
 		super.layout(gc, width, loc, resourceTable, selected);
@@ -79,7 +79,7 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		}
 		return false;
 	}
-	
+
 	private boolean setFocus(Control c, boolean direction) {
 		if (c instanceof Composite) {
 			Composite comp = (Composite)c;

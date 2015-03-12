@@ -29,24 +29,24 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.WRAP</dd>
  * </dl>
- * 
+ *
  * @see org.eclipse.ui.forms.HyperlinkGroup
  * @since 3.0
  */
 public class Hyperlink extends AbstractHyperlink {
 	private String text;
-	private static final String ELLIPSIS = "..."; //$NON-NLS-1$	
+	private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 	private boolean underlined;
 	// The tooltip is used for two purposes - the application can set
 	// a tooltip or the tooltip can be used to display the full text when the
 	// the text has been truncated due to the label being too short.
-	// The appToolTip stores the tooltip set by the application.  Control.tooltiptext 
+	// The appToolTip stores the tooltip set by the application.  Control.tooltiptext
 	// contains whatever tooltip is currently being displayed.
-	private String appToolTipText;	
+	private String appToolTipText;
 
 	/**
 	 * Creates a new hyperlink control in the provided parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the control parent
 	 * @param style
@@ -93,7 +93,7 @@ public class Hyperlink extends AbstractHyperlink {
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_LINK;
 			}
-						
+
 			public void getDefaultAction (AccessibleControlEvent e) {
 				e.result = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
 			}
@@ -110,7 +110,7 @@ public class Hyperlink extends AbstractHyperlink {
 	/**
 	 * Sets the underlined state. It is not necessary to call this method when
 	 * in a hyperlink group.
-	 * 
+	 *
 	 * @param underlined
 	 *            if <samp>true </samp>, a line will be drawn below the text for
 	 *            each wrapped line.
@@ -122,7 +122,7 @@ public class Hyperlink extends AbstractHyperlink {
 
 	/**
 	 * Returns the underline state of the hyperlink.
-	 * 
+	 *
 	 * @return <samp>true </samp> if text is underlined, <samp>false </samp>
 	 *         otherwise.
 	 */
@@ -146,13 +146,13 @@ public class Hyperlink extends AbstractHyperlink {
 
 	/**
 	 * Returns the current hyperlink text.
-	 * 
+	 *
 	 * @return hyperlink text
 	 */
 	public String getText() {
 		return text;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#getToolTipText()
 	 */
@@ -160,18 +160,18 @@ public class Hyperlink extends AbstractHyperlink {
 		checkWidget();
 		return appToolTipText;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#setToolTipText(java.lang.String)
 	 */
 	public void setToolTipText (String string) {
 		super.setToolTipText (string);
 		appToolTipText = super.getToolTipText();
-	}	
+	}
 
 	/**
 	 * Sets the text of this hyperlink.
-	 * 
+	 *
 	 * @param text
 	 *            the hyperlink text
 	 */
@@ -185,7 +185,7 @@ public class Hyperlink extends AbstractHyperlink {
 
 	/**
 	 * Paints the hyperlink text.
-	 * 
+	 *
 	 * @param gc
 	 *            graphic context
 	 */
@@ -199,7 +199,7 @@ public class Hyperlink extends AbstractHyperlink {
 
 	/**
 	 * Paints the hyperlink text in provided bounding rectangle.
-	 * 
+	 *
 	 * @param gc
 	 *            graphic context
 	 * @param bounds
@@ -243,7 +243,7 @@ public class Hyperlink extends AbstractHyperlink {
 				fg.dispose();
 		}
 	}
-	
+
 	protected String shortenText(GC gc, String t, int width) {
 		if (t == null) return null;
 		int w = gc.textExtent(ELLIPSIS).x;
@@ -259,7 +259,7 @@ public class Hyperlink extends AbstractHyperlink {
 			int l1 = gc.textExtent(s1).x;
 			int l2 = gc.textExtent(s2).x;
 			if (l1+w+l2 > width) {
-				max = mid;			
+				max = mid;
 				mid = (max+min)/2;
 			} else if (l1+w+l2 < width) {
 				min = mid;
