@@ -24,11 +24,11 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorSorterService;
 
 /**
- * 
+ *
  * Provides a default implementation of {@link INavigatorSorterService}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class NavigatorSorterService implements INavigatorSorterService, VisibilityListener  {
 
@@ -41,7 +41,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 
 	/**
 	 * Create a sorter service attached to the given content service.
-	 * 
+	 *
 	 * @param aContentService
 	 *            The content service used by the viewer that will use this
 	 *            sorter service.
@@ -54,17 +54,17 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	private synchronized void computeSortOnlyDescriptors() {
 		INavigatorContentDescriptor[] allDescriptors;
 		allDescriptors = NavigatorContentDescriptorManager.getInstance().getSortOnlyContentDescriptors();
-		
+
 		List sortOnlyList = new ArrayList();
 		for (int i = 0; i < allDescriptors.length; i++) {
 			if (contentService.isActive(allDescriptors[i].getId())) {
 				sortOnlyList.add(allDescriptors[i]);
 			}
 		}
-		
+
 		sortOnlyDescriptors = (INavigatorContentDescriptor[]) sortOnlyList.toArray(new INavigatorContentDescriptor[]{});
 	}
-	
+
 	@Override
 	public ViewerSorter findSorterForParent(Object aParent) {
 
@@ -88,13 +88,13 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	@Override
-	public synchronized ViewerSorter findSorter(INavigatorContentDescriptor source, 
-			Object parent, Object lvalue, Object rvalue) { 
-		
-		CommonSorterDescriptorManager dm = CommonSorterDescriptorManager 
+	public synchronized ViewerSorter findSorter(INavigatorContentDescriptor source,
+			Object parent, Object lvalue, Object rvalue) {
+
+		CommonSorterDescriptorManager dm = CommonSorterDescriptorManager
 				.getInstance();
 		CommonSorterDescriptor[] descriptors;
-		
+
 		INavigatorContentDescriptor lookupDesc;
 		for (int i = 0; i < sortOnlyDescriptors.length; i++) {
 			lookupDesc = sortOnlyDescriptors[i];
@@ -108,7 +108,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 				return getSorter(descriptors[0]);
 			}
 		}
-		
+
 		if (source != null) {
 			descriptors = dm. findApplicableSorters(contentService, source, parent);
 			if (descriptors.length > 0) {
@@ -120,7 +120,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 
 	@Override
 	public Map findAvailableSorters(INavigatorContentDescriptor theSource) {
-		
+
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager.getInstance().findApplicableSorters(theSource);
 		Map sorters = new HashMap();
 
@@ -128,17 +128,17 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 		for (int i = 0; i < descriptors.length; i++) {
 			if(descriptors[i].getId() != null && descriptors[i].getId().length() > 0)
 				sorters.put(descriptors[i].getId(), getSorter(descriptors[i]));
-			else 
+			else
 				sorters.put(theSource.getId()+".sorter."+ (++count), getSorter(descriptors[i])); //$NON-NLS-1$
 		}
 		return sorters;
-	} 
+	}
 
-	
+
 	@Override
 	public void onVisibilityOrActivationChange() {
 		computeSortOnlyDescriptors();
 	}
-	
+
 
 }

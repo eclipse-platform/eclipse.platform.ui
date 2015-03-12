@@ -28,7 +28,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CommonDropDescriptorManager {
 
@@ -43,7 +43,7 @@ public class CommonDropDescriptorManager {
 	private final Map<INavigatorContentDescriptor, List> dropDescriptors = new TreeMap<INavigatorContentDescriptor, List>(ExtensionSequenceNumberComparator.INSTANCE);
 
 	/**
-	 * 
+	 *
 	 * @return An initialized singleton instance of the
 	 *         CommonDropDescriptorManager.
 	 */
@@ -56,7 +56,7 @@ public class CommonDropDescriptorManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aDropTarget
 	 *            The drop target of the operation
 	 * @param aContentService
@@ -119,7 +119,7 @@ public class CommonDropDescriptorManager {
 	 */
 	private void addCommonDropAdapter(
 			INavigatorContentDescriptor aContentDescriptor,
-			CommonDropAdapterDescriptor aDropDescriptor) { 
+			CommonDropAdapterDescriptor aDropDescriptor) {
 		getDropDescriptors(aContentDescriptor).add(aDropDescriptor);
 	}
 
@@ -147,7 +147,7 @@ public class CommonDropDescriptorManager {
 						for (int i = 0; i < commonDropAdapters.length; i++) {
 							addCommonDropAdapter(contentDescriptor,
 									new CommonDropAdapterDescriptor(commonDropAdapters[i], contentDescriptor));
-						} 
+						}
 					}
 				}
 

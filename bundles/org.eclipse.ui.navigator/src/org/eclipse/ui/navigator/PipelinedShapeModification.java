@@ -14,11 +14,11 @@ package org.eclipse.ui.navigator;
 import java.util.Set;
 
 /**
- * 
+ *
  * Indicates how a shape modification should be transformed when applied to the
  * tree. Clients use {@link PipelinedShapeModification} as the input and return
  * type from intercept methods on {@link IPipelinedTreeContentProvider}.
- * 
+ *
  * <p>
  * Overriding extensions should use these to map attempts to directly modify the
  * tree down to the overridden model. A shape modification can either be an
@@ -27,10 +27,10 @@ import java.util.Set;
  * method, then it is a remove shape modification, otherwise if supplied to an
  * <code>interceptAdd</code> method, then it is an add shape modification.
  * </p>
- * 
- * 
+ *
+ *
  * @since 3.2
- * 
+ *
  */
 public final class PipelinedShapeModification {
 
@@ -41,7 +41,7 @@ public final class PipelinedShapeModification {
 	/**
 	 * Create a shape modification. The given parent and children will be set as
 	 * the initial values for the shape modification.
-	 * 
+	 *
 	 * @param aParent
 	 *            The parent for the add or remove call to the tree.
 	 * @param theChildren
@@ -53,7 +53,7 @@ public final class PipelinedShapeModification {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The parent to use for the shape modification.
 	 */
 	public final Object getParent() {
@@ -61,7 +61,7 @@ public final class PipelinedShapeModification {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aParent
 	 *            The parent to use for the shape modification.
 	 */
@@ -70,7 +70,7 @@ public final class PipelinedShapeModification {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The current set of children. Clients may add or remove elements
 	 *         directly to this set.
 	 */

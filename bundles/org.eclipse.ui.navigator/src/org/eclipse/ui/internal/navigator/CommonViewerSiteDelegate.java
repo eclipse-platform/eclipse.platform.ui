@@ -18,19 +18,19 @@ import org.eclipse.ui.navigator.ICommonViewerSite;
 
 /**
  * Provides a delegate implementation of {@link ICommonViewerSite}.
- * 
+ *
  * @since 3.2
  *
  */
 public class CommonViewerSiteDelegate implements ICommonViewerSite {
-	
-	
-	private String id; 
-	private ISelectionProvider selectionProvider; 
+
+
+	private String id;
+	private ISelectionProvider selectionProvider;
 	private Shell shell;
 
 	/**
-	 * 
+	 *
 	 * @param anId
 	 * @param aSelectionProvider
 	 * @param aShell
@@ -40,14 +40,14 @@ public class CommonViewerSiteDelegate implements ICommonViewerSite {
 		Assert.isNotNull(aSelectionProvider);
 		Assert.isNotNull(aShell);
 		id = anId;
-		selectionProvider = aSelectionProvider;		
+		selectionProvider = aSelectionProvider;
 		shell = aShell;
-	} 
+	}
 
 	@Override
 	public String getId() {
 		return id;
-	} 
+	}
 
 	@Override
 	public Shell getShell() {
@@ -57,7 +57,7 @@ public class CommonViewerSiteDelegate implements ICommonViewerSite {
 	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return selectionProvider;
-	}  
+	}
 
 
 	@Override
@@ -66,7 +66,7 @@ public class CommonViewerSiteDelegate implements ICommonViewerSite {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) { 
+	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 

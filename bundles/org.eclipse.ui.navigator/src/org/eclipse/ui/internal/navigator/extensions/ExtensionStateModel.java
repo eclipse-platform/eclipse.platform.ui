@@ -19,8 +19,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
- * 
- * 
+ *
+ *
  * @since 3.2
  * @see IExtensionStateModel
  */
@@ -36,7 +36,7 @@ public class ExtensionStateModel extends EventManager implements
 	/**
 	 * Create an extension state model for the given extension (anId) associated
 	 * with the given viewer (aViewerId).
-	 * 
+	 *
 	 * @param anId
 	 *            The id of the extension this state model is used for.
 	 * @param aViewerId
@@ -136,7 +136,7 @@ public class ExtensionStateModel extends EventManager implements
 					aPropertyName, oldValue, newValue));
 		}
 	}
- 
+
 	private boolean hasPropertyChanged(Object oldValue, Object newValue) {
 		return oldValue == null || !oldValue.equals(newValue);
 	}

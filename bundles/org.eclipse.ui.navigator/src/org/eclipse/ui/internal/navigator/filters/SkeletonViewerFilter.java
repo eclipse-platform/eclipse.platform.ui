@@ -15,12 +15,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
- * 
+ *
  * A no-op viewer filter used to prevent null return values from
  * {@link CommonFilterDescriptor#createFilter()}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class SkeletonViewerFilter extends ViewerFilter {
 

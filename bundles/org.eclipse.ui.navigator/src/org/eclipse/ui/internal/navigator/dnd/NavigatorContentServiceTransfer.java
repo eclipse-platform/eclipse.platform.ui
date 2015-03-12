@@ -21,16 +21,16 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 /**
  * Caches instances of {@link INavigatorContentService} to facilitate the
  * handling of drop operations in other viewers.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class NavigatorContentServiceTransfer {
-	
-	private static final NavigatorContentServiceTransfer instance = new NavigatorContentServiceTransfer(); 
-	
+
+	private static final NavigatorContentServiceTransfer instance = new NavigatorContentServiceTransfer();
+
 	/**
-	 * 
+	 *
 	 * @return The singleton instance of the transfer service.
 	 */
 	public static NavigatorContentServiceTransfer getInstance() {
@@ -38,38 +38,38 @@ public class NavigatorContentServiceTransfer {
 	}
 
 	private final Set<WeakReference<INavigatorContentService>> registeredContentServices = new HashSet<WeakReference<INavigatorContentService>>();
-	
+
 	/**
-	 *  
+	 *
 	 * @param aContentService The Content Service to register.
 	 */
-	public synchronized void registerContentService(INavigatorContentService aContentService) { 
+	public synchronized void registerContentService(INavigatorContentService aContentService) {
 		if(findService(aContentService.getViewerId()) == null) {
 			registeredContentServices.add(new WeakReference<INavigatorContentService>(aContentService));
 		}
 	}
-	
+
 	/**
-	 *  
+	 *
 	 * @param aContentService The Content Service to unregister.
 	 */
-	public synchronized void unregisterContentService(INavigatorContentService aContentService) { 
-  
+	public synchronized void unregisterContentService(INavigatorContentService aContentService) {
+
 		for (Iterator<WeakReference<INavigatorContentService>> iter = registeredContentServices.iterator(); iter.hasNext();) {
 			WeakReference ref = iter.next();
 			if(ref.get() == null) {
 				iter.remove();
-			} else { 
+			} else {
 				if(ref.get() == aContentService) {
-					iter.remove(); 
+					iter.remove();
 					return;
 				}
 			}
-		} 
+		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param aViewerId A viewer id that should have previously been registered with the service.
 	 * @return The registered content service for the given viewer id.
 	 */
@@ -86,11 +86,11 @@ public class NavigatorContentServiceTransfer {
 				contentService = (INavigatorContentService)ref.get();
 				if(aViewerId.equals(contentService.getViewerId())) {
 					return contentService;
-				} 
+				}
 			}
 		}
 		return null;
-	} 
-	
+	}
+
 
 }

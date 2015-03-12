@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthieu Wipliez <matthieu.wipliez@synflow.com> (Synflow SAS) - [CommonNavigator] Implementation of Binding isVisibleExtension not excluding as expected - http://bugs.eclipse.org/425867 
+ *     Matthieu Wipliez <matthieu.wipliez@synflow.com> (Synflow SAS) - [CommonNavigator] Implementation of Binding isVisibleExtension not excluding as expected - http://bugs.eclipse.org/425867
  ******************************************************************************/
 
 package org.eclipse.ui.internal.navigator.extensions;
@@ -86,7 +86,7 @@ class Binding {
 	boolean isRootExtension(String anExtensionId) {
 		if (rootPatterns.size() == 0) {
 			return false;
-		} 
+		}
 		// Have we seen this pattern before?
 		if (knownRootIds.containsKey(anExtensionId)) {
 			// we have, don't recompute
@@ -191,11 +191,11 @@ class Binding {
 		}
 
 	}
-	
+
 	void addBinding(Binding otherBinding) {
 		includePatterns.addAll(otherBinding.includePatterns);
 		excludePatterns.addAll(otherBinding.excludePatterns);
 		rootPatterns.addAll(otherBinding.rootPatterns);
 	}
-	
+
 }

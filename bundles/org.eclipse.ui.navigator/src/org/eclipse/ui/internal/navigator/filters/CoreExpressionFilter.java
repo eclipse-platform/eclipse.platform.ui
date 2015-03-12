@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CoreExpressionFilter extends ViewerFilter {
 
@@ -29,7 +29,7 @@ public class CoreExpressionFilter extends ViewerFilter {
 	/**
 	 * Creates a filter which hides all elements that match the given
 	 * expression.
-	 * 
+	 *
 	 * @param aFilterExpression
 	 *            An expression to hide elements in the viewer.
 	 */

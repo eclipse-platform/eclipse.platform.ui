@@ -53,7 +53,7 @@ import org.osgi.framework.BundleEvent;
  * from methods that already hold the lock.
  * </p>
  * @since 3.2
- * 
+ *
  */
 public class NavigatorSaveablesService implements INavigatorSaveablesService, VisibilityListener {
 
@@ -189,17 +189,17 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	/**
 	 * Implementation note: This is not synchronized at the method level because it needs to
 	 * synchronize on "instances" first, then on "this", to avoid potential deadlock.
-	 * 
+	 *
 	 * @param saveablesSource
 	 * @param viewer
 	 * @param outsideListener
-	 * 
+	 *
 	 */
 	@Override
 	public void init(final ISaveablesSource saveablesSource,
 			final StructuredViewer viewer,
 			ISaveablesLifecycleListener outsideListener) {
-		// Synchronize on instances to make sure that we don't miss bundle started events. 
+		// Synchronize on instances to make sure that we don't miss bundle started events.
 		synchronized (instances) {
 			// Synchronize on this because we are calling computeSaveables.
 			// Synchronization must remain in this order to avoid deadlock.
@@ -222,12 +222,12 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private boolean isDisposed() {
 		return contentService == null;
 	}
-	
+
 	/** helper to compute the saveables for which elements are part of the tree.
 	 * Must be called from a synchronized method.
-	 * 
+	 *
 	 * @return the saveables
-	 */ 
+	 */
 	private Saveable[] computeSaveables() {
 		ITreeContentProvider contentProvider = (ITreeContentProvider) viewer
 				.getContentProvider();
@@ -299,7 +299,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 		return new Saveable[0];
 	}
-	
+
 	/**
 	 * @param selection
 	 * @return the active saveables
@@ -390,7 +390,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param path
 	 * @return a saveable, or null
@@ -487,7 +487,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		// for the adaptation below. See bug 306545
 		ITreeContentProvider contentProvider = extension
 				.getContentProvider();
-        
+
         return (SaveablesProvider)AdaptabilityUtility.getAdapter(contentProvider, SaveablesProvider.class);
 	}
 

@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * <p>
  * If drag operations originate outside of Eclipse, then the set of eligible
  * drop adapters is determined based on the drop target (using the
- * <b>possibleDropTargets</b> expression). Each assistant can then indicate 
+ * <b>possibleDropTargets</b> expression). Each assistant can then indicate
  * whether {@link #isSupportedType(TransferData) the incoming type is supported}.
  * <p>
  * Whenever a match is found, the assistant will be given an opportunity to
@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * opportunity to validate the drop operation in turn. The first one to validate
  * will have the opportunty to carry out the drop.
  * </p>
- * 
+ *
  * <p>
  * Clients may handle DND operations that begin and end in the current viewer by
  * overriding the following methods:
@@ -73,16 +73,16 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * <li>{@link #handlePluginTransferDrop(IStructuredSelection, Object)}: Handle
  * the drop operation onto the other viewer.</li>
  * </ul>
- * </p> 
+ * </p>
  * <p>
  * Clients may subclass this.
  * </p>
- * 
+ *
  * @see INavigatorDnDService
  * @see INavigatorDnDService#findCommonDropAdapterAssistants(Object,
  *      TransferData)
  * @since 3.2
- * 
+ *
  */
 public abstract class CommonDropAdapterAssistant {
 
@@ -91,12 +91,12 @@ public abstract class CommonDropAdapterAssistant {
 	private DropTargetEvent _currentEvent;
 
 	private CommonDropAdapter _dropAdapter;
-	
+
 	/**
 	 * Perform any necessary initialization using the
 	 * {@link INavigatorContentService}.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param aContentService
 	 *            The instance of {@link INavigatorContentService} that the
 	 *            current CommonDropAdapterAssistant will be associated with
@@ -106,7 +106,7 @@ public abstract class CommonDropAdapterAssistant {
 		doInit();
 	}
 
-	
+
 	/**
 	 * Override to perform any one-time initialization.
 	 */
@@ -122,7 +122,7 @@ public abstract class CommonDropAdapterAssistant {
 	 * If clients return true, then they will be allowed to handle the drop in
 	 * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object) }.
 	 * </p>
-	 * 
+	 *
 	 * @param target
 	 *            the object that the mouse is currently hovering over, or
 	 *            <code>null</code> if the mouse is hovering over empty space
@@ -137,7 +137,7 @@ public abstract class CommonDropAdapterAssistant {
 
 	/**
 	 * Carry out the DND operation.
-	 * 
+	 *
 	 * <p>
 	 * Note: Contrary to the SWT {@link DropTargetListener} specification, you
 	 * <i>must</i> make sure that the aDropTargetEvent.detail is not set to
@@ -146,14 +146,14 @@ public abstract class CommonDropAdapterAssistant {
 	 * to complete the operation (for example removing the moved file). In
 	 * particular for the LocalSelectionTransfer case, DND.DROP_MOVE cannot be
 	 * used as it will cause incorrect behavior in some existing drag handlers.
-	 * 
+	 *
 	 * In case of move operations where no action is required on the source side
 	 * (e.g. LocalSelectionTransfer) you must set aDropTargetEvent.detail to
 	 * DND.DROP_NONE to signal this to the drag source. Even though the SWT
 	 * specification says this is canceling the drop, it is not really doing so,
 	 * it is only preventing the DND.DROP_MOVE from being passed through to the
 	 * dragFinished() method.
-	 * 
+	 *
 	 * @param aDropAdapter
 	 *            The Drop Adapter contains information that has already been
 	 *            parsed from the drop event.
@@ -173,7 +173,7 @@ public abstract class CommonDropAdapterAssistant {
 	 * other than one of these is encountered, the DND Service will query the
 	 * <b>visible</b> and <b>active</b> descriptors that are <b>enabled</b>
 	 * for the drop target of the current operation.
-	 * 
+	 *
 	 * @param aTransferType
 	 *            The transfer data from the drop operation
 	 * @return True if the given TransferData can be understood by this
@@ -185,18 +185,18 @@ public abstract class CommonDropAdapterAssistant {
 	}
 
 	/**
-	 * 
+	 *
 	 * Return true if the client can handle the drop onto the target viewer of
 	 * the drop operation.
 	 * <p>
 	 * The default behavior of this method is to return <b>Status.CANCEL_STATUS</b>.
 	 * </p>
-	 * 
+	 *
 	 * @param aDragSelection
 	 *            The selection dragged from the viewer.
 	 * @param aDropTarget
 	 *            The target of the drop operation.
-	 * 
+	 *
 	 * @return OK if the plugin transfer can be handled by this assistant.
 	 */
 	public IStatus validatePluginTransferDrop(
@@ -209,12 +209,12 @@ public abstract class CommonDropAdapterAssistant {
 	 * <p>
 	 * The default behavior of this method is to return <b>Status.CANCEL_STATUS</b>.
 	 * </p>
-	 * 
+	 *
 	 * @param aDragSelection
 	 *            The selection dragged from the viewer.
 	 * @param aDropTarget
 	 *            The target of the drop operation.
-	 * 
+	 *
 	 * @return OK if the drop operation succeeded.
 	 */
 	public IStatus handlePluginTransferDrop(
@@ -223,7 +223,7 @@ public abstract class CommonDropAdapterAssistant {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The associated content service.
 	 */
 	protected INavigatorContentService getContentService() {
@@ -231,7 +231,7 @@ public abstract class CommonDropAdapterAssistant {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return A shell for the viewer currently used by the
 	 *         {@link INavigatorContentService}.
 	 */
@@ -241,12 +241,12 @@ public abstract class CommonDropAdapterAssistant {
 
 	/**
 	 * Sets the current {@link DropTargetEvent}.
-	 * 
+	 *
 	 * This is used to make the event available to the client methods of this class.
-	 * 
+	 *
 	 * @param event
 	 *            the new event.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	void setCurrentEvent(DropTargetEvent event) {
@@ -255,18 +255,18 @@ public abstract class CommonDropAdapterAssistant {
 
 	/**
 	 * Returns the current {@link DropTargetEvent}.
-	 * 
+	 *
 	 * @return event the current DropTargetEvent.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public DropTargetEvent getCurrentEvent() {
 		return _currentEvent;
 	}
-	
+
     /**
      * Sets the {@link CommonDropAdapter}.
-     * @param dropAdapter 
+     * @param dropAdapter
      *
      * @noreference This method is not intended to be referenced by clients.
      * @nooverride This method is not intended to be re-implemented or extended by clients.
@@ -274,12 +274,12 @@ public abstract class CommonDropAdapterAssistant {
 	public void setCommonDropAdapter(CommonDropAdapter dropAdapter) {
 		_dropAdapter = dropAdapter;
 	}
-	
+
     /**
      * Returns the {@link CommonDropAdapter}.
      *
      * @return the CommonDropAdapter.
-     * 
+     *
      * @since 3.4
      *
      */

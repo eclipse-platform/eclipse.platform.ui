@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.navigator.extensions.LinkHelperManager;
 /**
  * Manages the link helpers which are used to define the behavior of
  * the link with editor function.
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 3.4
  */
@@ -49,7 +49,7 @@ public class LinkHelperService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param anObject
 	 *            An object from the viewer
 	 * @return An array of link helpers that know about elements in the
@@ -74,7 +74,7 @@ public class LinkHelperService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param input
 	 *            The Editor input from the active viewer.
 	 * @return An array of link helpers that know about elements in the
@@ -108,12 +108,12 @@ public class LinkHelperService {
 		}
 		return helper;
 	}
-	
+
 	/**
-	 * Return a selection that contains the elements that the given editor input 
+	 * Return a selection that contains the elements that the given editor input
 	 * represent.
 	 * @param input the editor input
-	 * @return a selection that contains the elements that the given editor input 
+	 * @return a selection that contains the elements that the given editor input
 	 * represent
 	 */
 	public IStructuredSelection getSelectionFor(IEditorInput input) {
@@ -129,8 +129,8 @@ public class LinkHelperService {
 			}
 		}
 		return newSelection;
-	} 
-	
+	}
+
 	private IStructuredSelection mergeSelection(IStructuredSelection aBase,
 			IStructuredSelection aSelectionToAppend) {
 		if (aBase == null || aBase.isEmpty()) {

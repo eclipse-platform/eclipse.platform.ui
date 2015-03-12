@@ -25,9 +25,9 @@ import org.eclipse.ui.services.IDisposable;
  * </p>
  * Instances of subclasses will be returned from content extensions that
  * implement {@link IAdaptable}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public abstract class SaveablesProvider implements IDisposable {
 
@@ -35,14 +35,14 @@ public abstract class SaveablesProvider implements IDisposable {
 
 	/**
 	 * Creates a new saveable model provider. May only be called by subclasses.
-	 * 
+	 *
 	 */
 	protected SaveablesProvider() {
 	}
 
 	/**
 	 * Initializes this SaveablesProvider with the given listener, and calls the hook method doInit().
-	 * 
+	 *
 	 * @param listener
 	 */
 	final public void init(ISaveablesLifecycleListener listener) {
@@ -59,7 +59,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Notifies the listener that the given models were opened in this model
 	 * provider. This method must be called on the UI thread.
-	 * 
+	 *
 	 * @param models
 	 */
 	final protected void fireSaveablesOpened(Saveable[] models) {
@@ -70,7 +70,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Notifies the listener that the given models are about to be closed in
 	 * this model provider. This method must be called on the UI thread.
-	 * 
+	 *
 	 * @param models
 	 * @param force
 	 *            true if the closing may be canceled by the user
@@ -88,7 +88,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Notifies the listener that the given models were closed in this model
 	 * provider. This method must be called on the UI thread.
-	 * 
+	 *
 	 * @param models
 	 */
 	final protected void fireSaveablesClosed(Saveable[] models) {
@@ -99,7 +99,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Notifies the listener that the given models' dirty state has changed.
 	 * This method must be called on the UI thread.
-	 * 
+	 *
 	 * @param models
 	 */
 	final protected void fireSaveablesDirtyChanged(Saveable[] models) {
@@ -111,7 +111,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Returns the saveables reachable through this provider. Changes to the
 	 * list of saveables or to the saveables' dirty state must be announced
 	 * using the appropriate fire* methods.
-	 * 
+	 *
 	 * @return the saveables returned by this saveables provider.
 	 */
 	public abstract Saveable[] getSaveables();
@@ -119,7 +119,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Returns the elements representing the given saveable. It is recommended
 	 * that a saveable be represented by only one element.
-	 * 
+	 *
 	 * @param saveable
 	 * @return the elements representing the given saveable (array may be empty)
 	 */
@@ -128,7 +128,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Returns the saveable for the given element, or null if the element does
 	 * not represent a saveable.
-	 * 
+	 *
 	 * @param element
 	 * @return the saveable for the given element, or null
 	 */

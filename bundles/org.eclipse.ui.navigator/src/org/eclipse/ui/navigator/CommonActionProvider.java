@@ -58,7 +58,7 @@ import org.eclipse.ui.internal.navigator.extensions.CommonActionExtensionSite;
  * <p>
  * Clients may extend this class.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class CommonActionProvider extends ActionGroup implements
@@ -74,7 +74,7 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 * <p>
 	 * init() is guaranteed to be called before any other method of the
 	 * ActionGroup super class.
-	 * 
+	 *
 	 * @param aSite
 	 *            The configuration information for the instantiated Common
 	 *            Action Provider.
@@ -85,12 +85,12 @@ public abstract class CommonActionProvider extends ActionGroup implements
 
 	/**
 	 * Filters the specified action through the {@link WorkbenchActivityHelper}.
-	 * 
+	 *
 	 * This is used to determine if the {@link IAction} should be included based
 	 * on the currently enabled activities.
-	 * 
+	 *
 	 * @return true, if the action is to be filtered (suppressed)
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected boolean filterAction(final IAction action) {
@@ -98,7 +98,7 @@ public abstract class CommonActionProvider extends ActionGroup implements
 			String message = "init() method was not called on CommonActionProvider: " + this + " make sure your init() method calls the superclass"; //$NON-NLS-1$ //$NON-NLS-2$
 			throw new IllegalStateException(message);
 		}
-		
+
 		IPluginContribution piCont = new IPluginContribution() {
 			@Override
 			public String getLocalId() {
@@ -113,19 +113,19 @@ public abstract class CommonActionProvider extends ActionGroup implements
 
 		return WorkbenchActivityHelper.filterItem(piCont);
 	}
-	
-	
+
+
 	/**
 	 * <p>
 	 * Restore the previous state of any actions using the flags in aMemento.
 	 * This method allows the state of any actions that persist from session to
 	 * session to be restored.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The default behavior is to do nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param aMemento
 	 *            A memento that was given to the view part to restore its
 	 *            state.
@@ -143,11 +143,11 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 * Extensions should qualify any keys stored in the memento with their
 	 * plugin id
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The default behavior is to do nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param aMemento
 	 *            A memento that was given to the view part to save its state.
 	 */
@@ -156,7 +156,7 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The cached reference to the action site. Will only be non-null if
 	 *         the subclass calls super.init() first.
 	 */

@@ -23,10 +23,10 @@ import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 
 /**
- * 
+ *
  * Describes a <b>commonSorter</b> element under a
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension.
- * 
+ *
  * @since 3.2
  */
 public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
@@ -37,7 +37,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	private String id;
 
-	protected CommonSorterDescriptor(IConfigurationElement anElement) { 
+	protected CommonSorterDescriptor(IConfigurationElement anElement) {
 		element = anElement;
 		init();
 	}
@@ -55,16 +55,16 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return An identifier used to determine whether the sorter is visible.
 	 *         May not be unique.
 	 */
 	public String getId() {
 		return id;
 	}
- 
+
 	/**
-	 * 
+	 *
 	 * @param aParent
 	 *            An element from the viewer
 	 * @return True if and only if this CommonSorter can sort the children of
@@ -83,7 +83,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return An instance of the ViewerSorter defined by the extension. Callers
 	 *         of this method are responsible for managing the instantiated
 	 *         filter.

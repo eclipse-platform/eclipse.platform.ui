@@ -37,7 +37,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
 /**
- * 
+ *
  * Populates context menus with shortcut actions for defined wizards. Wizards
  * may be defined by any of the following extension points:
  * <p>
@@ -70,7 +70,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * @see IWorkbench#getImportWizardRegistry()
  * @see IWorkbench#getExportWizardRegistry()
  * @since 3.2
- * 
+ *
  */
 public final class WizardActionGroup extends ActionGroup {
 
@@ -93,9 +93,9 @@ public final class WizardActionGroup extends ActionGroup {
 	public static final String TYPE_EXPORT = "export"; //$NON-NLS-1$
 
 	private static final CommonWizardDescriptor[] NO_DESCRIPTORS = new CommonWizardDescriptor[0];
-	
-	private static final String[] NO_IDS = new String[0];  
-	
+
+	private static final String[] NO_IDS = new String[0];
+
 	private CommonWizardDescriptor[] descriptors;
 
 	/* a map of (id, IAction)-pairs. */
@@ -108,7 +108,7 @@ public final class WizardActionGroup extends ActionGroup {
 	private IWorkbenchWindow window;
 
 	/* the correct wizard registry for this action group (getRegistry()) */
-	private IWizardRegistry wizardRegistry; 
+	private IWizardRegistry wizardRegistry;
 
 	private boolean disposed = false;
 
@@ -117,7 +117,7 @@ public final class WizardActionGroup extends ActionGroup {
 	private INavigatorContentService contentService;
 
 	/**
-	 * 
+	 *
 	 * @param aWindow
 	 *            The window that will be used to acquire a Shell and a
 	 *            Selection Service
@@ -147,10 +147,10 @@ public final class WizardActionGroup extends ActionGroup {
 		type = aType;
 
 	}
-	
+
 
 	/**
-	 * 
+	 *
 	 * @param aWindow
 	 *            The window that will be used to acquire a Shell and a
 	 *            Selection Service
@@ -161,8 +161,8 @@ public final class WizardActionGroup extends ActionGroup {
 	 *            Indicates the value of the type attribute of the commonWizard
 	 *            extension point. Use any of the TYPE_XXX constants defined on
 	 *            this class.
-	 * @param aContentService 
-	 * 			 The content service to use when deciding visibility.         
+	 * @param aContentService
+	 * 			 The content service to use when deciding visibility.
 	 * @see PlatformUI#getWorkbench()
 	 * @see IWorkbench#getNewWizardRegistry()
 	 * @see IWorkbench#getImportWizardRegistry()
@@ -200,40 +200,40 @@ public final class WizardActionGroup extends ActionGroup {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		Assert.isTrue(!disposed);
- 
-		if (descriptors != null) { 
-			Map<String, SortedSet> groups = findGroups(); 
+
+		if (descriptors != null) {
+			Map<String, SortedSet> groups = findGroups();
 			SortedSet sortedWizards = null;
 			String menuGroupId = null;
 			for (Iterator<String> menuGroupItr = groups.keySet().iterator(); menuGroupItr.hasNext();) {
 				menuGroupId = menuGroupItr.next();
-				sortedWizards = groups.get(menuGroupId); 
+				sortedWizards = groups.get(menuGroupId);
 				menu.add(new Separator(menuGroupId));
 				for (Iterator wizardItr = sortedWizards.iterator(); wizardItr.hasNext();) {
-					menu.add((IAction) wizardItr.next());				
+					menu.add((IAction) wizardItr.next());
 				}
-			} 
-		} 
+			}
+		}
 	}
 
 	/**
-	 * @return A Map of menuGroupIds to SortedSets of IActions. 
+	 * @return A Map of menuGroupIds to SortedSets of IActions.
 	 */
-	private synchronized Map/*<String, SortedSet<IAction>>*/<String, SortedSet>  findGroups() {  
+	private synchronized Map/*<String, SortedSet<IAction>>*/<String, SortedSet>  findGroups() {
 		IAction action = null;
 		Map<String, SortedSet> groups = new TreeMap<String, SortedSet>();
 		SortedSet<IAction> sortedWizards = null;
 		String menuGroupId = null;
 		for (int i = 0; i < descriptors.length; i++) {
-			menuGroupId = descriptors[i].getMenuGroupId() != null ? 
+			menuGroupId = descriptors[i].getMenuGroupId() != null ?
 							descriptors[i].getMenuGroupId() : CommonWizardDescriptor.DEFAULT_MENU_GROUP_ID;
 			sortedWizards = groups.get(menuGroupId);
 			if(sortedWizards == null) {
 				groups.put(descriptors[i].getMenuGroupId(), sortedWizards = new TreeSet<IAction>(ActionComparator.INSTANCE));
-			}  
+			}
 			if ((action = getAction(descriptors[i].getWizardId())) != null) {
-				sortedWizards.add(action); 
-			}			
+				sortedWizards.add(action);
+			}
 		}
 		return groups;
 	}
@@ -284,9 +284,9 @@ public final class WizardActionGroup extends ActionGroup {
 	/**
 	 * @return Returns the wizardActionIds.
 	 */
-	public synchronized String[] getWizardActionIds() { 
-		if(descriptors != null && descriptors.length > 0) { 
-			String[] wizardActionIds = new String[descriptors.length]; 
+	public synchronized String[] getWizardActionIds() {
+		if(descriptors != null && descriptors.length > 0) {
+			String[] wizardActionIds = new String[descriptors.length];
 			for (int i = 0; i < descriptors.length; i++) {
 				wizardActionIds[i] = descriptors[i].getWizardId();
 			}
@@ -300,16 +300,16 @@ public final class WizardActionGroup extends ActionGroup {
 	 *            The wizard action ids to set. These should be defined through
 	 *            <b>org.eclipse.ui.xxxWizards</b>
 	 */
-	private synchronized void setWizardActionDescriptors(CommonWizardDescriptor[] theWizardDescriptors) { 
+	private synchronized void setWizardActionDescriptors(CommonWizardDescriptor[] theWizardDescriptors) {
 		descriptors = theWizardDescriptors;
 	}
-	  
+
 	private static class ActionComparator implements Comparator {
-		
+
 		private static final ActionComparator INSTANCE = new ActionComparator();
 		@Override
 		public int compare(Object arg0, Object arg1) {
 			return ((IAction)arg0).getText().compareTo(((IAction)arg1).getText());
 		}
-	} 
+	}
 }

@@ -64,9 +64,9 @@ import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
  * Clients that reuse this service outside of an instance of {@link CommonNavigator} must be sure
  * that {{@link #fillActionBars(IActionBars)} is called whenever the selection changes. The
  * retargetable actions for each selection could change, based on who contributed the items.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public final class NavigatorActionService extends ActionGroup implements IMementoAware {
 
@@ -122,7 +122,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	 * is controlled by the &lgt;popupMenu /&gt; element's 'allowPlatformContributions' attribute.
 	 * Clients may choose to ignore this setting by supplying a value of <b>true</b> for the
 	 * <code>force</code> attribute.
-	 * 
+	 *
 	 * @param menu
 	 *            The context menu of the IViewPart
 	 * @param aSelectionProvider
@@ -149,12 +149,12 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	/**
 	 * Requests that the service invoke extensions to fill the given menu with Action Providers that
 	 * are interested in elements from the given selection.
-	 * 
+	 *
 	 * <p>
 	 * Object contributions (see <b>org.eclipes.ui.popupMenus</b>) may also respected by this
 	 * method if <code>toRespectObjectContributions</code> is true.
 	 * </p>
-	 * 
+	 *
 	 * @param aMenu
 	 *            The menu being presented to the user.
 	 * @see ActionGroup#fillContextMenu(IMenuManager)
@@ -206,7 +206,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 
 		return WorkbenchActivityHelper.filterItem(piCont);
 	}
-	
+
 	/**
 	 * @param aMenu
 	 */
@@ -229,12 +229,12 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 			}
 		}
 	}
-	
+
 	/**
 	 * Request that the service invoke extensions to fill the given IActionBars with retargetable
 	 * actions or view menu contributions from Action Providers that are interested in the given
 	 * selection.
-	 * 
+	 *
 	 * @param theActionBars
 	 *            The action bars in use by the current view site.
 	 * @see ActionGroup#fillActionBars(IActionBars)
@@ -275,7 +275,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 
 	/**
 	 * Dispose of any state or resources held by the service.
-	 * 
+	 *
 	 * @see ActionGroup#dispose()
 	 */
 	@Override
@@ -293,7 +293,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 
 	/**
 	 * Use the given memento to restore the state of each Action Provider as it is initialized.
-	 * 
+	 *
 	 * @param aMemento
 	 *            The memento retrieved from the dialog settings
 	 */
@@ -319,7 +319,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 
 	/**
 	 * Request that Action Providers save any state that they find interesting.
-	 * 
+	 *
 	 * @param aMemento
 	 *            The memento retrieved from the dialog settings
 	 */
@@ -338,7 +338,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aProviderDescriptor
 	 * @return a CommonActionProvider
 	 * @noreference This method is not intended to be referenced by clients.

@@ -27,9 +27,9 @@ public class SkeletonLinkHelper implements ILinkHelper {
 	 * The singleton instance.
 	 */
 	public static final ILinkHelper INSTANCE = new SkeletonLinkHelper();
-	
+
 	private SkeletonLinkHelper() {
-		
+
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class SkeletonLinkHelper implements ILinkHelper {
 	@Override
 	public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
 		// no-op
-		
+
 	}
 
 }

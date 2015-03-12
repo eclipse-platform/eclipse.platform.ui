@@ -17,18 +17,18 @@ import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
 
 /**
- * 
+ *
  * Drag assistants allow clients to provide new TransferTypes to a particular
  * viewer.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public final class CommonDragAssistantDescriptor implements IViewerExtPtConstants {
 
 	private IConfigurationElement element;
 
-	
+
 	/* package */ CommonDragAssistantDescriptor(IConfigurationElement aConfigElement) {
 		element = aConfigElement;
 	}
@@ -36,7 +36,7 @@ public final class CommonDragAssistantDescriptor implements IViewerExtPtConstant
 	/**
 	 * Create an instance of the {@link CommonDragAdapterAssistant} defined by
 	 * this descriptor.
-	 * 
+	 *
 	 * @return an instance of the {@link CommonDragAdapterAssistant} or
 	 *         {@link SkeletonCommonDragAssistant} if a problem occurs with the
 	 *         instantiation.

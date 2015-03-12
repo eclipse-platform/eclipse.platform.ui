@@ -12,10 +12,10 @@ package org.eclipse.ui.navigator;
 
 
 /**
- * 
+ *
  * An extension activation listener is notified whenever the activation state
  * changes for one or more content extensions.
- * 
+ *
  * @since 3.2
  * @see INavigatorActivationService
  * @see INavigatorActivationService#addExtensionActivationListener(IExtensionActivationListener)

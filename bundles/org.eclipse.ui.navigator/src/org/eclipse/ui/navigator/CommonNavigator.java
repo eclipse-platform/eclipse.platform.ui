@@ -78,14 +78,14 @@ import org.eclipse.ui.part.ViewPart;
  * </p>
  * </li>
  * </ul>
- * 
+ *
  * <p>
  * Clients that wish to define their own custom extensible navigator view using
  * CommonNavigator need to specify an instance of the
  * <b>org.eclipse.ui.views</b> extension point:
- * 
+ *
  * <pre>
- * 
+ *
  *          &lt;extension
  *          		point=&quot;org.eclipse.ui.views&quot;&gt;
  *          	&lt;view
@@ -96,11 +96,11 @@ import org.eclipse.ui.part.ViewPart;
  *          		id=&quot;org.acme.MyCustomNavigatorID&quot;&gt;
  *          	&lt;/view&gt;
  *          &lt;/extension&gt;
- * 
+ *
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  * <p>
  * CommonNavigator gets its initial input (during initialization) from the
  * Workbench by calling getSite().getPage().getInput(). This is done in
@@ -108,12 +108,12 @@ import org.eclipse.ui.part.ViewPart;
  * to provide their own means of getting the initial input. Or they may access
  * the {@link CommonViewer} and set its input directly after startup.
  * </p>
- * 
+ *
  * <p>
  * In the IDE scenario, the default page input is IWorkspaceRoot, in the RCP
  * scenario it is null and can be configured in the WorkbenchAdvisor.
  * </p>
- * 
+ *
  * <p>
  * Clients that wish to extend the view menu provided via the
  * <b>org.eclipse.ui.popupMenu</b>s extension may specify the the
@@ -121,32 +121,32 @@ import org.eclipse.ui.part.ViewPart;
  * nested <b>popupMenu</b> element) of their target viewer as their target menu
  * id.
  * </p>
- * 
+ *
  * <p>
  * This class may be instantiated or subclassed
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource, IShowInTarget {
- 
+
 	private static final String PERF_CREATE_PART_CONTROL= "org.eclipse.ui.navigator/perf/explorer/createPartControl"; //$NON-NLS-1$
 
-	
+
 	private static final Class INAVIGATOR_CONTENT_SERVICE = INavigatorContentService.class;
 	private static final Class COMMON_VIEWER_CLASS = CommonViewer.class;
 	private static final Class ISHOW_IN_SOURCE_CLASS = IShowInSource.class;
 	private static final Class ISHOW_IN_TARGET_CLASS = IShowInTarget.class;
-	
+
 	private static final String HELP_CONTEXT =  NavigatorPlugin.PLUGIN_ID + ".common_navigator"; //$NON-NLS-1$
 
 	/**
 	 * <p>
 	 * Used to track changes to the {@link #isLinkingEnabled}&nbsp;property.
 	 * </p>
-	 * 
+	 *
 	 * Make sure this does not conflict with anything in IWorkbenchPartConstants.
-	 * 
+	 *
 	 */
 	public static final int IS_LINKING_ENABLED_PROPERTY = 0x10000;
 
@@ -158,19 +158,19 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	/**
 	 * To allow {@link #createCommonViewer(Composite)} to be subclassed
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected IMemento memento;
 
 	private boolean isLinkingEnabled = false;
 
-	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$ 
+	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$
 
 	private LinkHelperService linkService;
 
 	/**
-	 * 
+	 *
 	 */
 	public CommonNavigator() {
 		super();
@@ -181,8 +181,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Create the CommonViewer part control and setup the default providers as
 	 * necessary.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -191,31 +191,31 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_PART_CONTROL, this);
 		stats.startRun();
 
-		commonViewer = createCommonViewer(aParent);	
+		commonViewer = createCommonViewer(aParent);
 		commonViewer.setCommonNavigator(this);
-		
+
 		try {
 			commonViewer.getControl().setRedraw(false);
-			
+
 	        INavigatorFilterService filterService = commonViewer
 					.getNavigatorContentService().getFilterService();
 			ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
 			for (int i = 0; i < visibleFilters.length; i++) {
 				commonViewer.addFilter(visibleFilters[i]);
 			}
-	
+
 			commonViewer.setSorter(new CommonViewerSorter());
-	
+
 			/*
 			 * make sure input is set after sorters and filters to avoid unnecessary
 			 * refreshes
 			 */
-			commonViewer.setInput(getInitialInput()); 
-	
+			commonViewer.setInput(getInitialInput());
+
 			getSite().setSelectionProvider(commonViewer);
-	
+
 			setPartName(getConfigurationElement().getAttribute("name")); //$NON-NLS-1$
-		} finally { 
+		} finally {
 			commonViewer.getControl().setRedraw(true);
 		}
 
@@ -227,13 +227,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		 * the CommonNavigatorManager
 		 */
 		commonManager = createCommonManager();
-		if (memento != null) {			
+		if (memento != null) {
 			commonViewer.getNavigatorContentService().restoreState(memento);
 		}
 
 		commonActionGroup = createCommonActionGroup();
 		commonActionGroup.fillActionBars(getViewSite().getActionBars());
-		
+
 		ISaveablesLifecycleListener saveablesLifecycleListener = new ISaveablesLifecycleListener() {
 			ISaveablesLifecycleListener siteSaveablesLifecycleListener = (ISaveablesLifecycleListener) getSite()
 					.getService(ISaveablesLifecycleListener.class);
@@ -249,19 +249,19 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		commonViewer.getNavigatorContentService()
 				.getSaveablesService().init(this, getCommonViewer(),
 						saveablesLifecycleListener);
-		
+
 		commonViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				firePropertyChange(PROP_DIRTY);
 			}});
-		
+
 		String helpContext = commonViewer.getNavigatorContentService().getViewerDescriptor().getHelpContext();
 		if (helpContext == null)
 			helpContext = HELP_CONTEXT;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(), helpContext);
-		
+
 		stats.endRun();
 	}
 
@@ -281,16 +281,16 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			setTitleToolTip(inputToolTip);
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns the tool tip text for the given element. Used as the tool tip
 	 * text for the current frame, and for the view title tooltip.
 	 * </p>
-	 * @param anElement 
+	 * @param anElement
 	 * @return the tool tip text
 	 * @since 3.4
-	 * 
+	 *
 	 */
 	public String getFrameToolTipText(Object anElement) {
 		if (commonViewer == null)
@@ -299,7 +299,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 					.getText(anElement);
 	}
 
-	
+
 	/**
 	 * <p>
 	 * Note: This method is for internal use only. Clients should not call this
@@ -309,7 +309,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * This method will be invoked when the DisposeListener is notified of the
 	 * disposal of the Eclipse view part.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	@Override
@@ -346,12 +346,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>
 	 * Note: This method is for internal use only. Clients should not call this
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
 	@Override
@@ -366,7 +366,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * <p>
 	 * Force the workbench to focus on the Common Navigator tree.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
@@ -382,7 +382,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * necessary. Use caution when invoking this method as it can cause
 	 * Navigator Content Extensions to load, thus causing plugin activation.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.ISetSelectionTarget#selectReveal(org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
@@ -399,7 +399,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Custom implementations that wish to override this functionality, need to
 	 * override the action used by the default ActionGroup and listen for
 	 * changes to the above property.
-	 * 
+	 *
 	 * @param toEnableLinking
 	 *            True enables linking the current selection with open editors
 	 */
@@ -423,7 +423,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * {@link #init(IViewSite, IMemento)}&nbsp;has been called by the
 	 * Workbench.
 	 * </p>
-	 *  
+	 *
 	 * @return The (already created) instance of Common Viewer.
 	 */
 	public CommonViewer getCommonViewer() {
@@ -444,7 +444,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * no such object can be found.
 	 *
 	 * @param adapter the adapter class to look up
-	 * @return a object castable to the given class, 
+	 * @return a object castable to the given class,
 	 *    or <code>null</code> if this object does not
 	 *    have an adapter for the given class
 	 */
@@ -487,7 +487,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * the Eclipse view part will be used to create the viewer. The ID is
 	 * important as some extensions indicate they should only be used with a
 	 * particular viewer ID.
-	 * 
+	 *
 	 * @param aParent
 	 *            A composite parent to contain the Common Viewer
 	 * @return An initialized instance of CommonViewer
@@ -502,9 +502,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/**
 	 * Constructs and returns an instance of {@link CommonViewer}. The ID of
 	 * the Eclipse view part will be used to create the viewer.
-	 * 
+	 *
 	 * Override this method if you want a subclass of the CommonViewer
-	 * 
+	 *
 	 * @param aParent
 	 *            A composite parent to contain the CommonViewer
 	 * @return An instance of CommonViewer
@@ -519,7 +519,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * <p>
 	 * Adds the listeners to the Common Viewer.
 	 * </p>
-	 * 
+	 *
 	 * @param viewer
 	 *            The viewer
 	 * @since 2.0
@@ -544,19 +544,19 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Note: This method is for internal use only. Clients should not call this
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @param anEvent
 	 *            Supplied by the DoubleClick listener.
 	 */
 	protected void handleDoubleClick(DoubleClickEvent anEvent) {
 
 		IAction openHandler = getViewSite().getActionBars().getGlobalActionHandler(ICommonActionConstants.OPEN);
-		
+
 		if(openHandler == null) {
 			IStructuredSelection selection = (IStructuredSelection) anEvent
 					.getSelection();
 			Object element = selection.getFirstElement();
-	
+
 			TreeViewer viewer = getCommonViewer();
 			if (viewer.isExpandable(element)) {
 				viewer.setExpandedState(element, !viewer.getExpandedState(element));
@@ -570,11 +570,11 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Menu, manages updates to the ActionBars from
 	 * {@link CommonActionProvider}&nbsp; extensions as the user's selection
 	 * changes, and also updates the status bar based on the current selection.
-	 * 
+	 *
 	 * @return The Common Navigator Manager class which handles menu population
 	 *         and ActionBars
-	 *         
-	 * @since 3.4        
+	 *
+	 * @since 3.4
 	 */
 	protected CommonNavigatorManager createCommonManager() {
 		return new CommonNavigatorManager(this, memento);
@@ -606,7 +606,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * activations.
 	 * </p>
 	 * </ul>
-	 * 
+	 *
 	 * @return The Action Group to be associated with the Common Navigator View
 	 *         Part.
 	 */
@@ -618,7 +618,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Used to provide the initial input for the {@link CommonViewer}.  By default
 	 * getSite().getPage().getInput() is used.  Subclass this to return your desired
 	 * input.
-	 * 
+	 *
 	 * @return The initial input for the viewer. Defaults to
 	 *         getSite().getPage().getInput()
 	 * @since 3.4
@@ -676,7 +676,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		if (selection != null && !selection.isEmpty()) {
 			selectReveal(selection);
 			return true;
-		} 
+		}
 		return false;
 	}
 
@@ -705,7 +705,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			linkService = new LinkHelperService((NavigatorContentService)getCommonViewer().getNavigatorContentService());
 		return linkService;
 	}
-	
+
 	/**
 	 * @since 3.4
 	 */
@@ -713,7 +713,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		return memento;
 	}
 
-	
+
 	/**
 	 * @param mode
 	 * @noreference This method is not intended to be referenced by clients.
@@ -755,6 +755,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		// For subclassing
 		return null;
 	}
-	
-	
+
+
 }

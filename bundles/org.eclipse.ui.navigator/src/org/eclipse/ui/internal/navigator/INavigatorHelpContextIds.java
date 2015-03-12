@@ -15,9 +15,9 @@ import org.eclipse.ui.PlatformUI;
 /**
  * The help context ids used by the Common Navigator. These are defined in the
  * workbench plugin. There is no separate help for the Common Navigator.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public interface INavigatorHelpContextIds {
 

@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
  * If the wrapped label provider is a {@link org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider} it will use
  * the styled label it provides.
  * </p>
- * <p>The label provider listens to the built-in decoration colors ({@link JFacePreferences#QUALIFIER_COLOR}, 
+ * <p>The label provider listens to the built-in decoration colors ({@link JFacePreferences#QUALIFIER_COLOR},
  * {@link JFacePreferences#COUNTER_COLOR} and {@link JFacePreferences#DECORATIONS_COLOR}. If other
  * colors are used, it is the responsibility of the wrapped label provider to fire the refresh.
  * </p>
@@ -51,7 +51,7 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 		public StyledLabelProviderAdapter(ILabelProvider provider) {
 			this.provider= provider;
 		}
-		
+
 		@Override
 		public Image getImage(Object element) {
 			return provider.getImage(element);
@@ -126,35 +126,35 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 				return ((ITableLabelProvider) provider).getColumnText(element, columnIndex);
 			}
 			return null;
-		}	
+		}
 	}
-	
+
 	/**
 	 * Creates a {@link NavigatorDecoratingLabelProvider}
-	 * 
+	 *
 	 * @param commonLabelProvider the label provider to use
 	 */
 	public NavigatorDecoratingLabelProvider(ILabelProvider commonLabelProvider) {
 		super(new StyledLabelProviderAdapter(commonLabelProvider), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator(), null);
 	}
-	
+
 	@Override
 	public void initialize(ColumnViewer viewer, ViewerColumn column) {
 		PlatformUI.getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getColorRegistry().addListener(this);
-		
+
 		setOwnerDrawEnabled(showColoredLabels());
-		
+
 		super.initialize(viewer, column);
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		PlatformUI.getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getColorRegistry().removeListener(this);
 	}
-	
+
 	private void refresh() {
 		ColumnViewer viewer= getViewer();
 		if (viewer == null) {
@@ -168,11 +168,11 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 			viewer.refresh();
 		}
 	}
-	
+
 	private static boolean showColoredLabels() {
 		return PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS);
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();

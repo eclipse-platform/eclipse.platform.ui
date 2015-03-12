@@ -15,93 +15,93 @@ import java.util.Set;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * 
+ *
  * The descriptor provides a the low-level handle to a content extension. Information such as
  * the Id, the name, the priority, and whether the descriptor provides one or
- * more root elements is provided.  This descriptor is used to form the 
+ * more root elements is provided.  This descriptor is used to form the
  * {@link INavigatorContentExtension}.
- * 
+ *
  * <p>
  * There is a one-to-many correspondence between the {@link INavigatorContentDescriptor} and
  * {@link INavigatorContentExtension}.  An instance of the {@link INavigatorContentExtension} is
- * created for each {@link INavigatorContentDescriptor} used by a 
+ * created for each {@link INavigatorContentDescriptor} used by a
  * {@link INavigatorContentService}.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.2
- * 
+ *
  */
 public interface INavigatorContentDescriptor {
 
 	/**
 	 * Returns the navigator content extension id
-	 * 
+	 *
 	 * @return the navigator content extension id
 	 */
 	String getId();
 
 	/**
 	 * Returns the name of this navigator extension
-	 * 
+	 *
 	 * @return the name of this navigator extension
 	 */
 	String getName();
 
 	/**
 	 * Returns the priority of the navigator content extension.
-	 * 
+	 *
 	 * @return the priority of the navigator content extension. Returns {@link Priority#NORMAL}
 	 *         if no priority was specified.
 	 */
 	int getPriority();
-	
+
 	/**
 	 * Returns the extension that this extension must appear before.
-	 * 
+	 *
 	 * @return The value specified by the <i>appearsBefore</i> attribute of the
 	 *         &lt;navigatorContent/&gt; element.
-	 *         
-	 * @since 3.5        
+	 *
+	 * @since 3.5
 	 */
 	public String getAppearsBeforeId();
-	
+
 	/**
 	 * Returns the unique sequence number of this extension.  This is calculated based on
 	 * the priority and the appears before and represents the order the extension will appear
 	 * relative to the other extensions
-	 * 
+	 *
 	 * @return The sequence number of the extension
-	 *         
-	 * @since 3.5        
+	 *
+	 * @since 3.5
 	 */
 	public int getSequenceNumber();
-	
+
 	/**
 	 * The enabledByDefault attribute specifies whether an extension should be
 	 * activated in the context of a viewer automatically. Users may override
 	 * this setting through the "Types of Content" dialog. This will be true
-	 * if either the activeByDefault attribute of the navigatorContent element 
+	 * if either the activeByDefault attribute of the navigatorContent element
 	 * is true, or if an initialActivationExpression is specified which resolves
 	 * to true.
-	 * 
+	 *
 	 * @return true if the extension is enabled by default.
 	 */
 	boolean isActiveByDefault();
 
 	/**
-	 * True if this content extension is used only to specify a commonSorter 
+	 * True if this content extension is used only to specify a commonSorter
 	 * in order to provide only sorting.
 	 * @return true if sort only
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	boolean isSortOnly();
-	
+
 	/**
 	 * Determine if this content extension is enabled for the given element.
-	 * 
+	 *
 	 * @param anElement
 	 *            The element that should be used for the evaluation.
 	 * @return True if and only if the extension is enabled for the element.
@@ -111,12 +111,12 @@ public interface INavigatorContentDescriptor {
 	/**
 	 * Determine if this content extension could provide the given element as a
 	 * child.
-	 * 
+	 *
 	 * <p>
 	 * This method is used to determine what the parent of an element could be
 	 * for Link with Editor support.
 	 * </p>
-	 * 
+	 *
 	 * @param anElement
 	 *            The element that should be used for the evaluation.
 	 * @return True if and only if the extension might provide an object of this
@@ -126,7 +126,7 @@ public interface INavigatorContentDescriptor {
 
 	/**
 	 * A convenience method to check all elements in a selection.
-	 * 
+	 *
 	 * @param aSelection
 	 *            A non-null selection
 	 * @return True if and only if every element in the selection is a possible
@@ -153,9 +153,9 @@ public interface INavigatorContentDescriptor {
 	INavigatorContentDescriptor getOverriddenDescriptor();
 
 	/**
-	 * 
+	 *
 	 * Does not force the creation of the set of overriding extensions.
-	 * 
+	 *
 	 * @return True if this extension has overriding extensions.
 	 */
 	boolean hasOverridingExtensions();

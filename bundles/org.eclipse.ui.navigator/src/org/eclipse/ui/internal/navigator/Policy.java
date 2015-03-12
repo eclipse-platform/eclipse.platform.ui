@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Policy is the class for the debug arguments in the navigator
- * 
+ *
  */
 public class Policy {
 
@@ -61,7 +61,7 @@ public class Policy {
 	private static boolean getDebugOption(String option) {
 		return "true".equalsIgnoreCase(Platform.getDebugOption(NavigatorPlugin.PLUGIN_ID + option)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @param obj
 	 * @return a String

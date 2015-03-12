@@ -32,7 +32,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 
 /**
- * 
+ *
  * @since 3.2
  */
 public class NavigatorContentExtension implements IMementoAware,
@@ -60,7 +60,7 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	/**
 	 * Create an object to manage the instantiated elements from the extension.
-	 * 
+	 *
 	 * @param aDescriptor
 	 *            The descriptor that knows how to create elements and knows the
 	 *            id of the extension
@@ -97,7 +97,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The internal content provider that is wrapped by this extension.
 	 */
 	public SafeDelegateTreeContentProvider internalGetContentProvider() {
@@ -179,7 +179,7 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	/**
 	 * Dispose of any resources acquired during the lifecycle of the extension.
-	 * 
+	 *
 	 */
 	public void dispose() {
 		try {
@@ -233,7 +233,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	/**
-	 * 
+	 *
 	 * @return True if the loading of the content provider has failed.
 	 */
 	public boolean hasLoadingFailed() {
@@ -298,7 +298,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	/**
-	 * 
+	 *
 	 * @param anElement
 	 *            The element for the query.
 	 * @return Returns the overridingExtensions.
@@ -309,7 +309,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Returns the overridingExtensions.
 	 */
 	public NavigatorContentExtension[] getOverridingExtensions() {
@@ -317,7 +317,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	}
 
 	private static final boolean TRIGGER_POINT = true;
-	
+
 	/**
 	 * @param anElement
 	 *            The element for the query.

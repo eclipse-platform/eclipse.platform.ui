@@ -22,7 +22,7 @@ public interface IViewerExtPtConstants {
 
 	/** */
 	String TAG_VIEWER = "viewer"; //$NON-NLS-1$
-	
+
 	/** */
 	String ATT_INHERIT_BINDINGS_FROM_VIEWER = "inheritBindingsFromViewer"; //$NON-NLS-1$
 
@@ -36,14 +36,14 @@ public interface IViewerExtPtConstants {
 	String TAG_VIEWER_ACTION_BINDING = "viewerActionBinding"; //$NON-NLS-1$
 
 	/** */
-	String TAG_POPUP_MENU = "popupMenu"; //$NON-NLS-1$ 
+	String TAG_POPUP_MENU = "popupMenu"; //$NON-NLS-1$
 
 	/** */
-	String TAG_OPTIONS = "options"; //$NON-NLS-1$ 
+	String TAG_OPTIONS = "options"; //$NON-NLS-1$
 
 	/** */
 	String TAG_PROPERTY = "property"; //$NON-NLS-1$
-	
+
 	/** */
 	String TAG_DRAG_ASSISTANT = "dragAssistant"; //$NON-NLS-1$
 
@@ -70,9 +70,9 @@ public interface IViewerExtPtConstants {
 
 	/** */
 	String ATT_VALUE = "value"; //$NON-NLS-1$
-	
+
 	/** */
 	String ATT_CLASS = "class"; //$NON-NLS-1$
-	
+
 
 }

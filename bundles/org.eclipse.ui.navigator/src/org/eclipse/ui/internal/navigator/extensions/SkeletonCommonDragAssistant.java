@@ -18,9 +18,9 @@ import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
 
 /**
  * A Skeleton implementation of {@link CommonDragAdapterAssistant}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public final class SkeletonCommonDragAssistant extends
 		CommonDragAdapterAssistant {

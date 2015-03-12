@@ -45,7 +45,7 @@ public class SafeDelegateTreeContentProvider implements
 		super();
 		contentProvider = aContentProvider;
 	}
-	
+
 	/**
 	 * @return true if the underlying content provider implements IPipelinedTreeContentProvider
 	 */
@@ -68,17 +68,17 @@ public class SafeDelegateTreeContentProvider implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void dispose() {
 		SafeRunner.run(new NavigatorSafeRunnable() {
 			@Override
 			public void run() throws Exception {
-				contentProvider.dispose(); 
+				contentProvider.dispose();
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class SafeDelegateTreeContentProvider implements
 	@Override
 	public void inputChanged(final Viewer aViewer, final Object anOldInput, final Object aNewInput) {
 		viewer = (StructuredViewer) aViewer;
-		
+
 		SafeRunner.run(new NavigatorSafeRunnable() {
 			@Override
 			public void run() throws Exception {
@@ -135,7 +135,7 @@ public class SafeDelegateTreeContentProvider implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The real content provider.
 	 */
 	public ITreeContentProvider getDelegateContentProvider() {
@@ -193,7 +193,7 @@ public class SafeDelegateTreeContentProvider implements
 
 	@Override
 	public PipelinedShapeModification interceptAdd(
-			PipelinedShapeModification anAddModification) { 
+			PipelinedShapeModification anAddModification) {
 		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			return ((IPipelinedTreeContentProvider) contentProvider)
 					.interceptAdd(anAddModification);
@@ -203,7 +203,7 @@ public class SafeDelegateTreeContentProvider implements
 
 	@Override
 	public PipelinedShapeModification interceptRemove(
-			PipelinedShapeModification aRemoveModification) { 
+			PipelinedShapeModification aRemoveModification) {
 		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			return ((IPipelinedTreeContentProvider) contentProvider)
 					.interceptRemove(aRemoveModification);
@@ -264,7 +264,7 @@ public class SafeDelegateTreeContentProvider implements
 				segments.add(0, parent);
 		} while (parent != null && parent != viewer.getInput());
 		if (!segments.isEmpty()) {
-			// Loop backwards over the array to create the path.			
+			// Loop backwards over the array to create the path.
 			return new TreePath[] { new TreePath(segments.toArray()) };
 		}
 		return NO_PATHS;

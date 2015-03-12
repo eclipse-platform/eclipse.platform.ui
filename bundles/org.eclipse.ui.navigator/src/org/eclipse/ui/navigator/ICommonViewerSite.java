@@ -15,11 +15,11 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * 
+ *
  * Provides context for extensions including a valid shell, a selection
  * provider, and a unique identifier corresponding to the abstract viewer behind
  * the viewer site.
- *  
+ *
  * @since 3.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 public interface ICommonViewerSite extends IAdaptable {
 
 	/**
-	 * 
+	 *
 	 * @return The unique identifier associated with the defined abstract
 	 *         viewer. In general, this will be the id of the
 	 *         <b>org.eclipse.ui.views</b> extension that defines the view
@@ -37,14 +37,14 @@ public interface ICommonViewerSite extends IAdaptable {
 
 
 	/**
-	 * 
+	 *
 	 * @return A valid shell corresponding to the shell of the
 	 *         {@link CommonViewer}
 	 */
 	Shell getShell();
 
 	/**
-	 * 
+	 *
 	 * @return The selection provider that can provide a current, valid
 	 *         selection. The default selection provider is the
 	 *         {@link CommonViewer}.
@@ -53,10 +53,10 @@ public interface ICommonViewerSite extends IAdaptable {
 
 	/**
 	 * Sets the selection provider for this common viewer site.
-	 * 
+	 *
 	 * @param provider
 	 *            the selection provider, or <code>null</code> to clear it
 	 */
 	public void setSelectionProvider(ISelectionProvider provider);
-	
+
 }

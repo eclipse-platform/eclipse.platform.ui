@@ -34,7 +34,7 @@ import org.eclipse.ui.navigator.INavigatorFilterService;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class NavigatorFilterService implements INavigatorFilterService {
 
@@ -115,7 +115,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			NavigatorContentService.flushPreferences(prefs);
 		}
 	}
-	
+
 	/**
 	 * Used for the tests
 	 */
@@ -209,7 +209,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			activeFilters.addAll(Arrays.asList(theFilterIds));
 		}
 	}
-	
+
 	@Override
 	public void activateFilterIdsAndUpdateViewer(String[] filterIdsToActivate) {
 		boolean updateFilterActivation = false;
@@ -221,7 +221,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		int indexofFilterIdToBeActivated;
 
 		List<String> nonUiVisible = null;
-		
+
 		/* is there a delta? */
 		for (int i = 0; i < visibleFilterDescriptors.length; i++) {
 			indexofFilterIdToBeActivated = Arrays.binarySearch(filterIdsToActivate,
@@ -233,7 +233,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			if (indexofFilterIdToBeActivated >= 0 ^ isActive(visibleFilterDescriptors[i].getId())) {
 				updateFilterActivation = true;
 			}
-			
+
 			// We don't turn of non-UI visible filters here, they have to be manipulated explicitly
 			if (!visibleFilterDescriptors[i].isVisibleInUi()) {
 				if (nonUiVisible == null)
@@ -249,7 +249,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 					nonUiVisible.add(filterIdsToActivate[i]);
 				filterIdsToActivate = nonUiVisible.toArray(new String[]{});
 			}
-			
+
 			setActiveFilterIds(filterIdsToActivate);
 			persistFilterActivationState();
 			updateViewer();
@@ -268,11 +268,11 @@ public class NavigatorFilterService implements INavigatorFilterService {
 
 		ViewerFilter[] visibleFilters =	getVisibleFilters(true);
 		commonViewer.setFilters(visibleFilters);
-	}		
-		
+	}
+
 	/**
 	 * Activate the given array without disabling all other filters.
-	 * 
+	 *
 	 * @param theFilterIds
 	 *            The filter ids to activate.
 	 */
@@ -282,9 +282,9 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			activeFilters.addAll(Arrays.asList(theFilterIds));
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param aFilterId The id of the filter to activate or deactivate
 	 * @param toMakeActive True to make the filter active, false to make the filter inactive
 	 */
@@ -297,10 +297,10 @@ public class NavigatorFilterService implements INavigatorFilterService {
 					activeFilters.remove(aFilterId);
 				else
 					activeFilters.add(aFilterId);
-					
+
 			}
-				
+
 		}
 	}
- 
+
 }

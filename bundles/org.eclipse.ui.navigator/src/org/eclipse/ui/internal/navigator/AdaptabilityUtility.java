@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Provides utilities for working with adaptable and non-adaptable objects.
- * 
+ *
  * @since 3.2
  */
 public class AdaptabilityUtility {
@@ -25,7 +25,7 @@ public class AdaptabilityUtility {
 	/**
 	 * <p>
 	 * Returns an adapter of the requested type (anAdapterType)
-	 * 
+	 *
 	 * @param anElement
 	 *            The element to adapt, which may or may not implement
 	 *            {@link IAdaptable}, or null
@@ -51,8 +51,8 @@ public class AdaptabilityUtility {
                 Assert.isTrue(anAdapterType.isInstance(result));
                 return result;
             }
-        } 
-        
+        }
+
         if (!(anElement instanceof PlatformObject)) {
             Object result = Platform.getAdapterManager().getAdapter(anElement, anAdapterType);
             if (result != null) {

@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.5
- * 
+ *
  */
 public abstract class NavigatorSafeRunnable extends SafeRunnable {
 
@@ -27,7 +27,7 @@ public abstract class NavigatorSafeRunnable extends SafeRunnable {
 	protected Object _object;
 
 	/**
-	 * 
+	 *
 	 */
 	public NavigatorSafeRunnable() {
 		super();

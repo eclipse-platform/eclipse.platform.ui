@@ -26,14 +26,14 @@ import org.eclipse.ui.internal.navigator.TextActionHandler;
  * progress. There is a guarantee neither that this API will work nor that it will remain the same.
  * Please do not use this API without consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface INavigatorSiteEditor {
 	/**
 	 * Starts the editing. An editor box will be overlaid on the selected element in the Navigator
 	 * tree.
-	 * 
+	 *
 	 * @param runnable
 	 *            Runnable to execute when editing ends successfully
 	 */
@@ -42,7 +42,7 @@ public interface INavigatorSiteEditor {
 	/**
 	 * Returns the new text. Returns <code>null</code> if editing was cancelled. Editing is
 	 * cancelled when the user pressed the Escape key.
-	 * 
+	 *
 	 * @return the new text or <code>null</code> if editing was cancelled
 	 */
 	public String getText();
@@ -50,7 +50,7 @@ public interface INavigatorSiteEditor {
 	/**
 	 * Set the text handler that handles cut, copy, paste, delete and select all operations within
 	 * the editor box.
-	 * 
+	 *
 	 * @param actionHandler
 	 *            the text action handler
 	 */

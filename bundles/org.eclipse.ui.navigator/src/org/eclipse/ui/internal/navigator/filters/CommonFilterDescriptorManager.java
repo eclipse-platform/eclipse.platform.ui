@@ -23,7 +23,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CommonFilterDescriptorManager {
 
@@ -35,7 +35,7 @@ public class CommonFilterDescriptorManager {
 	private final Map<String, CommonFilterDescriptor> filters = new HashMap<String, CommonFilterDescriptor>();
 
 	/**
-	 * 
+	 *
 	 * @return An initialized singleton instance of the
 	 *         CommonFilterDescriptorManager.
 	 */
@@ -48,12 +48,12 @@ public class CommonFilterDescriptorManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static final boolean FOR_UI = true;
-	
+
 	/**
-	 * 
+	 *
 	 * @param contentService
 	 *            A content service to filter the visible filters.
 	 * @return The set of filters that are 'visible' to the given viewer
@@ -64,7 +64,7 @@ public class CommonFilterDescriptorManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param contentService
 	 *            A content service to filter the visible filters.
 	 * @param forUI true if only filters visible to the UI are desired
@@ -97,7 +97,7 @@ public class CommonFilterDescriptorManager {
 	public CommonFilterDescriptor getFilterById(String id) {
 		return filters.get(id);
 	}
-	
+
 	/**
 	 * @param aDescriptor
 	 *            A non-null descriptor

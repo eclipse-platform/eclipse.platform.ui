@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 /**
  * Provides support for managing the filters defined for a Common Navigator
  * viewer.
- * 
+ *
  * <p>
  * An INavigatorFilterService manages the available common filters and their
  * current activation state for a particular INavigatorContentService. An
@@ -37,23 +37,23 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * Clients of this interface have control over when the persistence occurs. In
  * particular, clients should call {@link  #persistFilterActivationState()}
  * after each call to {@link #setActiveFilterIds(String[])}.
- * </p> 
- * 
+ * </p>
+ *
  * @see INavigatorContentService#getFilterService()
  * @see ViewerFilter
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.2
- * 
+ *
  */
 public interface INavigatorFilterService {
 
 	/**
-	 * 
+	 *
 	 * Determine the set of filters which are <i>visible</i> to the
-	 * content service associated with this filter service. 
-	 * 
+	 * content service associated with this filter service.
+	 *
 	 * @param toReturnOnlyActiveFilters
 	 *            True indicates that only active filters should be returned.
 	 * @return An array of ViewerFilters that should be applied to the viewer
@@ -62,10 +62,10 @@ public interface INavigatorFilterService {
 	ViewerFilter[] getVisibleFilters(boolean toReturnOnlyActiveFilters);
 
 	/**
-	 * 
+	 *
 	 * <i>Visible</i> filters are filters whose ids match a
 	 * <b>viewerContentBinding</b> for the corresponding viewer.
-	 * 
+	 *
 	 * @return An array of all visible filter descriptors.
 	 */
 	ICommonFilterDescriptor[] getVisibleFilterDescriptors();
@@ -87,7 +87,7 @@ public interface INavigatorFilterService {
 	 * {@link #setActiveFilterIds(String[])} which does not set the viewer
 	 * filter state. This is probably the one you want if you are changing
 	 * filters.
-	 * 
+	 *
 	 * @param theFilterIds
 	 *            An array of filter ids to activate.
 	 * @since 3.5
@@ -99,28 +99,28 @@ public interface INavigatorFilterService {
 	 * returned from {@link #getVisibleFilters(boolean)}. An <i>inactive</i> filter will
 	 * only be returned from {@link #getVisibleFilters(boolean)} when it is
 	 * called with <b>false</b>.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param theFilterIds
 	 *            An array of filter ids to activate.
-	 * 
+	 *
 	 */
 	void setActiveFilterIds(String[] theFilterIds);
 
-	/** 
+	/**
 	 * Persist the current activation state for visible filters.
 	 */
 	void persistFilterActivationState();
-	
+
 	/**
-	 * 
+	 *
 	 * Return the viewer filter for the given descriptor
-	 * 
+	 *
 	 * @param theDescriptor
 	 *            A non-null filter descriptor.
 	 * @return the viewer filter for the given descriptor
 	 * @since 3.3
 	 */
 	ViewerFilter getViewerFilter(ICommonFilterDescriptor theDescriptor);
-	
+
 }

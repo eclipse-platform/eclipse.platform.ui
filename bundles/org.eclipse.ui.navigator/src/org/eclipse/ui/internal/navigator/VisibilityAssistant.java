@@ -24,7 +24,7 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
 /**
  * Stores information about programmatic bindings and activation settings.
- * 
+ *
  */
 public class VisibilityAssistant implements IExtensionActivationListener {
 
@@ -40,20 +40,20 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	/**
 	 * Notifies clients of changes in extension visibility or activation.
-	 * 
+	 *
 	 */
 	public interface VisibilityListener {
 
 		/**
 		 * Respond to the change in visibility or activation.
-		 * 
+		 *
 		 */
 		void onVisibilityOrActivationChange();
 	}
 
 	/**
 	 * Create a visibility assistant for the given viewer descriptor.
-	 * 
+	 *
 	 * @param aViewerDescriptor
 	 *            A non-nullviewer descriptor.
 	 * @param anActivationService
@@ -70,14 +70,14 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	/**
 	 * Dispose of any resources held onto by this assistant.
-	 * 
+	 *
 	 */
 	public void dispose() {
 		activationService.removeExtensionActivationListener(this);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param theExtensions
 	 *            The extensions that should be made visible to the viewer.
 	 * @param isRoot
@@ -98,7 +98,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	/**
 	 * Add a listener to be notified when the visibility or activation state
 	 * associated with this assistant changes.
-	 * 
+	 *
 	 * @param aListener
 	 *            a listener to be notified when the visibility or activation
 	 *            state associated with this assistant changes.
@@ -110,7 +110,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	/**
 	 * Remove a listener to be notified when the visibility or activation state
 	 * associated with this assistant changes.
-	 * 
+	 *
 	 * @param aListener
 	 *            a listener to be notified when the visibility or activation
 	 *            state associated with this assistant changes.
@@ -127,7 +127,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentDescriptor
 	 *            The content descriptor of inquiry
 	 * @return True if and only if the content descriptor is <i>active</i> and
@@ -140,11 +140,11 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentDescriptor
 	 *            The content descriptor of inquiry
 	 * @return True if and only if the given extension is <i>active</i>
-	 * 
+	 *
 	 * @see INavigatorContentService For more information on what <i>active</i>
 	 *      means.
 	 * @see INavigatorActivationService#activateExtensions(String[], boolean)
@@ -156,7 +156,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentExtensionId
 	 *            The unique id of the content extension
 	 * @return True if and only if the given extension is <i>active</i>
@@ -171,7 +171,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentDescriptor
 	 *            The content descriptor of inquiry
 	 * @return True if and only if the given content extension is declaratively
@@ -187,7 +187,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentExtensionId
 	 *            The unique id of the content extension
 	 * @return True if and only if the given content extension is declaratively
@@ -203,7 +203,7 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	/**
 	 * Return whether the given content extension is a root extension.
-	 * 
+	 *
 	 * @param aContentExtensionId
 	 *            the id of the content extension.
 	 * @return whether the given content extension is a root extension

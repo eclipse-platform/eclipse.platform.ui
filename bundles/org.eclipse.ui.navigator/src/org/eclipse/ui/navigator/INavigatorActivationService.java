@@ -12,7 +12,7 @@
 package org.eclipse.ui.navigator;
 
 /**
- * 
+ *
  * Determines if an extension is <i>active</i> within the context of a given
  * viewer and manages the persistence of this information. If an extension is
  * <i>active</i> then the extension will contribute functionality to the
@@ -20,9 +20,9 @@ package org.eclipse.ui.navigator;
  * given opportunities to contribute functionality to the given viewer. See
  * {@link INavigatorContentService} for more detail on what states are
  * associated with a content extension.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public interface INavigatorActivationService {
 
@@ -33,12 +33,12 @@ public interface INavigatorActivationService {
 	 * case of this method, that means that a descriptor will be returned for
 	 * each extensionId in the array, regardless of whether that extension is
 	 * already enabled.
-	 * 
+	 *
 	 * <p>
 	 * Clients must call {@link #persistExtensionActivations()} to save the the
 	 * activation state after activating or deactivating extensions.
 	 * </p>
-	 * 
+	 *
 	 * @param extensionIds
 	 *            The list of extensions to activate
 	 * @param toDeactivateAllOthers
@@ -58,12 +58,12 @@ public interface INavigatorActivationService {
 	 * disabled. If toActivateAllOthers is true, the array of returned
 	 * descriptors will be the collection of all extensions not specified in the
 	 * extensionIds array. If it is false, the array will be empty.
-	 * 
+	 *
 	 * <p>
 	 * Clients must call {@link #persistExtensionActivations()} to save the the
 	 * activation state after activating or deactivating extensions.
 	 * </p>
-	 * 
+	 *
 	 * @param extensionIds
 	 *            The list of extensions to activate
 	 * @param toActivateAllOthers
@@ -79,13 +79,13 @@ public interface INavigatorActivationService {
 			String[] extensionIds, boolean toActivateAllOthers);
 
 	/**
-	 * 
+	 *
 	 * Checks the known activation state for the given viewer id to determine if
 	 * the given navigator extension is 'active'.
-	 * 
+	 *
 	 * @param aNavigatorExtensionId
 	 *            The unique identifier associated with a given extension.
-	 * 
+	 *
 	 * @return True if the extension is active in the context of the viewer id.
 	 */
 	public boolean isNavigatorExtensionActive(String aNavigatorExtensionId);
@@ -95,13 +95,13 @@ public interface INavigatorActivationService {
 	 * content service. Clients should persist the activation state after any
 	 * call to {@link #activateExtensions(String[], boolean)} or
 	 * {@link #deactivateExtensions(String[], boolean)}.
-	 * 
+	 *
 	 */
 	public void persistExtensionActivations();
 
 	/**
 	 * Request notification when the activation state changes.
-	 * 
+	 *
 	 * @param aListener
 	 *            An implementation of {@link IExtensionActivationListener}
 	 */
@@ -110,7 +110,7 @@ public interface INavigatorActivationService {
 
 	/**
 	 * No longer receive notification when activation state changes.
-	 * 
+	 *
 	 * @param aListener
 	 *            An implementation of {@link IExtensionActivationListener}
 	 */

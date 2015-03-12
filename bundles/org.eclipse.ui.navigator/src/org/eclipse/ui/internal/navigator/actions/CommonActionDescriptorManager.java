@@ -37,9 +37,9 @@ import org.eclipse.ui.navigator.Priority;
 /**
  * Manages descriptors consumed from the 'actionProvider' elements of the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class CommonActionDescriptorManager {
 
@@ -58,7 +58,7 @@ public class CommonActionDescriptorManager {
 	public static CommonActionDescriptorManager getInstance() {
 		return INSTANCE;
 	}
-	
+
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
 	private final Map<String, CommonActionProviderDescriptor> dependentDescriptors = new LinkedHashMap<String, CommonActionProviderDescriptor>();
 
@@ -68,13 +68,13 @@ public class CommonActionDescriptorManager {
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
 	private final Set<CommonActionProviderDescriptor> overridingDescriptors = new LinkedHashSet<CommonActionProviderDescriptor>();
 
-	
+
 	private final LinkedList<CommonActionProviderDescriptor> rootDescriptorsList = new LinkedList<CommonActionProviderDescriptor>();
 	private final LinkedList<CommonActionProviderDescriptor> dependentDescriptorsList = new LinkedList<CommonActionProviderDescriptor>();
 
-	
+
 	/**
-	 * 
+	 *
 	 * @param aDescriptor
 	 *            A valid descriptor to begin managing.
 	 */
@@ -100,9 +100,9 @@ public class CommonActionDescriptorManager {
 		}
 		return -1;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Sorts the descriptors according to the appearsBefore property
 	 */
@@ -127,18 +127,18 @@ public class CommonActionDescriptorManager {
 			outMap.put(desc.getDefinedId(), desc);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Orders the set of available descriptors based on the order defined by the
 	 * <i>dependsOn</i> attribute from the <actionProvider /> element in
 	 * <b>org.eclipse.ui.navigator.navigatorContent</b>
-	 * 
+	 *
 	 */
 	protected void computeOrdering() {
 		sortDescriptors(rootDescriptorsList, rootDescriptors);
 		sortDescriptors(dependentDescriptorsList, dependentDescriptors);
-		
+
 		CommonActionProviderDescriptor dependentDescriptor;
 		CommonActionProviderDescriptor requiredDescriptor;
 
@@ -203,7 +203,7 @@ public class CommonActionDescriptorManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentService
 	 *            The content service to use when filtering action providers;
 	 *            only action providers bound directly or indirectly will be
@@ -256,7 +256,7 @@ public class CommonActionDescriptorManager {
 			CommonActionProviderDescriptor actionDescriptor, Set<CommonActionProviderDescriptor> providers, Set blockedProviders) {
 		if (isVisible(aContentService, actionDescriptor)
 				&& actionDescriptor.isEnabledFor(structuredSelection)) {
-			
+
 			if(actionDescriptor.hasOverridingDescriptors()) {
 				for (Iterator iter = actionDescriptor.overridingDescriptors(); iter.hasNext();) {
 					CommonActionProviderDescriptor descriptor = (CommonActionProviderDescriptor) iter.next();
@@ -265,9 +265,9 @@ public class CommonActionDescriptorManager {
 							blockedProviders.add(iter.next());
 						return true;
 					}
-					
+
 				}
-			}			
+			}
 			providers.add(actionDescriptor);
 			if (actionDescriptor.hasDependentDescriptors()) {
 				for (Iterator iter = actionDescriptor.dependentDescriptors(); iter
@@ -307,32 +307,32 @@ public class CommonActionDescriptorManager {
 						anElement));
 				return true;
 			} else if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
-				
+
 				IConfigurationElement[] actionProviders = anElement.getChildren(TAG_ACTION_PROVIDER);
-				
+
 				if (actionProviders.length > 0) {
-					
+
 					IConfigurationElement defaultEnablement = null;
 					IConfigurationElement[] inheritedEnablement = anElement.getChildren(TAG_ENABLEMENT);
 					if (inheritedEnablement.length == 0) {
 						inheritedEnablement = anElement.getChildren(TAG_POSSIBLE_CHILDREN);
 					}
-					
+
 					defaultEnablement = inheritedEnablement.length == 1 ? inheritedEnablement[0] : null;
-  
+
 					Priority defaultPriority = Priority.get(anElement.getAttribute(ATT_PRIORITY));
-					
-					
+
+
 					if(defaultEnablement == null) {
-						NavigatorPlugin.logError(0, 
+						NavigatorPlugin.logError(0,
 							"An actionProvider has been defined as the child " + //$NON-NLS-1$
 							"of a navigatorContent extension that does not specify " + //$NON-NLS-1$
 							"an <enablement/> or <possibleChildren /> expression. Please " + //$NON-NLS-1$
 							"review the documentation and correct this error.", null); //$NON-NLS-1$
 					}
-					for (int i = 0; i < actionProviders.length; i++) { 
-						if(defaultEnablement == null) { 
-							NavigatorPlugin.logError(0, 
+					for (int i = 0; i < actionProviders.length; i++) {
+						if(defaultEnablement == null) {
+							NavigatorPlugin.logError(0,
 											"Disabling actionProvider: " + actionProviders[i].getAttribute(ATT_ID), null); //$NON-NLS-1$
 						} else {
 							SafeRunner.run(new AddProviderSafeRunner(actionProviders[i], defaultEnablement, defaultPriority, anElement));
@@ -343,16 +343,16 @@ public class CommonActionDescriptorManager {
 			}
 			return super.readElement(anElement);
 		}
-	
+
 		private class AddProviderSafeRunner implements ISafeRunnable {
-			
+
 			private IConfigurationElement parentElement;
 			private IConfigurationElement defaultEnablement;
 			private IConfigurationElement actionProvider;
 			private Priority defaultPriority;
 
-			protected AddProviderSafeRunner(IConfigurationElement actionProvider, 
-											 IConfigurationElement defaultEnablement, 
+			protected AddProviderSafeRunner(IConfigurationElement actionProvider,
+											 IConfigurationElement defaultEnablement,
 											 Priority defaultPriority,
 											 IConfigurationElement parentElement) {
 				this.actionProvider = actionProvider;
@@ -360,20 +360,20 @@ public class CommonActionDescriptorManager {
 				this.defaultPriority = defaultPriority;
 				this.parentElement = parentElement;
 			}
-			
+
 			@Override
-			public void run() throws Exception { 
+			public void run() throws Exception {
 				addActionDescriptor(new CommonActionProviderDescriptor(
 							actionProvider, defaultEnablement, defaultPriority, parentElement
 									.getAttribute(ATT_ID), true));
 			}
-			
+
 			@Override
 			public void handleException(Throwable t) {
-				NavigatorPlugin.logError(0, "Recovering from error while parsing actionProviders.", t); //$NON-NLS-1$ 
+				NavigatorPlugin.logError(0, "Recovering from error while parsing actionProviders.", t); //$NON-NLS-1$
 			}
-			
-			
+
+
 		}
 	}
 

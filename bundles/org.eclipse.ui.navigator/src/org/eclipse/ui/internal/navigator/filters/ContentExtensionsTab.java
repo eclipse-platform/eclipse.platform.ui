@@ -18,7 +18,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ContentExtensionsTab extends CustomizationTab {
 
@@ -29,10 +29,10 @@ public class ContentExtensionsTab extends CustomizationTab {
 
 	}
 
-	private void createControl() { 
-				
+	private void createControl() {
+
 		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_available_extensions);
-		
+
 		createTable();
 
 		getTableViewer().setContentProvider(new ContentDescriptorContentProvider());

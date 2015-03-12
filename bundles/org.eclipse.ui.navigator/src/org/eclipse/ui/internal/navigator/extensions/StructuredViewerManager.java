@@ -41,9 +41,9 @@ import org.eclipse.ui.internal.navigator.Policy;
  * {@link #inputChanged(Object, Object)}and
  * {@link #inputChanged(Viewer, Object, Object)}are not called concurrently
  * with {@link #initialize(IStructuredContentProvider)}.
- * 
- * 
- * 
+ *
+ *
+ *
  * @since 3.2
  */
 public class StructuredViewerManager {
@@ -65,7 +65,7 @@ public class StructuredViewerManager {
 	 */
 	// Map<element, NavigatorContentDescriptor>
 	private Map viewerDataMap;
-	
+
 	static class StructuredViewerAccess extends StructuredViewerInternals {
 		static class Listener implements StructuredViewerInternals.AssociateListener {
 			private final NavigatorContentService contentService;
@@ -112,7 +112,7 @@ public class StructuredViewerManager {
 			StructuredViewerInternals.setAssociateListener(v, new Listener(contentService, viewerDataMap));
 		}
 	}
-	
+
 	/**
 	 * @param element
 	 * @return the object
@@ -135,9 +135,9 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aViewer
-	 * @param contentService 
+	 * @param contentService
 	 */
 	public StructuredViewerManager(StructuredViewer aViewer, NavigatorContentService contentService) {
 		super();
@@ -147,7 +147,7 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The real viewer.
 	 */
 	public Viewer getViewer() {
@@ -155,7 +155,7 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param anOldInput
 	 * @param aNewInput
 	 */
@@ -165,7 +165,7 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aViewer
 	 * @param anOldInput
 	 * @param aNewInput
@@ -177,7 +177,7 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentProvider
 	 * @return True if all is well.
 	 */
@@ -196,7 +196,7 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void safeRefresh() {
 

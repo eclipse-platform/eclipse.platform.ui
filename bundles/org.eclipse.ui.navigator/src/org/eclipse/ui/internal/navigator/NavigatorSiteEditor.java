@@ -30,7 +30,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 /**
  * A NavigatorSiteEditor is used to edit (i.e., rename) elements in a Navigator view. It displays a
  * text editor box overlay on the Navigator tree widget.
- *  
+ *
  * @since 3.2
  */
 public class NavigatorSiteEditor implements INavigatorSiteEditor {
@@ -46,7 +46,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
 	/**
 	 * Creates an instance of a NavigatorSiteEditor.
-	 * 
+	 *
 	 * @param aCommonViewer
 	 *            the viewer this editor applies to
 	 * @param navigatorTree
@@ -60,7 +60,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
 	/**
 	 * Creates the parent composite for the editor overlay.
-	 * 
+	 *
 	 * @return the parent composite for the editor overlay
 	 */
 	Composite createParent() {
@@ -74,7 +74,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
 	/**
 	 * Creates the text editor widget.
-	 * 
+	 *
 	 * @param runnable
 	 *            the Runnable to execute when editing ends by the user pressing enter or clicking
 	 *            outside the text editor box.
@@ -154,7 +154,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
 	/**
 	 * Displays a text editor overlay on the tree widget.
-	 * 
+	 *
 	 * @param runnable
 	 *            Runnable to execute when editing ends either by the user pressing enter or
 	 *            clicking outside the editor box.
@@ -189,7 +189,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
 	/**
 	 * Returns the displayed label of the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element that is displayed in the navigator
 	 * @return the displayed label of the given element.
@@ -198,7 +198,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		return ((ILabelProvider) commonViewer.getLabelProvider()).getText(element);
 	}
 
- 
+
 	@Override
 	public String getText() {
 		return text;
@@ -206,7 +206,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
 	/**
 	 * Saves the changes and disposes of the text widget.
-	 * 
+	 *
 	 * @param runnable
 	 *            Runnable to execute
 	 */
@@ -230,7 +230,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		navigatorTree.getShell().getDisplay().asyncExec(editRunnable);
 	}
 
- 
+
 	@Override
 	public void setTextActionHandler(TextActionHandler actionHandler) {
 		textActionHandler = actionHandler;

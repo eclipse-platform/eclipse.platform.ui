@@ -30,7 +30,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class CommonSorterDescriptorManager {
 
@@ -39,9 +39,9 @@ public class CommonSorterDescriptorManager {
 	private static final CommonSorterDescriptor[] NO_SORTER_DESCRIPTORS = new CommonSorterDescriptor[0];
 
 	private final Map<INavigatorContentDescriptor, Set> sortersMap = new HashMap<INavigatorContentDescriptor, Set>();
-	
+
 	/**
-	 * 
+	 *
 	 * @return An initialized singleton instance of the
 	 *         CommonSorterDescriptorManager.
 	 */
@@ -54,7 +54,7 @@ public class CommonSorterDescriptorManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param contentService
 	 *            A content service to filter the visible filters.
 	 * @param aParent
@@ -71,7 +71,7 @@ public class CommonSorterDescriptorManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aContentService
 	 *            A content service to filter the visible filters.
 	 * @param theSource
@@ -101,18 +101,18 @@ public class CommonSorterDescriptorManager {
 		return applicableSorters
 				.toArray(new CommonSorterDescriptor[applicableSorters.size()]);
 	}
-	
+
 
 	/**
-	 * 
+	 *
 	 * @param theSource
-	 *            The source of each *value. 
+	 *            The source of each *value.
 	 * @return The set of filters that are 'visible' to the given viewer
 	 *         descriptor.
 	 */
 	public CommonSorterDescriptor[] findApplicableSorters(INavigatorContentDescriptor theSource) {
-  
-		Set<CommonSorterDescriptor> sorters = getCommonSorters(theSource); 
+
+		Set<CommonSorterDescriptor> sorters = getCommonSorters(theSource);
 		if (sorters.size() == 0) {
 			return NO_SORTER_DESCRIPTORS;
 		}

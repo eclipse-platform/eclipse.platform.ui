@@ -31,14 +31,14 @@ import org.eclipse.ui.part.PluginTransfer;
 /**
  * Provides an implementation of {@link PluginDropAdapter} which uses the
  * extensions provided by the associated {@link INavigatorContentService}.
- * 
+ *
  * <p>
  * Clients should not need to create an instance of this class unless they are
  * creating their own custom viewer. Otherwise, {@link CommonViewer} configures
  * its drop adapter automatically.
  * </p>
- *  
- * 
+ *
+ *
  * @see INavigatorDnDService
  * @see CommonDragAdapter
  * @see CommonDragAdapterAssistant
@@ -55,11 +55,11 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	private final INavigatorContentService contentService;
 
 	private final INavigatorDnDService dndService;
-	
+
 	/**
 	 * Create a DropAdapter that handles a drop based on the given content
 	 * service and selection provider.
-	 * 
+	 *
 	 * @param aContentService
 	 *            The content service this Drop Adapter is associated with
 	 * @param aStructuredViewer
@@ -74,7 +74,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return An array of Transfers allowed by the CommonDropAdapter. Includes
 	 *         {@link LocalSelectionTransfer#getTransfer()},
 	 *         {@link FileTransfer#getInstance()},
@@ -92,14 +92,14 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 
 		if (event.detail == DND.DROP_NONE)
 			return;
-		
+
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.dragEnter: " + event); //$NON-NLS-1$
 		}
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(
 					event.dataTypes[i])) {
-				event.currentDataType = event.dataTypes[i]; 
+				event.currentDataType = event.dataTypes[i];
 				if (Policy.DEBUG_DND) {
 					System.out.println("CommonDropAdapter.dragEnter: local selection: " + event.currentDataType); //$NON-NLS-1$
 				}
@@ -111,7 +111,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (FileTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
-				event.detail = DND.DROP_COPY; 
+				event.detail = DND.DROP_COPY;
 				if (Policy.DEBUG_DND) {
 					System.out.println("CommonDropAdapter.dragEnter: file: " + event.currentDataType); //$NON-NLS-1$
 				}
@@ -123,7 +123,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (PluginTransfer.getInstance()
 					.isSupportedType(event.dataTypes[i])) {
-				event.currentDataType = event.dataTypes[i]; 
+				event.currentDataType = event.dataTypes[i];
 				if (Policy.DEBUG_DND) {
 					System.out.println("CommonDropAdapter.dragEnter: plugin: " + event.currentDataType); //$NON-NLS-1$
 				}
@@ -132,7 +132,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			}
 		}
 
-		event.detail = DND.DROP_NONE; 
+		event.detail = DND.DROP_NONE;
 
 	}
 
@@ -152,19 +152,19 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.drop (begin): " + event); //$NON-NLS-1$
 		}
-		final Object target = getCurrentTarget() != null ? 
+		final Object target = getCurrentTarget() != null ?
 				getCurrentTarget() : getViewer().getInput();
 
-		// Must validate the drop here because on some platforms (Linux, Mac) the event 
+		// Must validate the drop here because on some platforms (Linux, Mac) the event
 		// is not populated with the correct currentDataType until the drop actually
-		// happens, and validateDrop sets the currentTransfer based on that.  The 
+		// happens, and validateDrop sets the currentTransfer based on that.  The
 		// call to validateDrop in dragAccept is too early.
 		validateDrop(target, getCurrentOperation(), event.currentDataType);
 		if (PluginTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			super.drop(event);
 			return true;
 		}
-		
+
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.drop target: " + target + " op: " + getCurrentOperation()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -247,7 +247,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 				}
 				if (Policy.DEBUG_DND) {
 					System.out
-							.println("CommonDropAdapter.validateDrop NOT valid: " + (valid[0] != null ? (valid[0].getSeverity() + ": " + valid[0].getMessage()) : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+							.println("CommonDropAdapter.validateDrop NOT valid: " + (valid[0] != null ? (valid[0].getSeverity() + ": " + valid[0].getMessage()) : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}
@@ -303,6 +303,6 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public TransferData getCurrentTransfer() {
 		return super.getCurrentTransfer();
 	}
-	
+
 
 }

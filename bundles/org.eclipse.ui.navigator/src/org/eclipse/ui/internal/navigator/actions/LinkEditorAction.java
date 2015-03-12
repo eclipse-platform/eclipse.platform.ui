@@ -42,7 +42,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * This action links the activate editor with the Navigator selection.
- * 
+ *
  * @since 3.2
  */
 public class LinkEditorAction extends Action implements
@@ -58,7 +58,7 @@ public class LinkEditorAction extends Action implements
 
 	private boolean ignoreSelectionChanged;
 	private boolean ignoreEditorActivation;
-	
+
 	private UIJob activateEditorJob = new UIJob(
 			CommonNavigatorMessages.Link_With_Editor_Job_) {
 		@Override
@@ -125,7 +125,7 @@ public class LinkEditorAction extends Action implements
 
 	/**
 	 * Create a LinkEditorAction for the given navigator and viewer.
-	 * 
+	 *
 	 * @param aNavigator
 	 *            The navigator which defines whether linking is enabled and
 	 *            implements {@link ISetSelectionTarget}.
@@ -190,7 +190,7 @@ public class LinkEditorAction extends Action implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void dispose() {
 		commonNavigator.removePropertyListener(this);

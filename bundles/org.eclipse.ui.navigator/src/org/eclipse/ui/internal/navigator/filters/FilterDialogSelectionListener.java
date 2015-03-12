@@ -22,11 +22,11 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class FilterDialogSelectionListener implements ISelectionChangedListener {
-	
-	
+
+
 	private Label descriptionText;
 
 	protected FilterDialogSelectionListener(Label aDescriptionText) {
@@ -52,7 +52,7 @@ public class FilterDialogSelectionListener implements ISelectionChangedListener 
 			String description = 	cfd.getDescription();
 			if(description != null)
 				descriptionText.setText(description);
-			else 
+			else
 				descriptionText.setText(NLS.bind(CommonNavigatorMessages.FilterDialogSelectionListener_Enable_the_0_filter_, cfd.getName()));
 		}
 

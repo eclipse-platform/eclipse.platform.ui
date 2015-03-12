@@ -20,9 +20,9 @@ import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 
 /**
  * A Skeleton implementation of {@link CommonDropAdapterAssistant}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class SkeletonCommonDropAssistant extends CommonDropAdapterAssistant {
 

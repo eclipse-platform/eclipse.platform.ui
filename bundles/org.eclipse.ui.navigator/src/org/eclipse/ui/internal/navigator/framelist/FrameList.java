@@ -20,7 +20,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Supports a web-browser style of navigation by maintaining a list
- * of frames.  Each frame holds a snapshot of a view at some point 
+ * of frames.  Each frame holds a snapshot of a view at some point
  * in time.
  * <p>
  * The frame list obtains a snapshot of the current frame from a frame source
@@ -188,7 +188,7 @@ public class FrameList extends EventManager {
         firePropertyChange(new PropertyChangeEvent(this, P_RESET,
                 null, getFrame(current)));
     }
-    
+
     /**
      * Sets the current frame to the one with the given index.
      * Updates the old current frame, and fires a <code>P_CURRENT_FRAME</code> property change event
@@ -211,7 +211,7 @@ public class FrameList extends EventManager {
      * Sets the current frame to the frame with the given index.
      * Fires a <code>P_CURRENT_FRAME</code> property change event
      * if the current frame changes.
-     * @param index 
+     * @param index
      */
     public void setCurrentIndex(int index) {
         if (index != -1 && index != current) {
@@ -221,14 +221,14 @@ public class FrameList extends EventManager {
 
     /**
      * Returns the number of frames in the frame list.
-     * @return the number of frames.  
+     * @return the number of frames.
      */
     public int size() {
         return frames.size();
     }
 
     /**
-     * Replaces the current frame in this list with the current frame 
+     * Replaces the current frame in this list with the current frame
      * from the frame source.  No event is fired.
      */
     public void updateCurrentFrame() {
@@ -239,5 +239,5 @@ public class FrameList extends EventManager {
         frame.setIndex(current);
         frames.set(current, frame);
     }
-    
+
 }

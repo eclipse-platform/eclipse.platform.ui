@@ -20,20 +20,20 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * 
+ *
  * Provides a page, set of action bars, menu registration callback, and active
  * window.
- * 
+ *
  * @since 3.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  */
 public interface ICommonViewerWorkbenchSite extends ICommonViewerSite {
 
 	/**
 	 * Returns the page corresponding to this viewer site.
-	 * 
+	 *
 	 * @return the page corresponding to this viewer site
 	 */
 	public IWorkbenchPage getPage();
@@ -58,7 +58,7 @@ public interface ICommonViewerWorkbenchSite extends ICommonViewerSite {
 	 * will use this group as a reference point for insertion. The marker should
 	 * be defined at an appropriate location within the menu for insertion.
 	 * </p>
-	 * 
+	 *
 	 * @param menuId
 	 *            the menu id
 	 * @param menuManager
@@ -72,13 +72,13 @@ public interface ICommonViewerWorkbenchSite extends ICommonViewerSite {
 	/**
 	 * Returns the action bars for this page site. Pages have exclusive use of
 	 * their site's action bars.
-	 * 
+	 *
 	 * @return the action bars
 	 */
 	IActionBars getActionBars();
 
 	/**
-	 * 
+	 *
 	 * @return A workbench window corresponding to the container of the
 	 *         {@link CommonViewer}
 	 */

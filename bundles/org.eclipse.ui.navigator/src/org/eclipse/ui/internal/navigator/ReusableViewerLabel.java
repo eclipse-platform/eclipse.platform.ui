@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 
@@ -13,9 +13,9 @@ import org.eclipse.jface.viewers.ViewerLabel;
 
 /**
  * Provides a subclass of ViewerLabel that can be re-used for multiple viewer updates.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class ReusableViewerLabel extends ViewerLabel {
 
@@ -30,9 +30,9 @@ public class ReusableViewerLabel extends ViewerLabel {
 
 
 	/**
-	 * Updates the Background, Foreground, and Font to the given ViewerLabel. The 
+	 * Updates the Background, Foreground, and Font to the given ViewerLabel. The
 	 * Text and Image are reset to <b>null</b>.
-	 * 
+	 *
 	 * @param theOriginal The ViewerLabel to represent.
 	 */
 	public void reset(ViewerLabel theOriginal) {
@@ -43,10 +43,10 @@ public class ReusableViewerLabel extends ViewerLabel {
 		setImage(null);
 		setText(null);
 	}
-	
+
 	/**
-	 * 
-	 * @param theOriginal The ViewerLabel to fill with my values. 
+	 *
+	 * @param theOriginal The ViewerLabel to fill with my values.
 	 */
 	public void fill(ViewerLabel theOriginal) {
 
@@ -57,13 +57,13 @@ public class ReusableViewerLabel extends ViewerLabel {
 		theOriginal.setText(getText() != null ? getText() : ""); //$NON-NLS-1$
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @return True if the ReusableViewerLabel has different text or image than the original
 	 *         ViewerLabel.
 	 */
 	public boolean hasChanged() {
-		
+
 		boolean changed = false;
 		if(original != null) {
 			if(original.getText() == null ^ getText() != null)

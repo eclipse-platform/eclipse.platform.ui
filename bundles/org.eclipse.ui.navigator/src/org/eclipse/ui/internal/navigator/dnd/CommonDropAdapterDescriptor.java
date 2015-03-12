@@ -26,7 +26,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public final class CommonDropAdapterDescriptor implements
 		INavigatorContentExtPtConstants {
@@ -53,18 +53,18 @@ public final class CommonDropAdapterDescriptor implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param anElement
 	 *            The element from the set of elements being dragged.
 	 * @return True if the element matches the drag expression from the
 	 *         extension.
 	 */
-	public boolean isDragElementSupported(Object anElement) { 
-		return contentDescriptor.isPossibleChild(anElement); 
+	public boolean isDragElementSupported(Object anElement) {
+		return contentDescriptor.isPossibleChild(anElement);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aSelection
 	 *            The set of elements being dragged.
 	 * @return True if the element matches the drag expression from the
@@ -78,7 +78,7 @@ public final class CommonDropAdapterDescriptor implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param anElement
 	 *            The element from the set of elements benig dropped.
 	 * @return True if the element matches the drop expression from the
@@ -93,7 +93,7 @@ public final class CommonDropAdapterDescriptor implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return An instance of {@link CommonDropAdapterAssistant} from the
 	 *         descriptor or {@link SkeletonCommonDropAssistant}.
 	 */
@@ -112,7 +112,7 @@ public final class CommonDropAdapterDescriptor implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The content descriptor that contains this drop descriptor.
 	 */
 	public INavigatorContentDescriptor getContentDescriptor() {

@@ -18,9 +18,9 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public final class NavigatorContentServiceDescriptionProvider implements
 		IDescriptionProvider {
@@ -29,7 +29,7 @@ public final class NavigatorContentServiceDescriptionProvider implements
 
 	/**
 	 * Creates a description provider that targets the given service.
-	 * 
+	 *
 	 * @param aContentService
 	 *            The content service associated with this provider.
 	 */
@@ -63,7 +63,7 @@ public final class NavigatorContentServiceDescriptionProvider implements
 		for (int i = 0; i < providers.length && (message == null || message.length() == 0); i++) {
 			if (providers[i] instanceof ICommonLabelProvider) {
 				message = ((ICommonLabelProvider) providers[i])
-						.getDescription(target); 
+						.getDescription(target);
 			}
 		}
 		message = (message != null) ? message : getDefaultStatusBarMessage(1);

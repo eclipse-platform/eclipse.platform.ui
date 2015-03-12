@@ -323,11 +323,11 @@ public class TextActionHandler {
 
     /**
      * Creates a <code>Text</code> control action handler
-     * for the global Cut, Copy, Paste, Delete, and Select All 
+     * for the global Cut, Copy, Paste, Delete, and Select All
      * of the action bar.
      *
      * @param actionBar the action bar to register global
-     *    action handlers for Cut, Copy, Paste, Delete, 
+     *    action handlers for Cut, Copy, Paste, Delete,
      * 	  and Select All
      */
     public TextActionHandler(IActionBars actionBar) {
@@ -346,7 +346,7 @@ public class TextActionHandler {
 
     /**
      * Add a <code>Text</code> control to the handler
-     * so that the Cut, Copy, Paste, Delete, and Select All 
+     * so that the Cut, Copy, Paste, Delete, and Select All
      * actions are redirected to it when active.
      *
      * @param textControl the inline <code>Text</code> control
@@ -381,7 +381,7 @@ public class TextActionHandler {
 
     /**
      * Removes a <code>Text</code> control from the handler
-     * so that the Cut, Copy, Paste, Delete, and Select All 
+     * so that the Cut, Copy, Paste, Delete, and Select All
      * actions are no longer redirected to it when active.
      *
      * @param textControl the inline <code>Text</code> control

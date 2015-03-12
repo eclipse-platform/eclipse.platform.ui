@@ -20,14 +20,14 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
- * 
+ *
  * A content extension may have its content and label providers disposed
  * whenever the extension is activated or deactivated. However, the state model
  * lives throughout the life of the viewer to allow Action Providers to drive
  * their behavior from it.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class NavigatorExtensionStateService {
 
@@ -37,7 +37,7 @@ public class NavigatorExtensionStateService {
 	/**
 	 * Create an ExtensionStateServie that will keep track of the state models
 	 * of content extensions.
-	 * 
+	 *
 	 * @param theContentService
 	 *            The content service which manages this state model service.
 	 */
@@ -52,9 +52,9 @@ public class NavigatorExtensionStateService {
 	private final Map/* <INavigatorContentDescriptor, IExtensionStateModel> */stateModels = new HashMap();
 
 	/**
-	 * Return the state model for the given descriptor. 
-	 * 
-	 * @param aDescriptor A content descriptor 
+	 * Return the state model for the given descriptor.
+	 *
+	 * @param aDescriptor A content descriptor
 	 * @return The state model for the given descriptor.
 	 */
 	public IExtensionStateModel getExtensionStateModel(

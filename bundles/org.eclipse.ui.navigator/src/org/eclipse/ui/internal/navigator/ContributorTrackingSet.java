@@ -18,7 +18,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
  * Used to associate the NavigatorContentDescriptor (NCD) with an object that it contributes.
- * 
+ *
  * The NCD/object association is tracked using the NavigatorContentService.rememberContribution().
  *
  * @since 3.2
@@ -26,53 +26,53 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
  */
 public class ContributorTrackingSet extends LinkedHashSet {
 
-	
+
 	private static final long serialVersionUID = 2516241537206281972L;
-	
+
 	private INavigatorContentDescriptor contributor;
 	private INavigatorContentDescriptor firstClassContributor;
 	private NavigatorContentService contentService;
-	
+
 	/**
 	 * Construct a tracking set.
-	 * 
-	 * @param aContentService 
+	 *
+	 * @param aContentService
 	 */
 	public ContributorTrackingSet(NavigatorContentService aContentService) {
 		contentService = aContentService;
 	}
-	
+
 	/**
 	 * Construct a tracking set.
-	 * 
+	 *
 	 * @param aContentService
 	 * @param elements
 	 */
 	public ContributorTrackingSet(NavigatorContentService aContentService, Object[] elements) {
-		
-		for (int i = 0; i < elements.length; i++) 
-			super.add(elements[i]); 
-		
+
+		for (int i = 0; i < elements.length; i++)
+			super.add(elements[i]);
+
 		contentService = aContentService;
 	}
-	
+
 	@Override
-	public boolean add(Object o) { 
+	public boolean add(Object o) {
 		if (contributor != null) {
 			contentService.rememberContribution(contributor, firstClassContributor, o);
 		}
 		return super.add(o);
 	}
-	
+
 	@Override
-	public boolean remove(Object o) { 
+	public boolean remove(Object o) {
 		contentService.forgetContribution(o);
 		return super.remove(o);
 	}
 
-	
+
 	@Override
-	public void clear() { 
+	public void clear() {
 		Iterator it = iterator();
 		while (it.hasNext())
 			contentService.forgetContribution(it.next());
@@ -80,7 +80,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The current contributor.
 	 */
 	public INavigatorContentDescriptor getContributor() {
@@ -88,7 +88,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The current contributor.
 	 */
 	public INavigatorContentDescriptor getFirstClassContributor() {
@@ -96,7 +96,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param newContributor The contributor to record for the next series of adds.
 	 * @param theFirstClassContributor The first class contributor associated with the newContributor.
 	 */
@@ -110,12 +110,12 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 */
 	public void setContents(Object[] contents) {
 		super.clear();
-		if(contents != null) 
-			for (int i = 0; i < contents.length; i++) 
-				add(contents[i]); 
-		
+		if(contents != null)
+			for (int i = 0; i < contents.length; i++)
+				add(contents[i]);
+
 	}
-	
+
 	@Override
 	public Iterator iterator() {
 		return new Iterator() {
@@ -141,5 +141,5 @@ public class ContributorTrackingSet extends LinkedHashSet {
 			}
 		};
 	}
-	
+
 }

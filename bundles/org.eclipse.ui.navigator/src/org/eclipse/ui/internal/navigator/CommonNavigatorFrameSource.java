@@ -23,7 +23,7 @@ public class CommonNavigatorFrameSource extends TreeViewerFrameSource {
 
     /**
      * Constructs a new frame source for the specified common navigator.
-     * 
+     *
      * @param navigator the common navigator
      */
     public CommonNavigatorFrameSource(CommonNavigator navigator) {
@@ -52,6 +52,6 @@ public class CommonNavigatorFrameSource extends TreeViewerFrameSource {
         super.frameChanged(frame);
         navigator.updateTitle();
     }
-    
-    
+
+
 }

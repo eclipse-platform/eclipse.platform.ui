@@ -22,7 +22,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablesSource;
 
 /**
- * 
+ *
  * Manages content extensions for extensible viewers and provides reusable
  * services for filters, sorting, the activation of content extensions, and DND.
  * The service can locate the appropriate providers (for contents or labels) for
@@ -30,12 +30,12 @@ import org.eclipse.ui.ISaveablesSource;
  * {@link ILabelProvider} for viewers that wish to take advantage of the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extensions defined for a
  * particular <i>viewerId</i>.
- * 
+ *
  * <p>
  * Clients can get the instance of this associated with the {@link CommonNavigator} using
  * {@link CommonNavigator#getNavigatorContentService()}.
  * </p>
- * 
+ *
  * <p>
  * Clients may contribute logical extensions using
  * <b>org.eclipse.ui.navigator.navigatorContent</b>. Each extension has three
@@ -45,7 +45,7 @@ import org.eclipse.ui.ISaveablesSource;
  * <b>viewerContentBinding</b> for the <i>viewerId</i> of this content
  * service, then the extension is <i>visible</i>. Visible extensions may only
  * be configured through <b>viewerContentBinding</b>s. </li>
- * 
+ *
  * <li><a name="active"><i>active</i>: The active state may be set to a default using the
  * <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users may
  * toggle the <i>active</i> state through the "Available customizations"
@@ -53,7 +53,7 @@ import org.eclipse.ui.ISaveablesSource;
  * {@link INavigatorActivationService#activateExtensions(String[], boolean)} or
  * {@link INavigatorActivationService#deactivateExtensions(String[], boolean)}
  * from the {@link #getActivationService() Activation Service} </li>
- * 
+ *
  * <li><a name="enabled"><i>enabled</i>: An extension is <i>enabled</i> for an element if the
  * extension contributed that element or if the element is described in the
  * <i>triggerPoints</i> element of the <b>navigatorContent</b> extension. The
@@ -90,11 +90,11 @@ import org.eclipse.ui.ISaveablesSource;
  * {@link #saveState(IMemento)} at the appropriate times for these extensions to
  * prepare themselves with the memento.
  * </p>
- * 
+ *
  * @since 3.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  */
 public interface INavigatorContentService {
 
@@ -102,7 +102,7 @@ public interface INavigatorContentService {
 	 * Create a Content Provider which will use an enhanced delegation model to
 	 * locate extension content providers using this content service for each
 	 * element in the tree.
-	 * 
+	 *
 	 * <p>
 	 * The content provider returned will populate the root of the viewer in one
 	 * of two ways.
@@ -133,7 +133,7 @@ public interface INavigatorContentService {
 	 * are responsible for creating the content provider, and setting it on
 	 * their viewer.
 	 * </p>
-	 * 
+	 *
 	 * @return An enhanced content provider that will use this content service
 	 *         to drive the viewer.
 	 */
@@ -143,27 +143,27 @@ public interface INavigatorContentService {
 	 * Create a Label Provider which will use an enhanced delegation model to
 	 * locate extension label providers using this content service for each
 	 * element in the tree.
-	 * 
+	 *
 	 * <p>
 	 * The label of each element is determined by consulting the source of the
 	 * element. If the source chooses to return null, then other extensions
 	 * which declare the element in their <b>triggerPoints</b> extension are
 	 * consulted. The first non-null value is used (including the empty label).
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * If clients wish to use a viewer other than the CommonViewer, then they
 	 * are responsible for creating the label provider, and setting it on their
 	 * viewer.
 	 * </p>
-	 * 
+	 *
 	 * @return An enhanced label provider that will use this content service to
 	 *         drive labels in the viewer.
 	 */
 	ILabelProvider createCommonLabelProvider();
 
 	/**
-	 * 
+	 *
 	 * @return The description provider for this content service.
 	 */
 	IDescriptionProvider createCommonDescriptionProvider();
@@ -174,7 +174,7 @@ public interface INavigatorContentService {
 	 * extension (content provider, label provider, action providers, etc) may
 	 * attach themselves as listeners to the model ({@link IExtensionStateModel#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)})
 	 * and respond to changes to the values of the properties.
-	 * 
+	 *
 	 * @param anExtensionId
 	 *            The extension id defined by a <b>navigatorContent</b>
 	 *            extension.
@@ -187,7 +187,7 @@ public interface INavigatorContentService {
 	 * In general, this would be the id of the view defined by a
 	 * <b>org.eclipse.ui.views</b> extension. However, there is no formal
 	 * requirement that this is the case.
-	 * 
+	 *
 	 * @return The viewerId used to create this content service.
 	 */
 	String getViewerId();
@@ -195,7 +195,7 @@ public interface INavigatorContentService {
 	/**
 	 * The viewer descriptor provides some basic information about the abstract
 	 * viewer that uses this content service.
-	 * 
+	 *
 	 * @return The viewer descriptor for this content service.
 	 * @see INavigatorViewerDescriptor
 	 */
@@ -204,21 +204,21 @@ public interface INavigatorContentService {
 	/**
 	 * See <a href="INavigatorContentService.html#active">above</a> for the
 	 * definition of <i>active</i>.
-	 * 
+	 *
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>active</i> for
 	 *         this content service.
 	 * @see INavigatorContentService For more information on what <i>active</i>
 	 *      means.
-	 * 
+	 *
 	 */
 	boolean isActive(String anExtensionId);
 
 	/**
 	 * See <a href="INavigatorContentService.html#visible">above</a> for the
 	 * definition of <i>visible</i>.
-	 * 
+	 *
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>visible</i> to
@@ -233,7 +233,7 @@ public interface INavigatorContentService {
 	 * which includes those that are bound through <b>viewerContentBinding</b>s
 	 * and those that are bound through
 	 * {@link #bindExtensions(String[], boolean)}.
-	 * 
+	 *
 	 * @return The set of <i>visible</i> extension ids for this content service
 	 */
 	String[] getVisibleExtensionIds();
@@ -243,7 +243,7 @@ public interface INavigatorContentService {
 	 * service, which includes those that are bound through
 	 * <b>viewerContentBinding</b>s and those that are bound through
 	 * {@link #bindExtensions(String[], boolean)}.
-	 * 
+	 *
 	 * @return The set of <i>visible</i> content descriptors for this content
 	 *         service
 	 */
@@ -268,7 +268,7 @@ public interface INavigatorContentService {
 	 * {@link INavigatorContentService} for more information on the difference
 	 * between <i>visible</i> and <i>active</i>.
 	 * </p>
-	 * 
+	 *
 	 * @param extensionIds
 	 *            The list of extensions to make visible.
 	 * @param isRoot
@@ -281,7 +281,7 @@ public interface INavigatorContentService {
 
 	/**
 	 * Restore the state associated with the memento.
-	 * 
+	 *
 	 * @param aMemento
 	 *            The memento for extensions to use when restoring previous
 	 *            settings.
@@ -290,7 +290,7 @@ public interface INavigatorContentService {
 
 	/**
 	 * Persist any session-to-session state with the memento.
-	 * 
+	 *
 	 * @param aMemento
 	 *            The memento for extensions to use when persisting previous
 	 *            settings.
@@ -299,7 +299,7 @@ public interface INavigatorContentService {
 
 	/**
 	 * Add a listener to be notified whenever an extension is loaded.
-	 * 
+	 *
 	 * @param aListener
 	 *            A listener to be attached.
 	 */
@@ -307,7 +307,7 @@ public interface INavigatorContentService {
 
 	/**
 	 * Remove a listener (by identity) from the set of listeners.
-	 * 
+	 *
 	 * @param aListener
 	 *            A listener to be detached.
 	 */
@@ -316,13 +316,13 @@ public interface INavigatorContentService {
 	/**
 	 * The root content providers are recalculated by this method. The attached
 	 * viewer is also refreshed as a result of this method.
-	 * 
+	 *
 	 */
 	void update();
 
 	/**
 	 * Release any acquired resources and instantiated content extensions.
-	 * 
+	 *
 	 */
 	void dispose();
 
@@ -330,7 +330,7 @@ public interface INavigatorContentService {
 	 * Search for extensions that declare the given element in their
 	 * <b>triggerPoints</b> expression or that indicate they should be bound as
 	 * a root extension.
-	 * 
+	 *
 	 * @param anElement
 	 *            The element to use in the query
 	 * @return The set of {@link INavigatorContentExtension}s that are
@@ -345,7 +345,7 @@ public interface INavigatorContentService {
 	/**
 	 * Search for extensions that declare the given element in their
 	 * <b>triggerPoints</b> expression.
-	 * 
+	 *
 	 * @param anElement
 	 *            The element to use in the query
 	 * @return The set of {@link INavigatorContentExtension}s that are
@@ -358,7 +358,7 @@ public interface INavigatorContentService {
 	/**
 	 * Search for extensions that declare the given element in their
 	 * <b>possibleChildren</b> expression.
-	 * 
+	 *
 	 * @param anElement
 	 *            The element to use in the query
 	 * @return The set of {@link INavigatorContentExtension}s that are
@@ -371,7 +371,7 @@ public interface INavigatorContentService {
 	/**
 	 * The filter service can provide the available filters for the viewer, and
 	 * manage which filters are <i>active</i>.
-	 * 
+	 *
 	 * @return An {@link INavigatorFilterService} that can provide information
 	 *         to a viewer about what filters are <i>visible</i> and <i>active</i>.
 	 */
@@ -383,7 +383,7 @@ public interface INavigatorContentService {
 	 * {@link CommonViewerSorter} which delegates to this service. Clients do
 	 * not need to provide their own {@link ViewerSorter} unless they wish to
 	 * override this functionality.
-	 * 
+	 *
 	 * @return An {@link INavigatorSorterService} that can provide
 	 *         {@link ViewerSorter} based on the context of the parent.
 	 */
@@ -396,8 +396,8 @@ public interface INavigatorContentService {
 	 * contents in the viewer. Clients that use the {@link CommonViewer} do not
 	 * need to be concerned with this service as the refreshes are automatically
 	 * computed using this service.
-	 * 
-	 * 
+	 *
+	 *
 	 * @return The {@link INavigatorPipelineService} which can determine the
 	 *         correct updates to apply to a viewer.
 	 */
@@ -406,7 +406,7 @@ public interface INavigatorContentService {
 	/**
 	 * The DND Service provides instances of {@link CommonDragAdapterAssistant}
 	 * and {@link CommonDropAdapterAssistant} for this content service.
-	 * 
+	 *
 	 * @return The {@link INavigatorDnDService} which can add additional
 	 *         TransferTypes for the DragAdapter and setup the data correctly
 	 *         for those extended Transfer Types.
@@ -416,29 +416,29 @@ public interface INavigatorContentService {
 	/**
 	 * The activation service is used to toggle whether certain extensions have
 	 * the opportunity to contribute content and/or actions.
-	 * 
+	 *
 	 * @return The {@link INavigatorActivationService} for this content service.
 	 */
 	INavigatorActivationService getActivationService();
-	
+
 	/**
 	 * The saveable service helps implementing {@link ISaveablesSource}.
-	 * 
+	 *
 	 * @return the {@link INavigatorSaveablesService} for this content service.
 	 */
 	INavigatorSaveablesService getSaveablesService();
-	
-	/** 
-	 * Return the content extension for the given id. 
-	 * 
+
+	/**
+	 * Return the content extension for the given id.
+	 *
 	 * @param anExtensionId The id used to define the <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.
 	 * @return An instance of the content extension for the given extension id. May return <b>null</b> if the id is invalid.
 	 */
 	public INavigatorContentExtension getContentExtensionById(String anExtensionId);
-	
-	/** 
-	 * Return the content extension for the given id. 
-	 * 
+
+	/**
+	 * Return the content extension for the given id.
+	 *
 	 * @param anExtensionId The id used to define the <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.
 	 * @return An instance of the content extension for the given extension id. May return <b>null</b> if the id is invalid.
 	 * @since 3.3

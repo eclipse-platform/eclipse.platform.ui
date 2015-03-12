@@ -49,7 +49,7 @@ import org.eclipse.ui.navigator.Priority;
 /**
  * Encapsulates the <code>org.eclipse.ui.navigator.navigatorContent</code>
  * extension point.
- * 
+ *
  * @since 3.2
  */
 public final class NavigatorContentDescriptor implements
@@ -69,7 +69,7 @@ public final class NavigatorContentDescriptor implements
 	 * are first loaded. This is what's used to sort on after that.
 	 */
 	private int sequenceNumber;
-	
+
 	private String appearsBeforeId;
 
 	private Expression enablement;
@@ -77,7 +77,7 @@ public final class NavigatorContentDescriptor implements
 	private Expression possibleChildren;
 
 	private Expression initialActivation;
-	
+
 	private String icon;
 
 	private boolean activeByDefault;
@@ -85,7 +85,7 @@ public final class NavigatorContentDescriptor implements
 	private IPluginContribution contribution;
 
 	private boolean sortOnly;
-	
+
 	private Set overridingExtensions;
 	private List overridingExtensionsList; // FIXME: will replace 'overridingExtensions' in 3.6
 
@@ -101,10 +101,10 @@ public final class NavigatorContentDescriptor implements
 
 	/**
 	 * Creates a new content descriptor from a configuration element.
-	 * 
+	 *
 	 * @param configElement
 	 *            configuration element to create a descriptor from
-	 * 
+	 *
 	 * @throws WorkbenchException
 	 *             if the configuration element could not be parsed. Reasons
 	 *             include:
@@ -146,9 +146,9 @@ public final class NavigatorContentDescriptor implements
 	void setSequenceNumber(int num) {
 		sequenceNumber = num;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return The value specified by the <i>appearsBefore</i> attribute of the
 	 *         &lt;navigatorContent/&gt; element.
 	 */
@@ -161,10 +161,10 @@ public final class NavigatorContentDescriptor implements
 	public boolean isSortOnly() {
 		return sortOnly;
 	}
-	
+
 	/**
 	 * Parses the configuration element.
-	 * 
+	 *
 	 * @throws WorkbenchException
 	 *             if the configuration element could not be parsed. Reasons
 	 *             include:
@@ -201,15 +201,15 @@ public final class NavigatorContentDescriptor implements
 				priority = Priority.NORMAL_PRIORITY_VALUE;
 			}
 		}
-		
-		// We start with this because the sort ExtensionPriorityComparator works 
+
+		// We start with this because the sort ExtensionPriorityComparator works
 		// from the sequenceNumber
 		sequenceNumber = priority;
 
 		String sortOnlyString = configElement.getAttribute(ATT_SORT_ONLY);
 		sortOnly = (sortOnlyString != null && sortOnlyString.length() > 0) ? Boolean.valueOf(
 				sortOnlyString).booleanValue() : false;
-		
+
 		if (id == null) {
 			throw new WorkbenchException(NLS.bind(
 					CommonNavigatorMessages.Attribute_Missing_Warning,
@@ -235,7 +235,7 @@ public final class NavigatorContentDescriptor implements
 		};
 
 		IConfigurationElement[] children;
-		
+
 		children = configElement.getChildren(TAG_INITIAL_ACTIVATION);
 		if (children.length > 0) {
 			if (children.length == 1) {
@@ -352,18 +352,18 @@ public final class NavigatorContentDescriptor implements
 	public IConfigurationElement getConfigElement() {
 		return configElement;
 	}
-	
+
 	/**
 	 * The content provider could be an instance of
 	 * {@link ICommonContentProvider}, but only {@link ITreeContentProvider} is
 	 * required.
-	 * 
-	 * 
+	 *
+	 *
 	 * @return An instance of the Content provider defined for this extension.
 	 * @throws CoreException
 	 *             if an instance of the executable extension could not be
 	 *             created for any reason
-	 * 
+	 *
 	 */
 	public ITreeContentProvider createContentProvider() throws CoreException {
 		if (Policy.DEBUG_EXTENSION_SETUP)
@@ -373,10 +373,10 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * 
+	 *
 	 * The content provider could be an instance of {@link ICommonLabelProvider},
 	 * but only {@link ILabelProvider} is required.
-	 * 
+	 *
 	 * @return An instance of the Label provider defined for this extension
 	 * @throws CoreException
 	 *             if an instance of the executable extension could not be
@@ -402,7 +402,7 @@ public final class NavigatorContentDescriptor implements
 	/**
 	 * Determine if this content extension would be able to provide children for
 	 * the given element.
-	 * 
+	 *
 	 * @param anElement
 	 *            The element that should be used for the evaluation.
 	 * @return True if and only if the extension is enabled for the element.
@@ -421,12 +421,12 @@ public final class NavigatorContentDescriptor implements
 	/**
 	 * Determine if this content extension could provide the given element as a
 	 * child.
-	 * 
+	 *
 	 * <p>
 	 * This method is used to determine what the parent of an element could be
 	 * for Link with Editor support.
 	 * </p>
-	 * 
+	 *
 	 * @param anElement
 	 *            The element that should be used for the evaluation.
 	 * @return True if and only if the extension might provide an object of this
@@ -450,10 +450,10 @@ public final class NavigatorContentDescriptor implements
 		}
 		return false;
 	}
-	
+
 	/**
 	 * A convenience method to check all elements in a selection.
-	 * 
+	 *
 	 * @param aSelection A non-null selection
 	 * @return True if and only if every element in the selection is a possible child.
 	 */
@@ -472,9 +472,9 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * 
+	 *
 	 * Does not force the creation of the set of overriding extensions.
-	 * 
+	 *
 	 * @return True if this extension has overriding extensions.
 	 */
 	@Override
@@ -496,7 +496,7 @@ public final class NavigatorContentDescriptor implements
 
 	/**
 	 *  Returns a list iterator over the overriding extensions.
-	 * 
+	 *
 	 * @param fromStart
 	 *            <code>true</code> if list iterator starts at the beginning and
 	 *            <code>false</code> if it starts at the end of the list
@@ -517,7 +517,7 @@ public final class NavigatorContentDescriptor implements
 	public String toString() {
 		return "Content[" + id  + "(" + sequenceNumber + ") " + ", \"" + name + "\"]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
-	
+
 	@Override
 	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {

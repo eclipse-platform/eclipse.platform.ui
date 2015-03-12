@@ -29,11 +29,11 @@ import org.eclipse.ui.part.PluginTransfer;
  * as part of the <b>org.eclipse.ui.navigator.viewer/dragAssistant</b>
  * extension. By default, the Common Navigator supports
  * {@link LocalSelectionTransfer} and {@link PluginTransfer}.
- * 
+ *
  * <p>
  * Clients may extend this class.
  * </p>
- * 
+ *
  * @see INavigatorDnDService
  * @see CommonDragAdapter
  * @see CommonDropAdapter
@@ -45,9 +45,9 @@ import org.eclipse.ui.part.PluginTransfer;
  * @see <a
  *      href="http://www.eclipse.org/articles/Article-Workbench-DND/drag_drop.html">Drag
  *      and Drop in the Eclipse UI (Custom Transfer Types)</a>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public abstract class CommonDragAdapterAssistant {
 
@@ -57,7 +57,7 @@ public abstract class CommonDragAdapterAssistant {
 	 * Extra TransferTypes allow the Navigator to generate different kinds of
 	 * payloads for DND clients. By default, the {@link CommonDragAdapter}
 	 * supports {@link LocalSelectionTransfer} and {@link PluginTransfer}.
-	 * 
+	 *
 	 * <p>
 	 * CommonDragAdapterAssistants can extend the available TransferTypes that a
 	 * Common Navigator Viewer can generate. Clients should return the set of
@@ -69,7 +69,7 @@ public abstract class CommonDragAdapterAssistant {
 	 * {@link #setDragData(DragSourceEvent, IStructuredSelection)} will not be
 	 * called.
 	 * </p>
-	 * 
+	 *
 	 * @return The added transfer types. (e.g. FileTransfer.getInstance()).
 	 */
 	public abstract Transfer[] getSupportedTransferTypes();
@@ -85,7 +85,7 @@ public abstract class CommonDragAdapterAssistant {
 	 * occurs. If the drop operation is cancelled, then this method will not be
 	 * called.
 	 * </p>
-	 * 
+	 *
 	 * @param anEvent
 	 *            The event object should have its {@link Event#data} field set
 	 *            to a value that matches a supported {@link TransferData} type.
@@ -97,48 +97,48 @@ public abstract class CommonDragAdapterAssistant {
 			IStructuredSelection aSelection);
 
 	/**
-	 * 
+	 *
 	 * Allows the drag assistant indicate it wants to participate in the drag operation.
-	 * This is called at {@link DragSourceListener#dragStart(DragSourceEvent)} 
+	 * This is called at {@link DragSourceListener#dragStart(DragSourceEvent)}
 	 * time.
-	 * 
+	 *
 	 * @param anEvent
 	 *            The event object should return doit = true if it wants to participate
-	 *            in the drag and set doit = false if it does not want to further 
+	 *            in the drag and set doit = false if it does not want to further
 	 *            participate.
 	 * @param aSelection
 	 *            The current selection from the viewer.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void dragStart(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {
 		// May be subclassed
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Allows the drag assistant to do any necessary cleanup after the drop operation
-	 * is done. This is called at {@link DragSourceListener#dragFinished(DragSourceEvent)} 
+	 * is done. This is called at {@link DragSourceListener#dragFinished(DragSourceEvent)}
 	 * time.  This is called on the same assistant that was called for the set data.
-	 * 
+	 *
 	 * @param anEvent
 	 *            The event object should have its {@link Event#data} field set
 	 *            to a value that matches a supported {@link TransferData} type.
 	 * @param aSelection
 	 *            The current selection from the viewer.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void dragFinished(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {
 		// May be subclassed
 	}
-	
+
 	/**
 	 * Accept and remember the content service this assistant is associated
 	 * with.
-	 * 
+	 *
 	 * @param aContentService
 	 */
 	public final void setContentService(INavigatorContentService aContentService) {
@@ -146,7 +146,7 @@ public abstract class CommonDragAdapterAssistant {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The associated content service.
 	 */
 	public INavigatorContentService getContentService() {
@@ -154,7 +154,7 @@ public abstract class CommonDragAdapterAssistant {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The shell for the viewer this assistant is associated with or the
 	 *         shell of the active workbench window.
 	 */

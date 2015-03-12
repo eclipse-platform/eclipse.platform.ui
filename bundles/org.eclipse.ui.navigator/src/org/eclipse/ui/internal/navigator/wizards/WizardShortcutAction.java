@@ -33,9 +33,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * work nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class WizardShortcutAction extends Action implements IPluginContribution {
 	private IWizardDescriptor descriptor;
@@ -43,7 +43,7 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 	private IWorkbenchWindow window;
 
 	/**
-	 * 
+	 *
 	 * @param aWindow
 	 *            The window to use for the shell and selection service.
 	 * @param aDescriptor
@@ -61,7 +61,7 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 	}
 
 	/**
-	 * This action has been invoked by the user 
+	 * This action has been invoked by the user
 	 */
 	@Override
 	public void run() {
@@ -87,7 +87,7 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		} else {
 			wizard.init(window.getWorkbench(), StructuredSelection.EMPTY);
 		}
-		
+
 		if(descriptor.canFinishEarly() && !descriptor.hasPages()) {
 			wizard.performFinish();
 		} else {

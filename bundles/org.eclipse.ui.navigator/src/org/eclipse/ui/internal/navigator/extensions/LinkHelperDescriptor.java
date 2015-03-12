@@ -26,9 +26,9 @@ import org.eclipse.ui.navigator.ILinkHelper;
 /**
  * Provides a wrapper around
  * <b>org.eclipse.ui.navigator.navigatorContent/linkHelper</b> extensions.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 
@@ -87,7 +87,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 
 	/**
 	 * Create a link helper instance from this descriptors class attribute.
-	 * 
+	 *
 	 * @return An instance of the helper that is defined by the extension, or a
 	 *         Skeleton Link Helper.
 	 */
@@ -108,7 +108,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param anInput
 	 *            The editor input from the editor that was activated.
 	 * @return True if this linkHelper descriptor can produce a selection from

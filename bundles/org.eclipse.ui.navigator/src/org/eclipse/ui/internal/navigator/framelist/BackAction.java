@@ -21,10 +21,10 @@ import org.eclipse.ui.PlatformUI;
 public class BackAction extends FrameAction {
 
 	private static final String ID = "org.eclipse.ui.framelist.back"; //$NON-NLS-1$
-	
+
     /**
      * Constructs a new action for the specified frame list.
-     * 
+     *
      * @param frameList the frame list
      */
     public BackAction(FrameList frameList) {

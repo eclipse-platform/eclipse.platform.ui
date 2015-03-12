@@ -18,12 +18,12 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
- * 
+ *
  * Provides a common base class for {@link ICommonContentExtensionSite} and
  * {@link ICommonActionExtensionSite}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class CommonExtensionSite {
 
@@ -43,7 +43,7 @@ public class CommonExtensionSite {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The content service used to create this extension site
 	 */
 	public final INavigatorContentService getContentService() {
@@ -56,7 +56,7 @@ public class CommonExtensionSite {
 	 * Otherwise, clients may use
 	 * {@link INavigatorContentService#findStateModel(String)} to locate the
 	 * state model of another content extension.
-	 * 
+	 *
 	 * @return The extension state model of the associated extension.
 	 * @see IExtensionStateModel
 	 */

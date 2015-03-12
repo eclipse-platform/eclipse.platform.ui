@@ -16,8 +16,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 
-/** 
- * 
+/**
+ *
  * @since 3.2
  */
 public final class SkeletonLabelProvider implements ICommonLabelProvider {
@@ -28,7 +28,7 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	public static final SkeletonLabelProvider INSTANCE = new SkeletonLabelProvider();
 
 	/**
-	 *  
+	 *
 	 */
 	private SkeletonLabelProvider() {
 		super();
@@ -64,26 +64,26 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 
 	}
 
- 
+
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 
 	}
 
- 
+
 	@Override
 	public String getDescription(Object anElement) {
 		return null;
 	}
 
 	@Override
-	public void restoreState(IMemento aMemento) { 
-		
+	public void restoreState(IMemento aMemento) {
+
 	}
 
 	@Override
-	public void saveState(IMemento aMemento) { 
-		
+	public void saveState(IMemento aMemento) {
+
 	}
 
 }

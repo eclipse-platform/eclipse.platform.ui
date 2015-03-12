@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.SafeRunner;
 /**
  * Create an AND-type core expression from an IConfigurationElement of arbitrary
  * name.
- * 
+ *
  */
 public class CustomAndExpression extends Expression {
 
@@ -36,7 +36,7 @@ public class CustomAndExpression extends Expression {
 	 * Create an AND-type core expression from an IConfigurationElement of
 	 * arbitrary name. The children elements are combined using boolean AND
 	 * semantics to evaluate the expression.
-	 * 
+	 *
 	 * @param element
 	 *            An IConfigurationElement of arbitrary name.
 	 */

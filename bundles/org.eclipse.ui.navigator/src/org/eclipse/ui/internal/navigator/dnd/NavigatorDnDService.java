@@ -31,17 +31,17 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorDnDService;
 
 /**
- * 
+ *
  * Provides instances of {@link CommonDragAdapterAssistant} and
  * {@link CommonDropAdapterAssistant} for the associated
  * {@link INavigatorContentService}.
- * 
+ *
  * <p>
  * Clients may not extend, instantiate or directly reference this class.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class NavigatorDnDService implements INavigatorDnDService {
 
@@ -50,13 +50,13 @@ public class NavigatorDnDService implements INavigatorDnDService {
 	private INavigatorContentService contentService;
 
 	private CommonDragAdapterAssistant[] dragAssistants;
-	
+
 	private CommonDropAdapter dropAdapter;
 
 	private final Map dropAssistants = new HashMap();
 
 	/**
-	 * 
+	 *
 	 * @param aContentService
 	 *            The associated content service
 	 */
@@ -66,21 +66,21 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 	/**
 	 * @param da
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setDropAdaptor(CommonDropAdapter da) {
 		dropAdapter = da;
 	}
-	
+
 	@Override
 	public synchronized CommonDragAdapterAssistant[] getCommonDragAssistants() {
 
-		if (dragAssistants == null) 
-			initializeDragAssistants(); 
+		if (dragAssistants == null)
+			initializeDragAssistants();
 		return dragAssistants;
 	}
- 
+
 	private void initializeDragAssistants() {
 		int i = 0;
 		Set dragDescriptors = ((NavigatorViewerDescriptor) contentService
@@ -93,23 +93,23 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			dragAssistants[i++] = descriptor.createDragAssistant();
 		}
 	}
-	
+
 
 	@Override
 	public synchronized void bindDragAssistant(CommonDragAdapterAssistant anAssistant) {
-		if(dragAssistants == null) 
-			initializeDragAssistants(); 
+		if(dragAssistants == null)
+			initializeDragAssistants();
 		CommonDragAdapterAssistant[] newDragAssistants = new CommonDragAdapterAssistant[dragAssistants.length + 1];
 		System.arraycopy(dragAssistants, 0, newDragAssistants, 0, dragAssistants.length);
 		newDragAssistants[dragAssistants.length] = anAssistant;
-		dragAssistants = newDragAssistants;		
+		dragAssistants = newDragAssistants;
 	}
 
 	@Override
 	public CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
 			Object aDropTarget, TransferData aTransferType) {
- 
-		// TODO Make sure descriptors are sorted by priority 
+
+		// TODO Make sure descriptors are sorted by priority
 		CommonDropAdapterDescriptor[] descriptors = CommonDropDescriptorManager
 				.getInstance().findCommonDropAdapterAssistants(aDropTarget,
 						contentService);
@@ -118,19 +118,19 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			return NO_ASSISTANTS;
 		}
 
-		if (LocalSelectionTransfer.getTransfer().isSupportedType(aTransferType)  
+		if (LocalSelectionTransfer.getTransfer().isSupportedType(aTransferType)
 						&& LocalSelectionTransfer.getTransfer().getSelection() instanceof IStructuredSelection) {
 			return getAssistantsBySelection(descriptors, (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection());
-		} 
+		}
 		return getAssistantsByTransferData(descriptors, aTransferType);
 	}
-	
+
 
 	@Override
 	public CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
 			Object aDropTarget, IStructuredSelection theDragSelection) {
- 
-		// TODO Make sure descriptors are sorted by priority 
+
+		// TODO Make sure descriptors are sorted by priority
 		CommonDropAdapterDescriptor[] descriptors = CommonDropDescriptorManager
 				.getInstance().findCommonDropAdapterAssistants(aDropTarget,
 						contentService);
@@ -139,7 +139,7 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			return NO_ASSISTANTS;
 		}
 
-		return getAssistantsBySelection(descriptors, theDragSelection);  
+		return getAssistantsBySelection(descriptors, theDragSelection);
 	}
 
 	private CommonDropAdapterAssistant[] getAssistantsByTransferData(
@@ -161,13 +161,13 @@ public class NavigatorDnDService implements INavigatorDnDService {
 	private CommonDropAdapterAssistant[] getAssistantsBySelection(
 			CommonDropAdapterDescriptor[] descriptors, IStructuredSelection aSelection) {
 
-		Set assistants = new LinkedHashSet(); 
-			
+		Set assistants = new LinkedHashSet();
+
 		for (int i = 0; i < descriptors.length; i++) {
 			if(descriptors[i].areDragElementsSupported(aSelection)) {
 				assistants.add(getAssistant(descriptors[i]));
 			}
-		}  
+		}
 
 		return sortAssistants((CommonDropAdapterAssistant[]) assistants
 				.toArray(new CommonDropAdapterAssistant[assistants.size()]));
@@ -180,7 +180,7 @@ public class NavigatorDnDService implements INavigatorDnDService {
 				CommonDropAdapterAssistant a = (CommonDropAdapterAssistant) arg0;
 				CommonDropAdapterAssistant b = (CommonDropAdapterAssistant) arg1;
 				// This is to ensure that the navigator resources drop assistant will
-				// always be first on the list of drop assistant, if a conflict ever 
+				// always be first on the list of drop assistant, if a conflict ever
 				// occurs.
 				String id = "org.eclipse.ui.navigator.resources."; //$NON-NLS-1$
 				if (a.getClass().getName().startsWith(id))

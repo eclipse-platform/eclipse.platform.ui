@@ -14,7 +14,7 @@ package org.eclipse.ui.navigator;
  * <p>
  * Enumeration of the OverridePolicy values supported by the Common Navigator.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public final class OverridePolicy {
@@ -66,14 +66,14 @@ public final class OverridePolicy {
 			InvokeAlwaysRegardlessOfSuppressedExt };
 
 	/**
-	 * 
+	 *
 	 * Returns the correct instance of the OverridePolicy ENUM for aLiteral.
-	 * 
+	 *
 	 * <p>
 	 * This method will return InvokeAlwaysRegardlessOfSuppressedExt if the
 	 * supplied value of aLiteral is invalid.
 	 * </p>
-	 * 
+	 *
 	 * @param aLiteral
 	 *            One of the defined *_LITERAL constants of this class
 	 * @return The corresponding OverridePolicy Enum or
@@ -89,14 +89,14 @@ public final class OverridePolicy {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns the correct instance of the OverridePolicy ENUM for aValue.
-	 * 
+	 *
 	 * <p>
 	 * This method will return InvokeAlwaysRegardlessOfSuppressedExt if the
 	 * supplied value of aValue is invalid.
 	 * </p>
-	 * 
+	 *
 	 * @param aValue
 	 *            One of the defined *_VALUE constants of this class
 	 * @return The corresponding OverridePolicy Enum or
@@ -124,7 +124,7 @@ public final class OverridePolicy {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The literal string for this specific OverridePolicy.
 	 */
 	public String getLiteral() {
@@ -132,7 +132,7 @@ public final class OverridePolicy {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The integer value for this specific OverridePolicy.
 	 */
 	public int getValue() {

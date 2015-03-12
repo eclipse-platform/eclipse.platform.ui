@@ -14,16 +14,16 @@ package org.eclipse.ui.navigator;
 import org.eclipse.ui.IMemento;
 
 /**
- * 
+ *
  * Provides initialization data for a content extension. Supplied in the
  * <code>init()</code> methods of various interfaces allowed by the framework.
- * 
+ *
  * @since 3.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @see ICommonLabelProvider
  * @see ICommonContentProvider
- * 
+ *
  */
 public interface ICommonContentExtensionSite {
 
@@ -33,7 +33,7 @@ public interface ICommonContentExtensionSite {
 	 * displays actions. Clients may use this state model to drive values from
 	 * actions that will cause label or content providers to change their
 	 * behavior.
-	 * 
+	 *
 	 * @return The state model associated with this logical extension.
 	 */
 	IExtensionStateModel getExtensionStateModel();
@@ -42,22 +42,22 @@ public interface ICommonContentExtensionSite {
 	 * Advanced extensions may expose user-customizeable properties that affect
 	 * the structure or behavior of the extension. Clients may use the given
 	 * memento to restore or persist these settings between sessions.
-	 * 
+	 *
 	 * @return A memento which can be used to restore or persist settings
 	 *         between workbench sessions.
 	 */
-	IMemento getMemento(); 
-  
+	IMemento getMemento();
+
 	/**
-	 * 
+	 *
 	 * @return The extension instance. Clients may use their extension
 	 *         instance to get access to other components defined by the logical
 	 *         extension.
 	 */
 	INavigatorContentExtension getExtension();
-	
+
 	/**
-	 * 
+	 *
 	 * @return The content service associated with this extension site.
 	 * @since 3.3
 	 */

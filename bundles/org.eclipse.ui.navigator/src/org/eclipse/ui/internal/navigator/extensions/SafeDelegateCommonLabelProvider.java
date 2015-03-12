@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * 	   Anton Leherbauer, Wind River - bug 146788
  *     rob.stryker@jboss.com - bug 243824 [CommonNavigator] lacks table / tree-table support
- * 
+ *
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
@@ -41,7 +41,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	/**
 	 * @param aLabelProvider
 	 *            A non-null label provider.
-	 * 
+	 *
 	 */
 	public SafeDelegateCommonLabelProvider(ILabelProvider aLabelProvider) {
 		super();
@@ -52,7 +52,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	 * <p>
 	 * No-op.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(ICommonContentExtensionSite)
 	 */
 	@Override
@@ -62,13 +62,13 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	/**
 	 * <p>
 	 * If the delegate label provider implements <code>IDescriptionProvider</code>,
-	 * it is used to retrieve the status bar message. 
+	 * it is used to retrieve the status bar message.
 	 * </p>
 	 * <p>
 	 * Returns <b>null </b> otherwise, forcing the CommonNavigator to provide the default
 	 * message.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#getDescription(java.lang.Object)
 	 */
 	@Override
@@ -90,7 +90,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void dispose() {
@@ -111,7 +111,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	public String getText(Object element) {
 		return delegateLabelProvider.getText(element);
 	}
-	
+
 	@Override
 	public StyledString getStyledText(Object element) {
 		if (delegateLabelProvider instanceof IStyledLabelProvider) {
@@ -121,7 +121,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		if (text == null)
 			text= ""; //$NON-NLS-1$
 		return new StyledString(text);
-	}	
+	}
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
@@ -138,7 +138,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		}
 		return getText(element);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return delegateLabelProvider.hashCode();

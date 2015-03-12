@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
  * Defines strings used for menu insertion points.
- * 
+ *
  * @since 3.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -31,7 +31,7 @@ public interface ICommonMenuConstants {
 	 * Pop-up menu: name of group for the top of the menu (value
 	 * <code>"group.top"</code>).
 	 */
-	public static final String GROUP_TOP = "group.top"; //$NON-NLS-1$ 
+	public static final String GROUP_TOP = "group.top"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for goto actions (value
@@ -82,7 +82,7 @@ public interface ICommonMenuConstants {
 	 * <li>Open With</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @see #GROUP_OPEN_WITH
 	 */
 	public static final String GROUP_OPEN = "group.open"; //$NON-NLS-1$
@@ -116,7 +116,7 @@ public interface ICommonMenuConstants {
 	 * Pop-up menu: name of group for properties actions (value
 	 * <code>"group.edit"</code>).
 	 */
-	public static final String GROUP_EDIT = "group.edit"; //$NON-NLS-1$ 
+	public static final String GROUP_EDIT = "group.edit"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for build actions (value
@@ -140,7 +140,7 @@ public interface ICommonMenuConstants {
 	 * Pop-up menu: name of group for source actions. This is an alias for
 	 * <code>GROUP_GENERATE</code> to be more consistent with main menu bar
 	 * structure.
-	 *  
+	 *
 	 */
 	public static final String GROUP_SOURCE = GROUP_GENERATE;
 
@@ -166,6 +166,6 @@ public interface ICommonMenuConstants {
 	 * Pop-up menu: name of group for properties actions (value
 	 * <code>"group.properties"</code>).
 	 */
-	public static final String GROUP_PROPERTIES = "group.properties"; //$NON-NLS-1$ 
+	public static final String GROUP_PROPERTIES = "group.properties"; //$NON-NLS-1$
 
 }

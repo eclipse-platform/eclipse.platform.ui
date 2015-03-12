@@ -18,17 +18,17 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerSite;
 
 /**
- * 
+ *
  * Provides access to information required for the initialization of
  * CommonActionProviders.
- * 
+ *
  * <p>
  * See the documentation of the <b>org.eclipse.ui.navigator.navigatorContent</b>
  * extension point and {@link CommonActionProvider} for more information on
  * declaring {@link CommonActionProvider}s.
  * </p>
- * 
- * 
+ *
+ *
  * @since 3.2
  */
 public final class CommonActionExtensionSite extends CommonExtensionSite
@@ -37,7 +37,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	private String extensionId;
 
 	private String pluginId;
-	
+
 	private ICommonViewerSite commonViewerSite;
 
 	private StructuredViewer structuredViewer;
@@ -45,7 +45,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	/**
 	 * Create a config element for the initialization of Common Action
 	 * Providers.
-	 * 
+	 *
 	 * @param anExtensionId
 	 *            The unique identifier of the associated content extension or
 	 *            the top-level action provider. <b>May NOT be null.</b>
@@ -70,7 +70,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 			ICommonViewerSite aCommonViewerSite,
 			NavigatorContentService aContentService,
 			StructuredViewer aStructuredViewer) {
-		super(aContentService, anExtensionId); 
+		super(aContentService, anExtensionId);
 
 		Assert.isNotNull(aCommonViewerSite);
 		Assert.isNotNull(aStructuredViewer);
@@ -82,7 +82,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The unique identifier of the associated content extension or the
 	 *         top-level Common Action Provider.
 	 */
@@ -92,7 +92,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The plugin id of associated Common Action Provider
 	 */
 	@Override
@@ -101,7 +101,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The associated structured viewer for the instantiated Common
 	 *         Action Provider.
 	 */
@@ -111,7 +111,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The ICommonViewerSite from the CommonViewer.
 	 */
 	@Override

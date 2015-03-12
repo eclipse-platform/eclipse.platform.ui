@@ -28,11 +28,11 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- * 
+ *
  */
-public class CustomizationTab extends Composite { 
- 
- 
+public class CustomizationTab extends Composite {
+
+
 	private final INavigatorContentService contentService;
 
 	private CheckboxTableViewer tableViewer;
@@ -47,19 +47,19 @@ public class CustomizationTab extends Composite {
 			else
 				checkedItems.remove(event.getElement());
 		}
-		
+
 	};
- 
+
 	protected CustomizationTab(Composite parent,
 			INavigatorContentService aContentService) {
 		super(parent, SWT.RESIZE);
- 
+
 		contentService = aContentService;
-		setFont(getParent().getFont()); 
-		setLayout(new GridLayout()); 
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true); 
+		setFont(getParent().getFont());
+		setLayout(new GridLayout());
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		setData(data);
- 
+
 	}
 
 	protected Table getTable() {
@@ -75,35 +75,35 @@ public class CustomizationTab extends Composite {
 	}
 
 	protected void createTable() {
-		  
-		tableViewer = CheckboxTableViewer.newCheckList(this,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);		
-		tableViewer.addCheckStateListener(checkListener);		
-		
-		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));		
+
+		tableViewer = CheckboxTableViewer.newCheckList(this,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableViewer.addCheckStateListener(checkListener);
+
+		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		tableViewer.getControl().setFont(getFont());
 
-	} 
-	
+	}
+
 	@Override
-	public void dispose() { 
+	public void dispose() {
 		tableViewer.removeCheckStateListener(checkListener);
 		super.dispose();
-		
+
 	}
 
 	protected void createInstructionsLabel(String labelText) {
-		 
+
 		Label extensionsInstructionLabel = new Label(this, SWT.BOLD | SWT.WRAP);
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL); 
+				| GridData.VERTICAL_ALIGN_FILL);
 
 		extensionsInstructionLabel.setLayoutData(gridData);
 		extensionsInstructionLabel.setFont(getFont());
 		extensionsInstructionLabel.setText(labelText);
 	}
-	 
+
 
 	protected final INavigatorContentService getContentService() {
 		return contentService;

@@ -14,7 +14,7 @@ package org.eclipse.ui.navigator;
 import java.util.Set;
 
 /**
- * 
+ *
  * To correctly implement pipelining you should implement
  * {@link IPipelinedTreeContentProvider2} which provides the
  * additional
@@ -23,11 +23,11 @@ import java.util.Set;
  * calculating the children. If you don't implement the hasChildren, you may get
  * "false positive" hasChildrens which will result in a "+" indication in the
  * tree in the event that the pipelined children calculation.
- * 
+ *
  * The only reason these are two separate interfaces is historical.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 
@@ -36,7 +36,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * determine how to change the shape of those children. The set of children
 	 * should be modified to contain the correct children to return to the
 	 * viewer.
-	 * 
+	 *
 	 * @param aParent
 	 *            A parent from the viewer
 	 * @param theCurrentChildren
@@ -50,7 +50,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * viewer and determine how to change the shape of those children. The given
 	 * set of elements should be modified to contain the correct elements to
 	 * return to the viewer.
-	 * 
+	 *
 	 * @param anInput
 	 *            An input from the viewer
 	 * @param theCurrentElements
@@ -61,7 +61,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 
 	/**
 	 * Intercept requests for a parent of the given object.
-	 * 
+	 *
 	 * @param anObject
 	 *            The object being queried for a parent.
 	 * @param aSuggestedParent
@@ -74,7 +74,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 
 	/**
 	 * Intercept attempts to add elements directly to the viewer.
-	 * 
+	 *
 	 * <p>
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
@@ -98,7 +98,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
 	 * </p>
-	 * 
+	 *
 	 * @param anAddModification
 	 *            The shape modification which contains the current suggested
 	 *            parent and children. Clients may modify this parameter
@@ -110,7 +110,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 
 	/**
 	 * Intercept attempts to remove elements directly from the viewer.
-	 * 
+	 *
 	 * <p>
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
@@ -132,7 +132,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
 	 * </p>
-	 * 
+	 *
 	 * @param aRemoveModification
 	 *            The shape modification which contains the current suggested
 	 *            parent and children. Clients may modify this parameter
@@ -144,19 +144,19 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 
 	/**
 	 * Intercept calls to viewer <code>refresh()</code> methods.
-	 * 
+	 *
 	 * <p>
 	 * Clients may modify the given update to add or remove the elements to be
 	 * refreshed. Clients may return the same instance that was passed in for
 	 * the next downstream extension.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Clients should not call any of the add, remove, refresh, or update
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
 	 * </p>
-	 * 
+	 *
 	 * @param aRefreshSynchronization
 	 *            The (current) refresh update to execute against the viewer.
 	 * @return True if the viewer update was modified.
@@ -165,20 +165,20 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 
 	/**
 	 * Intercept calls to viewer <code>update()</code> methods.
-	 * 
+	 *
 	 * <p>
 	 * Clients may modify the given update to add or remove the elements to be
 	 * updated. Clients may also add or remove properties for the given targets
 	 * to optimize the refresh. Clients may return the same instance that was
 	 * passed in for the next downstream extension.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Clients should not call any of the add, remove, refresh, or update
 	 * methods on the viewer from this method or any code invoked by the
 	 * implementation of this method.</b>
 	 * </p>
-	 * 
+	 *
 	 * @param anUpdateSynchronization
 	 *            The (current) update to execute against the viewer.
 	 * @return True if the viewer update was modified.

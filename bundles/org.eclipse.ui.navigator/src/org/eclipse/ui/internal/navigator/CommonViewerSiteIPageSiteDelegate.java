@@ -18,9 +18,9 @@ import org.eclipse.ui.part.IPageSite;
 
 /**
  * Provides a delegate implementation of {@link ICommonViewerSite}.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerSite {
 
@@ -29,7 +29,7 @@ public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerSite {
 	private String viewerId;
 
 	/**
-	 * 
+	 *
 	 * @param aViewerId
 	 * @param aPageSite
 	 */

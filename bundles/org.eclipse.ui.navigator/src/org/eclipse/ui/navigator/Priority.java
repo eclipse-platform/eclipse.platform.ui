@@ -14,7 +14,7 @@ package org.eclipse.ui.navigator;
  * <p>
  * Enumeration of the Priority values supported by the Common Navigator.
  * </p>
- *  
+ *
  * @since 3.2
  */
 public final class Priority {
@@ -139,14 +139,14 @@ public final class Priority {
 			HIGHER, HIGH, NORMAL, LOW, LOWER, LOWEST };
 
 	/**
-	 * 
+	 *
 	 * Returns the correct instance of the Priority ENUM for aLiteral.
-	 * 
+	 *
 	 * <p>
 	 * This method will return NORMAL if the supplied value of aLiteral is
 	 * invalid.
 	 * </p>
-	 * 
+	 *
 	 * @param aLiteral
 	 *            One of the defined *_LITERAL constants of this class
 	 * @return The corresponding Priority Enum or NORMAL if aLiteral is invalid
@@ -161,14 +161,14 @@ public final class Priority {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns the correct instance of the Priority ENUM for aValue.
-	 * 
+	 *
 	 * <p>
 	 * This method will return NORMAL if the supplied value of aValue is
 	 * invalid.
 	 * </p>
-	 * 
+	 *
 	 * @param aValue
 	 *            One of the defined *_VALUE constants of this class
 	 * @return The corresponding Priority Enum or NORMAL if aValue is invalid
@@ -202,7 +202,7 @@ public final class Priority {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The literal string for this specific Priority.
 	 */
 	public String getLiteral() {
@@ -211,13 +211,13 @@ public final class Priority {
 
 	/**
 	 * 0 is the lowest priority; 7 is the highest.
-	 * 
-	 * @return The integer value for this specific Priority. 
+	 *
+	 * @return The integer value for this specific Priority.
 	 */
 	public int getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Priority ["+getLiteral()+"]";  //$NON-NLS-1$//$NON-NLS-2$

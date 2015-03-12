@@ -21,7 +21,7 @@ import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ToggleFilterAction extends Action {
 

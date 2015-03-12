@@ -7,7 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
- * Oakland Software (Francis Upton - francisu@ieee.org) 
+ * Oakland Software (Francis Upton - francisu@ieee.org)
  *    bug 197113 Project Explorer drag and drop selection not working properly
  *******************************************************************************/
 package org.eclipse.ui.navigator;
@@ -41,22 +41,22 @@ import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 
 /**
- * 
+ *
  * Provides the Tree Viewer for the Common Navigator. Content and labels are
  * provided by an instance of {@link INavigatorContentService}&nbsp; which uses
  * the ID supplied in the constructor
  * {@link CommonViewer#CommonViewer(String, Composite, int)} or through
  * {@link NavigatorContentServiceFactory#createContentService(String, org.eclipse.jface.viewers.StructuredViewer)}.
- * 
+ *
  * <p>
  * Clients may extend this class.
  * </p>
- * 
+ *
  * <p>
  * Note that as of 3.2.1 and 3.3, the common viewer caches its selection.
  * Clients must not set the selection of the viewer's tree control directly.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class CommonViewer extends TreeViewer {
@@ -64,13 +64,13 @@ public class CommonViewer extends TreeViewer {
 	private final NavigatorContentService contentService;
 
 	private ISelection cachedSelection;
-	
+
 	private FrameList frameList;
-	
+
 	private CommonNavigator commonNavigator;
 
 	private ICommonViewerMapper _mapper;
-	
+
 	/**
 	 * <p>
 	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
@@ -81,7 +81,7 @@ public class CommonViewer extends TreeViewer {
 	 * For the valid bits to supply in the style mask (aStyle), see
 	 * documentation provided by {@link TreeViewer}.
 	 * </p>
-	 * 
+	 *
 	 * @param aViewerId
 	 *            An id tied to the extensions that is used to focus specific
 	 *            content to a particular instance of the Common Navigator
@@ -117,24 +117,24 @@ public class CommonViewer extends TreeViewer {
 
 	/**
 	 * Sets the {@link ICommonViewerMapper} to work with this viewer.
-	 * 
+	 *
 	 * @param mapper
 	 * @since 3.4
 	 */
 	public void setMapper(ICommonViewerMapper mapper) {
 		_mapper = mapper;
 	}
-	
+
 	/**
 	 * Gets the {@link ICommonViewerMapper} assigned to this viewer.
-	 * 
+	 *
 	 * @return the mapper
 	 * @since 3.4
 	 */
 	public ICommonViewerMapper getMapper() {
 		return _mapper;
 	}
-	
+
 	/**
 	 * @return the CommonNavigator
 	 * @since 3.4
@@ -142,7 +142,7 @@ public class CommonViewer extends TreeViewer {
 	public CommonNavigator getCommonNavigator() {
 		return commonNavigator;
 	}
-	
+
 	protected void removeWithoutRefresh(Object[] elements) {
 		super.remove(elements);
 	}
@@ -159,7 +159,7 @@ public class CommonViewer extends TreeViewer {
 	 * <li>PluginTransfer.getInstance()
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @see CommonDragAdapter
 	 * @see CommonDropAdapter
 	 */
@@ -170,7 +170,7 @@ public class CommonViewer extends TreeViewer {
 		CommonDragAdapter dragAdapter = createDragAdapter();
 		addDragSupport(operations, dragAdapter.getSupportedDragTransfers(),
 				dragAdapter);
-		
+
 		CommonDropAdapter dropAdapter = createDropAdapter();
 		addDropSupport(operations, dropAdapter.getSupportedDropTransfers(),
 				dropAdapter);
@@ -179,33 +179,33 @@ public class CommonViewer extends TreeViewer {
 		dnd.setDropAdaptor(dropAdapter);
 	}
 
-	
+
 	/**
 	 * Creates the {@link CommonDragAdapter}, this is used to provide a subclass
 	 * if desired.
-	 * 
+	 *
 	 * @return the CommonDragAdapter
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected CommonDragAdapter createDragAdapter() {
 		return new CommonDragAdapter(contentService, this);
 	}
-	
-	
+
+
 	/**
 	 * Creates the {@link CommonDropAdapter}, this is used to provide a subclass
 	 * if desired.
-	 * 
+	 *
 	 * @return the CommonDropAdapter
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected CommonDropAdapter createDropAdapter() {
 		return new CommonDropAdapter(contentService, this);
 	}
-	
-	
+
+
 	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
 	 */
@@ -218,7 +218,7 @@ public class CommonViewer extends TreeViewer {
 			for (int i = 0; i < changed.length; i++) {
 				if (changed[i] == null)
 					continue;
-				
+
 				if (_mapper != null) {
 					if (_mapper.handlesObject(changed[i])) {
 						_mapper.objectChanged(changed[i]);
@@ -241,7 +241,7 @@ public class CommonViewer extends TreeViewer {
 		dispose();
 		super.handleDispose(event);
 	}
- 
+
 	/**
 	 * <p>
 	 * Disposes of the NavigatorContentService, which will dispose the Content
@@ -258,7 +258,7 @@ public class CommonViewer extends TreeViewer {
 	/**
 	 * Sets this viewer's sorter and triggers refiltering and resorting of this
 	 * viewer's element. Passing <code>null</code> turns sorting off.
-	 * 
+	 *
 	 * @param sorter
 	 *            a viewer sorter, or <code>null</code> if none
 	 */
@@ -276,7 +276,7 @@ public class CommonViewer extends TreeViewer {
 	 * The {@link INavigatorContentService}provides the hook into the framework
 	 * to provide content from the various extensions.
 	 * </p>
-	 * 
+	 *
 	 * @return The {@link INavigatorContentService}that was created when the
 	 *         viewer was created.
 	 */
@@ -306,7 +306,7 @@ public class CommonViewer extends TreeViewer {
 	 * Removals are handled by refreshing the parents of each of the given
 	 * elements. The parents are determined via calls ot the contentProvider.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
 	@Override
@@ -328,7 +328,7 @@ public class CommonViewer extends TreeViewer {
 		if(element != getInput()) {
 			INavigatorPipelineService pipeDream = contentService
 					.getPipelineService();
-	
+
 			PipelinedViewerUpdate update = new PipelinedViewerUpdate();
 			update.getRefreshTargets().add(element);
 			update.setUpdateLabels(updateLabels);
@@ -347,13 +347,13 @@ public class CommonViewer extends TreeViewer {
 			super.refresh(element, updateLabels);
 		}
 	}
-	
+
 	@Override
-	public void setSelection(ISelection selection, boolean reveal) { 
+	public void setSelection(ISelection selection, boolean reveal) {
 
 		if(selection instanceof IStructuredSelection) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
-			
+
 			INavigatorPipelineService pipeDream = contentService
 					.getPipelineService();
 
@@ -362,14 +362,14 @@ public class CommonViewer extends TreeViewer {
 			update.setUpdateLabels(false);
 			/* if the update is modified */
 			if (pipeDream.interceptRefresh(update)) {
-				/* intercept and apply the update */ 
+				/* intercept and apply the update */
 				super.setSelection(new StructuredSelection(update.getRefreshTargets().toArray()) , reveal);
 			} else {
 				super.setSelection(selection, reveal);
 			}
 		}
 	}
-	
+
     @Override
 	protected void hookControl(Control control) {
     	super.hookControl(control);
@@ -390,10 +390,10 @@ public class CommonViewer extends TreeViewer {
 
 	/**
 	 * Update an item in the tree.
-	 * 
+	 *
 	 * @param item the item in the tree to update
 	 * @since 3.4
-	 * 
+	 *
 	 */
 	public void doUpdateItem(Widget item) {
 		doUpdateItem(item, item.getData(), true);
@@ -436,45 +436,45 @@ public class CommonViewer extends TreeViewer {
 		clearSelectionCache();
 		super.setSelectionToWidget(v, reveal);
 	}
-	
+
 	@Override
 	protected void handleDoubleSelect(SelectionEvent event) {
 		clearSelectionCache();
 		super.handleDoubleSelect(event);
 	}
-	
+
 	@Override
 	protected void handleOpen(SelectionEvent event) {
 		clearSelectionCache();
 		super.handleOpen(event);
 	}
-	
+
 	@Override
 	protected void handlePostSelect(SelectionEvent e) {
 		clearSelectionCache();
 		super.handlePostSelect(e);
 	}
-	
+
 	@Override
 	protected void handleSelect(SelectionEvent event) {
 		clearSelectionCache();
 		super.handleSelect(event);
 	}
-	
+
 	/**
 	 * Clears the selection cache.
 	 */
 	private void clearSelectionCache() {
 		cachedSelection = null;
 	}
-	
+
 	/**
 	 * Returns the current selection.
 	 * <p>
 	 * Note that as of 3.2.1 and 3.3, the common viewer caches its selection.
 	 * Clients must not set the selection of the viewer's tree control directly.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getSelection()
 	 */
 	@Override
@@ -495,13 +495,13 @@ public class CommonViewer extends TreeViewer {
 		if(element != getInput()) {
 			INavigatorPipelineService pipeDream = contentService
 					.getPipelineService();
-	
+
 			PipelinedViewerUpdate update = new PipelinedViewerUpdate();
 			update.getRefreshTargets().add(element);
 			update.setUpdateLabels(true);
 			/* if the update is modified */
 			if (pipeDream.interceptUpdate(update)) {
-				/* intercept and apply the update */ 
+				/* intercept and apply the update */
 				for (Iterator<Object> iter = update.getRefreshTargets().iterator(); iter
 						.hasNext();) {
 					super.update(iter.next(), properties);
@@ -537,7 +537,7 @@ public class CommonViewer extends TreeViewer {
         frameList = new FrameList(frameSource);
         frameSource.connectTo(frameList);
     }
-    
+
 	/**
 	 * @return a FrameList
 	 * @noreference This method is not intended to be referenced by clients.
@@ -547,6 +547,6 @@ public class CommonViewer extends TreeViewer {
     public FrameList getFrameList() {
         return frameList;
     }
-	
-	
+
+
 }

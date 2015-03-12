@@ -10,7 +10,7 @@
  *******************************************************************************/
 /*
  * Created on Feb 9, 2004
- *  
+ *
  */
 package org.eclipse.ui.internal.navigator.filters;
 
@@ -45,12 +45,12 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
 /**
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class CommonFilterSelectionDialog extends TrayDialog {
-   
+
 	private static final String FILTER_ICON = "icons/full/elcl16/filter_ps.gif"; //$NON-NLS-1$
 	private static final String CONTENT_ICON = "icons/full/elcl16/content.gif"; //$NON-NLS-1$
 
@@ -70,13 +70,13 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 	private Label descriptionText;
 
-	private ISelectionChangedListener updateDescriptionSelectionListener; 
+	private ISelectionChangedListener updateDescriptionSelectionListener;
 
 	private String helpContext;
-	
+
 	/**
 	 * Public only for tests.
-	 * 
+	 *
 	 * @param aCommonViewer
 	 */
 	public CommonFilterSelectionDialog(CommonViewer aCommonViewer) {
@@ -103,29 +103,29 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		 
+
 		getShell()
 				.setText(
 						CommonNavigatorMessages.CommonFilterSelectionDialog_Available_customization_);
-		 
-		
+
+
 		Composite superComposite = (Composite) super.createDialogArea(parent);
-		 
-		createCustomizationsTabFolder(superComposite); 
-		
+
+		createCustomizationsTabFolder(superComposite);
+
 		commonFiltersTab = new CommonFiltersTab(customizationsTabFolder,
 				contentService);
 		createTabItem(
 				customizationsTabFolder,
 				CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Filters,
 				commonFiltersTab, FILTER_ICON);
-		
+
 
 		boolean hideExtensionsTab = contentService.getViewerDescriptor()
 				.getBooleanConfigProperty(
 						INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_EXT_TAB);
 
-		if (!hideExtensionsTab) { 
+		if (!hideExtensionsTab) {
 			contentExtensionsTab = new ContentExtensionsTab(
 					customizationsTabFolder, contentService);
 
@@ -133,7 +133,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 					customizationsTabFolder,
 					CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Content,
 					contentExtensionsTab, CONTENT_ICON);
-			
+
 		}
 
 		createDescriptionText(superComposite);
@@ -146,23 +146,23 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 			contentExtensionsTab
 					.addSelectionChangedListener(getSelectionListener());
 		}
-	
+
 		commonFiltersTab.setInitialFocus();
-		
+
 		return customizationsTabFolder;
 	}
 
 	private void createCustomizationsTabFolder(Composite superComposite) {
 		customizationsTabFolder = new CTabFolder (superComposite, SWT.RESIZE | SWT.BORDER);
- 
+
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
 		gd.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
-		
+
 		customizationsTabFolder.setLayout(new GridLayout());
 		customizationsTabFolder.setLayoutData(gd);
 
-		customizationsTabFolder.setFont(superComposite.getFont()); 
+		customizationsTabFolder.setFont(superComposite.getFont());
 
 		customizationsTabFolder.addSelectionListener(new SelectionListener() {
 
@@ -179,7 +179,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 			}
 
 		});
-	  
+
 		customize();
 
 	}
@@ -197,7 +197,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 			Composite composite, String imageKey) {
 		CTabItem extensionsTabItem = new CTabItem(aTabFolder, SWT.BORDER);
 		extensionsTabItem.setText(label);
- 		extensionsTabItem.setControl(composite); 
+ 		extensionsTabItem.setControl(composite);
  		extensionsTabItem.setImage(NavigatorPlugin.getDefault().getImage(imageKey));
  		return extensionsTabItem;
 	}
@@ -244,7 +244,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 		if (commonFiltersTab != null) {
 			Set checkedFilters = commonFiltersTab.getCheckedItems();
-			
+
 			String[] filterIdsToActivate = new String[checkedFilters.size()];
 			int indx = 0;
 			for (Iterator iterator = checkedFilters.iterator(); iterator
@@ -254,7 +254,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 				filterIdsToActivate[indx++] = descriptor.getId();
 
-			} 
+			}
 			UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
 					commonViewer, filterIdsToActivate);
 			updateFilters.execute(null, null);
