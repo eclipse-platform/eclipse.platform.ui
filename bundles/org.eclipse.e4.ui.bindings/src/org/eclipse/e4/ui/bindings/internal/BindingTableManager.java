@@ -244,7 +244,7 @@ public class BindingTableManager {
 
 	/*
 	 * Copied from org.eclipse.jface.bindings.BindingManager.compareSchemes(String, String)
-	 * 
+	 *
 	 * Returns an in based on scheme 1 < scheme 2
 	 */
 	private final int compareSchemes(final String schemeId1, final String schemeId2) {
