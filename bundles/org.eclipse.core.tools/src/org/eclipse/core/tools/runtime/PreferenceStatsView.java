@@ -28,12 +28,12 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Text view that dumps sizeof info and stats about the
  * Eclipse preferences tree.
- * 
+ *
  * @since 3.0
  */
 public class PreferenceStatsView extends SpyView {
 
-	// The JFace widget used for showing the Element Tree info.  
+	// The JFace widget used for showing the Element Tree info.
 	protected TextViewer viewer;
 
 	private IAction updateAction;

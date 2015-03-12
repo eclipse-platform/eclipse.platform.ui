@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A helper class that supports error report and logging for 
- * Spy plug-in classes. 
+ * A helper class that supports error report and logging for
+ * Spy plug-in classes.
  */
 public class ErrorUtil {
 
 	/**
 	 * Logs the provided exception and user message in Spy plug-in's log.
-	 * 
+	 *
 	 * @param exception the exception to be logged
 	 * @param userMessage an optional  higher-level explanation for the exception
 	 */
@@ -38,7 +38,7 @@ public class ErrorUtil {
 
 	/**
 	 * Shows the provided message using a MessageDialog.
-	 * 
+	 *
 	 * @param message
 	 * @param title
 	 * @see org.eclipse.jface.dialogs.MessageDialog#openError(Shell,String,String)

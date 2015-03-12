@@ -1,14 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tools.search;
+
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 import java.util.Iterator;
 import org.eclipse.core.resources.*;
@@ -52,7 +54,7 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 		} else if (resource instanceof IFile) {
 			String name = resource.getName();
 			IRunnableContext context = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			ISearchQuery query = DefaultTextSearchQueryProvider.getPreferred().createQuery(name);
+			ISearchQuery query = TextSearchQueryProvider.getPreferred().createQuery(name);
 			NewSearchUI.runQueryInForeground(context, query);
 			ISearchResult result = query.getSearchResult();
 			if (result instanceof AbstractTextSearchResult) {
@@ -62,7 +64,7 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 				}
 			}
 		}
-		
+
 	}
 
 	@Override

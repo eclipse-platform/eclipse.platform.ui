@@ -14,13 +14,13 @@ import java.util.*;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * Represents a node (possibly containing children) in a tree content 
+ * Represents a node (possibly containing children) in a tree content
  * provider model. Every node has a name and optionally a value.
  */
 public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
-	 * A list containing this node's children. 
+	 * A list containing this node's children.
 	 */
 	private List children;
 
@@ -29,7 +29,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 */
 	private String name;
 
-	/** 
+	/**
 	 * This node's value (may be null).
 	 */
 	private Object value;
@@ -41,7 +41,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Constructs a TreeContentProviderNode with the given name and value.
-	 * 
+	 *
 	 * @param name this node's name (may be null, if value is not null)
 	 * @param value this node's value (may be null, if name is not null)
 	 */
@@ -52,8 +52,8 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Constructs a TreeContentProviderNode with the given name.
-	 * 
-	 * @param name this node's name (may not be null). 
+	 *
+	 * @param name this node's name (may not be null).
 	 */
 	public TreeContentProviderNode(String name) {
 		this(name, null);
@@ -61,7 +61,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Sets this node's parent.
-	 * 
+	 *
 	 * @param parent this node's new parent
 	 */
 	private void setParent(TreeContentProviderNode parent) {
@@ -71,7 +71,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	/**
 	 * Adds a new child. If the child is a TreeContentProviderNode, sets its parent
 	 * to this object.
-	 * 
+	 *
 	 * @param child a new child to be added.
 	 */
 	public void addChild(Object child) {
@@ -87,9 +87,9 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	}
 
 	/**
-	 * Returns an array containing all children this node has. If this node 
+	 * Returns an array containing all children this node has. If this node
 	 * has no children, returns an empty array.
-	 * 
+	 *
 	 * @return an array containing this node's children.
 	 */
 	public Object[] getChildren() {
@@ -98,7 +98,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns a boolean indicating if this node has any children.
-	 * 
+	 *
 	 * @return true, if this node has children, false otherwise
 	 */
 	public boolean hasChildren() {
@@ -107,7 +107,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns a string representation of the object.
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns this node's parent node.
-	 * 
+	 *
 	 * @return this node's parent node or null, if this node is a root
 	 */
 	public TreeContentProviderNode getParent() {
@@ -130,7 +130,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns this node's value (may be null).
-	 * 
+	 *
 	 * @return this node's value
 	 */
 	public Object getValue() {
@@ -139,7 +139,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns a boolean indicating if this node is root or not.
-	 * 
+	 *
 	 * @return true if this node is root, false otherwise
 	 */
 	public boolean isRoot() {
@@ -147,10 +147,10 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	}
 
 	/**
-	 * Sorts this node's children list in ascending order. The children are 
-	 * ordered by name. Any changes in the children list will potentially 
-	 * invalidate the ordering. All children must be instances of 
-	 * <code>TreeContentProviderNode</code>. 
+	 * Sorts this node's children list in ascending order. The children are
+	 * ordered by name. Any changes in the children list will potentially
+	 * invalidate the ordering. All children must be instances of
+	 * <code>TreeContentProviderNode</code>.
 	 */
 	public void sort() {
 		if (children == null)
@@ -159,8 +159,8 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	}
 
 	/**
-	 * Compares this node with another node. 
-	 * 
+	 * Compares this node with another node.
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -192,7 +192,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns this node's tree root node. If this node is a root node, returns itself.
-	 * 
+	 *
 	 * @return this node's tree root node
 	 */
 	public TreeContentProviderNode getRoot() {
@@ -201,7 +201,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * Returns this node's immediate child that has the given value.
-	 * 
+	 *
 	 * @return a tree node, or <code>null</code>
 	 */
 	public TreeContentProviderNode findNode(Object obj) {

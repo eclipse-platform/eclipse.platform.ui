@@ -29,7 +29,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 
 	/**
 	 * Sets action's text and tool tip text.
-	 * 
+	 *
 	 * @param selectionProvider the selection provider
 	 */
 	public AbstractCopySelectionAction(ISelectionProvider selectionProvider) {
@@ -38,10 +38,10 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 	}
 
 	/**
-	 * Copies the currently selected contents to the clipboard. The meaning of the 
-	 * currently selected contents is defined by overriding the getContents() 
+	 * Copies the currently selected contents to the clipboard. The meaning of the
+	 * currently selected contents is defined by overriding the getContents()
 	 * method.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
@@ -54,7 +54,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 
 	/**
 	 * Registers this action as a global action handler.
-	 * 
+	 *
 	 * @param actionBars the action bars where this action will be registered.
 	 * @see org.eclipse.core.tools.GlobalAction#registerAsGlobalAction(
 	 * org.eclipse.ui.IActionBars)
@@ -66,7 +66,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 
 	/**
 	 * Returns the currently selected contents as a String object.
-	 * 
+	 *
 	 * @return the selected contents as string.
 	 */
 	protected abstract String getContents();

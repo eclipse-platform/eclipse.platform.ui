@@ -14,8 +14,8 @@ public class PartialDumpException extends DumpException {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * Data read when the error happened. May be 
-	 * null. 
+	 * Data read when the error happened. May be
+	 * null.
 	 */
 	private Object partialContents;
 
@@ -25,10 +25,10 @@ public class PartialDumpException extends DumpException {
 	}
 
 	/**
-	 * Returns the contents partially read when this exception occurred. May 
+	 * Returns the contents partially read when this exception occurred. May
 	 * return <code>null</code>.
-	 * 
-	 * @return the contents partially read, or <code>null</code> 
+	 *
+	 * @return the contents partially read, or <code>null</code>
 	 */
 	public Object getPartialContents() {
 		return partialContents;

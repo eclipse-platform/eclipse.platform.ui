@@ -30,7 +30,7 @@ public class PluginDependencyGraphNode {
 	private Set ancestors = new HashSet();
 
 	/**
-	 * Constructor for this class. Each node is associated with a plug-in so 
+	 * Constructor for this class. Each node is associated with a plug-in so
 	 * we accept the plug-in descriptor here and keep it around for later use.
 	 */
 	public PluginDependencyGraphNode(BundleDescription descriptor) {
@@ -54,7 +54,7 @@ public class PluginDependencyGraphNode {
 	/**
 	 * Return the identifier for this node. It is the unique plug-in identifier
 	 * for this object's plug-in descriptor.
-	 * 
+	 *
 	 * @return the plug-in id
 	 */
 	public String getId() {

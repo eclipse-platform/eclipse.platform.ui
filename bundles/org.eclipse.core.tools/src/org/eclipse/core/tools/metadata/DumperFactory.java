@@ -36,7 +36,7 @@ public class DumperFactory {
 
 	/**
 	 * Provides access to a DumperFactory instance.
-	 * 
+	 *
 	 * @return a <code>DumperFactory</code> instance
 	 */
 	public synchronized static DumperFactory getInstance() {
@@ -47,8 +47,8 @@ public class DumperFactory {
 	}
 
 	/**
-	 * Constructs a dumper factory, reading dumper definitions from the 
-	 * extension registry. Forbids instantiation from outside this class. 
+	 * Constructs a dumper factory, reading dumper definitions from the
+	 * extension registry. Forbids instantiation from outside this class.
 	 */
 	private DumperFactory() {
 		loadDumpers();
@@ -64,22 +64,22 @@ public class DumperFactory {
 
 	/**
 	 * Returns an array containing all known file names.
-	 * 
-	 * @return an array containing file names registered in this factory. 
+	 *
+	 * @return an array containing file names registered in this factory.
 	 */
 	public String[] getRegisteredFileNames() {
 		String[] fileNames = new String[configuration.size()];
-		return (String[]) configuration.keySet().toArray(fileNames);
+		return configuration.keySet().toArray(fileNames);
 	}
 
 	/**
-	 * Returns an instance of the dumper class registered for the provided file name. 
-	 * If there is no dumper class registered for the provided file name, raises an 
+	 * Returns an instance of the dumper class registered for the provided file name.
+	 * If there is no dumper class registered for the provided file name, raises an
 	 * exception.
-	 * 
+	 *
 	 * @param fileName the file to be dumped's name
 	 * @return a <code>IDumper</code> that knows how to read the file
-	 * @throws DumpException if there is no dumper class registered for the 
+	 * @throws DumpException if there is no dumper class registered for the
 	 * provided file name of if we cannot instanciate the dumper class
 	 */
 	public IDumper getDumper(String fileName) throws DumpException {
@@ -97,13 +97,13 @@ public class DumperFactory {
 			try {
 				return (IDumper) Class.forName((String) dumper).newInstance();
 			} catch (Exception e) {
-				throw new DumpException("Error instantiating dumper named " + dumper + " for <" + fileName + "> file", e); //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$
+				throw new DumpException("Error instantiating dumper named " + dumper + " for <" + fileName + "> file", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-		// dumper defined through extension mechanism	
+		// dumper defined through extension mechanism
 		try {
 			return (IDumper) ((IConfigurationElement) dumper).createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			throw new DumpException("Error instantiating dumper for <" + fileName + "> file", ce); //$NON-NLS-1$ //$NON-NLS-2$		
+			throw new DumpException("Error instantiating dumper for <" + fileName + "> file", ce); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

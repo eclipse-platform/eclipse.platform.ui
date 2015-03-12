@@ -12,7 +12,7 @@ package org.eclipse.core.tools;
 
 import org.eclipse.ui.part.ViewPart;
 
-/** 
+/**
  * A common base class for all Spy Plug-in views
  */
 public abstract class SpyView extends ViewPart {

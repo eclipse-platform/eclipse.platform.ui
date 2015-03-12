@@ -19,32 +19,32 @@ import org.eclipse.equinox.app.IApplicationContext;
 /**
  * A command-line interface for running dumpers on metadata files.
  * This application requires the name of the file to be dumped as its unique
- * argument.  
+ * argument.
  */
 public class DumpTool implements IApplication {
 
 	// list of files to dump
 	String[] files = null;
-	
-	/** 
-	 * The file filter. 
-	 * 
+
+	/**
+	 * The file filter.
+	 *
 	 * @see MetadataFileFilter
 	 */
 	private FileFilter fileFilter;
 
-	/** 
-	 * The directory filter. 
-	 * 
+	/**
+	 * The directory filter.
+	 *
 	 * @see DirectoryFilter
 	 */
 	private FileFilter directoryFilter;
 
-	
+
 	/**
-	 * Dumps a given file using the associated dumper, sending its contents to the 
-	 * standard output. 
-	 * 
+	 * Dumps a given file using the associated dumper, sending its contents to the
+	 * standard output.
+	 *
 	 * @param context Application Context
 	 * @see DumperFactory#getDumper(String)
 	 */
@@ -52,16 +52,16 @@ public class DumpTool implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 		String fileName = System.getProperty("dump.file"); //$NON-NLS-1$
 		if (fileName == null) {
-			System.err.println("Use \"dump.file\" system property to point to the metadata file to be dumped"); //$NON-NLS-1$			
+			System.err.println("Use \"dump.file\" system property to point to the metadata file to be dumped"); //$NON-NLS-1$
 			return new Integer(0);
 		}
 
 		File toDump = new File(fileName);
 		if (!toDump.exists()) {
-			System.err.println("File \"" + toDump.getAbsolutePath() + "\" does not exist"); //$NON-NLS-1$ //$NON-NLS-2$			
+			System.err.println("File \"" + toDump.getAbsolutePath() + "\" does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 			return new Integer(1);
 		}
-		
+
 		// ready to parse
 		DumperFactory factory = DumperFactory.getInstance();
 		String[] registeredFileNames = factory.getRegisteredFileNames();
@@ -69,7 +69,7 @@ public class DumpTool implements IApplication {
 		this.directoryFilter = new DirectoryFilter();
 		System.out.println("DumpTool started...");
 		System.out.println("Analyzing: "+fileName);
-		
+
 		if (toDump.isFile()) {
 			files = new String[]{fileName};
 		} else {
@@ -77,7 +77,7 @@ public class DumpTool implements IApplication {
 		}
 
 		for (int i = 0; i < files.length; i++) {
-			dump(files[i]);	
+			dump(files[i]);
 		}
 
 		System.out.println("DumpTool finished...");
@@ -114,7 +114,7 @@ public class DumpTool implements IApplication {
 	private String[] extractFiles(String directory) {
 		List fileNames = new ArrayList();
 		extractInfo(new File(directory), fileNames, new NullProgressMonitor());
-		
+
 		String[] result = new String[fileNames.size()];
 		if (fileNames.size()>0){
 			result = (String[])fileNames.toArray(new String[fileNames.size()]);
@@ -122,16 +122,16 @@ public class DumpTool implements IApplication {
 		return result;
 	}
 	/**
-	 * Builds this content provider data model from a given root directory. This 
-	 * method operates recursively, adding a tree node for each file of a registered 
-	 * type it finds and for each directory that contains (any directories that 
-	 * contain) a file of a registered type. This method returns a boolean value 
-	 * indicating that it (or at least one of its sub dirs) contains files with one 
+	 * Builds this content provider data model from a given root directory. This
+	 * method operates recursively, adding a tree node for each file of a registered
+	 * type it finds and for each directory that contains (any directories that
+	 * contain) a file of a registered type. This method returns a boolean value
+	 * indicating that it (or at least one of its sub dirs) contains files with one
 	 * of the registered types (so its parent will include it too).
-	 * 
+	 *
 	 * @param dir a directory potentially containing known metadata files.
-	 * @param dirNode the node corresponding to that directory 
-	 * @return true if the provided dir (or at least one of its sub dirs) 
+	 * @param dirNode the node corresponding to that directory
+	 * @return true if the provided dir (or at least one of its sub dirs)
 	 * contains files with one of the registered types, false otherwise
 	 */
 	void extractInfo(File dir, List fileList, IProgressMonitor monitor) {
@@ -141,7 +141,7 @@ public class DumpTool implements IApplication {
 
 		monitor.beginTask("Scanning dir " + dir, 100); //$NON-NLS-1$
 		try {
-			// looks for files of registered types in this directory	
+			// looks for files of registered types in this directory
 			File[] selectedFiles = dir.listFiles(fileFilter);
 			monitor.worked(1);
 			Arrays.sort(selectedFiles);
@@ -161,10 +161,10 @@ public class DumpTool implements IApplication {
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * Filters directories entries.
-	 * 
+	 *
 	 * @see java.io.FileFilter
 	 */
 	private class DirectoryFilter implements FileFilter {
@@ -176,7 +176,7 @@ public class DumpTool implements IApplication {
 			return file.isDirectory();
 		}
 	}
-	
+
 	@Override
 	public void stop() {
 		// Does not do anything

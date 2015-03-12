@@ -33,7 +33,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 	protected TableTreeViewer viewer; // Table tree viewer used to contain all the data but the total
 	protected TableTree tableTree; // The table tree that will populate the viewer
 	protected Table totalTable; // The table used to display the totals
-	protected boolean flat; // Flag indicating the view mode 
+	protected boolean flat; // Flag indicating the view mode
 	protected Clipboard clipboard;
 	protected Action copyAction;
 	protected Action selectAllAction;

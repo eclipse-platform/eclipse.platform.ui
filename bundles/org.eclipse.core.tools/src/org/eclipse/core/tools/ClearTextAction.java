@@ -27,8 +27,8 @@ public class ClearTextAction extends GlobalAction {
 	private IDocument document;
 
 	/**
-	 * Constructs a ClearTextAction action with the provided document. 
-	 * 
+	 * Constructs a ClearTextAction action with the provided document.
+	 *
 	 * @param document the document to be cleared when this action is run.
 	 */
 	public ClearTextAction(IDocument document) {
@@ -52,7 +52,7 @@ public class ClearTextAction extends GlobalAction {
 
 	/**
 	 * Registers this action as a global action handler.
-	 * 
+	 *
 	 * @param actionBars the action bars where this action will be registered.
 	 * @see GlobalAction#registerAsGlobalAction(org.eclipse.ui.IActionBars)
 	 */

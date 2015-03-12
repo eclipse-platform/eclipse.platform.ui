@@ -14,23 +14,23 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 /**
- A high-level exception class to be used by <code>IDumper</code>s. It is 
- intended to be used as a wrapper for low-level exceptions. A method for 
- accessing the low-level exception that caused this 
- <code>DumpException</code> is provided.  
+ A high-level exception class to be used by <code>IDumper</code>s. It is
+ intended to be used as a wrapper for low-level exceptions. A method for
+ accessing the low-level exception that caused this
+ <code>DumpException</code> is provided.
  */
 public class DumpException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * The low-level exception that caused this <code>DumpException</code>. May be 
+	 * The low-level exception that caused this <code>DumpException</code>. May be
 	 * null.
 	 */
 	private Throwable cause;
 
 	/**
 	 * Constructs a <code>DumpException</code> with the provided message.
-	 * 
+	 *
 	 * @param msg the message
 	 */
 	public DumpException(String msg) {
@@ -39,8 +39,8 @@ public class DumpException extends Exception {
 
 	/**
 	 * Constructs a <code>DumpException</code> with the provided message and cause.
-	 * 
-	 * @param msg the message 
+	 *
+	 * @param msg the message
 	 * @param cause the exception that caused this <code>DumpException</code>
 	 */
 	public DumpException(String msg, Throwable cause) {
@@ -50,7 +50,7 @@ public class DumpException extends Exception {
 
 	/**
 	 * Returns the cause for this <code>DumpException</code>. May be null.
-	 * 
+	 *
 	 * @return the cause for this <code>DumpException</code>.
 	 */
 	@Override
@@ -59,9 +59,9 @@ public class DumpException extends Exception {
 	}
 
 	/**
-	 * Returns this exception message (including the cause message, if there is a 
+	 * Returns this exception message (including the cause message, if there is a
 	 * cause exception).
-	 * 
+	 *
 	 * @return the error message string
 	 * @see java.lang.Throwable#getMessage()
 	 */
@@ -71,9 +71,9 @@ public class DumpException extends Exception {
 	}
 
 	/**
-	 * Prints this <code>DumpException</code> message and its backtrace to the 
-	 * specified print stream. 
-	 * 
+	 * Prints this <code>DumpException</code> message and its backtrace to the
+	 * specified print stream.
+	 *
 	 * @param output the <code>java.io.PrintStream</code> object where to print
 	 * @see java.lang.Throwable#printStackTrace(java.io.PrintStream)
 	 */
@@ -87,9 +87,9 @@ public class DumpException extends Exception {
 	}
 
 	/**
-	 * Prints this <code>DumpException</code> message and its backtrace to the 
-	 * specified print writer. 
-	 * 
+	 * Prints this <code>DumpException</code> message and its backtrace to the
+	 * specified print writer.
+	 *
 	 * @param output the <code>java.io.PrintWriter</code> object where to print
 	 * @see java.lang.Throwable#printStackTrace(java.io.PrintWriter)
 	 */

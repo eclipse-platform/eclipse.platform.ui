@@ -15,30 +15,30 @@ import java.io.IOException;
 
 /**
  * A dumping strategy defines how a input stream will be dumped as a string.
- * A given dumper may use different strategies for reading different versions of 
- * a file it understands, or may even use different strategies for reading 
+ * A given dumper may use different strategies for reading different versions of
+ * a file it understands, or may even use different strategies for reading
  * different segments of a same file.
- * 
+ *
  * @see org.eclipse.core.tools.metadata.AbstractDumper
  */
 public interface IStringDumpingStrategy {
 	/**
 	 * Dumps contents read from the provided stream.
-	 * Concrete implementations should not catch any exceptions. 
+	 * Concrete implementations should not catch any exceptions.
 	 * Concrete implementations should not close the input stream.
 	 * This method may read the entire input stream contents, or just part of it.
-	 * 
-	 * @param input the input stream where to dump contents from 
+	 *
+	 * @param input the input stream where to dump contents from
 	 * @return the contents read in string format, or null if no further reading should occur
-	 * @throws IOException an exception occurred while dumping the input stream 
-	 * @throws DumpException an exception occurred while dumping the input stream 
+	 * @throws IOException an exception occurred while dumping the input stream
+	 * @throws DumpException an exception occurred while dumping the input stream
 	 */
 	public String dumpStringContents(DataInputStream input) throws IOException, DumpException;
 
 	/**
-	 * Returns a high-level description for the file format understood by this 
+	 * Returns a high-level description for the file format understood by this
 	 * strategy.
-	 * 
+	 *
 	 * @return a string describing the file format this strategy understands.
 	 */
 	public String getFormatDescription();

@@ -25,9 +25,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class MetadataTreeView extends SpyView {
 
-	/** 
+	/**
 	 * A JFace widget used to display a tree corresponding to the metadata
-	 * directory structure (containing only files of known types). 
+	 * directory structure (containing only files of known types).
 	 */
 	protected AbstractTreeViewer viewer;
 
@@ -116,7 +116,7 @@ public class MetadataTreeView extends SpyView {
 
 	/**
 	 * Creates this view widget and actions.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -157,7 +157,7 @@ public class MetadataTreeView extends SpyView {
 
 	/**
 	 * Rebuilds the viewer content provider.
-	 * 
+	 *
 	 * @param file
 	 * @see WorkspaceContentProvider#inputChanged(Viewer, Object, Object)
 	 */

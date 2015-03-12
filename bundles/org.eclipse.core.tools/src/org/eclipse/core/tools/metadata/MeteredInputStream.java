@@ -22,7 +22,7 @@ public class MeteredInputStream extends PushbackInputStream {
 
 	/**
 	 * Constructs a metered input stream chained to the given source input stream.
-	 * 
+	 *
 	 * @param in the input stream from where to read data
 	 */
 	public MeteredInputStream(InputStream in) {
@@ -30,11 +30,11 @@ public class MeteredInputStream extends PushbackInputStream {
 	}
 
 	/**
-	 * Forwards the call to the super class, incrementing the offset if a 
+	 * Forwards the call to the super class, incrementing the offset if a
 	 * byte is successfully read.
-	 * 
+	 *
 	 * @return the next byte or <code>-1</code> if there is more data to be read.
-	 * @throws IOException if a failure occurs while reading the input stream 
+	 * @throws IOException if a failure occurs while reading the input stream
 	 * @see java.io.PushbackInputStream#read()
 	 */
 	@Override
@@ -48,8 +48,8 @@ public class MeteredInputStream extends PushbackInputStream {
 	/**
 	 * Forwards the call to the super class, incrementing the current offset
 	 * by the number of bytes read.
-	 * 
-	 * @param b an array containing bytes to be read 
+	 *
+	 * @param b an array containing bytes to be read
 	 * @return the number of bytes read.
 	 * @throws IOException if a failure occurs while reading the input stream
 	 * @see java.io.PushbackInputStream#read(byte[])
@@ -62,10 +62,10 @@ public class MeteredInputStream extends PushbackInputStream {
 	/**
 	 * Forwards the call to the super class, incrementing the current offset
 	 * by the number of bytes read.
-	 * 
+	 *
 	 * @param b an array containing bytes to be read
 	 * @param off the array offset where bytes will be read to
-	 * @param len the number of bytes to be read 
+	 * @param len the number of bytes to be read
 	 * @return the number of bytes read
 	 * @throws IOException if a failure occurs while reading the input stream
 	 * @see java.io.PushbackInputStream#read(byte[], int, int)
@@ -80,7 +80,7 @@ public class MeteredInputStream extends PushbackInputStream {
 
 	/**
 	 * Returns the current offset value.
-	 * 
+	 *
 	 * @return long the current number of bytes read
 	 */
 	public long getOffset() {
@@ -90,8 +90,8 @@ public class MeteredInputStream extends PushbackInputStream {
 	/**
 	 * Forwards the call to the underlying input stream, decrementing the offset by
 	 * the number of bytes unread.
-	 * 
-	 * @param b an array containing bytes to be unread 
+	 *
+	 * @param b an array containing bytes to be unread
 	 * @throws IOException if a failure occurs
 	 * @see java.io.PushbackInputStream#unread(byte)
 	 */
@@ -104,10 +104,10 @@ public class MeteredInputStream extends PushbackInputStream {
 	/**
 	 * Forwards the call to the underlying input stream, decrementing the offset by
 	 * the number of bytes unread.
-	 * 
+	 *
 	 * @param b an array containing bytes to be unread
 	 * @param off the array offset from where bytes will be unread
-	 * @param len the number of bytes to be unread 
+	 * @param len the number of bytes to be unread
 	 * @throws IOException if a failure occurs
 	 * @see PushbackInputStream#unread(byte[], int, int)
 	 */
@@ -118,10 +118,10 @@ public class MeteredInputStream extends PushbackInputStream {
 	}
 
 	/**
-	 * Forwards the call to the underlying push back input stream, decrementing the 
-	 * offset if a 
+	 * Forwards the call to the underlying push back input stream, decrementing the
+	 * offset if a
 	 * byte is successfully unread.
-	 * 
+	 *
 	 * @param b the byte to be unread
 	 * @throws IOException if a failure occurs
 	 * @see PushbackInputStream#unread(byte[])

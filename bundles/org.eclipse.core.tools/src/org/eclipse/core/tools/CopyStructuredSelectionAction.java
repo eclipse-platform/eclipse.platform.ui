@@ -15,14 +15,14 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * A concrete implementation for <code>AbstractCopySelectionAction</code> that 
+ * A concrete implementation for <code>AbstractCopySelectionAction</code> that
  * supports structured selections.
- * 
+ *
  * @see org.eclipse.jface.viewers.IStructuredSelection
  */
 public class CopyStructuredSelectionAction extends AbstractCopySelectionAction {
 
-	/** 
+	/**
 	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#AbstractCopySelectionAction(ISelectionProvider)
 	 */
 	public CopyStructuredSelectionAction(ISelectionProvider selectionProvider) {
@@ -30,13 +30,13 @@ public class CopyStructuredSelectionAction extends AbstractCopySelectionAction {
 	}
 
 	/**
-	 * Returns the current structured selection as a string object where each 
+	 * Returns the current structured selection as a string object where each
 	 * node is followed by a line terminator char.  This method depends on the
 	 * toString() method of each node to define a reasonably formatted string
 	 * for display.
-	 * 
+	 *
 	 * @return a string containing the currently selected elements separated by
-	 * line terminators 
+	 * line terminators
 	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#getContents()
 	 */
 	@Override

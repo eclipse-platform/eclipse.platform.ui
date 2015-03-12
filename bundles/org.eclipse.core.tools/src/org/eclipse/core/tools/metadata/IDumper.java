@@ -18,11 +18,11 @@ import java.io.File;
  */
 public interface IDumper {
 
-	/** 
-	 * Reads a given file and produces a dump object. Any exception that 
-	 * may occur during file processing must be caught and stored as 
+	/**
+	 * Reads a given file and produces a dump object. Any exception that
+	 * may occur during file processing must be caught and stored as
 	 * failure reason in the IDump object returned.
-	 * 
+	 *
 	 * @param file the file to be dumped
 	 * @return a dump object representing the contents of the file dumped
 	 */

@@ -35,7 +35,7 @@ public class DumpSummaryView extends SpyView {
 
 	/**
 	 * Creates this view widget and actions.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl
 	 * (org.eclipse.swt.widgets.Composite)
@@ -67,8 +67,8 @@ public class DumpSummaryView extends SpyView {
 	/**
 	 * Rebuilds the view with the dump object provided. Only summary information
 	 * is made available.
-	 * 
-	 * @param dump a dump object describing the result of a dumping process. 
+	 *
+	 * @param dump a dump object describing the result of a dumping process.
 	 */
 	void load(IDump dump) {
 
@@ -92,7 +92,7 @@ public class DumpSummaryView extends SpyView {
 		output.append(dump.getFile().length());
 		output.append(" byte(s) read"); //$NON-NLS-1$
 
-		// updates the view contents 
+		// updates the view contents
 		viewer.getDocument().set(output.toString());
 	}
 

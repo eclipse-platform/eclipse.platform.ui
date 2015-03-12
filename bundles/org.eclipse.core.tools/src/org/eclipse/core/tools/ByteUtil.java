@@ -17,10 +17,10 @@ public class ByteUtil {
 
 	/**
 	 * Helper method that creates a string representation for a byte array.
-	 * 
+	 *
 	 * @param byteArray a byte array to be represented as string
-	 * @param max a maximum number of bytes to be considered - if zero, there is 
-	 * no maximum. 
+	 * @param max a maximum number of bytes to be considered - if zero, there is
+	 * no maximum.
 	 * @return a byte array string representation
 	 */
 	public static String byteArrayToString(byte[] byteArray, int max) {

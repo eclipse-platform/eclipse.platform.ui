@@ -16,8 +16,8 @@ import java.util.Arrays;
 
 /**
  * Filters accepted files (the ones who are registered in the DumperFactory).
- * 
- * @see MetadataTreeContentProvider#MetadataTreeContentProvider(String[]) 
+ *
+ * @see MetadataTreeContentProvider#MetadataTreeContentProvider(String[])
  * @see java.io.FileFilter
  */
 class MetadataFileFilter implements FileFilter {

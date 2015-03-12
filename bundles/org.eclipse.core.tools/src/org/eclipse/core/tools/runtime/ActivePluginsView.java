@@ -23,7 +23,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
- * View used to display the activated plugins 
+ * View used to display the activated plugins
  */
 public class ActivePluginsView extends TableWithTotalView {
 	private Action refreshAction;

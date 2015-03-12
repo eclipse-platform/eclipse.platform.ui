@@ -14,9 +14,9 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
- * A concrete implementation for <code>AbstractCopySelectionAction</code> that 
+ * A concrete implementation for <code>AbstractCopySelectionAction</code> that
  * supports text selections.
- * 
+ *
  * @see org.eclipse.jface.text.ITextSelection
  */
 public class CopyTextSelectionAction extends AbstractCopySelectionAction {
@@ -31,7 +31,7 @@ public class CopyTextSelectionAction extends AbstractCopySelectionAction {
 
 	/**
 	 * Returns the current text selection.
-	 * 
+	 *
 	 * @return a string containing the currently selected text
 	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#getContents()
 	 */

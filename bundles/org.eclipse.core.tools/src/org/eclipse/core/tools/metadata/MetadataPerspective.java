@@ -19,7 +19,7 @@ public class MetadataPerspective implements IPerspectiveFactory {
 	/**
 	 * Creates a layout containing the following views: Metadata Tree, Dump Contents
 	 * and Dump Summary, with no editor area.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(
 	 * org.eclipse.ui.IPageLayout)
 	 */

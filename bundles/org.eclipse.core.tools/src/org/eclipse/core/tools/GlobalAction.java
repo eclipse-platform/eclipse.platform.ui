@@ -15,12 +15,12 @@ import org.eclipse.ui.IActionBars;
 
 /**
  * An abstract base class for global actions. Global actions
- * are able to register themselves in a view's action bars. 
+ * are able to register themselves in a view's action bars.
  */
 public abstract class GlobalAction extends Action {
 	/**
 	 * Constructs an action.
-	 * 
+	 *
 	 * @param text the action description
 	 */
 	GlobalAction(String text) {
@@ -30,7 +30,7 @@ public abstract class GlobalAction extends Action {
 
 	/**
 	 * Registers this action as a global action handler.
-	 * 
+	 *
 	 * @param actionBars the action bars where this action will be registered.
 	 * @see IActionBars#updateActionBars()
 	 */

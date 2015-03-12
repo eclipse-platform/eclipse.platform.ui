@@ -25,7 +25,7 @@ public class SelectAllAction extends GlobalAction {
 
 	/**
 	 * Registers this action as a global action handler.
-	 * 
+	 *
 	 * @param actionBars the action bars where this action will be registered.
 	 * @see org.eclipse.core.tools.GlobalAction#registerAsGlobalAction(org.eclipse.ui.IActionBars)
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -27,21 +27,21 @@ import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * Stats View
- * 
+ *
  * This spy utility will display globally available statistical
  * information on various plug-ins.  The statistics available are those that
  * are available through the PluginStats class of
  * org.eclipse.core.resource/src/org/eclipse/core/internal/utils
- * 
+ *
  * Currently available information includes:
- * 	the id of the statistic 
+ * 	the id of the statistic
  * 	the number of notification this plug-in received
  * 	the amount of time spent receiving these notifications
  * 	the number of build requests on this plug-in
  * 	the amount of time spent building this plug-in
- * 
+ *
  * Build statistics will only be displayed if the tracing/debug option
- * "build/invoking" in the plug-in org.eclipse.core.resources is set to 
+ * "build/invoking" in the plug-in org.eclipse.core.resources is set to
  * true.
  */
 
@@ -116,7 +116,7 @@ public class EventsView extends TableWithTotalView {
 				case COLUMN_BLAME :
 					return stats.getBlameString();
 				case COLUMN_CONTEXT :
-					return stats.getContext(); //$NON-NLS-1$
+					return stats.getContext();
 				case COLUMN_COUNT :
 					return Integer.toString(stats.getRunCount());
 				case COLUMN_TIME :
@@ -196,7 +196,7 @@ public class EventsView extends TableWithTotalView {
 	private ColumnLayoutData columnLayouts[] = {new ColumnWeightData(80), // event
 			new ColumnWeightData(180), // blame
 			new ColumnWeightData(40), // context
-			new ColumnPixelData(65), // count 
+			new ColumnPixelData(65), // count
 			new ColumnPixelData(65)}; // total time
 	private CopyStructuredSelectionAction copyAction;
 	private Action resetAction;

@@ -21,27 +21,27 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * A tree content provider for Metadata view. Its input is a metadata directory,
- * the root directory from which Eclipse metadata files 
- * will be searched. The result is a tree containing directory that contains 
- * (any directories that contain) metadata files and the metadata files 
+ * the root directory from which Eclipse metadata files
+ * will be searched. The result is a tree containing directory that contains
+ * (any directories that contain) metadata files and the metadata files
  * themselves.<br>
- * This content provider mantains its contents using 
+ * This content provider mantains its contents using
  * <code>TreeContentProviderNode</code>
  * objects.
- * 
+ *
  * @see org.eclipse.core.tools.TreeContentProviderNode
  */
 public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
-	/** 
-	 * The file filter. 
-	 * 
+	/**
+	 * The file filter.
+	 *
 	 * @see MetadataFileFilter
 	 */
 	private FileFilter fileFilter;
 
-	/** 
-	 * The directory filter. 
-	 * 
+	/**
+	 * The directory filter.
+	 *
 	 * @see DirectoryFilter
 	 */
 	private FileFilter directoryFilter;
@@ -49,9 +49,9 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	private MetadataTreeRebuilder treeRebuilder;
 
 	/**
-	 * Constructs a new content provider. 
-	 * 
-	 * @param registeredFileNames an array containing all metadata file names known 
+	 * Constructs a new content provider.
+	 *
+	 * @param registeredFileNames an array containing all metadata file names known
 	 */
 	public MetadataTreeContentProvider(String[] registeredFileNames) {
 		super(true);
@@ -61,24 +61,24 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	}
 
 	/**
-	 * Returns true if the input is a <code>File</code> object pointing to 
+	 * Returns true if the input is a <code>File</code> object pointing to
 	 * a directory.
-	 * 
-	 * @return true if this input object is a <code>File</code> pointing to a 
+	 *
+	 * @return true if this input object is a <code>File</code> pointing to a
 	 * directory.
-	 * @param input an input object 
+	 * @param input an input object
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#acceptInput(java.lang.Object)
 	 */
 	@Override
 	protected boolean acceptInput(Object input) {
-		return (input instanceof File) && ((File) input).isDirectory(); //$NON-NLS-1$
+		return (input instanceof File) && ((File) input).isDirectory();
 	}
 
 	/**
 	 * Updates the data model for this content provider upon the provided input.
-	 * 
+	 *
 	 * @param input a File object pointing to a metadata directory.
-	 * 
+	 *
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#rebuild(Viewer, Object)
 	 */
 	@Override
@@ -126,16 +126,16 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	}
 
 	/**
-	 * Builds this content provider data model from a given root directory. This 
-	 * method operates recursively, adding a tree node for each file of a registered 
-	 * type it finds and for each directory that contains (any directories that 
-	 * contain) a file of a registered type. This method returns a boolean value 
-	 * indicating that it (or at least one of its sub dirs) contains files with one 
+	 * Builds this content provider data model from a given root directory. This
+	 * method operates recursively, adding a tree node for each file of a registered
+	 * type it finds and for each directory that contains (any directories that
+	 * contain) a file of a registered type. This method returns a boolean value
+	 * indicating that it (or at least one of its sub dirs) contains files with one
 	 * of the registered types (so its parent will include it too).
-	 * 
+	 *
 	 * @param dir a directory potentially containing known metadata files.
-	 * @param dirNode the node corresponding to that directory 
-	 * @return true if the provided dir (or at least one of its sub dirs) 
+	 * @param dirNode the node corresponding to that directory
+	 * @return true if the provided dir (or at least one of its sub dirs)
 	 * contains files with one of the registered types, false otherwise
 	 */
 	boolean extractInfo(File dir, TreeContentProviderNode dirNode, IProgressMonitor monitor) {
@@ -147,7 +147,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 
 		monitor.beginTask("Scanning dir " + dir, 100); //$NON-NLS-1$
 		try {
-			// looks for files of registered types in this directory	
+			// looks for files of registered types in this directory
 			File[] selectedFiles = dir.listFiles(fileFilter);
 			monitor.worked(1);
 			Arrays.sort(selectedFiles);
@@ -175,15 +175,15 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	}
 
 	/**
-	 * Helper method that creates a new TreeContentProviderNode object given a File 
+	 * Helper method that creates a new TreeContentProviderNode object given a File
 	 * object.
-	 * 
+	 *
 	 * @param file the file a node will created for
-	 * @return a <code>TreeContentProviderNode</code> 
+	 * @return a <code>TreeContentProviderNode</code>
 	 */
 	private TreeContentProviderNode makeNode(final File file) {
 		return new TreeContentProviderNode(file.getName(), file) {
-			// redefines toString so the root shows the full path while any other 
+			// redefines toString so the root shows the full path while any other
 			// node shows only the file / directory name
 			@Override
 			public String toString() {
@@ -194,7 +194,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 
 	/**
 	 * Filters directories entries.
-	 * 
+	 *
 	 * @see java.io.FileFilter
 	 */
 	private class DirectoryFilter implements FileFilter {

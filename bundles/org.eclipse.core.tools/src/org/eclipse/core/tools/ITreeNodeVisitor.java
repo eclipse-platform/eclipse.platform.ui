@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.tools;
 
-/** 
+/**
  * This interface is implemented by objects that visit trees made of
  * <code>TreeContentProviderNode</code> objects.
  *
  * @see org.eclipse.core.tools.TreeContentProviderNode#accept(ITreeNodeVisitor)
  */
 public interface ITreeNodeVisitor {
-	/** 
+	/**
 	 * Visits the given node.
 	 *
 	 * @param node the node to visit

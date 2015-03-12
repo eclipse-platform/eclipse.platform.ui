@@ -22,9 +22,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Content type Spy view. This view shows detailed information about the currently 
- * the content type registry . 
- * 
+ * Content type Spy view. This view shows detailed information about the currently
+ * the content type registry .
+ *
  */
 public class ContentTypeView extends SpyView implements IAdaptable {
 

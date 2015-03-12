@@ -13,8 +13,8 @@ package org.eclipse.core.tools.metadata;
 import java.io.File;
 
 /**
- * Default implementation for <code>IDump</code>. 
- * 
+ * Default implementation for <code>IDump</code>.
+ *
  * @see IDump
  */
 public class Dump implements IDump {
@@ -27,7 +27,7 @@ public class Dump implements IDump {
 	 */
 	private boolean failed;
 	/**
-	 * The exception that caused the failure (may be null) 
+	 * The exception that caused the failure (may be null)
 	 */
 	private Exception failureReason;
 	/**
@@ -72,7 +72,7 @@ public class Dump implements IDump {
 
 	/**
 	 * Sets the failure reason.
-	 * 
+	 *
 	 * @param failureReason The failure reason for this dump object
 	 */
 	public void setFailureReason(Exception failureReason) {
@@ -81,7 +81,7 @@ public class Dump implements IDump {
 
 	/**
 	 * Sets the file.
-	 * 
+	 *
 	 * @param file The file for this dump object
 	 */
 	public void setFile(File file) {
@@ -98,7 +98,7 @@ public class Dump implements IDump {
 
 	/**
 	 * Sets the contents.
-	 * 
+	 *
 	 * @param contents The contents for this dump object
 	 */
 	public void setContents(Object contents) {
@@ -107,7 +107,7 @@ public class Dump implements IDump {
 
 	/**
 	 * Sets the offset.
-	 * 
+	 *
 	 * @param offset The offset for this dump object
 	 */
 	public void setOffset(long offset) {
@@ -123,9 +123,9 @@ public class Dump implements IDump {
 	}
 
 	/**
-	 * Returns a human-readable representation for this dump object (for 
+	 * Returns a human-readable representation for this dump object (for
 	 * debugging purposes).
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

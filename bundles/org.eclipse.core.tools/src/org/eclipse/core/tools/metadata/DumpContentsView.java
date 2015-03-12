@@ -45,7 +45,7 @@ public class DumpContentsView extends SpyView {
 	public static final String VIEW_ID = DumpContentsView.class.getName();
 
 	/**
-	 * Constructs a DumpContentsView. 
+	 * Constructs a DumpContentsView.
 	 */
 	public DumpContentsView() {
 		dumperFactory = DumperFactory.getInstance();
@@ -54,7 +54,7 @@ public class DumpContentsView extends SpyView {
 
 	/**
 	 * Creates this view widget and actions.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -88,7 +88,7 @@ public class DumpContentsView extends SpyView {
 	/**
 	 * Sets the file to be dumped. The view state will be updated to reflect
 	 * changes.
-	 * 
+	 *
 	 * @param file the file to be dumped
 	 */
 	public void setFile(File file) {
@@ -103,12 +103,12 @@ public class DumpContentsView extends SpyView {
 			return;
 		}
 
-		// dumps file        
+		// dumps file
 		IDump dump = dumper.dump(file);
 		if (dump.isFailed()) {
 			CoreToolsPlugin.getDefault().log("Error during file dump", dump.getFailureReason()); //$NON-NLS-1$
 			String message = "File dumping did not complete successfully. Reason: " + dump.getFailureReason(); //$NON-NLS-1$
-			ErrorUtil.showErrorMessage(message, "Error during file dump"); //$NON-NLS-1$		
+			ErrorUtil.showErrorMessage(message, "Error during file dump"); //$NON-NLS-1$
 		}
 
 		// loads the new dump object
@@ -117,14 +117,14 @@ public class DumpContentsView extends SpyView {
 
 	/**
 	 * Rebuilds the view with the dump object provided.
-	 * 
-	 * @param dump a dump object to be shown on this view 
+	 *
+	 * @param dump a dump object to be shown on this view
 	 */
 	private void load(IDump dump) {
 
 		this.currentFile = dump.getFile();
 
-		// now it is safe to get the part title 
+		// now it is safe to get the part title
 		// (during createPartControl it gets Workbench window title)
 		if (initialTitle == null)
 			this.initialTitle = this.getTitle();
@@ -151,12 +151,12 @@ public class DumpContentsView extends SpyView {
 				ErrorUtil.logException(pie, "Error opening view"); //$NON-NLS-1$
 			}
 
-		// if the Dump Summary view is available, updates it 
+		// if the Dump Summary view is available, updates it
 		if (summaryView != null)
 			summaryView.load(dump);
 	}
 
-	/** 
+	/**
 	 * File load action implementation.
 	 */
 	private class LoadFileAction extends Action {
@@ -166,11 +166,11 @@ public class DumpContentsView extends SpyView {
 			this.setToolTipText("Load file..."); //$NON-NLS-1$
 		}
 
-		/** 
-		 * Executes this action, opening a file dialog so the user can select the 
+		/**
+		 * Executes this action, opening a file dialog so the user can select the
 		 * file to be dumped. If a file is successfully selected, opens it by
 		 * calling <code>#setFile(File)</code>.
-		 * 
+		 *
 		 * @see DumpContentsView#setFile
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
