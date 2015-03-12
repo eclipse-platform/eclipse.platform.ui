@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Steven Spungin - Bug 441874
@@ -36,18 +36,18 @@ import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
 public class EventBroker implements IEventBroker {
-	
+
 	// TBD synchronization
 	private Map<EventHandler, Collection<ServiceRegistration<?>>> registrations = new HashMap<EventHandler, Collection<ServiceRegistration<?>>>();
 
 	@Inject
 	@Optional
 	Logger logger;
-	
+
 	@Inject
 	@Optional
 	UISynchronize uiSync;
-	
+
 	// This is a temporary code to ensure that bundle containing
 	// EventAdmin implementation is started. This code it to be removed once
 	// the proper method to start EventAdmin is added.
@@ -67,7 +67,7 @@ public class EventBroker implements IEventBroker {
 			}
 		}
 	}
-	
+
 	public EventBroker() {
 		// placeholder
 	}
@@ -160,7 +160,7 @@ public class EventBroker implements IEventBroker {
 		}
 		return true;
 	}
-	
+
 	@PreDestroy
 	void dispose() {
 		Collection<Collection<ServiceRegistration<?>>> values = new ArrayList<Collection<ServiceRegistration<?>>>(

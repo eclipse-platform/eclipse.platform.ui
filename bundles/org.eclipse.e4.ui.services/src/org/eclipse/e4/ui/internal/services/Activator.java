@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,14 +17,14 @@ import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
-	
+
 	public final static String PLUGIN_ID = "org.eclipse.e4.ui.services"; //$NON-NLS-1$
-	
+
 	private static Activator singleton;
-	
-	private ServiceRegistration contextServiceReg; 
+
+	private ServiceRegistration contextServiceReg;
 	private ServiceRegistration handlerServiceReg;
-	
+
 	private ServiceTracker eventAdminTracker;
 	private BundleContext bundleContext;
 
@@ -41,7 +41,7 @@ public class Activator implements BundleActivator {
 		bundleContext = context;
 		singleton = this;
 	}
-	
+
 	/*
 	 * Return the debug options service, if available.
 	 */
@@ -63,7 +63,7 @@ public class Activator implements BundleActivator {
 			handlerServiceReg.unregister();
 			handlerServiceReg = null;
 		}
-		
+
 		if (eventAdminTracker != null) {
 			eventAdminTracker.close();
 			eventAdminTracker = null;
@@ -71,7 +71,7 @@ public class Activator implements BundleActivator {
 		bundleContext = null;
 		singleton = null;
 	}
-	
+
 	public BundleContext getBundleContext() {
 		return bundleContext;
 	}

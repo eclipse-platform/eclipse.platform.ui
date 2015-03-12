@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class ContextContextService implements EContextService {
 
 	private IEclipseContext eclipseContext;
 	private ContextManager contextManager;
-	
+
 	private boolean deferUpdates = false;
 
 	private int cachingRef = 0;
@@ -58,7 +58,7 @@ public class ContextContextService implements EContextService {
 			}
 		}
 	}
-	
+
 	/**
 	 * Informs the manager that a batch operation has started.
 	 * <p>
@@ -66,11 +66,11 @@ public class ContextContextService implements EContextService {
 	 * <code>deferUpdates(true)</code> that nothing in your batched operation
 	 * will prevent the matching call to <code>deferUpdates(false)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param defer
 	 *            true when starting a batch operation false when ending the
 	 *            operation
-	 * 
+	 *
 	 * @since 4.2.2
 	 */
 	@Override
@@ -128,7 +128,7 @@ public class ContextContextService implements EContextService {
 		}
 		eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
 	}
-	
+
 	@Override
 	public void deactivateContext(String id) {
 		if (deferUpdates) {

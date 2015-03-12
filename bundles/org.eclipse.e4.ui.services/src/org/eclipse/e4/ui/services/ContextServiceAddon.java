@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public final class ContextServiceAddon {
 			manager = new ContextManager();
 			context.set(ContextManager.class, manager);
 		}
-		
+
 		context.set(EContextService.class.getName(), new ContextContextFunction());
 		context.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		context.runAndTrack(new RunAndTrack() {
