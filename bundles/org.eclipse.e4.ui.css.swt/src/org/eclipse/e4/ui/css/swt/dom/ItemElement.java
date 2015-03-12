@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Item}.
- * 
+ *
  */
 public class ItemElement extends WidgetElement {
 

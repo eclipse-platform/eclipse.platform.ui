@@ -24,9 +24,9 @@ public class ThemeDefinitionElement<T extends IThemeElementDefinitionOverridable
 	private String localName;
 
 	private String namespaceURI;
-	
+
 	private String id;
-	
+
 	public ThemeDefinitionElement(T definition, CSSEngine engine) {
 		super(definition, engine);
 	}

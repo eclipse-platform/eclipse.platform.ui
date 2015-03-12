@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyWebbyStyleHandler extends AbstractCSSPropertySWTHandler {
 
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyWebbyStyleHandler();
-	
+
 	@Override
 	public void applyCSSProperty(Control control, String property,
 		    CSSValue value, String pseudo, CSSEngine engine) throws Exception {

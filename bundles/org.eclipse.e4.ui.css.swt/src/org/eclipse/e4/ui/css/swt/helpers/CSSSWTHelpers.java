@@ -26,10 +26,10 @@ import org.w3c.dom.css.CSSValue;
 /**
  * SWT Helper to transform CSS w3c object (org.w3c.dom.css.RGBColor....) into
  * SWT object (org.eclipse.swt.graphics.Color...).
- * 
+ *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  */
 public class CSSSWTHelpers {
 
@@ -44,11 +44,11 @@ public class CSSSWTHelpers {
 	public static PaintListener createBorderPaintListener(final CSSEngine engine,
 			final Control control) {
 		return new PaintListener() {
-			
+
 			/**
 			 * Converts the specified CSS value into an SWT Color instance. If
 			 * the conversion process fails, <code>null</code> will be returned.
-			 * 
+			 *
 			 * @param value the CSS value to convert
 			 * @return the Color corresponding to the provided RGB values, or <code>null</code> if the conversion process failed
 			 */
@@ -60,7 +60,7 @@ public class CSSSWTHelpers {
 					return null;
 				}
 			}
-			
+
 			@Override
 			public void paintControl(PaintEvent e) {
 				CSSBorderProperties border = (CSSBorderProperties) control

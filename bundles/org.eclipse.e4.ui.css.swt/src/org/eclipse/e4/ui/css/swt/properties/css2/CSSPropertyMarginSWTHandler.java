@@ -29,7 +29,7 @@ public class CSSPropertyMarginSWTHandler extends
 		AbstractCSSPropertyMarginHandler {
 
 	public final static ICSSPropertyMarginHandler INSTANCE = new CSSPropertyMarginSWTHandler();
-	
+
 	private final static int TOP = 0;
 	private final static int RIGHT = 1;
 	private final static int BOTTOM = 2;
@@ -38,11 +38,11 @@ public class CSSPropertyMarginSWTHandler extends
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		
+
 		super.applyCSSProperty(element, property, value, pseudo, engine);
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyMarginHandler#applyCSSPropertyMargin(java.lang.Object, org.w3c.dom.css.CSSValue, java.lang.String, org.eclipse.e4.ui.css.core.engine.CSSEngine)
@@ -54,7 +54,7 @@ public class CSSPropertyMarginSWTHandler extends
 	@Override
 	public void applyCSSPropertyMargin(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		
+
 		// If single value then assigned to all four margins
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			setMargin(element, TOP, value, pseudo);
@@ -63,21 +63,21 @@ public class CSSPropertyMarginSWTHandler extends
 			setMargin(element, LEFT, value, pseudo);
 			return;
 		}
-		
+
 		if(value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			CSSValueList valueList = (CSSValueList) value;
 			int length = valueList.getLength();
 
 			if(length < 2 || length > 4)
 				throw new CSSException("Invalid margin property list length");
-			
+
 			switch (length) {
 			case 4:
 				// If four values then assigned top/right/bottom/left
 				setMargin(element, TOP, valueList.item(0), pseudo);
 				setMargin(element, RIGHT, valueList.item(1), pseudo);
 				setMargin(element, BOTTOM, valueList.item(2), pseudo);
-				setMargin(element, LEFT, valueList.item(3), pseudo);				
+				setMargin(element, LEFT, valueList.item(3), pseudo);
 				break;
 			case 3:
 				// If three values then assigned top=v1, left=v2, right=v2, bottom=v3
@@ -164,13 +164,13 @@ public class CSSPropertyMarginSWTHandler extends
 			return null;
 		if(parent.getData(CSSSWTConstants.MARGIN_WRAPPER_KEY) == null)
 			return null;
-		
+
 		Layout layout = parent.getLayout();
 		if (layout == null || ! (layout instanceof GridLayout))
 			return null;
 		return (GridLayout) layout;
 	}
-	
+
 	private void setMargin(Object element, int side, CSSValue value, String pseudo) {
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
 			return;
@@ -180,7 +180,7 @@ public class CSSPropertyMarginSWTHandler extends
 
 		if(! (widget instanceof Control))
 			return;
-		
+
 		GridLayout layout = getLayout((Control) widget);
 		if(layout == null)
 			return;
@@ -192,7 +192,7 @@ public class CSSPropertyMarginSWTHandler extends
 			layout.marginRight = pixelValue;
 			break;
 		case BOTTOM:
-			layout.marginBottom = pixelValue;			
+			layout.marginBottom = pixelValue;
 			break;
 		case LEFT:
 			layout.marginLeft = pixelValue;

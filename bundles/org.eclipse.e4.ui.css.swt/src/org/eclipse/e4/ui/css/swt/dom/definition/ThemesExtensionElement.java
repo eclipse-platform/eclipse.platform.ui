@@ -23,11 +23,11 @@ public class ThemesExtensionElement extends ElementAdapter {
 	private String localName;
 
 	private String namespaceURI;
-	
+
 	public ThemesExtensionElement(IThemesExtension themesExtension, CSSEngine engine) {
 		super(themesExtension, engine);
 	}
-	
+
 	@Override
 	public NodeList getChildNodes() {
 		return null;

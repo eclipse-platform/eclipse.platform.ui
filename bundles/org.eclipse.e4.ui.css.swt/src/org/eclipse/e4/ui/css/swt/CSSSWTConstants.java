@@ -35,7 +35,7 @@ public class CSSSWTConstants {
 	 * @see Widget.getData(String) Widget.setData(String, Object)
 	 */
 	public static final String CSS_ENGINE_KEY = "org.eclipse.e4.ui.css.core.engine";
-	
+
 	//HACK non API - see bug #267434
 	public static final String MARGIN_WRAPPER_KEY = "org.eclipse.e4.ui.css.swt.marginWrapper";
 
@@ -55,22 +55,22 @@ public class CSSSWTConstants {
 	 * Constant used to store String Text into SWT control data.
 	 */
 	public static final String TEXT_KEY = "org.eclipse.e4.ui.css.swt.TEXT_KEY";
-	
+
 	public static final String ACTIVE_LOST = "org.eclipse.e4.ui.css.swt.ACTIVE_LOST";
-	
+
 	public static final String ACTIVE_LISTENER = "org.eclipse.e4.ui.css.swt.ACTIVE_LISTENER";
-	
+
 	public static final String FOCUS_LOST = "org.eclipse.e4.ui.css.swt.FOCUS_LOST";
-	
+
 	public static final String FOCUS_LISTENER = "org.eclipse.e4.ui.css.swt.FOCUS_LISTENER";
-	
+
 	public static final String MOUSE_HOVER = "org.eclipse.e4.ui.css.swt.HOVER";
-	
+
 	public static final String MOUSE_HOVER_LOST = "org.eclipse.e4.ui.css.swt.HOVER_LOST";
-	
+
 	public static final String BUTTON_SELECTED_LISTENER = "org.eclipse.e4.ui.css.swt.BUTTON_SELECTED_LISTENER";
-	
-	
-	
+
+
+
 
 }

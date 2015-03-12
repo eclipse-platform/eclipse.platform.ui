@@ -18,10 +18,10 @@ import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link CTabFolder}.
- * 
+ *
  */
 public class ToolBarElement extends CompositeElement {
-	
+
 	public ToolBarElement(ToolBar toolbar, CSSEngine engine) {
 		super(toolbar, engine);
 	}
@@ -29,15 +29,15 @@ public class ToolBarElement extends CompositeElement {
 	public ToolBar getToolBar() {
 		return (ToolBar)getNativeWidget();
 	}
-	
+
 	@Override
 	public Node item(int index) {
 		return getElement(getToolBar().getItem(index));
 	}
-	
+
 	@Override
 	public int getLength() {
 		return getToolBar().getItemCount();
 	}
-	
+
 }

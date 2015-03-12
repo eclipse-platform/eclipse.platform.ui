@@ -34,5 +34,5 @@ public class CSSSWTApplyStylesListener {
 			}
 		});
 	}
-	
+
 }

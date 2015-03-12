@@ -55,7 +55,7 @@ public class PropertyHelper {
 		if (attr.indexOf('.') == -1) {
 			NOTNESTEDCACHE.put(key,readMethod);
 		}
-		
+
 		return value;
 	}
 
