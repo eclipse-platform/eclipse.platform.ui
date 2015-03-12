@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     l33t labs LLC and others - initial contribution 
+ *     l33t labs LLC and others - initial contribution
  *******************************************************************************/
 
 package org.eclipse.ui.images.renderer;
@@ -51,7 +51,7 @@ import com.jhlabs.image.HSBAdjustFilter;
 
 /**
  * <p>Mojo which renders SVG icons into PNG format.</p>
- * 
+ *
  * @goal render-icons
  * @phase generate-resources
  */
@@ -89,13 +89,13 @@ public class RenderMojo extends AbstractMojo {
         /**
          * Creates an IconEntry used for record keeping when
          * rendering a set of SVG icons.
-         * 
+         *
          * @param nameBase the name of the icon file, minus any extension
          * @param inputPath the SVG file that is rendered
          * @param outputPath the path to the rendered icon data
          * @param disabledPath the part to the disabled version of the output icon
          */
-        public IconEntry(String nameBase, File inputPath, File outputPath, 
+        public IconEntry(String nameBase, File inputPath, File outputPath,
                 File disabledPath) {
             this.nameBase = nameBase;
             this.inputPath = inputPath;
@@ -131,7 +131,7 @@ public class RenderMojo extends AbstractMojo {
 
     /** Used for creating desaturated icons */
     private HSBAdjustFilter desaturator;
-    
+
     /** Reduces contrast for disabled icons. */
     private ContrastFilter decontrast;
 
@@ -151,11 +151,11 @@ public class RenderMojo extends AbstractMojo {
 
     /**
      * <p>Creates an IconEntry during the icon gather operation.</p>
-     * 
+     *
      * @param input the source of the icon file (SVG document)
      * @param outputPath the path of the rasterized version to generate
      * @param disabledPath the path of the disabled (desaturated) icon, if one is required
-     * 
+     *
      * @return an IconEntry describing the rendering operation
      */
     public IconEntry createIcon(File input, File outputPath, File disabledPath) {
@@ -169,7 +169,7 @@ public class RenderMojo extends AbstractMojo {
 
     /**
      * <p>Generates raster images from the input SVG vector image.</p>
-     * 
+     *
      * @param icon
      *            the icon to render
      */
@@ -250,7 +250,7 @@ public class RenderMojo extends AbstractMojo {
         // Generate a buffered image from Batik's png output
         byte[] imageBytes = iconOutput.toByteArray();
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(imageBytes);
-        
+
         BufferedImage inputImage = null;
         try {
             inputImage = ImageIO.read(imageInputStream);
@@ -265,16 +265,16 @@ public class RenderMojo extends AbstractMojo {
             failedIcons.add(icon);
             return;
         }
-        
+
         writeIcon(icon, outputWidth, outputHeight, inputImage);
     }
 
     /**
      * <p>Generates a Batik SVGDocument for the supplied IconEntry's input
      * file.</p>
-     * 
+     *
      * @param icon the icon entry to generate an SVG document for
-     * 
+     *
      * @return a batik SVGDocument instance or null if one could not be generated
      */
     private SVGDocument generateSVGDocument(IconEntry icon) {
@@ -300,7 +300,7 @@ public class RenderMojo extends AbstractMojo {
     /**
      * <p>Resizes the supplied inputImage to the specified width and height, using
      * lanczos resampling techniques.</p>
-     *  
+     *
      * @param icon the icon that's being resized
      * @param width the desired output width after rescaling operations
      * @param height the desired output height after rescaling operations
@@ -309,7 +309,7 @@ public class RenderMojo extends AbstractMojo {
     private void writeIcon(IconEntry icon, int width, int height, BufferedImage sourceImage) {
         try {
             ImageIO.write(sourceImage, "PNG", new File(icon.outputPath, icon.nameBase + ".png"));
-            
+
             if (icon.disabledPath != null) {
                 BufferedImage desaturated16 = desaturator.filter(
                         grayFilter.filter(sourceImage, null), null);
@@ -319,7 +319,7 @@ public class RenderMojo extends AbstractMojo {
                 ImageIO.write(deconstrast, "PNG", new File(icon.disabledPath, icon.nameBase + ".png"));
             }
         } catch (Exception e1) {
-            log.error("Failed to resize rendered icon to output size: "  + 
+            log.error("Failed to resize rendered icon to output size: "  +
                                icon.nameBase + " - " + e1.getMessage());
             failedIcons.add(icon);
         }
@@ -350,7 +350,7 @@ public class RenderMojo extends AbstractMojo {
         while (remainingIcons > 0) {
             // The current start index for the current batch
             final int batchStart = batchOffset;
-            
+
             // Increment the offset to reflect this batch (used for the next batch)
             batchOffset += threadExecSize;
 
@@ -413,7 +413,7 @@ public class RenderMojo extends AbstractMojo {
     /**
      * Use batik to rasterize the input SVG into a raster image at the specified
      * image dimensions.
-     * 
+     *
      * @param width the width to render the icons at
      * @param height the height to render the icon at
      * @param input the SVG transcoder input
@@ -459,7 +459,7 @@ public class RenderMojo extends AbstractMojo {
                 return renderer;
             }
         };
-          
+
         transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, new Float(width));
         transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, new Float(height));
 
@@ -502,7 +502,7 @@ public class RenderMojo extends AbstractMojo {
     /**
      * <p>Search the root resources directory for svg icons and add them to our
      * collection for rasterization later.</p>
-     * 
+     *
      * @param outputName
      * @param iconDir
      * @param outputBase
@@ -522,7 +522,7 @@ public class RenderMojo extends AbstractMojo {
             if (!child.getName().endsWith("svg")) {
                 return;
             }
-        
+
             // Compute a relative path for the output dir
             URI rootUri = rootDir.toURI();
             URI iconUri = iconDir.toURI();
@@ -572,7 +572,7 @@ public class RenderMojo extends AbstractMojo {
 
     /**
      * <p>Initializes rasterizer defaults</p>
-     * 
+     *
      * @param threads the number of threads to render with
      * @param scale multiplier to use with icon output dimensions
      */
@@ -587,18 +587,18 @@ public class RenderMojo extends AbstractMojo {
 
         desaturator = new HSBAdjustFilter();
         desaturator.setSFactor(0.0f);
-        
+
         decontrast = new ContrastFilter();
              decontrast.setBrightness(2.9f);
              decontrast.setContrast(0.2f);
     }
-    
+
     /**
      * @see AbstractMojo#execute()
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         log = getLog();
-        
+
         // Default to 2x the number of processor cores but allow override via jvm arg
         int threads = Math.max(1, Runtime.getRuntime().availableProcessors() * 2);
         String threadStr = System.getProperty(RENDERTHREADS);
@@ -611,7 +611,7 @@ public class RenderMojo extends AbstractMojo {
                         .println("Could not parse thread count, using default thread count");
             }
         }
-        
+
         // if high res is enabled, the icons output size will be scaled by iconScale
         // Defaults to 1, meaning native size
         int iconScale = 1;
@@ -619,15 +619,15 @@ public class RenderMojo extends AbstractMojo {
         if(iconScaleStr != null) {
             iconScale = Integer.parseInt(iconScaleStr);
         }
-        
+
         // Track the time it takes to render the entire set
         long totalStartTime = System.currentTimeMillis();
-        
+
         // initialize defaults (the old renderer was instantiated via constructor)
         init(threads, iconScale);
 
         String workingDirectory = System.getProperty("user.dir");
-        
+
         File outputDir = new File(workingDirectory+"/eclipse-png/");
         File iconDirectoryRoot = new File("eclipse-svg/");
 
@@ -636,20 +636,20 @@ public class RenderMojo extends AbstractMojo {
             if(!file.isDirectory()) {
                 continue;
             }
-            
+
             String dirName = file.getName();
-            
+
             // Where to place the rendered icon
             File outputBase = new File(outputDir, dirName);
 
             gatherIcons(dirName, file, file, outputBase);
         }
-        
+
         log.info("Working directory: " + outputDir.getAbsolutePath());
         log.info("SVG Icon Directory: " + iconDirectoryRoot.getAbsolutePath());
         log.info("Rendering icons with " + threads + " threads, scaling output to " + iconScale + "x");
         long startTime = System.currentTimeMillis();
-        
+
         // Render the icons
         rasterizeAll();
 
@@ -657,7 +657,7 @@ public class RenderMojo extends AbstractMojo {
         int iconRendered = getIconsRendered();
         int failedIcons = getFailedIcons();
         int fullIconCount = iconRendered - failedIcons;
-        
+
         log.info(fullIconCount + " Icons Rendered");
         log.info(failedIcons + " Icons Failed");
         log.info("Took: "    + (System.currentTimeMillis() - startTime) + " ms.");
