@@ -128,7 +128,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	/**
 	 * Crates a new IDE workbench window advisor.
-	 * 
+	 *
 	 * @param wbAdvisor
 	 *            the workbench advisor
 	 * @param configurer
@@ -149,7 +149,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	/**
 	 * Returns the workbench.
-	 * 
+	 *
 	 * @return the workbench
 	 */
 	private IWorkbench getWorkbench() {
@@ -169,7 +169,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	/**
 	 * Asks the user whether the workbench should really be closed. Only asks if
 	 * the preference is enabled.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell to use for the confirmation dialog
 	 * @return <code>true</code> if OK to exit, <code>false</code> if the user
@@ -193,7 +193,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				parentShell.setMinimized(false);
 				parentShell.forceActive();
 			}
-			
+
 			String message;
 
 			String productName = null;
@@ -249,10 +249,10 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 		hookTitleUpdateListeners(configurer);
 	}
-	
+
 	/**
 	 * Hooks the listeners needed on the window
-	 * 
+	 *
 	 * @param configurer
 	 */
 	private void hookTitleUpdateListeners(IWorkbenchWindowConfigurer configurer) {
@@ -345,7 +345,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						// do nothing
 					}
 				});
-		
+
 		// Listen for changes of the workspace name.
 		propertyChangeListener = new IPropertyChangeListener() {
 			@Override
@@ -409,7 +409,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
 					title, workspaceLocation);
 		}
-		
+
 		// Bug 284447: Prepend workspace name to the title
 		String workspaceName = IDEWorkbenchPlugin.getDefault()
 				.getPreferenceStore().getString(
@@ -477,7 +477,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			persp = currentPage.getPerspective();
 			input = currentPage.getInput();
 		}
-		
+
 		if (editorHidden) {
 			activeEditor = null;
 		}
@@ -551,7 +551,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	/**
 	 * Tries to open the intro, if one exists and otherwise will open the legacy
 	 * Welcome pages.
-	 * 
+	 *
 	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#openIntro()
 	 */
 	@Override

@@ -64,15 +64,15 @@ public class DelayedEventsProcessor implements Listener {
 		// line will need to be in a "synchronized" block:
 		filesToOpen.add(path);
 	}
-	
+
 	/**
 	 * Process delayed events.
-	 * @param display display associated with the workbench 
+	 * @param display display associated with the workbench
 	 */
 	public void catchUp(Display display) {
 		if (filesToOpen.isEmpty())
 			return;
-		
+
 		// If we start supporting events that can arrive on a non-UI thread, the following
 		// lines will need to be in a "synchronized" block:
 		String[] filePaths = new String[filesToOpen.size()];

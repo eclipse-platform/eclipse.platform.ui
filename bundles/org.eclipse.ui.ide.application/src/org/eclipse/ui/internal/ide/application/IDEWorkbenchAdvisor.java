@@ -90,7 +90,7 @@ import com.ibm.icu.text.Collator;
  * <p>
  * Note: This class replaces <code>org.eclipse.ui.internal.Workbench</code>.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
@@ -130,7 +130,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private IDEIdleHelper idleHelper;
 
 	private Listener settingsChangeListener;
-	
+
 	/**
 	 * Support class for monitoring workspace changes and periodically
 	 * validating the undo history
@@ -156,7 +156,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			throw new IllegalStateException();
 		}
 		workbenchAdvisor = this;
-		
+
 		Listener closeListener = new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -182,7 +182,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void initialize(IWorkbenchConfigurer configurer) {
 
 		PluginActionBuilder.setAllowIdeLogging(true);
-		
+
 		// make sure we always save and restore workspace state
 		configurer.setSaveAndRestore(true);
 
@@ -197,7 +197,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// initialize idle handler
 		idleHelper = new IDEIdleHelper(configurer);
-		
+
 		// initialize the workspace undo monitor
 		workspaceUndoMonitor = WorkspaceUndoMonitor.getInstance();
 
@@ -254,7 +254,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 		if (proxyService == null) {
 			IDEWorkbenchPlugin.log("Proxy service could not be found."); //$NON-NLS-1$
-		}	
+		}
 	}
 
 	/**
@@ -322,7 +322,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	/**
 	 * Return true if the intro plugin is present and false otherwise.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean hasIntro() {
@@ -502,7 +502,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Returns the map of versioned feature ids -> info object for all installed
 	 * features. The format of the versioned feature id (the key of the map) is
 	 * featureId + ":" + versionId.
-	 * 
+	 *
 	 * @return map of versioned feature ids -> info object (key type:
 	 *         <code>String</code>, value type: <code>AboutInfo</code>)
 	 * @since 3.0
@@ -533,7 +533,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/**
 	 * Returns the ordered map of versioned feature ids -> AboutInfo that are
 	 * new for this session.
-	 * 
+	 *
 	 * @return ordered map of versioned feature ids (key type:
 	 *         <code>String</code>) -> infos (value type:
 	 *         <code>AboutInfo</code>).
@@ -575,7 +575,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Declares all IDE-specific workbench images. This includes both "shared"
 	 * images (named in {@link org.eclipse.ui.ide.IDE.SharedImages}) and internal images (named in
 	 * {@link org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages}).
-	 * 
+	 *
 	 * @see IWorkbenchConfigurer#declareImage
 	 */
 	private void declareWorkbenchImages() {
@@ -772,7 +772,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	/**
 	 * Declares an IDE-specific workbench image.
-	 * 
+	 *
 	 * @param symbolicName
 	 *            the symbolic name of the image
 	 * @param path

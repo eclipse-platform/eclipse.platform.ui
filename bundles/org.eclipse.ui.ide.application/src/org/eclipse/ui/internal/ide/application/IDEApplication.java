@@ -55,7 +55,7 @@ import org.osgi.framework.Version;
 
 /**
  * The "main program" for the Eclipse IDE.
- * 
+ *
  * @since 3.0
  */
 public class IDEApplication implements IApplication, IExecutableExtension {
@@ -92,7 +92,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      * show an error dialog if the workspace is locked.
      */
     private static final Integer EXIT_WORKSPACE_LOCKED = new Integer(15);
-    
+
     /**
      * The ID of the application plug-in
      */
@@ -116,14 +116,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         	// look and see if there's a splash shell we can parent off of
         	Shell shell = WorkbenchPlugin.getSplashShell(display);
         	if (shell != null) {
-        		// should should set the icon and message for this shell to be the 
+        		// should should set the icon and message for this shell to be the
         		// same as the chooser dialog - this will be the guy that lives in
-        		// the task bar and without these calls you'd have the default icon 
+        		// the task bar and without these calls you'd have the default icon
         		// with no message.
         		shell.setText(ChooseWorkspaceDialog.getWindowTitle());
         		shell.setImages(Window.getDefaultImages());
         	}
-           
+
             Object instanceLocationCheck = checkInstanceLocation(shell, appContext.getArguments());
 			if (instanceLocationCheck != null) {
             	WorkbenchPlugin.unsetSplashShell(display);
@@ -161,7 +161,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
     /**
      * Creates the display used by the application.
-     * 
+     *
      * @return the display used by the application
      */
     protected Display createDisplay() {
@@ -177,7 +177,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
     /**
      * Return <code>null</code> if a valid workspace path has been set and an exit code otherwise.
      * Prompt for and set the path if possible and required.
-     * 
+     *
      * @param applicationArguments the command line arguments
      * @return <code>null</code> if a valid instance location has been set and an exit code
      *         otherwise
@@ -210,8 +210,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                     writeWorkspaceVersion();
                     return null;
                 }
-                
-                // we failed to create the directory.  
+
+                // we failed to create the directory.
                 // Two possibilities:
                 // 1. directory is already in use
                 // 2. directory could not be created
@@ -226,19 +226,19 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	                        NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage, workspaceDirectory.getAbsolutePath()));
                 } else {
                 	MessageDialog.openError(
-                			shell, 
+                			shell,
                 			IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
                 			IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
                 }
             } catch (IOException e) {
                 IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", //$NON-NLS-1$
-                        e);            	
+                        e);
                 MessageDialog
                 .openError(
                         shell,
                         IDEWorkbenchMessages.InternalError,
-                        e.getMessage());                
-            }            
+                        e.getMessage());
+            }
             return EXIT_OK;
         }
 
@@ -282,7 +282,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
             // by this point it has been determined that the workspace is
             // already in use -- force the user to choose again
-            MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle, 
+            MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
                     NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()));
         }
     }
@@ -294,13 +294,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			return true;
 		return args.containsKey("-pdelaunch"); //$NON-NLS-1$
 	}
-	
+
     /**
      * Open a workspace selection dialog on the argument shell, populating the
      * argument data with the user's selection. Perform first level validation
      * on the selection by comparing the version information. This method does
      * not examine the runtime state (e.g., is the workspace already locked?).
-     * 
+     *
      * @param shell
      * @param launchData
      * @param force
@@ -348,7 +348,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
             try {
                 // Don't use File.toURL() since it adds a leading slash that Platform does not
-                // handle properly.  See bug 54081 for more details.  
+                // handle properly.  See bug 54081 for more details.
                 String path = workspace.getAbsolutePath().replace(
                         File.separatorChar, '/');
                 url = new URL("file", null, path); //$NON-NLS-1$
@@ -370,7 +370,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      * false otherwise. A version check will be performed, and a confirmation
      * box may be displayed on the argument shell if an older version is
      * detected.
-     * 
+     *
      * @return true if the argument URL is ok to use as a workspace and false
      *         otherwise.
      */
@@ -544,7 +544,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      * The version file is stored in the metadata area of the workspace. This
      * method returns an URL to the file or null if the directory or file does
      * not exist (and the create parameter is false).
-     * 
+     *
      * @param create
      *            If the directory and file does not exist this parameter
      *            controls whether it will be created.

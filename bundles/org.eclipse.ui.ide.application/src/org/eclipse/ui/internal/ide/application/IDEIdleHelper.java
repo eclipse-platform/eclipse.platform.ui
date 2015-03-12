@@ -25,11 +25,11 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.Policy;
 
 /**
- * The idle helper detects when the system is idle in order to perform garbage 
+ * The idle helper detects when the system is idle in order to perform garbage
  * collection in a way that minimizes impact on responsiveness of the UI.
  * The algorithm for determining when to perform a garbage collection
  * is as follows:
- * 
+ *
  *  - Never gc if there is a test harness present
  *  - Don't gc if background jobs are running
  *  - Don't gc if the keyboard or mouse have been active within IDLE_INTERVAL
@@ -58,7 +58,7 @@ class IDEIdleHelper {
 	private static final int GC_DELAY_MULTIPLIER = 60;
 
 	/**
-	 * The time interval of no keyboard or mouse events after which the system 
+	 * The time interval of no keyboard or mouse events after which the system
 	 * is considered idle.
 	 */
 	private static final int IDLE_INTERVAL = 5000;
@@ -70,14 +70,14 @@ class IDEIdleHelper {
 	private static final String PROP_GC = "ide.gc"; //$NON-NLS-1$
 
 	/**
-	 * The name of the integer system property that specifies the minimum time 
+	 * The name of the integer system property that specifies the minimum time
 	 * interval in milliseconds between garbage collections.
 	 */
 	private static final String PROP_GC_INTERVAL = "ide.gc.interval"; //$NON-NLS-1$
 
 	/**
-	 * The name of the integer system property that specifies the maximum 
-	 * duration for a garbage collection. If this duration is ever exceeded, the 
+	 * The name of the integer system property that specifies the maximum
+	 * duration for a garbage collection. If this duration is ever exceeded, the
 	 * explicit gc mechanism is disabled for the remainder of the session.
 	 */
 	private static final String PROP_GC_MAX = "ide.gc.max"; //$NON-NLS-1$
@@ -105,11 +105,11 @@ class IDEIdleHelper {
 	 * The time interval until the next garbage collection
 	 */
 	private int nextGCInterval = DEFAULT_GC_INTERVAL;
-	
+
 	private Job gcJob;
 
-	private Runnable handler;	
-	
+	private Runnable handler;
+
 	/**
 	 * Creates and initializes the idle handler
 	 * @param aConfigurer The workbench configurer.
@@ -136,7 +136,7 @@ class IDEIdleHelper {
 		if (prop != null) {
 			maxGC = prop.intValue();
 		}
-		
+
 		createGarbageCollectionJob();
 
 		//hook idle handler
@@ -227,7 +227,7 @@ class IDEIdleHelper {
 				});
 			} catch (SWTException ex) {
 				// ignore (display might be disposed)
-			}			
+			}
 		}
 	}
 }

@@ -77,9 +77,9 @@ public class ModelCleanupAddon {
 			MPartDescriptor partDescriptor = iterator.next();
 			boolean validPartDescriptor = isValidPartDescriptor(bundle, partDescriptor);
 			if (!validPartDescriptor) {
-				logger.warn("Removing part descriptor with the '" + partDescriptor.getElementId() //$NON-NLS-1$ 
+				logger.warn("Removing part descriptor with the '" + partDescriptor.getElementId() //$NON-NLS-1$
 						+ "' id and the '" + partDescriptor.getLocalizedLabel() //$NON-NLS-1$
-						+ "' description. Points to the invalid '" + partDescriptor.getContributionURI() + "' class."); //$NON-NLS-1$ //$NON-NLS-2$ 
+						+ "' description. Points to the invalid '" + partDescriptor.getContributionURI() + "' class."); //$NON-NLS-1$ //$NON-NLS-2$
 				iterator.remove();
 			}
 		}

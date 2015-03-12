@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * Preference page for editing the list of recent workspaces and whether or not
  * the user is prompted at startup.
- * 
+ *
  * @since 3.5
  */
 public class RecentWorkspacesPreferencePage extends PreferencePage
@@ -78,7 +78,7 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		createPromptOption(container);
 		createMaxWorkspacesField(container);
 		createWorkspacesList(container);
-		
+
 		Dialog.applyDialogFont(container);
 
 		return container;
@@ -119,11 +119,11 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		final GridLayout gridLayout_1 = new GridLayout();
 		gridLayout_1.numColumns = 2;
 		recentWorkspacesGroup.setLayout(gridLayout_1);
-		
+
 		workspacesList = new List(recentWorkspacesGroup, SWT.BORDER | SWT.MULTI);
 		final GridData gd_workspacesList = new GridData(SWT.FILL, SWT.FILL, true, true);
 		workspacesList.setLayoutData(gd_workspacesList);
-		
+
 		removeButton = new Button(recentWorkspacesGroup, SWT.NONE);
 		final GridData gd_removeButton = new GridData(SWT.CENTER, SWT.TOP, false, false);
 		removeButton.setLayoutData(gd_removeButton);
@@ -187,7 +187,7 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		String[] listItems = new String[tmpListItem.length];
 
 		for (int i = 0; i < tmpListItem.length; i++){
-			listItems[i] = TextProcessor.deprocess(tmpListItem[i]); 
+			listItems[i] = TextProcessor.deprocess(tmpListItem[i]);
 		}
 
 		if (maxWorkspaces < listItems.length) {
