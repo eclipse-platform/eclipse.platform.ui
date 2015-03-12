@@ -28,10 +28,10 @@ public abstract class BasicUIJob extends Job {
 	 * Create a new instance of the receiver with the supplied name. The display
 	 * used will be the one from the workbench if this is available. UIJobs with
 	 * this constructor will determine their display at runtime.
-	 * 
+	 *
 	 * @param name
 	 *            the job name
-	 * 
+	 *
 	 */
 	public BasicUIJob(String name, Display display) {
 		super(name);
@@ -76,7 +76,7 @@ public abstract class BasicUIJob extends Job {
 
 	/**
 	 * Run the job in the UI Thread.
-	 * 
+	 *
 	 * @param monitor
 	 * @return IStatus
 	 */
@@ -86,7 +86,7 @@ public abstract class BasicUIJob extends Job {
 	 * Returns the display for use by the receiver when running in an asyncExec.
 	 * If it is not set then the display set in the workbench is used. If the
 	 * display is null the job will not be run.
-	 * 
+	 *
 	 * @return Display or <code>null</code>.
 	 */
 	public Display getDisplay() {

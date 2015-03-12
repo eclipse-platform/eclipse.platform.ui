@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 429728
@@ -67,7 +67,7 @@ public abstract class AbstractPartRenderer {
 
 	/**
 	 * Return a parent context for this part.
-	 * 
+	 *
 	 * @param element
 	 *            the part to start searching from
 	 * @return the parent's closest context, or global context if none in the
@@ -79,7 +79,7 @@ public abstract class AbstractPartRenderer {
 
 	/**
 	 * Return a context for this part.
-	 * 
+	 *
 	 * @param part
 	 *            the part to start searching from
 	 * @return the closest context, or global context if none in the hierarchy
@@ -94,7 +94,7 @@ public abstract class AbstractPartRenderer {
 	/**
 	 * Activate the part in the hierarchy. This should either still be internal
 	 * or be a public method somewhere else.
-	 * 
+	 *
 	 * @param element
 	 */
 	public void activate(MPart element) {
@@ -109,7 +109,7 @@ public abstract class AbstractPartRenderer {
 
 	/**
 	 * Check if activating {@code element} requires that the part set the focus.
-	 * 
+	 *
 	 * @param element
 	 * @return true if the part requires focus
 	 */
@@ -129,7 +129,7 @@ public abstract class AbstractPartRenderer {
 	 * Force the UI focus into the element if possible. This method should not
 	 * be called directly, it will be called by the IPresentationEngine#focusGui
 	 * method if the normal process used to set the focus cannot be performed.
-	 * 
+	 *
 	 * @param element
 	 */
 	public void forceFocus(MUIElement element) {

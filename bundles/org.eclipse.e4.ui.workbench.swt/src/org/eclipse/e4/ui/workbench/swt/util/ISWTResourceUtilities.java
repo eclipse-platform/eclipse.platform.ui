@@ -20,12 +20,12 @@ public interface ISWTResourceUtilities extends
 
 	/**
 	 * Low-level utility to stamp an adornment onto a given Image.
-	 * 
+	 *
 	 * @param toAdorn
 	 *            The image to be adorned (must not be null)
 	 * @param adornment
 	 *            The image to adorn with.
-	 * 
+	 *
 	 * @return The adorned image or 'toAdorn' if 'adornment' is null
 	 */
 	public Image adornImage(Image toAdorn, Image adornment);

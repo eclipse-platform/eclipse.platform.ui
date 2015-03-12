@@ -21,7 +21,7 @@ import org.eclipse.ui.testing.TestableObject;
 
 /**
  * The Workbench's testable object facade to a test harness.
- * 
+ *
  * @since 3.0
  */
 public class E4Testable extends TestableObject {
@@ -44,7 +44,7 @@ public class E4Testable extends TestableObject {
 	/**
 	 * Initializes the workbench testable with the display and workbench, and
 	 * notifies all listeners that the tests can be run.
-	 * 
+	 *
 	 * @param display
 	 *            the display
 	 * @param workbench

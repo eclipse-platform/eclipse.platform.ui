@@ -412,7 +412,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	/**
 	 * Initialize a part renderer from the extension point.
-	 * 
+	 *
 	 * @param context
 	 *            the context for the part factories
 	 */
@@ -727,7 +727,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.IPresentationEngine#focusGui(org.eclipse.
 	 * e4.ui.model.application.ui.MUIElement)
@@ -1250,7 +1250,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				themeEngine.registerResourceLocator(new OSGiResourceLocator(
 						cssResourcesURI));
 			}
-			
+
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				@Override
 				public void setClassname(Object widget, String classname) {

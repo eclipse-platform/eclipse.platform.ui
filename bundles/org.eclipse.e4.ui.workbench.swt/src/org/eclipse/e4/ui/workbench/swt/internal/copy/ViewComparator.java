@@ -23,7 +23,7 @@ public class ViewComparator extends ViewerComparator {
 
 	/**
 	 * ViewSorter constructor comment.
-	 * 
+	 *
 	 * @param reg
 	 *            an IViewRegistry
 	 */

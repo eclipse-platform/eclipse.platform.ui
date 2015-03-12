@@ -81,7 +81,7 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Constructs a new ShowViewDialog.
-	 * 
+	 *
 	 * @param window
 	 *            the workbench window
 	 * @param viewReg
@@ -179,7 +179,7 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Create a new filtered tree viewer in the parent.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent <code>Composite</code>.
 	 */
@@ -217,7 +217,7 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Return whether or not there are less than two views in the list.
-	 * 
+	 *
 	 * @param tree
 	 * @return <code>true</code> if there are less than two views in the list.
 	 */
@@ -266,7 +266,7 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Returns the descriptors for the selected views.
-	 * 
+	 *
 	 * @return the descriptors for the selected views
 	 */
 	public MPartDescriptor[] getSelection() {
@@ -275,7 +275,7 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Layout the top control.
-	 * 
+	 *
 	 * @param control
 	 *            the control.
 	 */

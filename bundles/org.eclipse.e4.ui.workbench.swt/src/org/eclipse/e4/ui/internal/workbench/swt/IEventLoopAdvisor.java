@@ -29,7 +29,7 @@ public interface IEventLoopAdvisor {
 	 * queue. Subclasses may override or extend this method. It is generally a
 	 * bad idea to override with an empty method.
 	 * </p>
-	 * 
+	 *
 	 * @param display
 	 *            the main display of the rendering UI
 	 */
@@ -53,7 +53,7 @@ public interface IEventLoopAdvisor {
 	 * a bad idea to override with an empty method, and you should be especially
 	 * careful when handling Errors.
 	 * </p>
-	 * 
+	 *
 	 * @param exception
 	 *            the uncaught exception that was thrown inside the UI event
 	 *            loop

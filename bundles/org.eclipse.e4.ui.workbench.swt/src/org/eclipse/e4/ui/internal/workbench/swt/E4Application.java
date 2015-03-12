@@ -654,14 +654,14 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 		 * // -data @noDefault or -data not specified, prompt and set
 		 * ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc
 		 * .getDefault());
-		 * 
+		 *
 		 * boolean force = false; while (true) { URL workspaceUrl =
 		 * promptForWorkspace(shell, launchData, force); if (workspaceUrl ==
 		 * null) { return false; }
-		 * 
+		 *
 		 * // if there is an error with the first selection, then force the //
 		 * dialog to open to give the user a chance to correct force = true;
-		 * 
+		 *
 		 * try { // the operation will fail if the url is not a valid //
 		 * instance data area, so other checking is unneeded if
 		 * (instanceLocation.setURL(workspaceUrl, true)) {
@@ -670,7 +670,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 		 * shell, IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
 		 * IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
 		 * return false; }
-		 * 
+		 *
 		 * // by this point it has been determined that the workspace is //
 		 * already in use -- force the user to choose again
 		 * MessageDialog.openError(shell,
@@ -685,7 +685,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 	 * false otherwise. A version check will be performed, and a confirmation
 	 * box may be displayed on the argument shell if an older version is
 	 * detected.
-	 * 
+	 *
 	 * @return true if the argument URL is ok to use as a workspace and false
 	 *         otherwise.
 	 */
@@ -799,7 +799,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 	 * The version file is stored in the metadata area of the workspace. This
 	 * method returns an URL to the file or null if the directory or file does
 	 * not exist (and the create parameter is false).
-	 * 
+	 *
 	 * @param create
 	 *            If the directory and file does not exist this parameter
 	 *            controls whether it will be created.

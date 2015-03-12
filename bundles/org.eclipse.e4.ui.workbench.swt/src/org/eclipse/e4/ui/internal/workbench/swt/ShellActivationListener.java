@@ -149,7 +149,7 @@ public class ShellActivationListener implements Listener {
 	 * Retrieves the eclipse context for the specified shell. If one cannot be
 	 * found, a child context will be created off of the provided parent
 	 * context.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell of interest, must not be <code>null</code>
 	 * @param parentContext

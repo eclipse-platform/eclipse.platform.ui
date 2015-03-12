@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Shell;
  * over-lain (in its own shell) on top of the real one. This image
  * masks the changes to the 'real' shell and then the covering image
  * fades to transparent, revealing the new state.
- * 
+ *
  * This provides a nice cross-fade effect for operations like a
  * perspective change (where the overall effect on the shell is large.
- * 
+ *
  * @since 3.3
  *
  */
@@ -55,7 +55,7 @@ public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 		// gc.copyArea(backingStore, psRect.x, psRect.y);
 		gc.copyArea(backingStore, psRect.x, psRect.y);
 		gc.dispose();
-		
+
 		getAnimationShell().setAlpha(254);
 		getAnimationShell().setBackgroundImage(backingStore);
 		getAnimationShell().setVisible(true);
@@ -65,5 +65,5 @@ public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 	public void renderStep(AnimationEngine engine) {
 		getAnimationShell().setAlpha((int) (255 - (engine.amount()*255)));
 	}
-	
+
 }

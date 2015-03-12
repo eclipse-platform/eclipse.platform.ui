@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Display;
  * This job creates an Animation Engine that uses an Animation Feedback to
  * render the animation. To begin the animation, instantiate this object then
  * call schedule().
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class AnimationEngine extends Job {
 	public static final int TICK_TIMER = 1;
@@ -53,7 +53,7 @@ public class AnimationEngine extends Job {
 
 	/**
 	 * Creates an Animation that will run for the given number of milliseconds.
-	 * 
+	 *
 	 * @param animationFeedback
 	 *            provides renderStep(), initialize() and jobInit() methods
 	 * @param durationIn

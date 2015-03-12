@@ -291,7 +291,7 @@ public class CSSRenderingUtils {
 				}
 			 }
 		};
-			
+
 		toFrame.getDisplay().addListener(SWT.Skin, listener);
 
 		imageBasedFrame.addDisposeListener(new DisposeListener() {
