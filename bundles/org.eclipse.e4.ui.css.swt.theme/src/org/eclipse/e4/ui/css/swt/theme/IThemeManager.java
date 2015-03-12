@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 public interface IThemeManager {
 	/**
 	 * Get the engine for a given display
-	 * 
+	 *
 	 * @param display
 	 *            the display the engine is for
 	 * @return a new theme engine when none already created

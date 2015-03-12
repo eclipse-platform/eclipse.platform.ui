@@ -29,7 +29,7 @@ public interface IThemeEngine {
 	 * The IThemeEngine may broadcast an event using the OSGi EventAdmin
 	 * service, if available, to notify of theme changes. The event will contain
 	 * several attributes to provide the context of the event.
-	 * 
+	 *
 	 * <p>
 	 * NB: this event topic and attribute list may change and should not yet be
 	 * considered as API.
@@ -43,7 +43,7 @@ public interface IThemeEngine {
 
 		/**
 		 * Attribute for the new theme
-		 * 
+		 *
 		 * @see ITheme
 		 */
 		public static final String THEME = "theme";
@@ -51,7 +51,7 @@ public interface IThemeEngine {
 		/**
 		 * Attribute for the affected rendering device (e.g., an SWT
 		 * {@link Display}). May be null
-		 * 
+		 *
 		 * @see org.eclipse.swt.graphics.Device
 		 * @see org.eclipse.swt.widgets.Display
 		 */
@@ -59,7 +59,7 @@ public interface IThemeEngine {
 
 		/**
 		 * Attribute for the associated {@link IThemeEngine} theme engine
-		 * 
+		 *
 		 * @see IThemeEngine
 		 */
 		public static final String THEME_ENGINE = "themeEngine";
@@ -67,7 +67,7 @@ public interface IThemeEngine {
 		/**
 		 * Attribute describing the theme change's persist state. If true, then
 		 * the theme will be restored on subsequent startups.
-		 * 
+		 *
 		 * @see Boolean
 		 */
 		public static final String RESTORE = "restore";
@@ -75,14 +75,14 @@ public interface IThemeEngine {
 
 	/**
 	 * Register a theme
-	 * 
+	 *
 	 * @param id
 	 *            the id of the theme
 	 * @param label
 	 *            the label
 	 * @param basestylesheetURI
 	 *            the base stylesheet uri
-	 * 
+	 *
 	 * @return the theme instance registered
 	 * @throws IllegalArgumentException
 	 *             if a theme with this id is already registered
@@ -92,7 +92,7 @@ public interface IThemeEngine {
 
 	/**
 	 * Register a stylesheet
-	 * 
+	 *
 	 * @param uri
 	 *            the stylsheet uri
 	 * @param themes
@@ -103,7 +103,7 @@ public interface IThemeEngine {
 
 	/**
 	 * Register a resource locator used to look up image sources
-	 * 
+	 *
 	 * @param locator
 	 *            the locator
 	 * @param themes
@@ -121,7 +121,7 @@ public interface IThemeEngine {
 	/**
 	 * Set a theme by its id and restore it for the next time the engine is
 	 * initialized ({@link #restore(String)})
-	 * 
+	 *
 	 * @param themeId
 	 *            the theme id
 	 * @param restore
@@ -133,7 +133,7 @@ public interface IThemeEngine {
 	/**
 	 * Set a theme and restore it for the next time the engine is initialized (
 	 * {@link #restore(String)})
-	 * 
+	 *
 	 * @param theme
 	 *            the theme
 	 * @param restore
@@ -144,7 +144,7 @@ public interface IThemeEngine {
 
 	/**
 	 * Force reapplying the style to the widget and its children
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @param applyStylesToChildNodes
@@ -154,7 +154,7 @@ public interface IThemeEngine {
 
 	/**
 	 * Get the style currently active for a widget
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @return the declaration or <code>null</code>
@@ -163,7 +163,7 @@ public interface IThemeEngine {
 
 	/**
 	 * Restore the previously stored theme
-	 * 
+	 *
 	 * @param alternate
 	 *            the alternate theme if the restored one is not found
 	 */
