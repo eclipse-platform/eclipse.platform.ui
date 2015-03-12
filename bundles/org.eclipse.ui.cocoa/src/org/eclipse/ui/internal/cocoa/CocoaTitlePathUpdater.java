@@ -16,9 +16,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.tweaklets.TitlePathUpdater;
 
 /**
- * 
+ *
  * @since 3.7
- * 
+ *
  */
 public class CocoaTitlePathUpdater extends TitlePathUpdater {
 
