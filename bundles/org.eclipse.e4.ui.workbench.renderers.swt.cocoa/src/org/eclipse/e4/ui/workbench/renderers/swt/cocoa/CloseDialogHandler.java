@@ -18,10 +18,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * 
+ *
  * @author Prakash G.R. (grprakash@gmail.com)
  * @since 3.6
- * 
+ *
  */
 public class CloseDialogHandler {
 

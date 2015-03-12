@@ -149,7 +149,7 @@ class DragHost {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void dispose() {
 		// TODO Auto-generated method stub

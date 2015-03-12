@@ -37,7 +37,7 @@ public class IBFDragAgent extends DragAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#getElementToDrag(org.eclipse.e4.ui.
 	 * workbench.addons.dndaddon.DnDInfo)
@@ -64,7 +64,7 @@ public class IBFDragAgent extends DragAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragStart(org.eclipse.e4.ui.workbench
 	 * .addons.dndaddon.DnDInfo)
@@ -104,7 +104,7 @@ public class IBFDragAgent extends DragAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#track(org.eclipse.e4.ui.workbench.addons
 	 * .dndaddon.DnDInfo)
@@ -126,7 +126,7 @@ public class IBFDragAgent extends DragAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragFinished(boolean,
 	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
 	 */

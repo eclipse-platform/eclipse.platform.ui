@@ -110,7 +110,7 @@ public class SplitDropAgent extends DropAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragEnter(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
 	 */
@@ -161,7 +161,7 @@ public class SplitDropAgent extends DropAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
 	 */
@@ -188,7 +188,7 @@ public class SplitDropAgent extends DropAgent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#track(org.eclipse.e4.ui.model.application
 	 * .ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
@@ -228,7 +228,7 @@ public class SplitDropAgent extends DropAgent {
 	 * for 'edges' you can modify the effect of the drop. If the drop area is at the edge of the
 	 * perspective stack a modified drop will place it *outside* the perspectives. If the drop area
 	 * is the shared area then a modified drop will drop *inside* the shared area.
-	 * 
+	 *
 	 * @return Whether this is a 'modified' drop.
 	 */
 	private boolean getModified() {

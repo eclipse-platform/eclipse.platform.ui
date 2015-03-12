@@ -52,7 +52,7 @@ public class TrimPaneLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int,
 	 * boolean)
 	 */
@@ -63,7 +63,7 @@ public class TrimPaneLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
 	 */
 	@Override

@@ -341,7 +341,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles changes in tags
-	 * 
+	 *
 	 * @param event
 	 */
 
@@ -377,10 +377,10 @@ public class MinMaxAddon {
 	/**
 	 * Handles changes in the id of the element If a perspective ID changes fix any TrimStacks that
 	 * reference the old id to point at the new id.
-	 * 
+	 *
 	 * This keeps trim stacks attached to the correct perspective when a perspective is saved with a
 	 * new name.
-	 * 
+	 *
 	 * @param event
 	 */
 
@@ -419,7 +419,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is saved
-	 * 
+	 *
 	 * @param event
 	 */
 
@@ -468,7 +468,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is reset
-	 * 
+	 *
 	 * @param event
 	 */
 	@Inject
@@ -487,7 +487,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is opened
-	 * 
+	 *
 	 * @param event
 	 */
 	@Inject
@@ -541,7 +541,7 @@ public class MinMaxAddon {
 	 * Set the state of the min / max buttons on the CTF based on the model element's state. The
 	 * input is expected to be the element that contains the min/max state info which should either
 	 * be an MPartStack or an MPlaceholder for the shared area.
-	 * 
+	 *
 	 * @param element
 	 *            The element to test
 	 */
@@ -754,7 +754,7 @@ public class MinMaxAddon {
 
 	/**
 	 * Restore any currently maximized element (except the one we're in the process of maximizing
-	 * 
+	 *
 	 * @param element
 	 * @param win
 	 */
@@ -788,10 +788,10 @@ public class MinMaxAddon {
 	 * Return the MWindow containing this element (if any). This may either be a 'top level' window
 	 * -or- a detached window. This allows the min.max code to only affect elements in the window
 	 * containing the element.
-	 * 
+	 *
 	 * @param element
 	 *            The element to check
-	 * 
+	 *
 	 * @return the window containing the element.
 	 */
 	private MWindow getWindowFor(MUIElement element) {

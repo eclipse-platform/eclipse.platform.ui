@@ -142,7 +142,7 @@ public class SplitFeedbackOverlay {
 
 	/**
 	 * Control this instance's visibility.
-	 * 
+	 *
 	 * @param visible
 	 *            make visible if {@code true} or invisible if {@code false}
 	 * @since 0.11

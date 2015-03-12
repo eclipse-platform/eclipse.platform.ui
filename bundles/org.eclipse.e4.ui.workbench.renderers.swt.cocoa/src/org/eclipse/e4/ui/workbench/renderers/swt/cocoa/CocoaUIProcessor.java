@@ -139,7 +139,7 @@ public class CocoaUIProcessor {
 	/**
 	 * Install a keybinding to the provided command, providing the command is
 	 * not already bound to another keybinding.
-	 * 
+	 *
 	 * @param bindingContextId
 	 *            the keybinding context
 	 * @param keysequence
@@ -215,7 +215,7 @@ public class CocoaUIProcessor {
 	/**
 	 * Configure and install a command handler for the provided command and
 	 * handler
-	 * 
+	 *
 	 * @param handlerClass
 	 * @param command
 	 */
@@ -238,7 +238,7 @@ public class CocoaUIProcessor {
 
 	/**
 	 * Find the corresponding command and define if not found.
-	 * 
+	 *
 	 * @param commandId
 	 * @param name
 	 * @param description
@@ -263,7 +263,7 @@ public class CocoaUIProcessor {
 
 	/**
 	 * Find the corresponding category and define if not found.
-	 * 
+	 *
 	 * @param categoryId
 	 * @return the category
 	 */
@@ -282,7 +282,7 @@ public class CocoaUIProcessor {
 
 	/**
 	 * Return a platform-style URI to reference the provided class
-	 * 
+	 *
 	 * @param clazz
 	 *            a class
 	 * @return a URI referencing the class
@@ -296,7 +296,7 @@ public class CocoaUIProcessor {
 	/**
 	 * Return a platform-style URI to reference the bundle providing
 	 * {@code clazz}
-	 * 
+	 *
 	 * @param clazz
 	 *            a class
 	 * @return a URI referencing the bundle
