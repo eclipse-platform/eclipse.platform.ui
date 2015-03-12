@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 
 /**
  * A running instance of the workbench.
- * 
+ *
  * This instance is published through:
  * <ul>
  * <li>the {@link IEclipseContext} of the application</li>
@@ -25,7 +25,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
  * </ul>
  * <b>It is possible that there are multiple active {@link IWorkbench} instances in one
  * OSGi-Instance</b>
- * 
+ *
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -40,7 +40,7 @@ public interface IWorkbench {
 	 * The argument for the {@link URI} of the resources referenced from the application CSS file <br>
 	 * <br>
 	 * Value is: <code>applicationCSSResources</code>
-	 * 
+	 *
 	 * @since 0.12.0
 	 */
 	public static final String CSS_RESOURCE_URI_ARG = "applicationCSSResources"; //$NON-NLS-1$
@@ -48,7 +48,7 @@ public interface IWorkbench {
 	 * The argument for the {@link URI} of the application CSS file <br>
 	 * <br>
 	 * Value is: <code>applicationCSS</code>
-	 * 
+	 *
 	 * @since 0.12.0
 	 */
 	public static final String CSS_URI_ARG = "applicationCSS"; //$NON-NLS-1$
@@ -56,7 +56,7 @@ public interface IWorkbench {
 	 * The argument for the {@link URI} of the life-cycle manager <br>
 	 * <br>
 	 * Value is: <code>lifeCycleURI</code>
-	 * 
+	 *
 	 * @since 0.12.0
 	 */
 	public static final String LIFE_CYCLE_URI_ARG = "lifeCycleURI"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public interface IWorkbench {
 	 * The argument for the {@link URI} of the application presentation <br>
 	 * <br>
 	 * Value is: <code>presentationURI</code>
-	 * 
+	 *
 	 * @since 0.12.0
 	 */
 	public static final String PRESENTATION_URI_ARG = "presentationURI"; //$NON-NLS-1$
@@ -84,14 +84,14 @@ public interface IWorkbench {
 	 * The argument for the {@link URI} of the applicaton.xmi file <br>
 	 * <br>
 	 * Value is: <code>applicationXMI</code>
-	 * 
+	 *
 	 * @since 0.12.0
 	 */
 	public static final String XMI_URI_ARG = "applicationXMI"; //$NON-NLS-1$
 
 	/**
 	 * Close the workbench instance
-	 * 
+	 *
 	 * @return <code>true</code> if the shutdown succeeds
 	 */
 	public boolean close();
@@ -108,7 +108,7 @@ public interface IWorkbench {
 
 	/**
 	 * restart the workbench
-	 * 
+	 *
 	 * @return <code>false</code> if the restart is aborted
 	 */
 	public boolean restart();

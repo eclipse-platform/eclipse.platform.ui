@@ -65,8 +65,8 @@ public class ModelAssembler {
 	final private static String extensionPointID = "org.eclipse.e4.workbench.model"; //$NON-NLS-1$
 
 	//	private static final String ALWAYS = "always"; //$NON-NLS-1$
-	private static final String INITIAL = "initial"; //$NON-NLS-1$ 
-	private static final String NOTEXISTS = "notexists"; //$NON-NLS-1$ 
+	private static final String INITIAL = "initial"; //$NON-NLS-1$
+	private static final String NOTEXISTS = "notexists"; //$NON-NLS-1$
 
 	/**
 	 * Process the model
@@ -99,7 +99,7 @@ public class ModelAssembler {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
 				if ("fragment".equals(ce.getName())) { //$NON-NLS-1$
-					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$ 
+					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$
 						processFragment(ce, imports, addedElements, initial);
 					}
 				}
@@ -153,7 +153,7 @@ public class ModelAssembler {
 			logger.warn("Unable to create model extension \"{0}\"", bundleName); //$NON-NLS-1$
 			return;
 		}
-		boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$ 
+		boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$
 
 		MModelFragments fragmentsContainer = (MModelFragments) extensionRoot;
 		List<MModelFragment> fragments = fragmentsContainer.getFragments();

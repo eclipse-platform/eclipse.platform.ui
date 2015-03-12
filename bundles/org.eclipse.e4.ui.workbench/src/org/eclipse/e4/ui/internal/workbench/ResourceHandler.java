@@ -83,7 +83,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	/**
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
-	 * 
+	 *
 	 */
 	final private boolean deltaRestore;
 	final private boolean saveAndRestore;
@@ -91,7 +91,7 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param saveAndRestore
 	 * @param clearPersistedState
 	 * @param deltaRestore
@@ -281,7 +281,7 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	/**
 	 * Creates a resource with an app Model, used for saving copies of the main app model.
-	 * 
+	 *
 	 * @param theApp
 	 *            the application model to add to the resource
 	 * @return a resource with a proper save path with the model as contents

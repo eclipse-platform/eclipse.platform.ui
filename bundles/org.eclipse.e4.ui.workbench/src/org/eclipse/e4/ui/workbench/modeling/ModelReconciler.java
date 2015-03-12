@@ -431,7 +431,7 @@ public abstract class ModelReconciler {
 	 * Begin recording changes on the specified object. All changes contained within child elements
 	 * of the object will also be recorded. When the desired changes have been captured,
 	 * {@link #serialize()} should be called.
-	 * 
+	 *
 	 * @param object
 	 *            the object to monitor changes for, must not be <code>null</code>
 	 */
@@ -441,7 +441,7 @@ public abstract class ModelReconciler {
 	 * Serializes all the changes that have been captured since the last call to
 	 * {@link #recordChanges(Object)} and returns an object that can be used later with
 	 * {@link #constructDeltas(Object, Object)}.
-	 * 
+	 *
 	 * @return a serialization of all the changes that have been made to the model since the last
 	 *         call to <code>recordChanges(Object)</code>
 	 */
@@ -450,7 +450,7 @@ public abstract class ModelReconciler {
 	/**
 	 * Analyzes the model and its serialized state and constructs a collection of deltas between the
 	 * two.
-	 * 
+	 *
 	 * @param model
 	 *            the object to apply changes to
 	 * @param serializedState

@@ -21,7 +21,7 @@ import java.util.TreeSet;
  * <p>
  * A static class providing utility methods to all of JFace.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class Util {
@@ -41,7 +41,7 @@ public final class Util {
 
 	/**
 	 * Verifies that the given object is an instance of the given class.
-	 * 
+	 *
 	 * @param object
 	 *            The object to check; may be <code>null</code>.
 	 * @param c
@@ -54,7 +54,7 @@ public final class Util {
 	/**
 	 * Verifies the given object is an instance of the given class. It is possible to specify
 	 * whether the object is permitted to be <code>null</code>.
-	 * 
+	 *
 	 * @param object
 	 *            The object to check; may be <code>null</code>.
 	 * @param c
@@ -78,7 +78,7 @@ public final class Util {
 	/**
 	 * Compares two boolean values. <code>false</code> is considered to be "less than"
 	 * <code>true</code>.
-	 * 
+	 *
 	 * @param left
 	 *            The left value to compare
 	 * @param right
@@ -93,7 +93,7 @@ public final class Util {
 
 	/**
 	 * Compares two integer values.
-	 * 
+	 *
 	 * @param left
 	 *            The left value to compare
 	 * @param right
@@ -106,7 +106,7 @@ public final class Util {
 
 	/**
 	 * Compares to comparable objects -- defending against <code>null</code>.
-	 * 
+	 *
 	 * @param left
 	 *            The left object to compare; may be <code>null</code>.
 	 * @param right
@@ -128,7 +128,7 @@ public final class Util {
 
 	/**
 	 * Compares two arrays of comparable objects -- accounting for <code>null</code>.
-	 * 
+	 *
 	 * @param left
 	 *            The left array to be compared; may be <code>null</code>.
 	 * @param right
@@ -166,7 +166,7 @@ public final class Util {
 	/**
 	 * Compares two lists -- account for <code>null</code>. The lists must contain comparable
 	 * objects.
-	 * 
+	 *
 	 * @param left
 	 *            The left list to compare; may be <code>null</code>. This list must only contain
 	 *            instances of <code>Comparable</code>.
@@ -205,7 +205,7 @@ public final class Util {
 
 	/**
 	 * Tests whether the first array ends with the second array.
-	 * 
+	 *
 	 * @param left
 	 *            The array to check (larger); may be <code>null</code>.
 	 * @param right
@@ -239,7 +239,7 @@ public final class Util {
 
 	/**
 	 * Checks whether the two objects are <code>null</code> -- allowing for <code>null</code>.
-	 * 
+	 *
 	 * @param left
 	 *            The left object to compare; may be <code>null</code>.
 	 * @param right
@@ -253,7 +253,7 @@ public final class Util {
 	/**
 	 * Tests whether two arrays of objects are equal to each other. The arrays must not be
 	 * <code>null</code>, but their elements may be <code>null</code>.
-	 * 
+	 *
 	 * @param leftArray
 	 *            The left array to compare; may be <code>null</code>, and may be empty and may
 	 *            contain <code>null</code> elements.
@@ -292,7 +292,7 @@ public final class Util {
 
 	/**
 	 * Provides a hash code based on the given integer value.
-	 * 
+	 *
 	 * @param i
 	 *            The integer value
 	 * @return <code>i</code>
@@ -303,7 +303,7 @@ public final class Util {
 
 	/**
 	 * Provides a hash code for the object -- defending against <code>null</code>.
-	 * 
+	 *
 	 * @param object
 	 *            The object for which a hash code is required.
 	 * @return <code>object.hashCode</code> or <code>0</code> if <code>object</code> if
@@ -315,7 +315,7 @@ public final class Util {
 
 	/**
 	 * Computes the hash code for an array of objects, but with defense against <code>null</code>.
-	 * 
+	 *
 	 * @param objects
 	 *            The array of objects for which a hash code is needed; may be <code>null</code>.
 	 * @return The hash code for <code>objects</code>; or <code>0</code> if <code>objects</code> is
@@ -340,7 +340,7 @@ public final class Util {
 	/**
 	 * Checks whether the second array is a subsequence of the first array, and that they share
 	 * common starting elements.
-	 * 
+	 *
 	 * @param left
 	 *            The first array to compare (large); may be <code>null</code>.
 	 * @param right
@@ -374,7 +374,7 @@ public final class Util {
 
 	/**
 	 * Converts an array into a string representation that is suitable for debugging.
-	 * 
+	 *
 	 * @param array
 	 *            The array to convert; may be <code>null</code>.
 	 * @return The string representation of the array; never <code>null</code>.
@@ -403,7 +403,7 @@ public final class Util {
 
 	/**
 	 * Provides a translation of a particular key from the resource bundle.
-	 * 
+	 *
 	 * @param resourceBundle
 	 *            The key to look up in the resource bundle; should not be <code>null</code>.
 	 * @param key
@@ -433,7 +433,7 @@ public final class Util {
 	/**
 	 * Foundation replacement for <code>String#replaceAll(String,
 	 * String)</code>, but <strong>without support for regular expressions</strong>.
-	 * 
+	 *
 	 * @param src
 	 *            the original string
 	 * @param find

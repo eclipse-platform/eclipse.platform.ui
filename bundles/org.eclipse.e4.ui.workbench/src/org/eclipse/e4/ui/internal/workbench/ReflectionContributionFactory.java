@@ -36,7 +36,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 
 	/**
 	 * Create a reflection factory.
-	 * 
+	 *
 	 * @param registry
 	 *            to read languages.
 	 */

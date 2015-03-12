@@ -25,7 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
  * It is expected that any methods that are exposed by this service that takes an <code>MPart</code>
  * as an argument be a part that is actually being managed by this service.
  * </p>
- * 
+ *
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -63,7 +63,7 @@ public interface EPartService {
 
 	/**
 	 * A tag on a part to indicate that it should be removed from the model when it is hidden.
-	 * 
+	 *
 	 * @see #hidePart(MPart)
 	 */
 	public static final String REMOVE_ON_HIDE_TAG = "removeOnHide"; //$NON-NLS-1$
@@ -74,7 +74,7 @@ public interface EPartService {
 	 * <p>
 	 * <b>Note:</b> Listeners should be removed when no longer necessary.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to attach
 	 */
@@ -83,7 +83,7 @@ public interface EPartService {
 	/**
 	 * Removes the given listener so that it will no longer be notified of part lifecycle events.
 	 * Has no effect if an identical listener has not been registered.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 */
@@ -91,7 +91,7 @@ public interface EPartService {
 
 	/**
 	 * Activates the given part. The part will be brought to top (if necessary) and granted focus.
-	 * 
+	 *
 	 * @param part
 	 *            the part to activate, must not be <code>null</code>
 	 */
@@ -100,7 +100,7 @@ public interface EPartService {
 	/**
 	 * Activates the given part. The part will be brought to top (if necessary) and, if
 	 * {@code requiresFocus} is true, then granted focus.
-	 * 
+	 *
 	 * @param part
 	 *            the part to activate, must not be <code>null</code>
 	 * @param requiresFocus
@@ -116,7 +116,7 @@ public interface EPartService {
 	/**
 	 * Brings this part to the top so that it will become visible to the end user. This does not
 	 * imply that the part will be granted focus.
-	 * 
+	 *
 	 * @param part
 	 *            the part to bring to top
 	 */
@@ -124,7 +124,7 @@ public interface EPartService {
 
 	/**
 	 * Finds and returns a part with the given id.
-	 * 
+	 *
 	 * @param id
 	 *            the id of the part to search for, must not be <code>null</code>
 	 * @return the part with the specified id, or <code>null</code> if no such part could be found
@@ -133,14 +133,14 @@ public interface EPartService {
 
 	/**
 	 * Returns a collection of all the parts that are being managed by this part service.
-	 * 
+	 *
 	 * @return a collection of parts that are being managed by this service, never <code>null</code>
 	 */
 	public Collection<MPart> getParts();
 
 	/**
 	 * Returns the active part.
-	 * 
+	 *
 	 * @return an active part within the scope of this service, or <code>null</code> if no part is
 	 *         currently active
 	 */
@@ -148,7 +148,7 @@ public interface EPartService {
 
 	/**
 	 * Returns whether the specified part is currently visible to the end user.
-	 * 
+	 *
 	 * @param part
 	 *            the part to check
 	 * @return <code>true</code> if the part is currently visible, <code>false</code> otherwise
@@ -157,7 +157,7 @@ public interface EPartService {
 
 	/**
 	 * Creates a new part of the given id.
-	 * 
+	 *
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
 	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
@@ -167,7 +167,7 @@ public interface EPartService {
 
 	/**
 	 * Creates a new placeholder for a part of the given id.
-	 * 
+	 *
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
 	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
@@ -177,7 +177,7 @@ public interface EPartService {
 
 	/**
 	 * Creates a new placeholder for a part of the given id.
-	 * 
+	 *
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
 	 * @param force
@@ -202,7 +202,7 @@ public interface EPartService {
 	 * contents may not necessarily be visible to the end user. visible to the end user.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
 	 * @param partState
@@ -233,7 +233,7 @@ public interface EPartService {
 	 * contents may not necessarily be visible to the end user. visible to the end user.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param part
 	 *            the part to show
 	 * @param partState
@@ -251,13 +251,13 @@ public interface EPartService {
 	 * <p>
 	 * To save the part before hiding, use {@link #savePart(MPart, boolean)}:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * if (partService.savePart(part, true)) {
 	 * 	partService.hidePart(part);
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param part
 	 *            the part to hide
 	 * @see #savePart(MPart, boolean)
@@ -273,13 +273,13 @@ public interface EPartService {
 	 * <p>
 	 * To save the part before hiding, use {@link #savePart(MPart, boolean)}:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * if (partService.savePart(part, true)) {
 	 * 	partService.hidePart(part);
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param part
 	 *            the part to hide
 	 * @param force
@@ -291,8 +291,8 @@ public interface EPartService {
 
 	/**
 	 * Returns a collection of all the dirty parts that are being managed by this service.
-	 * 
-	 * 
+	 *
+	 *
 	 * @return a collection of dirty parts that are being managed by this service, never
 	 *         <code>null</code>
 	 */
@@ -300,7 +300,7 @@ public interface EPartService {
 
 	/**
 	 * Saves the contents of the part if it is dirty and returns whether the operation completed.
-	 * 
+	 *
 	 * @param part
 	 *            the part to save
 	 * @param confirm
@@ -314,7 +314,7 @@ public interface EPartService {
 
 	/**
 	 * Saves the contents of all dirty parts and returns whether the operation completed.
-	 * 
+	 *
 	 * @param confirm
 	 *            <code>true</code> if the user should be prompted prior to saving the changes, and
 	 *            <code>false</code> to save changes without asking
@@ -326,7 +326,7 @@ public interface EPartService {
 	/**
 	 * Returns a collection of all {@link MInputPart} with the inputURI-Attribute set to the given
 	 * value
-	 * 
+	 *
 	 * @param inputUri
 	 *            the input uri to search for, must not be <code>null</code>
 	 * @return list of parts or an empty collection
@@ -338,7 +338,7 @@ public interface EPartService {
 	/**
 	 * Switch to the specified perspective. It will be selected and brought to top (if necessary).
 	 * It may not necessarily be granted focus if there is another active window present.
-	 * 
+	 *
 	 * @param perspective
 	 *            the perspective to switch to, must not be <code>null</code> and it must be a
 	 *            perspective that's being managed by this service

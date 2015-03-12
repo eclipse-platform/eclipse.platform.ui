@@ -27,7 +27,7 @@ import java.util.Map;
  * objects have the same identifier. This is required for sorting Eclipse Extension Registry
  * extensions by their plug-in dependencies, as a plug-in may contribute multiple sets of
  * extensions.
- * 
+ *
  * <p>
  * The implementation creates a dependency graph where the vertices represent the object identifiers
  * and the edges represent the required-relation between them. Subclasses must implement of
@@ -36,7 +36,7 @@ import java.util.Map;
  * <em>A</em> is a dependent of <em>B</em>), one may be easier to compute than the other in some
  * contexts and so this class combines the results.
  * </p>
- * 
+ *
  * <p>
  * Description of the algorithm:
  * </p>
@@ -57,7 +57,7 @@ import java.util.Map;
  * bundles within the cycle, since any dependencies to any single ndoe within the cycle effectively
  * extends to all.</li>
  * </ol>
- * 
+ *
  * @param <T>
  *            the type of objects being sorted
  * @param <ID>
@@ -74,7 +74,7 @@ public abstract class TopologicalSort<T, ID> {
 	/**
 	 * Return the identifier for the given object. The implementation properly tracks where multiple
 	 * objects have the same identifier.
-	 * 
+	 *
 	 * @param object
 	 *            the object
 	 * @return the identifier
@@ -85,7 +85,7 @@ public abstract class TopologicalSort<T, ID> {
 	 * Return the list of IDs required by {@code id}. Implementors may choose to return {@code null}
 	 * or an empty collection if this information is more easily computed by
 	 * {@link #getDependencies(Object)}.
-	 * 
+	 *
 	 * @param id
 	 *            the id
 	 * @return the IDs required by {@code id}; may be {@code null}
@@ -96,7 +96,7 @@ public abstract class TopologicalSort<T, ID> {
 	 * Return the list of IDs depended upon by {@code id}. Implementors may choose to return
 	 * {@code null} or an empty collection if this information is more easily computed by
 	 * {@link #getRequirements(Object)}.
-	 * 
+	 *
 	 * @param id
 	 *            the id
 	 * @return the IDs depended upon by {@code id}; may be {@code null}
@@ -106,7 +106,7 @@ public abstract class TopologicalSort<T, ID> {
 	/**
 	 * Sort the provided extensions by the dependencies of their contributors. Note that sorting is
 	 * done in-place.
-	 * 
+	 *
 	 * @param objects
 	 *            the objects to be sorted
 	 * @return the objects in a topologically-sorted order

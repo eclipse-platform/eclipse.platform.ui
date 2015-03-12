@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * Parameters are mutable, and can change as the command changes. Notifications will not be sent if
  * the parameter itself changes. Listeners can be attached to the command.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class Parameter implements IParameter, ITypedParameter {
@@ -102,7 +102,7 @@ public final class Parameter implements IParameter, ITypedParameter {
 
 	/**
 	 * Constructs a new instance of <code>Parameter</code> with all of its values pre-defined.
-	 * 
+	 *
 	 * @param id
 	 *            The identifier for this parameter; must not be <code>null</code>.
 	 * @param name
@@ -135,7 +135,7 @@ public final class Parameter implements IParameter, ITypedParameter {
 	/**
 	 * Tests whether this object is equal to another object. A parameter is only equal to another
 	 * parameter with the same properties.
-	 * 
+	 *
 	 * @param object
 	 *            The object with which to compare; may be <code>null</code>.
 	 * @return <code>true</code> if the objects are equal; <code>false</code> otherwise.

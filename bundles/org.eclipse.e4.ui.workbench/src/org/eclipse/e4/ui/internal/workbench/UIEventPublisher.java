@@ -62,38 +62,38 @@ public class UIEventPublisher extends EContentAdapter {
 
 	/**
 	 * Large hack here. Open to better suggestions
-	 * 
+	 *
 	 * When the model SET changes occur to the values of maps, the NOTIFIER is the map and not the
 	 * element containing the map. (Note that map addition and removal events DO come in with the
 	 * NOTIFIER set to the element containing the map)
-	 * 
+	 *
 	 * In the problematic case, the containing model element can be found in the NOTIFIER's
 	 * eContainer. However, the FEATURE (field) of the eContainer containing the map is not readily
 	 * available.
-	 * 
+	 *
 	 * We had considered a strategy where you recursively check all fields of the eContainer for an
 	 * object that IS the NOTIFIER, however these events happen a lot and the resulting code would
 	 * have very poor performance. Additionally, all I could get from the eContainer was an EMF
 	 * DelegatingMap, while the NOTIFIER is an instance of the contained delegated map
 	 * (StringToObjectImpl for example). It would appear some reflection tricks to read
 	 * protected/private methods would be required to get the correct objects to compare.
-	 * 
+	 *
 	 * At this time there are only two maps used in our model. A StringToObject map used in
 	 * MApplicationElement.transientData a StringToString map used in
 	 * MApplicationElement.persistentState.
-	 * 
+	 *
 	 * The large hack employed is to take this knowledge and hard hard code the topic based on the
 	 * type of the NOTIFIER.
-	 * 
+	 *
 	 * One problem with this approach is if a developer modifies the model to contain another field
 	 * using a map events would be generated with the wrong topic information. This will lead to
 	 * hard to identify bugs.
-	 * 
+	 *
 	 * To combat this I have added guard code that explicitly confirms that a StringToObject change
 	 * is being originated by transientData and a StringToString change is being originated by
 	 * persistentState. If the guard check fails an IllegalArgumentException is thrown with
 	 * instructions to modify UIEventPublisher.
-	 * 
+	 *
 	 * Clearly this is a sub-optimal solution and would like to hear suggestions for improvement.
 	 * Likely there is some "simple" EMF wisdom we are missing to make this work with a couple of
 	 * annotations, a white swan and a full moon.

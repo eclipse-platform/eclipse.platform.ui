@@ -65,7 +65,7 @@ class PartActivationHistory {
 	/**
 	 * Places the specified part at the end of the activation history if it is not already in the
 	 * list. If it is already in the activation history, then its position will not change.
-	 * 
+	 *
 	 * @param part
 	 *            the part to possibly add to the end of the activation history
 	 */
@@ -77,7 +77,7 @@ class PartActivationHistory {
 
 	/**
 	 * Adds the specified part to the front of the activation history.
-	 * 
+	 *
 	 * @param part
 	 *            the part to insert into the front of the activation history
 	 */

@@ -36,7 +36,7 @@ public class HandlerProcessingAddon {
 
 	/**
 	 * Do initial check of handlers and their context upon creation
-	 * 
+	 *
 	 * @param application
 	 * @param modelService
 	 */
@@ -60,7 +60,7 @@ public class HandlerProcessingAddon {
 	/**
 	 * Responds to the coming and goings of handlers in the application model by activating and
 	 * deactivating them accordingly.
-	 * 
+	 *
 	 * @param event
 	 *            The event thrown in the event bus
 	 */

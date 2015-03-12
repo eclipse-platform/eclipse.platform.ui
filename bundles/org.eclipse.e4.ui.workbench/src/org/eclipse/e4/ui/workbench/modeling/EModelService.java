@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.workbench.Selector;
 
 /**
  * This service is used to find, create and handle model elements
- * 
+ *
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -70,14 +70,14 @@ public interface EModelService {
 
 	/**
 	 * Returned Location if the element is in a main menu of an MWindow
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final int IN_MAIN_MENU = 0x20;
 
 	/**
 	 * Returned Location if the element is in an MPart
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static final int IN_PART = 0x40;
@@ -101,7 +101,7 @@ public interface EModelService {
 	/**
 	 * When invoking the 'cloneElement' method the newly cloned element's 'transientData' map will
 	 * contain a reference to the original element using this as a key.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public static String CLONED_FROM_KEY = "Cloned From"; //$NON-NLS-1$
@@ -109,13 +109,13 @@ public interface EModelService {
 	/**
 	 * Creates instances of model elements. The method supports any type extending
 	 * {@link MApplicationElement}, both in the standard e4 UI model and in an extension models.
-	 * 
+	 *
 	 * <p>
 	 * <b>Caution:</b> To create model element instances of extension models you need to register
 	 * them with the <code>the org.eclipse.e4.workbench.model.definition.enrichment</code>
 	 * ExtensionPoint.
 	 * </p>
-	 * 
+	 *
 	 * @param elementType
 	 *            the class to instantiate. Cannot be <code>null</code>
 	 * @return a new instance
@@ -130,7 +130,7 @@ public interface EModelService {
 	 * This is a convenience method that constructs a new Selector based on {@link ElementMatcher}
 	 * and forwards the call on to the base API
 	 * {@link EModelService#findElements(MApplicationElement, Class, int, Selector)}.
-	 * 
+	 *
 	 * @see EModelService#findElements(MApplicationElement, Class, int, Selector)
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
@@ -140,7 +140,7 @@ public interface EModelService {
 	 * This is a convenience method that forwards the parameters on to
 	 * {@link EModelService#findElements(MUIElement, String, Class, List, int)}, passing
 	 * {@link EModelService#ANYWHERE} as the 'searchFlags'.
-	 * 
+	 *
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch);
@@ -154,7 +154,7 @@ public interface EModelService {
 	 * value of the 'clazz' parameter. If the 'clazz' parameter is null then the returned list is
 	 * untyped.
 	 * </p>
-	 * 
+	 *
 	 * @param <T>
 	 *            The generic type of the returned list
 	 * @param searchRoot
@@ -186,7 +186,7 @@ public interface EModelService {
 	 *            An implementation of a Selector that will return true for elements that it wants
 	 *            in the returned list.
 	 * @return The generically typed list of matching elements.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public <T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
@@ -194,7 +194,7 @@ public interface EModelService {
 
 	/**
 	 * Returns the first element, recursively searching under the specified search root (inclusive)
-	 * 
+	 *
 	 * @param id
 	 *            The id to search for, must not be null
 	 * @param searchRoot
@@ -206,7 +206,7 @@ public interface EModelService {
 	/**
 	 * Locate the context that is closest to the given element in the parent hierarchy. It does not
 	 * include the context of the supplied element (should it have one).
-	 * 
+	 *
 	 * @param element
 	 *            the element to locate parent context for
 	 * @return the containing context for this element
@@ -218,7 +218,7 @@ public interface EModelService {
 	 * element is a top-level window, then it will be selected as the application's currently active
 	 * window. Otherwise, the element may merely be brought up to be seen by the user but not
 	 * necessarily have its containing window become the application's active window.
-	 * 
+	 *
 	 * @param element
 	 *            The element to bring to the top
 	 */
@@ -226,11 +226,11 @@ public interface EModelService {
 
 	/**
 	 * Clones the element, creating a deep copy of its structure.
-	 * 
+	 *
 	 * NOTE: The cloned element gets the original element added into its 'transientData' map using
 	 * the CLONED_FROM_KEY key. This is useful in cases where there may be other information the
 	 * newly cloned element needs from the original.
-	 * 
+	 *
 	 * @param element
 	 *            The element to clone
 	 * @param snippetContainer
@@ -243,14 +243,14 @@ public interface EModelService {
 	/**
 	 * If a snippet with the given id exists a clone is created and returned. returns
 	 * <code>null</code> if no snippet can be found.
-	 * 
+	 *
 	 * @param snippetContainer
 	 *            The container of the snippet to clone used
 	 * @param snippetId
 	 *            The element id of the snippet to clone
 	 * @param refWin
 	 *            The window that Placeholder references should be resolved using
-	 * 
+	 *
 	 * @return The cloned snippet or <code>null</code> if no snippet with the given id can be found
 	 */
 	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
@@ -258,7 +258,7 @@ public interface EModelService {
 
 	/**
 	 * Convenience method to find a snippet by id in a particular container
-	 * 
+	 *
 	 * @param snippetContainer
 	 *            The container to look in
 	 * @param id
@@ -269,7 +269,7 @@ public interface EModelService {
 
 	/**
 	 * Return the count of the children whose 'toBeRendered' flag is true
-	 * 
+	 *
 	 * @param element
 	 *            The element to test
 	 * @return the number of children with 'toBeRendered' == true
@@ -279,7 +279,7 @@ public interface EModelService {
 	/**
 	 * Given a containing MWindow find the MPlaceholder that is currently being used to host the
 	 * given element (if any)
-	 * 
+	 *
 	 * @param window
 	 *            The containing window
 	 * @param element
@@ -291,7 +291,7 @@ public interface EModelService {
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
 	 * list of children.
-	 * 
+	 *
 	 * @param element
 	 *            The element to move
 	 * @param newParent
@@ -303,7 +303,7 @@ public interface EModelService {
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
 	 * list of children. If 'leavePlaceholder is true then an instance of MPlaceholder will be
 	 * inserted into the model at the element's original location.
-	 * 
+	 *
 	 * @param element
 	 *            The element to move
 	 * @param newParent
@@ -317,7 +317,7 @@ public interface EModelService {
 	/**
 	 * Move the element to a new location. The element will be placed at the specified index in the
 	 * new parent's list of children.
-	 * 
+	 *
 	 * @param element
 	 *            The element to move
 	 * @param newParent
@@ -330,7 +330,7 @@ public interface EModelService {
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
 	 * list of children.
-	 * 
+	 *
 	 * @param element
 	 *            The element to move
 	 * @param newParent
@@ -346,7 +346,7 @@ public interface EModelService {
 	/**
 	 * Inserts the given element into the UI Model by either creating a new sash or augmenting an
 	 * existing sash if the orientation permits.
-	 * 
+	 *
 	 * @param toInsert
 	 *            The element to insert
 	 * @param relTo
@@ -361,7 +361,7 @@ public interface EModelService {
 
 	/**
 	 * Created a separate (detached) window containing the given element.
-	 * 
+	 *
 	 * @param mPartSashContainerElement
 	 *            The element to detach
 	 * @param x
@@ -380,10 +380,10 @@ public interface EModelService {
 	 * Get the top-level window containing this UI element. A <code>null</code> return value
 	 * indicates that the element is not directly contained in the UI model (but may, for example,
 	 * be a model snippet hosted in a Dialog...)
-	 * 
+	 *
 	 * @param element
 	 *            The element to get the window for
-	 * 
+	 *
 	 * @return the top-level window containing this UI element. A <code>null</code> return value
 	 *         indicates that the element is not directly contained in the UI model (but may, for
 	 *         example, be a model snippet hosted in a Dialog...)
@@ -400,12 +400,12 @@ public interface EModelService {
 
 	/**
 	 * Returns the window's MTrimBar for the specified side. If necessary the bar will be created.
-	 * 
+	 *
 	 * @param window
 	 *            The window to get the trim bar for
 	 * @param sv
 	 *            The value for the specified side
-	 * 
+	 *
 	 * @return The appropriate trim bar
 	 */
 	public MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
@@ -413,10 +413,10 @@ public interface EModelService {
 	/**
 	 * Return the active perspective for the given window. This is a convenience method that just
 	 * returns the MPerspectiveStack's selectedElement.
-	 * 
+	 *
 	 * @param window
 	 *            The window to determine the active perspective for.
-	 * 
+	 *
 	 * @return The active perspective or <code>null</code> if there is no MPerspectiveStack, it's
 	 *         empty or has no selected element.
 	 */
@@ -427,7 +427,7 @@ public interface EModelService {
 	 * There may be elements (i.e. minimized stacks...) in the window's trim that are associated
 	 * with a perspective as well as the need to properly clean up any detached windows associated
 	 * with the perspective.
-	 * 
+	 *
 	 * @param persp
 	 *            the perspective to remove
 	 * @param window
@@ -437,7 +437,7 @@ public interface EModelService {
 
 	/**
 	 * Remove the given perspective completely from the model.
-	 * 
+	 *
 	 * @param persp
 	 *            the perspective to remove
 	 * @param window
@@ -447,11 +447,11 @@ public interface EModelService {
 
 	/**
 	 * Count the number of 'toBeRendered' children
-	 * 
+	 *
 	 * @param container
 	 *            The container to check
 	 * @return The number of children whose toBeRendered flag is <code>true</code>
-	 * 
+	 *
 	 */
 	public int toBeRenderedCount(MElementContainer<?> container);
 
@@ -459,7 +459,7 @@ public interface EModelService {
 	 * Get the container of the given element. This is a convenience method that will always return
 	 * the actual container for the element, even where the element's 'getParent' might return null
 	 * (trim, detached windows...)
-	 * 
+	 *
 	 * @param element
 	 *            The element to get the container for
 	 * @return The element's container. This may be <code>null</code> if the element being checked
@@ -471,7 +471,7 @@ public interface EModelService {
 	 * Given an element this method responds with information about where the element exists within
 	 * the current UI Model. This is used in cases where it is necessary to know if an element is in
 	 * the 'shared area' or outside of any perspective.
-	 * 
+	 *
 	 * @param element
 	 * @return The location of the element in the UI, will be one of:
 	 *         <ul>
@@ -497,7 +497,7 @@ public interface EModelService {
 	 * <p>
 	 * In order to support this convention it's required that no descriptor contain a ':' in its id
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            The id of the descriptor to return
 	 * @return The descriptor matching the id or <code>null</code> if none exists
@@ -510,7 +510,7 @@ public interface EModelService {
 	 * contained in any MPerspective if there is a placeholder for the element in any 'shared' area
 	 * (i.e. visible regardless of which perspective is visible) by setting its 'toBeRendered' state
 	 * to <code>false</code>.
-	 * 
+	 *
 	 * @param window
 	 *            The window to modify
 	 * @param perspective
@@ -523,7 +523,7 @@ public interface EModelService {
 	 * Returns <code>true</code> iff the supplied element represents the single visible element in
 	 * the shared area. This method is used to test for this condition since (by convention) there
 	 * must be at least one stack in the shared area at all times.
-	 * 
+	 *
 	 * @param stack
 	 *            The element to test
 	 * @return <code>true</code> iff the element is the last visible stack
@@ -532,7 +532,7 @@ public interface EModelService {
 
 	/**
 	 * Allows an element to be rendered in an arbitrary UI container (I.e. SWT Composite).
-	 * 
+	 *
 	 * @param element
 	 *            The element to be rendered.
 	 * @param hostWindow
@@ -549,12 +549,12 @@ public interface EModelService {
 	 * Tests whether the given element is being 'hosted'. This method is used to allow UI Elements
 	 * to act as if they are contained within a given MWindow even though the element is not
 	 * actually structurally contained in that window's UI Model.
-	 * 
+	 *
 	 * @param element
 	 *            The element to test. Must be non-null.
 	 * @param hostWindow
 	 *            The window to test the element against. Must be non-null.
-	 * 
+	 *
 	 * @return <code>true</code> iff the given element or one of its ancestors is currently being
 	 *         hosted in the given MWindow.
 	 */

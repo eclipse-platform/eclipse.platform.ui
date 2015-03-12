@@ -23,7 +23,7 @@ public interface IModelReconcilingService {
 	/**
 	 * Creates a model reconciler that is capable of tracking delta changes of a model and applying
 	 * said changes to a model.
-	 * 
+	 *
 	 * @return a reconciler for tracking and applying model changes
 	 */
 	public ModelReconciler createModelReconciler();
@@ -34,7 +34,7 @@ public interface IModelReconcilingService {
 	 * <p>
 	 * This is a convenience method, fully equivalent to <code>applyDeltas(deltas, null)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param deltas
 	 *            the deltas to apply to the model
 	 * @return the resulting outcome of the merge
@@ -44,7 +44,7 @@ public interface IModelReconcilingService {
 	/**
 	 * Applies all of the deltas to the model and returns a status representing the result of the
 	 * merging operation.
-	 * 
+	 *
 	 * @param deltas
 	 *            the deltas to apply to the model
 	 * @param filters

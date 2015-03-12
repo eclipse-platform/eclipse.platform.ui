@@ -41,7 +41,7 @@ public class ExtensionsSort extends TopologicalSort<IExtension, Bundle> {
 
 	/**
 	 * Returns the bundles that the given bundle requires.
-	 * 
+	 *
 	 * @return An unmodifiable {@link Iterable} set of bundles currently required by the geiven
 	 *         bundle. An empty {@link Iterable} will be returned if the given {@code Bundle} object
 	 *         has become stale or there are no bundles required.
@@ -59,7 +59,7 @@ public class ExtensionsSort extends TopologicalSort<IExtension, Bundle> {
 	 * <p>
 	 * All re-exports will be followed and also be contained in the result.
 	 * </p>
-	 * 
+	 *
 	 * @param dependents
 	 *            the result which will contain all the bundles which require the given
 	 *            {@link BundleWiring}
@@ -96,7 +96,7 @@ public class ExtensionsSort extends TopologicalSort<IExtension, Bundle> {
 	 * bundles of the re-exporting bundle are included in the returned array as they transitively
 	 * depend on {@code bundle}.
 	 * </p>
-	 * 
+	 *
 	 * @return An unmodifiable {@link Iterable} set of bundles currently requiring {@code bundle}.
 	 *         An empty {@link Iterable} will be returned if the {@code bundle} has become stale or
 	 *         has no dependents.

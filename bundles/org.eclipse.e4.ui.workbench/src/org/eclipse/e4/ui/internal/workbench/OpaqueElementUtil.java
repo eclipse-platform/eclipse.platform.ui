@@ -38,7 +38,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Remove the 'opaque item' from the UI Element
-	 * 
+	 *
 	 * @param uiElement
 	 *            the UI element
 	 * @return the removed 'opaque item' or <code>null</code>
@@ -49,7 +49,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Create an opaque menu
-	 * 
+	 *
 	 * @return a new opaque menu
 	 */
 	public static MMenu createOpaqueMenu() {
@@ -60,7 +60,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Create an opaque menu item
-	 * 
+	 *
 	 * @return a new opaque menu item.
 	 */
 	public static MMenuItem createOpaqueMenuItem() {
@@ -71,7 +71,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Create an opaque menu separator
-	 * 
+	 *
 	 * @return a new opaque menu separator
 	 */
 	public static MMenuSeparator createOpaqueMenuSeparator() {
@@ -82,7 +82,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Create an opaque tool item
-	 * 
+	 *
 	 * @return a new opaque tool item.
 	 */
 	public static MToolItem createOpaqueToolItem() {
@@ -93,7 +93,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Get the 'opaque item' associated with the UI Element.
-	 * 
+	 *
 	 * @param uiElement
 	 *            a UI element
 	 * @return the opaque item or <code>null</code>
@@ -104,7 +104,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Tests whether a menu element is an opaque menue
-	 * 
+	 *
 	 * @param item
 	 * @return <code>true</code> if the element is an 'opaque' menu
 	 */
@@ -114,7 +114,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Tests whether a menu element is an opaque menu item
-	 * 
+	 *
 	 * @param item
 	 *            a menu item.
 	 * @return <code>true</code> if the menu element is an 'opaque' menu item
@@ -126,7 +126,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Tests whether a menu element is an opaque menu separator
-	 * 
+	 *
 	 * @param item
 	 *            a menu item.
 	 * @return <code>true</code> if the menu element is an 'opaque' separator
@@ -138,7 +138,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Tests whether a UI element is an 'opaque' tool item
-	 * 
+	 *
 	 * @param uiElement
 	 *            a UI element.
 	 * @return <code>true</code> if the tool item is 'opaque'
@@ -150,7 +150,7 @@ public class OpaqueElementUtil {
 
 	/**
 	 * Set the 'opaque item' associated with the UI Element.
-	 * 
+	 *
 	 * @param uiElement
 	 *            the UI Element.
 	 * @param opaqueItem

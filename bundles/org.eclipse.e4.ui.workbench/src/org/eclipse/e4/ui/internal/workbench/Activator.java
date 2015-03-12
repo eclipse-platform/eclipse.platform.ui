@@ -52,7 +52,7 @@ public class Activator implements BundleActivator {
 
 	/**
 	 * Get the default activator.
-	 * 
+	 *
 	 * @return a BundleActivator
 	 */
 	public static Activator getDefault() {

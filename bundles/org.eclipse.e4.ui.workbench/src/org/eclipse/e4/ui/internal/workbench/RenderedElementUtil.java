@@ -36,7 +36,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Create a 'rendered' menu instance
-	 * 
+	 *
 	 * @return the new instance
 	 */
 	public static MMenu createRenderedMenu() {
@@ -48,7 +48,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Create a 'rendered' menu item instance
-	 * 
+	 *
 	 * @return the new instance
 	 */
 	public static MMenuItem createRenderedMenuItem() {
@@ -59,7 +59,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Create a 'rendered' tool bar instance
-	 * 
+	 *
 	 * @return the new instance
 	 */
 	public static MToolBar createRenderedToolBar() {
@@ -70,7 +70,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Return the contribution manager value for the 'rendered' element.
-	 * 
+	 *
 	 * @param element
 	 *            a rendered element.
 	 * @return the contribution manager or <code>null</code>
@@ -81,7 +81,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Test whether the UI element is an 'rendered' menu.
-	 * 
+	 *
 	 * @param element
 	 *            the UI element
 	 * @return <code>true</code> if the element is a 'rendered' menu
@@ -92,7 +92,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Test whether the UI element is a 'rendered' menu item.
-	 * 
+	 *
 	 * @param element
 	 *            a UI element
 	 * @return <code>true</code> if the element is a 'rendered' menu item
@@ -103,7 +103,7 @@ public class RenderedElementUtil {
 
 	/**
 	 * Set the contribution manager value for a 'rendered' element.
-	 * 
+	 *
 	 * @param element
 	 *            a rendered element
 	 * @param contributionManager

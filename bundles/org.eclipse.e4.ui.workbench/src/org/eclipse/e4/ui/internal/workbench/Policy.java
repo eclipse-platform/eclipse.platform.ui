@@ -13,7 +13,7 @@ package org.eclipse.e4.ui.internal.workbench;
 /**
  * A common facility for parsing the
  * <code>org.eclipse.e4.ui.workbench/.options</code> file.
- * 
+ *
  */
 public class Policy {
 	public static final String DEBUG = "/debug"; //$NON-NLS-1$

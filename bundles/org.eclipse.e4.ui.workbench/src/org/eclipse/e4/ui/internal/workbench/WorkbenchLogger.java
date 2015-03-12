@@ -127,7 +127,7 @@ public final class WorkbenchLogger extends Logger {
 
 	/**
 	 * Sets the debug options service for this logger.
-	 * 
+	 *
 	 * @param options
 	 *            The debug options to be used by this logger
 	 */

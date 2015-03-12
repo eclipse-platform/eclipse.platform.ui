@@ -247,7 +247,7 @@ public class CommandProcessingAddon {
 	/**
 	 * Attempt to localize the provided key. Return the localized variant if found or the key itself
 	 * otherwise.
-	 * 
+	 *
 	 * @param key
 	 *            the possible key reference
 	 * @param modelElement
