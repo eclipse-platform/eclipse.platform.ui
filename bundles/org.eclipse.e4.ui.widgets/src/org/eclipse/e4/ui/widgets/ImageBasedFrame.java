@@ -33,7 +33,7 @@ public class ImageBasedFrame extends Canvas {
 	private static final String HANDLE_IMAGE= "handleImage"; //$NON-NLS-1$
 
 	private static final String FRAME_IMAGE= "frameImage"; //$NON-NLS-1$
-	
+
 	private Control framedControl;
 
 	private boolean draggable = true;
@@ -136,7 +136,7 @@ public class ImageBasedFrame extends Canvas {
 	public Point computeSize(int wHint, int hHint) {
 		if (framedControl == null || framedControl.isDisposed())
 			return new Point(0, 0);
-		
+
 		if (vertical) {
 			int width = w1 + framedControl.getSize().x + w3;
 			int height = h1 + handleHeight + framedControl.getSize().y + h3;
@@ -153,10 +153,10 @@ public class ImageBasedFrame extends Canvas {
 			reskin(SWT.NONE);
 			return;
 		}
-		
+
 		if (framedControl == null || framedControl.isDisposed())
 			return;
-		
+
 		Point inner = framedControl.getSize();
 		int handleWidth = (handle != null && !vertical) ? handle.getBounds().width
 				: 0;
@@ -206,7 +206,7 @@ public class ImageBasedFrame extends Canvas {
 					srcRect.height, dstRect.x, dstRect.y, dstRect.width,
 					dstRect.height);
 		}
-		
+
 		// Top Right
 		srcRect.x = w1 + w2;
 		srcRect.y = 0;
