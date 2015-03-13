@@ -112,8 +112,8 @@ public abstract class ToolTip {
 						public void run() {
 							// Check if the new active shell is the tooltip
 							// itself
-							if (ToolTip.this.control.getDisplay()
-									.getActiveShell() != CURRENT_TOOLTIP) {
+							if (ToolTip.this.control != null && !ToolTip.this.control.isDisposed()
+									&& ToolTip.this.control.getDisplay().getActiveShell() != CURRENT_TOOLTIP) {
 								toolTipHide(CURRENT_TOOLTIP, event);
 							}
 						}
