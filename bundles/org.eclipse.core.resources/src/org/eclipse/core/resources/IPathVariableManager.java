@@ -97,11 +97,11 @@ public interface IPathVariableManager {
 	 * @param name the name of the variable 
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
-	 * @deprecated use setValue(String, URI) instead.
 	 * <ul>
 	 * <li>The variable name is not valid</li>
 	 * <li>The variable value is relative</li>
 	 * </ul>
+	 * @deprecated use {@link #setURIValue(String, URI)} instead.
 	 */
 	@Deprecated
 	public void setValue(String name, IPath value) throws CoreException;
@@ -149,7 +149,7 @@ public interface IPathVariableManager {
 	 * @param name the name of the variable to return the value for  
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
-	 * @deprecated use getURIValue(String) instead.
+	 * @deprecated use {@link #getURIValue(String)} instead.
 	 */
 	@Deprecated
 	public IPath getValue(String name);
@@ -248,7 +248,7 @@ public interface IPathVariableManager {
 	 * 
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
-	 * @deprecated use resolveURI(URI) instead.
+	 * @deprecated use {@link #resolveURI(URI)} instead.
 	 */
 	@Deprecated
 	public IPath resolvePath(IPath path);

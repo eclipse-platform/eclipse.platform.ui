@@ -89,10 +89,10 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated use {@link #getURIValue(String)} instead.
 	 */
-	@Override
 	@Deprecated
+	@Override
 	public IPath getValue(String varName) {
 		URI uri = getURIValue(varName);
 		if (uri != null)
@@ -197,7 +197,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated use {@link #resolveURI(URI)} instead.
 	 */
 	@Override
 	@Deprecated
@@ -298,16 +298,15 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated use {@link #setURIValue(String, URI)} instead.
 	 */
-	@Override
 	@Deprecated
+	@Override
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		if (newValue == null)
 			setURIValue(varName, (URI) null);
 		else
 			setURIValue(varName, URIUtil.toURI(newValue));
-
 	}
 
 	/**

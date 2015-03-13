@@ -1932,7 +1932,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @return <code>true</code> if this resource is read-only, 
 	 *		<code>false</code> otherwise
-	 * @deprecated use <tt>IResource#getResourceAttributes()</tt>
+	 * @deprecated use {@link #getResourceAttributes()}
 	 */
 	@Deprecated
 	public boolean isReadOnly();

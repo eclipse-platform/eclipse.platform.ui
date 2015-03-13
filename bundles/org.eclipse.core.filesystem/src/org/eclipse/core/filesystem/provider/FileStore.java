@@ -293,6 +293,9 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	@Override
 	public abstract IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * @deprecated use {@link #getFileStore(IPath)} instead
+	 */
 	@Deprecated
 	@Override
 	public IFileStore getChild(IPath path) {

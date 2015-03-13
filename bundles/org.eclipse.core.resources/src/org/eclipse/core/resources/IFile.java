@@ -760,7 +760,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
-	 * @deprecated use IFile#getCharset instead
+	 * @deprecated use {@link #getCharset} instead
 	 */
 	@Deprecated
 	public int getEncoding() throws CoreException;
@@ -815,9 +815,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *
 	 * @see IResource#isReadOnly()
 	 * @see IStorage#isReadOnly()
-	 * @deprecated
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isReadOnly();
 

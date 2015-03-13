@@ -320,6 +320,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		notificationManager.addListener(listener, eventMask);
 	}
 
+	/**
+	 * @deprecated Use {@link #addSaveParticipant(String, ISaveParticipant)} instead
+	 */
 	@Deprecated
 	@Override
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
  * </p>
  * @since 3.3
  */
+@SuppressWarnings("deprecation")
 public abstract class FileModificationValidator implements IFileModificationValidator {
 
 	/**
@@ -47,8 +48,8 @@ public abstract class FileModificationValidator implements IFileModificationVali
 	 * interface. Clients should call {@link #validateEdit(IFile[], FileModificationValidationContext)}
 	 * instead.
 	 */
-	@Override
 	@Deprecated
+	@Override
 	public final IStatus validateEdit(IFile[] files, Object context) {
 		FileModificationValidationContext validationContext;
 		if (context == null)
@@ -75,9 +76,7 @@ public abstract class FileModificationValidator implements IFileModificationVali
 	 * 
 	 * @see IFile#setContents(java.io.InputStream, int, org.eclipse.core.runtime.IProgressMonitor)
 	 * @see IFile#appendContents(java.io.InputStream, int, org.eclipse.core.runtime.IProgressMonitor)
-	 * @deprecated
 	 */
-	@Deprecated
 	@Override
 	public IStatus validateSave(IFile file) {
 		return validateEdit(new IFile[] {file}, (FileModificationValidationContext) null);
