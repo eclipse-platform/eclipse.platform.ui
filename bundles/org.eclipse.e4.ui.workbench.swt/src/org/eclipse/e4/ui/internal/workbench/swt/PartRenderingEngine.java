@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 462056
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
@@ -33,6 +34,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
@@ -46,7 +48,6 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.PersistState;
-import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -112,7 +113,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	@Inject
 	@Optional
-	private void subscribeTopicToBeRendered(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
+	private void subscribeTopicToBeRendered(@EventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
 
 		MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 		MElementContainer<?> parent = changedElement.getParent();
@@ -159,7 +160,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	@Inject
 	@Optional
-	private void subscribeVisibilityHandler(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
+	private void subscribeVisibilityHandler(@EventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
 
 		MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 		MUIElement parent = changedElement.getParent();
@@ -211,7 +212,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	@Inject
 	@Optional
-	private void subscribeTrimHandler(@UIEventTopic(UIEvents.TrimmedWindow.TOPIC_TRIMBARS) Event event) {
+	private void subscribeTrimHandler(@EventTopic(UIEvents.TrimmedWindow.TOPIC_TRIMBARS) Event event) {
 
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(changedObj instanceof MTrimmedWindow))
@@ -238,7 +239,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	@Inject
 	@Optional
-	private void subscribeChildrenHandler(@UIEventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
+	private void subscribeChildrenHandler(@EventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
 
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(changedObj instanceof MElementContainer<?>))
@@ -319,9 +320,21 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	@Inject
 	@Optional
-	private void subscribeWindowsHandler(@UIEventTopic(UIEvents.Window.TOPIC_WINDOWS) Event event) {
+	private void subscribeWindowsHandler(@EventTopic(UIEvents.Window.TOPIC_WINDOWS) Event event) {
 
 		subscribeChildrenHandler(event);
+	}
+
+	@Inject
+	@Optional
+	private void subscribePerspectiveWindowsHandler(@EventTopic(UIEvents.Perspective.TOPIC_WINDOWS) Event event) {
+		subscribeChildrenHandler(event);
+	}
+
+	@Inject
+	@Optional
+	private void subscribeCssThemeChanged(@EventTopic(IThemeEngine.Events.THEME_CHANGED) Event event) {
+		cssThemeChangedHandler.handleEvent(event);
 	}
 
 	private IEclipseContext appContext;
@@ -343,6 +356,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	@Inject
 	@Optional
 	IEventBroker eventBroker;
+
+	private StylingPreferencesHandler cssThemeChangedHandler;
 
 	@Inject
 	public PartRenderingEngine(
@@ -439,6 +454,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		curFactory = factory;
 		context.set(IRendererFactory.class, curFactory);
+
+		cssThemeChangedHandler = new StylingPreferencesHandler(context.get(Display.class));
 	}
 
 	private static void populateModelInterfaces(MContext contextModel,

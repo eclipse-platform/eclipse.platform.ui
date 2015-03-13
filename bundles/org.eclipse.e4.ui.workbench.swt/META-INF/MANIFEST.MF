@@ -33,7 +33,8 @@ Require-Bundle: org.eclipse.equinox.registry;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.equinox.ds,
  org.eclipse.equinox.event;resolution:=optional,
  org.eclipse.emf.ecore.xmi;bundle-version="2.7.0",
- org.eclipse.e4.ui.model.workbench;bundle-version="1.0.0"
+ org.eclipse.e4.ui.model.workbench;bundle-version="1.0.0",
+ org.eclipse.e4.core.di.extensions
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.addons.swt,org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
