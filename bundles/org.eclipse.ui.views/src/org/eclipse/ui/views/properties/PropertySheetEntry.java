@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
  *     Kevin Milburn - [Bug 423214] [PropertiesView] add support for IColorProvider and IFontProvider
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
@@ -63,7 +64,7 @@ public class PropertySheetEntry extends EventManager implements
 	/**
 	 * The property sources for the values we are displaying/editing.
 	 */
-	private Map sources = new HashMap(0);
+	private Map<Object, IPropertySource> sources = new HashMap<Object, IPropertySource>(0);
 
 	/**
 	 * The value of this entry is defined as the the first object in its value
@@ -438,20 +439,20 @@ public class PropertySheetEntry extends EventManager implements
 	 */
 	protected IPropertySource getPropertySource(Object object) {
 		if (sources.containsKey(object))
-			return (IPropertySource) sources.get(object);
+			return sources.get(object);
 
 		IPropertySource result = null;
 		IPropertySourceProvider provider = propertySourceProvider;
 
 		if (provider == null && object != null) {
-			provider = (IPropertySourceProvider) ViewsPlugin.getAdapter(object,
+			provider = ViewsPlugin.getAdapter(object,
                     IPropertySourceProvider.class, false);
         }
 
 		if (provider != null) {
 			result = provider.getPropertySource(object);
 		} else {
-            result = (IPropertySource)ViewsPlugin.getAdapter(object, IPropertySource.class, false);
+			result = ViewsPlugin.getAdapter(object, IPropertySource.class, false);
         }
 
 		sources.put(object, result);

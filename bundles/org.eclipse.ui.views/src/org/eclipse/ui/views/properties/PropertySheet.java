@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,11 @@
  *     Markus Alexander Kuppe (Versant Corp.) - https://bugs.eclipse.org/248103
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 272564
  *     Craig Foote (Footeware.ca) - https://bugs.eclipse.org/325743
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
 import java.util.HashSet;
-
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -25,7 +22,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.RegistryFactory;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -33,7 +29,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
@@ -199,7 +196,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
     	if(part instanceof PropertySheet) {
     		return null;
     	}
-        IPropertySheetPage page = (IPropertySheetPage) ViewsPlugin.getAdapter(part,
+		IPropertySheetPage page = ViewsPlugin.getAdapter(part,
                 IPropertySheetPage.class, false);
         if (page != null) {
             if (page instanceof IPageBookViewPage) {
@@ -286,7 +283,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	public void partActivated(IWorkbenchPart part) {
     	// Look for a declaratively-contributed adapter - including not yet loaded adapter factories.
     	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
-        IContributedContentsView view = (IContributedContentsView) ViewsPlugin.getAdapter(part,
+		IContributedContentsView view = ViewsPlugin.getAdapter(part,
                 IContributedContentsView.class, true);
         IWorkbenchPart source = null;
         if (view != null) {
