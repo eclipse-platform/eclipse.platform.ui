@@ -64,7 +64,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 	public Object lookup(String name, EclipseContext originatingContext) {
 		if (name == null)
 			return null;
-		if (refs.containsKey(name)) { // retrieve service again 
+		if (refs.containsKey(name)) { // retrieve service again
 			// This could be reached, for instance, if previously stored service value is overridden or removed from the context.
 			ServiceReference<?> ref = refs.get(name);
 			if (ref == null)
@@ -126,7 +126,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 
 	public void bundleChanged(BundleEvent event) {
 		// In case OSGi context has not being properly disposed by the application,
-		// OSGi framework shutdown will trigged uninjection of all consumed OSGi 
+		// OSGi framework shutdown will trigged uninjection of all consumed OSGi
 		// service. To avoid this, we detect framework shutdown and release services.
 		if (event.getType() != BundleEvent.STOPPING)
 			return;

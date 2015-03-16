@@ -42,12 +42,12 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * reverse order: methods and then fields. As a result, injection methods can safely make use of
  * injected field values. The order in which methods are injected is undefined, so
  * injection methods should not rely on other injection methods having been run already. Methods
- * and field on superclasses are injected before methods in fields on the subclasses. 
+ * and field on superclasses are injected before methods in fields on the subclasses.
  * </p>
  * <p>
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
  * calling methods with the <tt>javax.annotation.PreDestroy</tt> annotation.
- * 
+ *
  * This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 1.3
@@ -63,7 +63,7 @@ public final class ContextInjectionFactory {
 	/**
 	 * Injects a context into a domain object. See the class comment for details on the injection
 	 * algorithm that is used.
-	 * 
+	 *
 	 * @param object The object to perform injection on
 	 * @param context The context to obtain injected values from
 	 * @throws InjectionException if an exception occurred while performing this operation
@@ -76,7 +76,7 @@ public final class ContextInjectionFactory {
 	/**
 	 * Call a method, injecting the parameters from the context.
 	 * <p>
-	 * If no matching method is found on the class, an InjectionException will be 
+	 * If no matching method is found on the class, an InjectionException will be
 	 * thrown.
 	 * </p>
 	 * @param object The object to perform injection on
@@ -114,7 +114,7 @@ public final class ContextInjectionFactory {
 	 * <p>
 	 * If values for the same key present in both the context and the local context, the values from
 	 * the local context are injected.
-	 * </p> 
+	 * </p>
 	 * <p>
 	 * If no matching method is found on the class, the defaultValue will be returned.
 	 * </p>
@@ -133,9 +133,9 @@ public final class ContextInjectionFactory {
 	}
 
 	/**
-	 * Un-injects the context from the object. The un-injection requires that all injected 
+	 * Un-injects the context from the object. The un-injection requires that all injected
 	 * values were marked as optional, or the un-injection will fail.
-	 * 
+	 *
 	 * @param object The domain object previously injected with the context
 	 * @param context The context previously injected into the object
 	 * @throws InjectionException if an exception occurred while performing this operation
@@ -168,7 +168,7 @@ public final class ContextInjectionFactory {
 	 * <p>
 	 * If values for the same key present in both the context and the static context, the values from
 	 * the static context are injected.
-	 * </p> 
+	 * </p>
 	 * <p>
 	 * Class'es scope dictates if a new instance of the class will be created, or existing instance
 	 * will be reused.
@@ -189,7 +189,7 @@ public final class ContextInjectionFactory {
 	/**
 	 * Specifies context used by the injector to create its internal objects.
 	 * Providing this context allows injector to become aware of higher-level
-	 * constructs, such as application logging and synchronization. 
+	 * constructs, such as application logging and synchronization.
 	 * @param context the context to be used as a data source by the injector
 	 * @since 1.2
 	 */

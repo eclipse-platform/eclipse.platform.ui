@@ -149,11 +149,6 @@ public class EclipseContext implements IEclipseContext {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.core.services.context.IEclipseContext#dispose()
-	 */
 	public void dispose() {
 		// dispose of child contexts first
 		for (EclipseContext childContext : getChildren()) {
@@ -646,7 +641,7 @@ public class EclipseContext implements IEclipseContext {
 		if (parent == null)
 			return;
 		if (this != parent.getActiveChild())
-			return; // this is not an active context; return 
+			return; // this is not an active context; return
 		parent.set(ACTIVE_CHILD, null);
 	}
 

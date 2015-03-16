@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Listeners are held wrapped in weak references and are removed if no other [strong] reference 
+ * Listeners are held wrapped in weak references and are removed if no other [strong] reference
  * exists.
  */
 public class WeakGroupedListenerList {

@@ -33,10 +33,10 @@ package org.eclipse.e4.core.contexts;
  * child. The interpretation of what active means depends on the domain in which the context
  * is used.
  * <p>
- * Like maps, values are stored in the context based on keys. Two types of keys can be used: strings 
- * and classes. When classes are used to access objects in the context, keys are calculated based on 
- * the class name, so the value stored for the class {@link java.lang.String} can be retrieved 
- * using the key value of "java.lang.String". 
+ * Like maps, values are stored in the context based on keys. Two types of keys can be used: strings
+ * and classes. When classes are used to access objects in the context, keys are calculated based on
+ * the class name, so the value stored for the class {@link java.lang.String} can be retrieved
+ * using the key value of "java.lang.String".
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -83,7 +83,7 @@ public interface IEclipseContext {
 	public <T> T get(Class<T> clazz);
 
 	/**
-	 * Returns the context value associated with the given name in this context, or <code>null</code> if 
+	 * Returns the context value associated with the given name in this context, or <code>null</code> if
 	 * no such value is defined in this context.
 	 * <p>
 	 * This method does not search for the value on other elements on the context tree.
@@ -98,7 +98,7 @@ public interface IEclipseContext {
 	public Object getLocal(String name);
 
 	/**
-	 * Returns the context value associated with the given class in this context, or <code>null</code> if 
+	 * Returns the context value associated with the given class in this context, or <code>null</code> if
 	 * no such value is defined in this context.
 	 * <p>
 	 * This method does not search for the value on other elements on the context tree.
@@ -151,7 +151,7 @@ public interface IEclipseContext {
 	 * this context. Thus a provided runnable should be implemented to return immediately when
 	 * change tracking is no longer needed.
 	 * </p>
-	 * 
+	 *
 	 * @param runnable
 	 *            The runnable to execute and register for change tracking
 	 * @see RunAndTrack
@@ -170,13 +170,13 @@ public interface IEclipseContext {
 	 * stored in a parent context.
 	 * </p>
 	 * @param name the name to store a value for
-	 * @param value the value to be stored, or a {@link ContextFunction} that can return 
+	 * @param value the value to be stored, or a {@link ContextFunction} that can return
 	 * the stored value.
 	 */
 	public void set(String name, Object value);
 
 	/**
-	 * Sets a value to be associated with a given class in this context. 
+	 * Sets a value to be associated with a given class in this context.
 	 * @param clazz The class to store a value for
 	 * @param value The value to be stored
 	 * @see #set(String, Object)
@@ -218,7 +218,7 @@ public interface IEclipseContext {
 	public void declareModifiable(String name);
 
 	/**
-	 * Declares the value for the class as modifiable by descendants of this context. 
+	 * Declares the value for the class as modifiable by descendants of this context.
 	 * If the value does not exist in this context, a <code>null</code> value added for the class.
 	 * @param clazz the class to be declared as modifiable by descendants
 	 * @see #declareModifiable(String)
@@ -280,7 +280,7 @@ public interface IEclipseContext {
 	public IEclipseContext getActiveChild();
 
 	/**
-	 * Follows active child chain to return the active leaf for this context. 
+	 * Follows active child chain to return the active leaf for this context.
 	 * May return the context itself if it has no active children.
 	 * @return leaf active context
 	 */
@@ -301,7 +301,7 @@ public interface IEclipseContext {
 	 * <p>Use this method in code paths that are going to receive a large number
 	 * of repeat calls, such as inside {@link RunAndTrack#changed(IEclipseContext)}.
 	 * </p>
-	 * <p>In the code paths that won't be cycled through large number of times, 
+	 * <p>In the code paths that won't be cycled through large number of times,
 	 * consider using <code>getActiveLeaf().get(clazz)</code>.
 	 * </p>
 	 * @param clazz the class that needs to be found in the active context
@@ -319,7 +319,7 @@ public interface IEclipseContext {
 	 * <p>Use this method in code paths that are going to receive a large number
 	 * of repeat calls, such as inside {@link RunAndTrack#changed(IEclipseContext)}.
 	 * </p>
-	 * <p>In the code paths that won't be cycled through large number of times, 
+	 * <p>In the code paths that won't be cycled through large number of times,
 	 * consider using <code>getActiveLeaf().get(name)</code>.
 	 * </p>
 	 * @param name the name of the value to return

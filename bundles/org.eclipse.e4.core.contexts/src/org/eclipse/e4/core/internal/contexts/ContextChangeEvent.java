@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,14 +27,14 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
  * In order to handle additional event types that may be introduced in future releases, clients
  * should not write code that presumes the set of event types is closed.
  * </p>
- * 
+ *
  * @see RunAndTrack
  */
 public final class ContextChangeEvent {
 	/**
 	 * A change event type (value "0"), indicating that the listener receiving this event has just
 	 * been registered with a context.
-	 * 
+	 *
 	 * @see IEclipseContext#runAndTrack(RunAndTrack)
 	 */
 	public static final int INITIAL = 0;
@@ -82,7 +82,7 @@ public final class ContextChangeEvent {
 
 	/**
 	 * Creates a new context event.
-	 * 
+	 *
 	 * @param context
 	 * @param eventType
 	 * @param args
@@ -98,7 +98,7 @@ public final class ContextChangeEvent {
 
 	/**
 	 * Returns the arguments that were supplied when the listener was registered.
-	 * 
+	 *
 	 * @see IEclipseContext#runAndTrack(RunAndTrack)
 	 * @return the arguments that were supplied when the listener was registered.
 	 */
@@ -108,7 +108,7 @@ public final class ContextChangeEvent {
 
 	/**
 	 * Returns the context where the change occurred.
-	 * 
+	 *
 	 * @return the context where the change occurred
 	 */
 	public IEclipseContext getContext() {
@@ -117,7 +117,7 @@ public final class ContextChangeEvent {
 
 	/**
 	 * Returns the type of content change that occurred.
-	 * 
+	 *
 	 * @return the type of content change that occurred.
 	 */
 	public int getEventType() {
@@ -127,7 +127,7 @@ public final class ContextChangeEvent {
 	/**
 	 * Returns the name of the context value that changed, or <code>null</code> if not applicable if
 	 * this event type.
-	 * 
+	 *
 	 * @return The name of the changed context value, or <code>null</code>
 	 */
 	public String getName() {

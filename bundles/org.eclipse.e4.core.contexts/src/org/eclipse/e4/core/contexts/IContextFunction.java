@@ -34,7 +34,7 @@ import org.osgi.framework.BundleContext;
  * context automatically, using the key specified by the
  * {@link #SERVICE_CONTEXT_KEY} service property.
  * </p>
- * 
+ *
  * @see IEclipseContext#set(String, Object)
  * @noimplement This interface is not intended to be implemented by clients.
  *              Function implementations must subclass {@link ContextFunction}
@@ -45,7 +45,7 @@ public interface IContextFunction {
 	/**
 	 * The OSGi service name for a context function service. This name can be
 	 * used to obtain instances of the service.
-	 * 
+	 *
 	 * @see BundleContext#getServiceReference(String)
 	 */
 	public static final String SERVICE_NAME = IContextFunction.class.getName();
@@ -53,7 +53,7 @@ public interface IContextFunction {
 	/**
 	 * An OSGi service property used to indicate the context key this function
 	 * should be registered in.
-	 * 
+	 *
 	 * @see BundleContext#getServiceReference(String)
 	 */
 	public static final String SERVICE_CONTEXT_KEY = "service.context.key"; //$NON-NLS-1$
@@ -61,7 +61,7 @@ public interface IContextFunction {
 	/**
 	 * Evaluates the function based on the provided arguments and context to
 	 * produce a consistent result.
-	 * 
+	 *
 	 * @param context
 	 *            The context in which to perform the value computation.
 	 * @param contextKey

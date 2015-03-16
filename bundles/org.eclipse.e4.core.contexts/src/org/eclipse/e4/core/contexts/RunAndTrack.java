@@ -18,7 +18,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * Instances of this class contain behavior that is executed within an
  * {@link IEclipseContext}. The context records all values accessed by this
  * object, and will re-evaluate this runnable whenever any accessed value changes.
- * 
+ *
  * @see IEclipseContext#runAndTrack(RunAndTrack)
  * @since 1.3
  */
@@ -35,7 +35,7 @@ abstract public class RunAndTrack {
 	 * This method is initially called by the framework when an instance of this
 	 * class is associated with the context via {@link IEclipseContext#runAndTrack(RunAndTrack)}.
 	 * <p>
-	 * After the initial call this method is executed when one or more values it retrieved 
+	 * After the initial call this method is executed when one or more values it retrieved
 	 * from the context change.
 	 * </p>
 	 * @param context modified context

@@ -19,9 +19,9 @@ import javax.inject.Inject;
 import javax.inject.Qualifier;
 
 /**
- * This annotation can be added to injectable fields ands methods 
+ * This annotation can be added to injectable fields ands methods
  * to indicate that the injected value should come from the active context.
- * 
+ *
  * @see Inject
  * @see IEclipseContext#activate
  * @since 1.3
