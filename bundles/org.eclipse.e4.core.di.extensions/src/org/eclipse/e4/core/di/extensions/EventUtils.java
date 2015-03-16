@@ -19,7 +19,7 @@ import org.osgi.service.event.EventConstants;
 
 /**
  * DOC: no instantiate, no extend
- * 
+ *
  */
 final public class EventUtils {
 

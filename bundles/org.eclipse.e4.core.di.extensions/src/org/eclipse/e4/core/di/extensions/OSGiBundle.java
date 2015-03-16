@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved. 
- * This program and the accompanying materials are made available under the terms 
+ * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -19,15 +19,15 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
- * A method or field of type {@link org.osgi.framework.BundleContext} and 
- * annotated with {@link OSGiBundle} will be injected with the from the bundle 
- * containing the class if the annotated type is a {@link BundleContext} 
+ * A method or field of type {@link org.osgi.framework.BundleContext} and
+ * annotated with {@link OSGiBundle} will be injected with the from the bundle
+ * containing the class if the annotated type is a {@link BundleContext}
  * and the bundle's state is {@link Bundle#ACTIVE}.
  * <p>
- * If the method or field type is of {@link Bundle}, the bundle containing 
+ * If the method or field type is of {@link Bundle}, the bundle containing
  * the class will be injected even for bundles in the {@link Bundle#RESOLVED} state.
  * </p><p>
- * The {@link Bundle} injected will be the {@link Bundle} that supplied the class of 
+ * The {@link Bundle} injected will be the {@link Bundle} that supplied the class of
  * the object instance.  For example, in:
  * <pre>
  * class A {
@@ -38,7 +38,7 @@ import org.osgi.framework.BundleContext;
  * class B extends A {
  * }
  * </pre>
- * <code>ContextInjectionFactory.make(B.class)</code> will inject the 
+ * <code>ContextInjectionFactory.make(B.class)</code> will inject the
  * {@link BundleContext} for the bundle that supplies class B, not class A.
 
  * </p>

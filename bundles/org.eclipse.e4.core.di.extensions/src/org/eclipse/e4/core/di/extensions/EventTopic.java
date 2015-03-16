@@ -27,7 +27,7 @@ import javax.inject.Qualifier;
  * </p>
  * <p>
  * Example usage:
- * 
+ *
  * <pre>
  *   public class Car {
  *     @Inject
@@ -37,10 +37,10 @@ import javax.inject.Qualifier;
  * </pre>
  * </p>
  * <p>
- * The value stored under the event's "org.eclipse.e4.data" property is injected unless 
- * the class of the injected variable is org.osgi.service.event.Event. In that case the whole event 
+ * The value stored under the event's "org.eclipse.e4.data" property is injected unless
+ * the class of the injected variable is org.osgi.service.event.Event. In that case the whole event
  * object is injected.
- * </p> 
+ * </p>
  */
 @Qualifier
 @Documented

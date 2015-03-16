@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved. 
- * This program and the accompanying materials are made available under the terms 
+ * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -47,7 +47,7 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 				if (!requestor2listener.containsKey(requestor)) {
 					track(bundle, requestor);
 				}
-				// Handlers only executed once and thus don't track the BC/Bundle. 
+				// Handlers only executed once and thus don't track the BC/Bundle.
 				// Still guard to now de-register a non-existing listener.
 			} else if (requestor2listener.containsKey(requestor)) {
 				untrack(requestor);
@@ -62,10 +62,10 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 			}
 			throw new InjectionException("Unable to inject BundleContext: " + bundle.getSymbolicName() + " bundle is not active or starting/stopping"); //$NON-NLS-1$  //$NON-NLS-2$
 		} else if (Bundle.class.equals(desiredType)) {
-			// Not tracking the Bundle's life-cycle because the B instance does 
+			// Not tracking the Bundle's life-cycle because the B instance does
 			// not change whether a bundle is ACTIVE or RESOLVED. The only
-			// thing worth tracking is when a bundle switches to the INSTALLED 
-			// state. However, the requestor will go away along with its bundle anyway. 
+			// thing worth tracking is when a bundle switches to the INSTALLED
+			// state. However, the requestor will go away along with its bundle anyway.
 			return FrameworkUtil.getBundle(requestingObjectClass);
 		}
 		// Annotation used with unsupported type
@@ -81,7 +81,7 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 
 	private void track(final Bundle bundle, final IRequestor requestor) {
 		// A _synchronous_ BundleListener asserts that the BC is un-injected,
-		// _before_ it becomes invalid (state-wise). 
+		// _before_ it becomes invalid (state-wise).
 		BundleListener listener = new SynchronousBundleListener() {
 			public void bundleChanged(BundleEvent event) {
 				if (event.getBundle().equals(bundle)) {
