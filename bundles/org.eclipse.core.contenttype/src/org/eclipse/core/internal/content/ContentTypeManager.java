@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,10 +26,10 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	private ContentTypeCatalog catalog;
 	private int catalogGeneration;
 
-	/** 
-	 * List of registered listeners (element type: 
+	/**
+	 * List of registered listeners (element type:
 	 * <code>IContentTypeChangeListener</code>).
-	 * These listeners are to be informed when 
+	 * These listeners are to be informed when
 	 * something in a content type changes.
 	 */
 	protected final ListenerList contentTypeListeners = new ListenerList();
@@ -67,8 +67,8 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	/**
-	 * Obtains this platform's content type manager. 
-	 * 
+	 * Obtains this platform's content type manager.
+	 *
 	 * @return the content type manager
 	 */
 	public static ContentTypeManager getInstance() {
@@ -114,15 +114,15 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	protected synchronized ContentTypeCatalog getCatalog() {
 		if (catalog != null)
-			// already has one			
+			// already has one
 			return catalog;
-		// create new catalog 
+		// create new catalog
 		ContentTypeCatalog newCatalog = new ContentTypeCatalog(this, catalogGeneration++);
 		// build catalog by parsing the extension registry
 		ContentTypeBuilder builder = createBuilder(newCatalog);
 		try {
 			builder.buildCatalog();
-			// only remember catalog if building it was successful 
+			// only remember catalog if building it was successful
 			catalog = newCatalog;
 		} catch (InvalidRegistryObjectException e) {
 			// the registry has stale objects... just don't remember the returned (incomplete) catalog
@@ -154,7 +154,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		// no changes related to the content type registry
-		if (event.getExtensionDeltas(IContentConstants.RUNTIME_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0 && 
+		if (event.getExtensionDeltas(IContentConstants.RUNTIME_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0 &&
 			event.getExtensionDeltas(IContentConstants.CONTENT_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0)
 			return;
 		invalidate();
@@ -165,7 +165,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	 */
 	synchronized void invalidate() {
 		if (ContentTypeManager.DEBUGGING && catalog != null)
-			ContentMessages.message("Registry discarded"); //$NON-NLS-1$		
+			ContentMessages.message("Registry discarded"); //$NON-NLS-1$
 		catalog = null;
 	}
 

@@ -15,19 +15,19 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * Content describers know how to retrieve metadata from 
+ * Content describers know how to retrieve metadata from
  * contents.
  * <p>
- * Note: It is expected that content describer implementations be declared in a package 
- * that is exempt from plug-in activation (using the Eclipse-AutoStart bundle 
- * manifest header). Since all describers are instantiated when the content type 
- * framework is initialized, failure in complying with this requirement causes 
- * premature activation, which must be avoided. Future implementations of the 
- * framework might refuse to instantiate describers if doing so would trigger 
+ * Note: It is expected that content describer implementations be declared in a package
+ * that is exempt from plug-in activation (using the Eclipse-AutoStart bundle
+ * manifest header). Since all describers are instantiated when the content type
+ * framework is initialized, failure in complying with this requirement causes
+ * premature activation, which must be avoided. Future implementations of the
+ * framework might refuse to instantiate describers if doing so would trigger
  * activation of the corresponding plug-in.
  * </p>
  * <p>
- * Describers for text-based content types should implement 
+ * Describers for text-based content types should implement
  * <code>ITextContentDescriber</code> instead.
  * </p>
  * <p>
@@ -39,42 +39,42 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public interface IContentDescriber {
 	/**
-	 * Description result constant, indicating that it was not possible 
-	 * to determine whether the contents were valid for 
+	 * Description result constant, indicating that it was not possible
+	 * to determine whether the contents were valid for
 	 * the intended content type.
-	 * 
+	 *
 	 * @see #describe
 	 */
 	public final static int INDETERMINATE = 1;
 	/**
-	 * Description result constant, indicating the contents are invalid for 
+	 * Description result constant, indicating the contents are invalid for
 	 * the intended content type.
-	 * 
+	 *
 	 * @see #describe
 	 */
 	public final static int INVALID = 0;
 	/**
-	 * Description result constant, indicating the contents are valid for 
+	 * Description result constant, indicating the contents are valid for
 	 * the intended content type.
-	 * 
+	 *
 	 * @see #describe
 	 */
 	public final static int VALID = 2;
 
 	/**
-	 * Tries to fill a description for the given contents. Returns 
-	 * an <code>int</code> indicating whether the given stream of 
+	 * Tries to fill a description for the given contents. Returns
+	 * an <code>int</code> indicating whether the given stream of
 	 * bytes represents a valid sample for its corresponding content type.
-	 * If no content description is provided, this method should perform 
+	 * If no content description is provided, this method should perform
 	 * content type validation.
 	 * <p>
-	 * The input stream must be kept open, and any IOExceptions while 
+	 * The input stream must be kept open, and any IOExceptions while
 	 * reading the stream should flow to the caller.
 	 * </p>
-	 * 
+	 *
 	 * @param contents the contents to be examined
-	 * @param description a description to be filled in, or <code>null</code> if 
-	 * only content type validation is to be performed  
+	 * @param description a description to be filled in, or <code>null</code> if
+	 * only content type validation is to be performed
 	 * @return one of the following:<ul>
 	 * <li><code>VALID</code></li>,
 	 * <li><code>INVALID</code></li>,
@@ -89,8 +89,8 @@ public interface IContentDescriber {
 	public int describe(InputStream contents, IContentDescription description) throws IOException;
 
 	/**
-	 * Returns the properties supported by this describer. 
-	 *   
+	 * Returns the properties supported by this describer.
+	 *
 	 * @return the supported properties
 	 * @see #describe
 	 */

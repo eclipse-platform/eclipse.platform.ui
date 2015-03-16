@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public abstract interface IContentTypeInfo {
 	/**
-	 * Returns a reference to the corresponding content type. 
+	 * Returns a reference to the corresponding content type.
 	 */
 	public abstract ContentType getContentType();
 
 	/**
 	 * Returns the default value for the given property, delegating to the
-	 * ancestor type if necessary. 
+	 * ancestor type if necessary.
 	 */
 	public abstract String getDefaultProperty(QualifiedName key);
 }

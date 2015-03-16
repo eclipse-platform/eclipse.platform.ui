@@ -24,14 +24,14 @@ import org.xml.sax.helpers.DefaultHandler;
  * using the <code>IExecutableExtension</code> mechanism. If the
  * <code>":-"</code> method is used, then the value is treated as the
  * <code>ELEMENT_TO_FIND</code>.
- * 
+ *
  * @since 3.0
  */
 public final class XMLRootHandler extends DefaultHandler implements LexicalHandler {
 	/**
 	 * An exception indicating that the parsing should stop. This is usually
 	 * triggered when the top-level element has been found.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class StopParsingException extends SAXException {
@@ -72,16 +72,11 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * successful to the point of finding the top-level element.
 	 */
 	private String namespaceFound = null;
-		
+
 	public XMLRootHandler(boolean checkRoot) {
 		this.checkRoot = checkRoot;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
-	 */
 	@Override
 	public final void comment(final char[] ch, final int start, final int length) {
 		// Not interested.
@@ -89,9 +84,9 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 
 	/**
 	 * Creates a new SAX parser for use within this instance.
-	 * 
+	 *
 	 * @return The newly created parser.
-	 * 
+	 *
 	 * @throws ParserConfigurationException
 	 *             If a parser of the given configuration cannot be created.
 	 * @throws SAXException
@@ -121,31 +116,16 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		return parser;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
-	 */
 	@Override
 	public final void endCDATA() {
 		// Not interested.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
-	 */
 	@Override
 	public final void endDTD() {
 		// Not interested.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
-	 */
 	@Override
 	public final void endEntity(final String name) {
 		// Not interested.
@@ -184,7 +164,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 
 	/*
 	 * Resolve external entity definitions to an empty string.  This is to speed
-	 * up processing of files with external DTDs.  Not resolving the contents 
+	 * up processing of files with external DTDs.  Not resolving the contents
 	 * of the DTD is ok, as only the System ID of the DTD declaration is used.
 	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 	 */
@@ -193,22 +173,11 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
-	 */
 	@Override
 	public final void startCDATA() {
 		// Not interested.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String,
-	 *      java.lang.String, java.lang.String)
-	 */
 	@Override
 	public final void startDTD(final String name, final String publicId, final String systemId) throws SAXException {
 		dtdFound = systemId;
@@ -217,12 +186,6 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 			throw new StopParsingException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-	 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	 */
 	@Override
 	public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
 		elementFound = elementName;
@@ -230,11 +193,6 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		throw new StopParsingException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
-	 */
 	@Override
 	public final void startEntity(final String name) {
 		// Not interested.

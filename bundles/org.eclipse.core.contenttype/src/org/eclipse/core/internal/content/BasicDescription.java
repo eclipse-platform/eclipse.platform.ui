@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public abstract class BasicDescription implements IContentDescription {
 	@Override
 	public IContentType getContentType() {
 		ContentType contentType = contentTypeInfo.getContentType();
-		//TODO performance: potential creation of garbage		
+		//TODO performance: potential creation of garbage
 		return new ContentTypeHandler(contentType, contentType.getCatalog().getGeneration());
 	}
 

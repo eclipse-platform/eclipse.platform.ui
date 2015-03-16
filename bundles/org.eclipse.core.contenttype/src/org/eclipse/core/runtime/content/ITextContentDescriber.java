@@ -15,40 +15,40 @@ import java.io.Reader;
 
 /**
  * Text content describers extend basic content describers to provide
- * the ability of scanning character streams (readers). Describers for 
- * text-based content types must implement this interface 
+ * the ability of scanning character streams (readers). Describers for
+ * text-based content types must implement this interface
  * instead of <code>IContentDescription</code>.
  * <p>
- * Note: It is expected that content describer implementations be declared in a package 
- * that is exempt from plug-in activation (using the Eclipse-AutoStart bundle 
- * manifest header). Since all describers are instantiated when the content type 
- * framework is initialized, failure in complying with this requirement causes 
- * premature activation, which must be avoided. Future implementations of the 
- * framework might refuse to instantiate describers if doing so would trigger 
+ * Note: It is expected that content describer implementations be declared in a package
+ * that is exempt from plug-in activation (using the Eclipse-AutoStart bundle
+ * manifest header). Since all describers are instantiated when the content type
+ * framework is initialized, failure in complying with this requirement causes
+ * premature activation, which must be avoided. Future implementations of the
+ * framework might refuse to instantiate describers if doing so would trigger
  * activation of the corresponding plug-in.
  * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see IContentDescription
  * @since 3.0
  */
 public interface ITextContentDescriber extends IContentDescriber {
 	/**
-	 * Tries to fill a description for the given contents. Returns 
-	 * an <code>int</code> indicating whether the given stream of 
-	 * characters represents a valid sample for this describer's corresponding 
-	 * content type. If no content description is provided, this method should 
+	 * Tries to fill a description for the given contents. Returns
+	 * an <code>int</code> indicating whether the given stream of
+	 * characters represents a valid sample for this describer's corresponding
+	 * content type. If no content description is provided, this method should
 	 * only perform content type validation.
 	 * <p>
-	 * The stream provided must be kept open, and any IOExceptions while 
+	 * The stream provided must be kept open, and any IOExceptions while
 	 * reading it should flow to the caller.
 	 * </p>
-	 * 
+	 *
 	 * @param contents the contents to be examined
-	 * @param description a description to be filled in, or <code>null</code> if 
-	 * only content type validation is to be performed  
+	 * @param description a description to be filled in, or <code>null</code> if
+	 * only content type validation is to be performed
 	 * @return one of the following:<ul>
 	 * <li><code>VALID</code></li>
 	 * <li><code>INVALID</code></li>

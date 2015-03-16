@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,14 +18,14 @@ import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
- * The only content types exposed to clients. Allows the content type registry to change 
+ * The only content types exposed to clients. Allows the content type registry to change
  * underneath preserving handlers kept by clients.
  */
 public class ContentTypeHandler implements IContentType {
 
 	/**
-	 * A dummy description object to be returned by getDescription when this 
-	 * handler's target cannot be determined. 
+	 * A dummy description object to be returned by getDescription when this
+	 * handler's target cannot be determined.
 	 */
 	private class DummyContentDescription implements IContentDescription {
 		@Override
@@ -137,14 +137,14 @@ public class ContentTypeHandler implements IContentType {
 			return null;
 		// the content type may returned itself as the settings object (instance scope context)
 		final IContentTypeSettings settings = target.getSettings(context);
-		// in that case, return this same handler; otherwise, just return the settings 
+		// in that case, return this same handler; otherwise, just return the settings
 		return settings == target ? this : settings;
 	}
 
 	/**
-	 * Returns the content type this handler represents. 
+	 * Returns the content type this handler represents.
 	 * Note that this handles the case of aliasing.
-	 * 
+	 *
 	 * Public for testing purposes only.
 	 */
 	public ContentType getTarget() {

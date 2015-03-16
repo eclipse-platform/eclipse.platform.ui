@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -158,7 +158,7 @@ public final class ContentDescription extends BasicDescription {
 			}
 		if ((flags & FLAG_ALL_OPTIONS) == 0)
 			return;
-		// need to resize arrays 		
+		// need to resize arrays
 		int currentSize = tmpKeys.length;
 		tmpKeys = new QualifiedName[currentSize + 1];
 		System.arraycopy(keys, 0, tmpKeys, 0, currentSize);

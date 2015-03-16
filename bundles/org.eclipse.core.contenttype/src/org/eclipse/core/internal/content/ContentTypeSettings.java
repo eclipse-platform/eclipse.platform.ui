@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 				// don't do anything if already exists
 				return;
 		existingValues.add(fileSpec);
-		// set new preference value		
+		// set new preference value
 		String newValue = Util.toListString(existingValues.toArray());
 		ContentType.setPreference(contentTypeNode, key, newValue);
 		try {
@@ -108,7 +108,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 	}
 
 	/*
-	 * @see IContentTypeSettings 
+	 * @see IContentTypeSettings
 	 */
 	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {

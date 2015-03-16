@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * <li>&lt;?xml version="1.0" encoding="utf-16"?&gt;</li>
  * <li>&lt;?xml version="1.0" encoding="utf-16?&gt;</li>
  * </ul>
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  *                Clients should use it to provide their own XML-based
  *                describers that can be referenced by the "describer"

@@ -14,11 +14,11 @@ import java.io.IOException;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * A wrapper for IOExceptions, throw by LazyInputStream/Reader. 
+ * A wrapper for IOExceptions, throw by LazyInputStream/Reader.
  * Its purpose is to allow one to differentiate
- * between IOExceptions thrown by the base stream/reader from those 
+ * between IOExceptions thrown by the base stream/reader from those
  * thrown by streams/readers built on top of LazyInputStream/Reader.
- * 
+ *
  * @see LazyInputStream
  * @see LazyReader
  */
@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Assert;
 	private IOException actual;
 
 	public LowLevelIOException(IOException actual) {
-		// ensure we don't wrap more than once 
+		// ensure we don't wrap more than once
 		Assert.isLegal(!(actual instanceof LowLevelIOException));
 		this.actual = actual;
 	}

@@ -52,7 +52,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 
 	private static final Object NO_DESCRIBER = "NO DESCRIBER"; //$NON-NLS-1$
 	final static byte NOT_ASSOCIATED = 0;
-	public final static String PREF_DEFAULT_CHARSET = "charset"; //$NON-NLS-1$	
+	public final static String PREF_DEFAULT_CHARSET = "charset"; //$NON-NLS-1$
 	public final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
 	public final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
 	final static byte PRIORITY_HIGH = 1;
@@ -137,14 +137,14 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	 */
 	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
-		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$		
+		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
 		String[] userSet;
 		synchronized (this) {
 			if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 				return;
 			userSet = getFileSpecs(type | IGNORE_PRE_DEFINED);
 		}
-		// persist using preferences		
+		// persist using preferences
 		Preferences contentTypeNode = manager.getPreferences().node(id);
 		String newValue = Util.toListString(userSet);
 		// we are adding stuff, newValue must be non-null
@@ -168,7 +168,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
 		} catch (Error e) {
-			// describer got some serious problem. disable it (logging the reason) and throw the error again 
+			// describer got some serious problem. disable it (logging the reason) and throw the error again
 			invalidateDescriber(e);
 			throw e;
 		} catch (LowLevelIOException llioe) {
@@ -240,7 +240,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	}
 
 	/**
-	 * Returns the default value for the given property in this content type, or <code>null</code>. 
+	 * Returns the default value for the given property in this content type, or <code>null</code>.
 	 */
 	@Override
 	public String getDefaultProperty(QualifiedName key) {
@@ -290,7 +290,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		} catch (InvalidRegistryObjectException e) {
 			/*
 			 * This should only happen if  an API call is made after the registry has changed and before
-			 * the corresponding registry change event has been broadcast.  
+			 * the corresponding registry change event has been broadcast.
 			 */
 			// the configuration element is stale - need to rebuild the catalog
 			manager.invalidate();
@@ -395,7 +395,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 
 	/**
 	 * Returns whether this content type has the given file spec.
-	 * 
+	 *
 	 * @param text the file spec string
 	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
 	 * @param strict
@@ -431,18 +431,18 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			fileSpecs.add(newFileSpec);
 			return true;
 		}
-		// update file specs atomically so threads traversing the list of file specs don't have to synchronize		
+		// update file specs atomically so threads traversing the list of file specs don't have to synchronize
 		@SuppressWarnings("unchecked")
 		ArrayList<FileSpec> tmpFileSpecs = (ArrayList<FileSpec>) fileSpecs.clone();
 		tmpFileSpecs.add(newFileSpec);
 		catalog.associate(this, newFileSpec.getText(), newFileSpec.getType());
-		// set the new file specs atomically 
+		// set the new file specs atomically
 		fileSpecs = tmpFileSpecs;
 		return true;
 	}
 
 	/**
-	 * Returns the default value for a property, recursively if necessary.  
+	 * Returns the default value for a property, recursively if necessary.
 	 */
 	String internalGetDefaultProperty(QualifiedName key) {
 		// a special case for charset - users can override
@@ -561,7 +561,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	void processPreferences(Preferences contentTypeNode) {
 		// user set default charset
 		this.userCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, null);
-		// user set file names 
+		// user set file names
 		String userSetFileNames = contentTypeNode.get(PREF_FILE_NAMES, null);
 		String[] fileNames = Util.parseItems(userSetFileNames);
 		for (int i = 0; i < fileNames.length; i++)
@@ -578,7 +578,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	 */
 	@Override
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
-		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$		
+		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
 		synchronized (this) {
 			if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 				return;
@@ -596,7 +596,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			IStatus status = new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, bse);
 			throw new CoreException(status);
 		}
-		// notify listeners		
+		// notify listeners
 		manager.fireContentTypeChangeEvent(this);
 	}
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -91,7 +91,7 @@ public class Util {
 		} while (tokenizer.hasMoreTokens());
 		if (wasSeparator)
 			// trailing separator
-			items.add(""); //$NON-NLS-1$	
+			items.add(""); //$NON-NLS-1$
 		return items;
 	}
 
@@ -110,9 +110,9 @@ public class Util {
 		// ignore last comma
 		return result.substring(0, result.length() - 1);
 	}
-	
+
 	/*
-	 * Reads bom from the stream. Note that the stream will not be repositioned 
+	 * Reads bom from the stream. Note that the stream will not be repositioned
 	 * when the method returns.
 	 */
 	public static byte[] getByteOrderMark(InputStream input) throws IOException {

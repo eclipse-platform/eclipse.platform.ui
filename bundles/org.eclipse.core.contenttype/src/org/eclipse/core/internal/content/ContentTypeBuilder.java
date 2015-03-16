@@ -23,12 +23,12 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * This class is a sidekick for ContentTypeManager that provides mechanisms for 
+ * This class is a sidekick for ContentTypeManager that provides mechanisms for
  * creating content types from the extension registry (which ContentTypeManager
  *  is oblivious to).
  */
 public class ContentTypeBuilder {
-	public static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$	
+	public static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$
 	private ContentTypeCatalog catalog;
 
 	private static String getUniqueId(String namespace, String baseTypeId) {
@@ -142,7 +142,7 @@ public class ContentTypeBuilder {
 		String[] fileNames = Util.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
-		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("alias-for")); //$NON-NLS-1$		
+		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("alias-for")); //$NON-NLS-1$
 		IConfigurationElement[] propertyCEs = null;
 		Map<QualifiedName, String> defaultProperties = null;
 		if ((propertyCEs = contentTypeCE.getChildren("property")).length > 0) { //$NON-NLS-1$
@@ -219,11 +219,11 @@ public class ContentTypeBuilder {
 		}
 	}
 
-	/* Adds extra file associations to existing content types. If the content 
+	/* Adds extra file associations to existing content types. If the content
 	 * type has not been added, the file association is ignored.
 	 */
 	private void registerFileAssociation(IConfigurationElement fileAssociationElement) {
-		//TODO: need to ensure the config. element is valid		
+		//TODO: need to ensure the config. element is valid
 		String contentTypeId = getUniqueId(fileAssociationElement.getContributor().getName(), fileAssociationElement.getAttribute("content-type")); //$NON-NLS-1$
 		ContentType target = catalog.internalGetContentType(contentTypeId);
 		if (target == null)

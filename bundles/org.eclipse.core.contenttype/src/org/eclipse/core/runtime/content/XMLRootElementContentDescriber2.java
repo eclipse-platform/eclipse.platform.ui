@@ -23,17 +23,17 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * A content describer for detecting the name of the top-level element, 
+ * A content describer for detecting the name of the top-level element,
  * its namespace and the DTD system identifier in an XML file.
  * <p>
- * This executable extension supports "element" parameter, that 
+ * This executable extension supports "element" parameter, that
  * can be specified more than once. If the
  * <code>":-"</code> method is used, then the value is treated as
  * "element" (always just one)
  * </p>
  * <p>
  * The value of "element" is specified using such a format
- * <code>{namespace}name/dtd</code>. The namespace or dtd part  
+ * <code>{namespace}name/dtd</code>. The namespace or dtd part
  * can be omitted and accepted are values like <code>name/dtd</code>,
  * <code>{ns}name</code> and <code>name</code>.
  * </p>
@@ -43,25 +43,25 @@ import org.xml.sax.SAXException;
  * match those in the document.
  * </p>
  * <p>
- * If the "element" name part is "*", e.g. <code>{namespace}*</code>, 
- * it denotes a wildcard match. If the "element" namespace part is empty, 
- * e.g. <code>{}name</code>, only these documents with the root element 
- * that belong to the unnamed namespace <code><elem xmlns=""></code> 
+ * If the "element" name part is "*", e.g. <code>{namespace}*</code>,
+ * it denotes a wildcard match. If the "element" namespace part is empty,
+ * e.g. <code>{}name</code>, only these documents with the root element
+ * that belong to the unnamed namespace <code><elem xmlns=""></code>
  * will be detected.
  * </p>
  * <p>
  * This class should be used instead of {@link XMLRootElementContentDescriber}
- * which doesn't detect namespaces and doesn't allow to specify 
- * more than one set of dtds, root element names and namespaces which 
+ * which doesn't detect namespaces and doesn't allow to specify
+ * more than one set of dtds, root element names and namespaces which
  * should be detected.
  * </p>
  * <p>
- * This class is not intended to be subclassed or instantiated by clients, 
+ * This class is not intended to be subclassed or instantiated by clients,
  * only to be referenced by the "describer" configuration element in
  * extensions to the <code>org.eclipse.core.runtime.contentTypes</code>
  * extension point.
  * </p>
- * 
+ *
  * @since org.eclipse.core.contenttype 3.3
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -78,7 +78,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	 * The top-level elements we are looking for. This value will be initialized
 	 * by the <code>setInitializationData</code> method. If no value is
 	 * provided, then this means that we don't care what the top-level element
-	 * will be. The list is a collection of <code>QualifiedElement</code>. 
+	 * will be. The list is a collection of <code>QualifiedElement</code>.
 	 */
 	private QualifiedElement[] elementsToFind = null;
 
@@ -118,7 +118,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 
 	/* (Intentionally not included in javadoc)
 	 * Determines the validation status for the given contents.
-	 * 
+	 *
 	 * @param contents the contents to be evaluated
 	 * @return one of the following:<ul>
 	 * <li><code>VALID</code></li>,
@@ -149,7 +149,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 			if (!foundOne)
 				return INDETERMINATE;
 		}
-		// We must be okay then.		
+		// We must be okay then.
 		return VALID;
 	}
 
@@ -168,9 +168,9 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		// call the basic XML describer to do basic recognition
 		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
-		// super.describe will have consumed some chars, need to rewind		
+		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
-		// Check to see if we matched our criteria.		
+		// Check to see if we matched our criteria.
 		return checkCriteria(new InputSource(contents), properties);
 	}
 
@@ -242,7 +242,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		else if (data instanceof Hashtable) {
 			List<QualifiedElement> elements = null;
 
-			// the describer parameters have to be read again, because "element" parameter can be specified multiple times 
+			// the describer parameters have to be read again, because "element" parameter can be specified multiple times
 			// and the given hashtable carries only one of them
 			IConfigurationElement describerElement = config.getChildren("describer")[0]; //$NON-NLS-1$
 			IConfigurationElement[] params = describerElement.getChildren("parameter"); //$NON-NLS-1$

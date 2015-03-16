@@ -22,18 +22,18 @@ import org.xml.sax.InputSource;
  * DTD system identifier in an XML file.
  * <p>
  * This executable extension supports two parameters:
- * "dtd" and "element". 
+ * "dtd" and "element".
  * At least one of them <strong>must</strong> be provided.  If the
  * <code>":-"</code> method is used, then the value is treated as
  * "element".
- * </p>  
+ * </p>
  * <p>
- * This class is not intended to be subclassed or instantiated by clients, 
+ * This class is not intended to be subclassed or instantiated by clients,
  * only to be referenced by the "describer" configuration element in
  * extensions to the <code>org.eclipse.core.runtime.contentTypes</code>
  * extension point.
  * </p>
- * 
+ *
  * @since 3.0
  * @deprecated Use {@link XMLRootElementContentDescriber2} instead
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -58,7 +58,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 
 	/* (Intentionally not included in javadoc)
 	 * Determines the validation status for the given contents.
-	 * 
+	 *
 	 * @param contents the contents to be evaluated
 	 * @return one of the following:<ul>
 	 * <li><code>VALID</code></li>,
@@ -82,7 +82,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 			return INDETERMINATE;
 		if ((elementToFind != null) && (!elementToFind.equals(properties.get(XMLRootElementContentDescriber2.ELEMENT))))
 			return INDETERMINATE;
-		// We must be okay then.		
+		// We must be okay then.
 		return VALID;
 	}
 
@@ -101,9 +101,9 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		// call the basic XML describer to do basic recognition
 		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
-		// super.describe will have consumed some chars, need to rewind		
+		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
-		// Check to see if we matched our criteria.		
+		// Check to see if we matched our criteria.
 		return checkCriteria(new InputSource(contents), properties);
 	}
 

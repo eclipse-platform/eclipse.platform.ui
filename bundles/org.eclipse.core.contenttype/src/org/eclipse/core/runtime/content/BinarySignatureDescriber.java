@@ -18,36 +18,36 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * A content describer for binary formats that present some 
+ * A content describer for binary formats that present some
  * simple signature at a known, fixed offset.
  * <p>
  * This executable extension supports three parameters:
- * "signature", "offset" and "required", the first one being mandatory. 
+ * "signature", "offset" and "required", the first one being mandatory.
  * If the
  * <code>":-"</code> method is used, then the value is treated as the
  * "signature".
- * </p> 
+ * </p>
  * <p>
- * The "signature" parameter is a sequence of hex codes, one for each byte in 
+ * The "signature" parameter is a sequence of hex codes, one for each byte in
  * the signature. For example, "CA FE BA BE" would be a signature for Java
  * class files.
  * </p>
  * <p>
- * The "offset" parameter is an integer indicating the offset where the 
- * signature's first byte is found. 
+ * The "offset" parameter is an integer indicating the offset where the
+ * signature's first byte is found.
  * </p>
  * <p>
- * The "required" parameter is a boolean (default is " true") indicating whether 
- * the absence of a signature should deem the contents validity status as 
- * IContentDescriber.INVALID or IContentDescriber.INDETERMINATE.  
+ * The "required" parameter is a boolean (default is " true") indicating whether
+ * the absence of a signature should deem the contents validity status as
+ * IContentDescriber.INVALID or IContentDescriber.INDETERMINATE.
  * </p>
  * <p>
- * This class is not intended to be subclassed or instantiated by clients, 
+ * This class is not intended to be subclassed or instantiated by clients,
  * only to be referenced by the "describer" configuration element in
  * extensions to the <code>org.eclipse.core.runtime.contentTypes</code>
  * extension point.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
