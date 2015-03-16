@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,9 +15,9 @@ import java.util.*;
 /**
  * A specialized map implementation that is optimized for a small set of object
  * keys.
- * 
+ *
  * Implemented as a single array that alternates keys and values.
- * 
+ *
  * Note: This class is copied from org.eclipse.core.resources
  */
 public class ObjectMap implements Map {
@@ -29,7 +29,7 @@ public class ObjectMap implements Map {
 
 	/**
 	 * Creates a new object map.
-	 * 
+	 *
 	 * @param initialCapacity
 	 *                  The initial number of elements that will fit in the map.
 	 */
@@ -41,7 +41,7 @@ public class ObjectMap implements Map {
 	/**
 	 * Creates a new object map of the same size as the given map and populate
 	 * it with the key/attribute pairs found in the map.
-	 * 
+	 *
 	 * @param map
 	 *                  The entries in the given map will be added to the new map.
 	 */
@@ -95,7 +95,7 @@ public class ObjectMap implements Map {
 
 	/**
 	 * @see Map#entrySet()
-	 *  
+	 *
 	 * Note: This implementation does not conform properly to the
 	 * specification in the Map interface. The returned collection will not
 	 * be bound to this map and will not remain in sync with this map.
@@ -173,8 +173,8 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#keySet() 
-	 * 
+	 * @see Map#keySet()
+	 *
 	 * Note: This implementation does not conform properly to the
 	 * specification in the Map interface. The returned collection will not
 	 * be bound to this map and will not remain in sync with this map.
@@ -292,8 +292,8 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#values() 
-	 * 
+	 * @see Map#values()
+	 *
 	 * Note: This implementation does not conform properly to the
 	 * specification in the Map interface. The returned collection will not
 	 * be bound to this map and will not remain in sync with this map.

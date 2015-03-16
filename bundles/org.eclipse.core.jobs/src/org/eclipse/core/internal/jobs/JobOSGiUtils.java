@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,9 +23,9 @@ import org.osgi.util.tracker.ServiceTracker;
  * The following utility methods are supplied:
  * - provides access to debug options
  * - provides some bundle discovery functionality
- * 
- * The closeServices() method should be called before the plugin is stopped. 
- * 
+ *
+ * The closeServices() method should be called before the plugin is stopped.
+ *
  * @since org.eclipse.core.jobs 3.2
  */
 class JobOSGiUtils {
@@ -100,7 +100,7 @@ class JobOSGiUtils {
 	}
 
 	/**
-	 * Calculates whether the job plugin should set worker threads to be daemon 
+	 * Calculates whether the job plugin should set worker threads to be daemon
 	 * threads.  When workers are daemon threads, the job plugin does not need
 	 * to be explicitly shut down because the VM can exit while workers are still
 	 * alive.

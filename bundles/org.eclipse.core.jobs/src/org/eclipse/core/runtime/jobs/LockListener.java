@@ -20,7 +20,7 @@ import org.eclipse.core.internal.jobs.LockManager;
  * This class is for internal use by the platform-related plug-ins.
  * Clients outside of the base platform should not reference or subclass this class.
  * </p>
- * 
+ *
  * @see IJobManager#setLockListener(LockListener)
  * @since 3.0
  */
@@ -31,12 +31,12 @@ public class LockListener {
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
 	 * Returns whether the thread should be granted immediate access to the lock.
 	 * <p>
-	 * This default implementation always returns <code>false</code>. 
+	 * This default implementation always returns <code>false</code>.
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @param lockOwner the thread that currently owns the lock this thread is
 	 * waiting for, or <code>null</code> if unknown.
-	 * @return <code>true</code> if the thread should be granted immediate access, 
+	 * @return <code>true</code> if the thread should be granted immediate access,
 	 * and <code>false</code> if it should wait for the lock to be available
 	 */
 	public boolean aboutToWait(Thread lockOwner) {
@@ -51,15 +51,15 @@ public class LockListener {
 	public void aboutToRelease() {
 		//do nothing
 	}
-	
+
 	/**
 	 * Returns if it is safe for the calling thread to block while waiting to obtain
 	 * a lock. When blocking in the calling thread is not safe, the caller will ensure
 	 * that the thread is kept alive and responsive to cancellation while waiting.
-	 * 
+	 *
 	 * @return <code>true</code> if this thread can block, and
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @since org.eclipse.core.jobs 3.5
 	 */
 	public boolean canBlock() {
@@ -68,7 +68,7 @@ public class LockListener {
 
 	/**
 	 * Returns whether this thread currently owns any locks
-	 * @return <code>true</code> if this thread owns any locks, and 
+	 * @return <code>true</code> if this thread owns any locks, and
 	 * <code>false</code> otherwise.
 	 */
 	protected final boolean isLockOwnerThread() {

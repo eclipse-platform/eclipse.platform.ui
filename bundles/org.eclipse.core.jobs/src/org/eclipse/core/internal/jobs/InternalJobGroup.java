@@ -65,51 +65,30 @@ public class InternalJobGroup {
 		this.seedJobsRemainingCount = seedJobsCount;
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#getName()
-	 */
 	protected String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#getMaxThreads()
-	 */
 	protected int getMaxThreads() {
 		return maxThreads;
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#getResult()
-	 */
 	protected MultiStatus getResult() {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#getState()
-	 */
 	protected int getState() {
 		return state;
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#getActiveJobs()
-	 */
 	protected List<Job> getActiveJobs() {
 		return manager.find(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#cancel()
-	 */
 	protected void cancel() {
 		manager.cancel(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#join(long, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	protected boolean join(long timeout, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		return manager.join(this, timeout, monitor);
 	}
@@ -300,16 +279,10 @@ public class InternalJobGroup {
 		return new ArrayList<IStatus>(results);
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#shouldCancel(IStatus, int, int)
-	 */
 	protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
 		return numberOfFailedJobs > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see JobGroup#computeGroupResult(IStatus[])
-	 */
 	protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
 		List<IStatus> importantResults = new ArrayList<IStatus>();
 		for (IStatus jobResult : jobResults) {
@@ -326,7 +299,7 @@ public class InternalJobGroup {
 
 	/**
 	 * Implementation of joining a job group.
-	 * @param remainingTime 
+	 * @param remainingTime
 	 * @return <code>true</code> if the join completed, and false otherwise (still waiting).
 	 */
 	boolean doJoin(long remainingTime) throws InterruptedException {

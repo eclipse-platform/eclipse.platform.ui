@@ -3,8 +3,8 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
@@ -37,7 +37,7 @@ public class JobMessages extends NLS {
 	}
 
 	/**
-	 * Print a debug message to the console. 
+	 * Print a debug message to the console.
 	 * Pre-pend the message with the current date and the name of the current thread.
 	 */
 	public static void message(String message) {

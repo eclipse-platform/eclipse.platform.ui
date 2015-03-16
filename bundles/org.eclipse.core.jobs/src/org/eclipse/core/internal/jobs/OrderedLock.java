@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - Bug 311863 Ordered Lock lost after interrupt
@@ -17,17 +17,17 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * A lock used to control write access to an exclusive resource.
- * 
+ *
  * The lock avoids circular waiting deadlocks by detecting the deadlocks
- * and resolving them through the suspension of all locks owned by one 
- * of the threads involved in the deadlock. This makes it impossible for n such 
+ * and resolving them through the suspension of all locks owned by one
+ * of the threads involved in the deadlock. This makes it impossible for n such
  * locks to deadlock while waiting for each other.  The down side is that this means
  * that during an interval when a process owns a lock, it can be forced
  * to give the lock up and wait until all locks it requires become
  * available.  This removes the feature of exclusive access to the
  * resource in contention for the duration between acquire() and
  * release() calls.
- * 
+ *
  * The lock implementation prevents starvation by granting the
  * lock in the same order in which acquire() requests arrive. In
  * this scheme, starvation is only possible if a thread retains
@@ -135,7 +135,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 
 	/**
 	 * Returns null if acquired and a Semaphore object otherwise. If a
-	 * waiting semaphore already exists for this thread, it will be returned, 
+	 * waiting semaphore already exists for this thread, it will be returned,
 	 * otherwise a new semaphore will be created, enqueued, and returned.
 	 */
 	private synchronized Semaphore createSemaphore() {
@@ -143,7 +143,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	}
 
 	/**
-	 * Attempts to acquire this lock.  Callers will block until this lock comes available to 
+	 * Attempts to acquire this lock.  Callers will block until this lock comes available to
 	 * them, or until the specified delay has elapsed.
 	 */
 	private boolean doAcquire(Semaphore semaphore, long delay) {
@@ -179,7 +179,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 
 	/**
 	 * Releases this lock from the thread that used to own it.
-	 * Grants this lock to the next thread in the queue.  
+	 * Grants this lock to the next thread in the queue.
 	 */
 	private synchronized void doRelease() {
 		//notify hook
@@ -206,7 +206,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 
 	/**
 	 * Suspend this lock by granting the lock to the next lock in the queue.
-	 * Return the depth of the suspended lock. 
+	 * Return the depth of the suspended lock.
 	 */
 	protected int forceRelease() {
 		int oldDepth = depth;
@@ -238,7 +238,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 
 	/**
 	 * Removes a semaphore from the queue of waiting operations.
-	 * 
+	 *
 	 * @param semaphore The semaphore to remove
 	 */
 	private synchronized void removeFromQueue(Semaphore semaphore) {
@@ -288,7 +288,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	/**
 	 * We have finished waiting on the given semaphore. Update the operation queue according
 	 * to whether we succeeded in obtaining the lock.
-	 * 
+	 *
 	 * @param semaphore The semaphore that we waited on
 	 * @param acquired <code>true</code> if we successfully acquired the semaphore, and <code>false</code> otherwise
 	 * @return whether the lock was successfully obtained

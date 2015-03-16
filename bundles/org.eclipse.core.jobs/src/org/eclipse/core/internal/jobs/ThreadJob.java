@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
 /**
- * Captures the implicit job state for a given thread. 
+ * Captures the implicit job state for a given thread.
  */
 class ThreadJob extends Job {
 
@@ -46,7 +46,7 @@ class ThreadJob extends Job {
 	 */
 	private RuntimeException lastPush = null;
 	/**
-	 * The actual job that is running in the thread that this 
+	 * The actual job that is running in the thread that this
 	 * ThreadJob represents.  This will be null if this thread
 	 * job is capturing a rule acquired outside of a job.
 	 * @GuardedBy("JobManager.implicitJobs")
@@ -159,30 +159,30 @@ class ThreadJob extends Job {
 	}
 
 	/**
-	 * A reentrant method which will run this <code>ThreadJob</code> immediately if there 
-	 * are no existing jobs with conflicting rules, or block until the rule can be acquired. If this 
+	 * A reentrant method which will run this <code>ThreadJob</code> immediately if there
+	 * are no existing jobs with conflicting rules, or block until the rule can be acquired. If this
 	 * job must block, the <code>LockListener</code> is given a chance to override.
-	 * If override is not granted, then this method will block until the rule is available. If 
+	 * If override is not granted, then this method will block until the rule is available. If
 	 * <code>LockListener#canBlock</code> returns <tt>true</tt>, then the <code>monitor</code>
-	 * <i>will not</i> be periodically checked for cancellation. It will only be rechecked if this 
-	 * thread is interrupted. If <code>LockListener#canBlock</code> returns <tt>false</tt> The 
+	 * <i>will not</i> be periodically checked for cancellation. It will only be rechecked if this
+	 * thread is interrupted. If <code>LockListener#canBlock</code> returns <tt>false</tt> The
 	 * <code>monitor</code> <i>will</i> be checked periodically for cancellation.
-	 * 
-	 * When a UI is present, it is recommended that the <code>LockListener</code> 
-	 * should not allow the UI thread to block without checking the <code>monitor</code>. This 
-	 * ensures that the UI remains responsive. 
-	 * 
+	 *
+	 * When a UI is present, it is recommended that the <code>LockListener</code>
+	 * should not allow the UI thread to block without checking the <code>monitor</code>. This
+	 * ensures that the UI remains responsive.
+	 *
 	 * @see LockListener#aboutToWait(Thread)
 	 * @see LockListener#canBlock()
 	 * @see JobManager#transferRule(ISchedulingRule, Thread)
-	
-	 * @return <tt>this</tt>, or the <code>ThreadJob</code> instance that was 
+
+	 * @return <tt>this</tt>, or the <code>ThreadJob</code> instance that was
 	 * unblocked (due to transferRule) in the case of reentrant invocations of this method.
-	 * 
-	 * @param monitor - The <code>IProgressMonitor</code> used to report blocking status and 
+	 *
+	 * @param monitor - The <code>IProgressMonitor</code> used to report blocking status and
 	 * cancellation.
-	 * 
-	 * @throws OperationCanceledException if this job was canceled before it was started. 
+	 *
+	 * @throws OperationCanceledException if this job was canceled before it was started.
 	 */
 	static ThreadJob joinRun(ThreadJob threadJob, IProgressMonitor monitor) {
 		if (isCanceled(monitor))
@@ -219,12 +219,12 @@ class ThreadJob extends Job {
 			final Thread currentThread = Thread.currentThread();
 
 			// Ultimately, this loop will wait until the job "runs" (acquires the rule)
-			// or is canceled. However, there are many ways for that to occur. 
+			// or is canceled. However, there are many ways for that to occur.
 			// The exit conditions of this loop are:
-			// 1) This job no longer conflicts with any other running job. 
-			// 2) The LockManager#aboutToWait allowed this thread to run. 
-			//    This usually occurs during reentrant situations. i.e. This is a UI thread, 
-			//    and a syncExec is performed from conflicting job/thread. 
+			// 1) This job no longer conflicts with any other running job.
+			// 2) The LockManager#aboutToWait allowed this thread to run.
+			//    This usually occurs during reentrant situations. i.e. This is a UI thread,
+			//    and a syncExec is performed from conflicting job/thread.
 			// 3) A rule is transfered to this thread. This can be invoked programmatically,
 			//    or commonly in JFace via ModalContext (for wizards/etc).
 			// 4) Monitor is canceled.
@@ -233,12 +233,12 @@ class ThreadJob extends Job {
 				if (isCanceled(monitor))
 					// Condition #4.
 					throw new OperationCanceledException();
-				// Try to run the job. If result is null, this job was allowed to run. 
-				// If the result is successful, atomically release thread from waiting 
-				// status. 
+				// Try to run the job. If result is null, this job was allowed to run.
+				// If the result is successful, atomically release thread from waiting
+				// status.
 				blockingJob = manager.runNow(threadJob, true);
 				if (blockingJob == null) {
-					// Condition #1. 
+					// Condition #1.
 					waiting = false;
 					return threadJob;
 				}
@@ -261,7 +261,7 @@ class ThreadJob extends Job {
 				manager.getLockManager().addLockWaitThread(currentThread, threadJob.getRule());
 				synchronized (blockingJob.jobStateLock) {
 					try {
-						// Wait until we are no longer definitely blocked (not running). 
+						// Wait until we are no longer definitely blocked (not running).
 						// The actual exit conditions are listed above at the beginning of
 						// this while loop
 						int state = blockingJob.getState();
@@ -274,10 +274,10 @@ class ThreadJob extends Job {
 						// This thread may be interrupted via two common scenarios. 1) If
 						// the UISynchronizer is in use and this thread is a UI thread
 						// and a syncExec() is performed, this thread will be interrupted
-						// every 1000ms. 2) If this thread is allowed to be blocked and 
-						// the progress monitor was canceled, the internal JobManager 
+						// every 1000ms. 2) If this thread is allowed to be blocked and
+						// the progress monitor was canceled, the internal JobManager
 						// worker thread will interrupt this thread so cancellation can
-						// be carried out. 
+						// be carried out.
 						interrupted = true;
 					}
 				}
@@ -442,7 +442,7 @@ class ThreadJob extends Job {
 	}
 
 	/**
-	 * ThreadJobs are one-shot jobs, and they must ignore all attempts to schedule them. 
+	 * ThreadJobs are one-shot jobs, and they must ignore all attempts to schedule them.
 	 */
 	@Override
 	public boolean shouldSchedule() {

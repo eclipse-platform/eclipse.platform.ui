@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.jobs.Job;
 class ImplicitJobs {
 
 	/**
-	 * Cached unused instance that can be reused 
+	 * Cached unused instance that can be reused
 	 * @GuardedBy("this")
 	 */
 	private ThreadJob jobCache = null;
@@ -48,8 +48,8 @@ class ImplicitJobs {
 		this.manager = manager;
 	}
 
-	/* (Non-javadoc) 
-	 * @see IJobManager#beginRule 
+	/* (Non-javadoc)
+	 * @see IJobManager#beginRule
 	 */
 	void begin(ISchedulingRule rule, IProgressMonitor monitor, boolean suspend) {
 		if (JobManager.DEBUG_BEGIN_END)
@@ -103,8 +103,8 @@ class ImplicitJobs {
 		}
 	}
 
-	/* (Non-javadoc) 
-	 * @see IJobManager#endRule 
+	/* (Non-javadoc)
+	 * @see IJobManager#endRule
 	 */
 	synchronized void end(ISchedulingRule rule, boolean resume) {
 		if (JobManager.DEBUG_BEGIN_END)
@@ -181,14 +181,14 @@ class ImplicitJobs {
 	}
 
 	/**
-	 * Returns a new or reused ThreadJob instance. 
+	 * Returns a new or reused ThreadJob instance.
 	 * @GuardedBy("this")
 	 */
 	private ThreadJob newThreadJob(ISchedulingRule rule) {
 		if (jobCache != null) {
 			ThreadJob job = jobCache;
 			// calling setRule will try to acquire JobManager.lock, breaking
-			// lock acquisition protocol. Since we managing this special job 
+			// lock acquisition protocol. Since we managing this special job
 			// ourselves we can call internalSetRule
 			((InternalJob) job).internalSetRule(rule);
 			job.acquireRule = job.isRunning = false;
@@ -201,7 +201,7 @@ class ImplicitJobs {
 
 	/**
 	 * A job has just finished that was holding a scheduling rule, and the
-	 * scheduling rule is now free.  Wake any blocked thread jobs so they can 
+	 * scheduling rule is now free.  Wake any blocked thread jobs so they can
 	 * compete for the newly freed lock
 	 */
 	void notifyWaitingThreadJobs(InternalJob job) {
@@ -211,7 +211,7 @@ class ImplicitJobs {
 	}
 
 	/**
-	 * Indicates that a thread job is no longer in use and can be reused. 
+	 * Indicates that a thread job is no longer in use and can be reused.
 	 * @GuardedBy("this")
 	 */
 	private void recycle(ThreadJob job) {

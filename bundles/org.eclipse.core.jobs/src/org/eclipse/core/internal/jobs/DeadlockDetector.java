@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,38 +19,38 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * Stores all the relationships between locks (rules are also considered locks), 
+ * Stores all the relationships between locks (rules are also considered locks),
  * and the threads that own them. All the relationships are stored in a 2D integer array.
  * The rows in the array are threads, while the columns are locks.
  * Two corresponding arrayLists store the actual threads and locks.
  * The index of a thread in the first arrayList is the index of the row in the graph.
- * The index of a lock in the second arrayList is the index of the column in the graph. 
+ * The index of a lock in the second arrayList is the index of the column in the graph.
  * An entry greater than 0 in the graph is the number of times a thread in the entry's row
  * acquired the lock in the entry's column.
  * An entry of -1 means that the thread is waiting to acquire the lock.
  * An entry of 0 means that the thread and the lock have no relationship.
- * 
+ *
  * The difference between rules and locks is that locks can be suspended, while
  * rules are implicit locks and as such cannot be suspended.
  * To resolve deadlock, the graph will first try to find a thread that only owns
  * locks. Failing that, it will find a thread in the deadlock that owns at least
  * one lock and suspend it.
- * 
+ *
  * Deadlock can only occur among locks, or among locks in combination with rules.
  * Deadlock among rules only is impossible. Therefore, in any deadlock one can always
  * find a thread that owns at least one lock that can be suspended.
- * 
+ *
  * The implementation of the graph assumes that a thread can only own 1 rule at
  * any one time. It can acquire that rule several times, but a thread cannot
  * acquire 2 non-conflicting rules at the same time.
- * 
+ *
  * The implementation of the graph will sometimes also find and resolve bogus deadlocks.
  * 		graph:				assuming this rule hierarchy:
  * 		   R2 R3 L1						R1
  * 		J1  1  0  0					   /  \
  * 		J2  0  1 -1					  R2  R3
  * 		J3 -1  0  1
- * 		 
+ *
  * If in the above situation job4 decides to acquire rule1, then the graph will transform
  * to the following:
  * 		   R2 R3 R1 L1
@@ -58,11 +58,11 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * 		J2  1  1  1 -1
  * 		J3 -1  0  0  1
  * 		J4  0  0 -1  0
- * 
+ *
  * and the graph will assume that job2 and job3 are deadlocked and suspend lock1 of job3.
  * The reason the deadlock is bogus is that the deadlock is unlikely to actually happen (the threads
  * are currently not deadlocked, but might deadlock later on when it is too late to detect it)
- * Therefore, in order to make sure that no deadlock is possible, 
+ * Therefore, in order to make sure that no deadlock is possible,
  * the deadlock will still be resolved at this point.
  */
 class DeadlockDetector {
@@ -119,7 +119,7 @@ class DeadlockDetector {
 	}
 
 	/**
-	 * Check that the addition of a waiting thread did not produce deadlock. 
+	 * Check that the addition of a waiting thread did not produce deadlock.
 	 * If deadlock is detected return true, else return false.
 	 */
 	private boolean checkWaitCycles(int[] waitingThreads, int lockIndex) {
@@ -157,7 +157,7 @@ class DeadlockDetector {
 
 	/**
 	 * A new rule was just added to the graph.
-	 * Find a rule it conflicts with and update the new rule with the number of times 
+	 * Find a rule it conflicts with and update the new rule with the number of times
 	 * it was acquired implicitly when threads acquired conflicting rule.
 	 */
 	private void fillPresentEntries(ISchedulingRule newLock, int lockIndex) {
@@ -372,7 +372,7 @@ class DeadlockDetector {
 			return;
 		}
 		/**
-		 * set all rules that are owned by the given thread to NO_STATE 
+		 * set all rules that are owned by the given thread to NO_STATE
 		 * (not just rules that conflict with the rule we are releasing)
 		 * if we are releasing a lock, then only update the one entry for the lock
 		 */
@@ -412,7 +412,7 @@ class DeadlockDetector {
 	}
 
 	/**
-	 * The given thread has stopped waiting for the given lock. 
+	 * The given thread has stopped waiting for the given lock.
 	 * Update the graph.
 	 * If the lock has already been granted, then it isn't removed.
 	 */
@@ -529,7 +529,7 @@ class DeadlockDetector {
 		/**
 		 * Check if the possibly empty columns are actually empty.
 		 * If a column is actually empty, remove the corresponding lock from the list of locks
-		 * Start at the last column so that when locks are removed from the list, 
+		 * Start at the last column so that when locks are removed from the list,
 		 * the index of the remaining locks is unchanged. Store the number of empty columns.
 		 */
 		for (int j = emptyColumns.length - 1; j >= 0; j--) {
@@ -680,7 +680,7 @@ class DeadlockDetector {
 	}
 
 	/**
-	 * Prints out the current matrix to standard output. 
+	 * Prints out the current matrix to standard output.
 	 * Only used for debugging.
 	 */
 	public String toDebugString() {

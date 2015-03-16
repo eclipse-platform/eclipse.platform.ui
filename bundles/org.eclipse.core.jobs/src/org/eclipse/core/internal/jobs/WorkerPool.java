@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * Maintains a pool of worker threads. Threads are constructed lazily as
  * required, and are eventually discarded if not in use for awhile. This class
  * maintains the thread creation/destruction policies for the job manager.
- * 
+ *
  * Implementation note: all the data structures of this class are protected
  * by the instance's object monitor.  To avoid deadlock with third party code,
  * this lock is never held when calling methods outside this class that may in
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class WorkerPool {
 	/**
-	 * Threads not used by their best before timestamp are destroyed. 
+	 * Threads not used by their best before timestamp are destroyed.
 	 */
 	private static final int BEST_BEFORE = 60000;
 	/**
@@ -55,7 +55,7 @@ class WorkerPool {
 	 */
 	private int numThreads = 0;
 	/**
-	 * The number of threads that are currently sleeping 
+	 * The number of threads that are currently sleeping
 	 */
 	private int sleepingThreads = 0;
 	/**
@@ -177,7 +177,7 @@ class WorkerPool {
 	}
 
 	/**
-	 * Sleep for the given duration or until woken. 
+	 * Sleep for the given duration or until woken.
 	 */
 	private synchronized void sleep(long duration) {
 		sleepingThreads++;
@@ -196,7 +196,7 @@ class WorkerPool {
 	}
 
 	/**
-	 * Returns a new job to run. Returns null if the thread should die. 
+	 * Returns a new job to run. Returns null if the thread should die.
 	 */
 	protected InternalJob startJob(Worker worker) {
 		//if we're above capacity, kill the thread

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.jobs.LockListener;
  * Stores the only reference to the graph that contains all the known
  * relationships between locks, rules, and the threads that own them.
  * Synchronizes all access to the graph on the only instance that exists in this class.
- * 
- * Also stores the state of suspended locks so that they can be re-acquired with 
- * the proper lock depth. 
+ *
+ * Also stores the state of suspended locks so that they can be re-acquired with
+ * the proper lock depth.
  */
 public class LockManager {
 	/**
@@ -65,13 +65,13 @@ public class LockManager {
 
 	//the lock listener for this lock manager
 	protected LockListener lockListener;
-	/* 
-	 * The internal data structure that stores all the relationships 
+	/*
+	 * The internal data structure that stores all the relationships
 	 * between the locks (or rules) and the threads that own them.
 	 */
 	private DeadlockDetector locks = new DeadlockDetector();
-	/* 
-	 * Stores thread - stack pairs where every entry in the stack is an array 
+	/*
+	 * Stores thread - stack pairs where every entry in the stack is an array
 	 * of locks that were suspended while the thread was acquiring more locks
 	 * (a stack is needed because when a thread tries to re-acquire suspended locks,
 	 * it can cause deadlock, and some locks it owns can be suspended again)
@@ -82,9 +82,6 @@ public class LockManager {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on LockListener
-	 */
 	public void aboutToRelease() {
 		if (lockListener == null)
 			return;
@@ -97,9 +94,6 @@ public class LockManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on LockListener
-	 */
 	public boolean canBlock() {
 		if (lockListener == null)
 			return true;
@@ -113,9 +107,6 @@ public class LockManager {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on LockListener
-	 */
 	public boolean aboutToWait(Thread lockOwner) {
 		if (lockListener == null)
 			return false;
@@ -238,7 +229,7 @@ public class LockManager {
 	 * Returns true IFF this thread either owns, or is waiting for, any locks or rules.
 	 */
 	public boolean isLockOwner() {
-		//all job threads have to be treated as lock owners because UI thread 
+		//all job threads have to be treated as lock owners because UI thread
 		//may try to join a job
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)

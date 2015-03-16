@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stephan Wahlbrink  - Fix for bug 200997.
@@ -31,20 +31,20 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Implementation of API type IJobManager
- * 
+ *
  * Implementation note: all the data structures of this class are protected by a
  * single lock object held as a private field in this class. The JobManager
  * instance itself is not used because this class is publicly reachable, and
  * third party clients may try to synchronize on it.
- * 
+ *
  * There are various locks used and held throughout the JobManager
  * implementation. When multiple locks interact, circular hold and waits must
  * never happen, or a deadlock will occur. To prevent deadlocks, this is the
  * order that locks must be acquired.
- * 
- * WorkerPool -> JobManager.implicitJobs -> JobManager.lock -> 
+ *
+ * WorkerPool -> JobManager.implicitJobs -> JobManager.lock ->
  * InternalJob.jobStateLock or InternalJobGroup.jobGroupStateLock
- * 
+ *
  * @ThreadSafe
  */
 public class JobManager implements IJobManager, DebugOptionsListener {
@@ -86,7 +86,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	/**
 	 * The singleton job manager instance. It must be a singleton because
-	 * all job instances maintain a reference (as an optimization) and have no way 
+	 * all job instances maintain a reference (as an optimization) and have no way
 	 * of updating it.
 	 */
 	private static JobManager instance;
@@ -269,8 +269,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	/**
 	 * Note that although this method is not API, clients have historically used
 	 * it to force jobs shutdown in cases where OSGi shutdown does not occur.
-	 * For this reason, this method should be considered near-API and should not 
-	 * be changed if at all possible. 
+	 * For this reason, this method should be considered near-API and should not
+	 * be changed if at all possible.
 	 */
 	public static void shutdown() {
 		if (instance != null) {
@@ -354,9 +354,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			cancel(it.next());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.JobGroup#cancel()
-	 */
 	void cancel(InternalJobGroup jobGroup) {
 		cancel(jobGroup, false);
 	}
@@ -654,7 +651,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
 				RuntimeLog.log(new Status(IStatus.WARNING, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, null));
 
-				// TODO the RuntimeLog.log in its current implementation won't produce a log 
+				// TODO the RuntimeLog.log in its current implementation won't produce a log
 				// during this stage of shutdown. For now add a standard error output.
 				// One the logging story is improved, the System.err output below can be removed:
 				System.err.println(msg);
@@ -670,8 +667,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/**
-	 * Indicates that a job was running, and has now finished.  Note that this method 
-	 * can be called under OutOfMemoryError conditions and thus must be paranoid 
+	 * Indicates that a job was running, and has now finished.  Note that this method
+	 * can be called under OutOfMemoryError conditions and thus must be paranoid
 	 * about allocating objects.
 	 */
 	protected void endJob(InternalJob job, IStatus result, boolean notify) {
@@ -715,9 +712,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		return members.toArray(new Job[members.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.JobGroup#getActiveJobs()
-	 */
 	List<Job> find(InternalJobGroup jobGroup) {
 		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
 		synchronized (lock) {
@@ -726,8 +720,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/**
-	 * Returns a running or blocked job whose scheduling rule conflicts with the 
-	 * scheduling rule of the given waiting job.  Returns null if there are no 
+	 * Returns a running or blocked job whose scheduling rule conflicts with the
+	 * scheduling rule of the given waiting job.  Returns null if there are no
 	 * conflicting jobs.  A job can only run if there are no running jobs and no blocked
 	 * jobs whose scheduling rule conflicts with its rule.
 	 */
@@ -766,8 +760,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	/**
 	 * Returns a job from the given collection whose scheduling rule conflicts
-	 * with the scheduling rule of the given job.  Returns null if there are no 
-	 * conflicting jobs.  
+	 * with the scheduling rule of the given job.  Returns null if there are no
+	 * conflicting jobs.
 	 */
 	InternalJob findBlockedJob(InternalJob job, Iterator jobs) {
 		synchronized (lock) {
@@ -859,9 +853,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#join(long, IProgressMonitor)
-	 */
 	protected boolean join(InternalJob job, long timeout, IProgressMonitor monitor) throws InterruptedException {
 		Assert.isLegal(timeout >= 0, "timeout should not be negative"); //$NON-NLS-1$
 		long deadline = timeout == 0 ? 0 : System.currentTimeMillis() + timeout;
@@ -1018,9 +1009,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.JobGroup#join(long, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	boolean join(InternalJobGroup jobGroup, long timeout, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		Assert.isLegal(jobGroup != null, "jobGroup should not be null"); //$NON-NLS-1$
 		Assert.isLegal(timeout >= 0, "timeout should not be negative"); //$NON-NLS-1$
@@ -1070,7 +1058,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	/**
 	 * Returns a non-null progress monitor instance.  If the monitor is null,
-	 * returns the default monitor supplied by the progress provider, or a 
+	 * returns the default monitor supplied by the progress provider, or a
 	 * NullProgressMonitor if no default monitor is available.
 	 */
 	private IProgressMonitor monitorFor(IProgressMonitor monitor) {
@@ -1247,9 +1235,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		return blocking;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#schedule(long)
-	 */
 	protected void schedule(InternalJob job, long delay, boolean reschedule) {
 		if (!active)
 			throw new IllegalStateException("Job manager has been shut down."); //$NON-NLS-1$
@@ -1301,7 +1286,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/**
-	 * Returns a list of all jobs known to the job manager that belong to the given 
+	 * Returns a list of all jobs known to the job manager that belong to the given
 	 * family and are in one of the provided states.
 	 */
 	private List<InternalJob> select(Object family, int stateMask) {
@@ -1352,9 +1337,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		progressProvider = provider;
 	}
 
-	/* (non-Javadoc)
-	 * @see Job#setRule
-	 */
 	public void setRule(InternalJob job, ISchedulingRule rule) {
 		synchronized (lock) {
 			//cannot change the rule of a job that is already running
@@ -1432,8 +1414,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		Assert.isLegal(currentThread == job.getThread(), "Cannot yieldRule from outside job's thread"); //$NON-NLS-1$
 
 		InternalJob unblocked;
-		// If job is not a ThreadJob, and it has implicitly started rules, likeThreadJob 
-		// is the corresponding ThreadJob. Similarly, if likeThreadJob is not null, then 
+		// If job is not a ThreadJob, and it has implicitly started rules, likeThreadJob
+		// is the corresponding ThreadJob. Similarly, if likeThreadJob is not null, then
 		// job is not a ThreadJob
 		ThreadJob likeThreadJob;
 		synchronized (implicitJobs) {
@@ -1444,8 +1426,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				unblocked = job.previous();
 
 				// if unblocked is not null, it was a blocked job. It is guaranteed
-				// that it will be the next job run by the worker threads once this 
-				// lock is released. 
+				// that it will be the next job run by the worker threads once this
+				// lock is released.
 				if (unblocked == null) {
 
 					if (likeThreadJob != null) {
@@ -1455,13 +1437,13 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 						if (unblocked == null) {
 
-							// look for any implicit (or yielding) jobs we may be blocking. 
+							// look for any implicit (or yielding) jobs we may be blocking.
 							unblocked = findBlockedJob(likeThreadJob, waitingThreadJobs.iterator());
 						}
 
 					} else {
 
-						// look for any implicit (or yielding) jobs we may be blocking. 
+						// look for any implicit (or yielding) jobs we may be blocking.
 						unblocked = findBlockedJob(job, waitingThreadJobs.iterator());
 					}
 				}
@@ -1494,9 +1476,9 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 					getLockManager().removeLockThread(currentThread, job.getRule());
 			}
 		}
-		// To prevent this job from immediately re-grabbing the scheduling rule wait until 
-		// the unblocked job changes state. This unblocked job is guaranteed to be the 
-		// next job of the set of similar conflicting rules to attempt to run. 
+		// To prevent this job from immediately re-grabbing the scheduling rule wait until
+		// the unblocked job changes state. This unblocked job is guaranteed to be the
+		// next job of the set of similar conflicting rules to attempt to run.
 		if (DEBUG_YIELDING_DETAILED)
 			JobManager.debug(job + " is waiting for " + unblocked + " to transition from WAITING state"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1504,7 +1486,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 		// restart this job, unless we've been restarted already
 		// This is the same as ThreadJob begin, except that cancelation CAN NOT be supported
-		// throwing the OperationCanceledException will return execution to the caller. 
+		// throwing the OperationCanceledException will return execution to the caller.
 		IProgressMonitor mon = monitorFor(monitor);
 		ProgressMonitorWrapper nonCanceling = new ProgressMonitorWrapper(mon) {
 			@Override
@@ -1521,10 +1503,10 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 		// this yielding job becomes an implicit job, unless it is one already
 		if (likeThreadJob == null) {
-			// Create a Threadjob proxy. This is strictly an internal job, but its not 
-			// preventing from "leaking" out to clients in the form of listener 
-			// notifications, and via IJobManager API usage like find(). 
-			// Set a flag to differentiate it from regular ThreadJobs. 
+			// Create a Threadjob proxy. This is strictly an internal job, but its not
+			// preventing from "leaking" out to clients in the form of listener
+			// notifications, and via IJobManager API usage like find().
+			// Set a flag to differentiate it from regular ThreadJobs.
 			ThreadJob threadJob = new ThreadJob(job.getRule()) {
 				@Override
 				boolean isResumingAfterYield() {
@@ -1561,7 +1543,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		}
 		if (unblocked instanceof ThreadJob && ((ThreadJob) unblocked).isResumingAfterYield()) {
 			// if the unblocked job is a proxy for a yielding job to start, return
-			// the original job. No need to expose the proxy ThreadJob. 
+			// the original job. No need to expose the proxy ThreadJob.
 			return ((ThreadJob) unblocked).realJob;
 		}
 		return (Job) unblocked;
@@ -1616,7 +1598,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	/**
 	 * Returns the next job to be run, or null if no jobs are waiting to run.
-	 * The worker must call endJob when the job is finished running.  
+	 * The worker must call endJob when the job is finished running.
 	 */
 	protected Job startJob(Worker worker) {
 		Job job = null;
@@ -1708,9 +1690,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		Assert.isLegal(!rule.isConflicting(nullRule));
 	}
 
-	/* (non-Javadoc)
-	 * @see Job#wakeUp(long)
-	 */
 	protected void wakeUp(InternalJob job, long delay) {
 		Assert.isLegal(delay >= 0, "Scheduling delay is negative"); //$NON-NLS-1$
 		synchronized (lock) {

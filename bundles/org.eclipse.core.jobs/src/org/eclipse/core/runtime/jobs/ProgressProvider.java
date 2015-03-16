@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.*;
  * running jobs.  There can only be one progress provider at any given time.
  * <p>
  * This class is intended for use by the currently executing Eclipse application.
- * Plug-ins outside the currently running application should not reference or 
+ * Plug-ins outside the currently running application should not reference or
  * subclass this class.
  * </p>
- * 
+ *
  * @see IJobManager#setProgressProvider(ProgressProvider)
  * @since 3.0
  */
@@ -30,11 +30,11 @@ public abstract class ProgressProvider {
 	 * This method is called prior to running any job that does not belong to a
 	 * progress group. The returned monitor will be supplied to the job's
 	 * <code>run</code> method.
-	 * 
+	 *
 	 * @see #createProgressGroup()
 	 * @see Job#setProgressGroup(IProgressMonitor, int)
 	 * @param job the job to create a progress monitor for
-	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
+	 * @return a progress monitor, or <code>null</code> if no progress monitoring
 	 * is needed.
 	 */
 	public abstract IProgressMonitor createMonitor(Job job);
@@ -47,7 +47,7 @@ public abstract class ProgressProvider {
 	 * <p>
 	 * This default implementation returns a new
 	 * <code>NullProgressMonitor</code>  Subclasses may override.
-	 * 
+	 *
 	 * @see IJobManager#createProgressGroup()
 	 * @return a progress monitor
 	 */
@@ -70,13 +70,13 @@ public abstract class ProgressProvider {
 	 * <p>
 	 * This default implementation returns a new
 	 * <code>SubProgressMonitor</code>.  Subclasses may override.
-	 * 
+	 *
 	 * @see IJobManager#createProgressGroup()
 	 * @see Job#setProgressGroup(IProgressMonitor, int)
 	 * @param job the job to create a progress monitor for
 	 * @param group the progress monitor group that this job belongs to
 	 * @param ticks the number of ticks of work for the progress monitor
-	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
+	 * @return a progress monitor, or <code>null</code> if no progress monitoring
 	 * is needed.
 	 */
 	public IProgressMonitor createMonitor(Job job, IProgressMonitor group, int ticks) {
@@ -85,11 +85,11 @@ public abstract class ProgressProvider {
 
 	/**
 	 * Returns a progress monitor to use when none has been provided
-	 * by the client running the job.  
+	 * by the client running the job.
 	 * <p>
 	 * This default implementation returns a new
 	 * <code>NullProgressMonitor</code>  Subclasses may override.
-	 * 
+	 *
 	 * @return a progress monitor
 	 */
 	public IProgressMonitor getDefaultMonitor() {

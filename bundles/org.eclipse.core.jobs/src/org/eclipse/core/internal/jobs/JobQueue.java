@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 
 /**
- * A linked list based priority queue. 
+ * A linked list based priority queue.
  */
 public final class JobQueue {
 	/**
@@ -33,14 +33,14 @@ public final class JobQueue {
 	private final boolean allowPriorityOvertaking;
 
 	/**
-	 * Create a new job queue. 
+	 * Create a new job queue.
 	 */
 	public JobQueue(boolean allowConflictOvertaking) {
 		this(allowConflictOvertaking, true);
 	}
 
 	/**
-	 * Create a new job queue. 
+	 * Create a new job queue.
 	 */
 	public JobQueue(boolean allowConflictOvertaking, boolean allowPriorityOvertaking) {
 		this.allowPriorityOvertaking = allowPriorityOvertaking;
@@ -56,8 +56,8 @@ public final class JobQueue {
 		this.allowConflictOvertaking = allowConflictOvertaking;
 	}
 
-	/** 
-	 * remove all elements 
+	/**
+	 * remove all elements
 	 */
 	public void clear() {
 		dummy.setNext(dummy);
@@ -65,7 +65,7 @@ public final class JobQueue {
 	}
 
 	/**
-	 * Return and remove the element with highest priority, or null if empty. 
+	 * Return and remove the element with highest priority, or null if empty.
 	 */
 	public InternalJob dequeue() {
 		InternalJob toRemove = dummy.previous();
@@ -75,7 +75,7 @@ public final class JobQueue {
 	}
 
 	/**
-	 * Adds an item to the queue 
+	 * Adds an item to the queue
 	 */
 	public void enqueue(InternalJob newEntry) {
 		//assert new entry is does not already belong to some other data structure
@@ -113,7 +113,7 @@ public final class JobQueue {
 	}
 
 	/**
-	 * Removes the given element from the queue. 
+	 * Removes the given element from the queue.
 	 */
 	public void remove(InternalJob toRemove) {
 		toRemove.remove();
@@ -130,14 +130,14 @@ public final class JobQueue {
 	}
 
 	/**
-	 * Returns true if the queue is empty, and false otherwise. 
+	 * Returns true if the queue is empty, and false otherwise.
 	 */
 	public boolean isEmpty() {
 		return dummy.next() == dummy;
 	}
 
-	/** 
-	 * Return greatest element without removing it, or null if empty 
+	/**
+	 * Return greatest element without removing it, or null if empty
 	 */
 	public InternalJob peek() {
 		return dummy.previous() == dummy ? null : dummy.previous();

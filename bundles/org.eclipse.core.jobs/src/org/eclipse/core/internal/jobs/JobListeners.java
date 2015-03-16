@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -118,7 +118,7 @@ class JobListeners {
 	}
 
 	private void handleException(Object listener, Throwable e) {
-		//this code is roughly copied from InternalPlatform.run(ISafeRunnable), 
+		//this code is roughly copied from InternalPlatform.run(ISafeRunnable),
 		//but in-lined here for performance reasons
 		if (e instanceof OperationCanceledException)
 			return;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * Used to perform internal JobManager tasks. Currently, this is limited to checking 
- * progress monitors while a thread is performing a blocking wait in ThreadJob. 
+ * Used to perform internal JobManager tasks. Currently, this is limited to checking
+ * progress monitors while a thread is performing a blocking wait in ThreadJob.
  */
 public class InternalWorker extends Thread {
 	private final JobManager manager;
@@ -32,7 +32,7 @@ public class InternalWorker extends Thread {
 	/**
 	* Will loop until there are progress monitors to check. While there are monitors
 	* registered, it will check cancelation every 250ms, and if it is canceled it will
-	* interrupt the ThreadJob that is performing a blocking wait. 
+	* interrupt the ThreadJob that is performing a blocking wait.
 	*/
 	@Override
 	public void run() {
@@ -65,7 +65,7 @@ public class InternalWorker extends Thread {
 	}
 
 	/**
-	* Terminate this thread. Once terminated, it cannot be restarted. 
+	* Terminate this thread. Once terminated, it cannot be restarted.
 	*/
 	void cancel() {
 		synchronized (manager.monitorStack) {
