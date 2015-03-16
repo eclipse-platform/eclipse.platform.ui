@@ -68,7 +68,7 @@ public interface IPropertyTester {
 
 	/**
 	 * Executes the property test determined by the parameter <code>property</code>.
-	 * 
+	 *
 	 * @param receiver the receiver of the property test
 	 * @param property the property to test
 	 * @param args additional arguments to evaluate the property. If no arguments are specified in
@@ -76,7 +76,7 @@ public interface IPropertyTester {
 	 * @param expectedValue the expected value of the property. The value is either of type
 	 *            <code>java.lang.String</code> or a boxed base type. If no value was specified in
 	 *            the <code>test</code> expressions then <code>null</code> is passed
-	 * 
+	 *
 	 * @return returns <code>true</code> if the property is equal to the expected value; otherwise
 	 *         <code>false</code> is returned
 	 */

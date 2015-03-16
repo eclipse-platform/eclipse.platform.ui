@@ -19,9 +19,8 @@ public class ExpressionPlugin extends Plugin {
 
 	private static ExpressionPlugin fgDefault;
 
-	
 	static BundleListener fgBundleListener;
-	
+
 	private BundleContext fBundleContext;
 
 	public ExpressionPlugin() {

@@ -32,7 +32,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 
 	/**
 	 * Tells whether this class is in debug mode.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.core.expressions/debug/TypeExtensionManager")); //$NON-NLS-1$//$NON-NLS-2$
@@ -124,7 +124,6 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 				t= new Throwable("forcePluginActivation: " + forcePluginActivation + ", receiver: " + receiver).fillInStackTrace(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,
 				Messages.format(

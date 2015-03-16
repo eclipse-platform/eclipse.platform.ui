@@ -66,9 +66,6 @@ public class AdaptExpression extends CompositeExpression {
 			* HASH_FACTOR + fTypeName.hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see Expression#evaluate(IVariablePool)
-	 */
 	@Override
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		if (fTypeName == null)
@@ -82,7 +79,7 @@ public class AdaptExpression extends CompositeExpression {
 			if (manager.hasAdapter(var, fTypeName)) {
 				adapted= manager.getAdapter(var, fTypeName);
 			} else {
-				// if the adapter manager doesn't have an adapter contributed, 
+				// if the adapter manager doesn't have an adapter contributed,
 				// try to see if the variable itself implements IAdaptable
 				if (var instanceof IAdaptable) {
 					Class<?> typeClazz= Expressions.loadClass(var.getClass().getClassLoader(), fTypeName);
