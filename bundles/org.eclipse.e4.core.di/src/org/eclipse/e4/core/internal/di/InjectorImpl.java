@@ -432,7 +432,7 @@ public class InjectorImpl implements IInjector {
 
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
 
-		// Resolution order changed in 1.4 as we now check extended suppliers first (bug 398728) 
+		// Resolution order changed in 1.4 as we now check extended suppliers first (bug 398728)
 
 		// 0) initial fill - all values are unresolved
 		Object[] actualArgs = new Object[descriptors.length];

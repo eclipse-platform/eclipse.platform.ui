@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
  * the affected items to be re-injected into the object. Thus the object will remain synchronized
  * with the context once it has been injected.
  * <p>
- * Matching of methods and fields to be injected is performed using the annotations defined in 
+ * Matching of methods and fields to be injected is performed using the annotations defined in
  * packages javax.inject and org.eclipse.e4.core.services.annotations.
  * </p>
  * <p>
@@ -38,12 +38,12 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
  * reverse order: methods and then fields. As a result, injection methods can safely make use of
  * injected field values. The order in which methods are injected is undefined, so
  * injection methods should not rely on other injection methods having been run already. Methods
- * and field on superclasses are injected before methods in fields on the subclasses. 
+ * and field on superclasses are injected before methods in fields on the subclasses.
  * </p>
  * <p>
  * When supplier is disposed, the injector will attempt to notify all injected objects by
  * calling methods with the {@link PreDestroy} annotation.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -51,12 +51,12 @@ public interface IInjector {
 
 	/**
 	 * Methods may return this to indicate that the requested object was not found
-	 * wherever <code>null</code> can be a valid return value. 
+	 * wherever <code>null</code> can be a valid return value.
 	 */
 	final public static Object NOT_A_VALUE = new Object();
 
 	/**
-	 * Injects data from the supplier into a domain object. See the class comment for details on 
+	 * Injects data from the supplier into a domain object. See the class comment for details on
 	 * the injection algorithm that is used.
 	 * @param object the object to perform injection on
 	 * @param objectSupplier primary object supplier for the injection
@@ -76,7 +76,7 @@ public interface IInjector {
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the supplier.
 	 * <p>
-	 * If no matching method is found on the class, an InjectionException will be 
+	 * If no matching method is found on the class, an InjectionException will be
 	 * thrown.
 	 * </p>
 	 * @param object the object on which the method should be called
@@ -134,7 +134,7 @@ public interface IInjector {
 	 * If values for the same key present in both the object supplier and the static supplier, the values from
 	 * the static supplier are injected. Injected values from the static supplier are not tracked and no links
 	 * between the static supplier and the object are established.
-	 * </p> 
+	 * </p>
 	 * @param <T> the type of the object to be created
 	 * @param clazz the class to be instantiated
 	 * @param objectSupplier primary object supplier for the injection
@@ -147,7 +147,7 @@ public interface IInjector {
 	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier) throws InjectionException;
 
 	/**
-	 * Creates a binding for the specified class and adds it to the injector. 
+	 * Creates a binding for the specified class and adds it to the injector.
 	 * @param clazz the class that the injector should be aware of
 	 * @return binding for the specified class
 	 */

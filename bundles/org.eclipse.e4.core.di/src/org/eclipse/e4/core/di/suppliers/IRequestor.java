@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.e4.core.di.InjectionException;
  * operations.
  * <p>
  * When an injector is asked to do a task, it splits work into a set of
- * requestors. Requestors are passed to relevant object suppliers so that 
+ * requestors. Requestors are passed to relevant object suppliers so that
  * requestors can be executed when values in the supplier change. (For instance,
  * an object supplier that provided the value for the injected field, is expected
  * to execute requestor again when it detects change in the injected value).
@@ -29,7 +29,7 @@ import org.eclipse.e4.core.di.InjectionException;
 public interface IRequestor {
 
 	/**
-	 * Forces the requestor to resolve arguments it depends on. 
+	 * Forces the requestor to resolve arguments it depends on.
 	 * @param initial <code>true</code> if this is the initial attempt to resolve arguments
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
@@ -38,7 +38,7 @@ public interface IRequestor {
 	/**
 	 * Call this method to perform requestor's task. This method should be called
 	 * whenever the dependent value changes.
-	 * <p> 
+	 * <p>
 	 * @return result of the task
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */

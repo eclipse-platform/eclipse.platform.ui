@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -141,7 +141,7 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
 		((InjectorImpl) injector).disposed(objectSupplier);
-		// Clear the objectRef if the supplier is disposed see 430041 
+		// Clear the objectRef if the supplier is disposed see 430041
 		if (objectSupplier == primarySupplier) {
 			if (objectRef != null) {
 				objectRef.clear();
@@ -166,8 +166,8 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 	}
 
 	/**
-	 * Don't hold on to the resolved results as it will prevent 
-	 * them from being garbage collected. 
+	 * Don't hold on to the resolved results as it will prevent
+	 * them from being garbage collected.
 	 */
 	protected void clearResolvedArgs() {
 		if (actualArgs == null)

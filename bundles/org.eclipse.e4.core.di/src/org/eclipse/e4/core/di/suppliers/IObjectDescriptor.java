@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import javax.inject.Qualifier;
  * This interface describes objects created by the dependency injection.
  * <p>
  * From the view point of the injector, objects are described by a type
- * with a set of optional qualifiers. 
+ * with a set of optional qualifiers.
  * </p>
  * @see Qualifier
  * @noextend This interface is not intended to be extended by clients.
@@ -51,7 +51,7 @@ public interface IObjectDescriptor {
 
 	/**
 	 * Returns qualifiers specified for this object descriptor, or <code>null</code>.
-	 * @return qualifiers for this descriptor, or <code>null</code> if there are 
+	 * @return qualifiers for this descriptor, or <code>null</code> if there are
 	 * no qualifiers specified
 	 */
 	public Annotation[] getQualifiers();

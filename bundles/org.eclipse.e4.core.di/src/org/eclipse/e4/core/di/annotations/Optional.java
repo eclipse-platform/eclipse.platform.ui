@@ -19,9 +19,9 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * This annotation can be applied to methods, fields, and parameters to 
- * mark them as optional for the dependency injection. Typically, if the injector is 
- * unable to find a value to inject, then injection will fail. However, if this annotation 
+ * This annotation can be applied to methods, fields, and parameters to
+ * mark them as optional for the dependency injection. Typically, if the injector is
+ * unable to find a value to inject, then injection will fail. However, if this annotation
  * is specified, then:
  * <ul>
  * <li> for parameters:  a <code>null</code> value will be injected; </li>

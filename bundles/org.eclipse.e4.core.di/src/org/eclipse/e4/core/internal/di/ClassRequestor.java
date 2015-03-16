@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
  * This requestor is used to establish a link between the object supplier
  * and the injected object. This pseudo-link is useful if no regular links
  * were created during injection (say, only constructor injection was used)
- * but the injected object needs to be notified on the supplier's disposal. 
+ * but the injected object needs to be notified on the supplier's disposal.
  */
 public class ClassRequestor extends Requestor<Class<?>> {
 

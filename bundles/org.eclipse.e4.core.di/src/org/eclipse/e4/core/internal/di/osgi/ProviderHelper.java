@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * This helper class assumes that availability of extended services
- * does not change.  
+ * does not change.
  */
 public class ProviderHelper {
 
