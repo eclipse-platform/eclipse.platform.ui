@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
  * XXX Need to create a new log interface on common plugin. That interface should be a super interface of this ILog.
  * getBundle() would stay here. In the super interface we would have getName()
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILog {
@@ -52,7 +52,7 @@ public interface ILog {
 
 	/**
 	 * Removes the given log listener to this log.  Subsequently the log listener will
-	 * no longer receive notification of log events passing through this log.  
+	 * no longer receive notification of log events passing through this log.
 	 * This method has no effect if the identical listener is not registered on this log.
 	 *
 	 * @param listener the listener to remove

@@ -18,7 +18,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogEntry;
 
 /**
- * 
+ *
  */
 public class Log implements ILog, SynchronousLogListener, LogFilter {
 	final Bundle bundle;

@@ -18,7 +18,7 @@ import org.osgi.framework.Bundle;
  * This class isolates calls to the backward compatibility layer.
  * It uses reflection so it can be loaded with success even in the absence of
  * the compatibility plugin.
- * 
+ *
  * @deprecated Marked as deprecated to suppress deprecation warnings.
  */
 @Deprecated
@@ -31,9 +31,9 @@ public class CompatibilityHelper {
 	public synchronized static void nullCompatibility() {
 		compatibility = null;
 	}
-	
+
 	public synchronized static Bundle initializeCompatibility() {
-		// if compatibility is stale (has been uninstalled or unresolved) 
+		// if compatibility is stale (has been uninstalled or unresolved)
 		// then we try to get a new resolved compatibility bundle
 		if (compatibility == null || (compatibility.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED | Bundle.STOPPING)) != 0)
 			compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
@@ -70,7 +70,7 @@ public class CompatibilityHelper {
 				IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e);
 				InternalPlatform.getDefault().log(error);
 			}
-			//Ignore the exceptions, return null			
+			//Ignore the exceptions, return null
 		}
 		return null;
 	}
@@ -98,7 +98,7 @@ public class CompatibilityHelper {
 			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject"); //$NON-NLS-1$
 			result = (Boolean) setPlugin.invoke(descriptor);
 		} catch (Exception e) {
-			//Ignore the exceptions			
+			//Ignore the exceptions
 		}
 		return result.booleanValue();
 	}

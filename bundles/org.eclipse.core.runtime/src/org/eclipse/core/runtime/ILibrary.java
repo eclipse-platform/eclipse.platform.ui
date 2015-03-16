@@ -16,43 +16,43 @@ import org.osgi.framework.Constants;
 /**
  * A runtime library declared in a plug-in.  Libraries contribute elements to the search path.
  * These contributions are specified as a path to a directory or Jar file.  This path is always
- * considered to be relative to the containing plug-in.  
+ * considered to be relative to the containing plug-in.
  * <p>
  * Libraries are typed.  The type is used to determine to which search path the library's
  * contribution should be added.  The valid types are: <code>CODE</code> and
- * <code>RESOURCE</code>.  
+ * <code>RESOURCE</code>.
  * </p>
- * 
+ *
  * @see IPluginDescriptor#getRuntimeLibraries()
- * @deprecated 
- * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of 
+ * @deprecated
+ * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of
  * <code>ILibrary</code> are directed to the headers associated with the relevant bundle.
  * In particular, the <code>Bundle-Classpath</code> header contains all available information
  * about the classpath of a plug-in.  Having retrieved the header, the {@link ManifestElement}
- * helper class can be used to parse the value and discover the individual 
+ * helper class can be used to parse the value and discover the individual
  * class path entries.  The various header attributes are defined in {@link Constants}.
- * <p>For example, 
+ * <p>For example,
  * <pre>
  *     String header = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
  *     ManifestElement[] elements = ManifestElement.parseHeader(
  *         Constants.BUNDLE_CLASSPATH, header);
- *     if (elements == null) 
+ *     if (elements == null)
  *         return;
  *     elements[0].getValue();   // the jar/dir containing the code
  *     ...
  * </pre>
  * </p><p>
- * Note that this new structure does not include information on 
- * which packages are exported or present in the listed classpath entries. This 
+ * Note that this new structure does not include information on
+ * which packages are exported or present in the listed classpath entries. This
  * information is no longer relevant.
  * </p><p>
- * See {@link IPluginDescriptor} for information on the relationship between plug-in 
+ * See {@link IPluginDescriptor} for information on the relationship between plug-in
  * descriptors and bundles.
  * </p><p>
- * This interface must only be used by plug-ins 
+ * This interface must only be used by plug-ins
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 @Deprecated
@@ -83,7 +83,7 @@ public interface ILibrary {
 	 * (no filtering).
 	 *
 	 * @return the content filters, or <code>null</code> if none
-	 * @deprecated As of Eclipse 3.0 content filters are obsolete.  
+	 * @deprecated As of Eclipse 3.0 content filters are obsolete.
 	 * There is no replacement.
 	 */
 	@Deprecated
@@ -95,9 +95,9 @@ public interface ILibrary {
 	 *
 	 * @return the path of the library
 	 * @see IPluginDescriptor#getInstallURL()
-	 * @deprecated 
+	 * @deprecated
 	 * Given a manifest element corresponding to a classpath entry, the path
-	 * for the entry can be accessed by getting the value of the manifest element.  
+	 * for the entry can be accessed by getting the value of the manifest element.
 	 * For example,
 	 * <pre>
 	 *     element.getValue();   // the jar/dir containing the code
@@ -146,9 +146,9 @@ public interface ILibrary {
 	public boolean isFullyExported();
 
 	/**
-	 * Returns the array of package prefixes that this library declares. This 
+	 * Returns the array of package prefixes that this library declares. This
 	 * is used in classloader enhancements and is an optional entry in the plugin.xml.
-	 * 
+	 *
 	 * @return the array of package prefixes or <code>null</code>
 	 * @since 2.1
 	 * @deprecated As of Eclipse 3.0 package prefix filtering is obsolete.

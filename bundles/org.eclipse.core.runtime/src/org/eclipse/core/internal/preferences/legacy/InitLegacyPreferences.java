@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,14 +22,14 @@ import org.eclipse.core.runtime.Plugin;
 public class InitLegacyPreferences implements ILegacyPreferences {
 	/**
 	 * The method tries to initialize the preferences using the legacy Plugin method.
-	 * 
+	 *
 	 * @param object - plugin to initialize
 	 * @param name - ID of the plugin to be initialized
-	 * 
+	 *
 	 * @see Plugin#initializeDefaultPluginPreferences
-	 * 
+	 *
 	 * @since org.eclipse.core.runtime 3.2
-	 * 
+	 *
 	 * @deprecated Marked deprecated to suppress warnings. This class is added to support
 	 * backward compatibility only and should not be used in any new code.
 	 */

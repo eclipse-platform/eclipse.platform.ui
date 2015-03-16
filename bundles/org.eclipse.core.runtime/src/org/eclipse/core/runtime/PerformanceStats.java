@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Adds generic type arguments https://bugs.eclipse.org/412836
@@ -18,7 +18,7 @@ import org.eclipse.core.internal.runtime.PerformanceStatsProcessor;
 
 /**
  * PerformanceStats collects and aggregates timing data about events such as
- * a builder running, an editor opening, etc.  This data is collected for the 
+ * a builder running, an editor opening, etc.  This data is collected for the
  * purpose of performance analysis, and is not intended to be used as
  * a generic event tracking and notification system.
  * <p>
@@ -32,7 +32,7 @@ import org.eclipse.core.internal.runtime.PerformanceStatsProcessor;
  * </p><p>
  * A performance event can optionally have additional context information
  * ({@link #getContext}).  This information is only stored in the case
- * of a performance failure, and can be used to provide further diagnostic 
+ * of a performance failure, and can be used to provide further diagnostic
  * information that can help track down the cause of the failure.
  * </p><p>
  * Performance events and performance failures are batched up and periodically
@@ -44,12 +44,12 @@ import org.eclipse.core.internal.runtime.PerformanceStatsProcessor;
  */
 public class PerformanceStats {
 	/**
-	 * A performance listener is periodically notified after performance events occur 
+	 * A performance listener is periodically notified after performance events occur
 	 * or after events fail.
 	 * <p>
 	 * This class is intended to be subclassed.
 	 * </p>
-	 * 
+	 *
 	 * @see PerformanceStats#addListener(PerformanceStats.PerformanceListener)
 	 */
 	public static abstract class PerformanceListener {
@@ -65,7 +65,7 @@ public class PerformanceStats {
 		 * <p>
 		 * This default implementation does nothing. Subclasses may override.
 		 * </p>
-		 * 
+		 *
 		 * @param event The event that failed
 		 * @param duration The duration of the failed event, in milliseconds
 		 */
@@ -79,7 +79,7 @@ public class PerformanceStats {
 		 * <p>
 		 * This default implementation does nothing. Subclasses may override.
 		 * </p>
-		 * 
+		 *
 		 * @param event The event that occurred
 		 */
 		public void eventsOccurred(PerformanceStats[] event) {
@@ -105,7 +105,7 @@ public class PerformanceStats {
 	/**
 	 * All known event statistics.
 	 */
-	private final static Map<PerformanceStats, PerformanceStats> statMap = 
+	private final static Map<PerformanceStats, PerformanceStats> statMap =
 				Collections.synchronizedMap(new HashMap<PerformanceStats,PerformanceStats>());
 
 	/**
@@ -120,8 +120,8 @@ public class PerformanceStats {
 	private static final boolean TRACE_SUCCESS;
 
 	/**
-	 * An identifier that can be used to figure out who caused the event. This is 
-	 * typically a string representation of the object whose code was running when 
+	 * An identifier that can be used to figure out who caused the event. This is
+	 * typically a string representation of the object whose code was running when
 	 * the event occurred or a <code>String</code> describing the event.
 	 */
 	private String blame;
@@ -145,7 +145,7 @@ public class PerformanceStats {
 	private long currentStart = NOT_STARTED;
 
 	/**
-	 * The symbolic name of the event that occurred. This is usually the name of 
+	 * The symbolic name of the event that occurred. This is usually the name of
 	 * the debug option for this event.
 	 */
 	private String event;
@@ -174,7 +174,7 @@ public class PerformanceStats {
 	/**
 	 * Adds a listener that is notified when performance events occur.  If
 	 * an equal listener is already installed, it will be replaced.
-	 * 
+	 *
 	 * @param listener The listener to be added
 	 * @see #removeListener(PerformanceStats.PerformanceListener)
 	 */
@@ -192,7 +192,7 @@ public class PerformanceStats {
 
 	/**
 	 * Returns all performance event statistics.
-	 * 
+	 *
 	 * @return An array of known performance event statistics.  The array
 	 * will be empty if there are no recorded statistics.
 	 */
@@ -201,16 +201,16 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Returns the stats object corresponding to the given parameters.  
-	 * A stats object is created and added to the global list of events if it did not 
+	 * Returns the stats object corresponding to the given parameters.
+	 * A stats object is created and added to the global list of events if it did not
 	 * already exist.
-	 * 
-	 * @param eventName A symbolic event name.  This is usually the name of 
+	 *
+	 * @param eventName A symbolic event name.  This is usually the name of
 	 * the debug option for this event. An example event name from
 	 * the org.eclipse.core.resources plugin describing a build event might look like:
 	 * 		<code>"org.eclipse.core.resources/perf/building"</code>"
-	 * @param blameObject The blame for the event.  This is typically the object 
-	 * whose code was running when the event occurred.  If a blame object cannot 
+	 * @param blameObject The blame for the event.  This is typically the object
+	 * whose code was running when the event occurred.  If a blame object cannot
 	 * be obtained, a <code>String</code> describing the event should be supplied
 	 */
 	public static PerformanceStats getStats(String eventName, Object blameObject) {
@@ -235,7 +235,7 @@ public class PerformanceStats {
 	 * is turned off.  It is not possible for enablement to change during the life
 	 * of this invocation of the platform.
 	 * </p>
-	 * 
+	 *
 	 * @param eventName The name of the event to determine enablement for
 	 * @return <code>true</code>If the performance event with the given
 	 * name is enabled, and <code>false</code> otherwise.
@@ -260,7 +260,7 @@ public class PerformanceStats {
 
 	/**
 	 * Writes all statistics using the provided writer
-	 * 
+	 *
 	 * @param out The writer to print stats to.
 	 */
 	public static void printStats(PrintWriter out) {
@@ -272,7 +272,7 @@ public class PerformanceStats {
 	/**
 	 * Removes an event listener. Has no effect if an equal
 	 * listener object is not currently registered.
-	 * 
+	 *
 	 * @param listener The listener to remove
 	 * @see #addListener(PerformanceStats.PerformanceListener)
 	 */
@@ -283,7 +283,7 @@ public class PerformanceStats {
 
 	/**
 	 * Removes statistics for a given event and blame
-	 * 
+	 *
 	 * @param eventName The name of the event to remove
 	 * @param blameObject The blame for the event to remove
 	 */
@@ -297,14 +297,14 @@ public class PerformanceStats {
 		}
 	}
 
-	/** 
+	/**
 	 * Creates a new PerformanceStats object.  Private to prevent client instantiation.
 	 */
 	private PerformanceStats(String event, Object blame) {
 		this(event, blame, null);
 	}
 
-	/** 
+	/**
 	 * Creates a new PerformanceStats object.  Private to prevent client instantiation.
 	 */
 	private PerformanceStats(String event, Object blameObject, String context) {
@@ -318,7 +318,7 @@ public class PerformanceStats {
 	 * Adds an occurrence of this event to the cumulative counters. This method
 	 * can be used as an alternative to <code>startRun</code> and <code>endRun</code>
 	 * for clients that want to track the context and execution time separately.
-	 * 
+	 *
 	 * @param elapsed The elapsed time of the new occurrence in milliseconds
 	 * @param contextName The context for the event to return, or <code>null</code>.
 	 * The context optionally provides extra information about an event, such as the
@@ -337,7 +337,7 @@ public class PerformanceStats {
 
 	/**
 	 * Creates a stats object representing a performance failure
-	 * 
+	 *
 	 * @param contextName The failure context information.
 	 * @param elapsed The elapsed time in milliseconds
 	 * @return The failure stats
@@ -364,7 +364,7 @@ public class PerformanceStats {
 	 * so it is not necessary to call this method from a finally block.  Tracking
 	 * performance of failure cases is generally not of interest.
 	 * </p>
-	 * 
+	 *
 	 * @see #startRun()
 	 */
 	public void endRun() {
@@ -393,7 +393,7 @@ public class PerformanceStats {
 	/**
 	 * Returns an object that can be used to figure out who caused the event,
 	 * or a string describing the cause of the event.
-	 * 
+	 *
 	 * @return The blame for this event
 	 */
 	public Object getBlame() {
@@ -402,7 +402,7 @@ public class PerformanceStats {
 
 	/**
 	 * Returns a string describing the blame for this event.
-	 * 
+	 *
 	 * @return A string describing the blame.
 	 */
 	public String getBlameString() {
@@ -412,7 +412,7 @@ public class PerformanceStats {
 	/**
 	 * Returns the optional event context, such as the input of an editor, or the target project
 	 * of a build event.
-	 * 
+	 *
 	 * @return The context, or <code>null</code> if there is none
 	 */
 	public String getContext() {
@@ -421,7 +421,7 @@ public class PerformanceStats {
 
 	/**
 	 * Returns the symbolic name of the event that occurred.
-	 * 
+	 *
 	 * @return The name of the event.
 	 */
 	public String getEvent() {
@@ -430,7 +430,7 @@ public class PerformanceStats {
 
 	/**
 	 * Returns the total number of times this event has occurred.
-	 * 
+	 *
 	 * @return The number of occurrences of this event.
 	 */
 	public int getRunCount() {
@@ -440,7 +440,7 @@ public class PerformanceStats {
 	/**
 	 * Returns the total execution time in milliseconds for all occurrences
 	 * of this event.
-	 * 
+	 *
 	 * @return The total running time in milliseconds.
 	 */
 	public long getRunningTime() {
@@ -479,8 +479,8 @@ public class PerformanceStats {
 
 	/**
 	 * Returns whether this performance event represents a performance failure.
-	 * 
-	 * @return <code>true</code> if this is a performance failure, and 
+	 *
+	 * @return <code>true</code> if this is a performance failure, and
 	 * <code>false</code> otherwise.
 	 */
 	public boolean isFailure() {
@@ -507,7 +507,7 @@ public class PerformanceStats {
 	/**
 	 * Starts timing an occurrence of this event.  The event should be stopped
 	 * by a subsequent call to <code>endRun</code>.
-	 * 
+	 *
 	 * @param contextName The context for the event to return, or <code>null</code>.
 	 * The context optionally provides extra information about an event, such as the
 	 * name of a project being built, or the input of an editor being opened.

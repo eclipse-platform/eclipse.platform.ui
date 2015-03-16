@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Julian Chen - fix for bug #92572, jclRM
@@ -46,7 +46,7 @@ public final class InternalPlatform {
 			Platform.ARCH_PPC, //
 			Platform.ARCH_SPARC, //
 			Platform.ARCH_X86, //
-			Platform.ARCH_AMD64, // 
+			Platform.ARCH_AMD64, //
 			Platform.ARCH_IA64, //
 			Platform.ARCH_IA64_32};
 
@@ -455,9 +455,6 @@ public final class InternalPlatform {
 		return result;
 	}
 
-	/**
-	 * 
-	 */
 	public IPreferencesService getPreferencesService() {
 		return preferencesTracker == null ? null : (IPreferencesService) preferencesTracker.getService();
 	}
@@ -569,7 +566,7 @@ public final class InternalPlatform {
 	}
 
 	/*
-	 * Finds and loads the options file 
+	 * Finds and loads the options file
 	 */
 	void initializeDebugFlags() {
 		// load runtime options
@@ -599,7 +596,7 @@ public final class InternalPlatform {
 
 	/**
 	 * Returns a list of known system architectures.
-	 * 
+	 *
 	 * @return the list of system architectures known to the system
 	 * XXX This is useless
 	 */
@@ -609,7 +606,7 @@ public final class InternalPlatform {
 
 	/**
 	 * Returns a list of known operating system names.
-	 * 
+	 *
 	 * @return the list of operating systems known to the system
 	 * XXX This is useless
 	 */
@@ -619,7 +616,7 @@ public final class InternalPlatform {
 
 	/**
 	 * Returns a list of known windowing system names.
-	 * 
+	 *
 	 * @return the list of window systems known to the system
 	 * XXX This is useless
 	 */
@@ -628,7 +625,7 @@ public final class InternalPlatform {
 	}
 
 	/**
-	 * Notifies all listeners of the platform log.  This includes the console log, if 
+	 * Notifies all listeners of the platform log.  This includes the console log, if
 	 * used, and the platform log file.  All Plugin log messages get funnelled
 	 * through here as well.
 	 */
@@ -650,7 +647,7 @@ public final class InternalPlatform {
 			// look for the keyring file
 			if (args[i - 1].equalsIgnoreCase(KEYRING))
 				keyringFile = arg;
-			// look for the user password.  
+			// look for the user password.
 			if (args[i - 1].equalsIgnoreCase(PASSWORD))
 				password = arg;
 		}
@@ -698,7 +695,7 @@ public final class InternalPlatform {
 	/**
 	 * Internal method for starting up the platform.  The platform is not started with any location
 	 * and should not try to access the instance data area.
-	 * 
+	 *
 	 * Note: the content type manager must be initialized only after the registry has been created
 	 */
 	public void start(BundleContext runtimeContext) {
@@ -712,8 +709,8 @@ public final class InternalPlatform {
 		initializeAuthorizationHandler();
 		startServices();
 
-		// See if need to activate rest of the runtime plugins. Plugins are "gently" activated by touching 
-		// a class from the corresponding plugin(s). 
+		// See if need to activate rest of the runtime plugins. Plugins are "gently" activated by touching
+		// a class from the corresponding plugin(s).
 		boolean shouldActivate = !"false".equalsIgnoreCase(context.getProperty(PROP_ACTIVATE_PLUGINS)); //$NON-NLS-1$
 		if (shouldActivate) {
 			// activate Preferences plugin by creating a class from it:
@@ -745,7 +742,7 @@ public final class InternalPlatform {
 		}
 		instanceLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		instanceLocation.open();
-		
+
 		try {
 			filter = context.createFilter(Location.USER_FILTER);
 		} catch (InvalidSyntaxException e) {
@@ -753,7 +750,7 @@ public final class InternalPlatform {
 		}
 		userLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		userLocation.open();
-		
+
 		try {
 			filter = context.createFilter(Location.CONFIGURATION_FILTER);
 		} catch (InvalidSyntaxException e) {
@@ -761,7 +758,7 @@ public final class InternalPlatform {
 		}
 		configurationLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		configurationLocation.open();
-		
+
 		try {
 			filter = context.createFilter(Location.INSTALL_FILTER);
 		} catch (InvalidSyntaxException e) {
@@ -769,27 +766,27 @@ public final class InternalPlatform {
 		}
 		installLocation = new ServiceTracker<Location,Location>(context, filter, null);
 		installLocation.open();
-		
+
 		if (context != null) {
 			logTracker = new ServiceTracker<FrameworkLog,FrameworkLog>(context, FrameworkLog.class, null);
 			logTracker.open();
 		}
-		
+
 		if (context != null) {
 			bundleTracker = new ServiceTracker<PackageAdmin,PackageAdmin>(context, PackageAdmin.class, null);
 			bundleTracker.open();
 		}
-		
+
 		if (context != null) {
 			contentTracker = new ServiceTracker<IContentTypeManager,IContentTypeManager>(context, IContentTypeManager.class, null);
 			contentTracker.open();
 		}
-		
+
 		if (context != null) {
 			preferencesTracker = new ServiceTracker<IPreferencesService,IPreferencesService>(context, IPreferencesService.class, null);
 			preferencesTracker.open();
 		}
-		
+
 		try {
 			filter = context.createFilter("(objectClass=" + IBundleGroupProvider.class.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (InvalidSyntaxException e) {
@@ -797,13 +794,13 @@ public final class InternalPlatform {
 		}
 		groupProviderTracker = new ServiceTracker<IBundleGroupProvider,IBundleGroupProvider>(context, filter, null);
 		groupProviderTracker.open();
-		
+
 		logReaderTracker = new ServiceTracker<ExtendedLogReaderService,ExtendedLogReaderService>(context, ExtendedLogReaderService.class.getName(), null);
 		logReaderTracker.open();
-		
+
 		extendedLogTracker = new ServiceTracker<ExtendedLogService,ExtendedLogService>(context, ExtendedLogService.class, null);
 		extendedLogTracker.open();
-		
+
 		environmentTracker = new ServiceTracker<EnvironmentInfo,EnvironmentInfo>(context, EnvironmentInfo.class, null);
 		environmentTracker.open();
 
@@ -813,7 +810,7 @@ public final class InternalPlatform {
 
 	private void startServices() {
 		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
-		// so we don't want to enforce it here. 
+		// so we don't want to enforce it here.
 		customPreferencesService = context.registerService(IProductPreferencesService.class, new ProductPreferencesService(), new Hashtable<String,String>());
 
 		// Only register this interface if compatibility is installed - the check for a bundle presence
@@ -897,7 +894,7 @@ public final class InternalPlatform {
 	}
 
 	/**
-	 * Print a debug message to the console. 
+	 * Print a debug message to the console.
 	 * Pre-pend the message with the current date and the name of the current thread.
 	 */
 	public static void message(String message) {

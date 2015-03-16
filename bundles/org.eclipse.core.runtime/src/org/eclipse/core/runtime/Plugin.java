@@ -26,17 +26,17 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The abstract superclass of all plug-in runtime class
  * implementations. A plug-in subclasses this class and overrides
- * the appropriate life cycle methods in order to react to the life cycle 
+ * the appropriate life cycle methods in order to react to the life cycle
  * requests automatically issued by the platform.
- * For compatibility reasons, the methods called for those life cycle events 
- * vary, please see the "Constructors and life cycle methods" section below. 
- *  
+ * For compatibility reasons, the methods called for those life cycle events
+ * vary, please see the "Constructors and life cycle methods" section below.
+ *
  * <p>
  * Conceptually, the plug-in runtime class represents the entire plug-in
  * rather than an implementation of any one particular extension the
  * plug-in declares. A plug-in is not required to explicitly
  * specify a plug-in runtime class; if none is specified, the plug-in
- * will be given a default plug-in runtime object that ignores all life 
+ * will be given a default plug-in runtime object that ignores all life
  * cycle requests (it still provides access to the corresponding
  * plug-in descriptor).
  * </p>
@@ -49,13 +49,13 @@ import org.osgi.util.tracker.ServiceTracker;
  * with the class attribute of the <code>&ltplugin&gt</code> element markup.
  * </p>
  * <p>
- * Instances of plug-in runtime classes are automatically created 
- * by the platform in the course of plug-in activation. For compatibility reasons, 
- * the constructor used to create plug-in instances varies, please see the "Constructors 
+ * Instances of plug-in runtime classes are automatically created
+ * by the platform in the course of plug-in activation. For compatibility reasons,
+ * the constructor used to create plug-in instances varies, please see the "Constructors
  * and life cycle methods" section below.
  * </p><p>
- * The concept of bundles underlies plug-ins. However it is safe to regard plug-ins 
- * and bundles as synonyms. 
+ * The concept of bundles underlies plug-ins. However it is safe to regard plug-ins
+ * and bundles as synonyms.
  * </p>
  * <p>
  * <b>Clients must never explicitly instantiate a plug-in runtime class</b>.
@@ -86,37 +86,37 @@ import org.osgi.util.tracker.ServiceTracker;
  * will always return an initialized instance of <code>MyPluginClass</code>.
  * </p>
  * <p>
- * <b>Constructors and life cycle methods</b> 
+ * <b>Constructors and life cycle methods</b>
  * </p><p>
  * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and its prerequisite
- * list includes <code>org.eclipse.core.runtime</code>, the default constructor of the plug-in 
+ * list includes <code>org.eclipse.core.runtime</code>, the default constructor of the plug-in
  * class is used and {@link #start(BundleContext)} and {@link #stop(BundleContext)} are
- * called as life cycle methods.    
+ * called as life cycle methods.
  * </p><p>
  * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and its prerequisite list includes
  * <code>org.eclipse.core.runtime.compatibility</code>, the {@link #Plugin(IPluginDescriptor)}
  * constructor is used and {@link #startup()} and {@link #shutdown()} are called as life cycle methods.
  * Note that in this situation, start() is called before startup() and stop() is called
- * after shutdown. 
+ * after shutdown.
  * </p><p>
  * If the plugin.xml of your plug-in does <b>not</b> indicate &lt;?eclipse version="3.0"?&gt; it is therefore
- * not a 3.0 plug-in. Consequently the {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and 
+ * not a 3.0 plug-in. Consequently the {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and
  * {@link #shutdown()} are called as life cycle methods.
  * </p><p>
  * Since Eclipse 3.0 APIs of the Plugin class can be called only when the Plugin is in an active state, i.e.,
  * after it was started up and before it is shutdown. In particular, it means that Plugin APIs should not
- * be called from overrides of {@link #Plugin()}. 
+ * be called from overrides of {@link #Plugin()}.
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
 
 	/**
-	 * String constant used for the default scope name for legacy 
+	 * String constant used for the default scope name for legacy
 	 * Eclipse plug-in preferences. The value of <code>PLUGIN_PREFERENCE_SCOPE</code> should
 	 * match the InstanceScope's variable SCOPE from org.eclipse.core.runtime.preferences.
 	 * The value is copied in this file to prevent unnecessary activation of
 	 * the Preferences plugin on startup.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String PLUGIN_PREFERENCE_SCOPE = "instance"; //$NON-NLS-1$
@@ -146,7 +146,7 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * The base name (value <code>"preferences"</code>) for the file which is used for
 	 * overriding default preference values.
-	 *   
+	 *
 	 * @since 2.0
 	 * @see #PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME
 	 */
@@ -160,7 +160,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The format of the file is as per <code>java.io.Properties</code> where
 	 * the keys are property names and values are strings.
 	 * </p>
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
@@ -168,7 +168,7 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * The preference object for this plug-in; initially <code>null</code>
 	 * meaning not yet created and initialized.
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated
 	 */
@@ -177,21 +177,21 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * Creates a new plug-in runtime object.  This method is called by the platform
-	 * if this class is used as a <code>BundleActivator</code>.  This method is not 
-	 * needed/used if this plug-in requires the org.eclipse.core.runtime.compatibility plug-in.  
-	 * Subclasses of <code>Plugin</code> 
-	 * must call this method first in their constructors.  
-	 * 
+	 * if this class is used as a <code>BundleActivator</code>.  This method is not
+	 * needed/used if this plug-in requires the org.eclipse.core.runtime.compatibility plug-in.
+	 * Subclasses of <code>Plugin</code>
+	 * must call this method first in their constructors.
+	 *
 	 * The resultant instance is not managed by the runtime and
 	 * so should be remembered by the client (typically using a Singleton pattern).
 	 * <b>Clients must never explicitly call this method.</b>
-	 * </p> 
+	 * </p>
 	 * <p>
-	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is 
+	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public Plugin() {
@@ -201,12 +201,12 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * Creates a new plug-in runtime object for the given plug-in descriptor.
 	 * <p>
-	 * Instances of plug-in runtime classes are automatically created 
+	 * Instances of plug-in runtime classes are automatically created
 	 * by the platform in the course of plug-in activation.
 	 * <b>Clients must never explicitly call this method.</b>
 	 * </p>
 	 * <p>
-	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is 
+	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
@@ -215,9 +215,9 @@ public abstract class Plugin implements BundleActivator {
 	 * @see #getDescriptor()
 	 * @deprecated
 	 * In Eclipse 3.0 this constructor has been replaced by {@link #Plugin()}.
-	 * Implementations of <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to 
+	 * Implementations of <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to
 	 * <code>MyPlugin()</code> and call <code>super()</code> instead of <code>super(descriptor)</code>.
-	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is called only for plug-ins 
+	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is called only for plug-ins
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	@Deprecated
@@ -240,8 +240,8 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
-	 * 
-	 * @param path path relative to plug-in installation location 
+	 *
+	 * @param path path relative to plug-in installation location
 	 * @return a URL for the given path or <code>null</code>
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
@@ -253,7 +253,7 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
-	 * 
+	 *
 	 * @param path file path relative to plug-in installation location
 	 * @param override map of override substitution arguments to be used for
 	 * any $arg$ path elements. The map keys correspond to the substitution
@@ -273,9 +273,9 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns the plug-in descriptor for this plug-in runtime object.
 	 *
 	 * @return the plug-in descriptor for this plug-in runtime object
-	 * @deprecated 
+	 * @deprecated
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
-	 * The <code>getDescriptor()</code> method may only be called by plug-ins 
+	 * The <code>getDescriptor()</code> method may only be called by plug-ins
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
@@ -298,7 +298,7 @@ public abstract class Plugin implements BundleActivator {
 	}
 
 	/**
-	 * Returns the location in the local file system of the 
+	 * Returns the location in the local file system of the
 	 * plug-in state area for this plug-in.
 	 * If the plug-in state area did not exist prior to this call,
 	 * it is created.
@@ -307,7 +307,7 @@ public abstract class Plugin implements BundleActivator {
 	 * platform's metadata area where a plug-in is free to create files.
 	 * The content and structure of this area is defined by the plug-in,
 	 * and the particular plug-in is solely responsible for any files
-	 * it puts there. It is recommended for plug-in preference settings and 
+	 * it puts there. It is recommended for plug-in preference settings and
 	 * other configuration parameters.
 	 * </p>
 	 * @throws IllegalStateException when the system is running with no data area (-data @none),
@@ -322,19 +322,19 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * Returns the preference store for this plug-in.
 	 * <p>
-	 * Note that if an error occurs reading the preference store from disk, an empty 
+	 * Note that if an error occurs reading the preference store from disk, an empty
 	 * preference store is quietly created, initialized with defaults, and returned.
 	 * </p>
 	 * <p>
 	 * Calling this method may cause the preference store to be created and
-	 * initialized. Subclasses which reimplement the 
+	 * initialized. Subclasses which reimplement the
 	 * <code>initializeDefaultPluginPreferences</code> method have this opportunity
 	 * to initialize preference default values, just prior to processing override
 	 * default values imposed externally to this plug-in (specified for the product,
 	 * or at platform start up).
 	 * </p>
 	 * <p>
-	 * After settings in the preference store are changed (for example, with 
+	 * After settings in the preference store are changed (for example, with
 	 * <code>Preferences.setValue</code> or <code>setToDefault</code>),
 	 * <code>savePluginPreferences</code> should be called to store the changed
 	 * values back to disk. Otherwise the changes will be lost on plug-in
@@ -351,7 +351,7 @@ public abstract class Plugin implements BundleActivator {
 	 * a combination of the {@link InstanceScope} and the {@link DefaultScope}. To set preferences
 	 * for your plug-in, use <tt>new InstanceScope().getNode(&lt;yourPluginId&gt;)</tt>.  To set default
 	 * preferences for your plug-in, use <tt>new DefaultScope().getNode(&lt;yourPluginId&gt;)</tt>.
-	 * To lookup an integer preference value for your plug-in, use 
+	 * To lookup an integer preference value for your plug-in, use
 	 * <tt>Platform.getPreferencesService().getInt(&lt;yourPluginId&gt;, &lt;preferenceKey&gt;, &lt;defaultValue&gt;, null)</tt>.
 	 * Similar methods exist on {@link IPreferencesService} for obtaining other kinds
 	 * of preference values (strings, booleans, etc).
@@ -388,7 +388,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * Plug-in preferences are <b>not</b> saved automatically on plug-in shutdown.
 	 * </p>
-	 * 
+	 *
 	 * @see Preferences#store(OutputStream, String)
 	 * @see Preferences#needsSaving()
 	 * @since 2.0
@@ -396,7 +396,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	@Deprecated
 	public final void savePluginPreferences() {
-		
+
 		Location instance = InternalPlatform.getDefault().getInstanceLocation();
 		if (instance == null || !instance.isSet())
 			// If the instance area is not set there is no point in getting or setting the preferences.
@@ -407,7 +407,7 @@ public abstract class Plugin implements BundleActivator {
 		// made changes via the OSGi APIs.
 		getPluginPreferences();
 
-		// Performance: isolate PreferenceForwarder and BackingStoreException into 
+		// Performance: isolate PreferenceForwarder and BackingStoreException into
 		// an inner class to avoid class loading (and then activation of the Preferences plugin)
 		// as the Plugin class is loaded.
 		final Preferences preferencesCopy = preferences;
@@ -441,11 +441,11 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 * @since 2.0
 	 * @deprecated
-	 * This method has been refactored in the new preference mechanism 
-	 * to handle the case where the runtime compatibility layer does not exist. The 
-	 * contents of this method should be moved to the method named 
-	 * <code>initializeDefaultPreferences</code> in a separate subclass of 
-	 * {@link org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer}. 
+	 * This method has been refactored in the new preference mechanism
+	 * to handle the case where the runtime compatibility layer does not exist. The
+	 * contents of this method should be moved to the method named
+	 * <code>initializeDefaultPreferences</code> in a separate subclass of
+	 * {@link org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer}.
 	 * This class should be contributed via the
 	 * <code>org.eclipse.core.runtime.preferences</code> extension point.
 	 * <pre>
@@ -472,9 +472,9 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * Internal method. This method is a hook for
-	 * initialization of default preference values. 
+	 * initialization of default preference values.
 	 * It should not be called by clients.
-	 * 
+	 *
 	 * @since 3.0
 	 * @deprecated
 	 */
@@ -488,7 +488,7 @@ public abstract class Plugin implements BundleActivator {
 	 * By default plug-ins are not in debug mode.  A plug-in can put itself
 	 * into debug mode or the user can set an execution option to do so.
 	 * <p>
-	 * Note that the plug-in's debug flag is initialized when the 
+	 * Note that the plug-in's debug flag is initialized when the
 	 * plug-in is started. The result of calling this method before the plug-in
 	 * has started is unspecified.
 	 * </p>
@@ -516,7 +516,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @param file path relative to plug-in installation location
 	 * @return an input stream
 	 * @exception IOException if the given path cannot be found in this plug-in
-	 * 
+	 *
 	 * @see #openStream(IPath,boolean)
 	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
@@ -528,15 +528,15 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * Returns an input stream for the specified file. The file path
 	 * must be specified relative to this plug-in's installation location.
-	 * Optionally, the path specified may contain $arg$ path elements that can 
-	 * be used as substitution arguments.  If this option is used then the $arg$ 
+	 * Optionally, the path specified may contain $arg$ path elements that can
+	 * be used as substitution arguments.  If this option is used then the $arg$
 	 * path elements are processed in the same way as {@link #find(IPath, Map)}.
 	 * <p>
 	 * The caller must close the returned stream when done.
 	 * </p>
 	 *
 	 * @param file path relative to plug-in installation location
-	 * @param substituteArgs <code>true</code> to process substitution arguments, 
+	 * @param substituteArgs <code>true</code> to process substitution arguments,
 	 * and <code>false</code> for the file exactly as specified without processing any
 	 * substitution arguments.
 	 * @return an input stream
@@ -553,7 +553,7 @@ public abstract class Plugin implements BundleActivator {
 	 * By default plug-ins are not in debug mode.  A plug-in can put itself
 	 * into debug mode or the user can set a debug option to do so.
 	 * <p>
-	 * Note that the plug-in's debug flag is initialized when the 
+	 * Note that the plug-in's debug flag is initialized when the
 	 * plug-in is started. The result of calling this method before the plug-in
 	 * has started is unspecified.
 	 * </p>
@@ -580,7 +580,7 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * Returns the DebugOptions instance
-	 * 
+	 *
 	 * @since 3.5
 	 * @return Either the DebugOptions instance or <code>null</code> if this plug-in does not have a bundle
 	 */
@@ -625,12 +625,12 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in
-	 * @deprecated 
+	 * @deprecated
 	 * In Eclipse 3.0 this method has been replaced by {@link Plugin#stop(BundleContext context)}.
-	 * Implementations of <code>shutdown()</code> should be changed to override 
-	 * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code> 
+	 * Implementations of <code>shutdown()</code> should be changed to override
+	 * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code>
 	 * instead of <code>super.shutdown()</code>.
-	 * The <code>shutdown()</code> method is called only for plug-ins which explicitly require the 
+	 * The <code>shutdown()</code> method is called only for plug-ins which explicitly require the
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	@Deprecated
@@ -670,7 +670,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * If this method throws an exception, it is taken as an indication that
 	 * plug-in initialization has failed; as a result, the plug-in will not
-	 * be activated; moreover, the plug-in will be marked as disabled and 
+	 * be activated; moreover, the plug-in will be marked as disabled and
 	 * ineligible for activation for the duration.
 	 * </p>
 	 * <p>
@@ -679,16 +679,16 @@ public abstract class Plugin implements BundleActivator {
 	 * in an attempt to close open files, etc.
 	 * </p>
 	 * <p>
-	 * Note 1: This method is automatically invoked by the platform 
+	 * Note 1: This method is automatically invoked by the platform
 	 * the first time any code in the plug-in is executed.
 	 * </p>
 	 * <p>
-	 * Note 2: This method is intended to perform simple initialization 
-	 * of the plug-in environment. The platform may terminate initializers 
+	 * Note 2: This method is intended to perform simple initialization
+	 * of the plug-in environment. The platform may terminate initializers
 	 * that do not complete in a timely fashion.
 	 * </p>
 	 * <p>
-	 * Note 3: The class loader typically has monitors acquired during invocation of this method.  It is 
+	 * Note 3: The class loader typically has monitors acquired during invocation of this method.  It is
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
@@ -696,12 +696,12 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 *
 	 * @exception CoreException if this plug-in did not start up properly
-	 * @deprecated 
+	 * @deprecated
 	 * In Eclipse 3.0 this method has been replaced by {@link Plugin#start(BundleContext context)}.
 	 * Implementations of <code>startup()</code> should be changed to extend
 	 * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>
 	 * instead of <code>super.startup()</code>.
-	 * The <code>startup()</code> method is called only for plug-ins which explicitly require the 
+	 * The <code>startup()</code> method is called only for plug-ins which explicitly require the
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	@Deprecated
@@ -710,7 +710,7 @@ public abstract class Plugin implements BundleActivator {
 	}
 
 	/**
-	 * Returns a string representation of the plug-in, suitable 
+	 * Returns a string representation of the plug-in, suitable
 	 * for debugging purposes only.
 	 */
 	@Override
@@ -732,20 +732,20 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * If this method throws an exception, it is taken as an indication that
 	 * plug-in initialization has failed; as a result, the plug-in will not
-	 * be activated; moreover, the plug-in will be marked as disabled and 
+	 * be activated; moreover, the plug-in will be marked as disabled and
 	 * ineligible for activation for the duration.
 	 * </p>
 	 * <p>
-	 * Note 1: This method is automatically invoked by the platform 
+	 * Note 1: This method is automatically invoked by the platform
 	 * the first time any code in the plug-in is executed.
 	 * </p>
 	 * <p>
-	 * Note 2: This method is intended to perform simple initialization 
-	 * of the plug-in environment. The platform may terminate initializers 
+	 * Note 2: This method is intended to perform simple initialization
+	 * of the plug-in environment. The platform may terminate initializers
 	 * that do not complete in a timely fashion.
 	 * </p>
 	 * <p>
-	 * Note 3: The class loader typically has monitors acquired during invocation of this method.  It is 
+	 * Note 3: The class loader typically has monitors acquired during invocation of this method.  It is
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
@@ -782,7 +782,7 @@ public abstract class Plugin implements BundleActivator {
 
 		IPluginDescriptor tmp = CompatibilityHelper.getPluginDescriptor(symbolicName);
 
-		//Runtime descriptor is never set to support dynamic re-installation of compatibility 
+		//Runtime descriptor is never set to support dynamic re-installation of compatibility
 		if (!symbolicName.equals(Platform.PI_RUNTIME))
 			descriptor = tmp;
 
@@ -821,7 +821,7 @@ public abstract class Plugin implements BundleActivator {
 	 * but the OSGi framework ensures that both methods will not be called simultaneously.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
-	 * 
+	 *
 	 * @param context the bundle context for this plug-in
 	 * @exception Exception if this method fails to shut down this plug-in
 	 * @since 3.0
@@ -837,7 +837,7 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * Returns the bundle associated with this plug-in.
-	 * 
+	 *
 	 * @return the associated bundle
 	 * @since 3.0
 	 */

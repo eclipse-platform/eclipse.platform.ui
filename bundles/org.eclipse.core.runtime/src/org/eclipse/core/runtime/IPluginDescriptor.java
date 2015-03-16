@@ -19,51 +19,51 @@ import java.util.*;
  * <p>
  * Plug-in descriptors are platform-defined objects that exist
  * in the plug-in registry independent of whether a plug-in has
- * been started. In contrast, a plug-in's runtime object 
+ * been started. In contrast, a plug-in's runtime object
  * (<code>getPlugin</code>) generally runs plug-in-defined code.
  * </p>
- * 
- * @deprecated 
+ *
+ * @deprecated
  * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
- * Most of the functionality has moved to {@link Platform} and the 
- * plug-in descriptor has been replaced with the OSGi <code>Bundle</code> 
+ * Most of the functionality has moved to {@link Platform} and the
+ * plug-in descriptor has been replaced with the OSGi <code>Bundle</code>
  * object.
  * <p>
- * This interface must only be used by plug-ins 
+ * This interface must only be used by plug-ins
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
  * <p>
  * For most uses the bundle object can be treated as an opaque token
- * representing your plug-in to the system -- It must be supplied to various 
+ * representing your plug-in to the system -- It must be supplied to various
  * <code>Platform</code> methods but need not be interrogated itself.
- * There are a small number of plug-in descriptor method equivalents 
+ * There are a small number of plug-in descriptor method equivalents
  * supplied by <code>Bundle</code> itself.  The details are spelled out
  * in the comments on each <code>IPluginDescriptor</code> method.
  * </p>
  * <p>
- * Clients of this interface have a reference to an <code>IPluginDescriptor</code> 
+ * Clients of this interface have a reference to an <code>IPluginDescriptor</code>
  * corresponding to a plug-in.  To adapt to the deprecation, the bundle corresponding
  * to the plug-in generally needs to be acquired. There are several cases:
  * <ul>
- * <li>the descriptor was discovered using methods such as 
- * <code>IPluginRegistry.getPluginDescriptor()</code>.  The code should be 
- * updated to use one of the bundle discovery mechanisms such as 
+ * <li>the descriptor was discovered using methods such as
+ * <code>IPluginRegistry.getPluginDescriptor()</code>.  The code should be
+ * updated to use one of the bundle discovery mechanisms such as
  * <code>Platform.getBundle()</code>.
  * </li>
  * <li>the descriptor is from the plug-in itself.  The code should be updated to
  * use the plug-in's bundle instead.
  * </li>
- * <li>the descriptor is supplied by a third party.  The plug-in writer must 
+ * <li>the descriptor is supplied by a third party.  The plug-in writer must
  * cooperate with that party to obtain a bundle rather than a descriptor.
  * </li>
  * </ul>
  * </p>
  * <p>
  * The resulting bundle object can be used
- * to carry out the adaptation steps outlined for each of the 
+ * to carry out the adaptation steps outlined for each of the
  * <code>IPluginDescriptor</code> methods.
  * </p>
- * 
+ *
  * @see #getPlugin()
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -77,10 +77,10 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionName the simple identifier of the extension (e.g. <code>"main"</code>).
 	 * @return the extension, or <code>null</code>
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.getExtensionRegistry().getExtension(id + "." + extensionName) 
+	 *     Platform.getExtensionRegistry().getExtension(id + "." + extensionName)
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
@@ -93,10 +93,10 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionPointId the simple identifier of the extension point (e.g. <code>"wizard"</code>).
 	 * @return the extension point, or <code>null</code>
-	 * @deprecated  
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.getExtensionRegistry().getExtensionPoint(id, extensionPointId) 
+	 *     Platform.getExtensionRegistry().getExtensionPoint(id, extensionPointId)
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
@@ -108,10 +108,10 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in does not declare any extension points.
 	 *
 	 * @return the extension points declared by this plug-in
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.getExtensionRegistry().getExtensionPoints(id) 
+	 *     Platform.getExtensionRegistry().getExtensionPoints(id)
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
@@ -123,10 +123,10 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in does not declare any extensions.
 	 *
 	 * @return the extensions declared by this plug-in
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.getExtensionRegistry().getExtensions(id) 
+	 *     Platform.getExtensionRegistry().getExtensions(id)
 	 * </pre>
 	 * where <code>id</code> is the plug-in id.
 	 */
@@ -134,22 +134,22 @@ public interface IPluginDescriptor {
 	public IExtension[] getExtensions();
 
 	/**
-	 * Returns the URL of this plug-in's install directory. 
+	 * Returns the URL of this plug-in's install directory.
 	 * This is the directory containing
 	 * the plug-in manifest file, resource bundle, runtime libraries,
 	 * and any other files supplied with this plug-in. This directory is usually
-	 * read-only. Plug-in relative information should be written to the location 
+	 * read-only. Plug-in relative information should be written to the location
 	 * provided by <code>Plugin.getStateLocation</code>.
 	 *
 	 * @return the URL of this plug-in's install directory
 	 * @see #getPlugin()
 	 * @see Plugin#getStateLocation()
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     bundle.getEntry("/");
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in or simply use the <code>getEntry</code> API
 	 * to construct the desired URL.
 	 */
@@ -167,12 +167,12 @@ public interface IPluginDescriptor {
 	 * @return a displayable string label for this plug-in,
 	 *    possibly the empty string
 	 * @see #getResourceString(String)
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME) 
+	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -188,20 +188,20 @@ public interface IPluginDescriptor {
 	 * is an internally-supplied one that does not react to life cycle requests.
 	 *
 	 * @return the plug-in runtime object
-	 * @exception CoreException 
+	 * @exception CoreException
 	 *   if this plug-in's runtime object could not be created.
 	 * @see #isPluginActivated()
-	 * @deprecated 
+	 * @deprecated
 	 * In Eclipse 3.0 plug-in runtime objects are not globally managed and
 	 * so are not generically accessible.  Rather, each plug-in is free to declare
 	 * API which exposes the plug-in runtime object (e.g., <code>MyPlugin.getInstance()</code>).
-	 * 
+	 *
 	 * If this method is being used to activate a plug-in then the following code is
 	 * equivalent:
 	 * <pre>
 	 *     bundle.start()
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -211,9 +211,9 @@ public interface IPluginDescriptor {
 	 * Returns the plug-in class loader used to load classes and resources
 	 * for this plug-in. The class loader can be used to directly access
 	 * plug-in resources and classes. Note that accessing a resource will
-	 * <b>not activate</b> the corresponding plug-in. Successfully loading 
+	 * <b>not activate</b> the corresponding plug-in. Successfully loading
 	 * a class will <b>always activate</b> the corresponding plug-in.
-	 * <p> 
+	 * <p>
 	 * The following examples illustrate the direct use of the plug-in class
 	 * loader and its effect on plug-in activation (example ignores error
 	 * handling).
@@ -236,7 +236,7 @@ public interface IPluginDescriptor {
 	 *     // on the bundle implementation. If implemented as a class, the plug-in
 	 *     // will be activated. If implemented as a properties file, the plug-in will
 	 *     // not be activated.
-	 *     ResourceBundle b = 
+	 *     ResourceBundle b =
 	 *         ResourceBundle.getBundle("bundle", Locale.getDefault(), loader);
 	 * </pre>
 	 *
@@ -244,12 +244,12 @@ public interface IPluginDescriptor {
 	 * @see IConfigurationElement#createExecutableExtension(String)
 	 * @see #isPluginActivated()
 	 * @see #getResourceBundle()
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     bundle.loadClass(className)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -261,8 +261,8 @@ public interface IPluginDescriptor {
 	 *
 	 * @return an array of plug-in prerequisites, or an empty array
 	 * if no prerequisites were specified
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     import org.eclipse.osgi.util.ManifestElement;
 	 *     import org.osgi.framework.Constants;
@@ -270,7 +270,7 @@ public interface IPluginDescriptor {
 	 *     String requires = (String)bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
 	 *     ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.  The resultant elements array contains one
 	 * entry for each required plug-in.
 	 */
@@ -279,7 +279,7 @@ public interface IPluginDescriptor {
 
 	/**
 	 * Returns the name of the provider of this plug-in.
-	 * Returns the empty string if no provider name is specified in 
+	 * Returns the empty string if no provider name is specified in
 	 * the plug-in manifest file.
 	 * <p> Note that any translation specified in the plug-in manifest
 	 * file is automatically applied.
@@ -287,20 +287,20 @@ public interface IPluginDescriptor {
 	 * @return the name of the provider, possibly the empty string
 	 * @see #getResourceString(String)
 	 * @deprecated
-	 * Use 
+	 * Use
 	 * <pre>
-	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VENDOR) 
+	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VENDOR)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
 	public String getProviderName();
 
 	/**
-	 * Returns this plug-in's resource bundle for the current locale. 
+	 * Returns this plug-in's resource bundle for the current locale.
 	 * <p>
-	 * The bundle is stored as the <code>plugin.properties</code> file 
+	 * The bundle is stored as the <code>plugin.properties</code> file
 	 * in the plug-in install directory, and contains any translatable
 	 * strings used in the plug-in manifest file (<code>plugin.xml</code>)
 	 * along with other resource strings used by the plug-in implementation.
@@ -308,12 +308,12 @@ public interface IPluginDescriptor {
 	 *
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     Platform.getResourceBundle(bundle)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -325,7 +325,7 @@ public interface IPluginDescriptor {
 	 * is looked up in the default resource bundle. If the argument does not
 	 * specify a valid key, the argument itself is returned as the
 	 * resource string. The key lookup is performed in the
-	 * plugin.properties resource bundle. If a resource string 
+	 * plugin.properties resource bundle. If a resource string
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
@@ -339,25 +339,25 @@ public interface IPluginDescriptor {
 	 * @param value the value
 	 * @return the resource string
 	 * @see #getResourceBundle()
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     Platform.getResourceString(bundle, value)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
 	public String getResourceString(String value);
 
 	/**
-	 * Returns a resource string corresponding to the given argument 
+	 * Returns a resource string corresponding to the given argument
 	 * value and bundle.
 	 * If the argument value specifies a resource key, the string
 	 * is looked up in the given resource bundle. If the argument does not
 	 * specify a valid key, the argument itself is returned as the
 	 * resource string. The key lookup is performed against the
-	 * specified resource bundle. If a resource string 
+	 * specified resource bundle. If a resource string
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
@@ -381,12 +381,12 @@ public interface IPluginDescriptor {
 	 * @param resourceBundle the resource bundle
 	 * @return the resource string
 	 * @see #getResourceBundle()
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.getResourceString(bundle, value, resourceBundle) 
+	 *     Platform.getResourceString(bundle, value, resourceBundle)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -397,8 +397,8 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in has no runtime libraries.
 	 *
 	 * @return the runtime libraries declared by this plug-in
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     import org.eclipse.osgi.util.ManifestElement;
 	 *     import org.osgi.framework.Constants;
@@ -406,7 +406,7 @@ public interface IPluginDescriptor {
 	 *     String requires = (String)bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
 	 *     ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, requires);
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.  The resultant elements array contains one
 	 * entry for each entry on the bundle's classpath..
 	 */
@@ -415,16 +415,16 @@ public interface IPluginDescriptor {
 
 	/**
 	 * Returns the unique identifier of this plug-in.
-	 * This identifier is a non-empty string and is unique 
+	 * This identifier is a non-empty string and is unique
 	 * within the plug-in registry.
 	 *
 	 * @return the unique identifier of the plug-in (e.g. <code>"org.eclipse.core.runtime"</code>)
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     bundle.getSymbolicName() 
+	 *     bundle.getSymbolicName()
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -434,13 +434,13 @@ public interface IPluginDescriptor {
 	 * Returns the version identifier of this plug-in.
 	 *
 	 * @return the plug-in version identifier
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
 	 *     String version = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
-	 *     new PluginVersionIdentifier(version); 
+	 *     new PluginVersionIdentifier(version);
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -454,12 +454,12 @@ public interface IPluginDescriptor {
 	 * @return <code>true</code> if this plug-in is activated, and
 	 *   <code>false</code> otherwise
 	 * @see #getPlugin()
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     bundle.getState == org.osgi.framework.Bundle.ACTIVE 
+	 *     bundle.getState == org.osgi.framework.Bundle.ACTIVE
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -468,18 +468,18 @@ public interface IPluginDescriptor {
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
-	 * 
-	 * @param path path relative to plug-in installation location 
+	 *
+	 * @param path path relative to plug-in installation location
 	 * @return a URL for the given path or <code>null</code>  It is not
 	 * necessary to perform a 'resolve' on this URL.
-	 * 
+	 *
 	 * @since 2.0
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.find(bundle, file) 
+	 *     Platform.find(bundle, file)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated
@@ -488,19 +488,19 @@ public interface IPluginDescriptor {
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
-	 * 
+	 *
 	 * find will look for this path under the directory structure for this plugin
 	 * and any of its fragments.  If this path will yield a result outside the
 	 * scope of this plugin, <code>null</code> will be returned.  Note that
 	 * there is no specific order to the fragments.
-	 * 
+	 *
 	 * The following arguments may also be used
-	 * 
+	 *
 	 *  $nl$ - for language specific information
 	 *  $os$ - for operating system specific information
 	 *  $ws$ - for windowing system specific information
-	 * 
-	 * A path of $nl$/about.properties in an environment with a default 
+	 *
+	 * A path of $nl$/about.properties in an environment with a default
 	 * locale of en_CA will return a URL corresponding to the first place
 	 * about.properties is found according to the following order:
 	 *   plugin root/nl/en/CA/about.properties
@@ -515,10 +515,10 @@ public interface IPluginDescriptor {
 	 *   fragment1 root/about.properties
 	 *   fragment2 root/about.properties
 	 *   ...
-	 * 
+	 *
 	 * If a locale other than the default locale is desired, use an
 	 * override map.
-	 * 
+	 *
 	 * @param path file path relative to plug-in installation location
 	 * @param override map of override substitution arguments to be used for
 	 * any $arg$ path elements. The map keys correspond to the substitution
@@ -528,14 +528,14 @@ public interface IPluginDescriptor {
 	 * is used.
 	 * @return a URL for the given path or <code>null</code>.  It is not
 	 * necessary to perform a 'resolve' on this URL.
-	 * 
+	 *
 	 * @since 2.0
-	 * @deprecated 
-	 * Use 
+	 * @deprecated
+	 * Use
 	 * <pre>
-	 *     Platform.find(bundle, path, override) 
+	 *     Platform.find(bundle, path, override)
 	 * </pre>
-	 * where <code>bundle</code> is the bundle associated with 
+	 * where <code>bundle</code> is the bundle associated with
 	 * the relevant plug-in.
 	 */
 	@Deprecated

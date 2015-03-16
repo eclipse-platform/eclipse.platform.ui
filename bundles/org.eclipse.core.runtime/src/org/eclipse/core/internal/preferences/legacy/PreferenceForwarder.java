@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * This class represents a convenience layer between the Eclipse 3.0
- * preferences and pre-3.0 preferences. It acts as a bridge between the 
+ * preferences and pre-3.0 preferences. It acts as a bridge between the
  * org.eclipse.core.runtime.Preferences object associated with a particular plug-in
  * object, and its corresponding preference node in the 3.0 preference node
  * hierarchy.
- * 
+ *
  * @since 3.0
  * @deprecated to avoid warnings for interacting with deprecated Preferences class.
  */
@@ -153,7 +153,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	/**
 	 * Does its best at determining the default value for the given key. Checks the
 	 * given object's type and then looks in the list of defaults to see if a value
-	 * exists. If not or if there is a problem converting the value, the default default 
+	 * exists. If not or if there is a problem converting the value, the default default
 	 * value for that type is returned.
 	 */
 	private Object getDefault(String key, Object obj) {
@@ -199,7 +199,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the current value of the boolean-valued property with the
 	 * given name.
 	 * Returns the default-default value (<code>false</code>) if there
-	 * is no property with the given name, or if the current value 
+	 * is no property with the given name, or if the current value
 	 * cannot be treated as a boolean.
 	 *
 	 * @param name the name of the property
@@ -214,7 +214,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Sets the current value of the boolean-valued property with the
 	 * given name.
 	 * <p>
-	 * A property change event is reported if the current value of the 
+	 * A property change event is reported if the current value of the
 	 * property actually changes from its previous value. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are wrapped as objects.
@@ -251,7 +251,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the default value for the boolean-valued property
 	 * with the given name.
 	 * Returns the default-default value (<code>false</code>) if there
-	 * is no default property with the given name, or if the default 
+	 * is no default property with the given name, or if the default
 	 * value cannot be treated as a boolean.
 	 *
 	 * @param name the name of the property
@@ -264,7 +264,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Sets the default value for the boolean-valued property with the
-	 * given name. 
+	 * given name.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -286,7 +286,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the current value of the double-valued property with the
 	 * given name.
 	 * Returns the default-default value (<code>0.0</code>) if there
-	 * is no property with the given name, or if the current value 
+	 * is no property with the given name, or if the current value
 	 * cannot be treated as a double.
 	 *
 	 * @param name the name of the property
@@ -301,7 +301,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Sets the current value of the double-valued property with the
 	 * given name.
 	 * <p>
-	 * A property change event is reported if the current value of the 
+	 * A property change event is reported if the current value of the
 	 * property actually changes from its previous value. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are wrapped as objects.
@@ -314,7 +314,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * </p>
 	 *
 	 * @param name the name of the property
-	 * @param value the new current value of the property; must be 
+	 * @param value the new current value of the property; must be
 	 *   a number (not a NaN)
 	 */
 	@Override
@@ -342,7 +342,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the default value for the double-valued property
 	 * with the given name.
 	 * Returns the default-default value (<code>0.0</code>) if there
-	 * is no default property with the given name, or if the default 
+	 * is no default property with the given name, or if the default
 	 * value cannot be treated as a double.
 	 *
 	 * @param name the name of the property
@@ -355,7 +355,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Sets the default value for the double-valued property with the
-	 * given name. 
+	 * given name.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -366,7 +366,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * </p>
 	 *
 	 * @param name the name of the property
-	 * @param value the new default value for the property; must be 
+	 * @param value the new default value for the property; must be
 	 *   a number (not a NaN)
 	 */
 	@Override
@@ -380,7 +380,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the current value of the float-valued property with the
 	 * given name.
 	 * Returns the default-default value (<code>0.0f</code>) if there
-	 * is no property with the given name, or if the current value 
+	 * is no property with the given name, or if the current value
 	 * cannot be treated as a float.
 	 *
 	 * @param name the name of the property
@@ -395,7 +395,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Sets the current value of the float-valued property with the
 	 * given name.
 	 * <p>
-	 * A property change event is reported if the current value of the 
+	 * A property change event is reported if the current value of the
 	 * property actually changes from its previous value. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are wrapped as objects.
@@ -408,7 +408,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * </p>
 	 *
 	 * @param name the name of the property
-	 * @param value the new current value of the property; must be 
+	 * @param value the new current value of the property; must be
 	 *   a number (not a NaN)
 	 */
 	@Override
@@ -436,7 +436,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the default value for the float-valued property
 	 * with the given name.
 	 * Returns the default-default value (<code>0.0f</code>) if there
-	 * is no default property with the given name, or if the default 
+	 * is no default property with the given name, or if the default
 	 * value cannot be treated as a float.
 	 *
 	 * @param name the name of the property
@@ -449,7 +449,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Sets the default value for the float-valued property with the
-	 * given name. 
+	 * given name.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -460,7 +460,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * </p>
 	 *
 	 * @param name the name of the property
-	 * @param value the new default value for the property; must be 
+	 * @param value the new default value for the property; must be
 	 *   a number (not a NaN)
 	 */
 	@Override
@@ -474,7 +474,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the current value of the integer-valued property with the
 	 * given name.
 	 * Returns the default-default value (<code>0</code>) if there
-	 * is no property with the given name, or if the current value 
+	 * is no property with the given name, or if the current value
 	 * cannot be treated as an integter.
 	 *
 	 * @param name the name of the property
@@ -489,7 +489,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Sets the current value of the integer-valued property with the
 	 * given name.
 	 * <p>
-	 * A property change event is reported if the current value of the 
+	 * A property change event is reported if the current value of the
 	 * property actually changes from its previous value. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are wrapped as objects.
@@ -527,7 +527,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the default value for the integer-valued property
 	 * with the given name.
 	 * Returns the default-default value (<code>0</code>) if there
-	 * is no default property with the given name, or if the default 
+	 * is no default property with the given name, or if the default
 	 * value cannot be treated as an integer.
 	 *
 	 * @param name the name of the property
@@ -540,7 +540,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Sets the default value for the integer-valued property with the
-	 * given name. 
+	 * given name.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -562,7 +562,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the current value of the long-valued property with the
 	 * given name.
 	 * Returns the default-default value (<code>0L</code>) if there
-	 * is no property with the given name, or if the current value 
+	 * is no property with the given name, or if the current value
 	 * cannot be treated as a long.
 	 *
 	 * @param name the name of the property
@@ -577,7 +577,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Sets the current value of the long-valued property with the
 	 * given name.
 	 * <p>
-	 * A property change event is reported if the current value of the 
+	 * A property change event is reported if the current value of the
 	 * property actually changes from its previous value. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are wrapped as objects.
@@ -615,7 +615,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns the default value for the long-valued property
 	 * with the given name.
 	 * Returns the default-default value (<code>0L</code>) if there
-	 * is no default property with the given name, or if the default 
+	 * is no default property with the given name, or if the default
 	 * value cannot be treated as a long.
 	 *
 	 * @param name the name of the property
@@ -628,7 +628,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Sets the default value for the long-valued property with the
-	 * given name. 
+	 * given name.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -664,7 +664,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Sets the current value of the string-valued property with the
 	 * given name.
 	 * <p>
-	 * A property change event is reported if the current value of the 
+	 * A property change event is reported if the current value of the
 	 * property actually changes from its previous value. In the event
 	 * object, the property name is the name of the property, and the
 	 * old and new values are wrapped as objects.
@@ -701,8 +701,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	/**
 	 * Returns the default value for the string-valued property
 	 * with the given name.
-	 * Returns the default-default value (the empty string <code>""</code>) 
-	 * is no default property with the given name, or if the default 
+	 * Returns the default-default value (the empty string <code>""</code>)
+	 * is no default property with the given name, or if the default
 	 * value cannot be treated as a string.
 	 *
 	 * @param name the name of the property
@@ -715,7 +715,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Sets the default value for the string-valued property with the
-	 * given name. 
+	 * given name.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -758,13 +758,13 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * <p>
 	 * Note that the recommended way of re-initializing a property to the
 	 * appropriate default value is to call <code>setToDefault</code>.
-	 * This is implemented by removing the named value from the object, 
+	 * This is implemented by removing the named value from the object,
 	 * thereby exposing the default value.
 	 * </p>
 	 * <p>
 	 * A property change event is always reported. In the event
 	 * object, the property name is the name of the property, and the
-	 * old and new values are either strings, or <code>null</code> 
+	 * old and new values are either strings, or <code>null</code>
 	 * indicating the default-default value.
 	 * </p>
 	 *
@@ -782,7 +782,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns a list of all properties known to this preference object which
 	 * have current values other than their default value.
 	 *
-	 * @return an array of property names 
+	 * @return an array of property names
 	 */
 	@Override
 	public String[] propertyNames() {
@@ -793,7 +793,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * Returns a list of all properties known to this preference object which
 	 * have default values other than their default-default value.
 	 *
-	 * @return an array of property names 
+	 * @return an array of property names
 	 */
 	@Override
 	public String[] defaultPropertyNames() {
@@ -820,7 +820,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Flush the values of these plug-in preferences to disk.
-	 * 
+	 *
 	 * @throws BackingStoreException
 	 */
 	public void flush() throws BackingStoreException {
@@ -830,7 +830,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	}
 
 	/*
-	 * Something bad happened so log it. 
+	 * Something bad happened so log it.
 	 */
 	private void logError(String message, Exception e) {
 		IStatus status = new Status(IStatus.ERROR, PrefsMessages.OWNER_NAME, IStatus.ERROR, message, e);

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -125,7 +125,7 @@ public class AuthorizationHandler {
 
 	/**
 	 * Saves the keyring file to disk.
-	 * @exception CoreException 
+	 * @exception CoreException
 	 */
 	private static void saveKeyring() throws CoreException {
 		try {
@@ -141,9 +141,9 @@ public class AuthorizationHandler {
 	 * Adds the given authorization information to the key ring. The
 	 * information is relevant for the specified protection space and the
 	 * given authorization scheme. The protection space is defined by the
-	 * combination of the given server URL and realm. The authorization 
-	 * scheme determines what the authorization information contains and how 
-	 * it should be used. The authorization information is a <code>Map</code> 
+	 * combination of the given server URL and realm. The authorization
+	 * scheme determines what the authorization information contains and how
+	 * it should be used. The authorization information is a <code>Map</code>
 	 * of <code>String</code> to <code>String</code> and typically
 	 * contains information such as user names and passwords.
 	 *
@@ -154,8 +154,8 @@ public class AuthorizationHandler {
 	 *		"realm1@example.com" or "" for no realm.
 	 * @param authScheme the scheme for which this authorization information
 	 *		applies. For example, "Basic" or "" for no authorization scheme
-	 * @param info a <code>Map</code> containing authorization information 
-	 *		such as user names and passwords (key type : <code>String</code>, 
+	 * @param info a <code>Map</code> containing authorization information
+	 *		such as user names and passwords (key type : <code>String</code>,
 	 *		value type : <code>String</code>)
 	 * @exception CoreException if there are problems setting the
 	 *		authorization information. Reasons include:
