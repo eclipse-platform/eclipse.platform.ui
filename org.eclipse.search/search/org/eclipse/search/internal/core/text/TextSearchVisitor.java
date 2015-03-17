@@ -36,6 +36,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobGroup;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -199,11 +201,15 @@ public class TextSearchVisitor {
 
 	private final MultiStatus fStatus;
 
+	private boolean fIsLightweightAutoRefresh;
+
 	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern) {
 		fCollector= collector;
 		fStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
 
 		fSearchPattern= searchPattern;
+
+		fIsLightweightAutoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
 	}
 
 	public IStatus search(IFile[] files, IProgressMonitor monitor) {
@@ -401,9 +407,11 @@ public class TextSearchVisitor {
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
 			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
 		} catch (CoreException e) {
-			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
-			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			if (!fIsLightweightAutoRefresh || IResourceStatus.FAILED_READ_LOCAL != e.getStatus().getCode()) {
+				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
+				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
+				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			}
 		} catch (StackOverflowError e) {
 			// Trigger cancellation of remaining jobs in the group.
 			// An alternative is to move this method into TextSearchJob and call getJobGroup().cancel() directly.
