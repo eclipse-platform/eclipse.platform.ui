@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Brock Janicyak - brockj@tpg.com.au
  *     		- Fix for Bug 11142 [HeapStatus] Heap status is updated too frequently
  *          - Fix for Bug 192996 [Workbench] Reduce amount of garbage created by HeapStatus
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040, 372517
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -217,6 +217,12 @@ public class HeapStatus extends Composite {
 		});
    	}
 
+	@Override
+	public void setBackground(Color color) {
+		bgCol = color;
+		button.redraw();
+		button.update();
+	}
 	/**
 	 * Returns the maximum memory limit, or Long.MAX_VALUE if the max is not known.
 	 */
