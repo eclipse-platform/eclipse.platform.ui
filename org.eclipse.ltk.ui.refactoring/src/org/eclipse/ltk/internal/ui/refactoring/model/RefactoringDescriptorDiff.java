@@ -61,44 +61,32 @@ public final class RefactoringDescriptorDiff implements IThreeWayDiff {
 		return fDescriptor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getDirection() {
 		return fDirection;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return fKind;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITwoWayDiff getLocalChange() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IPath getPath() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITwoWayDiff getRemoteChange() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toDiffString() {
 		return Messages.format(ModelMessages.RefactoringDescriptorDiff_diff_string, fDescriptor.getDescription());
 	}

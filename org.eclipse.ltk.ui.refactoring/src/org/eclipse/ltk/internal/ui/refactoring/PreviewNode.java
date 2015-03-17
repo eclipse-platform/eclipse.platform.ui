@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.ltk.core.refactoring.GroupCategory;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 /**
@@ -113,7 +114,7 @@ public abstract class PreviewNode {
 	 *
 	 * @throws CoreException if an error occurred while feeding the input
 	 */
-	abstract void feedInput(IChangePreviewViewer viewer, List/*<GroupCategory>*/ categories) throws CoreException;
+	abstract void feedInput(IChangePreviewViewer viewer, List<GroupCategory> categories) throws CoreException;
 
 	/**
 	 * Sets the activation status for this <code>PreviewNode</code>. When a
@@ -159,7 +160,7 @@ public abstract class PreviewNode {
 	 * @return whether the change node has one of the given
 	 *  group categories
 	 */
-	abstract boolean hasOneGroupCategory(List/*<GroupCategory>*/ categories);
+	abstract boolean hasOneGroupCategory(List<GroupCategory> categories);
 
 	/**
 	 * Returns <code>true</code> if the change node contains

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,9 +58,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 
 	private IResource[] fResources;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		if (fResources != null && isDeleteAvailable(fResources)) {
@@ -85,9 +83,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fResources= null;
 		if (selection instanceof IStructuredSelection) {
@@ -97,7 +93,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 	}
 
 	private static IResource[] evaluateResources(IStructuredSelection sel) {
-		ArrayList res= new ArrayList();
+		ArrayList<IResource> res= new ArrayList<>();
 		Object[] objects= sel.toArray();
 		for (int i= 0; i < objects.length; i++) {
 			Object curr= objects[i];
@@ -113,10 +109,10 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 				return null;
 			}
 		}
-		return (IResource[]) res.toArray(new IResource[res.size()]);
+		return res.toArray(new IResource[res.size()]);
 	}
 
-	private static boolean addProject(ArrayList res, IProject project) {
+	private static boolean addProject(ArrayList<IResource> res, IProject project) {
 		if (!res.isEmpty()) {
 			if (!(res.get(0) instanceof IProject)) { // either all projects or all IFile/IFolder
 				return false;
@@ -130,7 +126,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 		return true;
 	}
 
-	private static boolean addFileOrFolder(ArrayList res, IResource resource) {
+	private static boolean addFileOrFolder(ArrayList<IResource> res, IResource resource) {
 		if (!res.isEmpty()) {
 			if (res.get(0) instanceof IProject) { // either all projects or all IFile/IFolder
 				return false;
@@ -139,7 +135,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 			// not in list and no nested or nesting element in list
 			IPath path= resource.getFullPath();
 			for (int i= 0; i < res.size(); i++) {
-				IResource curr= (IResource) res.get(i);
+				IResource curr= res.get(i);
 				IPath currPath= curr.getFullPath();
 				if (path.isPrefixOf(currPath) || currPath.isPrefixOf(path) || currPath.equals(path)) {
 					return false;

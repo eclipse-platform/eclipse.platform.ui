@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class MockRefactoring extends Refactoring {
 
-	private Map fArguments= Collections.EMPTY_MAP;
+	private Map<String, String> fArguments= Collections.emptyMap();
 
 	private String fComment= "A mock comment";
 
@@ -41,7 +41,7 @@ public class MockRefactoring extends Refactoring {
 
 	}
 
-	public MockRefactoring(String project, String description, String comment, Map arguments, int flags) {
+	public MockRefactoring(String project, String description, String comment, Map<String, String> arguments, int flags) {
 		fProject= project;
 		fDescription= description;
 		fComment= comment;
@@ -49,29 +49,21 @@ public class MockRefactoring extends Refactoring {
 		fFlags= flags;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change createChange(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		return new NullChange() {
 
-			/**
-			 * {@inheritDoc}
-			 */
+			@Override
 			public ChangeDescriptor getDescriptor() {
 				MockRefactoringDescriptor descriptor= createRefactoringDescriptor();
 				return new RefactoringChangeDescriptor(descriptor);
@@ -83,9 +75,7 @@ public class MockRefactoring extends Refactoring {
 		return new MockRefactoringDescriptor(fProject, fDescription, fComment, fArguments, fFlags);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return "mock";
 	}

@@ -130,7 +130,7 @@ public abstract class RefactoringContribution {
 	 *            the comment associated with the refactoring, or
 	 *            <code>null</code> for no comment
 	 * @param arguments
-	 *            the argument map (element type: &lt;String, String&gt;). The
+	 *            the argument map. The
 	 *            keys of the arguments are required to be non-empty strings
 	 *            which must not contain spaces. The values must be non-empty
 	 *            strings
@@ -142,7 +142,7 @@ public abstract class RefactoringContribution {
 	 *
 	 * @see #retrieveArgumentMap(RefactoringDescriptor)
 	 */
-	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException;
+	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map<String, String> arguments, int flags) throws IllegalArgumentException;
 
 	/**
 	 * Returns the refactoring id for which this refactoring contribution has
@@ -201,11 +201,11 @@ public abstract class RefactoringContribution {
 	 *
 	 * @see #createDescriptor(String, String, String, String, Map, int)
 	 */
-	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
+	public Map<String, String> retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		if (descriptor instanceof DefaultRefactoringDescriptor) {
 			final DefaultRefactoringDescriptor extended= (DefaultRefactoringDescriptor) descriptor;
 			return extended.getArguments();
 		}
-		return Collections.EMPTY_MAP;
+		return Collections.emptyMap();
 	}
 }

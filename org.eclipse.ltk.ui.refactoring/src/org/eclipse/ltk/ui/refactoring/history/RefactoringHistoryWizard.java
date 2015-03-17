@@ -135,16 +135,12 @@ public class RefactoringHistoryWizard extends Wizard {
 			setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_description);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public boolean canFlipToNextPage() {
 			return true;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void createControl(final Composite parent) {
 			final Composite composite= new Composite(parent, SWT.NULL);
 			composite.setLayout(new GridLayout());
@@ -154,23 +150,17 @@ public class RefactoringHistoryWizard extends Wizard {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_PREVIEW_WIZARD_PAGE);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public IWizardPage getNextPage() {
 			return getWizard().getNextPage(this);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public IWizardPage getPreviousPage() {
 			return getWizard().getPreviousPage(this);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void setPageComplete(final boolean complete) {
 			super.setPageComplete(true);
 		}
@@ -270,9 +260,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The preview change filter */
 	private RefactoringPreviewChangeFilter fPreviewChangeFilter= new RefactoringPreviewChangeFilter() {
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public final boolean select(final Change change) {
 			return selectPreviewChange(change);
 		}
@@ -290,9 +278,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The status entry filter */
 	private RefactoringStatusEntryFilter fStatusEntryFilter= new RefactoringStatusEntryFilter() {
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public final boolean select(final RefactoringStatusEntry entry) {
 			return selectStatusEntry(entry);
 		}
@@ -423,14 +409,13 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Clients must contribute their wizard pages by re-implementing
 	 * {@link #addUserDefinedPages()}.
 	 */
+	@Override
 	public final void addPage(final IWizardPage page) {
 		Assert.isTrue(fInAddPages);
 		super.addPage(page);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final void addPages() {
 		try {
 			fInAddPages= true;
@@ -464,9 +449,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		// Do not add any as default
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFinish() {
 		final IWizardPage page= getContainer().getCurrentPage();
 		if (page == fErrorPage) {
@@ -557,6 +540,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *             if an error occurs while creating the refactoring instance
 	 * @deprecated since 3.6. Override {@link #createRefactoringContext(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
+	@Deprecated
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
 		Assert.isNotNull(descriptor);
 		return descriptor.createRefactoring(status);
@@ -586,6 +570,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * @since 3.4
 	 * @deprecated since 3.7. Override {@link #createRefactoringContext(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
+	@Deprecated
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
 		final Refactoring refactoring= createRefactoring(descriptor, status);
 		if (refactoring != null) {
@@ -634,16 +619,16 @@ public class RefactoringHistoryWizard extends Wizard {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		SafeRunner.run(new ISafeRunnable() {
 
+			@Override
 			public void handleException(final Throwable exception) {
 				RefactoringUIPlugin.log(exception);
 			}
 
+			@Override
 			public final void run() throws Exception {
 				if (fAboutToPerformFired) {
 					final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
@@ -667,11 +652,13 @@ public class RefactoringHistoryWizard extends Wizard {
 		final RefactoringStatus status= new RefactoringStatus();
 		SafeRunner.run(new ISafeRunnable() {
 
+			@Override
 			public void handleException(final Throwable exception) {
 				RefactoringUIPlugin.log(exception);
 				status.addFatalError(RefactoringUIMessages.RefactoringWizard_unexpected_exception_1);
 			}
 
+			@Override
 			public final void run() throws Exception {
 				status.merge(aboutToPerformHistory(monitor));
 			}
@@ -693,9 +680,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		return fErrorPage;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getNextPage(final IWizardPage page) {
 		if (page == fOverviewPage || page == fNoOverviewPage) {
 			fCurrentRefactoring= 0;
@@ -731,6 +716,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (refactoring != null) {
 				final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
+					@Override
 					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						Assert.isNotNull(monitor);
 						try {
@@ -738,6 +724,7 @@ public class RefactoringHistoryWizard extends Wizard {
 							final Change change= createChange(refactoring, monitor);
 							getShell().getDisplay().syncExec(new Runnable() {
 
+								@Override
 								public final void run() {
 									fPreviewPage.setChange(change);
 								}
@@ -793,9 +780,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		return fPreviewPage;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getPreviousPage(final IWizardPage page) {
 		if (page == fErrorPage || page == fPreviewPage)
 			return null;
@@ -841,6 +826,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		final IWizardContainer wizard= getContainer();
 		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
+			@Override
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Assert.isNotNull(monitor);
 				try {
@@ -885,6 +871,7 @@ public class RefactoringHistoryWizard extends Wizard {
 												final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 												getShell().getDisplay().syncExec(new Runnable() {
 	
+													@Override
 													public final void run() {
 														fPreviewPage.setChange(change);
 													}
@@ -983,9 +970,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		return fCurrentRefactoring >= getRefactoringDescriptors().length - 2;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performCancel() {
 		if (fExecutedRefactorings > 0 && !fCancelException) {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
@@ -1003,6 +988,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
 
+				@Override
 				public final void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					for (int index= 0; index < fExecutedRefactorings; index++) {
 						try {
@@ -1033,9 +1019,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		return super.performCancel();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performFinish() {
 		if (fHeadlessErrorStatus)
 			return true;
@@ -1044,7 +1028,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		final IWizardContainer wizard= getContainer();
 		final RefactoringStatus status= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
-		final List list= new ArrayList(proxies.length);
+		final List<RefactoringDescriptorProxy> list= new ArrayList<>(proxies.length);
 		for (int index= fCurrentRefactoring; index < proxies.length; index++)
 			list.add(proxies[index]);
 		final RefactoringDescriptorProxy[] descriptors= new RefactoringDescriptorProxy[list.size()];
@@ -1078,23 +1062,28 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
+				@Override
 				protected RefactoringContext createRefactoringContext(final RefactoringDescriptor descriptor, final RefactoringStatus state, IProgressMonitor monitor) throws CoreException {
 					return RefactoringHistoryWizard.this.createRefactoringContext(descriptor, state, monitor);
 				}
 
+				@Override
 				protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
 					SafeRunner.run(new ISafeRunnable() {
 
+						@Override
 						public void handleException(final Throwable exception) {
 							RefactoringUIPlugin.log(exception);
 						}
 
+						@Override
 						public final void run() throws Exception {
 							RefactoringHistoryWizard.this.refactoringPerformed(refactoring, monitor);
 						}
 					});
 				}
 
+				@Override
 				public void run(final IProgressMonitor monitor) throws CoreException {
 					try {
 						monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactorings, 100);
@@ -1165,6 +1154,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		Assert.isNotNull(refactoring);
 		final UIPerformChangeOperation operation= new UIPerformChangeOperation(getShell().getDisplay(), change, getContainer()) {
 
+			@Override
 			public void run(final IProgressMonitor monitor) throws CoreException {
 				try {
 					monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_changes, 12);
@@ -1236,6 +1226,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	private void prepareErrorPage(final RefactoringStatus status, final RefactoringDescriptorProxy descriptor, final boolean fatal, final boolean disabled) {
 		getShell().getDisplay().syncExec(new Runnable() {
 
+			@Override
 			public final void run() {
 				fErrorPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
 				fErrorPage.setNextPageDisabled(disabled && fatal);
@@ -1261,6 +1252,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	private void preparePreviewPage(final RefactoringStatus status, final RefactoringDescriptorProxy descriptor, final boolean disabled) {
 		getShell().getDisplay().syncExec(new Runnable() {
 
+			@Override
 			public final void run() {
 				fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
 				fPreviewPage.setNextPageDisabled(disabled);

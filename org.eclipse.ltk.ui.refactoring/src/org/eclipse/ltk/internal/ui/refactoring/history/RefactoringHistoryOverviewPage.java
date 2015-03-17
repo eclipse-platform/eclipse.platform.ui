@@ -74,16 +74,12 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		setDescription(description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return !fRefactoringHistory.isEmpty();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(final Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite= new Composite(parent, SWT.NULL);
@@ -91,6 +87,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fHistoryControl= new SortableRefactoringHistoryControl(composite, fControlConfiguration) {
 
+			@Override
 			protected void createBottomButtonBar(final Composite control) {
 				// No button bar
 			}
@@ -110,16 +107,12 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_HISTORY_WIZARD_PAGE);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getNextPage() {
 		return getWizard().getNextPage(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getPreviousPage() {
 		return getWizard().getPreviousPage(this);
 	}
@@ -133,16 +126,12 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setPageComplete(final boolean complete) {
 		super.setPageComplete(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		fHistoryControl.setInput(fRefactoringHistory);
 		super.setVisible(visible);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,6 +99,7 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 	 *
 	 * @return the <code>TextEditBasedChange<code>
 	 */
+	@Override
 	public final TextEditBasedChange getTextEditBasedChange() {
 		return super.getTextEditBasedChange();
 	}
@@ -109,6 +110,7 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 	 *
 	 * @return a human readable representation of this node
 	 */
+	@Override
 	public String getText() {
 		Change change= getTextEditBasedChange();
 		if (change instanceof TextFileChange) {
@@ -126,10 +128,12 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 	 *
 	 * @return the image descriptor representing this node
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return RefactoringPluginImages.DESC_OBJS_FILE_CHANGE;
 	}
 
+	@Override
 	protected ChildNode[] createChildNodes() {
 		TextEditBasedChange change= getTextEditBasedChange();
 		if (change instanceof MultiStateTextFileChange) {
@@ -143,10 +147,9 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 		return result;
 	}
 
-	private static class OffsetComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			TextEditBasedChangeGroup c1= (TextEditBasedChangeGroup)o1;
-			TextEditBasedChangeGroup c2= (TextEditBasedChangeGroup)o2;
+	private static class OffsetComparator implements Comparator<TextEditBasedChangeGroup> {
+		@Override
+		public int compare(TextEditBasedChangeGroup c1, TextEditBasedChangeGroup c2) {
 			int p1= getOffset(c1);
 			int p2= getOffset(c2);
 			if (p1 < p2)
@@ -163,14 +166,14 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 
 	private TextEditBasedChangeGroup[] getSortedChangeGroups(TextEditBasedChange change) {
 		TextEditBasedChangeGroup[] groups= change.getChangeGroups();
-		List result= new ArrayList(groups.length);
+		List<TextEditBasedChangeGroup> result= new ArrayList<>(groups.length);
 		for (int i= 0; i < groups.length; i++) {
 			if (!groups[i].getTextEditGroup().isEmpty())
 				result.add(groups[i]);
 		}
-		Comparator comparator= new OffsetComparator();
+		Comparator<TextEditBasedChangeGroup> comparator= new OffsetComparator();
 		Collections.sort(result, comparator);
-		return (TextEditBasedChangeGroup[])result.toArray(new TextEditBasedChangeGroup[result.size()]);
+		return result.toArray(new TextEditBasedChangeGroup[result.size()]);
 	}
 
 

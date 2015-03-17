@@ -170,6 +170,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 		}
 	}
 
+	@Override
 	public void recordStateFromHistory(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(
@@ -201,6 +202,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 *
 	 * @return the name of the container.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -245,6 +247,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 		}
 	}
 
+	@Override
 	protected void restoreResourceAttributes(IResource resource)
 			throws CoreException {
 		super.restoreResourceAttributes(resource);
@@ -265,6 +268,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 		this.location = location;
 	}
 
+	@Override
 	public boolean verifyExistence(boolean checkMembers) {
 		boolean existence = super.verifyExistence(checkMembers);
 		if (existence) {

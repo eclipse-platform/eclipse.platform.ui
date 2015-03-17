@@ -26,9 +26,7 @@ public abstract class CreateParticipant extends RefactoringParticipant {
 
 	private CreateArguments fArguments;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (CreateArguments)arguments;
 	}

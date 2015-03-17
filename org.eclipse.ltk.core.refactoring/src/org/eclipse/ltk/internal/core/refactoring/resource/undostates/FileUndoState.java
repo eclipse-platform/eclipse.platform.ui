@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 		this.fileContentDescription= fileContentDescription;
 	}
 
+	@Override
 	public void recordStateFromHistory(IResource resource, IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(resource.getType() == IResource.FILE);
 
@@ -104,29 +105,17 @@ public class FileUndoState extends AbstractResourceUndoState {
 		if (states.length > 0) {
 			final IFileState state= getMatchingFileState(states);
 			this.fileContentDescription= new IFileContentDescription() {
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
-				 */
+				@Override
 				public boolean exists() {
 					return state.exists();
 				}
 
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getContents()
-				 */
+				@Override
 				public InputStream getContents() throws CoreException {
 					return state.getContents();
 				}
 
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
-				 */
+				@Override
 				public String getCharset() throws CoreException {
 					return state.getCharset();
 				}
@@ -134,12 +123,14 @@ public class FileUndoState extends AbstractResourceUndoState {
 		}
 	}
 
+	@Override
 	public IResource createResourceHandle() {
 		IWorkspaceRoot workspaceRoot= parent.getWorkspace().getRoot();
 		IPath fullPath= parent.getFullPath().append(name);
 		return workspaceRoot.getFile(fullPath);
 	}
 
+	@Override
 	public void createExistentResourceFromHandle(IResource resource, IProgressMonitor monitor) throws CoreException {
 
 		Assert.isLegal(resource instanceof IFile);
@@ -156,13 +147,15 @@ public class FileUndoState extends AbstractResourceUndoState {
 			if (location != null) {
 				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(monitor, 200));
 			} else {
-				InputStream contents= new ByteArrayInputStream(RefactoringCoreMessages.FileDescription_ContentsCouldNotBeRestored.getBytes());
+				InputStream contents;
 				// Retrieve the contents from the file content
 				// description. Other file state attributes, such as timestamps,
 				// have already been retrieved from the original IResource
 				// object and are restored in #restoreResourceAttributes
 				if (fileContentDescription != null && fileContentDescription.exists()) {
 					contents= fileContentDescription.getContents();
+				} else {
+					contents= new ByteArrayInputStream(RefactoringCoreMessages.FileDescription_ContentsCouldNotBeRestored.getBytes());
 				}
 				fileHandle.create(contents, false, new SubProgressMonitor(monitor, 100));
 				fileHandle.setCharset(charset, new SubProgressMonitor(monitor, 100));
@@ -181,6 +174,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 		}
 	}
 
+	@Override
 	public boolean isValid() {
 		if (location != null) {
 			return super.isValid();
@@ -188,6 +182,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 		return super.isValid() && fileContentDescription != null && fileContentDescription.exists();
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -209,6 +204,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 
 	}
 
+	@Override
 	protected void restoreResourceAttributes(IResource resource) throws CoreException {
 		super.restoreResourceAttributes(resource);
 		Assert.isLegal(resource instanceof IFile);

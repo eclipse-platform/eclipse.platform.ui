@@ -27,21 +27,24 @@ public class CompositeChangeNode extends AbstractChangeNode {
 		fFilter= filter;
 	}
 
+	@Override
 	int getActive() {
 		return getCompositeChangeActive();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE;
 	}
 
+	@Override
 	PreviewNode[] doCreateChildren() {
-		List children= new ArrayList();
+		List<PreviewNode> children= new ArrayList<>();
 		getFlattendedChildren(children, this, (CompositeChange)getChange());
-		return (PreviewNode[])children.toArray(new PreviewNode[children.size()]);
+		return children.toArray(new PreviewNode[children.size()]);
 	}
 
-	private void getFlattendedChildren(List result, CompositeChangeNode parent, CompositeChange focus) {
+	private void getFlattendedChildren(List<PreviewNode> result, CompositeChangeNode parent, CompositeChange focus) {
 		Change[] changes= focus.getChildren();
 		for (int i= 0; i < changes.length; i++) {
 			Change change= changes[i];

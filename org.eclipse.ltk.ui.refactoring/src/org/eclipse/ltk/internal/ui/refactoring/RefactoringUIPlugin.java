@@ -48,11 +48,13 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 		return "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		RefactoringCore.internalSetQueryFactory(new UIQueryFactory(RefactoringCore.getQueryFactory()));
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		RefactoringCore.internalSetQueryFactory(null);
 		super.stop(context);
@@ -85,7 +87,7 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static IEditorPart[] getInstanciatedEditors() {
-		List result= new ArrayList(0);
+		List<IEditorPart> result= new ArrayList<>(0);
 		IWorkbench workbench= getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int windowIndex= 0; windowIndex < windows.length; windowIndex++) {
@@ -99,9 +101,10 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 				}
 			}
 		}
-		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+		return result.toArray(new IEditorPart[result.size()]);
 	}
 
+	@Override
 	protected ImageRegistry createImageRegistry() {
 		return RefactoringPluginImages.getImageRegistry();
 	}

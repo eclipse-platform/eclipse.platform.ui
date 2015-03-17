@@ -50,6 +50,7 @@ import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class RedoRefactoringAction extends UndoManagerAction {
 
 	private int fPatternLength;
@@ -60,18 +61,15 @@ public class RedoRefactoringAction extends UndoManagerAction {
 	public RedoRefactoringAction() {
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in UndoManagerAction
-	 */
+	@Override
 	protected String getName() {
 		return RefactoringUIMessages.RedoRefactoringAction_name;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in UndoManagerAction
-	 */
+	@Override
 	protected IRunnableWithProgress createOperation(Shell parent) {
 		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.RedoRefactoringAction_error_title) {
+			@Override
 			protected String getFullMessage(String errorMessage) {
 				return Messages.format(
 					RefactoringUIMessages.RedoRefactoringAction_error_message,
@@ -79,6 +77,7 @@ public class RedoRefactoringAction extends UndoManagerAction {
 			}
 		};
 		return new IRunnableWithProgress(){
+			@Override
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
 				try {
 					RefactoringCore.getUndoManager().performRedo(query, pm);
@@ -89,11 +88,10 @@ public class RedoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in UndoManagerAction
-	 */
+	@Override
 	protected UndoManagerAdapter createUndoManagerListener() {
 		return new UndoManagerAdapter() {
+			@Override
 			public void redoStackChanged(IUndoManager manager) {
 				IAction action= getAction();
 				if (action == null)
@@ -112,9 +110,7 @@ public class RedoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
 			hookListener(action);

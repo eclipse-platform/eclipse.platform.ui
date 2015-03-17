@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
 import org.eclipse.ltk.core.refactoring.GroupCategorySet;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
@@ -29,13 +30,14 @@ import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
 
 public abstract class InternalLanguageElementNode extends TextEditChangeNode.ChildNode {
 
-	private List/*<ChildNode>*/ fChildren;
+	private List<ChildNode> fChildren;
 	private GroupCategorySet fGroupCategories;
 
 	protected InternalLanguageElementNode(PreviewNode parent) {
 		super(parent);
 	}
 
+	@Override
 	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element == null)
@@ -43,14 +45,15 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		return element.getChangePreviewViewerDescriptor();
 	}
 
-	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
+	@Override
+	void feedInput(IChangePreviewViewer viewer, List<GroupCategory> categories) throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element != null) {
 			Change change= element.getChange();
 			if (change instanceof TextEditBasedChange) {
-				List groups= collectTextEditBasedChangeGroups(categories);
+				List<TextEditBasedChangeGroup> groups= collectTextEditBasedChangeGroups(categories);
 				viewer.setInput(TextEditChangePreviewViewer.createInput(change,
-					(TextEditBasedChangeGroup[])groups.toArray(new TextEditBasedChangeGroup[groups.size()]),
+					groups.toArray(new TextEditBasedChangeGroup[groups.size()]),
 					getTextRange()));
 			}
 		} else {
@@ -58,22 +61,25 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		}
 	}
 
+	@Override
 	void setEnabled(boolean enabled) {
-		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-			PreviewNode element= (PreviewNode)iter.next();
+		for (Iterator<ChildNode> iter= fChildren.iterator(); iter.hasNext();) {
+			PreviewNode element= iter.next();
 			element.setEnabled(enabled);
 		}
 	}
 
+	@Override
 	void setEnabledShallow(boolean enabled) {
 		// do nothing. We don't manage an own enablement state.
 	}
 
+	@Override
 	int getActive() {
 		Assert.isTrue(fChildren.size() > 0);
 		int result= ((PreviewNode)fChildren.get(0)).getActive();
 		for (int i= 1; i < fChildren.size(); i++) {
-			PreviewNode element= (PreviewNode)fChildren.get(i);
+			PreviewNode element= fChildren.get(i);
 			result= PreviewNode.ACTIVATION_TABLE[element.getActive()][result];
 			if (result == PreviewNode.PARTLY_ACTIVE)
 				break;
@@ -81,23 +87,26 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		return result;
 	}
 
+	@Override
 	PreviewNode[] getChildren() {
 		if (fChildren == null)
 			return PreviewNode.EMPTY_CHILDREN;
-		return (PreviewNode[]) fChildren.toArray(new PreviewNode[fChildren.size()]);
+		return fChildren.toArray(new PreviewNode[fChildren.size()]);
 	}
 
-	boolean hasOneGroupCategory(List categories) {
+	@Override
+	boolean hasOneGroupCategory(List<GroupCategory> categories) {
 		if (fChildren == null)
 			return false;
 		return getGroupCategorySet().containsOneCategory(categories);
 	}
 
+	@Override
 	boolean hasDerived() {
 		if (fChildren == null)
 			return false;
-		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-			PreviewNode node= (PreviewNode)iter.next();
+		for (Iterator<ChildNode> iter= fChildren.iterator(); iter.hasNext();) {
+			PreviewNode node= iter.next();
 			if (node.hasDerived())
 				return true;
 		}
@@ -107,8 +116,8 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 	private GroupCategorySet getGroupCategorySet() {
 		if (fGroupCategories == null) {
 			fGroupCategories= GroupCategorySet.NONE;
-			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-				PreviewNode node= (PreviewNode)iter.next();
+			for (Iterator<ChildNode> iter= fChildren.iterator(); iter.hasNext();) {
+				PreviewNode node= iter.next();
 				GroupCategorySet other= null;
 				if (node instanceof TextEditGroupNode) {
 					other= ((TextEditGroupNode)node).getGroupCategorySet();
@@ -125,12 +134,12 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 
 	protected void internalAddChild(ChildNode child) {
 		if (fChildren == null)
-			fChildren= new ArrayList(2);
+			fChildren= new ArrayList<>(2);
 		fChildren.add(child);
 	}
 
-	private List collectTextEditBasedChangeGroups(List categories) {
-		List result= new ArrayList(10);
+	private List<TextEditBasedChangeGroup> collectTextEditBasedChangeGroups(List<GroupCategory> categories) {
+		List<TextEditBasedChangeGroup> result= new ArrayList<>(10);
 		PreviewNode[] children= getChildren();
 		for (int i= 0; i < children.length; i++) {
 			PreviewNode child= children[i];

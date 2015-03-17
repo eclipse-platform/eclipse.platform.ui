@@ -63,9 +63,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		fRefactoringHistory= history;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof AbstractRefactoringHistoryResourceMapping) {
 			final AbstractRefactoringHistoryResourceMapping mapping= (AbstractRefactoringHistoryResourceMapping) object;
@@ -74,18 +72,14 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final Object getModelObject() {
 		return fRefactoringHistory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final IProject[] getProjects() {
-		final Set set= new HashSet();
+		final Set<IProject> set= new HashSet<>();
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		for (int index= 0; index < proxies.length; index++) {
@@ -93,7 +87,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 			if (name != null && !"".equals(name)) //$NON-NLS-1$
 				set.add(root.getProject(name));
 		}
-		return (IProject[]) set.toArray(new IProject[set.size()]);
+		return set.toArray(new IProject[set.size()]);
 	}
 
 	/**
@@ -122,9 +116,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
 		if (fResourceTraversals == null) {
 			final IProject[] projects= getProjects();
@@ -138,9 +130,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		return traversals;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return fRefactoringHistory.hashCode();
 	}

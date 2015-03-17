@@ -49,9 +49,7 @@ public class RenameResourceRefactoringAction extends Action implements IActionDe
 
 	private IResource fResource;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		if (fResource != null && isRenameAvailable(fResource)) {
 			Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -76,9 +74,7 @@ public class RenameResourceRefactoringAction extends Action implements IActionDe
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fResource= null;
 		if (selection instanceof IStructuredSelection) {

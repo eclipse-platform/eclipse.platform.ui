@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 public class ParticipantExtensionPoint {
 
 	private String fParticipantID;
-	private List fParticipants;
-	private Class fParticipantClass;
+	private List<ParticipantDescriptor> fParticipants;
+	private Class<?> fParticipantClass;
 	private String fPluginId;
 
 	/**
@@ -55,7 +55,7 @@ public class ParticipantExtensionPoint {
 	 * @param participantId the name of the extension point
 	 * @param clazz the type of the class that contributors must provide
 	 */
-	public ParticipantExtensionPoint(String pluginId, String participantId, Class clazz) {
+	public ParticipantExtensionPoint(String pluginId, String participantId, Class<?> clazz) {
 		Assert.isNotNull(participantId);
 		fParticipantID= participantId;
 		fParticipantClass= clazz;
@@ -82,9 +82,9 @@ public class ParticipantExtensionPoint {
 			init();
 
 		EvaluationContext evalContext= createEvaluationContext(processor, element, affectedNatures);
-		List result= new ArrayList();
-		for (Iterator iter= fParticipants.iterator(); iter.hasNext();) {
-			ParticipantDescriptor descriptor= (ParticipantDescriptor)iter.next();
+		List<RefactoringParticipant> result= new ArrayList<>();
+		for (Iterator<ParticipantDescriptor> iter= fParticipants.iterator(); iter.hasNext();) {
+			ParticipantDescriptor descriptor= iter.next();
 			if (!descriptor.isEnabled()) {
 				iter.remove();
 			} else {
@@ -127,7 +127,7 @@ public class ParticipantExtensionPoint {
 			}
 		}
 
-		return (RefactoringParticipant[])result.toArray(new RefactoringParticipant[result.size()]);
+		return result.toArray(new RefactoringParticipant[result.size()]);
 	}
 
 	private void logMalfunctioningParticipant(RefactoringStatus status, ParticipantDescriptor descriptor, Throwable e) {
@@ -140,7 +140,7 @@ public class ParticipantExtensionPoint {
 	private void init() {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor(fPluginId, fParticipantID);
-		fParticipants= new ArrayList(ces.length);
+		fParticipants= new ArrayList<>(ces.length);
 		for (int i= 0; i < ces.length; i++) {
 			ParticipantDescriptor descriptor= new ParticipantDescriptor(ces[i]);
 			IStatus status= descriptor.checkSyntax();

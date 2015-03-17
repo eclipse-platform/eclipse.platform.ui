@@ -51,11 +51,9 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 	private static final String ATTRIBUTE_UPDATE_REFERENCES= "updateReferences"; //$NON-NLS-1$
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#retrieveArgumentMap(org.eclipse.ltk.core.refactoring.RefactoringDescriptor)
-	 */
-	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
-		HashMap map= new HashMap();
+	@Override
+	public Map<String, String> retrieveArgumentMap(final RefactoringDescriptor descriptor) {
+		HashMap<String, String> map= new HashMap<>();
 
 		if (descriptor instanceof MoveResourcesDescriptor) {
 			MoveResourcesDescriptor moveDescriptor= (MoveResourcesDescriptor) descriptor;
@@ -74,33 +72,29 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor()
-	 */
+	@Override
 	public RefactoringDescriptor createDescriptor() {
 		return new MoveResourcesDescriptor();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, int)
-	 */
-	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) {
+	@Override
+	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map<String, String> arguments, int flags) {
 		try {
-			int numResources= Integer.parseInt((String) arguments.get(ATTRIBUTE_NUMBER_OF_RESOURCES));
+			int numResources= Integer.parseInt(arguments.get(ATTRIBUTE_NUMBER_OF_RESOURCES));
 			if (numResources < 0 || numResources > 100000) {
 				throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, number of moved elements invalid"); //$NON-NLS-1$
 			}
 
 			IPath[] resourcePaths= new IPath[numResources];
 			for (int i= 0; i < numResources; i++) {
-				String resource= (String) arguments.get(ATTRIBUTE_ELEMENT + String.valueOf(i + 1));
+				String resource= arguments.get(ATTRIBUTE_ELEMENT + String.valueOf(i + 1));
 				if (resource == null) {
 					throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, resource missing"); //$NON-NLS-1$
 				}
 				resourcePaths[i]= ResourceProcessors.handleToResourcePath(project, resource);
 			}
 
-			String destination= (String) arguments.get(ATTRIBUTE_DESTINATION);
+			String destination= arguments.get(ATTRIBUTE_DESTINATION);
 			if (destination == null) {
 				throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, destination missing"); //$NON-NLS-1$
 			}

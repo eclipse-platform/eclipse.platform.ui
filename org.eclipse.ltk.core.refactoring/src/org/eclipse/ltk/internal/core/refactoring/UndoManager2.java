@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 public class UndoManager2 implements IUndoManager {
 
 	private class OperationHistoryListener implements IOperationHistoryListener {
+		@Override
 		public void historyNotification(OperationHistoryEvent event) {
 			IUndoableOperation op= event.getOperation();
 			if (op instanceof TriggeredOperations) {
@@ -79,9 +80,11 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	private static class NullQuery implements IValidationCheckResultQuery {
+		@Override
 		public boolean proceed(RefactoringStatus status) {
 			return true;
 		}
+		@Override
 		public void stopped(RefactoringStatus status) {
 			// do nothing
 		}
@@ -92,9 +95,11 @@ public class UndoManager2 implements IUndoManager {
 		public QueryAdapter(IValidationCheckResultQuery query) {
 			fQuery= query;
 		}
-		public Object getAdapter(Class adapter) {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T getAdapter(Class<T> adapter) {
 			if (IValidationCheckResultQuery.class.equals(adapter))
-				return fQuery;
+				return (T) fQuery;
 			return null;
 		}
 	}
@@ -111,6 +116,7 @@ public class UndoManager2 implements IUndoManager {
 		fOperationHistory= OperationHistoryFactory.getOperationHistory();
 	}
 
+	@Override
 	public void addListener(IUndoManagerListener listener) {
 		if (fListeners == null) {
 			fListeners= new ListenerList(ListenerList.IDENTITY);
@@ -120,6 +126,7 @@ public class UndoManager2 implements IUndoManager {
 		fListeners.add(listener);
 	}
 
+	@Override
 	public void removeListener(IUndoManagerListener listener) {
 		if (fListeners == null)
 			return;
@@ -131,6 +138,7 @@ public class UndoManager2 implements IUndoManager {
 		}
 	}
 
+	@Override
 	public void aboutToPerformChange(Change change) {
 		IUndoableOperation operation= new UndoableOperation2ChangeAdapter(change);
 		operation.addContext(RefactoringCorePlugin.getUndoContext());
@@ -144,10 +152,13 @@ public class UndoManager2 implements IUndoManager {
 	 * @param change the change
 	 * @deprecated use #changePerformed(Change, boolean) instead
 	 */
+	@Deprecated
+	@Override
 	public void changePerformed(Change change) {
 		changePerformed(change, true);
 	}
 
+	@Override
 	public void changePerformed(Change change, boolean successful) {
 		if (fIsOpen && fActiveOperation != null) {
 			fOperationHistory.closeOperation(successful, false, IOperationHistory.EXECUTE);
@@ -155,6 +166,7 @@ public class UndoManager2 implements IUndoManager {
 		}
 	}
 
+	@Override
 	public void addUndo(String name, Change change) {
 		if (fActiveOperation != null) {
 			UndoableOperation2ChangeAdapter operation= (UndoableOperation2ChangeAdapter)fActiveOperation.getTriggeringOperation();
@@ -165,10 +177,12 @@ public class UndoManager2 implements IUndoManager {
 		}
 	}
 
+	@Override
 	public boolean anythingToUndo() {
 		return fOperationHistory.canUndo(RefactoringCorePlugin.getUndoContext());
 	}
 
+	@Override
 	public String peekUndoName() {
 		IUndoableOperation op= fOperationHistory.getUndoOperation(RefactoringCorePlugin.getUndoContext());
 		if (op == null)
@@ -176,6 +190,7 @@ public class UndoManager2 implements IUndoManager {
 		return op.getLabel();
 	}
 
+	@Override
 	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		IUndoableOperation undo= fOperationHistory.getUndoOperation(RefactoringCorePlugin.getUndoContext());
 		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(undo);
@@ -191,10 +206,12 @@ public class UndoManager2 implements IUndoManager {
 		}
 	}
 
+	@Override
 	public boolean anythingToRedo() {
 		return fOperationHistory.canRedo(RefactoringCorePlugin.getUndoContext());
 	}
 
+	@Override
 	public String peekRedoName() {
 		IUndoableOperation op= fOperationHistory.getRedoOperation(RefactoringCorePlugin.getUndoContext());
 		if (op == null)
@@ -202,6 +219,7 @@ public class UndoManager2 implements IUndoManager {
 		return op.getLabel();
 	}
 
+	@Override
 	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		IUndoableOperation redo= fOperationHistory.getRedoOperation(RefactoringCorePlugin.getUndoContext());
 		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(redo);
@@ -228,6 +246,7 @@ public class UndoManager2 implements IUndoManager {
 		return null;
 	}
 
+	@Override
 	public void flush() {
 		if (fActiveOperation != null) {
 			if (fIsOpen) {
@@ -246,6 +265,7 @@ public class UndoManager2 implements IUndoManager {
 		fOperationHistory.dispose(RefactoringCorePlugin.getUndoContext(), true, true, false);
 	}
 
+	@Override
 	public void shutdown() {
 		// nothing to do since we have a shared undo manager anyways.
 	}
@@ -271,9 +291,11 @@ public class UndoManager2 implements IUndoManager {
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					listener.aboutToPerformChange(UndoManager2.this, change);
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					RefactoringCorePlugin.log(exception);
 				}
@@ -288,9 +310,11 @@ public class UndoManager2 implements IUndoManager {
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					listener.changePerformed(UndoManager2.this, change);
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					RefactoringCorePlugin.log(exception);
 				}
@@ -305,9 +329,11 @@ public class UndoManager2 implements IUndoManager {
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					listener.undoStackChanged(UndoManager2.this);
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					RefactoringCorePlugin.log(exception);
 				}
@@ -322,9 +348,11 @@ public class UndoManager2 implements IUndoManager {
 		for (int i= 0; i < listeners.length; i++) {
 			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					listener.redoStackChanged(UndoManager2.this);
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					RefactoringCorePlugin.log(exception);
 				}

@@ -38,11 +38,13 @@ import org.eclipse.ltk.ui.refactoring.TextStatusContextViewer;
 
 public class FileStatusContextViewer extends TextStatusContextViewer {
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		getSourceViewer().configure(new SourceViewerConfiguration());
 	}
 
+	@Override
 	public void setInput(RefactoringStatusContext context) {
 		FileStatusContext fc= (FileStatusContext)context;
 		IFile file= fc.getFile();
@@ -56,6 +58,7 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 		}
 	}
 
+	@Override
 	protected SourceViewer createSourceViewer(Composite parent) {
 	    return new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 	}

@@ -72,7 +72,7 @@ public final class RefactoringHistoryEditHelper {
 	 *         workspace is affected
 	 */
 	private static IProject[] getAffectedProjects(final RefactoringDescriptorProxy[] descriptors) {
-		final Set set= new HashSet();
+		final Set<String> set= new HashSet<>();
 		for (int index= 0; index < descriptors.length; index++) {
 			final String project= descriptors[index].getProject();
 			if (project == null || "".equals(project)) //$NON-NLS-1$
@@ -82,8 +82,8 @@ public final class RefactoringHistoryEditHelper {
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] result= new IProject[set.size()];
 		int index= 0;
-		for (final Iterator iterator= set.iterator(); iterator.hasNext(); index++) {
-			result[index]= root.getProject((String) iterator.next());
+		for (final Iterator<String> iterator= set.iterator(); iterator.hasNext(); index++) {
+			result[index]= root.getProject(iterator.next());
 		}
 		return result;
 	}
@@ -118,6 +118,7 @@ public final class RefactoringHistoryEditHelper {
 				final IProject[] affected= getAffectedProjects(descriptors);
 				context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
 
+					@Override
 					public void run(final IProgressMonitor monitor) throws CoreException {
 						try {
 							monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 300);
@@ -128,6 +129,7 @@ public final class RefactoringHistoryEditHelper {
 								if (throwable instanceof IOException) {
 									shell.getDisplay().syncExec(new Runnable() {
 
+										@Override
 										public void run() {
 											MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
 										}
@@ -139,6 +141,7 @@ public final class RefactoringHistoryEditHelper {
 								final RefactoringHistory history= provider.getRefactoringHistory(new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 								shell.getDisplay().syncExec(new Runnable() {
 
+									@Override
 									public void run() {
 										control.setInput(history);
 										control.setCheckedDescriptors(RefactoringPropertyPage.EMPTY_DESCRIPTORS);

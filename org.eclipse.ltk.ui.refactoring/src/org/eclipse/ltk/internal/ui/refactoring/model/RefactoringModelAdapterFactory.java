@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,23 +23,21 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  */
 public final class RefactoringModelAdapterFactory implements IAdapterFactory {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object getAdapter(final Object adaptable, final Class adapter) {
-		if (adaptable instanceof RefactoringDescriptorCompareInput) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Object adaptable, Class<T> adapter) {
+		if (adaptable instanceof RefactoringDescriptorCompareInput && ResourceMapping.class.equals(adapter)) {
 			final RefactoringDescriptorCompareInput input= (RefactoringDescriptorCompareInput) adaptable;
 			final RefactoringDescriptorProxy descriptor= input.getDescriptor();
-			if (descriptor != null)
-				return descriptor.getAdapter(ResourceMapping.class);
+			if (descriptor != null) {
+				return (T) descriptor.getAdapter(ResourceMapping.class);
+			}
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Class[] getAdapterList() {
+	@Override
+	public Class<?>[] getAdapterList() {
 		return new Class[] { ResourceMapping.class};
 	}
 }

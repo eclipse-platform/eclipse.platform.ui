@@ -22,40 +22,35 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 public class WorkingParticipant extends RenameParticipant {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected boolean initialize(Object element) {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return WorkingParticipant.class.getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKING_CREATE);
 
 		return  new NullChange() {
+			@Override
 			public Change perform(IProgressMonitor m1) throws CoreException {
 				ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKING_EXEC);
 				return new NullChange() {
+					@Override
 					public Change perform(IProgressMonitor m2) throws CoreException {
 						ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKING_EXEC_UNDO);
 						return new NullChange() {
+							@Override
 							public Change perform(IProgressMonitor m3) throws CoreException {
 								ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKING_EXEC);
 								return null;

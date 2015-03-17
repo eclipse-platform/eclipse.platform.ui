@@ -54,16 +54,12 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 		super(parent, configuration);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void createBottomButtonBar(final Composite parent) {
 		// No button bar
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl() {
 		super.createControl();
 		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
@@ -111,9 +107,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 		fDeleteButton.setLayoutData(data);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
 		if (fControlConfiguration.isCheckableViewer())
@@ -122,9 +116,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void createRightButtonBar(final Composite parent) {
 		Assert.isNotNull(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
@@ -142,16 +134,12 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 		createDeleteAllButton(composite);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void createSelectionLabel(final Composite parent) {
 		// No selection label
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected int getContainerColumns() {
 		return 2;
 	}
@@ -174,34 +162,26 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 		return fDeleteButton;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected int getDetailColumns() {
 		return 1;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void handleCheckStateChanged() {
 		super.handleCheckStateChanged();
 		if (fDeleteButton != null)
 			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void handleSelectionChanged(final IStructuredSelection selection) {
 		super.handleSelectionChanged(selection);
 		if (fDeleteButton != null)
 			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
 		if (fDeleteAllButton != null)

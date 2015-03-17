@@ -43,6 +43,7 @@ public abstract class RefactoringArguments {
 	 * @return a debug string
 	 * @since 3.2
 	 */
+	@Override
 	public String toString() {
 		return super.toString();
 	}

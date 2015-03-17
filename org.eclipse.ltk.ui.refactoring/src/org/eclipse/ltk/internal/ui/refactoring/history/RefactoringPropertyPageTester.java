@@ -54,14 +54,12 @@ public final class RefactoringPropertyPageTester extends PropertyTester {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean test(final Object receiver, final String property, final Object[] arguments, final Object expected) {
 		if (PROPERTY_NAME.equals(property)) {
 			if (receiver instanceof IAdaptable) {
 				final IAdaptable adaptable= (IAdaptable) receiver;
-				final IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+				final IResource resource= adaptable.getAdapter(IResource.class);
 				if (resource instanceof IProject) {
 					final IProject project= (IProject) resource;
 					final IFileStore store= getHistoryStore(project);

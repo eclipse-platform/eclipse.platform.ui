@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,6 +121,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	 *
 	 * @param group the text edit group to add
 	 */
+	@Override
 	public void addTextEditGroup(TextEditGroup group) {
 		addTextEditChangeGroup(new TextEditChangeGroup(this, group));
 	}
@@ -225,9 +226,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	 */
 	protected abstract Change createUndoChange(UndoEdit edit);
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 3); //$NON-NLS-1$
 		IDocument document= null;
@@ -317,16 +316,12 @@ public abstract class TextChange extends TextEditBasedChange {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getCurrentContent(IProgressMonitor pm) throws CoreException {
 		return getCurrentDocument(pm).get();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getCurrentContent(IRegion region, boolean expandRegionToFullLine, int surroundingLines, IProgressMonitor pm) throws CoreException {
 		Assert.isNotNull(region);
 		Assert.isTrue(surroundingLines >= 0);
@@ -378,13 +373,13 @@ public abstract class TextChange extends TextEditBasedChange {
 		Assert.isTrue(getKeepPreviewEdits() && fCopier != null && originals != null);
 		if (originals.length == 0)
 			return new TextEdit[0];
-		List result= new ArrayList(originals.length);
+		List<TextEdit> result= new ArrayList<>(originals.length);
 		for (int i= 0; i < originals.length; i++) {
 			TextEdit copy= fCopier.getCopy(originals[i]);
 			if (copy != null)
 				result.add(copy);
 		}
-		return (TextEdit[]) result.toArray(new TextEdit[result.size()]);
+		return result.toArray(new TextEdit[result.size()]);
 	}
 
 	/**
@@ -404,9 +399,7 @@ public abstract class TextChange extends TextEditBasedChange {
 		return result.document;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getPreviewContent(IProgressMonitor pm) throws CoreException {
 		return getPreviewDocument(pm).get();
 	}
@@ -493,6 +486,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	 *
 	 * @since 3.2
 	 */
+	@Override
 	public String getPreviewContent(TextEditBasedChangeGroup[] changeGroups, IRegion region, boolean expandRegionToFullLine, int surroundingLines, IProgressMonitor pm) throws CoreException {
 		IRegion currentRegion= getRegion(changeGroups);
 		Assert.isTrue(region.getOffset() <= currentRegion.getOffset() &&
@@ -543,7 +537,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, boolean preview) {
 		if (fEdit == null)
 			return new TextEditProcessor(document, new MultiTextEdit(0,0), flags);
-		List excludes= new ArrayList(0);
+		List<TextEdit> excludes= new ArrayList<>(0);
 		TextEditBasedChangeGroup[] groups= getChangeGroups();
 		for (int index= 0; index < groups.length; index++) {
 			TextEditBasedChangeGroup edit= groups[index];
@@ -559,14 +553,14 @@ public abstract class TextChange extends TextEditBasedChange {
 				flags= flags | TextEdit.UPDATE_REGIONS;
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, copiedEdit, flags);
 			result.setExcludes(mapEdits(
-				(TextEdit[])excludes.toArray(new TextEdit[excludes.size()]),
+				excludes.toArray(new TextEdit[excludes.size()]),
 				fCopier));
 			if (!keep)
 				fCopier= null;
 			return result;
 		} else {
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, fEdit, flags | TextEdit.UPDATE_REGIONS);
-			result.setExcludes((TextEdit[])excludes.toArray(new TextEdit[excludes.size()]));
+			result.setExcludes(excludes.toArray(new TextEdit[excludes.size()]));
 			return result;
 		}
 	}
@@ -574,7 +568,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, TextEditBasedChangeGroup[] changes) {
 		if (fEdit == null)
 			return new TextEditProcessor(document, new MultiTextEdit(0,0), flags);
-		List includes= new ArrayList(0);
+		List<TextEdit> includes= new ArrayList<>(0);
 		for (int c= 0; c < changes.length; c++) {
 			TextEditBasedChangeGroup change= changes[c];
 			Assert.isTrue(change.getTextEditChange() == this);
@@ -589,7 +583,7 @@ public abstract class TextChange extends TextEditBasedChange {
 			flags= flags | TextEdit.UPDATE_REGIONS;
 		LocalTextEditProcessor result= new LocalTextEditProcessor(document, copiedEdit, flags);
 		result.setIncludes(mapEdits(
-			(TextEdit[])includes.toArray(new TextEdit[includes.size()]),
+			includes.toArray(new TextEdit[includes.size()]),
 			fCopier));
 		if (!keep)
 			fCopier= null;
@@ -602,13 +596,13 @@ public abstract class TextChange extends TextEditBasedChange {
 				return null;
 			return fEdit.getRegion();
 		} else {
-			List edits= new ArrayList();
+			List<TextEdit> edits= new ArrayList<>();
 			for (int i= 0; i < changes.length; i++) {
 				edits.addAll(Arrays.asList(changes[i].getTextEditGroup().getTextEdits()));
 			}
 			if (edits.size() == 0)
 				return null;
-			return TextEdit.getCoverage((TextEdit[]) edits.toArray(new TextEdit[edits.size()]));
+			return TextEdit.getCoverage(edits.toArray(new TextEdit[edits.size()]));
 		}
 	}
 
@@ -618,7 +612,7 @@ public abstract class TextChange extends TextEditBasedChange {
 				return null;
 			return fCopier.getCopy(fEdit).getRegion();
 		} else {
-			List result= new ArrayList();
+			List<TextEdit> result= new ArrayList<>();
 			for (int c= 0; c < changes.length; c++) {
 				TextEdit[] edits= changes[c].getTextEditGroup().getTextEdits();
 				for (int e= 0; e < edits.length; e++) {
@@ -629,13 +623,11 @@ public abstract class TextChange extends TextEditBasedChange {
 			}
 			if (result.size() == 0)
 				return null;
-			return TextEdit.getCoverage((TextEdit[]) result.toArray(new TextEdit[result.size()]));
+			return TextEdit.getCoverage(result.toArray(new TextEdit[result.size()]));
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setKeepPreviewEdits(boolean keep) {
 		super.setKeepPreviewEdits(keep);
 

@@ -48,30 +48,22 @@ final class DefaultRefactoringDescriptorProxy extends RefactoringDescriptorProxy
 		fTimeStamp= stamp;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getDescription() {
 		return fDescription;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getProject() {
 		return fProject;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public long getTimeStamp() {
 		return fTimeStamp;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toString() {
 
 		final StringBuffer buffer= new StringBuffer(128);

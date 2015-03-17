@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eclipse.ltk.core.refactoring.tests.history;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -42,6 +40,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorProxyAdapter;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+
+import junit.framework.TestCase;
 
 public class RefactoringHistoryServiceTests extends TestCase {
 
@@ -80,9 +80,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 			fLastEvent= null;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void executionNotification(RefactoringExecutionEvent event) {
 			int previous= fLastEvent != null ? fLastEvent.getEventType() : -1;
 			switch (event.getEventType()) {
@@ -135,9 +133,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 			fLastEvent= null;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void historyNotification(RefactoringHistoryEvent event) {
 			fLastEvent= event;
 		}
@@ -172,7 +168,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
 			service.setOverrideTimeStamp((index + 1) * RefactoringHistoryServiceTests.STAMP_FACTOR);
-			MockRefactoring refactoring= new MockRefactoring(project, "A mock description number " + index, "A mock comment number " + index, Collections.EMPTY_MAP, flags);
+			MockRefactoring refactoring= new MockRefactoring(project, "A mock description number " + index, "A mock comment number " + index, Collections.<String, String> emptyMap(), flags);
 			RefactoringDescriptor descriptor= refactoring.createRefactoringDescriptor();
 			PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 			ResourcesPlugin.getWorkspace().run(operation, null);
@@ -189,9 +185,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		RefactoringHistoryService.setSharedRefactoringHistory(fProject.getProject(), shared, null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
@@ -224,9 +218,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 			executeRefactoring(null, index + TOTAL_PROJECT_NUMBER, RefactoringDescriptor.BREAKING_CHANGE);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		service.deleteRefactoringHistory(fProject.getProject(), null);
@@ -259,12 +251,12 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		RefactoringHistory workspaceHistory= service.getWorkspaceHistory(null);
 		RefactoringDescriptorProxy[] descriptors= workspaceHistory.getDescriptors();
-		Set set= new HashSet();
+		Set<RefactoringDescriptorProxy> set= new HashSet<>();
 		for (int index= 0; index < descriptors.length; index++) {
 			if (descriptors[index].getProject() == null)
 				set.add(descriptors[index]);
 		}
-		service.deleteRefactoringDescriptors((RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]), null);
+		service.deleteRefactoringDescriptors(set.toArray(new RefactoringDescriptorProxy[set.size()]), null);
 		workspaceHistory= service.getWorkspaceHistory(null);
 		RefactoringHistory projectHistory= service.getProjectHistory(project, null);
 		assertEquals("Refactoring history should be the same:", projectHistory, workspaceHistory);

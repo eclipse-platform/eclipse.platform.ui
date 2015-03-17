@@ -48,9 +48,7 @@ public class ExampleRefactoringAction extends Action implements IActionDelegate 
 
 	private IFile fFile;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		if (fFile != null) {
 			try {
@@ -66,9 +64,7 @@ public class ExampleRefactoringAction extends Action implements IActionDelegate 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fFile= null;
 		if (selection instanceof IStructuredSelection) {

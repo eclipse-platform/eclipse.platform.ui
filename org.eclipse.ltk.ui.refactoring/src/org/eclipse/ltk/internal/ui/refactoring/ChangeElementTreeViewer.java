@@ -29,13 +29,16 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import org.eclipse.ltk.core.refactoring.GroupCategory;
+
 class ChangeElementTreeViewer extends CheckboxTreeViewer {
 
 	private static class GroupCategoryFilter extends ViewerFilter {
-		private List fGroupCategories;
-		public void setGroupCategory(List groupCategories) {
+		private List<GroupCategory> fGroupCategories;
+		public void setGroupCategory(List<GroupCategory> groupCategories) {
 			fGroupCategories= groupCategories;
 		}
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fGroupCategories == null)
 				return true;
@@ -44,6 +47,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	}
 
 	private static class DerivedFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return ! ((PreviewNode) element).hasDerived();
 		}
@@ -53,12 +57,13 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 
 
 	// Workaround for http://bugs.eclipse.org/bugs/show_bug.cgi?id=9390
-	private List fDeferredTreeItemUpdates;
+	private List<Item> fDeferredTreeItemUpdates;
 
 	public ChangeElementTreeViewer(Composite parentComposite) {
 		super(parentComposite, SWT.NONE);
 		addFilter(new GroupCategoryFilter());
 		addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event){
 				PreviewNode element= (PreviewNode)event.getElement();
 				boolean checked= event.getChecked();
@@ -79,7 +84,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		});
 	}
 
-	public void setGroupCategory(List/*<GroupCategory>*/ groupCategories) {
+	public void setGroupCategory(List<GroupCategory> groupCategories) {
 		((GroupCategoryFilter)(getFilters()[0])).setGroupCategory(groupCategories);
 		refresh();
 	}
@@ -92,9 +97,10 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		try {
-			fDeferredTreeItemUpdates= new ArrayList();
+			fDeferredTreeItemUpdates= new ArrayList<>();
 			super.refresh();
 			processDeferredTreeItemUpdates();
 		} finally  {
@@ -102,6 +108,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		}
 	}
 
+	@Override
 	protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
 		PreviewNode next= getLeaf((PreviewNode)getInput(), true);
 		if (next != null) {
@@ -111,9 +118,10 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		super.handleInvalidSelection(invalidSelection, newSelection);
 	}
 
+	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		try {
-			fDeferredTreeItemUpdates= new ArrayList();
+			fDeferredTreeItemUpdates= new ArrayList<>();
 			super.inputChanged(input, oldInput);
 			processDeferredTreeItemUpdates();
 		} finally {
@@ -121,6 +129,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		}
 	}
 
+	@Override
 	protected void doUpdateItem(Item item, Object element) {
 		super.doUpdateItem(item, element);
 		if (fDeferredTreeItemUpdates == null) {
@@ -131,7 +140,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	}
 
 	private void processDeferredTreeItemUpdates() {
-		for (Iterator iter= fDeferredTreeItemUpdates.iterator(); iter.hasNext();) {
+		for (Iterator<Item> iter= fDeferredTreeItemUpdates.iterator(); iter.hasNext();) {
 			TreeItem item= (TreeItem)iter.next();
 			applyCheckedState(item, (PreviewNode)item.getData());
 		}

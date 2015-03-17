@@ -61,9 +61,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 		fDescriptor= descriptor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof AbstractRefactoringDescriptorResourceMapping) {
 			final AbstractRefactoringDescriptorResourceMapping mapping= (AbstractRefactoringDescriptorResourceMapping) object;
@@ -72,16 +70,12 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final Object getModelObject() {
 		return fDescriptor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final IProject[] getProjects() {
 		final String project= fDescriptor.getProject();
 		if (project != null && !"".equals(project)) //$NON-NLS-1$
@@ -109,9 +103,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
 		if (fResourceTraversals == null) {
 			fResourceTraversals= new ResourceTraversal[] {};
@@ -132,9 +124,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 		return traversals;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return fDescriptor.hashCode();
 	}

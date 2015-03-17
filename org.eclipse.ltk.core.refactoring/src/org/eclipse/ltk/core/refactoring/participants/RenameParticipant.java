@@ -27,9 +27,7 @@ public abstract class RenameParticipant extends RefactoringParticipant {
 
 	private RenameArguments fArguments;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (RenameArguments)arguments;
 	}

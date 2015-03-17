@@ -43,9 +43,7 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 		fKind= kind;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryDate) {
 			final RefactoringHistoryDate node= (RefactoringHistoryDate) object;
@@ -54,16 +52,12 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return fKind;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistoryNode getParent() {
 		return fParent;
 	}
@@ -77,9 +71,7 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 		return fStamp;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return (int) (super.hashCode() + 17 * getKind() + 31 * getTimeStamp());
 	}

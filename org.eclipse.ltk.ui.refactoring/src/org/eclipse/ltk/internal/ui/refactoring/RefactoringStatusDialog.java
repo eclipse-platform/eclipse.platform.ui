@@ -45,6 +45,7 @@ public class RefactoringStatusDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 * @since 3.4
 	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
@@ -58,20 +59,24 @@ public class RefactoringStatusDialog extends Dialog {
 		this(page.getStatus(), parent, parent.getText(), backButton);
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(fWindowTitle);
 	}
 	
+	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTSIZE;
 	}
 
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		return DialogSettings.getOrCreateSection(settings, "RefactoringStatusDialog"); //$NON-NLS-1$
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite) super.createDialogArea(parent);
 		GridData gd= (GridData) result.getLayoutData();
@@ -107,6 +112,7 @@ public class RefactoringStatusDialog extends Dialog {
 		return result;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.BACK_ID) {
 			setReturnCode(IDialogConstants.BACK_ID);
@@ -116,6 +122,7 @@ public class RefactoringStatusDialog extends Dialog {
 		}
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (!fStatus.hasFatalError()) {
 			if (fBackButton)

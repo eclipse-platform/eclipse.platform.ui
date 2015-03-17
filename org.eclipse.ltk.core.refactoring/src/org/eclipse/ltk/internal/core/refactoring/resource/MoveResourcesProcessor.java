@@ -111,18 +111,14 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		fUpdateReferences= updateReferences;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		result.merge(RefactoringStatus.create(Resources.checkInSync(fResourcesToMove)));
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -132,7 +128,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 			}
 			fMoveArguments= new MoveArguments(fDestination, isUpdateReferences());
 
-			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+			ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 
 			for (int i= 0; i < fResourcesToMove.length; i++) {
@@ -210,9 +206,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", fResourcesToMove.length); //$NON-NLS-1$
 		try {
@@ -231,30 +225,22 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getElements()
-	 */
+	@Override
 	public Object[] getElements() {
 		return fResourcesToMove;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getIdentifier()
-	 */
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.ltk.core.refactoring.moveResourcesProcessor"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getProcessorName()
-	 */
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.MoveResourceProcessor_processor_name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#isApplicable()
-	 */
+	@Override
 	public boolean isApplicable() {
 		for (int i= 0; i < fResourcesToMove.length; i++) {
 			if (!canMove(fResourcesToMove[i])) {
@@ -268,18 +254,16 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		return (res instanceof IFile || res instanceof IFolder) && res.exists() && !res.isPhantom();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#loadParticipants(org.eclipse.ltk.core.refactoring.RefactoringStatus, org.eclipse.ltk.core.refactoring.participants.SharableParticipants)
-	 */
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants shared) throws CoreException {
 		String[] affectedNatures= ResourceProcessors.computeAffectedNatures(fResourcesToMove);
 
-		List result= new ArrayList();
+		List<MoveParticipant> result= new ArrayList<>();
 		for (int i= 0; i < fResourcesToMove.length; i++) {
 			MoveParticipant[] participants= ParticipantManager.loadMoveParticipants(status, this, fResourcesToMove[i], fMoveArguments, null, affectedNatures, shared);
 			result.addAll(Arrays.asList(participants));
 		}
-		return (RefactoringParticipant[]) result.toArray(new RefactoringParticipant[result.size()]);
+		return result.toArray(new RefactoringParticipant[result.size()]);
 	}
 
 }

@@ -74,16 +74,12 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		setDescription(ScriptingMessages.ApplyRefactoringScriptWizard_description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return super.canFlipToNextPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(final Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
@@ -99,6 +95,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 
 		fLocationControl= new RefactoringScriptLocationControl(fWizard, group) {
 
+			@Override
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();
 				ApplyRefactoringScriptWizardPage.this.fWizard.setRefactoringHistory(null);
@@ -107,6 +104,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 				handleClipboardChanged();
 			}
 
+			@Override
 			protected final void handleExternalLocationChanged() {
 				super.handleExternalLocationChanged();
 				ApplyRefactoringScriptWizardPage.this.fWizard.setRefactoringHistory(null);
@@ -204,9 +202,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		fLocationControl.saveHistory();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setErrorMessage(final String message) {
 		if (!fFirstTime)
 			super.setErrorMessage(message);
@@ -214,9 +210,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			setMessage(message, NONE);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setVisible(final boolean visible) {
 		if (visible) {
 			final URI uri= fWizard.getRefactoringScript();

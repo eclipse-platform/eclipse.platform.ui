@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,24 +84,18 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 			fDelegateHandler= handler;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void dispose() {
 			fDelegateHandler.dispose();
 			super.dispose();
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public Object execute(final ExecutionEvent event) throws ExecutionException {
 			return fDelegateHandler.execute(event);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public boolean isEnabled() {
 			return !hasRefactorings(getSynchronizationContext(), getSynchronizePageConfiguration()) && fDelegateHandler.isEnabled();
 		}
@@ -117,8 +111,8 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 * @param set
 	 *            the set of refactoring descriptor proxies
 	 */
-	private static void getRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy, final Set set) {
-		final ResourceMapping mapping= (ResourceMapping) proxy.getAdapter(ResourceMapping.class);
+	private static void getRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy, final Set<RefactoringDescriptorProxy> set) {
+		final ResourceMapping mapping= proxy.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringDescriptorResourceMapping) {
 			final AbstractRefactoringDescriptorResourceMapping extended= (AbstractRefactoringDescriptorResourceMapping) mapping;
 			final IResource resource= extended.getResource();
@@ -139,7 +133,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	private static RefactoringDescriptorProxy[] getRefactorings(final ISynchronizationContext context, final ISynchronizePageConfiguration configuration) {
 		Assert.isNotNull(context);
 		Assert.isNotNull(configuration);
-		final Set set= new HashSet();
+		final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 		final ISelection selection= configuration.getSite().getSelectionProvider().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structured= (IStructuredSelection) selection;
@@ -157,7 +151,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 				}
 			}
 		}
-		return (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
+		return set.toArray(new RefactoringDescriptorProxy[set.size()]);
 	}
 
 	/**
@@ -170,8 +164,8 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 * @param set
 	 *            the set of refactoring descriptor proxies
 	 */
-	private static void getRefactorings(final ISynchronizationScope scope, final RefactoringHistory history, final Set set) {
-		final ResourceMapping mapping= (ResourceMapping) history.getAdapter(ResourceMapping.class);
+	private static void getRefactorings(final ISynchronizationScope scope, final RefactoringHistory history, final Set<RefactoringDescriptorProxy> set) {
+		final ResourceMapping mapping= history.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringHistoryResourceMapping) {
 			final AbstractRefactoringHistoryResourceMapping extended= (AbstractRefactoringHistoryResourceMapping) mapping;
 			final IResource resource= extended.getResource();
@@ -191,7 +185,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 *         <code>false</code> otherwise
 	 */
 	private static boolean hasRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy) {
-		final ResourceMapping mapping= (ResourceMapping) proxy.getAdapter(ResourceMapping.class);
+		final ResourceMapping mapping= proxy.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringDescriptorResourceMapping) {
 			final AbstractRefactoringDescriptorResourceMapping extended= (AbstractRefactoringDescriptorResourceMapping) mapping;
 			final IResource resource= extended.getResource();
@@ -247,7 +241,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 *         <code>false</code> otherwise
 	 */
 	private static boolean hasRefactorings(final ISynchronizationScope scope, final RefactoringHistory history) {
-		final ResourceMapping mapping= (ResourceMapping) history.getAdapter(ResourceMapping.class);
+		final ResourceMapping mapping= history.getAdapter(ResourceMapping.class);
 		if (mapping instanceof AbstractRefactoringHistoryResourceMapping) {
 			final AbstractRefactoringHistoryResourceMapping extended= (AbstractRefactoringHistoryResourceMapping) mapping;
 			final IResource resource= extended.getResource();
@@ -257,9 +251,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void fillContextMenu(final IMenuManager menu) {
 		super.fillContextMenu(menu);
 		if (isRefactoringElementSelected()) {
@@ -274,9 +266,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void initialize() {
 		super.initialize();
 		final ISynchronizePageConfiguration configuration= getSynchronizePageConfiguration();
@@ -285,9 +275,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		registerHandler(MARK_AS_MERGE_ACTION_ID, new RefactoringHandlerDelegate(MergeActionHandler.getDefaultHandler(MARK_AS_MERGE_ACTION_ID, configuration)));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void initializeOpenActions() {
 		if (!hasRefactorings(getSynchronizationContext(), getSynchronizePageConfiguration()))
 			super.initializeOpenActions();
@@ -297,7 +285,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		final ISelection selection= getContext().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection extended= (IStructuredSelection) selection;
-			for (final Iterator iterator= extended.iterator(); iterator.hasNext();) {
+			for (final Iterator<?> iterator= extended.iterator(); iterator.hasNext();) {
 				final Object element= iterator.next();
 				if (element instanceof RefactoringDescriptorProxy || element instanceof RefactoringDescriptor || element instanceof RefactoringHistory) {
 					return true;

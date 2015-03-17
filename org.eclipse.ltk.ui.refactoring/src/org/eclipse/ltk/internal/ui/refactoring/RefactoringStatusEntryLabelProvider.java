@@ -18,9 +18,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 import org.eclipse.ltk.internal.ui.refactoring.util.Strings;
 
 public class RefactoringStatusEntryLabelProvider extends LabelProvider{
+		@Override
 		public String getText(Object element){
 			return Strings.removeNewLine(((RefactoringStatusEntry)element).getMessage());
 		}
+		@Override
 		public Image getImage(Object element){
 			RefactoringStatusEntry entry= (RefactoringStatusEntry)element;
 			if (entry.isFatalError())

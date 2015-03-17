@@ -83,6 +83,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fCompareConfiguration.setRightEditable(false);
 			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
 			addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					if (fImage != null && !fImage.isDisposed())
 						fImage.dispose();
@@ -96,9 +97,11 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		public void setImageDescriptor(ImageDescriptor imageDescriptor) {
 			fDescriptor= imageDescriptor;
 		}
+		@Override
 		protected Viewer getViewer(Viewer oldViewer, Object input) {
 			return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
 		}
+		@Override
 		public void setText(String text) {
 			if (fLabel != null) {
 				super.setText(fLabel);
@@ -131,15 +134,19 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fType= type;
 			fResource= resource;
 		}
+		@Override
 		public String getName() {
 			return RefactoringUIMessages.ComparePreviewer_element_name;
 		}
+		@Override
 		public Image getImage() {
 			return null;
 		}
+		@Override
 		public String getType() {
 			return fType;
 		}
+		@Override
 		public InputStream getContents() throws CoreException {
 			try {
 				return new ByteArrayInputStream(fContent.getBytes(ENCODING));
@@ -147,9 +154,11 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 				return new ByteArrayInputStream(fContent.getBytes());
 			}
 		}
+		@Override
 		public String getCharset() {
 			return ENCODING;
 		}
+		@Override
 		public IResource getResource() {
 			return fResource;
 		}
@@ -173,14 +182,17 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		return input;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		fViewer= new ComparePreviewer(parent);
 	}
 
+	@Override
 	public Control getControl() {
 		return fViewer;
 	}
 
+	@Override
 	public void setInput(ChangePreviewViewerInput input) {
 		try {
 			Change change= input.getChange();
@@ -229,7 +241,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		IResource resource= null;
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable)element;
-			IWorkbenchAdapter workbenchAdapter= (IWorkbenchAdapter)adaptable.getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter workbenchAdapter= adaptable.getAdapter(IWorkbenchAdapter.class);
 			if (workbenchAdapter != null) {
 				fViewer.setLabel(workbenchAdapter.getLabel(element));
 				fViewer.setImageDescriptor(workbenchAdapter.getImageDescriptor(element));
@@ -237,7 +249,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 				fViewer.setLabel(null);
 				fViewer.setImageDescriptor(null);
 			}
-			resource= (IResource)adaptable.getAdapter(IResource.class);
+			resource= adaptable.getAdapter(IResource.class);
 		} else {
 			fViewer.setLabel(null);
 			fViewer.setImageDescriptor(null);

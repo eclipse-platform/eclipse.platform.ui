@@ -114,9 +114,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 		return fUndo;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		try {
 			if (monitor == null)

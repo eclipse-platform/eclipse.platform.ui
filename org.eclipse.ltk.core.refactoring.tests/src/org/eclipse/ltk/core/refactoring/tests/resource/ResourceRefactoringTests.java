@@ -57,10 +57,12 @@ public class ResourceRefactoringTests extends TestCase {
 
 	private SimpleTestProject fProject;
 
+	@Override
 	protected void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		fProject.delete();
 	}

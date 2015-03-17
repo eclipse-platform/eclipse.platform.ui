@@ -17,12 +17,15 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class RefactoringStatusContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public Object[] getElements(Object obj) {
 			return ((RefactoringStatus)obj).getEntries();
 		}

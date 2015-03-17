@@ -22,39 +22,34 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 public class WorkingParticipantPre extends RenameParticipant {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected boolean initialize(Object element) {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return WorkingParticipant.class.getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_CREATE);
 		return new NullChange() {
+			@Override
 			public Change perform(IProgressMonitor m1) throws CoreException {
 				ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_EXEC);
 				return new NullChange() {
+					@Override
 					public Change perform(IProgressMonitor m2) throws CoreException {
 						ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_EXEC_UNDO);
 						return new NullChange() {
+							@Override
 							public Change perform(IProgressMonitor m3) throws CoreException {
 								ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_EXEC);
 								return null;
@@ -66,18 +61,19 @@ public class WorkingParticipantPre extends RenameParticipant {
 		};
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_CREATEPRE);
 		return  new NullChange() {
+			@Override
 			public Change perform(IProgressMonitor m1) throws CoreException {
 				ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_EXECPRE);
 				return new NullChange() {
+					@Override
 					public Change perform(IProgressMonitor m2) throws CoreException {
 						ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_EXECPRE_UNDO);
 						return new NullChange() {
+							@Override
 							public Change perform(IProgressMonitor m3) throws CoreException {
 								ElementRenameProcessor.fHistory.add(ElementRenameProcessor.WORKINGPRE_EXECPRE);
 								return null;

@@ -44,13 +44,16 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 public class CancelingParticipantTests extends TestCase {
 
 	private class CancelingParticipant extends RenameParticipant {
+		@Override
 		protected boolean initialize(Object element) {
 			return true;
 		}
+		@Override
 		public String getName() {
 			return "canceling participant";
 		}
 		
+		@Override
 		public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 			if (fCancelStep == 0) {
 				pm.setCanceled(true);
@@ -59,6 +62,7 @@ public class CancelingParticipantTests extends TestCase {
 			return new RefactoringStatus();
 		}
 		
+		@Override
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			if (fCancelStep == 1) {
 				pm.setCanceled(true);
@@ -67,6 +71,7 @@ public class CancelingParticipantTests extends TestCase {
 			return new NullChange("1");
 		}
 		
+		@Override
 		public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			if (fCancelStep == 2) {
 				pm.setCanceled(true);
@@ -79,27 +84,35 @@ public class CancelingParticipantTests extends TestCase {
 	private class TestProcessor extends RenameProcessor {
 		private Object fElement= Boolean.TRUE;
 		
+		@Override
 		public Object[] getElements() {
 			return new Object[] { fElement };
 		}
+		@Override
 		public String getIdentifier() {
 			return "org.eclipse.ltk.core.refactoring.tests.TestProcessor";
 		}
+		@Override
 		public String getProcessorName() {
 			return "processor";
 		}
+		@Override
 		public boolean isApplicable() throws CoreException {
 			return true;
 		}
+		@Override
 		public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return new RefactoringStatus();
 		}
+		@Override
 		public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 			return new RefactoringStatus();
 		}
+		@Override
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return new NullChange("test change");
 		}
+		@Override
 		public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 			CancelingParticipant participant= new CancelingParticipant();
 			participant.initialize(this, fElement, new RenameArguments("", false));
@@ -110,18 +123,21 @@ public class CancelingParticipantTests extends TestCase {
 	private int fCancelStep;
 	
 	private ILogListener fLogListener;
-	private List fLogEntries;
+	private List<IStatus> fLogEntries;
 
+	@Override
 	protected void setUp() {
 		fLogListener= new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				fLogEntries.add(status);
 			}
 		};
 		Platform.addLogListener(fLogListener);
-		fLogEntries= new ArrayList();
+		fLogEntries= new ArrayList<>();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}

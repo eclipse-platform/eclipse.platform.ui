@@ -34,7 +34,8 @@ public class CreateArguments extends RefactoringArguments {
 	 *
 	 * @since 3.2
 	 */
-    public String toString() {
+    @Override
+	public String toString() {
     	return "create"; //$NON-NLS-1$
     }
 }

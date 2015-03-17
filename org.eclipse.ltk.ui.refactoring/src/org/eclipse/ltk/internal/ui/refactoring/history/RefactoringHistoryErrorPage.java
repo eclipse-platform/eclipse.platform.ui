@@ -52,31 +52,23 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_description, new String[] { getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL) }));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return !fNextPageDisabled;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(final Composite parent) {
 		super.createControl(parent);
 		fViewer.setFilter(fFilter);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getNextPage() {
 		return getWizard().getNextPage(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getPreviousPage() {
 		return getWizard().getPreviousPage(this);
 	}
@@ -86,6 +78,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 *
 	 * @return the current refactoring
 	 */
+	@Override
 	public Refactoring getRefactoring() {
 		return fRefactoring;
 	}
@@ -111,9 +104,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		return fNextPageDisabled;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected boolean performFinish() {
 		return true;
 	}
@@ -139,9 +130,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		fNextPageDisabled= disable;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setPageComplete(final boolean complete) {
 		super.setPageComplete(true);
 	}
@@ -156,9 +145,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		fRefactoring= refactoring;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setStatus(final RefactoringStatus status) {
 		super.setStatus(status);
 		if (status != null) {
@@ -194,9 +181,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 			setTitle(message);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setVisible(final boolean visible) {
 		if (visible) {
 			if (fViewer != null && fViewer.getStatus() != fStatus)
@@ -206,9 +191,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		getControl().setVisible(visible);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setWizard(final IWizard newWizard) {
 		Assert.isTrue(newWizard instanceof RefactoringHistoryWizard);
 		super.setWizard(newWizard);

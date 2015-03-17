@@ -74,10 +74,12 @@ public class ProjectUndoState extends ContainerUndoState {
 		this.projectDescription = projectDescription;
 	}
 
+	@Override
 	public IResource createResourceHandle() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(getName());
 	}
 
+	@Override
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(resource instanceof IProject);
@@ -105,6 +107,7 @@ public class ProjectUndoState extends ContainerUndoState {
 	
 	
 
+	@Override
 	public String getName() {
 		if (projectDescription != null) {
 			return projectDescription.getName();
@@ -112,6 +115,7 @@ public class ProjectUndoState extends ContainerUndoState {
 		return super.getName();
 	}
 
+	@Override
 	public boolean verifyExistence(boolean checkMembers) {
 		// We can only check members if the project is open.
 		IProject projectHandle = (IProject) createResourceHandle();

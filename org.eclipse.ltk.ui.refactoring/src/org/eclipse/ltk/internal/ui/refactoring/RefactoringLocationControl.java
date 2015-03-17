@@ -123,7 +123,7 @@ public class RefactoringLocationControl extends Composite {
 	public void saveHistory() {
 		final IDialogSettings settings= fWizard.getDialogSettings();
 		if (settings != null) {
-			final LinkedList locations= new LinkedList();
+			final LinkedList<String> locations= new LinkedList<>();
 			final String[] items= fCombo.getItems();
 			for (int index= 0; index < items.length; index++)
 				locations.add(items[index]);
@@ -135,13 +135,11 @@ public class RefactoringLocationControl extends Composite {
 			final int size= locations.size();
 			for (int index= 0; index < size - MAX_HISTORY_SIZE; index++)
 				locations.removeLast();
-			settings.put(fKey, (String[]) locations.toArray(new String[locations.size()]));
+			settings.put(fKey, locations.toArray(new String[locations.size()]));
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setEnabled(final boolean enabled) {
 		super.setEnabled(enabled);
 		fCombo.setEnabled(enabled);

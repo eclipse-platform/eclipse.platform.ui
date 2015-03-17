@@ -40,9 +40,7 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchr
  */
 public abstract class AbstractSynchronizationCompareAdapter extends SynchronizationCompareAdapter {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ICompareInput asCompareInput(final ISynchronizationContext context, final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
 			return new RefactoringDescriptorCompareInput((RefactoringDescriptorProxy) element, getKind(context, (RefactoringDescriptorProxy) element));

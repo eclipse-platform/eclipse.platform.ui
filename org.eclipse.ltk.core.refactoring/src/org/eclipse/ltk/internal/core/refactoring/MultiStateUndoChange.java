@@ -120,18 +120,14 @@ public class MultiStateUndoChange extends Change {
 		return new MultiStateUndoChange(getName(), fFile, edits, stampToRestore, fSaveMode);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		if (fValidationState != null) {
 			fValidationState.dispose();
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final Object[] getAffectedObjects() {
 		Object modifiedElement= getModifiedElement();
 		if (modifiedElement == null)
@@ -139,16 +135,12 @@ public class MultiStateUndoChange extends Change {
 		return new Object[] { modifiedElement};
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final Object getModifiedElement() {
 		return fFile;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final String getName() {
 		return fName;
 	}
@@ -166,9 +158,7 @@ public class MultiStateUndoChange extends Change {
 		return fSaveMode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		if (pm == null)
 			pm= new NullProgressMonitor();
@@ -180,9 +170,7 @@ public class MultiStateUndoChange extends Change {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
@@ -203,9 +191,7 @@ public class MultiStateUndoChange extends Change {
 		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || !fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if (fValidationState == null || fValidationState.isValid(needsSaving(), false).hasFatalError())
 			return new NullChange();
@@ -220,7 +206,7 @@ public class MultiStateUndoChange extends Change {
 			IDocument document= buffer.getDocument();
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
 			// perform the changes
-			LinkedList list= new LinkedList();
+			LinkedList<UndoEdit> list= new LinkedList<>();
 			for (int index= 0; index < fUndos.length; index++) {
 				UndoEdit edit= fUndos[index];
 				UndoEdit redo= edit.apply(document, TextEdit.CREATE_UNDO);
@@ -238,7 +224,7 @@ public class MultiStateUndoChange extends Change {
 					ContentStamps.set(fFile, fContentStampToRestore);
 				}
 			}
-			return createUndoChange((UndoEdit[]) list.toArray(new UndoEdit[list.size()]), currentStamp);
+			return createUndoChange(list.toArray(new UndoEdit[list.size()]), currentStamp);
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
 		} finally {

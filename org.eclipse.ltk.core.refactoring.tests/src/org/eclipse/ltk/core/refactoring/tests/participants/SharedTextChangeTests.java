@@ -44,16 +44,20 @@ public class SharedTextChangeTests extends TestCase {
 
 	private static class Participant extends RenameParticipant {
 		private IFile fFile;
+		@Override
 		protected boolean initialize(Object element) {
 			fFile= (IFile)element;
 			return true;
 		}
+		@Override
 		public String getName() {
 			return "participant";
 		}
+		@Override
 		public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 			return new RefactoringStatus();
 		}
+		@Override
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			TextChange change= getTextChange(fFile);
 			change.addEdit(new ReplaceEdit(20, 3, "four"));
@@ -68,24 +72,31 @@ public class SharedTextChangeTests extends TestCase {
 		public Processor(IFile file) {
 			fFile= file;
 		}
+		@Override
 		public Object[] getElements() {
 			return new Object[] { fFile };
 		}
+		@Override
 		public String getIdentifier() {
 			return "org.eclipse.ltk.core.refactoring.tests.Processor";
 		}
+		@Override
 		public String getProcessorName() {
 			return "processor";
 		}
+		@Override
 		public boolean isApplicable() throws CoreException {
 			return true;
 		}
+		@Override
 		public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return new RefactoringStatus();
 		}
+		@Override
 		public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 			return new RefactoringStatus();
 		}
+		@Override
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			TextFileChange result= new TextFileChange("", fFile);
 			MultiTextEdit root= new MultiTextEdit();
@@ -93,6 +104,7 @@ public class SharedTextChangeTests extends TestCase {
 			result.setEdit(root);
 			return result;
 		}
+		@Override
 		public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 			Participant participant= new Participant();
 			participant.initialize(this, fFile, new RenameArguments("", false));
@@ -104,17 +116,13 @@ public class SharedTextChangeTests extends TestCase {
 	    super("Shared TextChange Tests");
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fProject= new SimpleTestProject();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fProject.delete();
 		super.tearDown();

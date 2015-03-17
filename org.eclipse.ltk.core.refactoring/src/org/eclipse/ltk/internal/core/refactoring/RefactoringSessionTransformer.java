@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,15 +44,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 public final class RefactoringSessionTransformer {
 
 	/** Comparator for attributes */
-	private static final class AttributeComparator implements Comparator {
+	private static final class AttributeComparator implements Comparator<Attr> {
 
-		/**
-		 * {@inheritDoc}
-		 */
-		public int compare(final Object first, final Object second) {
-			final Attr predecessor= (Attr) first;
-			final Attr successor= (Attr) second;
-			return Collator.getInstance().compare(predecessor.getName(), successor.getName());
+		@Override
+		public int compare(final Attr o1, final Attr o2) {
+			return Collator.getInstance().compare(o1.getName(), o2.getName());
 		}
 	}
 
@@ -66,13 +62,13 @@ public final class RefactoringSessionTransformer {
 	private Node fRefactoring= null;
 
 	/** The current refactoring arguments, or <code>null</code> */
-	private List fRefactoringArguments= null;
+	private List<Attr> fRefactoringArguments= null;
 
 	/** The current session node, or <code>null</code> */
 	private Node fSession= null;
 
 	/** The current session arguments, or <code>null</code> */
-	private List fSessionArguments= null;
+	private List<Attr> fSessionArguments= null;
 
 	/**
 	 * Creates a new refactoring session transformer.
@@ -94,12 +90,12 @@ public final class RefactoringSessionTransformer {
 	 * @param list
 	 *            the list of attributes
 	 */
-	private void addArguments(final Node node, final List list) {
+	private void addArguments(final Node node, final List<Attr> list) {
 		final NamedNodeMap map= node.getAttributes();
 		if (map != null) {
 			Collections.sort(list, new AttributeComparator());
-			for (final Iterator iterator= list.iterator(); iterator.hasNext();) {
-				final Attr attribute= (Attr) iterator.next();
+			for (final Iterator<Attr> iterator= list.iterator(); iterator.hasNext();) {
+				final Attr attribute= iterator.next();
 				map.setNamedItem(attribute);
 			}
 		}
@@ -147,7 +143,7 @@ public final class RefactoringSessionTransformer {
 		}
 		if (fRefactoring == null) {
 			try {
-				fRefactoringArguments= new ArrayList(16);
+				fRefactoringArguments= new ArrayList<>(16);
 				fRefactoring= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_ID);
 				attribute.setValue(id);
@@ -208,7 +204,7 @@ public final class RefactoringSessionTransformer {
 			try {
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 				fSession= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_SESSION);
-				fSessionArguments= new ArrayList(2);
+				fSessionArguments= new ArrayList<>(2);
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 				attribute.setValue(version);
 				fSessionArguments.add(attribute);
@@ -244,7 +240,7 @@ public final class RefactoringSessionTransformer {
 		Assert.isNotNull(name);
 		Assert.isTrue(!"".equals(name)); //$NON-NLS-1$
 		Assert.isNotNull(value);
-		if (fDocument != null && fRefactoringArguments != null && value != null) {
+		if (fDocument != null && fRefactoringArguments != null) {
 			try {
 				final Attr attribute= fDocument.createAttribute(name);
 				attribute.setValue(value);

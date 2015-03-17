@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public abstract class TextEditBasedChange extends Change {
 			Assert.isTrue(fIncludes == null);
 			fExcludes= flatten(excludes);
 		}
+		@Override
 		protected boolean considerEdit(TextEdit edit) {
 			if (fExcludes != null) {
 				for (int i= 0; i < fExcludes.length; i++) {
@@ -79,13 +80,13 @@ public abstract class TextEditBasedChange extends Change {
 			return true;
 		}
 		private TextEdit[] flatten(TextEdit[] edits) {
-			List result= new ArrayList(5);
+			List<TextEdit> result= new ArrayList<>(5);
 			for (int i= 0; i < edits.length; i++) {
 				flatten(result, edits[i]);
 			}
-			return (TextEdit[])result.toArray(new TextEdit[result.size()]);
+			return result.toArray(new TextEdit[result.size()]);
 		}
-		private void flatten(List result, TextEdit edit) {
+		private void flatten(List<TextEdit> result, TextEdit edit) {
 			result.add(edit);
 			TextEdit[] children= edit.getChildren();
 			for (int i= 0; i < children.length; i++) {
@@ -113,7 +114,7 @@ public abstract class TextEditBasedChange extends Change {
 	static final TextEditBasedChangeGroup[] ALL_EDITS= new TextEditBasedChangeGroup[0];
 
 	/** The list of change groups */
-	private List fChangeGroups;
+	private List<TextEditBasedChangeGroup> fChangeGroups;
 	private GroupCategorySet fCombiedGroupCategories;
 
 	/** The name of the change */
@@ -139,7 +140,7 @@ public abstract class TextEditBasedChange extends Change {
 	 */
 	protected TextEditBasedChange(String name) {
 		Assert.isNotNull(name, "Name must not be null"); //$NON-NLS-1$
-		fChangeGroups= new ArrayList(5);
+		fChangeGroups= new ArrayList<>(5);
 		fName= name;
 		fTextType= "txt"; //$NON-NLS-1$
 	}
@@ -181,11 +182,11 @@ public abstract class TextEditBasedChange extends Change {
 	 *
 	 * @since 3.2
 	 */
-	public boolean hasOneGroupCategory(List groupCategories) {
+	public boolean hasOneGroupCategory(List<GroupCategory> groupCategories) {
 		if (fCombiedGroupCategories == null) {
 			fCombiedGroupCategories= GroupCategorySet.NONE;
-			for (Iterator iter= fChangeGroups.iterator(); iter.hasNext();) {
-				TextEditBasedChangeGroup group= (TextEditBasedChangeGroup)iter.next();
+			for (Iterator<TextEditBasedChangeGroup> iter= fChangeGroups.iterator(); iter.hasNext();) {
+				TextEditBasedChangeGroup group= iter.next();
 				fCombiedGroupCategories= GroupCategorySet.union(fCombiedGroupCategories, group.getGroupCategorySet());
 			}
 		}
@@ -199,7 +200,7 @@ public abstract class TextEditBasedChange extends Change {
 	 * @return the text edit change groups
 	 */
 	public final TextEditBasedChangeGroup[] getChangeGroups() {
-		return (TextEditBasedChangeGroup[])fChangeGroups.toArray(new TextEditBasedChangeGroup[fChangeGroups.size()]);
+		return fChangeGroups.toArray(new TextEditBasedChangeGroup[fChangeGroups.size()]);
 	}
 
 	String getContent(IDocument document, IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
@@ -294,9 +295,7 @@ public abstract class TextEditBasedChange extends Change {
 		return fTrackEdits;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -364,22 +363,20 @@ public abstract class TextEditBasedChange extends Change {
 	TextEdit[] mapEdits(TextEdit[] edits, TextEditCopier copier) {
 		if (edits == null)
 			return null;
-		final List result= new ArrayList(edits.length);
+		final List<TextEdit> result= new ArrayList<>(edits.length);
 		for (int i= 0; i < edits.length; i++) {
 			TextEdit edit= copier.getCopy(edits[i]);
 			if (edit != null)
 				result.add(edit);
 		}
-		return (TextEdit[]) result.toArray(new TextEdit[result.size()]);
+		return result.toArray(new TextEdit[result.size()]);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		for (Iterator iter= fChangeGroups.iterator(); iter.hasNext();) {
-			TextEditBasedChangeGroup element= (TextEditBasedChangeGroup) iter.next();
+		for (Iterator<TextEditBasedChangeGroup> iter= fChangeGroups.iterator(); iter.hasNext();) {
+			TextEditBasedChangeGroup element= iter.next();
 			element.setEnabled(enabled);
 		}
 	}

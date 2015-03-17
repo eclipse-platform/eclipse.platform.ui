@@ -48,9 +48,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 		fDelegateLabelProvider= configuration.getLabelProvider();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Image getImage(final Object element) {
 		if (element instanceof RefactoringHistoryProject) {
 			final RefactoringHistoryProject project= (RefactoringHistoryProject) element;
@@ -59,9 +57,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 		return fDelegateLabelProvider.getImage(element);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getText(final Object element) {
 		if (element instanceof RefactoringHistoryProject) {
 			final RefactoringHistoryProject project= (RefactoringHistoryProject) element;
@@ -70,9 +66,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 		return fDelegateLabelProvider.getText(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fDelegateLabelProvider != null) {
 			fDelegateLabelProvider.dispose();

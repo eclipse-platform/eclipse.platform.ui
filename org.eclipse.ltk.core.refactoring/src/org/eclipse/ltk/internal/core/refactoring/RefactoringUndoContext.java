@@ -16,14 +16,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 public class RefactoringUndoContext implements IUndoContext {
 
+	@Override
 	public String getLabel() {
 		return RefactoringCoreMessages.RefactoringUndoContext_label;
 	}
 
+	@Override
 	public boolean matches(IUndoContext context) {
 		if (this == context)
 			return true;
-		IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		if (workspaceContext == null)
 			return false;
 		return workspaceContext.matches(context);

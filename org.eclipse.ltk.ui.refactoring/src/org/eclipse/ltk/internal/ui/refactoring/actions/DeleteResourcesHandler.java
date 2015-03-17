@@ -28,6 +28,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ltk.ui.refactoring.resource.DeleteResourcesWizard;
 
 public class DeleteResourcesHandler extends AbstractResourcesHandler {
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell activeShell= HandlerUtil.getActiveShell(event);
 		ISelection sel= HandlerUtil.getCurrentSelection(event);

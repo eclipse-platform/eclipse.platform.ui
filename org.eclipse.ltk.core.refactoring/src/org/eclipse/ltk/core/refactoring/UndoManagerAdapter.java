@@ -20,27 +20,19 @@ package org.eclipse.ltk.core.refactoring;
  */
 public class UndoManagerAdapter implements IUndoManagerListener {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void undoStackChanged(IUndoManager manager) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void redoStackChanged(IUndoManager manager) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void aboutToPerformChange(IUndoManager manager, Change change) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void changePerformed(IUndoManager manager, Change change) {
 	}
 }

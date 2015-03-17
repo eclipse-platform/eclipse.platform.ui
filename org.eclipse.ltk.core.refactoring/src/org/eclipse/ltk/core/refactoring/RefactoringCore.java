@@ -40,15 +40,18 @@ public class RefactoringCore {
 	private static IValidationCheckResultQueryFactory fQueryFactory= new DefaultQueryFactory();
 
 	private static class NullQuery implements IValidationCheckResultQuery {
+		@Override
 		public boolean proceed(RefactoringStatus status) {
 			return true;
 		}
+		@Override
 		public void stopped(RefactoringStatus status) {
 			// do nothing
 		}
 	}
 
 	private static class DefaultQueryFactory implements IValidationCheckResultQueryFactory {
+		@Override
 		public IValidationCheckResultQuery create(IAdaptable context) {
 			return new NullQuery();
 		}

@@ -101,17 +101,13 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		fWizardPage= new CreateRefactoringScriptWizardPage(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		addPage(fWizardPage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFinish() {
 		return (fUseClipboard || fScriptLocation != null) && fRefactoringDescriptors.length > 0;
 	}
@@ -143,7 +139,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					try {
 						stream= new BufferedInputStream(new FileInputStream(file));
 						final RefactoringDescriptorProxy[] existing= RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
-						final Set set= new HashSet();
+						final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 						for (int index= 0; index < existing.length; index++)
 							set.add(existing[index]);
 						for (int index= 0; index < fRefactoringDescriptors.length; index++)
@@ -234,9 +230,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performFinish() {
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
@@ -316,6 +310,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 
+				@Override
 				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, monitor);

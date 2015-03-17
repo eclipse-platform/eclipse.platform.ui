@@ -50,16 +50,12 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return !fNextPageDisabled;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if (fChange != null && fRefactoring != null && !fStatus.hasFatalError()) {
 			final RefactoringHistoryWizard result= getRefactoringHistoryWizard();
@@ -86,9 +82,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		return getWizard().getNextPage(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getPreviousPage() {
 		return getWizard().getPreviousPage(this);
 	}
@@ -98,6 +92,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 *
 	 * @return the current refactoring
 	 */
+	@Override
 	public Refactoring getRefactoring() {
 		return fRefactoring;
 	}
@@ -123,9 +118,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		return fNextPageDisabled;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected boolean performFinish() {
 		return true;
 	}
@@ -151,9 +144,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		fNextPageDisabled= disable;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setPageComplete(final boolean complete) {
 		super.setPageComplete(!fNextPageDisabled);
 	}
@@ -201,9 +192,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 			setTitle(message);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setTreeViewerInput() {
 		if (fTreeViewer == null)
 			return;
@@ -230,18 +219,14 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		fTreeViewer.setInput(input);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setVisible(final boolean visible) {
 		super.setVisible(visible);
 		if (fTreeViewer.getInput() == null)
 			fFilterDropDownAction.setEnabled(false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setWizard(final IWizard newWizard) {
 		Assert.isTrue(newWizard instanceof RefactoringHistoryWizard);
 		super.setWizard(newWizard);

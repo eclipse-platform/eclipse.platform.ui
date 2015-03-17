@@ -45,6 +45,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 		fWizardContainer= container;
 	}
 
+	@Override
 	protected void executeChange(final IProgressMonitor pm) throws CoreException {
 		if (fDisplay != null && !fDisplay.isDisposed()) {
 			final Throwable[] exception= new Throwable[1];
@@ -52,6 +53,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			final Button[] cancelToEnable= new Button[1];
 			
 			final ISafeRunnable safeRunnable= new ISafeRunnable() {
+				@Override
 				public void run() {
 					Button cancel= getCancelButton();
 					if (cancel != null && !cancel.isDisposed() && cancel.isEnabled()) {
@@ -59,11 +61,13 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 						cancel.setEnabled(false);
 					}
 				}
+				@Override
 				public void handleException(Throwable e) {
 					exception[0]= e;
 				}
 			};
 			Runnable r= new Runnable() {
+				@Override
 				public void run() {
 					SafeRunner.run(safeRunnable);
 				}
@@ -93,6 +97,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			} finally {
 				if (cancelToEnable[0] != null) {
 					fDisplay.syncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!cancelToEnable[0].isDisposed()) {
 								cancelToEnable[0].setEnabled(true);

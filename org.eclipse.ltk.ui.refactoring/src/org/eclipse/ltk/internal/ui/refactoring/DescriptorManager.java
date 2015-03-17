@@ -37,7 +37,7 @@ public abstract class DescriptorManager {
 		if (fExtensions == null)
 			init();
 
-		List candidates= new ArrayList(1);
+		List<AbstractDescriptor> candidates= new ArrayList<>(1);
 		for (int i= 0; i < fExtensions.length; i++) {
 			AbstractDescriptor descriptor= fExtensions[i];
 			if (descriptor.matches(element, fVariableName)) {
@@ -48,7 +48,7 @@ public abstract class DescriptorManager {
 		if (candidates.size() == 0)
 			return null;
 		// No support for conflicts yet.
-		return (AbstractDescriptor)candidates.get(0);
+		return candidates.get(0);
 	}
 
 	protected abstract AbstractDescriptor createDescriptor(IConfigurationElement element);

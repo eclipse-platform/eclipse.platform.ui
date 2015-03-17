@@ -41,30 +41,22 @@ public class UndoDocumentChange extends Change {
 		fDocument= document;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getModifiedElement() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		fLength= fDocument.getLength();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
@@ -74,9 +66,7 @@ public class UndoDocumentChange extends Change {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		try {
 			UndoEdit redo= performEdits();
@@ -102,6 +92,7 @@ public class UndoDocumentChange extends Change {
 		final UndoEdit[] result= new UndoEdit[1];
 		final BadLocationException[] exception= new BadLocationException[1];
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				synchronized (completionLock) {
 					try {

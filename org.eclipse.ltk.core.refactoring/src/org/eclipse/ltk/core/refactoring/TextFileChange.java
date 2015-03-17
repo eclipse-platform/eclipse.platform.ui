@@ -146,13 +146,12 @@ public class TextFileChange extends TextChange {
 		return new UndoTextFileChange(getName(), fFile, edit, stampToRestore, fSaveMode);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getModifiedElement(){
 		return fFile;
 	}
 
+	@Override
 	public Object[] getAffectedObjects() {
 		Object modifiedElement= getModifiedElement();
 		if (modifiedElement == null)
@@ -160,9 +159,7 @@ public class TextFileChange extends TextChange {
 		return new Object[] { modifiedElement };
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -174,9 +171,7 @@ public class TextFileChange extends TextChange {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -199,18 +194,14 @@ public class TextFileChange extends TextChange {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		if (fValidationState != null) {
 			fValidationState.dispose();
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
 		fAcquireCount++;
 		if (fAcquireCount > 1)
@@ -232,15 +223,14 @@ public class TextFileChange extends TextChange {
 	 * {@link #needsSaving()} and {@link #isDocumentModified()} returns <code>true</code>.
 	 * </p>
 	 */
+	@Override
 	protected void commit(IDocument document, IProgressMonitor pm) throws CoreException {
 		if (needsSaving()) {
 			fBuffer.commit(pm, false);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
 		Assert.isTrue(fAcquireCount > 0);
 		if (fAcquireCount == 1) {
@@ -250,9 +240,7 @@ public class TextFileChange extends TextChange {
 		fAcquireCount--;
  	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected final Change createUndoChange(UndoEdit edit) {
 		return createUndoChange(edit, fContentStamp);
 	}
@@ -261,6 +249,7 @@ public class TextFileChange extends TextChange {
 	 * @see org.eclipse.ltk.core.refactoring.TextChange#performEdits(org.eclipse.jface.text.IDocument)
 	 * @since 3.5
 	 */
+	@Override
 	protected UndoEdit performEdits(final IDocument document) throws BadLocationException, MalformedTreeException {
 		if (! fBuffer.isSynchronizationContextRequested()) {
 			return super.performEdits(document);
@@ -273,6 +262,7 @@ public class TextFileChange extends TextChange {
 		final UndoEdit[] result= new UndoEdit[1];
 		final BadLocationException[] exception= new BadLocationException[1];
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				synchronized (completionLock) {
 					try {

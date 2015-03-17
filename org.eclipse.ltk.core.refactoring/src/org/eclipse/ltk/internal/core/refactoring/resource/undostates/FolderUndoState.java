@@ -66,12 +66,14 @@ public class FolderUndoState extends ContainerUndoState {
 		this.location = linkLocation;
 	}
 
+	@Override
 	public IResource createResourceHandle() {
 		IWorkspaceRoot workspaceRoot = getWorkspace().getRoot();
 		IPath folderPath = parent.getFullPath().append(name);
 		return workspaceRoot.getFolder(folderPath);
 	}
 
+	@Override
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
 

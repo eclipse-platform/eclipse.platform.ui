@@ -91,6 +91,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		fFromClipboardButton.setSelection(clipboard);
 		fFromClipboardButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				final boolean selection= fFromClipboardButton.getSelection();
 				fExternalLocationControl.setEnabled(!selection);
@@ -104,6 +105,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		fFromExternalLocationButton.setSelection(!clipboard);
 		fFromExternalLocationButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				handleExternalLocationChanged();
 			}
@@ -113,12 +115,14 @@ public class RefactoringScriptLocationControl extends Composite {
 		fExternalLocationControl.setEnabled(!clipboard);
 		fExternalLocationControl.getControl().addModifyListener(new ModifyListener() {
 
+			@Override
 			public final void modifyText(final ModifyEvent event) {
 				handleExternalLocationChanged();
 			}
 		});
 		fExternalLocationControl.getControl().addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(final SelectionEvent event) {
 				handleExternalLocationChanged();
 			}
@@ -132,12 +136,14 @@ public class RefactoringScriptLocationControl extends Composite {
 		SWTUtil.setButtonDimensionHint(fExternalBrowseButton);
 		fExternalBrowseButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				handleBrowseExternalLocation();
 			}
 		});
 		addDisposeListener(new DisposeListener() {
 
+			@Override
 			public final void widgetDisposed(final DisposeEvent event) {
 				if (settings != null)
 					settings.put(SETTING_CLIPBOARD, fFromClipboardButton.getSelection());

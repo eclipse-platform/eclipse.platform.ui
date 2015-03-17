@@ -46,9 +46,7 @@ public class ExampleRefactoring extends Refactoring {
 		fNewText= null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#getName()
-	 */
+	@Override
 	public String getName() {
 		return "Make replaces";
 	}
@@ -61,9 +59,7 @@ public class ExampleRefactoring extends Refactoring {
 		fOldText= text;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fFile == null || !fFile.exists()) {
 			return RefactoringStatus.createFatalErrorStatus("File does not exist");
@@ -71,9 +67,7 @@ public class ExampleRefactoring extends Refactoring {
 		return new RefactoringStatus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fOldText == null || fOldText.length() == 0) {
 			return RefactoringStatus.createFatalErrorStatus("Old text must be set and not empty");
@@ -116,9 +110,7 @@ public class ExampleRefactoring extends Refactoring {
 		return new RefactoringStatus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return fChange;
 	}

@@ -118,6 +118,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 	 *
 	 * @see #getProject()
 	 */
+	@Override
 	public void setProject(final String project) {
 		super.setProject(project);
 	}
@@ -165,9 +166,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		return fUpdateReferences;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringDescriptor#createRefactoring(org.eclipse.ltk.core.refactoring.RefactoringStatus)
-	 */
+	@Override
 	public Refactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		IPath resourcePath= getResourcePath();
 		if (resourcePath == null) {

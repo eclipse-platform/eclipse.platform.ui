@@ -24,22 +24,22 @@ public class ResourceProcessors {
 
 	public static String[] computeAffectedNatures(IResource resource) throws CoreException {
 		IProject project= resource.getProject();
-		Set result= new HashSet();
-		Set visitedProjects= new HashSet();
+		Set<String> result= new HashSet<>();
+		Set<IProject> visitedProjects= new HashSet<>();
 		computeNatures(result, visitedProjects, project);
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public static String[] computeAffectedNatures(IResource[] resources) throws CoreException {
-		Set result= new HashSet();
-		Set visitedProjects= new HashSet();
+		Set<String> result= new HashSet<>();
+		Set<IProject> visitedProjects= new HashSet<>();
 		for (int i= 0; i < resources.length; i++) {
 			computeNatures(result, visitedProjects, resources[i].getProject());
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
-	private static void computeNatures(Set result, Set visitedProjects, IProject focus) throws CoreException {
+	private static void computeNatures(Set<String> result, Set<IProject> visitedProjects, IProject focus) throws CoreException {
 		if (visitedProjects.contains(focus))
 			return;
 		String[] pns= focus.getDescription().getNatureIds();

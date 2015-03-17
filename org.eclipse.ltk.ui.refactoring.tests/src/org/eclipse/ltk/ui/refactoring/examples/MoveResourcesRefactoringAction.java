@@ -55,9 +55,7 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 
 	private IResource[] fResources;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		if (fResources != null && isMoveAvailable(fResources)) {
@@ -82,9 +80,7 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fResources= null;
 		if (selection instanceof IStructuredSelection) {
@@ -95,7 +91,7 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 
 	private static IResource[] evaluateResources(IStructuredSelection sel) {
 		Object[] objects= sel.toArray();
-		ArrayList res= new ArrayList();
+		ArrayList<IResource> res= new ArrayList<>();
 		IContainer parent= null;
 		for (int i= 0; i < objects.length; i++) {
 			Object curr= objects[i];
@@ -109,7 +105,7 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 				res.add(resource);
 			}
 		}
-		return (IResource[]) res.toArray(new IResource[res.size()]);
+		return res.toArray(new IResource[res.size()]);
 	}
 
 

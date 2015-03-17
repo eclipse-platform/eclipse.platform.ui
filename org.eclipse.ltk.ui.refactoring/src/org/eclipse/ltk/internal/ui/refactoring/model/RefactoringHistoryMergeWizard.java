@@ -56,15 +56,14 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	/** Workspace change listener */
 	private class WorkspaceChangeListener implements IResourceChangeListener {
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void resourceChanged(final IResourceChangeEvent event) {
 			final IResourceDelta delta= event.getDelta();
 			if (delta != null) {
 				try {
 					delta.accept(new IResourceDeltaVisitor() {
 
+						@Override
 						public final boolean visit(final IResourceDelta current) throws CoreException {
 							final IResource resource= current.getResource();
 							if (!resource.isDerived()) {
@@ -93,16 +92,16 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	}
 
 	/** The set of added files */
-	private final Set fAddedFiles= new HashSet();
+	private final Set<IResource> fAddedFiles= new HashSet<>();
 
 	/** The set of changed files */
-	private final Set fChangedFiles= new HashSet();
+	private final Set<IResource> fChangedFiles= new HashSet<>();
 
 	/** The workspace change listener */
 	private final IResourceChangeListener fListener= new WorkspaceChangeListener();
 
 	/** The set of removed files */
-	private final Set fRemovedFiles= new HashSet();
+	private final Set<IResource> fRemovedFiles= new HashSet<>();
 
 	/**
 	 * Creates a new refactoring history merge wizard.
@@ -118,9 +117,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 		super(caption, title, description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected RefactoringStatus aboutToPerformHistory(final IProgressMonitor monitor) {
 		fAddedFiles.clear();
 		fRemovedFiles.clear();
@@ -129,9 +126,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 		return super.aboutToPerformHistory(monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		Assert.isNotNull(descriptor);
 		final long stamp= descriptor.getTimeStamp();
@@ -145,7 +140,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 *
 	 * @return the added files
 	 */
-	public Set getAddedFiles() {
+	public Set<IResource> getAddedFiles() {
 		return fAddedFiles;
 	}
 
@@ -154,7 +149,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 *
 	 * @return the changed files
 	 */
-	public Set getChangedFiles() {
+	public Set<IResource> getChangedFiles() {
 		return fChangedFiles;
 	}
 
@@ -163,22 +158,18 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 *
 	 * @return the removed files
 	 */
-	public Set getRemovedFiles() {
+	public Set<IResource> getRemovedFiles() {
 		return fRemovedFiles;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected RefactoringStatus historyPerformed(final IProgressMonitor monitor) {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
 		RefactoringHistoryService.getInstance().setOverrideTimeStamp(-1);
 		return super.historyPerformed(monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected RefactoringStatus refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
 		RefactoringHistoryService.getInstance().setOverrideTimeStamp(-1);
 		return super.refactoringPerformed(refactoring, monitor);
@@ -193,8 +184,8 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 */
 	public void resolveConflicts(final IMergeContext context) {
 		Assert.isNotNull(context);
-		for (final Iterator iterator= fChangedFiles.iterator(); iterator.hasNext();) {
-			final IResource resource= (IResource) iterator.next();
+		for (final Iterator<IResource> iterator= fChangedFiles.iterator(); iterator.hasNext();) {
+			final IResource resource= iterator.next();
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
 				try {
@@ -204,8 +195,8 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 				}
 			}
 		}
-		for (final Iterator iterator= fAddedFiles.iterator(); iterator.hasNext();) {
-			final IResource resource= (IResource) iterator.next();
+		for (final Iterator<IResource> iterator= fAddedFiles.iterator(); iterator.hasNext();) {
+			final IResource resource= iterator.next();
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
 				try {
@@ -215,8 +206,8 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 				}
 			}
 		}
-		for (final Iterator iterator= fRemovedFiles.iterator(); iterator.hasNext();) {
-			final IResource resource= (IResource) iterator.next();
+		for (final Iterator<IResource> iterator= fRemovedFiles.iterator(); iterator.hasNext();) {
+			final IResource resource= iterator.next();
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
 				try {

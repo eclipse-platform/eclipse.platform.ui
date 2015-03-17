@@ -43,17 +43,21 @@ public class UndoDeleteResourceChange extends Change {
 		fResourceState= resourceDescription;
 	}
 
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 	}
 
+	@Override
 	public Object getModifiedElement() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_change_name, BasicElementLabels.getResourceName(fResourceState.getName()));
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (!fResourceState.isValid()) {
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_cannot_restore, BasicElementLabels.getResourceName(fResourceState.getName())));
@@ -61,6 +65,7 @@ public class UndoDeleteResourceChange extends Change {
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if (fResourceState.verifyExistence(true)) {
 			String message= Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, BasicElementLabels.getResourceName(fResourceState.getName()));
@@ -74,6 +79,7 @@ public class UndoDeleteResourceChange extends Change {
 		return change;
 	}
 
+	@Override
 	public String toString() {
 		return Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_revert_resource, fResourceState.getName());
 	}

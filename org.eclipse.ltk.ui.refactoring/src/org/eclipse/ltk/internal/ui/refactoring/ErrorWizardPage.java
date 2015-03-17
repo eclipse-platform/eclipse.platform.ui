@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,9 +57,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		super(PAGE_NAME, wizard);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setStatus(RefactoringStatus status) {
 		fStatus= status;
 		if (fStatus != null) {
@@ -83,18 +81,14 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		return LegacyActionTools.removeMnemonics(label);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus getStatus() {
 		return fStatus;
 	}
 
 	//---- UI creation ----------------------------------------------------------------------
 
-	/* (non-Javadoc)
-	 * Method declared in IWizardPage.
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		setControl(fViewer= new RefactoringStatusViewer(parent, SWT.NONE));
@@ -104,9 +98,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 
 	//---- Reimplementation of WizardPage methods ------------------------------------------
 
-	/* (non-Javadoc)
-	 * Method declared on IDialog.
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fViewer.setStatus(fStatus);
@@ -120,9 +112,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		super.setVisible(visible);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IWizardPage.
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		// We have to call super.getNextPage since computing the next
 		// page is expensive. So we avoid it as long as possible.
@@ -130,9 +120,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			   isPageComplete() && super.getNextPage() != null;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IWizardPage.
-	 */
+	@Override
 	public IWizardPage getNextPage() {
 		RefactoringWizard wizard= getRefactoringWizard();
 		Change change= wizard.getChange();
@@ -146,9 +134,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		return super.getNextPage();
 	}
 
-	/* (non-JavaDoc)
-	 * Method defined in RefactoringWizardPage
-	 */
+	@Override
 	protected boolean performFinish() {
 		RefactoringWizard wizard= getRefactoringWizard();
 		Change change= wizard.getChange();

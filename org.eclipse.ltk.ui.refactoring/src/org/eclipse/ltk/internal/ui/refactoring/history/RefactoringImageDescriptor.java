@@ -35,23 +35,17 @@ public final class RefactoringImageDescriptor extends ImageDescriptor {
 		fImage= image;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		return (object != null) && getClass().equals(object.getClass()) && fImage.equals(((RefactoringImageDescriptor) object).fImage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ImageData getImageData() {
 		return fImage.getImageData();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return fImage.hashCode();
 	}

@@ -45,16 +45,12 @@ public final class RefactoringIndexMerger implements IStorageMerger {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canMergeWithoutAncestor() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IStatus merge(final OutputStream output, final String encoding, final IStorage ancestor, final IStorage target, final IStorage source, final IProgressMonitor monitor) throws CoreException {
 		InputStream targetStream= null;
 		InputStream sourceStream= null;
@@ -104,11 +100,11 @@ public final class RefactoringIndexMerger implements IStorageMerger {
 	private void performMerge(final OutputStream output, final String encoding, final InputStream target, final InputStream source) throws IOException, UnsupportedEncodingException {
 		final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE);
 		final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE);
-		final Set set= new HashSet();
+		final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 		for (int index= 0; index < sourceProxies.length; index++)
 			set.add(sourceProxies[index]);
 		for (int index= 0; index < targetProxies.length; index++)
 			set.add(targetProxies[index]);
-		RefactoringHistoryManager.writeRefactoringDescriptorProxies(output, (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]));
+		RefactoringHistoryManager.writeRefactoringDescriptorProxies(output, set.toArray(new RefactoringDescriptorProxy[set.size()]));
 	}
 }

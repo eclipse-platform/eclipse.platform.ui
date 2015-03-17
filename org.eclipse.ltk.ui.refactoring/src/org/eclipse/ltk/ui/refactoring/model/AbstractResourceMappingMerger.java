@@ -94,16 +94,12 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 			super(project, false, false);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public String getProjectPattern() {
 			return RefactoringUIMessages.RefactoringModelMerger_project_pattern;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public String getWorkspaceCaption() {
 			return RefactoringUIMessages.RefactoringModelMerger_workspace_caption;
 		}
@@ -144,7 +140,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 *         workspace is affected
 	 */
 	private static IProject[] getAffectedProjects(final RefactoringHistory history) {
-		final Set set= new HashSet();
+		final Set<IProject> set= new HashSet<>();
 		final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		for (int index= 0; index < proxies.length; index++) {
@@ -168,6 +164,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		final Shell[] shell= new Shell[] { null};
 		Display.getDefault().syncExec(new Runnable() {
 
+			@Override
 			public final void run() {
 				shell[0]= getActiveShell();
 			}
@@ -227,6 +224,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 					final Shell shell= getDialogShell();
 					shell.getDisplay().syncExec(new Runnable() {
 
+						@Override
 						public final void run() {
 							if (MessageDialog.openQuestion(shell, RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.AbstractRefactoringModelMerger_accept_question)) {
 								final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryModelMergeWizard();
@@ -292,18 +290,16 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 */
 	private IDiff[] getDiffs(final IMergeContext context) {
 		final ResourceMapping[] mappings= context.getScope().getMappings(fModelProvider.getDescriptor().getId());
-		final Set set= new HashSet();
+		final Set<IDiff> set= new HashSet<>();
 		for (int index= 0; index < mappings.length; index++) {
 			final IDiff[] diffs= context.getDiffTree().getDiffs(context.getScope().getTraversals(mappings[index]));
 			for (int offset= 0; offset < diffs.length; offset++)
 				set.add(diffs[offset]);
 		}
-		return (IDiff[]) set.toArray(new IDiff[set.size()]);
+		return set.toArray(new IDiff[set.size()]);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected final ModelProvider getModelProvider() {
 		return fModelProvider;
 	}
@@ -318,15 +314,15 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * @return the incoming refactoring history
 	 */
 	private RefactoringHistory getRefactoringHistory(final IDiff[] diffs, final IProgressMonitor monitor) {
-		final Set result= new HashSet();
+		final Set<RefactoringDescriptor> result= new HashSet<>();
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, diffs.length * 2);
 			for (int index= 0; index < diffs.length; index++) {
 				final IDiff diff= diffs[index];
 				if (diff instanceof IThreeWayDiff) {
 					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
-					final Set localDescriptors= new HashSet();
-					final Set remoteDescriptors= new HashSet();
+					final Set<RefactoringDescriptor> localDescriptors= new HashSet<>();
+					final Set<RefactoringDescriptor> remoteDescriptors= new HashSet<>();
 					final ITwoWayDiff localDiff= threeWay.getLocalChange();
 					if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
 						final IResourceDiff resourceDiff= (IResourceDiff) localDiff;
@@ -354,7 +350,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		} finally {
 			monitor.done();
 		}
-		return new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) result.toArray(new RefactoringDescriptorProxy[result.size()]));
+		return new RefactoringHistoryImplementation(result.toArray(new RefactoringDescriptorProxy[result.size()]));
 	}
 
 	/**
@@ -368,7 +364,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * @param monitor
 	 *            the progress monitor to use
 	 */
-	static final void getRefactoringDescriptors(final IFileRevision revision, final Set descriptors, final IProgressMonitor monitor) {
+	static final void getRefactoringDescriptors(final IFileRevision revision, final Set<RefactoringDescriptor> descriptors, final IProgressMonitor monitor) {
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, 1);
 			IStorage storage= null;
@@ -402,9 +398,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IStatus merge(final IMergeContext context, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(context);
 		IStatus status= Status.OK_STATUS;

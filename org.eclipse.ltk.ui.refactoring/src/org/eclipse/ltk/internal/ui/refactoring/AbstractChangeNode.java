@@ -22,6 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
@@ -36,7 +37,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		if (change instanceof CompositeChange) {
 			return new CompositeChangeNode(parent, filter, (CompositeChange)change);
 		} else if (change instanceof TextEditBasedChange) {
-			InternalTextEditChangeNode result= (TextEditChangeNode)change.getAdapter(TextEditChangeNode.class);
+			InternalTextEditChangeNode result= change.getAdapter(TextEditChangeNode.class);
 			if (result == null) {
 				result= new TextEditChangeNode((TextEditBasedChange)change);
 			}
@@ -74,6 +75,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		return fChange;
 	}
 
+	@Override
 	PreviewNode[] getChildren() {
 		if (fChildren == null) {
 			fChildren= doCreateChildren();
@@ -83,31 +85,38 @@ public abstract class AbstractChangeNode extends PreviewNode {
 
 	abstract PreviewNode[] doCreateChildren();
 
+	@Override
 	public String getText() {
 		return fChange.getName();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE;
 	}
 
+	@Override
 	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		return ChangePreviewViewerDescriptor.get(fChange);
 	}
 
-	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
+	@Override
+	void feedInput(IChangePreviewViewer viewer, List<GroupCategory> categories) throws CoreException {
 		viewer.setInput(new ChangePreviewViewerInput(fChange));
 	}
 
+	@Override
 	void setEnabled(boolean enabled) {
 		fChange.setEnabled(enabled);
 	}
 
+	@Override
 	void setEnabledShallow(boolean enabled) {
 		fChange.setEnabledShallow(enabled);
 	}
 
-	boolean hasOneGroupCategory(List categories) {
+	@Override
+	boolean hasOneGroupCategory(List<GroupCategory> categories) {
 		PreviewNode[] children= getChildren();
 		for (int i= 0; i < children.length; i++) {
 			if (children[i].hasOneGroupCategory(categories))
@@ -116,6 +125,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		return false;
 	}
 
+	@Override
 	boolean hasDerived() {
 		if (hasDerivedResourceChange(fChange))
 			return true;
@@ -166,7 +176,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 			return ((IResource) modifiedElement).isDerived(IResource.CHECK_ANCESTORS);
 		} else if (modifiedElement instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) modifiedElement;
-			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+			IResource resource= adaptable.getAdapter(IResource.class);
 			if (resource != null) {
 				return resource.isDerived(IResource.CHECK_ANCESTORS);
 			}

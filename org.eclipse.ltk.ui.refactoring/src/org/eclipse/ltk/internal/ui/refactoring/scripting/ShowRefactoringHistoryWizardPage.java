@@ -74,9 +74,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		setDescription(ScriptingMessages.ShowRefactoringHistoryWizard_description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(final Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite= new Composite(parent, SWT.NULL);
@@ -88,12 +86,14 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		final RefactoringHistoryControlConfiguration configuration= new RefactoringHistoryControlConfiguration(null, true, false) {
 
+			@Override
 			public final String getWorkspaceCaption() {
 				return ScriptingMessages.ShowRefactoringHistoryWizard_workspace_caption;
 			}
 		};
 		fHistoryControl= new ShowRefactoringHistoryControl(composite, configuration) {
 
+			@Override
 			protected void createBottomButtonBar(final Composite control) {
 				Assert.isNotNull(control);
 				final Composite container= new Composite(control, SWT.NONE);
@@ -112,15 +112,18 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				createDeleteButton(container, GridData.END);
 			}
 
+			@Override
 			protected void createDeleteAllButton(final Composite control) {
 				// No delete all button
 			}
 
+			@Override
 			protected void createRightButtonBar(final Composite control) {
 				final Composite container= new Composite(control, SWT.NONE);
 				container.setLayout(new GridLayout(1, false));
 			}
 
+			@Override
 			protected int getContainerColumns() {
 				return 1;
 			}
@@ -142,6 +145,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		fHistoryControl.setLayoutData(data);
 		fHistoryControl.getDeleteButton().addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= fHistoryControl.getCheckedDescriptors();
 				if (selection.length > 0) {
@@ -149,6 +153,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 					final IRunnableContext context= new ProgressMonitorDialog(shell);
 					RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, null, selection.length), new IRefactoringHistoryProvider() {
 
+						@Override
 						public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
 							return RefactoringHistoryService.getInstance().getWorkspaceHistory(monitor);
 						}
@@ -162,9 +167,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_SHOW_HISTORY_PAGE);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isPageComplete() {
 		return true;
 	}

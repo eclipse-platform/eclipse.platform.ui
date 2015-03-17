@@ -38,9 +38,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public final class RefactoringHistorySerializer implements IRefactoringHistoryListener {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void historyNotification(final RefactoringHistoryEvent event) {
 		Assert.isNotNull(event);
 		switch (event.getEventType()) {

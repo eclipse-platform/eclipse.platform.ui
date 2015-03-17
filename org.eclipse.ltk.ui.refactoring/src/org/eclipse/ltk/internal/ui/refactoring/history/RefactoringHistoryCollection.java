@@ -17,16 +17,12 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
  */
 public final class RefactoringHistoryCollection extends RefactoringHistoryNode {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return RefactoringHistoryNode.COLLECTION;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistoryNode getParent() {
 		return null;
 	}

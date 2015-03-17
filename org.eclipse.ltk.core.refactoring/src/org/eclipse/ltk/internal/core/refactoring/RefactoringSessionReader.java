@@ -63,7 +63,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 * The current list of refactoring descriptors, or <code>null</code>
 	 * (element type: <code>RefactoringDescriptor</code>)
 	 */
-	private List fRefactoringDescriptors= null;
+	private List<RefactoringDescriptor> fRefactoringDescriptors= null;
 
 	/** Has a session been found during parsing? */
 	private boolean fSessionFound= false;
@@ -143,7 +143,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.MISSING_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_missing_version_information, null));
 				if (!IRefactoringSerializationConstants.CURRENT_VERSION.equals(fVersion))
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.UNSUPPORTED_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_unsupported_version_information, null));
-				return new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
+				return new RefactoringSessionDescriptor(fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
 			}
 		} catch (IOException exception) {
 			throwCoreException(exception, exception.getLocalizedMessage());
@@ -178,17 +178,16 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	/*
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
+	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator= locator;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void startElement(final String uri, final String localName, final String qualifiedName, final Attributes attributes) throws SAXException {
 		if (IRefactoringSerializationConstants.ELEMENT_REFACTORING.equals(qualifiedName)) {
 			final int length= attributes.getLength();
-			final Map map= new HashMap(length);
+			final Map<String, String> map= new HashMap<>(length);
 			String id= ""; //$NON-NLS-1$
 			String stamp= ""; //$NON-NLS-1$
 			String description= ""; //$NON-NLS-1$
@@ -234,6 +233,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				} catch (RuntimeException e) {
 					throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator, e) {
 						private static final long serialVersionUID= 1L;
+						@Override
 						public Throwable getCause() { // support proper 1.4-style exception chaining
 							return getException();
 						}
@@ -246,7 +246,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				// Do nothing
 			}
 			if (fRefactoringDescriptors == null)
-				fRefactoringDescriptors= new ArrayList();
+				fRefactoringDescriptors= new ArrayList<>();
 			fRefactoringDescriptors.add(descriptor);
 
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {

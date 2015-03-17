@@ -25,9 +25,7 @@ import org.eclipse.compare.IViewerCreator;
  */
 public final class RefactoringDescriptorCompareViewerCreator implements IViewerCreator {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Viewer createViewer(final Composite parent, final CompareConfiguration configuration) {
 		return new RefactoringDescriptorCompareViewer(parent, configuration, SWT.NONE);
 	}

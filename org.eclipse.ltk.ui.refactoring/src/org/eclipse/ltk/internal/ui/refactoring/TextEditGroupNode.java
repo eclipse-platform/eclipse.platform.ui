@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
 import org.eclipse.ltk.core.refactoring.GroupCategorySet;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
@@ -46,14 +47,17 @@ public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 		return fChangeGroup;
 	}
 
+	@Override
 	public String getText() {
 		return fChangeGroup.getName();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return RefactoringPluginImages.DESC_OBJS_TEXT_EDIT;
 	}
 
+	@Override
 	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element == null)
@@ -61,7 +65,8 @@ public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 		return element.getChangePreviewViewerDescriptor();
 	}
 
-	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
+	@Override
+	void feedInput(IChangePreviewViewer viewer, List<GroupCategory> categories) throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element != null) {
 			Change change= element.getChange();
@@ -80,26 +85,32 @@ public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 		}
 	}
 
+	@Override
 	void setEnabled(boolean enabled) {
 		fChangeGroup.setEnabled(enabled);
 	}
 
+	@Override
 	void setEnabledShallow(boolean enabled) {
 		fChangeGroup.setEnabled(enabled);
 	}
 
+	@Override
 	int getActive() {
 		return fChangeGroup.isEnabled() ? PreviewNode.ACTIVE : PreviewNode.INACTIVE;
 	}
 
+	@Override
 	PreviewNode[] getChildren() {
 		return PreviewNode.EMPTY_CHILDREN;
 	}
 
-	boolean hasOneGroupCategory(List categories) {
+	@Override
+	boolean hasOneGroupCategory(List<GroupCategory> categories) {
 		return fChangeGroup.getGroupCategorySet().containsOneCategory(categories);
 	}
 
+	@Override
 	boolean hasDerived() {
 		return false;
 	}

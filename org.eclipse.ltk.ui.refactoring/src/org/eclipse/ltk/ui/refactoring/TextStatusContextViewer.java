@@ -87,7 +87,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		String title= null;
 		ImageDescriptor imageDescriptor= null;
 		if (element != null) {
-			IWorkbenchAdapter adapter= (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter adapter= element.getAdapter(IWorkbenchAdapter.class);
 			if (adapter != null) {
 				title= adapter.getLabel(element);
 				imageDescriptor= adapter.getImageDescriptor(element);
@@ -137,9 +137,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 
 	//---- Methods defined in IStatusContextViewer -------------------------------
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		fForm= new ViewForm(parent, SWT.BORDER | SWT.FLAT);
 		fForm.marginWidth= 0;
@@ -147,6 +145,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		fLabel= new CLabel(fForm, SWT.NONE);
 		fForm.setTopLeft(fLabel);
 		fForm.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (fPaneImage != null)
 					fPaneImage.dispose();
@@ -160,9 +159,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		fForm.setContent(fSourceViewer.getControl());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Control getControl() {
 		return fForm;
 	}

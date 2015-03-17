@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 
 	private ChangeDescriptor fChangeDescriptor;
 
-	private List fContexts= new ArrayList();
+	private List<IUndoContext> fContexts= new ArrayList<>();
 
 	private static class ContextAdapter implements IAdaptable {
 		private IAdaptable fInfoAdapter;
@@ -57,9 +57,11 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 			fInfoAdapter= infoAdapter;
 			fTitle= title;
 		}
-		public Object getAdapter(Class adapter) {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T getAdapter(Class<T> adapter) {
 			if (String.class.equals(adapter))
-				return fTitle;
+				return (T) fTitle;
 			return fInfoAdapter.getAdapter(adapter);
 		}
 	}
@@ -102,6 +104,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		fLabel= label;
 	}
 
+	@Override
 	public String getLabel() {
 		if (fLabel != null)
 			return fLabel;
@@ -114,22 +117,25 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		return fActiveChange.getName();
 	}
 
+	@Override
 	public Object[] getAffectedObjects() {
 		if (fActiveChange == null)
 			return null;
 		return fActiveChange.getAffectedObjects();
 	}
 
+	@Override
 	public void addContext(IUndoContext context) {
 		if (!fContexts.contains(context))
 			fContexts.add(context);
 	}
 
+	@Override
 	public boolean hasContext(IUndoContext context) {
 		if (context == null)
 			return false;
 		for (int i = 0; i< fContexts.size(); i++) {
-			IUndoContext otherContext = (IUndoContext)fContexts.get(i);
+			IUndoContext otherContext = fContexts.get(i);
 			// have to check both ways because one context may be more general in
 			// its matching rules than another.
 			if (context.matches(otherContext) || otherContext.matches(context))
@@ -138,18 +144,22 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		return false;
 	}
 
+	@Override
 	public void removeContext(IUndoContext context) {
 		fContexts.remove(context);
 	}
 
+	@Override
 	public IUndoContext[] getContexts() {
-		return (IUndoContext[])fContexts.toArray(new IUndoContext[fContexts.size()]);
+		return fContexts.toArray(new IUndoContext[fContexts.size()]);
 	}
 
+	@Override
 	public boolean canExecute() {
 		return fExecuteChange != null;
 	}
 
+	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -171,10 +181,12 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 	}
 
+	@Override
 	public boolean canUndo() {
 		return fUndoChange != null;
 	}
 
+	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -199,6 +211,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 	}
 
+	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) throws ExecutionException {
 		if (fUndoChange == null)
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
@@ -224,10 +237,12 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 	}
 
+	@Override
 	public boolean canRedo() {
 		return fRedoChange != null;
 	}
 
+	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -252,6 +267,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 	}
 
+	@Override
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) throws ExecutionException {
 		if (fRedoChange == null)
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
@@ -277,6 +293,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 	}
 
+	@Override
 	public void aboutToNotify(OperationHistoryEvent event) {
 		switch(event.getEventType()) {
 			case OperationHistoryEvent.ABOUT_TO_EXECUTE:
@@ -291,6 +308,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		}
 	}
 
+	@Override
 	public void dispose() {
 		// the active change could be cleared.
 		if (fActiveChange != null)
@@ -302,6 +320,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		if (fActiveChange == null || !fActiveChange.isEnabled())
 			return result;
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				boolean reverseIsInitialized= false;
 				try {
@@ -372,7 +391,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	private IValidationCheckResultQuery getQuery(IAdaptable info, String title) {
 		if (info == null)
 			return RefactoringCore.getQueryFactory().create(null);
-		IValidationCheckResultQuery result= (IValidationCheckResultQuery)info.getAdapter(IValidationCheckResultQuery.class);
+		IValidationCheckResultQuery result= info.getAdapter(IValidationCheckResultQuery.class);
 		if (result != null)
 			return result;
 		ContextAdapter context= new ContextAdapter(info, title);

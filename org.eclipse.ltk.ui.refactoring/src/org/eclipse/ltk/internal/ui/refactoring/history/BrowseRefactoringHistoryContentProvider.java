@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,10 +46,10 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** The project content providers */
-	private Map fProjectContentProviders= null;
+	private Map<String, RefactoringHistoryContentProvider> fProjectContentProviders= null;
 
 	/** The project refactoring histories map */
-	private Map fProjectRefactoringHistories= null;
+	private Map<String, RefactoringHistory> fProjectRefactoringHistories= null;
 
 	/** The refactoring history, or <code>null</code> */
 	private RefactoringHistory fRefactoringHistory= null;
@@ -69,9 +69,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 		fControlConfiguration= configuration;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getChildren(final Object element) {
 		if (fSortProjects && element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
@@ -87,18 +85,14 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 		return super.getChildren(element);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getElements(final Object element) {
 		if (fSortProjects && element instanceof RefactoringHistory)
 			return getRootElements();
 		return super.getElements(element);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getParent(final Object element) {
 		if (fSortProjects && element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider((RefactoringHistoryNode) element);
@@ -114,9 +108,10 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	 *
 	 * @return the map of projects to refactoring histories
 	 */
-	private Map getRefactoringHistories() {
+	private Map<String, RefactoringHistory> getRefactoringHistories() {
 		if (fProjectRefactoringHistories == null) {
-			fProjectRefactoringHistories= new HashMap();
+			fProjectRefactoringHistories= new HashMap<>();
+			Map<String, Collection<RefactoringDescriptorProxy>> projectRefactoringHistories= new HashMap<>();
 			if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
 				final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 				for (int index= 0; index < proxies.length; index++) {
@@ -124,18 +119,18 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 					String current= proxy.getProject();
 					if (current == null || current.length() == 0)
 						current= WORKSPACE_PROJECT;
-					Collection collection= (Collection) fProjectRefactoringHistories.get(current);
+					Collection<RefactoringDescriptorProxy> collection= projectRefactoringHistories.get(current);
 					if (collection == null) {
-						collection= new HashSet();
-						fProjectRefactoringHistories.put(current, collection);
+						collection= new HashSet<>();
+						projectRefactoringHistories.put(current, collection);
 					}
 					collection.add(proxy);
 				}
-				for (final Iterator iterator= new ArrayList(fProjectRefactoringHistories.keySet()).iterator(); iterator.hasNext();) {
-					final String current= (String) iterator.next();
-					final Collection collection= (Collection) fProjectRefactoringHistories.get(current);
+				for (final Iterator<String> iterator= new ArrayList<>(projectRefactoringHistories.keySet()).iterator(); iterator.hasNext();) {
+					final String current= iterator.next();
+					final Collection<RefactoringDescriptorProxy> collection= projectRefactoringHistories.get(current);
 					if (collection != null)
-						fProjectRefactoringHistories.put(current, new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) collection.toArray(new RefactoringDescriptorProxy[collection.size()])));
+						fProjectRefactoringHistories.put(current, new RefactoringHistoryImplementation(collection.toArray(new RefactoringDescriptorProxy[collection.size()])));
 				}
 			}
 		}
@@ -152,7 +147,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	 */
 	private RefactoringHistory getRefactoringHistory(final String project) {
 		getRefactoringHistories();
-		return (RefactoringHistory) fProjectRefactoringHistories.get(project);
+		return fProjectRefactoringHistories.get(project);
 	}
 
 	/**
@@ -195,8 +190,8 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	 */
 	private RefactoringHistoryContentProvider getRefactoringHistoryContentProvider(final String project) {
 		if (fProjectContentProviders == null)
-			fProjectContentProviders= new HashMap();
-		RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fProjectContentProviders.get(project);
+			fProjectContentProviders= new HashMap<>();
+		RefactoringHistoryContentProvider provider= fProjectContentProviders.get(project);
 		if (provider == null) {
 			provider= fControlConfiguration.getContentProvider();
 			fProjectContentProviders.put(project, provider);
@@ -241,14 +236,12 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 		return NO_ELEMENTS;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getRootElements() {
 		if (fSortProjects) {
-			final List list= new ArrayList(32);
-			for (final Iterator iterator= getRefactoringHistories().keySet().iterator(); iterator.hasNext();) {
-				final String project= (String) iterator.next();
+			final List<Object> list= new ArrayList<>(32);
+			for (final Iterator<String> iterator= getRefactoringHistories().keySet().iterator(); iterator.hasNext();) {
+				final String project= iterator.next();
 				if (project.equals(WORKSPACE_PROJECT)) {
 					final RefactoringHistory history= getRefactoringHistory(project);
 					if (history != null) {
@@ -293,9 +286,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 		return current;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
 		super.inputChanged(viewer, predecessor, successor);
 		if (predecessor == successor)

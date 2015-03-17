@@ -42,11 +42,9 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 	private static final String ATTRIBUTE_UPDATE_REFERENCES= "updateReferences"; //$NON-NLS-1$
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#retrieveArgumentMap(org.eclipse.ltk.core.refactoring.RefactoringDescriptor)
-	 */
-	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
-		HashMap map= new HashMap();
+	@Override
+	public Map<String, String> retrieveArgumentMap(final RefactoringDescriptor descriptor) {
+		HashMap<String, String> map= new HashMap<>();
 
 		if (descriptor instanceof RenameResourceDescriptor) {
 			RenameResourceDescriptor resourceDescriptor= (RenameResourceDescriptor) descriptor;
@@ -58,19 +56,15 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor()
-	 */
+	@Override
 	public RefactoringDescriptor createDescriptor() {
 		return new RenameResourceDescriptor();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, int)
-	 */
-	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) {
-		String pathString= (String) arguments.get(ATTRIBUTE_INPUT);
-		String newName= (String) arguments.get(ATTRIBUTE_NAME);
+	@Override
+	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map<String, String> arguments, int flags) {
+		String pathString= arguments.get(ATTRIBUTE_INPUT);
+		String newName= arguments.get(ATTRIBUTE_NAME);
 
 		boolean updateReferences= "true".equals(arguments.get(ATTRIBUTE_UPDATE_REFERENCES)); //$NON-NLS-1$
 

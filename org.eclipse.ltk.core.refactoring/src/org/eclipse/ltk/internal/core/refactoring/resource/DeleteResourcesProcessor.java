@@ -37,6 +37,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.DeleteArguments;
+import org.eclipse.ltk.core.refactoring.participants.DeleteParticipant;
 import org.eclipse.ltk.core.refactoring.participants.DeleteProcessor;
 import org.eclipse.ltk.core.refactoring.participants.ParticipantManager;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
@@ -102,9 +103,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		fDeleteContents= deleteContents;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		// allow only projects or only non-projects to be selected;
 		// note that the selection may contain multiple types of resource
@@ -115,9 +114,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		return new RefactoringStatus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -159,7 +156,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 			checkDirtyResources(result);
 			
-			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+			ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (int i= 0; i < fResources.length; i++) {
 				if (fResources[i].isPhantom()) {
@@ -182,6 +179,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			if (resource instanceof IProject && !((IProject) resource).isOpen())
 				continue;
 			resource.accept(new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource visitedResource) throws CoreException {
 					if (visitedResource instanceof IFile) {
 						checkDirtyFile(result, (IFile)visitedResource);
@@ -206,9 +204,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		pm.beginTask(RefactoringCoreMessages.DeleteResourcesProcessor_create_task, fResources.length);
 		try {
@@ -246,30 +242,22 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_multi, new Integer(fResources.length));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getElements()
-	 */
+	@Override
 	public Object[] getElements() {
 		return fResources;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getIdentifier()
-	 */
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.ltk.core.refactoring.deleteResourcesProcessor"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getProcessorName()
-	 */
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.DeleteResourcesProcessor_processor_name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#isApplicable()
-	 */
+	@Override
 	public boolean isApplicable() throws CoreException {
 		for (int i= 0; i < fResources.length; i++) {
 			if (!canDelete(fResources[i])) {
@@ -283,11 +271,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		return res.isAccessible() && !res.isPhantom();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#loadParticipants(org.eclipse.ltk.core.refactoring.RefactoringStatus, org.eclipse.ltk.core.refactoring.participants.SharableParticipants)
-	 */
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
-		final ArrayList result= new ArrayList();
+		final ArrayList<DeleteParticipant> result= new ArrayList<>();
 		if (!isApplicable()) {
 			return new RefactoringParticipant[0];
 		}
@@ -298,21 +284,21 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			result.addAll(Arrays.asList(ParticipantManager.loadDeleteParticipants(status, this, fResources[i], deleteArguments, affectedNatures, sharedParticipants)));
 		}
 
-		return (RefactoringParticipant[]) result.toArray(new RefactoringParticipant[result.size()]);
+		return result.toArray(new RefactoringParticipant[result.size()]);
 	}
 
 	private static IResource[] removeDescendants(IResource[] resources) {
-		ArrayList result= new ArrayList();
+		ArrayList<IResource> result= new ArrayList<>();
 		for (int i= 0; i < resources.length; i++) {
 			addToList(result, resources[i]);
 		}
-		return (IResource[]) result.toArray(new IResource[result.size()]);
+		return result.toArray(new IResource[result.size()]);
 	}
 
-	private static void addToList(ArrayList result, IResource curr) {
+	private static void addToList(ArrayList<IResource> result, IResource curr) {
 		IPath currPath= curr.getFullPath();
 		for (int k= result.size() - 1; k >= 0 ; k--) {
-			IResource other= (IResource) result.get(k);
+			IResource other= result.get(k);
 			IPath otherPath= other.getFullPath();
 			if (otherPath.isPrefixOf(currPath)) {
 				return; // current entry is a descendant of an entry in the list

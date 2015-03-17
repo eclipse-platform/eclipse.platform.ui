@@ -40,18 +40,14 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
  */
 public abstract class AbstractSynchronizationLabelProvider extends SynchronizationLabelProvider {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected String decorateText(final String base, final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
 			return base;
 		return super.decorateText(base, element);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected IDiff getDiff(final Object element) {
 		if (element instanceof RefactoringDescriptorProxy)
 			return new RefactoringDescriptorDiff((RefactoringDescriptorProxy) element, getKind(element), getDirection(element));

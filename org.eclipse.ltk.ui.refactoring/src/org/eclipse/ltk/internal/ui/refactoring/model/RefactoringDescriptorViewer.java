@@ -59,16 +59,12 @@ public class RefactoringDescriptorViewer extends Viewer {
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Control getControl() {
 		return fBrowser;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getInput() {
 		return fDescriptor;
 	}
@@ -108,16 +104,12 @@ public class RefactoringDescriptorViewer extends Viewer {
 		return buffer.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ISelection getSelection() {
 		return new TextSelection(0, 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void refresh() {
 		String text= getInputText(fDescriptor);
 		if (text != null && text.length() > 0) {
@@ -130,9 +122,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 		fBrowser.setText(text);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInput(final Object input) {
 		if (input instanceof RefactoringDescriptorProxy) {
 			fDescriptor= (RefactoringDescriptorProxy) input;
@@ -141,9 +131,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 			fDescriptor= null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setSelection(final ISelection selection, final boolean reveal) {
 		// Do nothing
 	}

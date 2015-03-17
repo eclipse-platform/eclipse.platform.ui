@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -37,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -55,10 +52,15 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
 import org.eclipse.ltk.core.refactoring.tests.FileSystemHelper;
+import org.eclipse.ltk.core.refactoring.tests.RefactoringCoreTestPlugin;
 import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameProcessor;
 import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameRefactoring;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ResourceRefactoringUndoTests extends TestCase {
 
@@ -70,7 +72,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	private static final String TEST_LINKEDFOLDER_NAME= "linkedFolder";
 	private static final String TEST_LINKEDFILE_NAME= "linkedFile.txt";
 	private static final String TEST_SUBFOLDER_NAME= "subFolder";
-	private static List fileNameExcludes= new ArrayList();
+	private static List<String> fileNameExcludes= new ArrayList<>();
 	static {
 		fileNameExcludes.add(".project");
 	}
@@ -87,11 +89,12 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	private IFile testFile;
 	private IOperationHistory history;
 	private IUndoContext context;
-	private final Set storesToDelete= new HashSet();
+	private final Set<IFileStore> storesToDelete= new HashSet<>();
 	private IFolder testLinkedFolder;
 	private IFile testLinkedFile;
 	private IFolder testSubFolder;
 
+	@Override
 	protected void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 
@@ -119,9 +122,10 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		context= RefactoringCorePlugin.getUndoContext();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		fProject.delete();
-		final IFileStore[] toDelete= (IFileStore[]) storesToDelete.toArray(new IFileStore[storesToDelete.size()]);
+		final IFileStore[] toDelete= storesToDelete.toArray(new IFileStore[storesToDelete.size()]);
 		storesToDelete.clear();
 		for (int i= 0; i < toDelete.length; i++) {
 			clear(toDelete[i]);
@@ -339,7 +343,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 
 		execute(op);
 
-		List h= ElementRenameProcessor.fHistory;
+		List<String> h= ElementRenameProcessor.fHistory;
 		// Strictly speaking, the execution of these things does not need to be in exactly this
 		// order, but it's an easy way to check.  Of course there are some dependencies on the
 		// order (participant-pre-exec, main-exec, participant-exec)
@@ -410,12 +414,10 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		String encoding= file.getCharset();
 		if (is == null)
 			return null;
-		BufferedReader reader= null;
-		try {
+		try (BufferedReader reader= new BufferedReader(new InputStreamReader(is, encoding))) {
 			StringBuffer buffer= new StringBuffer();
 			char[] part= new char[2048];
 			int read= 0;
-			reader= new BufferedReader(new InputStreamReader(is, encoding));
 
 			while ((read= reader.read(part)) != -1)
 				buffer.append(part, 0, read);
@@ -423,15 +425,8 @@ public class ResourceRefactoringUndoTests extends TestCase {
 			return buffer.toString();
 
 		} catch (IOException ex) {
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException ex) {
-				}
-			}
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCoreTestPlugin.getPluginId(), ex.getMessage()));
 		}
-		return null;
 	}
 
 	/**
@@ -474,6 +469,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 			}
 		}
 
+		@Override
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource= getWorkspaceRoot().findMember(parent.getFullPath().append(name));
 			if (resource == null || !(resource instanceof IFile)) {
@@ -513,6 +509,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 			}
 		}
 
+		@Override
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource= getWorkspaceRoot().findMember(parent.getFullPath().append(name));
 			if (resource == null || !(resource instanceof IFolder)) {
@@ -538,7 +535,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	class MarkerSnapshot {
 		String type;
 
-		Map attributes;
+		Map<String, Object> attributes;
 
 		MarkerSnapshot(IMarker marker) throws CoreException {
 			type= marker.getType();
@@ -578,6 +575,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 
 		}
 
+		@Override
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource= getWorkspaceRoot().findMember(parent.getFullPath().append(name));
 			if (resource == null || !(resource instanceof IProject)) {

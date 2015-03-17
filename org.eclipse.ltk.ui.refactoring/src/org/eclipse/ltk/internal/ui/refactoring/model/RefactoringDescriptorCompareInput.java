@@ -36,16 +36,12 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 	/** Refactoring descriptor element */
 	private final class RefactoringDescriptorElement implements ITypedElement {
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public Image getImage() {
 			return RefactoringDescriptorCompareInput.this.getImage();
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public String getName() {
 			if (fDescriptor instanceof RefactoringDescriptorSynchronizationProxy) {
 				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fDescriptor;
@@ -57,9 +53,7 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 			return RefactoringUIMessages.RefactoringWizard_refactoring;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public String getType() {
 			return TYPE_REFACTORING_DESCRIPTOR;
 		}
@@ -95,23 +89,17 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addCompareInputChangeListener(final ICompareInputChangeListener listener) {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void copy(final boolean leftToRight) {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITypedElement getAncestor() {
 		return new RefactoringDescriptorElement();
 	}
@@ -125,44 +113,32 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 		return fDescriptor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Image getImage() {
 		return CompareUI.getImage(TYPE_REFACTORING_DESCRIPTOR);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return fKind;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITypedElement getLeft() {
 		return new RefactoringDescriptorElement();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return fDescriptor.getDescription();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITypedElement getRight() {
 		return new RefactoringDescriptorElement();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void removeCompareInputChangeListener(final ICompareInputChangeListener listener) {
 		// Do nothing
 	}

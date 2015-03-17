@@ -267,6 +267,7 @@ public class RefactoringStatusEntry {
 	/*
 	 * non java-doc for debugging only
 	 */
+	@Override
 	public String toString() {
 		String contextString= fContext == null ? "<Unspecified context>" : fContext.toString(); //$NON-NLS-1$
 		return "\n" //$NON-NLS-1$

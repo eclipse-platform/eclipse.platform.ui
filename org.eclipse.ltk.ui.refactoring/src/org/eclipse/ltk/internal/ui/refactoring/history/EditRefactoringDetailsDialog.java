@@ -62,9 +62,7 @@ public final class EditRefactoringDetailsDialog extends Dialog {
 			fDetails= details;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void buttonPressed(final int id) {
 		if (id == IDialogConstants.OK_ID)
 			fDetails= fDetailsField.getText();
@@ -73,18 +71,14 @@ public final class EditRefactoringDetailsDialog extends Dialog {
 		super.buttonPressed(id);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
 		if (fTitle != null)
 			shell.setText(fTitle);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -95,9 +89,7 @@ public final class EditRefactoringDetailsDialog extends Dialog {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected Control createDialogArea(final Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite= (Composite) super.createDialogArea(parent);

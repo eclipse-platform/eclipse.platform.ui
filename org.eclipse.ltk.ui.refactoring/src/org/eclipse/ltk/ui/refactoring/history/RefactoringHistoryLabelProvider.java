@@ -130,9 +130,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		if (fContainerImage != null)
 			fContainerImage.dispose();
@@ -175,9 +173,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		return descriptor.getDescription();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Image getImage(final Object element) {
 		Image image= null;
 		final boolean time= fControlConfiguration.isTimeDisplayed();
@@ -188,9 +184,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		return decorateImage(image, element);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof RefactoringHistoryEntry) {
 			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;

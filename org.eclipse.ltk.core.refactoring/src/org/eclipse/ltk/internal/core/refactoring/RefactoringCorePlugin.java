@@ -57,7 +57,7 @@ public class RefactoringCorePlugin extends Plugin {
 	public static IUndoContext getUndoContext() {
 		if (fRefactoringUndoContext == null) {
 			fRefactoringUndoContext= new RefactoringUndoContext();
-			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+			IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 			if (workspaceContext instanceof ObjectUndoContext) {
 				((ObjectUndoContext)workspaceContext).addMatch(fRefactoringUndoContext);
 			}
@@ -110,6 +110,7 @@ public class RefactoringCorePlugin extends Plugin {
 		return fgUndoManager;
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		RefactoringContributionManager.getInstance().connect();
@@ -119,9 +120,10 @@ public class RefactoringCorePlugin extends Plugin {
 		service.addHistoryListener(fRefactoringHistoryListener);
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fRefactoringUndoContext != null) {
-			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+			IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 			if (workspaceContext instanceof ObjectUndoContext) {
 				((ObjectUndoContext)workspaceContext).removeMatch(fRefactoringUndoContext);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,7 @@ public class ResourceChangeChecker implements IConditionChecker {
 		return fDeltaFactory;
 	}
 
+	@Override
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
 		IStatus status= ResourceChangeValidator.getValidator().validateChange(fDeltaFactory.getDelta(), monitor);
 		return createFrom(status);
@@ -88,14 +89,15 @@ public class ResourceChangeChecker implements IConditionChecker {
 
 	/* package */ IFile[] getChangedFiles() throws CoreException {
 		IResourceDelta root= fDeltaFactory.getDelta();
-		final List result= new ArrayList();
+		final List<IFile> result= new ArrayList<>();
 		root.accept(new IResourceDeltaVisitor() {
+			@Override
 			public boolean visit(IResourceDelta delta) throws CoreException {
 				final IResource resource= delta.getResource();
 				if (resource.getType() == IResource.FILE) {
 					final int kind= delta.getKind();
 					if (isSet(kind, IResourceDelta.CHANGED)) {
-						result.add(resource);
+						result.add((IFile) resource);
 					} else if (isSet(kind, IResourceDelta.ADDED) && isSet(delta.getFlags(), IResourceDelta.CONTENT | IResourceDelta.MOVED_FROM)) {
 						final IFile movedFrom= resource.getWorkspace().getRoot().getFile(delta.getMovedFromPath());
 						result.add(movedFrom);
@@ -104,7 +106,7 @@ public class ResourceChangeChecker implements IConditionChecker {
 				return true;
 			}
 		});
-		return (IFile[]) result.toArray(new IFile[result.size()]);
+		return result.toArray(new IFile[result.size()]);
 	}
 
 	private static final boolean isSet(int flags, int flag) {

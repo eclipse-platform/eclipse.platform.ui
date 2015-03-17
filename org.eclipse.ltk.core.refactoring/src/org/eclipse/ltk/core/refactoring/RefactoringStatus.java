@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class RefactoringStatus {
 	/**
 	 * List of refactoring status entries.
 	 */
-	private List fEntries;
+	private List<RefactoringStatusEntry> fEntries;
 
 	/**
 	 * The status's severity. The following invariant holds for
@@ -101,7 +101,7 @@ public class RefactoringStatus {
 	 * status entries and a severity of <code>OK</code>.
 	 */
 	public RefactoringStatus() {
-		fEntries= new ArrayList(0);
+		fEntries= new ArrayList<>(0);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class RefactoringStatus {
 	 *  if no entries are managed.
 	 */
 	public RefactoringStatusEntry[] getEntries() {
-		return (RefactoringStatusEntry[])fEntries.toArray(new RefactoringStatusEntry[fEntries.size()]);
+		return fEntries.toArray(new RefactoringStatusEntry[fEntries.size()]);
 	}
 
 	/**
@@ -138,14 +138,14 @@ public class RefactoringStatus {
 	 * @since 3.1
 	 */
 	public RefactoringStatusEntry[] getEntries(IRefactoringStatusEntryComparator comparator, RefactoringStatusEntry entry) {
-		final List matches= new ArrayList(fEntries.size());
+		final List<RefactoringStatusEntry> matches= new ArrayList<>(fEntries.size());
 		RefactoringStatusEntry current= null;
-		for (Iterator iterator= fEntries.iterator(); iterator.hasNext();) {
-			current= (RefactoringStatusEntry) iterator.next();
+		for (Iterator<RefactoringStatusEntry> iterator= fEntries.iterator(); iterator.hasNext();) {
+			current= iterator.next();
 			if (comparator.compare(current, entry) == 0)
 				matches.add(current);
 		}
-		return (RefactoringStatusEntry[]) matches.toArray(new RefactoringStatusEntry[matches.size()]);
+		return matches.toArray(new RefactoringStatusEntry[matches.size()]);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class RefactoringStatus {
 	 * @throws IndexOutOfBoundsException if the index is out of range
 	 */
 	public RefactoringStatusEntry getEntryAt(int index) {
-		return (RefactoringStatusEntry)fEntries.get(index);
+		return fEntries.get(index);
 	}
 
 	/**
@@ -184,8 +184,8 @@ public class RefactoringStatus {
 	 */
 	public RefactoringStatusEntry getEntryMatchingCode(String pluginId, int code) {
 		Assert.isTrue(pluginId != null);
-		for (Iterator iter= fEntries.iterator(); iter.hasNext(); ) {
-			RefactoringStatusEntry entry= (RefactoringStatusEntry)iter.next();
+		for (Iterator<RefactoringStatusEntry> iter= fEntries.iterator(); iter.hasNext(); ) {
+			RefactoringStatusEntry entry= iter.next();
 			if (pluginId.equals(entry.getPluginId()) && entry.getCode() == code)
 				return entry;
 		}
@@ -206,9 +206,9 @@ public class RefactoringStatus {
 		Assert.isTrue(severity >= OK && severity <= FATAL);
 		if (severity > fSeverity)
 			return null;
-		Iterator iter= fEntries.iterator();
+		Iterator<RefactoringStatusEntry> iter= fEntries.iterator();
 		while (iter.hasNext()) {
-			RefactoringStatusEntry entry= (RefactoringStatusEntry)iter.next();
+			RefactoringStatusEntry entry= iter.next();
 			if (entry.getSeverity() >= severity)
 				return entry;
 		}
@@ -227,9 +227,9 @@ public class RefactoringStatus {
 	public RefactoringStatusEntry getEntryWithHighestSeverity() {
 		if (fEntries == null || fEntries.size() == 0)
 			return null;
-		RefactoringStatusEntry result= (RefactoringStatusEntry)fEntries.get(0);
+		RefactoringStatusEntry result= fEntries.get(0);
 		for (int i= 1; i < fEntries.size(); i++) {
-			RefactoringStatusEntry entry= (RefactoringStatusEntry)fEntries.get(i);
+			RefactoringStatusEntry entry= fEntries.get(i);
 			if (result.getSeverity() < entry.getSeverity())
 				result= entry;
 		}
@@ -667,12 +667,13 @@ public class RefactoringStatus {
 	 * (non java-doc)
 	 * for debugging only
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buff= new StringBuffer();
 		buff.append("<") //$NON-NLS-1$
 			.append(getSeverityString(fSeverity)).append("\n"); //$NON-NLS-1$
 		if (!isOK()) {
-			for (Iterator iter= fEntries.iterator(); iter.hasNext(); ) {
+			for (Iterator<RefactoringStatusEntry> iter= fEntries.iterator(); iter.hasNext(); ) {
 				buff.append("\t") //$NON-NLS-1$
 					.append(iter.next()).append("\n"); //$NON-NLS-1$
 			}

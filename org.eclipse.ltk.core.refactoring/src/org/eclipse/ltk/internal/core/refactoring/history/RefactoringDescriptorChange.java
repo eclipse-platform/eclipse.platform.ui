@@ -32,9 +32,7 @@ public final class RefactoringDescriptorChange extends CompositeChange {
 		super(name);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final ChangeDescriptor getDescriptor() {
 		final ChangeDescriptor descriptor= super.getDescriptor();
 		if (descriptor == null) {

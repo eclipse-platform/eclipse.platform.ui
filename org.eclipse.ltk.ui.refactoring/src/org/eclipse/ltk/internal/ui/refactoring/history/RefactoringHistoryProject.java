@@ -33,9 +33,7 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 		fProject= project;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryProject) {
 			final RefactoringHistoryProject node= (RefactoringHistoryProject) object;
@@ -44,16 +42,12 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return PROJECT;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistoryNode getParent() {
 		return null;
 	}
@@ -67,9 +61,7 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 		return fProject;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return super.hashCode() + 17 * getKind() + 31 * getProject().hashCode();
 	}

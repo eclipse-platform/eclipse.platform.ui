@@ -50,6 +50,7 @@ import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class UndoRefactoringAction extends UndoManagerAction {
 
 	private int fPatternLength;
@@ -60,19 +61,16 @@ public class UndoRefactoringAction extends UndoManagerAction {
 	public UndoRefactoringAction() {
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in UndoManagerAction
-	 */
+	@Override
 	protected String getName() {
 		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactoring change
 		return RefactoringUIMessages.UndoRefactoringAction_name;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in UndoManagerAction
-	 */
+	@Override
 	protected IRunnableWithProgress createOperation(Shell parent) {
 		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.UndoRefactoringAction_error_title) {
+			@Override
 			protected String getFullMessage(String errorMessage) {
 				return Messages.format(
 					RefactoringUIMessages.UndoRefactoringAction_error_message,
@@ -80,6 +78,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 			}
 		};
 		return new IRunnableWithProgress(){
+			@Override
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
 				try {
 					RefactoringCore.getUndoManager().performUndo(query, pm);
@@ -90,11 +89,10 @@ public class UndoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in UndoManagerAction
-	 */
+	@Override
 	protected UndoManagerAdapter createUndoManagerListener() {
 		return new UndoManagerAdapter() {
+			@Override
 			public void undoStackChanged(IUndoManager manager) {
 				IAction action= getAction();
 				if (action == null)
@@ -113,9 +111,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
 			hookListener(action);

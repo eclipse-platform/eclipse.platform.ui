@@ -50,11 +50,9 @@ public class RenameResourceWizard extends RefactoringWizard {
 		setWindowTitle(RefactoringUIMessages.RenameResourceWizard_window_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-	 */
+	@Override
 	protected void addUserInputPages() {
-		RenameResourceProcessor processor= (RenameResourceProcessor) getRefactoring().getAdapter(RenameResourceProcessor.class);
+		RenameResourceProcessor processor= getRefactoring().getAdapter(RenameResourceProcessor.class);
 		addPage(new RenameResourceRefactoringConfigurationPage(processor));
 	}
 
@@ -68,9 +66,7 @@ public class RenameResourceWizard extends RefactoringWizard {
 			fRefactoringProcessor= processor;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-		 */
+		@Override
 		public void createControl(Composite parent) {
 			Composite composite= new Composite(parent, SWT.NONE);
 			composite.setLayout(new GridLayout(2, false));
@@ -87,6 +83,7 @@ public class RenameResourceWizard extends RefactoringWizard {
 			fNameField.setFont(composite.getFont());
 			fNameField.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 			fNameField.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validatePage();
 				}
@@ -102,6 +99,7 @@ public class RenameResourceWizard extends RefactoringWizard {
 			setControl(composite);
 		}
 
+		@Override
 		public void setVisible(boolean visible) {
 			if (visible) {
 				fNameField.setFocus();
@@ -115,18 +113,14 @@ public class RenameResourceWizard extends RefactoringWizard {
 			setPageComplete(status);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
-		 */
+		@Override
 		protected boolean performFinish() {
 			initializeRefactoring();
 			storeSettings();
 			return super.performFinish();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
-		 */
+		@Override
 		public IWizardPage getNextPage() {
 			initializeRefactoring();
 			storeSettings();

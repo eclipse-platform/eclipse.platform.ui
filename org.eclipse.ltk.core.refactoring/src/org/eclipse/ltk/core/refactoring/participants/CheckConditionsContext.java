@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public class CheckConditionsContext {
 
-	private Map fCheckers= new HashMap();
+	private Map<Class<? extends IConditionChecker>, IConditionChecker> fCheckers= new HashMap<>();
 
 	/**
 	 * Returns the condition checker of the given type.
@@ -65,8 +65,8 @@ public class CheckConditionsContext {
 	 * @return the condition checker or <code>null</code> if
 	 *  no checker is registered for the given type
 	 */
-	public IConditionChecker getChecker(Class clazz) {
-		return (IConditionChecker)fCheckers.get(clazz);
+	public <T extends IConditionChecker> T getChecker(Class<T> clazz) {
+		return clazz.cast(fCheckers.get(clazz));
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class CheckConditionsContext {
 	 *  exists
 	 */
 	public void add(IConditionChecker checker) throws CoreException {
-		Object old= fCheckers.put(checker.getClass(), checker);
+		IConditionChecker old= fCheckers.put(checker.getClass(), checker);
 		if (old != null) {
 			fCheckers.put(checker.getClass(), old);
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
@@ -105,9 +105,10 @@ public class CheckConditionsContext {
 			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		mergeResourceOperationAndValidateEdit();
-		List values= new ArrayList(fCheckers.values());
-		Collections.sort(values, new Comparator() {
-			public int compare(Object o1, Object o2) {
+		List<IConditionChecker> values= new ArrayList<>(fCheckers.values());
+		Collections.sort(values, new Comparator<IConditionChecker>() {
+			@Override
+			public int compare(IConditionChecker o1, IConditionChecker o2) {
 				// Note there can only be one ResourceOperationChecker. So it
 				// is save to not test the case that both objects are
 				// ResourceOperationChecker
@@ -119,8 +120,8 @@ public class CheckConditionsContext {
 			}
 		});
 		pm.beginTask("", values.size()); //$NON-NLS-1$
-		for (Iterator iter= values.iterator(); iter.hasNext();) {
-			IConditionChecker checker= (IConditionChecker)iter.next();
+		for (Iterator<IConditionChecker> iter= values.iterator(); iter.hasNext();) {
+			IConditionChecker checker= iter.next();
 			result.merge(checker.check(new SubProgressMonitor(pm, 1)));
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
@@ -129,10 +130,10 @@ public class CheckConditionsContext {
 	}
 
 	private void mergeResourceOperationAndValidateEdit() throws CoreException {
-		ValidateEditChecker validateEditChecker= (ValidateEditChecker) getChecker(ValidateEditChecker.class);
+		ValidateEditChecker validateEditChecker= getChecker(ValidateEditChecker.class);
 		if (validateEditChecker == null)
 			return;
-		ResourceChangeChecker resourceChangeChecker= (ResourceChangeChecker) getChecker(ResourceChangeChecker.class);
+		ResourceChangeChecker resourceChangeChecker= getChecker(ResourceChangeChecker.class);
 		if (resourceChangeChecker == null)
 			return;
 

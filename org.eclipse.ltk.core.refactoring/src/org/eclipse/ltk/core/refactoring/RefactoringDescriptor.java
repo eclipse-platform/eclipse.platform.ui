@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  *
  * @since 3.2
  */
-public abstract class RefactoringDescriptor implements Comparable {
+public abstract class RefactoringDescriptor implements Comparable<RefactoringDescriptor> {
 
 	/**
 	 * Constant describing the API change flag (value: <code>1</code>).
@@ -214,16 +214,15 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * {@inheritDoc}
+	 * @since 3.7
 	 */
-	public final int compareTo(final Object object) {
-		if (object instanceof RefactoringDescriptor) {
-			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
-			final long delta= fTimeStamp - descriptor.fTimeStamp;
-			if (delta < 0)
-				return -1;
-			else if (delta > 0)
-				return +1;
-		}
+	@Override
+	public final int compareTo(final RefactoringDescriptor descriptor) {
+		long delta= fTimeStamp - descriptor.fTimeStamp;
+		if (delta < 0)
+			return -1;
+		else if (delta > 0)
+			return +1;
 		return 0;
 	}
 
@@ -280,9 +279,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 		return new RefactoringContext(refactoring);
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
 			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
@@ -353,9 +350,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 		return fTimeStamp;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final int hashCode() {
 		int code= getDescription().hashCode();
 		if (fTimeStamp >= 0)
@@ -444,9 +439,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 		fTimeStamp= stamp;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toString() {
 
 		final StringBuffer buffer= new StringBuffer(128);

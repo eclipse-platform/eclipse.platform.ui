@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,31 +24,27 @@ public class MockRefactoringDescriptor extends RefactoringDescriptor {
 
 	public static final String ID= "org.eclipse.ltk.core.mock";
 
-	private final Map fArguments= new HashMap();
+	private final Map<String, String> fArguments= new HashMap<>();
 
 	public MockRefactoringDescriptor(String project, String description, String comment, int flags) {
 		super(ID, project, description, comment, flags);
 	}
 
-	public MockRefactoringDescriptor(String project, String description, String comment, Map arguments, int flags) {
+	public MockRefactoringDescriptor(String project, String description, String comment, Map<String, String> arguments, int flags) {
 		this(project, description, comment, flags);
 		fArguments.putAll(arguments);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Refactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		return new MockRefactoring();
 	}
 
-	public Map getArguments() {
+	public Map<String, String> getArguments() {
 		return fArguments;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toString() {
 
 		final StringBuffer buffer= new StringBuffer(128);
@@ -68,7 +64,7 @@ public class MockRefactoringDescriptor extends RefactoringDescriptor {
 			buffer.append(",comment="); //$NON-NLS-1$
 			buffer.append(getComment());
 			buffer.append(",arguments="); //$NON-NLS-1$
-			buffer.append(new TreeMap(getArguments()));
+			buffer.append(new TreeMap<>(getArguments()));
 			buffer.append(",flags="); //$NON-NLS-1$
 			buffer.append(getFlags());
 			buffer.append("]"); //$NON-NLS-1$

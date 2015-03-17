@@ -56,9 +56,7 @@ public abstract class RefactoringHistoryNode {
 	/** The yesterday kind */
 	public static final int YESTERDAY= 1;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) object;
@@ -87,9 +85,7 @@ public abstract class RefactoringHistoryNode {
 	 */
 	public abstract RefactoringHistoryNode getParent();
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return (getParent() != null ? getParent().hashCode() : 0) + 31 * getKind();
 	}

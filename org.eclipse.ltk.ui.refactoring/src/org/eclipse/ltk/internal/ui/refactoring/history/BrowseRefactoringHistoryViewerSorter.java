@@ -20,18 +20,14 @@ import org.eclipse.jface.viewers.ViewerComparator;
  */
 public final class BrowseRefactoringHistoryViewerSorter extends ViewerComparator {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int category(final Object element) {
 		if (element instanceof RefactoringHistoryProject)
 			return 0;
 		return 1;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int compare(final Viewer viewer, final Object first, final Object second) {
 		if (first instanceof RefactoringHistoryProject && second instanceof RefactoringHistoryProject) {
 			final RefactoringHistoryProject predecessor= (RefactoringHistoryProject) first;

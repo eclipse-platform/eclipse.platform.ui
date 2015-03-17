@@ -25,11 +25,12 @@ public class UIQueryFactory implements IValidationCheckResultQueryFactory {
 		fCoreQueryFactory= coreFactory;
 	}
 
+	@Override
 	public IValidationCheckResultQuery create(IAdaptable context) {
 		if (context != null) {
-			Shell parent= (Shell)context.getAdapter(Shell.class);
+			Shell parent= context.getAdapter(Shell.class);
 			if (parent != null) {
-				String title= (String)context.getAdapter(String.class);
+				String title= context.getAdapter(String.class);
 				if (title != null) {
 					return new ValidationCheckResultQuery(parent, title);
 				}

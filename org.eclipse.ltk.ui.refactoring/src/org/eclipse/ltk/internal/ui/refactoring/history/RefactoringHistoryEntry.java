@@ -38,9 +38,7 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 		fDescriptorProxy= proxy;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof RefactoringHistoryEntry) {
 			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) object;
@@ -58,23 +56,17 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 		return fDescriptorProxy;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return RefactoringHistoryNode.ENTRY;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistoryNode getParent() {
 		return fParent;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return getDescriptor().hashCode();
 	}

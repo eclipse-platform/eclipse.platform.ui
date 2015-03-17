@@ -61,9 +61,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 		System.arraycopy(proxies, 0, fDescriptorProxies, 0, proxies.length);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (this == object)
 			return true;
@@ -86,9 +84,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 		return fDescriptorProxies;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringDescriptorProxy[] getDescriptors() {
 		if (!fSorted && fDescriptorProxies.length > 1)
 			RefactoringHistoryManager.sortRefactoringDescriptorsDescending(fDescriptorProxies);
@@ -98,35 +94,27 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 		return proxies;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return 31 * RefactoringHistoryImplementation.hashCode(getDescriptors());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isEmpty() {
 		return fDescriptorProxies.length == 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory removeAll(final RefactoringHistory history) {
-		final Set existing= new LinkedHashSet(Arrays.asList(fDescriptorProxies));
-		final Set other= new HashSet(Arrays.asList(history.getDescriptors()));
+		final Set<RefactoringDescriptorProxy> existing= new LinkedHashSet<>(Arrays.asList(fDescriptorProxies));
+		final Set<RefactoringDescriptorProxy> other= new HashSet<>(Arrays.asList(history.getDescriptors()));
 		existing.removeAll(other);
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[existing.size()];
 		existing.toArray(proxies);
 		return new RefactoringHistoryImplementation(proxies);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toString() {
 		final StringBuffer buffer= new StringBuffer(256);
 		buffer.append(getClass().getName());

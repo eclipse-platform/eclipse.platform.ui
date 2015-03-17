@@ -76,6 +76,7 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 	}
 
 
+	@Override
 	public IResource createResource(IProgressMonitor monitor) throws CoreException {
 		IResource resource= createResourceHandle();
 		createExistentResourceFromHandle(resource, monitor);
@@ -83,6 +84,7 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 		return resource;
 	}
 
+	@Override
 	public boolean isValid() {
 		return parent == null || parent.exists();
 	}
@@ -119,6 +121,7 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 		return ResourcesPlugin.getWorkspace();
 	}
 
+	@Override
 	public boolean verifyExistence(boolean checkMembers) {
 		IContainer p= parent;
 		if (p == null) {

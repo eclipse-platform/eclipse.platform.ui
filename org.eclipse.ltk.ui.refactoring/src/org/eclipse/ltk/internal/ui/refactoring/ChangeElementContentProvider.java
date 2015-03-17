@@ -22,6 +22,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	/* non Java-doc
 	 * @see ITreeContentProvider#inputChanged
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 	}
@@ -29,6 +30,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	/* non Java-doc
 	 * @see ITreeContentProvider#getChildren
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		PreviewNode element= (PreviewNode)o;
 		return element.getChildren();
@@ -37,6 +39,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	/* non Java-doc
 	 * @see ITreeContentProvider#getParent
 	 */
+	@Override
 	public Object getParent(Object element){
 		return ((PreviewNode)element).getParent();
 	}
@@ -44,6 +47,7 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	/* non Java-doc
 	 * @see ITreeContentProvider#hasChildren
 	 */
+	@Override
 	public boolean hasChildren(Object element){
 		Object[] children= getChildren(element);
 		return children != null && children.length > 0;
@@ -52,12 +56,14 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 	/* non Java-doc
 	 * @see ITreeContentProvider#dispose
 	 */
+	@Override
 	public void dispose(){
 	}
 
 	/* non Java-doc
 	 * @see ITreeContentProvider#getElements
 	 */
+	@Override
 	public Object[] getElements(Object element){
 		return getChildren(element);
 	}

@@ -80,21 +80,18 @@ public class RefactoringWizardDialog extends WizardDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 * @since 3.4
 	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		getRefactoringWizard().getRefactoring().setValidationContext(newShell);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void cancelPressed() {
 		storeCurrentSize();
 		super.cancelPressed();
@@ -103,6 +100,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 	/*
 	 * @see WizardDialog#finishPressed()
 	 */
+	@Override
 	protected void finishPressed() {
 		storeCurrentSize();
 		super.finishPressed();
@@ -119,6 +117,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 	/*
 	 * @see IWizardContainer#updateButtons()
 	 */
+	@Override
 	public void updateButtons() {
 		super.updateButtons();
 		if (! fMakeNextButtonDefault)
@@ -139,6 +138,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 	/*
 	 * @see org.eclipse.jface.wizard.WizardDialog#getButton(int)
 	 */
+	@Override
 	protected Button getButton(int id) {
 		return super.getButton(id);
 	}

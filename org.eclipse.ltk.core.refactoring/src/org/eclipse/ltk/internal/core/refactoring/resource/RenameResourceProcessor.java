@@ -112,22 +112,18 @@ public class RenameResourceProcessor extends RenameProcessor {
 		fUpdateReferences= updateReferences;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		return RefactoringStatus.create(Resources.checkInSync(fResource));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
 			fRenameArguments= new RenameArguments(getNewResourceName(), isUpdateReferences());
 
-			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+			ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 
 			ResourceModifications.buildMoveDelta(deltaFactory, fResource, fRenameArguments);
@@ -178,9 +174,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -196,30 +190,22 @@ public class RenameResourceProcessor extends RenameProcessor {
 		return fResource.getFullPath().removeLastSegments(1).append(newName).toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getElements()
-	 */
+	@Override
 	public Object[] getElements() {
 		return new Object[] { fResource};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getIdentifier()
-	 */
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.ltk.core.refactoring.renameResourceProcessor"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#getProcessorName()
-	 */
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameResourceProcessor_processor_name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#isApplicable()
-	 */
+	@Override
 	public boolean isApplicable() {
 		if (fResource == null)
 			return false;
@@ -230,9 +216,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#loadParticipants(org.eclipse.ltk.core.refactoring.RefactoringStatus, org.eclipse.ltk.core.refactoring.participants.SharableParticipants)
-	 */
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants shared) throws CoreException {
 		String[] affectedNatures= ResourceProcessors.computeAffectedNatures(fResource);
 		return ParticipantManager.loadRenameParticipants(status, this, fResource, fRenameArguments, null, affectedNatures, shared);

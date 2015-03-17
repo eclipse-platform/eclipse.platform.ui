@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,16 +62,12 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 		fDirection= direction;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int compareTo(final Object object) {
+	@Override
+	public int compareTo(final RefactoringDescriptorProxy object) {
 		return fProxy.compareTo(object);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getDescription() {
 		return fProxy.getDescription();
 	}
@@ -92,30 +88,22 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 		return fDirection;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getProject() {
 		return fProject;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public long getTimeStamp() {
 		return fProxy.getTimeStamp();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
 		return fProxy.requestDescriptor(monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toString() {
 		return fProxy.toString();
 	}

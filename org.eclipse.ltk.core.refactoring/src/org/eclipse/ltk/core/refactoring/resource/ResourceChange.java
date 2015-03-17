@@ -85,9 +85,7 @@ public abstract class ResourceChange extends Change {
 	 */
 	protected abstract IResource getModifiedResource();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		IResource resource= getModifiedResource();
 		if (resource != null) {
@@ -120,6 +118,7 @@ public abstract class ResourceChange extends Change {
 	 * This implementation of {@link Change#isValid(IProgressMonitor)} tests the modified resource using the validation method
 	 * specified by {@link #setValidationMethod(int)}.
 	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		pm.beginTask("", 2); //$NON-NLS-1$
 		try {
@@ -194,17 +193,13 @@ public abstract class ResourceChange extends Change {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
-	 */
+	@Override
 	public Object getModifiedElement() {
 		return getModifiedResource();
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return getName();
 	}

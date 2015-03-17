@@ -47,16 +47,12 @@ public final class RefactoringHistoryMerger implements IStorageMerger {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canMergeWithoutAncestor() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IStatus merge(final OutputStream output, final String encoding, final IStorage ancestor, final IStorage target, final IStorage other, final IProgressMonitor monitor) throws CoreException {
 		InputStream targetStream= null;
 		InputStream sourceStream= null;
@@ -100,7 +96,7 @@ public final class RefactoringHistoryMerger implements IStorageMerger {
 	private void performMerge(final OutputStream output, final InputStream target, final InputStream source) throws CoreException {
 		final DefaultRefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source);
 		final DefaultRefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target);
-		final Set set= new HashSet();
+		final Set<DefaultRefactoringDescriptor> set= new HashSet<>();
 		for (int index= 0; index < sourceDescriptors.length; index++)
 			set.add(sourceDescriptors[index]);
 		for (int index= 0; index < targetDescriptors.length; index++)

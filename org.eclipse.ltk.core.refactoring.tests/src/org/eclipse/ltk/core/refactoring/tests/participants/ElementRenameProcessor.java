@@ -31,7 +31,7 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
 public class ElementRenameProcessor extends RenameProcessor {
 
-	public static List fHistory;
+	public static List<String> fHistory;
 
 	public static final String WORKING_CREATE= "workingCreate";
 	public static final String WORKING_EXEC= "workingExec";
@@ -51,7 +51,7 @@ public class ElementRenameProcessor extends RenameProcessor {
 	int fOptions;
 
 	public static void resetHistory() {
-		fHistory= new ArrayList();
+		fHistory= new ArrayList<>();
 	}
 
 	public ElementRenameProcessor(int options) {
@@ -69,64 +69,53 @@ public class ElementRenameProcessor extends RenameProcessor {
 			fElements= new Object[] { new Element() };
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getElements() {
 		return fElements;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getIdentifier() {
 		return ElementRenameProcessor.class.getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getProcessorName() {
 		return ElementRenameProcessor.class.getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		fHistory.add(MAIN_CREATE);
 		return new NullChange() {
+			@Override
 			public Change perform(IProgressMonitor monitor) throws CoreException {
 				if ((fOptions & ElementRenameRefactoring.FAIL_TO_EXECUTE) != 0)
 					throw new RuntimeException();
 				fHistory.add(MAIN_EXEC);
 				// Undo change
 				return new NullChange() {
+					@Override
 					public Change perform(IProgressMonitor m2) throws CoreException {
 						fHistory.add(MAIN_EXEC_UNDO);
 						// Redo change
 						return new NullChange() {
+							@Override
 							public Change perform(IProgressMonitor m3) throws CoreException {
 								fHistory.add(MAIN_EXEC);
 								return null;
@@ -138,9 +127,7 @@ public class ElementRenameProcessor extends RenameProcessor {
 		};
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 		return ParticipantManager.loadRenameParticipants(new RefactoringStatus(), this, fElements[0], new RenameArguments("test", true), new String[0], new SharableParticipants());
 	}

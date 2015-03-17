@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,13 +38,11 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 	 */
 	private static final String ATTRIBUTE_ELEMENT= "element"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#retrieveArgumentMap(org.eclipse.ltk.core.refactoring.RefactoringDescriptor)
-	 */
-	public Map retrieveArgumentMap(RefactoringDescriptor descriptor) {
+	@Override
+	public Map<String, String> retrieveArgumentMap(RefactoringDescriptor descriptor) {
 		if (descriptor instanceof DeleteResourcesDescriptor) {
 			DeleteResourcesDescriptor deleteDesc= (DeleteResourcesDescriptor) descriptor;
-			HashMap map= new HashMap();
+			HashMap<String, String> map= new HashMap<>();
 			IPath[] resources= deleteDesc.getResourcePaths();
 			String project= deleteDesc.getProject();
 			map.put(ATTRIBUTE_NUMBER_OF_RESOURCES, String.valueOf(resources.length));
@@ -55,31 +53,27 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 			map.put(ATTRIBUTE_DELETE_CONTENTS, deleteDesc.isDeleteContents() ? TRUE : FALSE);
 			return map;
 		}
-		return Collections.EMPTY_MAP;
+		return Collections.emptyMap();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor()
-	 */
+	@Override
 	public RefactoringDescriptor createDescriptor() {
 		return new DeleteResourcesDescriptor();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, int)
-	 */
-	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException {
-		String del= (String) arguments.get(ATTRIBUTE_DELETE_CONTENTS);
+	@Override
+	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map<String, String> arguments, int flags) throws IllegalArgumentException {
+		String del= arguments.get(ATTRIBUTE_DELETE_CONTENTS);
 
 		try {
-			int numResources= Integer.parseInt((String) arguments.get(ATTRIBUTE_NUMBER_OF_RESOURCES));
+			int numResources= Integer.parseInt(arguments.get(ATTRIBUTE_NUMBER_OF_RESOURCES));
 			if (numResources < 0 || numResources > 100000) {
 				throw new IllegalArgumentException("Can not restore DeleteResourcesDescriptor from map, number of moved elements invalid"); //$NON-NLS-1$
 			}
 
 			IPath[] resourcePaths= new IPath[numResources];
 			for (int i= 0; i < numResources; i++) {
-				String resource= (String) arguments.get(ATTRIBUTE_ELEMENT + String.valueOf(i + 1));
+				String resource= arguments.get(ATTRIBUTE_ELEMENT + String.valueOf(i + 1));
 				if (resource == null) {
 					throw new IllegalArgumentException("Can not restore DeleteResourcesDescriptor from map, resource missing"); //$NON-NLS-1$
 				}

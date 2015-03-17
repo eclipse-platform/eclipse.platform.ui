@@ -62,11 +62,9 @@ public class MoveResourcesWizard extends RefactoringWizard {
 		setWindowTitle(RefactoringUIMessages.MoveResourcesWizard_window_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-	 */
+	@Override
 	protected void addUserInputPages() {
-		MoveResourcesProcessor processor= (MoveResourcesProcessor) getRefactoring().getAdapter(MoveResourcesProcessor.class);
+		MoveResourcesProcessor processor= getRefactoring().getAdapter(MoveResourcesProcessor.class);
 		addPage(new MoveResourcesRefactoringConfigurationPage(processor));
 	}
 
@@ -81,9 +79,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 			fRefactoringProcessor= processor;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-		 */
+		@Override
 		public void createControl(Composite parent) {
 			initializeDialogUnits(parent);
 
@@ -111,6 +107,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 			fDestinationField.setComparator(new WorkbenchViewerComparator());
 			fDestinationField.setInput(ResourcesPlugin.getWorkspace());
 			fDestinationField.addFilter(new ViewerFilter() {
+				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					if (element instanceof IProject) {
 						IProject project= (IProject) element;
@@ -122,6 +119,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 				}
 			});
 			fDestinationField.addSelectionChangedListener(new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					validatePage();
 				}
@@ -133,6 +131,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 			setControl(composite);
 		}
 
+		@Override
 		public void setVisible(boolean visible) {
 			if (visible) {
 				fDestinationField.getTree().setFocus();
@@ -159,18 +158,14 @@ public class MoveResourcesWizard extends RefactoringWizard {
 			setPageComplete(status);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
-		 */
+		@Override
 		protected boolean performFinish() {
 			initializeRefactoring();
 			storeSettings();
 			return super.performFinish();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
-		 */
+		@Override
 		public IWizardPage getNextPage() {
 			initializeRefactoring();
 			storeSettings();

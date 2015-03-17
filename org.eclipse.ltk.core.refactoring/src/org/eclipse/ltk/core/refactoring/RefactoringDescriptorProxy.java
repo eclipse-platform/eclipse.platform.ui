@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,27 +53,23 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public abstract class RefactoringDescriptorProxy extends PlatformObject implements Comparable {
+public abstract class RefactoringDescriptorProxy extends PlatformObject implements Comparable<RefactoringDescriptorProxy> {
 
 	/**
 	 * {@inheritDoc}
+	 * @since 3.7
 	 */
-	public int compareTo(final Object object) {
-		if (object instanceof RefactoringDescriptorProxy) {
-			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
-			final long delta= getTimeStamp() - proxy.getTimeStamp();
-			if (delta > 0)
-				return 1;
-			else if (delta < 0)
-				return -1;
-			return 0;
-		}
+	@Override
+	public int compareTo(RefactoringDescriptorProxy proxy) {
+		long delta= getTimeStamp() - proxy.getTimeStamp();
+		if (delta > 0)
+			return 1;
+		else if (delta < 0)
+			return -1;
 		return 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptorProxy) {
 			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
@@ -104,9 +100,7 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 	 */
 	public abstract long getTimeStamp();
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final int hashCode() {
 		int code= getDescription().hashCode();
 		final long stamp= getTimeStamp();

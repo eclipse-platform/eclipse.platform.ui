@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,44 +38,27 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 		fDescriptor= descriptor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int compareTo(final Object object) {
-		return fDescriptor.compareTo(object);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getDescription() {
 		return fDescriptor.getDescription();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getProject() {
 		return fDescriptor.getProject();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public long getTimeStamp() {
 		return fDescriptor.getTimeStamp();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringDescriptor requestDescriptor(final IProgressMonitor monitor) {
 		return fDescriptor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toString() {
 		return fDescriptor.toString();
 	}

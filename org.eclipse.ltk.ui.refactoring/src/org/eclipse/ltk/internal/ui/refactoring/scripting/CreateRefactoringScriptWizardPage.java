@@ -79,9 +79,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		setDescription(ScriptingMessages.CreateRefactoringScriptWizard_description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(final Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite= new Composite(parent, SWT.NULL);
@@ -89,17 +87,20 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		final RefactoringHistoryControlConfiguration configuration= new RefactoringHistoryControlConfiguration(null, true, true) {
 
+			@Override
 			public final String getWorkspaceCaption() {
 				return ScriptingMessages.CreateRefactoringScriptWizardPage_select_caption;
 			}
 		};
 		fHistoryControl= new SortableRefactoringHistoryControl(composite, configuration) {
 
+			@Override
 			protected final void handleDeselectAll() {
 				super.handleDeselectAll();
 				fWizard.setRefactoringDescriptors(EMPTY_DESCRIPTORS);
 			}
 
+			@Override
 			protected final void handleSelectAll() {
 				super.handleSelectAll();
 				final RefactoringHistory history= getInput();
@@ -124,6 +125,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		fHistoryControl.setInput(history);
 		fHistoryControl.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors());
 			}
@@ -136,6 +138,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fLocationControl= new RefactoringScriptLocationControl(fWizard, group) {
 
+			@Override
 			protected void handleBrowseExternalLocation() {
 				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
 				file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_destination);
@@ -149,6 +152,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				}
 			}
 
+			@Override
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();
 				CreateRefactoringScriptWizardPage.this.fWizard.setRefactoringScript(null);
@@ -157,6 +161,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				setPageComplete(true);
 			}
 
+			@Override
 			protected final void handleExternalLocationChanged() {
 				super.handleExternalLocationChanged();
 				CreateRefactoringScriptWizardPage.this.fWizard.setRefactoringScript(null);
@@ -202,9 +207,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		fLocationControl.saveHistory();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setErrorMessage(final String message) {
 		if (!fFirstTime)
 			super.setErrorMessage(message);

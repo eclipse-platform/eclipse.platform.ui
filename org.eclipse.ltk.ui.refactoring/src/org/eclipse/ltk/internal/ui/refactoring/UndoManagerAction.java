@@ -50,10 +50,12 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 			fParent= parent;
 			fTitle= title;
 		}
+		@Override
 		public boolean proceed(RefactoringStatus status) {
 			final Dialog dialog= RefactoringUI.createRefactoringStatusDialog(status, fParent, fTitle, false);
 			final int[] result= new int[1];
 			Runnable r= new Runnable() {
+				@Override
 				public void run() {
 					result[0]= dialog.open();
 				}
@@ -61,8 +63,10 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 			fParent.getDisplay().syncExec(r);
 			return result[0] == IDialogConstants.OK_ID;
 		}
+		@Override
 		public void stopped(final RefactoringStatus status) {
 			Runnable r= new Runnable() {
+				@Override
 				public void run() {
 					String message= status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 					MessageDialog.openWarning(fParent, fTitle, getFullMessage(message));
@@ -115,9 +119,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		return result.toString();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
-	 */
+	@Override
 	public void dispose() {
 		if (fUndoManagerListener != null)
 			RefactoringCore.getUndoManager().removeListener(fUndoManagerListener);
@@ -126,16 +128,12 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		fUndoManagerListener= null;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
-	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
-	 */
+	@Override
 	public void run(IAction action) {
 		Shell parent= fWorkbenchWindow.getShell();
 		IRunnableWithProgress op= createOperation(parent);

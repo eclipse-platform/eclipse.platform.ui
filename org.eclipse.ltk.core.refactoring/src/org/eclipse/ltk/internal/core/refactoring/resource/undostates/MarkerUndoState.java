@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class MarkerUndoState {
 	protected IResource resource;
 
 	private String type;
-	private Map attributes;
+	private Map<String, ? extends Object> attributes;
 
 	/**
 	 *
@@ -60,7 +60,7 @@ public class MarkerUndoState {
 	 * @param resource
 	 *            the resource on which the marker should be created
 	 */
-	public MarkerUndoState(String type, Map attributes, IResource resource) {
+	public MarkerUndoState(String type, Map<String, ? extends Object> attributes, IResource resource) {
 		this.type = type;
 		this.attributes = attributes;
 		this.resource = resource;

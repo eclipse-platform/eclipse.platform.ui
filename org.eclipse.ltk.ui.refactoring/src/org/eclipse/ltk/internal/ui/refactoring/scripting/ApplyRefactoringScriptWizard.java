@@ -38,18 +38,14 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	/** Proxy which encapsulates a refactoring history */
 	private final class RefactoringHistoryProxy extends RefactoringHistory {
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public RefactoringDescriptorProxy[] getDescriptors() {
 			if (fRefactoringHistory != null)
 				return fRefactoringHistory.getDescriptors();
 			return new RefactoringDescriptorProxy[0];
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public boolean isEmpty() {
 			final RefactoringDescriptorProxy[] proxies= getDescriptors();
 			if (proxies != null)
@@ -57,9 +53,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 			return true;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public RefactoringHistory removeAll(final RefactoringHistory history) {
 			throw new UnsupportedOperationException();
 		}
@@ -97,27 +91,25 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 		}
 		setConfiguration(new RefactoringHistoryControlConfiguration(null, false, false) {
 
+			@Override
 			public String getProjectPattern() {
 				return ScriptingMessages.ApplyRefactoringScriptWizard_project_pattern;
 			}
 
+			@Override
 			public String getWorkspaceCaption() {
 				return ScriptingMessages.ApplyRefactoringScriptWizard_workspace_caption;
 			}
 		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void addUserDefinedPages() {
 		fWizardPage= new ApplyRefactoringScriptWizardPage(this);
 		addPage(fWizardPage);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFinish() {
 		return super.canFinish() && fRefactoringHistory != null;
 	}
@@ -140,9 +132,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 		return fScriptLocation;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		if (selection != null && selection.size() == 1) {
 			final Object element= selection.getFirstElement();
@@ -154,9 +144,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performFinish() {
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();

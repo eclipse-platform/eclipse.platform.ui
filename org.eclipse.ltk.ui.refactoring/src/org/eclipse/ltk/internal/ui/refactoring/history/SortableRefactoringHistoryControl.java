@@ -66,6 +66,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	/** The sort projects action */
 	private final IAction fSortProjects= new Action(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project, IAction.AS_RADIO_BUTTON) {
 
+		@Override
 		public final void run() {
 			final BrowseRefactoringHistoryContentProvider provider= (BrowseRefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 			provider.setSortProjects(true);
@@ -81,6 +82,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	/** The sort time stamps action */
 	private final IAction fSortTimestamps= new Action(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date, IAction.AS_RADIO_BUTTON) {
 
+		@Override
 		public final void run() {
 			final BrowseRefactoringHistoryContentProvider provider= (BrowseRefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 			provider.setSortProjects(false);
@@ -112,6 +114,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 		addDisposeListener(new DisposeListener() {
 
+			@Override
 			public final void widgetDisposed(final DisposeEvent event) {
 				if (fToolBarManager != null) {
 					fToolBarManager.removeAll();
@@ -122,9 +125,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void createBottomButtonBar(final Composite parent) {
 		Assert.isNotNull(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
@@ -145,9 +146,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		createDeselectAllButton(composite);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl() {
 		super.createControl();
 		final GridData data= new GridData();
@@ -177,15 +176,14 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				handleDeselectAll();
 			}
 		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
 		TreeViewer viewer= null;
@@ -216,15 +214,14 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				handleSelectAll();
 			}
 		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void createToolBar(final ViewForm parent) {
 		final ToolBarManager manager= getToolBarManager();
 		if (manager != null) {
@@ -246,16 +243,12 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected int getContainerColumns() {
 		return 1;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected RefactoringHistoryContentProvider getContentProvider() {
 		return new BrowseRefactoringHistoryContentProvider(fControlConfiguration);
 	}
@@ -269,9 +262,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		return fDeselectAllButton;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected RefactoringHistoryLabelProvider getLabelProvider() {
 		return new BrowseRefactoringHistoryLabelProvider(fControlConfiguration);
 	}
@@ -299,9 +290,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		return fToolBarManager;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void handleCheckStateChanged() {
 		super.handleCheckStateChanged();
 		final RefactoringHistory history= getInput();
@@ -331,16 +320,12 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 			setCheckedDescriptors(history.getDescriptors());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isSortByDate() {
 		return !isSortByProjects();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isSortByProjects() {
 		final IContentProvider provider= fHistoryViewer.getContentProvider();
 		if (provider instanceof BrowseRefactoringHistoryContentProvider) {
@@ -350,9 +335,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setHistoryControlEnablement() {
 		super.setHistoryControlEnablement();
 		boolean enable= false;
@@ -366,9 +349,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		fSortTimestamps.setEnabled(enable);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
 		if (fDeselectAllButton != null)
@@ -377,16 +358,12 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 			fSelectAllButton.setEnabled(history != null && !history.isEmpty());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void sortByDate() {
 		fSortTimestamps.run();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void sortByProjects() {
 		fSortProjects.run();
 	}

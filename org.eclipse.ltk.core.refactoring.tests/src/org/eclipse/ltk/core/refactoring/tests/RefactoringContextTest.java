@@ -31,18 +31,22 @@ public class RefactoringContextTest extends TestCase {
 		RefactoringStatus fInitialConditionStatus= new RefactoringStatus();
 		RefactoringStatus fFinalConditionStatus= new RefactoringStatus();
 
+		@Override
 		public String getName() {
 			return "test Refactoring";
 		}
 
+		@Override
 		public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return fInitialConditionStatus;
 		}
 
+		@Override
 		public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return fFinalConditionStatus;
 		}
 
+		@Override
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return new NullChange();
 		}
@@ -55,6 +59,7 @@ public class RefactoringContextTest extends TestCase {
 			super(refactoring);
 		}
 
+		@Override
 		public void dispose() {
 			super.dispose();
 			fDisposeCalls++;
@@ -97,6 +102,7 @@ public class RefactoringContextTest extends TestCase {
 
 	public void testDisposeChangeFailed() throws Exception {
 		TestRefactoring ref= new TestRefactoring() {
+			@Override
 			public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 				throw new OperationCanceledException();
 			}

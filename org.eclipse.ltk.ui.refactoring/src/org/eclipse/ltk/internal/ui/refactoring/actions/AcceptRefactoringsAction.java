@@ -59,16 +59,12 @@ public final class AcceptRefactoringsAction extends Action {
 			super(project, false, false);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public String getProjectPattern() {
 			return ModelMessages.AcceptRefactoringsAction_wizard_project_pattern;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public String getWorkspaceCaption() {
 			return ModelMessages.AcceptRefactoringsAction_wizard_workspace_caption;
 		}
@@ -118,9 +114,7 @@ public final class AcceptRefactoringsAction extends Action {
 		setDescription(ModelMessages.AcceptRefactoringsAction_description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isEnabled() {
 		if (fProxies != null && fProxies.length > 0) {
 			for (int index= 0; index < fProxies.length; index++) {
@@ -134,9 +128,7 @@ public final class AcceptRefactoringsAction extends Action {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		if (fProxies != null && fProxies.length > 0) {
 			final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryAcceptWizard();
@@ -144,7 +136,7 @@ public final class AcceptRefactoringsAction extends Action {
 			try {
 				final WizardDialog dialog= new WizardDialog(fShell, wizard);
 				IProject project= null;
-				Set proxies= new HashSet();
+				Set<RefactoringDescriptorSynchronizationProxy> proxies= new HashSet<>();
 				for (int index= 0; index < fProxies.length; index++) {
 					if (fProxies[index] instanceof RefactoringDescriptorSynchronizationProxy) {
 						final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fProxies[index];
@@ -156,7 +148,7 @@ public final class AcceptRefactoringsAction extends Action {
 						project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				}
 				wizard.setConfiguration(new RefactoringHistoryAcceptConfiguration(project));
-				wizard.setInput(new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) proxies.toArray(new RefactoringDescriptorProxy[proxies.size()])));
+				wizard.setInput(new RefactoringHistoryImplementation(proxies.toArray(new RefactoringDescriptorProxy[proxies.size()])));
 				dialog.create();
 				dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_ACCEPT_REFACTORING_PAGE);

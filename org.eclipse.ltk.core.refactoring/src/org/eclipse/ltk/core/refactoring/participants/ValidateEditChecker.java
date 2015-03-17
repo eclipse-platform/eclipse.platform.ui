@@ -52,7 +52,7 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  */
 public class ValidateEditChecker implements IConditionChecker {
 
-	private Set fFiles= new HashSet();
+	private Set<IFile> fFiles= new HashSet<>();
 	private Object fContext;
 
 	/**
@@ -89,11 +89,9 @@ public class ValidateEditChecker implements IConditionChecker {
 		fFiles.addAll(Arrays.asList(files));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
-		IResource[] resources= (IResource[])fFiles.toArray(new IResource[fFiles.size()]);
+		IResource[] resources= fFiles.toArray(new IResource[fFiles.size()]);
 		RefactoringStatus result= new RefactoringStatus();
 		IStatus status= Resources.checkInSync(resources);
 		if (!status.isOK())

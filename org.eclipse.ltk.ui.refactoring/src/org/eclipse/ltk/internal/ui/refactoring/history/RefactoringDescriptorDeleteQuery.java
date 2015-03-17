@@ -71,22 +71,19 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 		fCount= count;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean hasDeletions() {
 		return fReturnCode == IDialogConstants.YES_ID;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
 		final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 		if (!fWarned) {
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
 				fShell.getDisplay().syncExec(new Runnable() {
 
+					@Override
 					public final void run() {
 						if (!fShell.isDisposed()) {
 							final String count= new Integer(fCount).toString();

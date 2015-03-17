@@ -65,9 +65,7 @@ public class FileStatusContext extends RefactoringStatusContext {
 		return fSourceRegion;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on RefactoringStatusContext.
-	 */
+	@Override
 	public Object getCorrespondingElement() {
 		return getFile();
 	}

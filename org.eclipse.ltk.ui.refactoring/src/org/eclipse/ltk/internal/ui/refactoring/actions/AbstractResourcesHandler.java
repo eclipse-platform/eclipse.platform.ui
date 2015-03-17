@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,21 +34,21 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 public abstract class AbstractResourcesHandler extends AbstractHandler {
 
 	protected IResource[] getSelectedResources(IStructuredSelection sel) {
-		List resources= new ArrayList(sel.size());
-		for (Iterator e= sel.iterator(); e.hasNext();) {
+		List<IResource> resources= new ArrayList<>(sel.size());
+		for (Iterator<?> e= sel.iterator(); e.hasNext();) {
 			Object next= e.next();
 			if (next instanceof IResource) {
-				resources.add(next);
+				resources.add((IResource) next);
 				continue;
 			} else if (next instanceof IAdaptable) {
-				Object resource= ((IAdaptable) next).getAdapter(IResource.class);
+				IResource resource= ((IAdaptable) next).getAdapter(IResource.class);
 				if (resource != null) {
 					resources.add(resource);
 					continue;
 				}
 			} else {
 				IAdapterManager adapterManager= Platform.getAdapterManager();
-				ResourceMapping mapping= (ResourceMapping) adapterManager.getAdapter(next, ResourceMapping.class);
+				ResourceMapping mapping= adapterManager.getAdapter(next, ResourceMapping.class);
 
 				if (mapping != null) {
 
@@ -72,7 +72,7 @@ public abstract class AbstractResourcesHandler extends AbstractHandler {
 				}// if
 			}
 		}
-		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+		return resources.toArray(new IResource[resources.size()]);
 	}
 
 }

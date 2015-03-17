@@ -68,17 +68,13 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void drawCompositeImage(final int width, final int height) {
 		drawImage(getImageData(fImage), 0, 0);
 		drawBottomRight();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean equals(final Object object) {
 		if (object == null || !RefactoringDescriptorImageDescriptor.class.equals(object.getClass()))
 			return false;
@@ -102,16 +98,12 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 		return data;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected Point getSize() {
 		return fSize;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int hashCode() {
 		return fImage.hashCode() | fFlags | fSize.hashCode();
 	}

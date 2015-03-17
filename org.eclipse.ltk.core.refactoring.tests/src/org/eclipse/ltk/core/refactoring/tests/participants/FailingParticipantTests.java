@@ -32,10 +32,12 @@ public class FailingParticipantTests extends TestCase {
 	private ElementRenameRefactoring fRefactoring;
 
 	private ILogListener fLogListener;
-	private List fLogEntries;
+	private List<IStatus> fLogEntries;
 
+	@Override
 	protected void setUp() {
 		fLogListener= new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				fLogEntries.add(status);
 			}
@@ -43,12 +45,13 @@ public class FailingParticipantTests extends TestCase {
 		Platform.addLogListener(fLogListener);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}
 	
 	private void resetLog() {
-		fLogEntries= new ArrayList();
+		fLogEntries= new ArrayList<>();
 	}
 
 	public void testFailingParticipants() throws Exception {
@@ -67,7 +70,7 @@ public class FailingParticipantTests extends TestCase {
 		}
 
 		Assert.assertEquals(1, fLogEntries.size());
-		IStatus status= (IStatus) fLogEntries.get(0);
+		IStatus status= fLogEntries.get(0);
 		Assert.assertTrue("Exception wrong", status.getException().getClass().equals(FailingParticipant.Exception.class));
 		Assert.assertTrue("No exception generated", exception);
 
@@ -88,7 +91,7 @@ public class FailingParticipantTests extends TestCase {
 		}
 
 		Assert.assertEquals(1, fLogEntries.size());
-		status= (IStatus) fLogEntries.get(0);
+		status= fLogEntries.get(0);
 		Assert.assertTrue("Exception wrong", status.getException().getClass().equals(FailingParticipant2.Exception.class));
 		Assert.assertTrue("No exception generated", exception);
 
@@ -126,10 +129,10 @@ public class FailingParticipantTests extends TestCase {
 
 		//System.out.println(fLogEntries);
 		Assert.assertEquals(2, fLogEntries.size());
-		IStatus status= (IStatus) fLogEntries.get(0);
+		IStatus status= fLogEntries.get(0);
 		Assert.assertTrue("Exception wrong", status.getException().getClass().equals(RuntimeException.class));
 		Assert.assertEquals("Status code wrong", IRefactoringCoreStatusCodes.REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS, status.getCode());
-		status= (IStatus) fLogEntries.get(1);
+		status= fLogEntries.get(1);
 		Assert.assertEquals("Exception wrong", null, status.getException());
 		Assert.assertEquals("Status code wrong", IRefactoringCoreStatusCodes.PARTICIPANT_DISABLED, status.getCode());
 		Assert.assertTrue("No exception generated", exception);

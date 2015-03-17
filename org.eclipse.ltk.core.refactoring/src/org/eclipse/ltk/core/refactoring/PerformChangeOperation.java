@@ -195,9 +195,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		fSchedulingRule= rule;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
@@ -240,6 +238,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		if (!fChange.isEnabled())
 			return;
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				boolean undoInitialized= false;
 				try {

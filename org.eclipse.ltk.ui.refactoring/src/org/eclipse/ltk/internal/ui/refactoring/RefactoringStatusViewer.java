@@ -54,13 +54,16 @@ public class RefactoringStatusViewer extends SashForm {
 		private Label fLabel;
 		public NullContextViewer() {
 		}
+		@Override
 		public void createControl(Composite parent) {
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
 			fLabel.setText(RefactoringUIMessages.ErrorWizardPage_no_context_information_available);
 		}
+		@Override
 		public void setInput(RefactoringStatusContext input) {
 			// do nothing
 		}
+		@Override
 		public Control getControl() {
 			return fLabel;
 		}
@@ -74,6 +77,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setToolTipText(RefactoringUIMessages.ErrorWizardPage_next_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_PROBLEM_ACTION);
 		}
+		@Override
 		public void run() {
 			revealElement(true);
 		}
@@ -96,6 +100,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setToolTipText(RefactoringUIMessages.ErrorWizardPage_previous_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_PROBLEM_ACTION);
 		}
+		@Override
 		public void run() {
 			revealElement(false);
 		}
@@ -110,6 +115,7 @@ public class RefactoringStatusViewer extends SashForm {
 	}
 
 	private static class RefactoringStatusSorter extends ViewerComparator {
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int r1= ((RefactoringStatusEntry)e1).getSeverity();
 			int r2= ((RefactoringStatusEntry)e2).getSeverity();
@@ -181,6 +187,7 @@ public class RefactoringStatusViewer extends SashForm {
 
 	//---- UI creation ----------------------------------------------------------------------
 
+	@Override
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		PixelConverter converter= new PixelConverter(this);
 		return new Point(converter.convertWidthInCharsToPixels(90), converter.convertHeightInCharsToPixels(25));
@@ -216,6 +223,7 @@ public class RefactoringStatusViewer extends SashForm {
 		fTableViewer.setLabelProvider(new RefactoringStatusEntryLabelProvider());
 		fTableViewer.setContentProvider(new RefactoringStatusContentProvider());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				entrySelected(event.getSelection());
 				fNextProblem.update();

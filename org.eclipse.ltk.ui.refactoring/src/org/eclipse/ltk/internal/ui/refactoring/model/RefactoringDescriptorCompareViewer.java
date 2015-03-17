@@ -58,9 +58,7 @@ public final class RefactoringDescriptorCompareViewer extends RefactoringDescrip
 		return fConfiguration;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInput(final Object element) {
 		if (element instanceof RefactoringDescriptorCompareInput) {
 			final RefactoringDescriptorCompareInput input= (RefactoringDescriptorCompareInput) element;

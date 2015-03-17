@@ -48,37 +48,27 @@ public class NullChange extends Change {
 		fName= name;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		// do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		return new NullChange();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getModifiedElement() {
 		return null;
 	}

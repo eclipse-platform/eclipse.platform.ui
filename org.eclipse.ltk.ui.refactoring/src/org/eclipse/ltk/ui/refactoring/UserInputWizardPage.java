@@ -97,18 +97,14 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible)
 			getRefactoringWizard().internalSetChange(InternalAPI.INSTANCE, null);
 		super.setVisible(visible);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if (fIsLastUserInputPage)
 			return computeSuccessorPage();
@@ -116,9 +112,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 			return super.getNextPage();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		if (fIsLastUserInputPage) {
 			// we can't call getNextPage to determine if flipping is allowed since computing
@@ -130,9 +124,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected boolean performFinish() {
 		RefactoringWizard wizard= getRefactoringWizard();
 		int threshold= RefactoringCore.getConditionCheckingFailedSeverity();

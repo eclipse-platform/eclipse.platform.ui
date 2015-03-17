@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,19 +57,15 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		return fInstance;
 	}
 
-	/**
-	 * The refactoring contribution cache (element type: &lt;String,
-	 * <code>RefactoringContribution&gt;</code>)
-	 */
-	private Map fContributionCache= null;
+	/** The refactoring contribution cache */
+	private Map<String, RefactoringContribution> fContributionCache= null;
 
 	/**
-	 * The refactoring contribution cache (element type:
-	 * &lt;RefactoringContribution, <code>String&gt;</code>)
+	 * The refactoring contribution cache.
 	 *
 	 * @since 3.3
 	 */
-	private Map fIdCache= null;
+	private Map<RefactoringContribution, String> fIdCache= null;
 
 	/**
 	 * Creates a new refactoring contribution manager.
@@ -103,7 +99,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	 * @return the refactoring descriptor
 	 * @throws IllegalArgumentException if the argument map contains invalid keys/values
 	 */
-	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) throws IllegalArgumentException {
+	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map<String, String> arguments, final int flags) throws IllegalArgumentException {
 		Assert.isNotNull(id);
 		Assert.isNotNull(description);
 		Assert.isNotNull(arguments);
@@ -135,7 +131,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		Assert.isNotNull(id);
 		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
 		populateCache();
-		return (RefactoringContribution) fContributionCache.get(id);
+		return fContributionCache.get(id);
 	}
 
 	/**
@@ -150,7 +146,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	public String getRefactoringId(final RefactoringContribution contribution) {
 		Assert.isNotNull(contribution);
 		populateCache();
-		return (String) fIdCache.get(contribution);
+		return fIdCache.get(contribution);
 	}
 
 	/**
@@ -160,8 +156,8 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	 */
 	private void populateCache() {
 		if (fContributionCache == null || fIdCache == null) {
-			fContributionCache= new HashMap(32);
-			fIdCache= new HashMap(32);
+			fContributionCache= new HashMap<>(32);
+			fIdCache= new HashMap<>(32);
 			final IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(RefactoringCore.ID_PLUGIN, REFACTORING_CONTRIBUTIONS_EXTENSION_POINT);
 			for (int index= 0; index < elements.length; index++) {
 				final IConfigurationElement element= elements[index];
@@ -175,8 +171,8 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 							if (implementation instanceof RefactoringContribution) {
 								if (fContributionCache.get(attributeId) != null)
 									RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_duplicate_warning, new String[] { attributeId, point}));
-								fContributionCache.put(attributeId, implementation);
-								fIdCache.put(implementation, attributeId);
+								fContributionCache.put(attributeId, (RefactoringContribution) implementation);
+								fIdCache.put((RefactoringContribution) implementation, attributeId);
 							} else
 								RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_creation_error, new String[] { point, attributeId}));
 						} catch (CoreException exception) {
@@ -190,9 +186,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void registryChanged(final IRegistryChangeEvent event) {
 		fContributionCache= null;
 		fIdCache= null;

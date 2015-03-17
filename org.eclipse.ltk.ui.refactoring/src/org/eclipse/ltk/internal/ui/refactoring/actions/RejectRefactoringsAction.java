@@ -58,9 +58,7 @@ public final class RejectRefactoringsAction extends Action {
 		setDescription(ModelMessages.RejectRefactoringsAction_description);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isEnabled() {
 		if (fProxies != null && fProxies.length > 0 && fContext instanceof IMergeContext) {
 			for (int index= 0; index < fProxies.length; index++) {
@@ -74,14 +72,13 @@ public final class RejectRefactoringsAction extends Action {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		if (fProxies != null) {
 			try {
 				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 
+					@Override
 					public final void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						try {
 							monitor.beginTask("", fProxies.length + 100); //$NON-NLS-1$

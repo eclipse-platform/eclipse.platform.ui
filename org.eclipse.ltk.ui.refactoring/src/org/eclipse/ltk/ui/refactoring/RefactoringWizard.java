@@ -111,6 +111,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * @deprecated Use {@link #DIALOG_BASED_USER_INTERFACE} instead.
 	 */
+	@Deprecated
 	public static final int DIALOG_BASED_UESR_INTERFACE= DIALOG_BASED_USER_INTERFACE;
 
 	/**
@@ -350,6 +351,8 @@ public abstract class RefactoringWizard extends Wizard {
      * @deprecated {@link #WIZARD_BASED_USER_INTERFACE} always shows a '?' button.
 	 *  To show the button with {@link #DIALOG_BASED_USER_INTERFACE}, add the {@link #SHOW_HELP_CONTROL} flag.
 	 */
+	@Deprecated
+	@Override
 	public void setHelpAvailable(boolean b) {
 		super.setHelpAvailable(b);
 	}
@@ -384,6 +387,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * This method calls the hook method {@link #addUserInputPages()} to allow
 	 * subclasses to add specific user input pages.
 	 */
+	@Override
 	public final void addPages() {
 		Assert.isNotNull(getRefactoring());
 		try {
@@ -418,6 +422,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * This method asserts that the pages added to the refactoring wizard
 	 * are instances of type {@link RefactoringWizardPage}.
 	 */
+	@Override
 	public final void addPage(IWizardPage page) {
 		Assert.isTrue(page instanceof RefactoringWizardPage && fInAddPages);
 		super.addPage(page);
@@ -457,9 +462,7 @@ public abstract class RefactoringWizard extends Wizard {
 
 	//---- Page computation -----------------------------------------------------------
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getStartingPage() {
 		if (hasUserInput())
 			return super.getStartingPage();
@@ -485,9 +488,7 @@ public abstract class RefactoringWizard extends Wizard {
 		fRunnableContext= context;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (hasUserInput())
 			return super.getPreviousPage(page);
@@ -522,9 +523,7 @@ public abstract class RefactoringWizard extends Wizard {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean canFinish() {
 		if (fForcePreviewReview && !fPreviewShown)
 			return false;
@@ -705,11 +704,13 @@ public abstract class RefactoringWizard extends Wizard {
      *   was accepted, and <code>false</code> to indicate
      *   that the finish request was refused
 	 */
+	@Override
 	public boolean performFinish() {
 		RefactoringWizardPage page= (RefactoringWizardPage)getContainer().getCurrentPage();
 		return page.performFinish();
 	}
 
+	@Override
 	public boolean performCancel() {
 		if (fChange != null)
 			fChange.dispose();

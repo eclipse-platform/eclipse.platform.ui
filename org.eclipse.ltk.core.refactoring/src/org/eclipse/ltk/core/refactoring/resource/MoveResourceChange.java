@@ -77,9 +77,7 @@ public class MoveResourceChange extends ResourceChange {
 		setValidationMethod(VALIDATE_NOT_DIRTY);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getDescriptor()
-	 */
+	@Override
 	public ChangeDescriptor getDescriptor() {
 		return fDescriptor;
 	}
@@ -93,9 +91,7 @@ public class MoveResourceChange extends ResourceChange {
 		fDescriptor= descriptor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public final Change perform(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		try {
 			if (monitor == null)
@@ -164,16 +160,12 @@ public class MoveResourceChange extends ResourceChange {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.resource.ResourceChange#getModifiedResource()
-	 */
+	@Override
 	protected IResource getModifiedResource() {
 		return fSource;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
-	 */
+	@Override
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.MoveResourceChange_name, new String[] { BasicElementLabels.getPathLabel(fSource.getFullPath(), false), BasicElementLabels.getResourceName(fTarget) });
 	}

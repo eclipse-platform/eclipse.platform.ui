@@ -106,6 +106,7 @@ public class ParticipantDescriptor {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		return "name= " + getName() + (isEnabled() ? " (enabled)" : " (disabled)") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				"\nid= " + getId() + //$NON-NLS-1$

@@ -176,9 +176,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		return fUpdateReferences;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringDescriptor#createRefactoring(org.eclipse.ltk.core.refactoring.RefactoringStatus)
-	 */
+	@Override
 	public Refactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 

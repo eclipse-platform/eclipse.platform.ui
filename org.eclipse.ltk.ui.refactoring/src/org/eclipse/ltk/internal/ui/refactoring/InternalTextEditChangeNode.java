@@ -13,6 +13,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import java.util.List;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
@@ -23,11 +24,13 @@ public abstract class InternalTextEditChangeNode extends AbstractChangeNode {
 		super(parent, change);
 	}
 
+	@Override
 	int getActive() {
 		return getCompositeChangeActive();
 	}
 
-	boolean hasOneGroupCategory(List categories) {
+	@Override
+	boolean hasOneGroupCategory(List<GroupCategory> categories) {
 		return ((TextEditBasedChange)getChange()).hasOneGroupCategory(categories);
 	}
 
@@ -35,6 +38,7 @@ public abstract class InternalTextEditChangeNode extends AbstractChangeNode {
 		return (TextEditBasedChange)getChange();
 	}
 
+	@Override
 	final PreviewNode[] doCreateChildren() {
 		return createChildNodes();
 	}

@@ -32,7 +32,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 
 	/** The map of arguments (element type: &lt;String, String&gt;) */
-	private final Map fArguments;
+	private final Map<String, String> fArguments;
 
 	/**
 	 * Creates a new default refactoring descriptor.
@@ -50,10 +50,10 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	 * @param flags
 	 *            the flags
 	 */
-	public DefaultRefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
+	public DefaultRefactoringDescriptor(final String id, final String project, final String description, final String comment, final Map<String, String> arguments, final int flags) {
 		super(id, project, description, comment, flags);
 		Assert.isNotNull(arguments);
-		fArguments= Collections.unmodifiableMap(new HashMap(arguments));
+		fArguments= Collections.unmodifiableMap(new HashMap<>(arguments));
 	}
 
 	/**
@@ -61,6 +61,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	 *
 	 * @return always null
 	 */
+	@Override
 	public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
 		status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DefaultRefactoringDescriptor_cannot_create_refactoring));
 		return null;
@@ -71,7 +72,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 	 *
 	 * @return the argument map.
 	 */
-	public Map getArguments() {
+	public Map<String, String> getArguments() {
 		return fArguments;
 	}
 }

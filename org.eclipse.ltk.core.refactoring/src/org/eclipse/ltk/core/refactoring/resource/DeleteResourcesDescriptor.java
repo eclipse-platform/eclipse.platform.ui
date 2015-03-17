@@ -129,9 +129,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 		fDeleteContents= deleteContents;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.RefactoringDescriptor#createRefactoring(org.eclipse.ltk.core.refactoring.RefactoringStatus)
-	 */
+	@Override
 	public Refactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		IWorkspaceRoot wsRoot= ResourcesPlugin.getWorkspace().getRoot();
 		IResource[] resources= new IResource[fResourcePaths.length];

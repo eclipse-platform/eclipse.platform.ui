@@ -80,6 +80,7 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 * This method asserts that the wizard passed as a parameter is of
 	 * type <code>RefactoringWizard</code>.
 	 */
+	@Override
 	public void setWizard(IWizard newWizard) {
 		Assert.isTrue(fConventionalWizard || newWizard instanceof RefactoringWizard);
 		super.setWizard(newWizard);

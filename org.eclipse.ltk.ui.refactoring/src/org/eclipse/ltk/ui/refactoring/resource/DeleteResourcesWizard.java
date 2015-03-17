@@ -58,11 +58,9 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 		setWindowTitle(RefactoringUIMessages.DeleteResourcesWizard_window_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-	 */
+	@Override
 	protected void addUserInputPages() {
-		DeleteResourcesProcessor processor= (DeleteResourcesProcessor) getRefactoring().getAdapter(DeleteResourcesProcessor.class);
+		DeleteResourcesProcessor processor= getRefactoring().getAdapter(DeleteResourcesProcessor.class);
 		addPage(new DeleteResourcesRefactoringConfigurationPage(processor));
 	}
 
@@ -76,6 +74,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			fRefactoringProcessor= processor;
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			initializeDialogUnits(parent);
 
@@ -196,12 +195,14 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			return false;
 		}
 
+		@Override
 		protected boolean performFinish() {
 			initializeRefactoring();
 			storeSettings();
 			return super.performFinish();
 		}
 
+		@Override
 		public IWizardPage getNextPage() {
 			initializeRefactoring();
 			storeSettings();

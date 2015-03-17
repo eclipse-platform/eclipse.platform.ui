@@ -37,9 +37,7 @@ public class DeleteRefactoring extends ProcessorBasedRefactoring {
 		fProcessor= processor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringProcessor getProcessor() {
 		return fProcessor;
 	}

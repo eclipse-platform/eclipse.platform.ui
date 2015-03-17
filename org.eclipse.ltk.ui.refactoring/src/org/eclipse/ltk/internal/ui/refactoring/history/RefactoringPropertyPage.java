@@ -124,9 +124,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected Control createContents(final Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -142,6 +140,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		composite.setLayout(layout);
 
 		fHistoryControl= new ShowRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false) {
+			@Override
 			public String getProjectPattern() {
 				return RefactoringUIMessages.RefactoringPropertyPage_project_pattern;
 			}
@@ -158,6 +157,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 		fHistoryControl.getDeleteAllButton().addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				final IProject project= getCurrentProject();
 				if (project != null) {
@@ -175,6 +175,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		});
 		fHistoryControl.getDeleteButton().addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= fHistoryControl.getCheckedDescriptors();
 				if (selection.length > 0) {
@@ -184,6 +185,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 						final Shell shell= getShell();
 						RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, getCurrentProject(), selection.length), new IRefactoringHistoryProvider() {
 
+							@Override
 							public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
 								return RefactoringHistoryService.getInstance().getProjectHistory(project, monitor);
 							}
@@ -222,7 +224,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * @return the currently associated project, or <code>null</code>
 	 */
 	private IProject getCurrentProject() {
-		return (IProject) getElement().getAdapter(IProject.class);
+		return getElement().getAdapter(IProject.class);
 	}
 
 	/**
@@ -255,6 +257,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		try {
 			context.run(false, false, new IRunnableWithProgress() {
 
+				@Override
 				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 					try {
@@ -285,9 +288,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		final IProject project= getCurrentProject();
@@ -295,9 +296,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performOk() {
 		final IProject project= getCurrentProject();
 		if (project == null || fManager == null)
@@ -318,6 +317,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			if (history != fHasProjectHistory) {
 				final Job job= new Job(history ? RefactoringUIMessages.RefactoringPropertyPage_sharing_refactoring_history : RefactoringUIMessages.RefactoringPropertyPage_unsharing_refactoring_history) {
 
+					@Override
 					public final IStatus run(final IProgressMonitor monitor) {
 						try {
 							RefactoringHistoryService.setSharedRefactoringHistory(project, history, monitor);
@@ -356,6 +356,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				final Shell shell= getShell();
 				context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
 
+					@Override
 					public void run(final IProgressMonitor monitor) throws CoreException {
 						try {
 							monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
@@ -366,6 +367,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 								if (throwable instanceof IOException) {
 									shell.getDisplay().syncExec(new Runnable() {
 
+										@Override
 										public void run() {
 											MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
 										}
@@ -376,6 +378,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							final RefactoringHistory history= service.getProjectHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							shell.getDisplay().syncExec(new Runnable() {
 
+								@Override
 								public void run() {
 									fHistoryControl.setInput(history);
 									fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
@@ -416,9 +419,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			preferences.remove(key);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setVisible(final boolean visible) {
 		fHasProjectHistory= hasSharedRefactoringHistory();
 		super.setVisible(visible);

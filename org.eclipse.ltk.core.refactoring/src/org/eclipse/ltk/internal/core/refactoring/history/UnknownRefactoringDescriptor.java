@@ -34,9 +34,7 @@ public final class UnknownRefactoringDescriptor extends RefactoringDescriptor {
 		super(ID_UNKNOWN, null, name, null, RefactoringDescriptor.NONE);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
 		status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.UnknownRefactoringDescriptor_cannot_create_refactoring));
 		return null;

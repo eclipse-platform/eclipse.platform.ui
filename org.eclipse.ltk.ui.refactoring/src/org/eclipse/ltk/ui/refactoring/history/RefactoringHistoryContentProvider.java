@@ -119,16 +119,12 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		fControlConfiguration= configuration;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getChildren(final Object element) {
 		if (element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
@@ -182,9 +178,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		return NO_ELEMENTS;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getElements(final Object element) {
 		if (element instanceof RefactoringHistory) {
 			if (fControlConfiguration.isTimeDisplayed())
@@ -195,9 +189,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		return NO_ELEMENTS;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getParent(final Object element) {
 		if (element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
@@ -244,7 +236,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		final Calendar calendar= Calendar.getInstance();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
-		final List list= new ArrayList(proxies.length);
+		final List<RefactoringHistoryDate> list= new ArrayList<>(proxies.length);
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
 			long stamp= proxies[index].getTimeStamp();
@@ -283,7 +275,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryDate parent, final long start, final long end) {
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
-		final List list= new ArrayList(proxies.length);
+		final List<RefactoringHistoryEntry> list= new ArrayList<>(proxies.length);
 		for (int index= range[0]; index <= range[1]; index++)
 			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
 		return list.toArray();
@@ -299,7 +291,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 */
 	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent) {
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
-		final List list= new ArrayList(proxies.length);
+		final List<RefactoringHistoryEntry> list= new ArrayList<>(proxies.length);
 		for (int index= 0; index < proxies.length; index++)
 			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
 		return list.toArray();
@@ -322,7 +314,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		final Calendar calendar= Calendar.getInstance();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
-		final List list= new ArrayList(proxies.length);
+		final List<RefactoringHistoryDate> list= new ArrayList<>(proxies.length);
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
 			long stamp= proxies[index].getTimeStamp();
@@ -380,7 +372,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		final Calendar calendar= Calendar.getInstance();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
-		final List list= new ArrayList(proxies.length);
+		final List<RefactoringHistoryDate> list= new ArrayList<>(proxies.length);
 		int last= -1;
 		for (int index= range[0]; index <= range[1]; index++) {
 			long stamp= proxies[index].getTimeStamp();
@@ -497,7 +489,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring history root elements
 	 */
 	public Object[] getRootElements() {
-		final List list= new ArrayList(16);
+		final List<RefactoringHistoryDate> list= new ArrayList<>(16);
 		if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
 			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 			if (proxies.length > 0) {
@@ -521,16 +513,12 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		return list.toArray();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean hasChildren(final Object element) {
 		return !(element instanceof RefactoringHistoryEntry);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
 		if (predecessor == successor || fRefactoringHistory == successor)
 			return;

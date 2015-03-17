@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,13 +93,16 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private static class NullPreviewer implements IChangePreviewViewer {
 		private Label fLabel;
+		@Override
 		public void createControl(Composite parent) {
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
 			fLabel.setText(RefactoringUIMessages.PreviewWizardPage_no_preview);
 		}
+		@Override
 		public Control getControl() {
 			return fLabel;
 		}
+		@Override
 		public void setInput(ChangePreviewViewerInput input) {
 		}
 	}
@@ -113,6 +116,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_next_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);
 		}
+		@Override
 		public void run() {
 			fTreeViewer.revealNext();
 		}
@@ -127,6 +131,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_previous_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);
 		}
+		@Override
 		public void run() {
 			fTreeViewer.revealPrevious();
 		}
@@ -145,9 +150,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fGroupCategory= category;
 		}
 
+		@Override
 		public void run() {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 
+				@Override
 				public void run() {
 					setActiveGroupCategory(fGroupCategory);
 					fOwner.executed(FilterAction.this);
@@ -167,9 +174,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setChecked(true);
 		}
 
+		@Override
 		public void run() {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 
+				@Override
 				public final void run() {
 					clearGroupCategories();
 					fOwner.executed(ShowAllAction.this);
@@ -182,8 +191,10 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			super(RefactoringUIMessages.PreviewWizardPage_hideDerived_text, IAction.AS_CHECK_BOX);
 			setChecked(fDerivedFilterActive);
 		}
+		@Override
 		public void run() {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				@Override
 				public final void run() {
 					boolean hideDerived= isChecked();
 					getRefactoringSettings().put(PREVIEW_WIZARD_PAGE_HIDE_DERIVED, hideDerived);
@@ -206,31 +217,32 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_filterChanges);
 			setMenuCreator(this);
 		}
-		public void initialize(Collection/*<GroupCategory>*/ groupCategories) {
-			List list= new ArrayList(groupCategories);
-			Collections.sort(list, new Comparator() {
+		public void initialize(Collection<GroupCategory> groupCategories) {
+			List<GroupCategory> list= new ArrayList<>(groupCategories);
+			Collections.sort(list, new Comparator<GroupCategory>() {
 				private Collator fCollator= Collator.getInstance();
-				public final int compare(final Object first, final Object second) {
-					final GroupCategory left= (GroupCategory) first;
-					final GroupCategory right= (GroupCategory) second;
-					return fCollator.compare(left.getName(), right.getName());
+				@Override
+				public final int compare(GroupCategory first, GroupCategory second) {
+					return fCollator.compare(first.getName(), second.getName());
 				}
 			});
 			fShowAllAction= new ShowAllAction(this);
 			fActiveAction= fShowAllAction;
 			fFilterActions= new FilterAction[list.size()];
 			int i= 0;
-			for (Iterator iter= list.iterator(); iter.hasNext();) {
-				fFilterActions[i++]= new FilterAction(this, (GroupCategory)iter.next());
+			for (Iterator<GroupCategory> iter= list.iterator(); iter.hasNext();) {
+				fFilterActions[i++]= new FilterAction(this, iter.next());
 			}
 			fHideDerivedAction= new HideDerivedAction();
 		}
+		@Override
 		public void dispose() {
 			if (fMenu != null) {
 				fMenu.dispose();
 				fMenu= null;
 			}
 		}
+		@Override
 		public Menu getMenu(Control parent) {
 			dispose();
 			fMenu= new Menu(parent);
@@ -244,9 +256,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			new ActionContributionItem(fHideDerivedAction).fill(fMenu, -1);
 			return fMenu;
 		}
+		@Override
 		public Menu getMenu(Menu parent) {
 			return null;
 		}
+		@Override
 		public void runWithEvent(Event event) {
 			ToolItem toolItem= (ToolItem) event.widget;
 			ToolBar toolBar= toolItem.getParent();
@@ -268,7 +282,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 
 	protected Change fChange;
-	private List/*<GroupCategory>*/ fActiveGroupCategories;
+	private List<GroupCategory> fActiveGroupCategories;
 	private boolean fDerivedFilterActive;
 	protected CompositeChange fTreeViewerInputChange;
 	private PreviewNode fCurrentSelection;
@@ -310,6 +324,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 * the given change.
 	 * @param change the new change.
 	 */
+	@Override
 	public void setChange(Change change) {
 		if (fChange == change)
 			return;
@@ -359,6 +374,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	protected ViewerComparator createTreeComparator() {
 		return new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				PreviewNode node1= (PreviewNode) e1;
 				PreviewNode node2= (PreviewNode) e2;
@@ -379,9 +395,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		};
 	}
 
-	/* (non-JavaDoc)
-	 * Method defined in RefactoringWizardPage
-	 */
+	@Override
 	protected boolean performFinish() {
 		UIPerformChangeOperation operation= new UIPerformChangeOperation(getShell().getDisplay(), fChange, getContainer());
 		FinishResult result= getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, operation);
@@ -401,16 +415,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		return true;
 	}
 
-	/* (non-JavaDoc)
-	 * Method defined in IWizardPage
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return false;
 	}
 
-	/* (Non-JavaDoc)
-	 * Method defined in IWizardPage
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		fPageContainer= new PageBook(parent, SWT.NONE);
@@ -450,6 +460,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			/*
 			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
 			 */
+			@Override
 			public void getName(AccessibleEvent e) {
 				if (e.childID != ACC.CHILDID_SELF)
 					e.result= toolBar.getItem(e.childID).getToolTipText();
@@ -495,9 +506,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		return result;
 	}
 
-	/* (Non-JavaDoc)
-	 * Method defined in IWizardPage
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		fCurrentSelection= null;
 		final RefactoringWizard refactoringWizard= getRefactoringWizard();
@@ -562,6 +571,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private ICheckStateListener createCheckStateListener() {
 		return new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event){
 				PreviewNode element= (PreviewNode)event.getElement();
 				if (isChild(fCurrentSelection, element) || isChild(element, fCurrentSelection)) {
@@ -581,6 +591,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private ISelectionChangedListener createSelectionChangedListener() {
 		return new ISelectionChangedListener(){
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				if (sel.size() == 1) {
@@ -662,13 +673,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	//---- manage group categories --------------------------------------------
 
-	private Collection/*<GroupCategory>*/ collectGroupCategories() {
-		Set/*<GroupCategory>*/ result= new HashSet();
+	private Collection<GroupCategory> collectGroupCategories() {
+		Set<GroupCategory> result= new HashSet<>();
 		collectGroupCategories(result, fChange);
 		return result;
 	}
 
-	private void collectGroupCategories(Set/*<GroupCategory>*/ result, Change change) {
+	private void collectGroupCategories(Set<GroupCategory> result, Change change) {
 		if (change instanceof TextEditBasedChange) {
 			TextEditBasedChangeGroup[] groups= ((TextEditBasedChange)change).getChangeGroups();
 			for (int i= 0; i < groups.length; i++) {
@@ -684,7 +695,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private void setActiveGroupCategory(GroupCategory category) {
 		if (fActiveGroupCategories == null) {
-			fActiveGroupCategories= new ArrayList(1);
+			fActiveGroupCategories= new ArrayList<>(1);
 		} else {
 			fActiveGroupCategories.clear();
 		}
@@ -705,7 +716,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			}
 		}
 		if (fActiveGroupCategories != null && fActiveGroupCategories.size() > 0) {
-			GroupCategory groupCategory= (GroupCategory) fActiveGroupCategories.get(0);
+			GroupCategory groupCategory= fActiveGroupCategories.get(0);
 			groupFilterMessage= Messages.format(RefactoringUIMessages.PreviewWizardPage_changes_filter_category, groupCategory.getName());
 		}
 
@@ -743,6 +754,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		updateTreeViewerPaneTitle();
 	}
 
+	@Override
 	public Change getChange() {
 		return fChange;
 	}

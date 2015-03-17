@@ -33,10 +33,8 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 		fRefactoring= refactoring;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
     	Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -65,18 +63,14 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 		Dialog.applyDialogFont(composite);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
-     */
-    protected boolean performFinish() {
+    @Override
+	protected boolean performFinish() {
 		initializeRefactoring();
 		storeSettings();
 		return super.performFinish();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
-     */
+	@Override
 	public IWizardPage getNextPage() {
 		initializeRefactoring();
 		storeSettings();

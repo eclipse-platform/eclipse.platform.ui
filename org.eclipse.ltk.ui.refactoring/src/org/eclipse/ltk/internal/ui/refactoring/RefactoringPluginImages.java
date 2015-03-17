@@ -34,7 +34,7 @@ public class RefactoringPluginImages {
 	private static final IPath ICONS_PATH= new Path("$nl$/icons/full"); //$NON-NLS-1$
 
  	private static ImageRegistry fgImageRegistry= null;
- 	private static HashMap fgAvoidSWTErrorMap= null;
+ 	private static HashMap<String, ImageDescriptor> fgAvoidSWTErrorMap= null;
 
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
 	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
@@ -132,9 +132,9 @@ public class RefactoringPluginImages {
 	/* package */ static ImageRegistry getImageRegistry() {
 		if (fgImageRegistry == null) {
 			fgImageRegistry= new ImageRegistry();
-			for (Iterator iter= fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
-				String key= (String) iter.next();
-				fgImageRegistry.put(key, (ImageDescriptor) fgAvoidSWTErrorMap.get(key));
+			for (Iterator<String> iter= fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
+				String key= iter.next();
+				fgImageRegistry.put(key, fgAvoidSWTErrorMap.get(key));
 			}
 			fgAvoidSWTErrorMap= null;
 		}
@@ -156,7 +156,7 @@ public class RefactoringPluginImages {
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		ImageDescriptor result= create(prefix, name.substring(NAME_PREFIX_LENGTH), true);
 		if (fgAvoidSWTErrorMap == null) {
-			fgAvoidSWTErrorMap= new HashMap();
+			fgAvoidSWTErrorMap= new HashMap<>();
 		}
 		fgAvoidSWTErrorMap.put(name, result);
 		if (fgImageRegistry != null) {

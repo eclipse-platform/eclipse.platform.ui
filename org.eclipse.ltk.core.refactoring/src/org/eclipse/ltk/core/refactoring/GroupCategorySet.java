@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,13 @@ public class GroupCategorySet {
 	 * group categories.
 	 */
 	public static final GroupCategorySet NONE= new GroupCategorySet() {
+		@Override
 		public boolean contains(GroupCategory category) {
 			return false;
 		}
-		public List asList() {
-			return Collections.EMPTY_LIST;
+		@Override
+		public List<GroupCategory> asList() {
+			return Collections.emptyList();
 		}
 	};
 
@@ -68,20 +70,20 @@ public class GroupCategorySet {
 		if (two == NONE)
 			return one;
 
-		Set combined= new HashSet();
+		Set<GroupCategory> combined= new HashSet<>();
 		combined.addAll(one.asList());
 		combined.addAll(two.asList());
 		return new GroupCategorySet(combined);
 	}
 
-	private List/*<GroupCategory>*/ fContent;
+	private List<GroupCategory> fContent;
 
 	private GroupCategorySet() {
-		fContent= Collections.EMPTY_LIST;
+		fContent= Collections.emptyList();
 	}
 
-	private GroupCategorySet(Set/*<GroupCategory>*/ categories) {
-		fContent= new ArrayList(categories);
+	private GroupCategorySet(Set<GroupCategory> categories) {
+		fContent= new ArrayList<>(categories);
 	}
 
 	/**
@@ -92,7 +94,7 @@ public class GroupCategorySet {
 	 */
 	public GroupCategorySet(GroupCategory category) {
 		Assert.isNotNull(category);
-		fContent= new ArrayList(1);
+		fContent= new ArrayList<>(1);
 		fContent.add(category);
 	}
 
@@ -104,7 +106,7 @@ public class GroupCategorySet {
 	 */
 	public GroupCategorySet(GroupCategory[] categories) {
 		Assert.isNotNull(categories);
-		fContent= new ArrayList(categories.length);
+		fContent= new ArrayList<>(categories.length);
 		for (int i= 0; i < categories.length; i++) {
 			if (!fContent.contains(categories[i]))
 				fContent.add(categories[i]);
@@ -133,9 +135,9 @@ public class GroupCategorySet {
 	 * @return <code>true</code> if one of the given categories is
 	 *  contained in this set; otherwise <code>false</code>
 	 */
-	public boolean containsOneCategory(List/*<GroupCategory>*/ categories) {
-		for (Iterator iter= categories.iterator(); iter.hasNext();) {
-			GroupCategory category= (GroupCategory)iter.next();
+	public boolean containsOneCategory(List<GroupCategory> categories) {
+		for (Iterator<GroupCategory> iter= categories.iterator(); iter.hasNext();) {
+			GroupCategory category= iter.next();
 			if(contains(category))
 				return true;
 		}
@@ -149,7 +151,7 @@ public class GroupCategorySet {
 	 * @return an unmodifiable list containing all group
 	 *  categories
 	 */
-	public List/*<GroupCategory>*/ asList() {
+	public List<GroupCategory> asList() {
 		return Collections.unmodifiableList(fContent);
 	}
 }

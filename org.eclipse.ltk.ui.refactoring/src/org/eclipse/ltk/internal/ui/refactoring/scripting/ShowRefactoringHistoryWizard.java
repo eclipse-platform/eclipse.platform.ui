@@ -56,9 +56,7 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 		fWizardPage= new ShowRefactoringHistoryWizardPage(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		addPage(fWizardPage);
@@ -73,9 +71,7 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 		return fRefactoringHistory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performFinish() {
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();

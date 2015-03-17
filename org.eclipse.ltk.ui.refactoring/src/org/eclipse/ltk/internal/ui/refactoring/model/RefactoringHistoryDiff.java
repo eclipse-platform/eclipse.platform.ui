@@ -51,30 +51,22 @@ public final class RefactoringHistoryDiff implements IThreeWayDiff {
 		fDirection= direction;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getDirection() {
 		return fDirection;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public int getKind() {
 		return fKind;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITwoWayDiff getLocalChange() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IPath getPath() {
 		return null;
 	}
@@ -88,16 +80,12 @@ public final class RefactoringHistoryDiff implements IThreeWayDiff {
 		return fHistory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ITwoWayDiff getRemoteChange() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String toDiffString() {
 		return ModelMessages.RefactoringHistoryDiff_diff_string;
 	}

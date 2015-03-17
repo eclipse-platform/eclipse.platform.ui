@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 public class CompositeChange extends Change {
 
 	private String fName;
-	private List fChanges;
+	private List<Change> fChanges;
 	private boolean fIsSynthetic;
 	private Change fUndoUntilException;
 
@@ -53,7 +53,7 @@ public class CompositeChange extends Change {
 	 *  be used to display the change in the user interface
 	 */
 	public CompositeChange(String name) {
-		this(name, new ArrayList(2));
+		this(name, new ArrayList<Change>(2));
 	}
 
 	/**
@@ -65,11 +65,11 @@ public class CompositeChange extends Change {
 	 * @param children the initial array of children
 	 */
 	public CompositeChange(String name, Change[] children) {
-		this(name, new ArrayList(children.length));
+		this(name, new ArrayList<Change>(children.length));
 		addAll(children);
 	}
 
-	private CompositeChange(String name, List changes) {
+	private CompositeChange(String name, List<Change> changes) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(changes);
 		fName= name;
@@ -93,9 +93,7 @@ public class CompositeChange extends Change {
 		fIsSynthetic= true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -168,7 +166,7 @@ public class CompositeChange extends Change {
 	 * @since 3.1
 	 */
 	public Change[] clear() {
-		Change[] result= (Change[])fChanges.toArray(new Change[fChanges.size()]);
+		Change[] result= fChanges.toArray(new Change[fChanges.size()]);
 		fChanges.clear();
 		return result;
 	}
@@ -180,7 +178,7 @@ public class CompositeChange extends Change {
 	 *  children exist
 	 */
 	public Change[] getChildren() {
-		return (Change[])fChanges.toArray(new Change[fChanges.size()]);
+		return fChanges.toArray(new Change[fChanges.size()]);
 	}
 
 	/**
@@ -192,10 +190,11 @@ public class CompositeChange extends Change {
 	 * Client are allowed to extend this method.
 	 * </p>
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
-			((Change)iter.next()).setEnabled(enabled);
+		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext(); ) {
+			iter.next().setEnabled(enabled);
 		}
 	}
 
@@ -209,10 +208,11 @@ public class CompositeChange extends Change {
 	 * Client are allowed to extend this method.
 	 * </p>
 	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
-			Change change= (Change)iter.next();
+		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
+			Change change= iter.next();
 			change.initializeValidationData(new SubProgressMonitor(pm, 1));
 			pm.worked(1);
 		}
@@ -230,11 +230,12 @@ public class CompositeChange extends Change {
 	 * Client are allowed to extend this method.
 	 * </p>
 	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		for (Iterator iter= fChanges.iterator(); iter.hasNext() && !result.hasFatalError();) {
-			Change change= (Change)iter.next();
+		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext() && !result.hasFatalError();) {
+			Change change= iter.next();
 			if (change.isEnabled())
 				result.merge(change.isValid(new SubProgressMonitor(pm, 1)));
 			else
@@ -259,16 +260,17 @@ public class CompositeChange extends Change {
 	 * Client are allowed to extend this method.
 	 * </p>
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
-		List undos= new ArrayList(fChanges.size());
+		List<Change> undos= new ArrayList<>(fChanges.size());
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.CompositeChange_performingChangesTask_name);
 		Change change= null;
 		boolean canceled= false;
 		try {
-			for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
-				change= (Change)iter.next();
+			for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
+				change= iter.next();
 				if (canceled && !internalProcessOnCancel(change))
 					continue;
 
@@ -299,9 +301,11 @@ public class CompositeChange extends Change {
 				// in the list of children when call CompositeChange#dispose()
 				final Change changeToDispose= change;
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						changeToDispose.dispose();
 					}
+					@Override
 					public void handleException(Throwable exception) {
 						RefactoringCorePlugin.log(exception);
 					}
@@ -311,7 +315,7 @@ public class CompositeChange extends Change {
 				throw new OperationCanceledException();
 			if (undos != null) {
 				Collections.reverse(undos);
-				return createUndoChange((Change[]) undos.toArray(new Change[undos.size()]));
+				return createUndoChange(undos.toArray(new Change[undos.size()]));
 			} else {
 				return null;
 			}
@@ -326,7 +330,7 @@ public class CompositeChange extends Change {
 		}
 	}
 
-	private void handleUndos(Change failedChange, List undos) {
+	private void handleUndos(Change failedChange, List<Change> undos) {
 		if (undos == null) {
 			fUndoUntilException= null;
 			return;
@@ -342,7 +346,7 @@ public class CompositeChange extends Change {
 			return;
 		}
 		Collections.reverse(undos);
-		fUndoUntilException= createUndoChange((Change[]) undos.toArray(new Change[undos.size()]));
+		fUndoUntilException= createUndoChange(undos.toArray(new Change[undos.size()]));
 	}
 
 	/**
@@ -410,13 +414,16 @@ public class CompositeChange extends Change {
 	 * that all children receive the <code>dispose</code> call.
 	 * </p>
 	 */
+	@Override
 	public void dispose() {
-		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
-			final Change change= (Change)iter.next();
+		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext(); ) {
+			final Change change= iter.next();
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					change.dispose();
 				}
+				@Override
 				public void handleException(Throwable exception) {
 					RefactoringCorePlugin.log(exception);
 				}
@@ -456,15 +463,13 @@ public class CompositeChange extends Change {
 		return new CompositeChange(getName(), childUndos);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getAffectedObjects() {
 		if (fChanges.size() == 0)
 			return new Object[0];
-		List result= new ArrayList();
-		for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
-			Change change= (Change)iter.next();
+		List<Object> result= new ArrayList<>();
+		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
+			Change change= iter.next();
 			Object[] affectedObjects= change.getAffectedObjects();
 			if (affectedObjects == null)
 				return null;
@@ -473,9 +478,7 @@ public class CompositeChange extends Change {
 		return result.toArray();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getModifiedElement() {
 		return null;
 	}
@@ -485,9 +488,10 @@ public class CompositeChange extends Change {
 	 *
 	 * @since 3.2
 	 */
+	@Override
 	public ChangeDescriptor getDescriptor() {
-		for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
-			final Change change= (Change) iterator.next();
+		for (final Iterator<Change> iterator= fChanges.iterator(); iterator.hasNext();) {
+			final Change change= iterator.next();
 			final ChangeDescriptor descriptor= change.getDescriptor();
 			if (descriptor != null)
 				return descriptor;
@@ -495,11 +499,12 @@ public class CompositeChange extends Change {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buff= new StringBuffer();
 		buff.append(getName());
 		buff.append("\n"); //$NON-NLS-1$
-		for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
+		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
 			buff.append("<").append(iter.next().toString()).append("/>\n"); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		return buff.toString();

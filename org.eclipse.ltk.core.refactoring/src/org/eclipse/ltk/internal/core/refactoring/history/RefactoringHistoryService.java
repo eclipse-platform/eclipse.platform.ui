@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.ibm.icu.text.DateFormat;
@@ -94,23 +95,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		/** The no proxies constant */
 		private static final RefactoringDescriptorProxy[] NO_PROXIES= {};
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public RefactoringDescriptorProxy[] getDescriptors() {
 			return NO_PROXIES;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public boolean isEmpty() {
 			return true;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public RefactoringHistory removeAll(final RefactoringHistory history) {
 			return this;
 		}
@@ -157,7 +152,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * @param monitor
 	 *            the progress monitor to use
 	 */
-	private static void filterRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final Set set, final boolean resolve, final int flags, final IProgressMonitor monitor) {
+	private static void filterRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final Set<RefactoringDescriptorProxy> set, final boolean resolve, final int flags, final IProgressMonitor monitor) {
 		Assert.isTrue(flags > RefactoringDescriptor.NONE);
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
@@ -309,15 +304,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	/** Maximal number of refactoring managers */
 	private static final int MAX_MANAGERS= 2;
 
-	/**
-	 * The refactoring history manager cache (element type:
-	 * <code>&lt;IFileStore, RefactoringHistoryManager&gt;</code>)
-	 */
-	private final Map fManagerCache= new LinkedHashMap(MAX_MANAGERS, 0.75f, true) {
+	/** The refactoring history manager cache */
+	private final Map<IFileStore, RefactoringHistoryManager> fManagerCache= new LinkedHashMap<IFileStore, RefactoringHistoryManager>(MAX_MANAGERS, 0.75f, true) {
 
 		private static final long serialVersionUID= 1L;
 
-		protected final boolean removeEldestEntry(final Map.Entry entry) {
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<IFileStore, RefactoringHistoryManager> entry) {
 			return size() > MAX_MANAGERS;
 		}
 	};
@@ -329,17 +322,13 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addExecutionListener(final IRefactoringExecutionListener listener) {
 		Assert.isNotNull(listener);
 		fExecutionListeners.add(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addHistoryListener(final IRefactoringHistoryListener listener) {
 		Assert.isNotNull(listener);
 		fHistoryListeners.add(listener);
@@ -368,13 +357,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void connect() {
 		fReferenceCount++;
 		if (fReferenceCount == 1) {
 			fOperationListener= new IOperationHistoryListener() {
+				@Override
 				public void historyNotification(final OperationHistoryEvent event) {
 					performHistoryNotification(event);
 				}
@@ -382,6 +370,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			OperationHistoryFactory.getOperationHistory().addOperationHistoryListener(fOperationListener);
 
 			fResourceListener= new IResourceChangeListener() {
+				@Override
 				public void resourceChanged(final IResourceChangeEvent event) {
 					peformResourceChanged(event);
 				}
@@ -417,14 +406,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, proxies.length + 300);
-			final Map projects= new HashMap();
+			final Map<String, Collection<RefactoringDescriptorProxy>> projects= new HashMap<>();
 			for (int index= 0; index < proxies.length; index++) {
 				String project= proxies[index].getProject();
 				if (project == null || "".equals(project)) //$NON-NLS-1$
 					project= RefactoringHistoryService.NAME_WORKSPACE_PROJECT;
-				Collection collection= (Collection) projects.get(project);
+				Collection<RefactoringDescriptorProxy> collection= projects.get(project);
 				if (collection == null) {
-					collection= new ArrayList();
+					collection= new ArrayList<>();
 					projects.put(project, collection);
 				}
 				collection.add(proxies[index]);
@@ -432,17 +421,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			}
 			final SubProgressMonitor subMonitor= new SubProgressMonitor(monitor, 300);
 			try {
-				final Set entries= projects.entrySet();
+				final Set<Entry<String, Collection<RefactoringDescriptorProxy>>> entries= projects.entrySet();
 				subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, entries.size());
-				for (final Iterator iterator= entries.iterator(); iterator.hasNext();) {
-					final Map.Entry entry= (Map.Entry) iterator.next();
-					final Collection collection= (Collection) entry.getValue();
-					String project= (String) entry.getKey();
+				for (final Iterator<Entry<String, Collection<RefactoringDescriptorProxy>>> iterator= entries.iterator(); iterator.hasNext();) {
+					final Entry<String, Collection<RefactoringDescriptorProxy>> entry= iterator.next();
+					final Collection<RefactoringDescriptorProxy> collection= entry.getValue();
+					String project= entry.getKey();
 					if (project.equals(RefactoringHistoryService.NAME_WORKSPACE_PROJECT))
 						project= null;
 					final RefactoringHistoryManager manager= getManager(project);
 					if (manager != null)
-						manager.removeRefactoringDescriptors((RefactoringDescriptorProxy[]) collection.toArray(new RefactoringDescriptorProxy[collection.size()]), new SubProgressMonitor(subMonitor, 1), RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings);
+						manager.removeRefactoringDescriptors(collection.toArray(new RefactoringDescriptorProxy[collection.size()]), new SubProgressMonitor(subMonitor, 1), RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings);
 					else
 						subMonitor.worked(1);
 				}
@@ -484,14 +473,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, proxies.length + 300);
-			final Set set= new HashSet(proxies.length);
+			final Set<RefactoringDescriptorProxy> set= new HashSet<>(proxies.length);
 			for (int index= 0; index < proxies.length; index++) {
 				if (query.proceed(proxies[index]).isOK())
 					set.add(proxies[index]);
 				monitor.worked(1);
 			}
 			if (!set.isEmpty()) {
-				final RefactoringDescriptorProxy[] delete= (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]);
+				final RefactoringDescriptorProxy[] delete= set.toArray(new RefactoringDescriptorProxy[set.size()]);
 				deleteRefactoringDescriptors(delete, new SubProgressMonitor(monitor, 300));
 				for (int index= 0; index < delete.length; index++)
 					fireRefactoringHistoryEvent(delete[index], RefactoringHistoryEvent.DELETED);
@@ -552,9 +541,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void disconnect() {
 		if (fReferenceCount > 0) {
 			fManagerCache.clear();
@@ -576,10 +563,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
+				@Override
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
 				}
 
+				@Override
 				public void run() throws Exception {
 					listener.executionNotification(new RefactoringExecutionEvent(RefactoringHistoryService.this, eventType, proxy));
 				}
@@ -594,10 +583,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
+				@Override
 				public void handleException(final Throwable throwable) {
 					RefactoringCorePlugin.log(throwable);
 				}
 
+				@Override
 				public void run() throws Exception {
 					listener.historyNotification(new RefactoringHistoryEvent(RefactoringHistoryService.this, eventType, proxy));
 				}
@@ -608,7 +599,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	private boolean checkDescriptor(RefactoringDescriptor descriptor, IUndoableOperation operation) {
 		Assert.isNotNull(descriptor);
 		try {
-			final Map arguments= RefactoringHistoryManager.getArgumentMap(descriptor);
+			final Map<String, String> arguments= RefactoringHistoryManager.getArgumentMap(descriptor);
 			if (arguments != null)
 				RefactoringHistoryManager.checkArgumentMap(arguments);
 		} catch (CoreException exception) {
@@ -632,16 +623,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory getProjectHistory(final IProject project, IProgressMonitor monitor) {
 		return getProjectHistory(project, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE, monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory getProjectHistory(final IProject project, final long start, final long end, final int flags, IProgressMonitor monitor) {
 		Assert.isNotNull(project);
 		Assert.isTrue(project.exists());
@@ -658,9 +645,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (manager != null) {
 					RefactoringHistory history= manager.readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 20));
 					if (flags > RefactoringDescriptor.NONE) {
-						final Set set= new HashSet();
+						final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 						filterRefactoringDescriptors(history.getDescriptors(), set, false, flags, new SubProgressMonitor(monitor, 100));
-						history= new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]));
+						history= new RefactoringHistoryImplementation(set.toArray(new RefactoringDescriptorProxy[set.size()]));
 					}
 					return history;
 				}
@@ -671,16 +658,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		return NO_HISTORY;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final IProgressMonitor monitor) {
 		return getRefactoringHistory(projects, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE, monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory getRefactoringHistory(final IProject[] projects, final long start, final long end, final int flags, IProgressMonitor monitor) {
 		Assert.isNotNull(projects);
 		Assert.isTrue(start >= 0);
@@ -690,7 +673,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 3 * projects.length);
-			final Set set= new HashSet();
+			final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 			if (flags > RefactoringDescriptor.NONE) {
 				for (int index= 0; index < projects.length; index++) {
 					final IProject project= projects[index];
@@ -717,16 +700,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory getWorkspaceHistory(IProgressMonitor monitor) {
 		return getWorkspaceHistory(0, Long.MAX_VALUE, monitor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory getWorkspaceHistory(final long start, final long end, IProgressMonitor monitor) {
 		return getRefactoringHistory(ResourcesPlugin.getWorkspace().getRoot().getProjects(), start, end, RefactoringDescriptor.NONE, monitor);
 	}
@@ -758,13 +737,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringHistory readRefactoringHistory(final InputStream stream, final int flags) throws CoreException {
 		Assert.isNotNull(stream);
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
-		final List list= new ArrayList();
+		final List<RefactoringDescriptor> list= new ArrayList<>();
 		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(false, null).readSession(new InputSource(stream));
 		if (descriptor != null) {
 			final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
@@ -779,21 +756,17 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
 		for (int index= 0; index < list.size(); index++)
-			proxies[index]= new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) list.get(index));
+			proxies[index]= new RefactoringDescriptorProxyAdapter(list.get(index));
 		return new RefactoringHistoryImplementation(proxies);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void removeExecutionListener(final IRefactoringExecutionListener listener) {
 		Assert.isNotNull(listener);
 		fExecutionListeners.remove(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void removeHistoryListener(final IRefactoringHistoryListener listener) {
 		Assert.isNotNull(listener);
 		fHistoryListeners.remove(listener);
@@ -838,9 +811,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		fOverrideTimeStamp= stamp;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void writeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final OutputStream stream, final int flags, final boolean time, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxies);
 		Assert.isNotNull(stream);
@@ -850,7 +821,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		try {
 			monitor.beginTask("", 100 * proxies.length); //$NON-NLS-1$
 			connect();
-			final List list= new ArrayList(proxies.length);
+			final List<RefactoringDescriptor> list= new ArrayList<>(proxies.length);
 			for (int index= 0; index < proxies.length; index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 100));
 				if (descriptor != null) {
@@ -867,9 +838,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void writeRefactoringSession(final RefactoringSessionDescriptor descriptor, final OutputStream stream, final boolean time) throws CoreException {
 		Assert.isNotNull(descriptor);
 		Assert.isNotNull(stream);
@@ -1032,7 +1001,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	private RefactoringHistoryManager getManager(final IFileStore store, final String name) {
 		Assert.isNotNull(store);
-		RefactoringHistoryManager manager= (RefactoringHistoryManager) fManagerCache.get(store);
+		RefactoringHistoryManager manager= fManagerCache.get(store);
 		if (manager == null) {
 			manager= new RefactoringHistoryManager(store, name);
 			fManagerCache.put(store, manager);

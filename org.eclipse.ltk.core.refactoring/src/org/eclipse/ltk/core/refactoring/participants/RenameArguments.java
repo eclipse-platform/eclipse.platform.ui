@@ -64,6 +64,7 @@ public class RenameArguments extends RefactoringArguments {
 	 *
 	 * @since 3.2
 	 */
+	@Override
 	public String toString() {
 		return "rename to " + fNewName //$NON-NLS-1$
 				+ (fUpdateReferences ? " (update references)" : " (don't update references)"); //$NON-NLS-1$//$NON-NLS-2$

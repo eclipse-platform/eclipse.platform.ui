@@ -27,10 +27,12 @@ public class ValidationCheckResultQuery implements IValidationCheckResultQuery  
 		fParent= parent;
 		fTitle= title;
 	}
+	@Override
 	public boolean proceed(RefactoringStatus status) {
 		final Dialog dialog= RefactoringUI.createRefactoringStatusDialog(status, fParent, fTitle, false);
 		final int[] result= new int[1];
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				result[0]= dialog.open();
 			}
@@ -38,8 +40,10 @@ public class ValidationCheckResultQuery implements IValidationCheckResultQuery  
 		fParent.getDisplay().syncExec(r);
 		return result[0] == IDialogConstants.OK_ID;
 	}
+	@Override
 	public void stopped(final RefactoringStatus status) {
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				String message= status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 				MessageDialog.openWarning(fParent, fTitle, getFullMessage(message));

@@ -55,26 +55,32 @@ public class ContentStamps {
 		public long getFileValue() {
 			return fFileStamp;
 		}
+		@Override
 		public boolean isNullStamp() {
 			return false;
 		}
+		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof ContentStampImpl))
 				return false;
 			return ((ContentStampImpl)obj).fValue == fValue;
 		}
+		@Override
 		public int hashCode() {
 			return (int)fValue;
 		}
+		@Override
 		public String toString() {
 			return "Stamp: " + fValue; //$NON-NLS-1$
 		}
 	}
 
 	private static class NullContentStamp extends ContentStamp {
+		@Override
 		public boolean isNullStamp() {
 			return true;
 		}
+		@Override
 		public String toString() {
 			return "Null Stamp"; //$NON-NLS-1$
 		}

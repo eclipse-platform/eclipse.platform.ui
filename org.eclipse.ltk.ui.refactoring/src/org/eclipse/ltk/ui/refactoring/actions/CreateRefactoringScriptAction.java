@@ -67,6 +67,7 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 				context= PlatformUI.getWorkbench().getProgressService();
 			context.run(false, true, new IRunnableWithProgress() {
 
+				@Override
 				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 					try {
@@ -84,6 +85,7 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 		}
 		final WizardDialog dialog= new WizardDialog(window.getShell(), wizard) {
 
+			@Override
 			protected final void createButtonsForButtonBar(final Composite parent) {
 				super.createButtonsForButtonBar(parent);
 				getButton(IDialogConstants.FINISH_ID).setText(ScriptingMessages.CreateRefactoringScriptAction_finish_button_label);
@@ -98,32 +100,24 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 	/** The workbench window, or <code>null</code> */
 	private IWorkbenchWindow fWindow= null;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void init(final IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run(final IAction action) {
 		if (fWindow != null) {
 			showCreateScriptWizard(fWindow);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void selectionChanged(final IAction action, final ISelection selection) {
 		// Do nothing
 	}

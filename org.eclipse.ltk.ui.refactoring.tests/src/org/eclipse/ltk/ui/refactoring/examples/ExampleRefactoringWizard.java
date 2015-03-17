@@ -21,9 +21,7 @@ public class ExampleRefactoringWizard extends RefactoringWizard {
 		setWindowTitle("My Example Refactoring");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-	 */
+	@Override
 	protected void addUserInputPages() {
 		addPage(new ExampleRefactoringConfigurationPage((ExampleRefactoring) getRefactoring()));
 	}

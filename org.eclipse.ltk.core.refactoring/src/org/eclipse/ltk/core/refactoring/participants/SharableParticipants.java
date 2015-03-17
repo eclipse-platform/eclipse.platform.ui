@@ -37,12 +37,12 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  */
 public class SharableParticipants {
 
-	private Map fMap= new HashMap();
+	private Map<ParticipantDescriptor, RefactoringParticipant> fMap= new HashMap<>();
 
 	/* package */ void put(ParticipantDescriptor descriptor, RefactoringParticipant participant) {
 		fMap.put(descriptor, participant);
 	}
 	/* package */ RefactoringParticipant get(ParticipantDescriptor descriptor) {
-		return (RefactoringParticipant)fMap.get(descriptor);
+		return fMap.get(descriptor);
 	}
 }

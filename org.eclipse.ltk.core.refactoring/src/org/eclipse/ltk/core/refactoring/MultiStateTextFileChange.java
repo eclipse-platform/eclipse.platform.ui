@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,13 +93,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 		private TextEdit fEdit;
 
-		private List fGroups;
+		private List<TextEditBasedChangeGroup> fGroups;
 
 		private final TextEdit getEdit() {
 			return fEdit;
 		}
 
-		private final List getGroups() {
+		private final List<TextEditBasedChangeGroup> getGroups() {
 			return fGroups;
 		}
 
@@ -109,7 +109,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			fEdit= edit;
 		}
 
-		private final void setGroups(final List groups) {
+		private final void setGroups(final List<TextEditBasedChangeGroup> groups) {
 			Assert.isNotNull(groups);
 
 			fGroups= groups;
@@ -118,7 +118,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	private static final class ComposableBufferChangeGroup extends TextEditBasedChangeGroup {
 
-		private final Set fEdits= new HashSet();
+		private final Set<TextEdit> fEdits= new HashSet<>();
 
 		private ComposableBufferChangeGroup(final MultiStateTextFileChange change, final TextEditGroup group) {
 			super(change, group);
@@ -140,7 +140,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			return fEdits.contains(edit);
 		}
 
-		private final Set getCachedEdits() {
+		private final Set<TextEdit> getCachedEdits() {
 			return fEdits;
 		}
 	}
@@ -218,11 +218,8 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/** The last string obtained from a document */
 	private String fCachedString;
 
-	/**
-	 * The internal change objects (element type:
-	 * <code>ComposableBufferChange</code>)
-	 */
-	private final ArrayList fChanges= new ArrayList(4);
+	/** The internal change objects */
+	private final ArrayList<ComposableBufferChange> fChanges= new ArrayList<>(4);
 
 	/** The content stamp */
 	private ContentStamp fContentStamp;
@@ -309,7 +306,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		result.setEdit(change.getEdit());
 
 		final TextEditBasedChangeGroup[] groups= change.getChangeGroups();
-		final List list= new ArrayList(groups.length);
+		final List<TextEditBasedChangeGroup> list= new ArrayList<>(groups.length);
 
 		for (int index= 0; index < groups.length; index++) {
 
@@ -324,9 +321,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	// Copied from TextChange
 	private TextEditProcessor createTextEditProcessor(ComposableBufferChange change, IDocument document, int flags, boolean preview) {
-		List excludes= new ArrayList(0);
-		for (final Iterator iterator= change.getGroups().iterator(); iterator.hasNext();) {
-			TextEditBasedChangeGroup group= (TextEditBasedChangeGroup) iterator.next();
+		List<TextEdit> excludes= new ArrayList<>(0);
+		for (final Iterator<TextEditBasedChangeGroup> iterator= change.getGroups().iterator(); iterator.hasNext();) {
+			TextEditBasedChangeGroup group= iterator.next();
 			if (!group.isEnabled())
 				excludes.addAll(Arrays.asList(group.getTextEdits()));
 		}
@@ -338,13 +335,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			if (keep)
 				flags= flags | TextEdit.UPDATE_REGIONS;
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, copiedEdit, flags);
-			result.setExcludes(mapEdits((TextEdit[]) excludes.toArray(new TextEdit[excludes.size()]), fCopier));
+			result.setExcludes(mapEdits(excludes.toArray(new TextEdit[excludes.size()]), fCopier));
 			if (!keep)
 				fCopier= null;
 			return result;
 		} else {
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, change.getEdit(), flags | TextEdit.UPDATE_REGIONS);
-			result.setExcludes((TextEdit[]) excludes.toArray(new TextEdit[excludes.size()]));
+			result.setExcludes(excludes.toArray(new TextEdit[excludes.size()]));
 			return result;
 		}
 	}
@@ -381,6 +378,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#dispose()
 	 */
+	@Override
 	public final void dispose() {
 		if (fValidationState != null) {
 			fValidationState.dispose();
@@ -390,6 +388,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getCurrentContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final String getCurrentContent(final IProgressMonitor monitor) throws CoreException {
 		return getCurrentDocument(monitor).get();
 	}
@@ -397,6 +396,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getCurrentContent(org.eclipse.jface.text.IRegion,boolean,int,org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final String getCurrentContent(final IRegion region, final boolean expand, final int surround, final IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(region);
 		Assert.isTrue(surround >= 0);
@@ -438,6 +438,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 	 */
+	@Override
 	public final Object getModifiedElement() {
 		return fFile;
 	}
@@ -445,9 +446,10 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getPreviewContent(org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup[],org.eclipse.jface.text.IRegion,boolean,int,org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final String getPreviewContent(final TextEditBasedChangeGroup[] groups, final IRegion region, final boolean expand, final int surround, final IProgressMonitor monitor) throws CoreException {
 
-		final Set cachedGroups= new HashSet(Arrays.asList(groups));
+		final Set<TextEditBasedChangeGroup> cachedGroups= new HashSet<>(Arrays.asList(groups));
 		final IDocument document= new Document(getCurrentDocument(monitor).get());
 
 		// Marks the region in the document to be previewed
@@ -458,9 +460,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 			final TextEditBasedChangeGroup[] changedGroups= getChangeGroups();
 
-			LinkedList compositeUndo= new LinkedList();
+			LinkedList<LinkedList<ComposableUndoEdit>> compositeUndo= new LinkedList<>();
 			for (int index= 0; index < fChanges.size(); index++) {
-				change= (ComposableBufferChange) fChanges.get(index);
+				change= fChanges.get(index);
 
 				TextEdit copy= null;
 				try {
@@ -469,13 +471,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 					copy= fCopier.perform();
 
 					// Create a mapping from the copied edits to its originals
-					final Map originalMap= new HashMap();
-					for (final Iterator outer= change.getGroups().iterator(); outer.hasNext();) {
+					final Map<TextEdit, TextEdit> originalMap= new HashMap<>();
+					for (final Iterator<TextEditBasedChangeGroup> outer= change.getGroups().iterator(); outer.hasNext();) {
 
 						final ComposableBufferChangeGroup group= (ComposableBufferChangeGroup) outer.next();
-						for (final Iterator inner= group.getCachedEdits().iterator(); inner.hasNext();) {
+						for (final Iterator<TextEdit> inner= group.getCachedEdits().iterator(); inner.hasNext();) {
 
-							final TextEdit originalEdit= (TextEdit) inner.next();
+							final TextEdit originalEdit= inner.next();
 							final TextEdit copiedEdit= fCopier.getCopy(originalEdit);
 
 							if (copiedEdit != null)
@@ -492,9 +494,10 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 					// current edit when processing
 					final TextEditProcessor processor= new TextEditProcessor(document, copy, TextEdit.NONE) {
 
+						@Override
 						protected final boolean considerEdit(final TextEdit edit) {
 
-							final TextEdit originalEdit= (TextEdit) originalMap.get(edit);
+							final TextEdit originalEdit= originalMap.get(edit);
 							if (originalEdit != null) {
 
 								currentEdit[0]= originalEdit;
@@ -519,12 +522,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 						}
 					};
 
-					final LinkedList eventUndos= new LinkedList();
+					final LinkedList<ComposableUndoEdit> eventUndos= new LinkedList<>();
 
 					// Listener to record the undos on the document (offsets
 					// relative to the document event)
 					final IDocumentListener listener= new IDocumentListener() {
 
+						@Override
 						public final void documentAboutToBeChanged(final DocumentEvent event) {
 							final ComposableUndoEdit edit= new ComposableUndoEdit();
 
@@ -535,6 +539,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 							eventUndos.addFirst(edit);
 						}
 
+						@Override
 						public final void documentChanged(final DocumentEvent event) {
 							// Do nothing
 						}
@@ -557,6 +562,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 			final IPositionUpdater positionUpdater= new IPositionUpdater() {
 
+				@Override
 				public final void update(final DocumentEvent event) {
 
 					final int eventOffset= event.getOffset();
@@ -634,11 +640,11 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 				// previewed and insert
 				// Undo edits for them (corresponding to the linearized net
 				// effect on the original document)
-				final LinkedList undoQueue= new LinkedList();
-				for (final Iterator outer= compositeUndo.iterator(); outer.hasNext();) {
-					for (final Iterator inner= ((List) outer.next()).iterator(); inner.hasNext();) {
+				final LinkedList<ComposableEditPosition> undoQueue= new LinkedList<>();
+				for (final Iterator<LinkedList<ComposableUndoEdit>> outer= compositeUndo.iterator(); outer.hasNext();) {
+					for (final Iterator<ComposableUndoEdit> inner= outer.next().iterator(); inner.hasNext();) {
 
-						final ComposableUndoEdit edit= (ComposableUndoEdit) inner.next();
+						final ComposableUndoEdit edit= inner.next();
 						final ReplaceEdit undo= edit.getUndo();
 
 						final int offset= undo.getOffset();
@@ -682,8 +688,8 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 						undoQueue.add(position);
 					}
 
-					for (final Iterator iterator= undoQueue.iterator(); iterator.hasNext();) {
-						final ComposableEditPosition position= (ComposableEditPosition) iterator.next();
+					for (final Iterator<ComposableEditPosition> iterator= undoQueue.iterator(); iterator.hasNext();) {
+						final ComposableEditPosition position= iterator.next();
 
 						document.replace(position.offset, position.length, position.getText());
 						iterator.remove();
@@ -741,6 +747,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#getPreviewContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final String getPreviewContent(final IProgressMonitor monitor) throws CoreException {
 		return getPreviewDocument(monitor).get();
 	}
@@ -796,6 +803,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final void initializeValidationData(IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -810,6 +818,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
@@ -849,6 +858,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final Change perform(final IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 3); //$NON-NLS-1$
 
@@ -857,13 +867,13 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		try {
 			document= acquireDocument(new SubProgressMonitor(monitor, 1));
 
-			final LinkedList undoList= new LinkedList();
+			final LinkedList<UndoEdit> undoList= new LinkedList<>();
 			performChanges(document, undoList, false);
 
 			if (needsSaving())
 				fBuffer.commit(new SubProgressMonitor(monitor, 1), false);
 
-			return new MultiStateUndoChange(getName(), fFile, (UndoEdit[]) undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
+			return new MultiStateUndoChange(getName(), fFile, undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
 
 		} catch (BadLocationException exception) {
 			throw Changes.asCoreException(exception);
@@ -888,7 +898,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * @throws BadLocationException
 	 *             if the edit tree could not be applied
 	 */
-	private void performChanges(final IDocument document, final LinkedList undoList, final boolean preview) throws BadLocationException {
+	private void performChanges(final IDocument document, final LinkedList<UndoEdit> undoList, final boolean preview) throws BadLocationException {
 		if (! fBuffer.isSynchronizationContextRequested()) {
 			performChangesInSynchronizationContext(document, undoList, preview);
 			return;
@@ -900,6 +910,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		final Lock completionLock= new Lock();
 		final BadLocationException[] exception= new BadLocationException[1];
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				synchronized (completionLock) {
 					try {
@@ -929,14 +940,14 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		}
 	}
 
-	private void performChangesInSynchronizationContext(final IDocument document, final LinkedList undoList, final boolean preview) throws BadLocationException {
+	private void performChangesInSynchronizationContext(final IDocument document, final LinkedList<UndoEdit> undoList, final boolean preview) throws BadLocationException {
 		DocumentRewriteSession session= null;
 		try {
 			if (document instanceof IDocumentExtension4)
 				session= ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
 	
-			for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
-				final ComposableBufferChange change= (ComposableBufferChange) iterator.next();
+			for (final Iterator<ComposableBufferChange> iterator= fChanges.iterator(); iterator.hasNext();) {
+				final ComposableBufferChange change= iterator.next();
 	
 				final UndoEdit edit= createTextEditProcessor(change, document, undoList != null ? TextEdit.CREATE_UNDO : TextEdit.NONE, preview).performEdits();
 				if (undoList != null)
@@ -970,6 +981,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.TextEditBasedChange#setKeepPreviewEdits(boolean)
 	 */
+	@Override
 	public final void setKeepPreviewEdits(final boolean keep) {
 		super.setKeepPreviewEdits(keep);
 

@@ -24,15 +24,17 @@ import org.eclipse.jface.viewers.LabelProvider;
 
 class ChangeElementLabelProvider extends LabelProvider implements IFontProvider {
 
-	private Map fDescriptorImageMap= new HashMap();
+	private Map<ImageDescriptor, Image> fDescriptorImageMap= new HashMap<>();
 
 	public ChangeElementLabelProvider() {
 	}
 
+	@Override
 	public Image getImage(Object object) {
 		return manageImageDescriptor(((PreviewNode)object).getImageDescriptor());
 	}
 
+	@Override
 	public String getText(Object object) {
 		String text= ((PreviewNode)object).getText();
 		if (isDerived(object)) {
@@ -42,6 +44,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 		}
 	}
 
+	@Override
 	public Font getFont(Object element) {
 		if (isDerived(element)) {
 			return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
@@ -55,16 +58,17 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 		return node.hasDerived();
 	}
 
+	@Override
 	public void dispose() {
-		for (Iterator iter= fDescriptorImageMap.values().iterator(); iter.hasNext(); ) {
-			Image image= (Image)iter.next();
+		for (Iterator<Image> iter= fDescriptorImageMap.values().iterator(); iter.hasNext(); ) {
+			Image image= iter.next();
 			image.dispose();
 		}
 		super.dispose();
 	}
 
 	private Image manageImageDescriptor(ImageDescriptor descriptor) {
-		Image image= (Image)fDescriptorImageMap.get(descriptor);
+		Image image= fDescriptorImageMap.get(descriptor);
 		if (image == null) {
 			image= descriptor.createImage();
 			fDescriptorImageMap.put(descriptor, image);

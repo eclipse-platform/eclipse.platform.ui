@@ -27,32 +27,25 @@ public class FailingParticipant2 extends RenameParticipant {
 		private static final long serialVersionUID= 1L;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected boolean initialize(Object element) {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getName() {
 		return FailingParticipant2.class.getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return new NullChange() {
+			@Override
 			public Change perform(IProgressMonitor monitor) throws CoreException {
 				throw new Exception();
 			}

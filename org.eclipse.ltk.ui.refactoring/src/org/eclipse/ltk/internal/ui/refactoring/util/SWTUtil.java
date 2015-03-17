@@ -56,6 +56,7 @@ public final class SWTUtil {
 	 */
 	public static void setAccessibilityText(Control control, final String text) {
 		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				if (e.childID == ACC.CHILDID_SELF) {
 					e.result= text;

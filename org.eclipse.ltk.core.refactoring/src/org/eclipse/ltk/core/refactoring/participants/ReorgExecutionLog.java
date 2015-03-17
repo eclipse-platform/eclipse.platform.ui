@@ -28,16 +28,16 @@ import java.util.Map;
  */
 public class ReorgExecutionLog {
 
-	private Map fNewNames;
-	private List fProcessedElements;
+	private Map<Object, String> fNewNames;
+	private List<Object> fProcessedElements;
 	private boolean fCanceled;
 
 	/**
 	 * Creates new reorg execution log
 	 */
 	public ReorgExecutionLog() {
-		fNewNames= new HashMap();
-		fProcessedElements= new ArrayList();
+		fNewNames= new HashMap<>();
+		fProcessedElements= new ArrayList<>();
 	}
 
 	/**
@@ -133,6 +133,6 @@ public class ReorgExecutionLog {
 	 * @return the new name of <code>null</code>
 	 */
 	public String getNewName(Object element) {
-		return (String)fNewNames.get(element);
+		return fNewNames.get(element);
 	}
 }

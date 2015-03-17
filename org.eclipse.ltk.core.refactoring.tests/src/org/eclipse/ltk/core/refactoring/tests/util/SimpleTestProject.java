@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,13 +63,13 @@ public class SimpleTestProject {
 
 	public String getContent(IFile file) throws CoreException, IOException {
 		StringBuffer result= new StringBuffer();
-		InputStreamReader reader= new InputStreamReader(file.getContents());
-		char[] buffer= new char[1024];
-		int amount;
-		while ((amount= reader.read(buffer)) != -1) {
-			result.append(buffer, 0, amount);
+		try (InputStreamReader reader= new InputStreamReader(file.getContents())) {
+			char[] buffer= new char[1024];
+			int amount;
+			while ((amount= reader.read(buffer)) != -1) {
+				result.append(buffer, 0, amount);
+			}
 		}
-		reader.close();
 		return result.toString();
 	}
 }

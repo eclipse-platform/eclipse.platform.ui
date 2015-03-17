@@ -69,9 +69,7 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 		Assert.isTrue(checkStyle(fStyle));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();

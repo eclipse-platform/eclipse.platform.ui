@@ -103,9 +103,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 		return fConditionCheckingFailedSeverity;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
@@ -151,6 +149,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 			if (descriptor == null) {
 				final CompositeChange composite= new CompositeChange(fChange.getName()) {
 
+					@Override
 					public final ChangeDescriptor getDescriptor() {
 						String name= fChange.getName();
 						if (name.length() == 0)

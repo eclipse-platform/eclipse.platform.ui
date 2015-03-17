@@ -38,7 +38,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorPr
 public class RefactoringHistorySerializationTests extends TestCase {
 
 	private static void compareReadHistory(RefactoringDescriptor[] descriptors, int flags, String xml, boolean ioException) throws CoreException {
-		List list= new ArrayList();
+		List<RefactoringDescriptorProxyAdapter> list= new ArrayList<>();
 		for (int index= 0; index < descriptors.length; index++) {
 			list.add(new RefactoringDescriptorProxyAdapter(descriptors[index]));
 		}
@@ -47,6 +47,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 			if (ioException) {
 				stream= new ByteArrayInputStream(xml.getBytes("utf-8")) {
 
+					@Override
 					public int read(byte[] b) throws IOException {
 						throw new IOException();
 					}
@@ -55,7 +56,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 				stream= new ByteArrayInputStream(xml.getBytes("utf-8"));
 			RefactoringHistory result= RefactoringCore.getHistoryService().readRefactoringHistory(stream, flags);
 			RefactoringDescriptorProxy[] actualProxies= result.getDescriptors();
-			RefactoringDescriptorProxy[] expectedProxies= (RefactoringDescriptorProxy[]) list.toArray(new RefactoringDescriptorProxy[list.size()]);
+			RefactoringDescriptorProxy[] expectedProxies= list.toArray(new RefactoringDescriptorProxy[list.size()]);
 			assertEquals("The number of refactoring descriptors is incorrect.", expectedProxies.length, actualProxies.length);
 			for (int index= 0; index < expectedProxies.length; index++) {
 				RefactoringDescriptor expectedDescriptor= expectedProxies[index].requestDescriptor(null);
@@ -118,7 +119,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session comment=\"A mock comment\" version=\"1.0\">\n" + "<refactoring arg0=\"value0\" arg1=\"value1\" arg2=\"value2\" comment=\"A mock comment\" description=\"A mock refactoring\" flags=\"3\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor("test0", "A mock refactoring", "A mock comment", RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
-		Map arguments= descriptor.getArguments();
+		Map<String, String> arguments= descriptor.getArguments();
 		arguments.put("arg0", "value0");
 		arguments.put("arg1", "value1");
 		arguments.put("arg2", "value2");
@@ -129,7 +130,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session comment=\"A mock comment\" version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" arg1=\"value 1\" arg2=\"value 2\" comment=\"A mock comment\" description=\"A mock refactoring\" flags=\"6\" id=\"org.eclipse.ltk.core.mock\" project=\"test1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor("test1", "A mock refactoring", "A mock comment", RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= descriptor.getArguments();
+		Map<String, String> arguments= descriptor.getArguments();
 		arguments.put("arg0", "value 0");
 		arguments.put("arg1", "value 1");
 		arguments.put("arg2", "value 2");
@@ -140,7 +141,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		try {
@@ -154,7 +155,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refact oring arg0=\"value 0\" com ment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		try {
@@ -168,7 +169,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" com ment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		try {
@@ -182,7 +183,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
-		Map arguments= descriptor.getArguments();
+		Map<String, String> arguments= descriptor.getArguments();
 		arguments.put("arg0", "value 0");
 		compareReadHistory(new RefactoringDescriptor[] { descriptor}, flags, xml, false);
 	}
@@ -192,7 +193,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		int flags= RefactoringDescriptor.NONE;
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("arg0", "value 0");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -205,7 +206,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("arg0", "value 0");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -221,7 +222,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		int flags= RefactoringDescriptor.BREAKING_CHANGE;
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= second.getArguments();
+		Map<String, String> arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
 		arguments.put("version", "1.0");
 		arguments= third.getArguments();
@@ -234,7 +235,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		compareReadHistory(new RefactoringDescriptor[] { third}, flags, xml, false);
@@ -244,7 +245,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		try {
@@ -258,7 +259,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<session>\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		try {
@@ -272,7 +273,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<error version=\"1.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</error>\n" + "";
 		int flags= RefactoringDescriptor.MULTI_CHANGE;
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= third.getArguments();
+		Map<String, String> arguments= third.getArguments();
 		arguments.put("arg2", "value 2");
 		arguments.put("version", "1.1");
 		try {
@@ -284,7 +285,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 
 	public void testWriteDescriptor0() throws Exception {
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor("test0", "A mock refactoring", "A mock comment", RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
-		Map arguments= descriptor.getArguments();
+		Map<String, String> arguments= descriptor.getArguments();
 		arguments.put("arg0", "value0");
 		arguments.put("arg1", "value1");
 		arguments.put("arg2", "value2");
@@ -297,7 +298,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 
 	public void testWriteDescriptor1() throws Exception {
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor("test1", "A mock refactoring", "A mock comment", RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= descriptor.getArguments();
+		Map<String, String> arguments= descriptor.getArguments();
 		arguments.put("arg0", "value 0");
 		arguments.put("arg1", "value 1");
 		arguments.put("arg2", "value 2");
@@ -310,7 +311,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 
 	public void testWriteDescriptor2() throws Exception {
 		MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
-		Map arguments= descriptor.getArguments();
+		Map<String, String> arguments= descriptor.getArguments();
 		arguments.put("arg0", "value 0");
 		String version= "2.0";
 		String comment= null;
@@ -322,7 +323,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 	public void testWriteDescriptor3() throws Exception {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("arg0", "value 0");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -337,7 +338,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("arg0", "value 0");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -356,7 +357,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("arg 0", "value 0");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -379,7 +380,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("", "value 0");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -402,7 +403,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("", null);
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");
@@ -425,7 +426,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		MockRefactoringDescriptor first= new MockRefactoringDescriptor(null, "A mock refactoring", "A mock comment", RefactoringDescriptor.NONE);
 		MockRefactoringDescriptor second= new MockRefactoringDescriptor(null, "Another mock refactoring", "No comment", RefactoringDescriptor.BREAKING_CHANGE);
 		MockRefactoringDescriptor third= new MockRefactoringDescriptor("test0", "Yet another mock refactoring", null, RefactoringDescriptor.BREAKING_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
-		Map arguments= first.getArguments();
+		Map<String, String> arguments= first.getArguments();
 		arguments.put("arg0", "");
 		arguments= second.getArguments();
 		arguments.put("arg1", "value 1");

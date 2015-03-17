@@ -46,6 +46,7 @@ public class ChangeExceptionHandler {
 		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String dialogMessage, IStatus status, int displayMask) {
 			super(parentShell, dialogTitle, dialogMessage, status, displayMask);
 		}
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			Button ok= getButton(IDialogConstants.OK_ID);
@@ -54,6 +55,7 @@ public class ChangeExceptionHandler {
 			abort.moveBelow(ok);
 			abort.setFocus();
 		}
+		@Override
 		protected Control createMessageArea (Composite parent) {
 			Control result= super.createMessageArea(parent);
 
@@ -116,6 +118,7 @@ public class ChangeExceptionHandler {
 
 	private void performUndo(final Change undo) {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask("", 11); //$NON-NLS-1$
 				try {

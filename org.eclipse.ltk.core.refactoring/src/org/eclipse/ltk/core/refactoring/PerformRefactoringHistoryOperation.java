@@ -102,6 +102,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 *             if an error occurs while creating the refactoring instance
 	 * @deprecated since 3.4. Override {@link #createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
+	@Deprecated
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
 		Assert.isNotNull(descriptor);
 		return descriptor.createRefactoring(status);
@@ -130,6 +131,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 * @since 3.4
 	 * @deprecated since 3.6. Override {@link #createRefactoringContext(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
+	@Deprecated
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
 		try {
 			Assert.isNotNull(descriptor);
@@ -203,9 +205,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
