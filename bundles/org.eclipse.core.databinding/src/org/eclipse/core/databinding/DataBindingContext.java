@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -387,7 +387,7 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an unmodifiable an unmodifiable {@link IObservableList} &lt;
+	 * Returns an unmodifiable {@link IObservableList} &lt;
 	 * {@link ValidationStatusProvider} &gt; of all validation status providers
 	 * in order by time of addition.
 	 *
