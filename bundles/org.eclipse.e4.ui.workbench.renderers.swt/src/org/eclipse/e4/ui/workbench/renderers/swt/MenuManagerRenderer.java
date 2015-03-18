@@ -14,7 +14,7 @@
  *     Patrick Naish <patrick.naish@microfocus.com> - Bug 435274
  *     René Brandstetter <Rene.Brandstetter@gmx.net> - Bug 378849
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 378849
- *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460556
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460556, Bug 400217
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 391430
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -270,6 +270,20 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			}
 		}
 	};
+
+	@Inject
+	@Optional
+	private void subscribeTopicUpdateMenuEnablement(
+			@UIEventTopic(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC) Event eventData) {
+
+		for (Map.Entry<IContributionItem, MMenuElement> entry : contributionToModel.entrySet()) {
+			processVisibility(entry.getKey(), entry.getValue());
+		}
+		for (MenuManager mgr : managerToModel.keySet()) {
+			mgr.update(false);
+		}
+
+	}
 
 	private MenuManagerRendererFilter rendererFilter;
 
@@ -720,8 +734,7 @@ MenuManagerEventHelper.getInstance()
 	 * @param parentManager
 	 * @param itemModel
 	 */
-	void processRenderedItem(MenuManager parentManager,
- MMenuItem itemModel) {
+	void processRenderedItem(MenuManager parentManager, MMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
@@ -740,7 +753,9 @@ MenuManagerEventHelper.getInstance()
 			// happy with
 			return;
 		}
-		ici.setVisible(itemModel.isVisible());
+
+		processVisibility(ici, itemModel);
+
 		addToManager(parentManager, itemModel, ici);
 		linkModelToContribution(itemModel, ici);
 	}
@@ -757,7 +772,9 @@ MenuManagerEventHelper.getInstance()
 		} else {
 			return;
 		}
-		ici.setVisible(itemModel.isVisible());
+
+		processVisibility(ici, itemModel);
+
 		addToManager(parentManager, itemModel, ici);
 		linkModelToContribution(itemModel, ici);
 	}
@@ -806,7 +823,9 @@ MenuManagerEventHelper.getInstance()
 		DirectContributionItem ci = ContextInjectionFactory.make(
 				DirectContributionItem.class, lclContext);
 		ci.setModel(itemModel);
-		ci.setVisible(itemModel.isVisible());
+
+		processVisibility(ci, itemModel);
+
 		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
@@ -843,7 +862,9 @@ MenuManagerEventHelper.getInstance()
 		HandledContributionItem ci = ContextInjectionFactory.make(
 				HandledContributionItem.class, lclContext);
 		ci.setModel(itemModel);
-		ci.setVisible(itemModel.isVisible());
+
+		processVisibility(ci, itemModel);
+
 		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}

@@ -11,7 +11,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 426535, 433234, 431868
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 431778
  *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 457198
- *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 431990
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 431990, Bug 400217
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -296,6 +296,14 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 
 		getUpdater().updateContributionItems(s);
+
+		for (Map.Entry<IContributionItem, MToolBarElement> entry : contributionToModel.entrySet()) {
+			processVisibility(entry.getKey(), entry.getValue());
+		}
+		for (ToolBarManager mgr : managerToModel.keySet()) {
+			mgr.update(false);
+		}
+
 	}
 
 	@Inject
@@ -736,7 +744,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		final IEclipseContext lclContext = getContext(itemModel);
 		ToolControlContribution ci = ContextInjectionFactory.make(ToolControlContribution.class, lclContext);
 		ci.setModel(itemModel);
-		ci.setVisible(itemModel.isVisible());
+
+		processVisibility(ci, itemModel);
+
 		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
@@ -750,7 +760,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		final IEclipseContext lclContext = getContext(itemModel);
 		DirectContributionItem ci = ContextInjectionFactory.make(DirectContributionItem.class, lclContext);
 		ci.setModel(itemModel);
-		ci.setVisible(itemModel.isVisible());
+
+		processVisibility(ci, itemModel);
+
 		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
@@ -764,7 +776,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		final IEclipseContext lclContext = getContext(itemModel);
 		HandledContributionItem ci = ContextInjectionFactory.make(HandledContributionItem.class, lclContext);
 		ci.setModel(itemModel);
-		ci.setVisible(itemModel.isVisible());
+
+		processVisibility(ci, itemModel);
+
 		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
@@ -782,7 +796,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		} else {
 			return;
 		}
-		ici.setVisible(itemModel.isVisible());
+
+		processVisibility(ici, itemModel);
+
 		addToManager(parentManager, itemModel, ici);
 		linkModelToContribution(itemModel, ici);
 	}
