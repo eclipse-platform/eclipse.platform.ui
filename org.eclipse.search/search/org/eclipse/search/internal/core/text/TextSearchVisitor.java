@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobGroup;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -407,11 +408,19 @@ public class TextSearchVisitor {
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
 			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
 		} catch (CoreException e) {
-			if (!fIsLightweightAutoRefresh || IResourceStatus.FAILED_READ_LOCAL != e.getStatus().getCode()) {
-				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
-				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
-				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			if (fIsLightweightAutoRefresh && IResourceStatus.FAILED_READ_LOCAL == e.getStatus().getCode()) {
+				// Check if read failed because the file no longer exists
+				try {
+					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+					if (!file.exists())
+						return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+				} catch (CoreException ex) {
+					// Report original CoreException
+				}
 			}
+			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
+			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
+			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
 		} catch (StackOverflowError e) {
 			// Trigger cancellation of remaining jobs in the group.
 			// An alternative is to move this method into TextSearchJob and call getJobGroup().cancel() directly.
