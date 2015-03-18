@@ -32,7 +32,7 @@ echo "Overview page of the planning bugs for the Eclipse 4.5 release"
 echo ""
 echo "'''This list is genereated automatically, please do not update manually'''"
 echo ""
-echo "A detailed planning of the work planned for Eclipse 4.5 can be found on [[https://wiki.eclipse.org/Platform_UI/Plan/4.5/Milestones]]."
+echo "A detailed planning of the work planned for Eclipse 4.5 can be found on [https://wiki.eclipse.org/Platform_UI/Plan/4.5/Milestones Eclipse 4.5 milestone wiki]."
 }
 
 gen_bugs_table () {
