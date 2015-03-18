@@ -237,7 +237,17 @@ public class ViewsPreferencePage extends PreferencePage implements
 		return button;
 	}
 
+	private Label createLabel(Composite composite, String text) {
+		Label label = new Label(composite, SWT.NONE);
+		GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1);
+		label.setLayoutData(data);
+		label.setText(text);
+		return label;
+	}
+
 	protected void createEnableMruPref(Composite composite) {
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, WorkbenchMessages.ViewsPreference_visibleTabs_description);
 		IEclipsePreferences prefs = getSwtRendererPreferences();
 		if (engine != null) {
 			boolean mruControlledByCSS = prefs.getBoolean(StackRenderer.MRU_CONTROLLED_BY_CSS_KEY, false);
