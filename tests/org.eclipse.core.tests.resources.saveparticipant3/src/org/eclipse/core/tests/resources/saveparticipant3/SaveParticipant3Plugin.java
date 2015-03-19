@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,11 +20,8 @@ public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 	protected boolean shouldFail = false;
 	protected static final String file1 = "file_1";
 
-	private static SaveParticipant3Plugin instance;
-
 	public SaveParticipant3Plugin() {
 		super();
-		instance = this;
 	}
 
 	protected IPath getFilePath(String name) {
@@ -53,7 +50,7 @@ public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 
 	public void saving(ISaveContext context) throws CoreException {
 		if (shouldFail)
-			throw new CoreException(new Status(0, getPluginId(), 0, "fake failure", null));
+			throw new CoreException(new Status(0, getDescriptor().getUniqueIdentifier(), 0, "fake failure", null));
 	}
 
 	protected void validate(ISaveContext context) {
@@ -63,10 +60,6 @@ public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 		if (value != null && value.equals(realPath))
 			return;
 		String message = "Name of configuration file is different than expected.";
-		saveLifecycleLog.add(new Status(IStatus.ERROR, getPluginId(), 111, message, null));
-	}
-
-	public static SaveParticipant3Plugin getInstance() {
-		return instance;
+		saveLifecycleLog.add(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), 111, message, null));
 	}
 }

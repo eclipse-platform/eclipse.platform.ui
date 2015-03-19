@@ -32,11 +32,7 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 	/** constants */
 	private static final String SAVE_NUMBER_LOCATION = "saveNumber";
 
-	private static SaveParticipant1Plugin instance;
-
 	public SaveParticipant1Plugin() {
-		super();
-		instance = this;
 		deltaVerifier = new ResourceDeltaVerifier();
 	}
 
@@ -71,7 +67,7 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 	}
 
 	public String getPluginId() {
-		return getBundle().getSymbolicName();
+		return getDescriptor().getUniqueIdentifier();
 	}
 
 	/**
@@ -196,9 +192,5 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 		} finally {
 			output.close();
 		}
-	}
-
-	public static SaveParticipant1Plugin getInstance() {
-		return instance;
 	}
 }
