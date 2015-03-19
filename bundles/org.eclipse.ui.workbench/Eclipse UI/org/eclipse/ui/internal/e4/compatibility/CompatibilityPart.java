@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Steven Spungin <steven@spungin.tv> - Bug 436908
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
+ *     Snjezana Peco <snjezana.peco@redhat.com> - Bug 414888
  ******************************************************************************/
 
 package org.eclipse.ui.internal.e4.compatibility;
@@ -189,6 +190,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 				} else {
 					selectionProvider.addSelectionChangedListener(postListener);
 				}
+				ESelectionService selectionService = (ESelectionService) part.getContext().get(
+						ESelectionService.class.getName());
+				selectionService.setSelection(selectionProvider.getSelection());
 			}
 		}
 		return true;
