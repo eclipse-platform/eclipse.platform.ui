@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mohamed Hussein (Mentor Graphics) - Added getWarningMessage (Bug 386673)
+ *     Robert Roth - Used consistent apply button location (Bug 432832)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -301,19 +302,20 @@ public class LaunchConfigurationTabGroupViewer {
 		fOptionsLink.setVisible(false);
 		
 		Composite buttonComp = SWTFactory.createComposite(blComp, 2, 1, GridData.HORIZONTAL_ALIGN_END);
-		fApplyButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17, null,GridData.HORIZONTAL_ALIGN_END);
-		fApplyButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				handleApplyPressed();
-			}
-		});
 
 		fRevertButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
 		fRevertButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleRevertPressed();
+			}
+		});
+
+		fApplyButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17, null,GridData.HORIZONTAL_ALIGN_END);
+		fApplyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleApplyPressed();
 			}
 		});
         Dialog.applyDialogFont(parent);
