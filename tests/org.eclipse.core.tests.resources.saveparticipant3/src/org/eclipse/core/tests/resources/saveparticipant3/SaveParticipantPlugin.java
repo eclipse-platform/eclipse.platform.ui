@@ -66,7 +66,7 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 	}
 
 	public String getPluginId() {
-		return getDescriptor().getUniqueIdentifier();
+		return getBundle().getSymbolicName();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.core.tests.resources.saveparticipant;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
@@ -19,6 +20,8 @@ import org.eclipse.core.tests.resources.regression.SimpleBuilder;
 import org.eclipse.core.tests.resources.saveparticipant1.SaveParticipant1Plugin;
 import org.eclipse.core.tests.resources.saveparticipant2.SaveParticipant2Plugin;
 import org.eclipse.core.tests.resources.saveparticipant3.SaveParticipant3Plugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 /**
  * This class needs to be used with SaveManager2Test. Basically this
@@ -64,26 +67,26 @@ public class SaveManager1Test extends SaveManagerTest {
 	public static Test suite() {
 		// we do not add the whole class because the order is important
 		TestSuite suite = new TestSuite();
-		suite.addTest(new SaveManager1Test("testSaveEmptyWorkspace"));
+		suite.addTest(new SaveManager1Test("saveWorkspace"));
 		suite.addTest(new SaveManager1Test("testCreateMyProject"));
 		suite.addTest(new SaveManager1Test("testCreateProject2"));
 		suite.addTest(new SaveManager1Test("testAddSaveParticipant"));
 		suite.addTest(new SaveManager1Test("testBuilder"));
-		suite.addTest(new SaveManager1Test("testSaveWorkspace"));
+		suite.addTest(new SaveManager1Test("saveWorkspace"));
 		suite.addTest(new SaveManager1Test("testPostSave"));
 		return suite;
 	}
 
 	public void testAddSaveParticipant() {
 		// get plugin
-		IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(PI_SAVE_PARTICIPANT_1);
-		SaveParticipant1Plugin plugin1 = null;
+		Bundle bundle = Platform.getBundle(PI_SAVE_PARTICIPANT_1);
+		assertTrue("0.1", bundle != null);
 		try {
-			plugin1 = (SaveParticipant1Plugin) descriptor.getPlugin();
-		} catch (CoreException e) {
+			bundle.start();
+		} catch (BundleException e) {
 			fail("0.0", e);
 		}
-		assertTrue("0.1", plugin1 != null);
+		SaveParticipant1Plugin plugin1 = SaveParticipant1Plugin.getInstance();
 
 		//	prepare plugin to the save operation
 		plugin1.resetDeltaVerifier();
@@ -100,14 +103,14 @@ public class SaveManager1Test extends SaveManagerTest {
 		plugin1.setExpectedSaveKind(ISaveContext.FULL_SAVE);
 
 		// SaveParticipant2Plugin
-		descriptor = Platform.getPluginRegistry().getPluginDescriptor(PI_SAVE_PARTICIPANT_2);
-		SaveParticipant2Plugin plugin2 = null;
+		bundle = Platform.getBundle(PI_SAVE_PARTICIPANT_2);
+		assertTrue("5.1", bundle != null);
 		try {
-			plugin2 = (SaveParticipant2Plugin) descriptor.getPlugin();
-		} catch (CoreException e) {
+			bundle.start();
+		} catch (BundleException e) {
 			fail("5.0", e);
 		}
-		assertTrue("5.1", plugin2 != null);
+		SaveParticipant2Plugin plugin2 = SaveParticipant2Plugin.getInstance();
 
 		//	prepare plugin to the save operation
 		plugin2.getDeltaVerifier().reset();
@@ -123,14 +126,15 @@ public class SaveManager1Test extends SaveManagerTest {
 		plugin1.setExpectedSaveKind(ISaveContext.FULL_SAVE);
 
 		// SaveParticipant3Plugin
-		descriptor = Platform.getPluginRegistry().getPluginDescriptor(PI_SAVE_PARTICIPANT_3);
-		SaveParticipant3Plugin plugin3 = null;
+		bundle = Platform.getBundle(PI_SAVE_PARTICIPANT_3);
+		assertTrue("7.1", bundle != null);
 		try {
-			plugin3 = (SaveParticipant3Plugin) descriptor.getPlugin();
-		} catch (CoreException e) {
+			bundle.start();
+		} catch (BundleException e) {
 			fail("7.0", e);
 		}
-		assertTrue("7.1", plugin3 != null);
+		SaveParticipant3Plugin plugin3 = SaveParticipant3Plugin.getInstance();
+
 		try {
 			status = plugin3.registerAsSaveParticipant();
 			if (!status.isOK()) {
@@ -337,14 +341,14 @@ public class SaveManager1Test extends SaveManagerTest {
 
 	public void testPostSave() {
 		// get plugin
-		IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(PI_SAVE_PARTICIPANT_1);
-		SaveParticipant1Plugin plugin = null;
+		Bundle bundle = Platform.getBundle(PI_SAVE_PARTICIPANT_1);
+		assertTrue("0.1", bundle != null);
 		try {
-			plugin = (SaveParticipant1Plugin) descriptor.getPlugin();
-		} catch (CoreException e) {
+			bundle.start();
+		} catch (BundleException e) {
 			fail("0.0", e);
 		}
-		assertTrue("0.1", plugin != null);
+		SaveParticipant1Plugin plugin = SaveParticipant1Plugin.getInstance();
 
 		// look at the plugin save lifecycle
 		IStatus status = plugin.getSaveLifecycleLog();

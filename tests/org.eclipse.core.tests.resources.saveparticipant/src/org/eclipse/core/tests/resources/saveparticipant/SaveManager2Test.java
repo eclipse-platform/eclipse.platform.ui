@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,15 @@ package org.eclipse.core.tests.resources.saveparticipant;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
 import org.eclipse.core.tests.resources.regression.SimpleBuilder;
 import org.eclipse.core.tests.resources.saveparticipant1.SaveParticipant1Plugin;
 import org.eclipse.core.tests.resources.saveparticipant3.SaveParticipant3Plugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 /**
  * @see SaveManager1Test
@@ -74,14 +77,14 @@ public class SaveManager2Test extends SaveManagerTest {
 
 	public void testSaveParticipant() {
 		// get plugin
-		IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(PI_SAVE_PARTICIPANT_1);
-		SaveParticipant1Plugin plugin1 = null;
+		Bundle bundle = Platform.getBundle(PI_SAVE_PARTICIPANT_1);
+		assertTrue("0.1", bundle != null);
 		try {
-			plugin1 = (SaveParticipant1Plugin) descriptor.getPlugin();
-		} catch (CoreException e) {
+			bundle.start();
+		} catch (BundleException e) {
 			fail("0.0", e);
 		}
-		assertTrue("0.1", plugin1 != null);
+		SaveParticipant1Plugin plugin1 = SaveParticipant1Plugin.getInstance();
 
 		// prepare plugin to the save operation
 		plugin1.resetDeltaVerifier();
@@ -99,14 +102,15 @@ public class SaveManager2Test extends SaveManagerTest {
 		}
 
 		// SaveParticipant3Plugin
-		descriptor = Platform.getPluginRegistry().getPluginDescriptor(PI_SAVE_PARTICIPANT_3);
-		SaveParticipant3Plugin plugin3 = null;
+		bundle = Platform.getBundle(PI_SAVE_PARTICIPANT_3);
+		assertTrue("7.1", bundle != null);
 		try {
-			plugin3 = (SaveParticipant3Plugin) descriptor.getPlugin();
-		} catch (CoreException e) {
+			bundle.start();
+		} catch (BundleException e) {
 			fail("7.0", e);
 		}
-		assertTrue("7.1", plugin3 != null);
+		SaveParticipant3Plugin plugin3 = SaveParticipant3Plugin.getInstance();
+
 		try {
 			status = plugin3.registerAsSaveParticipant();
 			if (!status.isOK()) {
