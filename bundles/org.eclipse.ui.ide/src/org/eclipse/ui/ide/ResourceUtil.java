@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 461762
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
@@ -129,7 +130,7 @@ public final class ResourceUtil {
 		if (element instanceof IResource) {
 			return (IResource) element;
 		}
-		return (IResource) getAdapter(element, IResource.class, true);
+		return getAdapter(element, IResource.class, true);
     }
 
     /**
@@ -251,16 +252,16 @@ public final class ResourceUtil {
      * @return the adapter
      * @since 3.2
      */
-	public static Object getAdapter(Object element, Class adapterType, boolean forceLoad) {
+	public static <T> T getAdapter(Object element, Class<T> adapterType, boolean forceLoad) {
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-	        Object o = adaptable.getAdapter(adapterType);
+			T o = adaptable.getAdapter(adapterType);
 	        if (o != null) {
 	        	return o;
 	        }
 		}
 		if (forceLoad) {
-			return Platform.getAdapterManager().loadAdapter(element, adapterType.getName());
+			return adapterType.cast(Platform.getAdapterManager().loadAdapter(element, adapterType.getName()));
 		}
 		return Platform.getAdapterManager().getAdapter(element, adapterType);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 461762
  *******************************************************************************/
 
 package org.eclipse.ui.views.bookmarkexplorer;
@@ -369,29 +370,26 @@ public class BookmarkNavigator extends ViewPart {
         manager.add(editAction);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-     */
     @Override
-	public Object getAdapter(Class adapter) {
-        if (adapter == IShowInSource.class) {
-            return new IShowInSource() {
+	public <T> T getAdapter(Class<T> adapterClass) {
+		if (adapterClass == IShowInSource.class) {
+			return adapterClass.cast(new IShowInSource() {
                 @Override
 				public ShowInContext getShowInContext() {
                     return new ShowInContext(null, getViewer().getSelection());
                 }
-            };
+			});
         }
-        if (adapter == IShowInTargetList.class) {
-            return new IShowInTargetList() {
+		if (adapterClass == IShowInTargetList.class) {
+			return adapterClass.cast(new IShowInTargetList() {
                 @Override
 				public String[] getShowInTargetIds() {
                     return new String[] { IPageLayout.ID_RES_NAV };
                 }
 
-            };
+			});
         }
-        return super.getAdapter(adapter);
+		return super.getAdapter(adapterClass);
     }
 
     /**

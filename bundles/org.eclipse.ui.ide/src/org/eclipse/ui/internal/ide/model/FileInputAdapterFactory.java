@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 461762
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
-import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IFileEditorInput;
 
 /**
@@ -25,28 +24,20 @@ import org.eclipse.ui.IFileEditorInput;
  */
 
 public class FileInputAdapterFactory implements IAdapterFactory {
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
-	 *      java.lang.Class)
-	 */
+
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (IFile.class.equals(adapterType))
-			return ((IFileEditorInput) adaptableObject).getFile();
-		if (IResource.class.equals(adapterType))
-			return ((IFileEditorInput) adaptableObject).getFile();
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (IFile.class.equals(adapterType)) {
+			return adapterType.cast(((IFileEditorInput) adaptableObject).getFile());
+		}
+		if (IResource.class.equals(adapterType)) {
+			return adapterType.cast(((IFileEditorInput) adaptableObject).getFile());
+		}
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IFile.class, IResource.class };
 	}
 }
