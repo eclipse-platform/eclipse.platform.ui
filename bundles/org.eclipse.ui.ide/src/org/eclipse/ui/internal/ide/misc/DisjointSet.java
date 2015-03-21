@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
  ******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
@@ -28,20 +29,23 @@ import java.util.List;
  * Ref: Cormen, Leiserson, and Rivest <it>Introduction to Algorithms</it>,
  * McGraw-Hill, 1990. The disjoint set forest implementation in section 22.3.
  * </p>
+ *
+ * @param <T>
+ *            element type
  * @since 3.2
  */
-public class DisjointSet {
+public class DisjointSet<T> {
 	/**
 	 * A node in the disjoint set forest.  Each tree in the forest is
 	 * a disjoint set, where the root of the tree is the set representative.
 	 */
-	private static class Node {
+	private static class Node<T> {
 		/** The node rank used for union by rank optimization */
 		int rank;
 		/** The parent of this node in the tree. */
-		Object parent;
+		T parent;
 
-		Node(Object parent, int rank) {
+		Node(T parent, int rank) {
 			this.parent = parent;
 			this.rank = rank;
 		}
@@ -52,7 +56,7 @@ public class DisjointSet {
 	 * disjoint set, and the Node represents its position and rank
 	 * within the set.
 	 */
-	private final HashMap objectsToNodes = new HashMap();
+	private final HashMap<T, Node<T>> objectsToNodes = new HashMap<>();
 
 	/**
 	 * Returns the set token for the given object, or null if the
@@ -61,12 +65,14 @@ public class DisjointSet {
 	 * @param o The object to return the set token for
 	 * @return The set token, or <code>null</code>
 	 */
-	public Object findSet(Object o) {
-		DisjointSet.Node node = (DisjointSet.Node) objectsToNodes.get(o);
-		if (node == null)
+	public T findSet(Object o) {
+		DisjointSet.Node<T> node = objectsToNodes.get(o);
+		if (node == null) {
 			return null;
-		if (o != node.parent)
+		}
+		if (o != node.parent) {
 			node.parent = findSet(node.parent);
+		}
 		return node.parent;
 	}
 
@@ -75,8 +81,8 @@ public class DisjointSet {
 	 * It is assumed that the object does not yet belong to any set.
 	 * @param o The object to add to the set
 	 */
-	public void makeSet(Object o) {
-		objectsToNodes.put(o, new Node(o, 0));
+	public void makeSet(T o) {
+		objectsToNodes.put(o, new Node<>(o, 0));
 	}
 
 	/**
@@ -85,13 +91,15 @@ public class DisjointSet {
 	 */
 	public void removeSet(Object o) {
 		Object set = findSet(o);
-		if (set == null)
+		if (set == null) {
 			return;
-		for (Iterator it = objectsToNodes.keySet().iterator(); it.hasNext();) {
-			Object next = it.next();
+		}
+		for (Iterator<T> it = objectsToNodes.keySet().iterator(); it.hasNext();) {
+			T next = it.next();
 			//remove the set representative last, otherwise findSet will fail
-			if (next != set && findSet(next) == set)
+			if (next != set && findSet(next) == set) {
 				it.remove();
+			}
 		}
 		objectsToNodes.remove(set);
 	}
@@ -100,7 +108,7 @@ public class DisjointSet {
 	 * Copies all objects in the disjoint set to the provided list
 	 * @param list The list to copy objects into
 	 */
-	public void toList(List list) {
+	public void toList(List<? super T> list) {
 		list.addAll(objectsToNodes.keySet());
 	}
 
@@ -111,20 +119,22 @@ public class DisjointSet {
 	 * @param x The first set to union
 	 * @param y The second set to union
 	 */
-	public void union(Object x, Object y) {
-		Object setX = findSet(x);
-		Object setY = findSet(y);
-		if (setX == null || setY == null || setX == setY)
+	public void union(T x, T y) {
+		T setX = findSet(x);
+		T setY = findSet(y);
+		if (setX == null || setY == null || setX == setY) {
 			return;
-		DisjointSet.Node nodeX = (DisjointSet.Node) objectsToNodes.get(setX);
-		DisjointSet.Node nodeY = (DisjointSet.Node) objectsToNodes.get(setY);
+		}
+		Node<T> nodeX = objectsToNodes.get(setX);
+		Node<T> nodeY = objectsToNodes.get(setY);
 		//join the two sets by pointing the root of one at the root of the other
 		if (nodeX.rank > nodeY.rank) {
 			nodeY.parent = x;
 		} else {
 			nodeX.parent = y;
-			if (nodeX.rank == nodeY.rank)
+			if (nodeX.rank == nodeY.rank) {
 				nodeY.rank++;
+			}
 		}
 	}
 }

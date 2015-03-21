@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
@@ -99,9 +100,8 @@ import org.eclipse.ui.part.ResourceTransfer;
      */
     @Override
 	public void run() {
-        List<IResource> selectedResources = getSelectedResources();
-        IResource[] resources =selectedResources
-                .toArray(new IResource[selectedResources.size()]);
+		List<? extends IResource> selectedResources = getSelectedResources();
+		IResource[] resources = selectedResources.toArray(new IResource[selectedResources.size()]);
 
         // Get the file names and a string representation
         final int length = resources.length;
@@ -148,8 +148,7 @@ import org.eclipse.ui.part.ResourceTransfer;
         try {
             // set the clipboard contents
             if (fileNames.length > 0) {
-                clipboard.setContents(new Object[] { resources, fileNames,
-                        names },
+				clipboard.setContents(new Object[] { resources, fileNames, names },
                         new Transfer[] { ResourceTransfer.getInstance(),
                                 FileTransfer.getInstance(),
                                 TextTransfer.getInstance() });
@@ -187,14 +186,13 @@ import org.eclipse.ui.part.ResourceTransfer;
 			return false;
 		}
 
-        List<IResource> selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
         if (selectedResources.size() == 0) {
 			return false;
 		}
 
         boolean projSelected = selectionIsOfType(IResource.PROJECT);
-        boolean fileFoldersSelected = selectionIsOfType(IResource.FILE
-                | IResource.FOLDER);
+		boolean fileFoldersSelected = selectionIsOfType(IResource.FILE | IResource.FOLDER);
         if (!projSelected && !fileFoldersSelected) {
 			return false;
 		}
@@ -219,9 +217,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 				return false;
 			}
         }
-
         return true;
     }
 
 }
-

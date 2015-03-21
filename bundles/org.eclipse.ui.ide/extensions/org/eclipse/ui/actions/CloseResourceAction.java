@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 41431
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 41431, 462760
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -54,13 +54,12 @@ import org.eclipse.ui.part.FileEditorInput;
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class CloseResourceAction extends WorkspaceAction implements
-        IResourceChangeListener {
+public class CloseResourceAction extends WorkspaceAction implements IResourceChangeListener {
     /**
      * The id of this action.
      */
-    public static final String ID = PlatformUI.PLUGIN_ID
-            + ".CloseResourceAction"; //$NON-NLS-1$
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseResourceAction"; //$NON-NLS-1$
+
 	private String[] modelProviderIds;
 
     /**
@@ -112,9 +111,8 @@ public class CloseResourceAction extends WorkspaceAction implements
 
 	private void initAction() {
 		setId(ID);
-        setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
+		setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
 	}
 
     @Override
@@ -133,9 +131,8 @@ public class CloseResourceAction extends WorkspaceAction implements
     }
 
     @Override
-	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
-	        throws CoreException {
-	    ((IProject) resource).close(monitor);
+	protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
+		((IProject) resource).close(monitor);
 	}
 
     /**
@@ -146,7 +143,7 @@ public class CloseResourceAction extends WorkspaceAction implements
     @Override
 	public void run() {
         // Get the items to close.
-		List<IResource> projects = getSelectedResources();
+		List<? extends IResource> projects = getSelectedResources();
         if (projects == null || projects.isEmpty()) {
 			// no action needs to be taken since no projects are selected
             return;
@@ -191,7 +188,7 @@ public class CloseResourceAction extends WorkspaceAction implements
 			return false;
 		}
 
-		Iterator<IResource> resources = getSelectedResources().iterator();
+		Iterator<? extends IResource> resources = getSelectedResources().iterator();
         while (resources.hasNext()) {
             IProject currentResource = (IProject) resources.next();
             if (currentResource.isOpen()) {
@@ -208,13 +205,12 @@ public class CloseResourceAction extends WorkspaceAction implements
     @Override
 	public synchronized void resourceChanged(IResourceChangeEvent event) {
         // Warning: code duplicated in OpenResourceAction
-		List<IResource> sel = getSelectedResources();
+		List<? extends IResource> sel = getSelectedResources();
         // don't bother looking at delta if selection not applicable
         if (selectionIsOfType(IResource.PROJECT)) {
             IResourceDelta delta = event.getDelta();
             if (delta != null) {
-                IResourceDelta[] projDeltas = delta
-                        .getAffectedChildren(IResourceDelta.CHANGED);
+				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
 				for (IResourceDelta projDelta : projDeltas) {
                     if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
                         if (sel.contains(projDelta.getResource())) {
@@ -229,12 +225,12 @@ public class CloseResourceAction extends WorkspaceAction implements
 
 
     @Override
-	protected synchronized List<IResource> getSelectedResources() {
+	protected synchronized List<? extends IResource> getSelectedResources() {
     	return super.getSelectedResources();
     }
 
     @Override
-	protected synchronized List<Object> getSelectedNonResources() {
+	protected synchronized List<?> getSelectedNonResources() {
     	return super.getSelectedNonResources();
     }
 
@@ -270,7 +266,7 @@ public class CloseResourceAction extends WorkspaceAction implements
 	 */
     private boolean validateClose() {
     	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
-		List<IResource> resources = getActionResources();
+		List<? extends IResource> resources = getActionResources();
 		for (IResource resource : resources) {
 			if (resource instanceof IProject) {
 				IProject project = (IProject) resource;
@@ -296,7 +292,7 @@ public class CloseResourceAction extends WorkspaceAction implements
 	 * @param deletedOnly
 	 *            true to close only editors on resources which do not exist
 	 */
-	static void closeMatchingEditors(final List<IResource> resourceRoots, final boolean deletedOnly) {
+	static void closeMatchingEditors(final List<? extends IResource> resourceRoots, final boolean deletedOnly) {
 		if (resourceRoots.isEmpty()) {
 			return;
 		}
@@ -332,9 +328,9 @@ public class CloseResourceAction extends WorkspaceAction implements
 		return w;
 	}
 
-	private static List<IEditorReference> getMatchingEditors(final List<IResource> resourceRoots, IWorkbenchWindow w,
-			boolean deletedOnly) throws CoreException {
-		List<IEditorReference> toClose = new ArrayList<IEditorReference>();
+	private static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
+			IWorkbenchWindow w, boolean deletedOnly) throws CoreException {
+		List<IEditorReference> toClose = new ArrayList<>();
 		IEditorReference[] editors = getEditors(w);
 		for (IEditorReference ref : editors) {
 			IResource resource = getAdapter(ref);
@@ -377,7 +373,7 @@ public class CloseResourceAction extends WorkspaceAction implements
 		return Util.getAdapter(input, IResource.class);
 	}
 
-	private static boolean belongsTo(List<IResource> roots, IResource leaf) {
+	private static boolean belongsTo(List<? extends IResource> roots, IResource leaf) {
 		for (IResource resource : roots) {
 			if (resource.contains(leaf)) {
 				return true;

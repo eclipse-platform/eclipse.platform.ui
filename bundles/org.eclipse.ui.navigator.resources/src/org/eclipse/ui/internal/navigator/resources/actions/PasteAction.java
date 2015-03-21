@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.actions;
 
@@ -26,8 +27,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
+import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.
@@ -79,7 +80,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
      * @return the actual target of the paste action
      */
     private IResource getTarget() {
-        List<IResource> selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
 
         for (IResource resource : selectedResources) {
             if (resource instanceof IProject && !((IProject) resource).isOpen()) {
@@ -118,23 +119,19 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
 	public void run() {
         // try a resource transfer
         ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-        IResource[] resourceData = (IResource[]) clipboard
-                .getContents(resTransfer);
+		IResource[] resourceData = (IResource[]) clipboard.getContents(resTransfer);
 
         if (resourceData != null && resourceData.length > 0) {
             if (resourceData[0].getType() == IResource.PROJECT) {
                 // enablement checks for all projects
                 for (int i = 0; i < resourceData.length; i++) {
-                    CopyProjectOperation operation = new CopyProjectOperation(
-                            this.shell);
+					CopyProjectOperation operation = new CopyProjectOperation(shell);
                     operation.copyProject((IProject) resourceData[i]);
                 }
             } else {
                 // enablement should ensure that we always have access to a container
                 IContainer container = getContainer();
-
-                CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
-                        this.shell);
+				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
                 operation.copyResources(resourceData, container);
             }
             return;
@@ -147,9 +144,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
         if (fileData != null) {
             // enablement should ensure that we always have access to a container
             IContainer container = getContainer();
-
-            CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
-                    this.shell);
+			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
             operation.copyFiles(fileData, container);
         }
     }
@@ -158,7 +153,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
      * Returns the container to hold the pasted resources.
      */
     private IContainer getContainer() {
-        List<IResource> selection = getSelectedResources();
+		List<? extends IResource> selection = getSelectedResources();
         if (selection.get(0) instanceof IFile) {
 			return ((IFile) selection.get(0)).getParent();
 		}
@@ -188,8 +183,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
 			public void run() {
                 // clipboard must have resources or files
                 ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-                clipboardData[0] = (IResource[]) clipboard
-                        .getContents(resTransfer);
+				clipboardData[0] = (IResource[]) clipboard.getContents(resTransfer);
             }
         });
         IResource[] resourceData = clipboardData[0];
@@ -221,7 +215,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
 
         // can paste files and folders to a single selection (file, folder,
         // open project) or multiple file selection with the same parent
-        List<IResource> selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
         if (selectedResources.size() > 1) {
             for (IResource resource : selectedResources) {
                 if (resource.getType() != IResource.FILE) {
