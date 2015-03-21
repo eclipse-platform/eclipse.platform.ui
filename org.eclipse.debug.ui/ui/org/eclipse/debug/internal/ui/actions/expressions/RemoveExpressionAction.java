@@ -68,5 +68,13 @@ public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 		job.setSystem(true);
 		schedule(job);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractSelectionActionDelegate#isEnabledFor(java.lang.Object)
+	 */
+	@Override
+	protected boolean isEnabledFor(Object element) {
+		return (element instanceof IExpression) || (element instanceof IAdaptable);
+	}
 }
 
