@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -28,6 +27,8 @@ import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * The Util class is the class of general utilities used by the marker support.
@@ -159,8 +160,9 @@ public final class Util {
 	 */
 	public static String getResourceName(IMarker marker) {
 
-		if (!marker.exists())
+		if (!marker.exists()) {
 			return Util.EMPTY_STRING;
+		}
 
 		try {
 			Object nameAttribute = marker
@@ -262,8 +264,9 @@ public final class Util {
 	 */
 	public static String getShortContainerName(IMarker marker) {
 
-		if (!marker.exists())
+		if (!marker.exists()) {
 			return Util.EMPTY_STRING;
+		}
 
 		try {
 			Object pathAttribute = marker
@@ -322,7 +325,7 @@ public final class Util {
 	 */
 	public static boolean allConcreteSelection(IStructuredSelection selection) {
 		if (selection != null && selection.size() > 0) {
-			Iterator nodes = selection.iterator();
+			Iterator<?> nodes = selection.iterator();
 			while (nodes.hasNext()) {
 				if (((MarkerNode) nodes.next()).isConcrete()) {
 					continue;

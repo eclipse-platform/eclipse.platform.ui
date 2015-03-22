@@ -1,6 +1,5 @@
-package org.eclipse.ui.internal.views.markers;
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +8,7 @@ package org.eclipse.ui.internal.views.markers;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
+package org.eclipse.ui.internal.views.markers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +21,11 @@ import org.eclipse.ui.views.markers.MarkerSupportConstants;
  * @since 3.4
  *
  */
-public class TodoFiltersContributionParameters extends
-		FiltersContributionParameters {
+public class TodoFiltersContributionParameters extends FiltersContributionParameters {
 
-	private static Map todoMap;
+	private static Map<String, String> todoMap;
 	static {
-		todoMap = new HashMap();
+		todoMap = new HashMap<>();
 		todoMap.put(MarkerSupportConstants.CONTAINS_KEY, "TODO"); //$NON-NLS-1$
 	}
 
@@ -38,11 +36,8 @@ public class TodoFiltersContributionParameters extends
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FiltersContributionParameters#getParameterValues()
-	 */
 	@Override
-	public Map getParameterValues() {
+	public Map<String, String> getParameterValues() {
 		return todoMap;
 	}
 

@@ -38,15 +38,15 @@ import com.ibm.icu.text.Collator;
  *
  */
 class MarkerEntry extends MarkerSupportItem implements IAdaptable {
+
 	static {
 		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
 			@Override
 			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-				if (adapterType == IMarker.class
-						&& adaptableObject instanceof MarkerEntry)
+				if (adapterType == IMarker.class && adaptableObject instanceof MarkerEntry) {
 					return adapterType.cast(((MarkerEntry) adaptableObject).getMarker());
-
+				}
 				return null;
 			}
 
@@ -56,10 +56,11 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			}
 		}, MarkerEntry.class);
 	}
+
 	// The key for the string we built for display
-	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
+	private static final String LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	private MarkerCategory category;
-	private Map cache;
+	private Map<String, Object> cache;
 
 	/**
 	 * Set the MarkerEntry to be stale, if discovered at any point of time
@@ -86,27 +87,28 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter.equals(IMarker.class))
+		if (adapter.equals(IMarker.class)) {
 			return adapter.cast(marker);
+		}
 		return null;
 	}
 
 	@Override
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
 		Object value = getAttributeValue(attribute);
-		if (value == null)
+		if (value == null) {
 			return defaultValue;
+		}
 		return ((Boolean) value).booleanValue();
 	}
 
 	@Override
 	public int getAttributeValue(String attribute, int defaultValue) {
-
 		Object value = getAttributeValue(attribute);
-		if (value == null)
+		if (value == null) {
 			return defaultValue;
+		}
 		return ((Integer) value).intValue();
-
 	}
 
 	/**
@@ -132,17 +134,18 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 				getCache().put(attribute, value);
 			}
 		}
-		if (value instanceof CollationKey)
+		if (value instanceof CollationKey) {
 			return ((CollationKey) value).getSourceString();
+		}
 		return value;
 	}
 
 	@Override
 	public String getAttributeValue(String attribute, String defaultValue) {
-
 		Object value = getAttributeValue(attribute);
-		if (value == null)
+		if (value == null) {
 			return defaultValue;
+		}
 		// The following toString() is a no-op for string attribute
 		// values (which we expect!), but safeguards against clients
 		// who used non-String objects (e.g. Integer) as attribute values,
@@ -159,11 +162,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		return category;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
-	 */
 	@Override
 	MarkerSupportItem[] getChildren() {
 		return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
@@ -183,18 +181,18 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (value != null) {
 			// Only return a collation key otherwise
 			//use the value to generate it
-			if (value instanceof CollationKey)
+			if (value instanceof CollationKey) {
 				return (CollationKey) value;
-
+			}
 			attributeValue = value.toString();
 		} else {
 			attributeValue = getAttributeValue(attribute, defaultValue);
 		}
 
-		if (attributeValue.length() == 0)
+		if (attributeValue.length() == 0) {
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
-		CollationKey key = Collator.getInstance().getCollationKey(
-				attributeValue);
+		}
+		CollationKey key = Collator.getInstance().getCollationKey(attributeValue);
 		getCache().put(attribute, key);
 		return key;
 	}
@@ -215,8 +213,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	@Override
 	String getDescription() {
-		return getAttributeValue(IMarker.MESSAGE,
-				MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
+		return getAttributeValue(IMarker.MESSAGE, MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
 	}
 
 	@Override
@@ -231,15 +228,15 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		}
 		if (getCache().containsKey(LOCATION_STRING)) {
 			Object value = getCache().get(LOCATION_STRING);
-			if (value instanceof CollationKey)
+			if (value instanceof CollationKey) {
 				return ((CollationKey) value).getSourceString();
+			}
 			return (String) value;
 		}
 
 
 		// Is the location override set?
-		String locationString = getAttributeValue(IMarker.LOCATION,
-				MarkerSupportInternalUtilities.EMPTY_STRING);
+		String locationString = getAttributeValue(IMarker.LOCATION, MarkerSupportInternalUtilities.EMPTY_STRING);
 		if (locationString.length() > 0) {
 			getCache().put(LOCATION_STRING, locationString);
 			return locationString;
@@ -248,11 +245,11 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		// No override so use line number
 		int lineNumber = getAttributeValue(IMarker.LINE_NUMBER, -1);
 		String lineNumberString;
-		if (lineNumber < 0)
+		if (lineNumber < 0) {
 			lineNumberString = MarkerMessages.Unknown;
-		else
-			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
-					Integer.toString(lineNumber));
+		} else {
+			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber, Integer.toString(lineNumber));
+		}
 
 		getCache().put(LOCATION_STRING, lineNumberString);
 		return lineNumberString;
@@ -267,31 +264,27 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	@Override
 	String getMarkerTypeName() {
 		if(stale){
-			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
-					.toString());
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker.toString());
 		}
 		try {
-			return MarkerTypesModel.getInstance().getType(marker.getType())
-					.getLabel();
+			return MarkerTypesModel.getInstance().getType(marker.getType()).getLabel();
 		} catch (CoreException e) {
 			checkIfMarkerStale() ;
 			Policy.handle(e);
-			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
-					.toString());
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker.toString());
 		}
 	}
+
 	String getMarkerTypeId() {
 		if(stale){
-			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
-					.toString());
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker.toString());
 		}
 		try {
 			return marker.getType();
 		} catch (CoreException e) {
 			checkIfMarkerStale();
 			Policy.handle(e);
-			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
-					.toString());
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker.toString());
 		}
 	}
 
@@ -315,8 +308,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (n <= 0) {
 			return super.getPath();
 		}
-		folder = path.removeLastSegments(1).removeTrailingSeparator()
-				.toString();
+		folder = path.removeLastSegments(1).removeTrailingSeparator().toString();
 		getCache().put(MarkerViewUtil.PATH_ATTRIBUTE, folder);
 		return folder;
 	}
@@ -333,7 +325,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	void setCategory(MarkerCategory markerCategory) {
 		category = markerCategory;
-
 	}
 
 	/**
@@ -354,9 +345,10 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 *
 	 * @return {@link HashMap}
 	 */
-	Map getCache() {
-		if (cache == null)
-			cache = new HashMap(2);
+	Map<String, Object> getCache() {
+		if (cache == null) {
+			cache = new HashMap<>(2);
+		}
 		return cache;
 	}
 
@@ -405,9 +397,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		}
-		if (obj == null) {
-			return false;
 		}
 		if (!(obj instanceof MarkerEntry)) {
 			return false;

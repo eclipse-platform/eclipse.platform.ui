@@ -57,17 +57,14 @@ public class DialogTaskProperties extends DialogMarkerProperties {
     }
 
     /**
-     * @param parentShell
-     */
+	 * @param parentShell
+	 * @param title
+	 */
     public DialogTaskProperties(Shell parentShell, String title) {
         super(parentShell, title);
         setType(IMarker.TASK);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#createAttributesArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected void createAttributesArea(Composite parent) {
     	createSeperator(parent);
@@ -100,7 +97,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
             @Override
 			public void widgetSelected(SelectionEvent e) {
                 if (getMarker() == null) {
-                    Map initialAttributes = getInitialAttributes();
+					Map<String, Object> initialAttributes = getInitialAttributes();
                     initialAttributes.put(IMarker.PRIORITY, new Integer(
                             getPriorityFromDialog()));
                 }
@@ -117,7 +114,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
             @Override
 			public void widgetSelected(SelectionEvent e) {
                 if (getMarker() == null) {
-                    Map initialAttributes = getInitialAttributes();
+					Map<String, Object> initialAttributes = getInitialAttributes();
                     initialAttributes.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
                 }
                 markDirty();
@@ -128,7 +125,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
     protected boolean getCompleted() {
         IMarker marker = getMarker();
         if (marker == null) {
-            Map attributes = getInitialAttributes();
+			Map<String, Object> attributes = getInitialAttributes();
             Object done = attributes.get(IMarker.DONE);
             return done != null && done instanceof Boolean
                     && ((Boolean) done).booleanValue();
@@ -140,7 +137,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         IMarker marker = getMarker();
         int priority = IMarker.PRIORITY_NORMAL;
         if (marker == null) {
-            Map attributes = getInitialAttributes();
+			Map<String, Object> attributes = getInitialAttributes();
             Object priorityObj = attributes.get(IMarker.PRIORITY);
             if (priorityObj != null && priorityObj instanceof Integer) {
                 priority = ((Integer) priorityObj).intValue();
@@ -152,10 +149,6 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         return priority;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#updateEnablement()
-     */
     @Override
 	protected void updateEnablement() {
         super.updateEnablement();
@@ -163,13 +156,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         completedCheckbox.setEnabled(isEditable());
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#updateDialogForNewMarker()
-     */
     @Override
 	protected void updateDialogForNewMarker() {
-        Map initialAttributes = getInitialAttributes();
+		Map<String, Object> initialAttributes = getInitialAttributes();
         int priority = getPriority();
         initialAttributes.put(IMarker.PRIORITY, new Integer(priority));
         if (priority == IMarker.PRIORITY_HIGH) {
@@ -185,13 +174,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         super.updateDialogForNewMarker();
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#updateDialogFromMarker()
-     */
     @Override
 	protected void updateDialogFromMarker() {
-        Map initialAttributes = getInitialAttributes();
+		Map<String, Object> initialAttributes = getInitialAttributes();
         int priority = getPriority();
         initialAttributes.put(IMarker.PRIORITY, new Integer(priority));
         if (priority == IMarker.PRIORITY_HIGH) {
@@ -219,13 +204,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         return priority;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#getMarkerAttributes()
-     */
     @Override
-	protected Map getMarkerAttributes() {
-        Map attrs = super.getMarkerAttributes();
+	protected Map<String, Object> getMarkerAttributes() {
+		Map<String, Object> attrs = super.getMarkerAttributes();
         attrs.put(IMarker.PRIORITY, new Integer(getPriorityFromDialog()));
         attrs.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
         Object userEditable = attrs.get(IMarker.USER_EDITABLE);
@@ -235,21 +216,11 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         return attrs;
     }
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getModifyOperationTitle()
-     *
-     * @since 3.3
-     */
 	@Override
 	protected String getModifyOperationTitle() {
 		return MarkerMessages.modifyTask_title;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getCreateOperationTitle()
-     *
-     * @since 3.3
-     */
 	@Override
 	protected String getCreateOperationTitle() {
 		return MarkerMessages.DialogTaskProperties_CreateTask;

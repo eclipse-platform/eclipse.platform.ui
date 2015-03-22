@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,10 @@ import org.eclipse.ui.views.markers.FiltersContributionParameters;
  */
 public class SelectedWarningsParameters extends FiltersContributionParameters {
 
-	private static Map warningsMap;
+	private static Map<String, Integer> warningsMap;
 	static {
-		warningsMap = new HashMap();
-		warningsMap.put(IMarker.SEVERITY, new Integer(
-				SeverityAndDescriptionFieldFilter.SEVERITY_WARNING));
+		warningsMap = new HashMap<>();
+		warningsMap.put(IMarker.SEVERITY, new Integer(SeverityAndDescriptionFieldFilter.SEVERITY_WARNING));
 	}
 
 	/**
@@ -39,13 +38,8 @@ public class SelectedWarningsParameters extends FiltersContributionParameters {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FiltersContributionParameters#getParameterValues()
-	 */
 	@Override
-	public Map getParameterValues() {
+	public Map<String, Integer> getParameterValues() {
 		return warningsMap;
 	}
 

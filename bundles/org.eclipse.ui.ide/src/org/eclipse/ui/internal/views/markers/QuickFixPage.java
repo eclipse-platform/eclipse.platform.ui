@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ import org.eclipse.ui.views.markers.internal.Util;
  */
 public class QuickFixPage extends WizardPage {
 
-	private Map resolutions;
+	private Map<IMarkerResolution, Collection<IMarker>> resolutions;
 
 	private TableViewer resolutionsList;
 	private CheckboxTableViewer markersTable;
@@ -92,7 +92,7 @@ public class QuickFixPage extends WizardPage {
 	 *            {@link Collection} of {@link IMarker}
 	 * @param site The IWorkbenchPartSite to show markers
 	 */
-	public QuickFixPage(String problemDescription, IMarker[] selectedMarkers, Map resolutions,
+	public QuickFixPage(String problemDescription, IMarker[] selectedMarkers, Map<IMarkerResolution, Collection<IMarker>> resolutions,
 			IWorkbenchPartSite site) {
 		super(problemDescription);
 		this.selectedMarkers= selectedMarkers;
@@ -355,7 +355,7 @@ public class QuickFixPage extends WizardPage {
 				}
 
 				if (resolutions.containsKey(selected)) {
-					return ((Collection) resolutions.get(selected)).toArray();
+					return resolutions.get(selected).toArray();
 				}
 				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
 			}
@@ -574,23 +574,16 @@ public class QuickFixPage extends WizardPage {
 		if (resolution instanceof WorkbenchMarkerResolution) {
 
 			try {
-				getWizard().getContainer().run(false, true,
-						new IRunnableWithProgress() {
-							/*
-							 * (non-Javadoc)
-							 *
-							 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-							 */
-							@Override
-							public void run(IProgressMonitor monitor) {
-								IMarker[] markers = new IMarker[checked.length];
-								System.arraycopy(checked, 0, markers, 0,
-										checked.length);
-								((WorkbenchMarkerResolution) resolution).run(
-										markers, monitor);
-							}
+				getWizard().getContainer().run(false, true, new IRunnableWithProgress() {
 
-						});
+					@Override
+					public void run(IProgressMonitor monitor1) {
+						IMarker[] markers = new IMarker[checked.length];
+						System.arraycopy(checked, 0, markers, 0, checked.length);
+						((WorkbenchMarkerResolution) resolution).run(markers, monitor1);
+					}
+
+				});
 			} catch (InvocationTargetException e) {
 				StatusManager.getManager().handle(
 						MarkerSupportInternalUtilities.errorFor(e));
@@ -602,33 +595,25 @@ public class QuickFixPage extends WizardPage {
 		} else {
 
 			try {
-				getWizard().getContainer().run(false, true,
-						new IRunnableWithProgress() {
-							/*
-							 * (non-Javadoc)
-							 *
-							 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-							 */
-							@Override
-							public void run(IProgressMonitor monitor) {
-								monitor
-										.beginTask(
-												MarkerMessages.MarkerResolutionDialog_Fixing,
-												checked.length);
-								for (int i = 0; i < checked.length; i++) {
-									// Allow paint events and wake up the button
-									getShell().getDisplay().readAndDispatch();
-									if (monitor.isCanceled())
-										return;
-									IMarker marker = (IMarker) checked[i];
-									monitor.subTask(Util.getProperty(
-											IMarker.MESSAGE, marker));
-									resolution.run(marker);
-									monitor.worked(1);
-								}
-							}
+				getWizard().getContainer().run(false, true, new IRunnableWithProgress() {
 
-						});
+					@Override
+					public void run(IProgressMonitor monitor1) {
+						monitor1.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, checked.length);
+						for (int i = 0; i < checked.length; i++) {
+							// Allow paint events and wake up the button
+							getShell().getDisplay().readAndDispatch();
+							if (monitor1.isCanceled()) {
+								return;
+							}
+							IMarker marker = (IMarker) checked[i];
+							monitor1.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+							resolution.run(marker);
+							monitor1.worked(1);
+						}
+					}
+
+				});
 			} catch (InvocationTargetException e) {
 				StatusManager.getManager().handle(
 						MarkerSupportInternalUtilities.errorFor(e));

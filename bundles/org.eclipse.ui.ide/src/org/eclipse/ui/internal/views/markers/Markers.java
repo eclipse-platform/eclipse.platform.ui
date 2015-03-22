@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,11 +48,11 @@ class Markers {
 
 	private CachedMarkerBuilder builder;
 
-	private boolean inChange = false;
+	private boolean inChange;
 
 	// markerToEntryMap is a lazily created map from the markers to thier
 	// corresponding entry
-	private Map markerToEntryMap = null;
+	private Map<IMarker, MarkerEntry> markerToEntryMap;
 	private Integer[] markerCounts;
 
 	Markers(CachedMarkerBuilder builder) {
@@ -68,7 +69,7 @@ class Markers {
 	 *            true sort and group them
 	 * @param monitor
 	 */
-	synchronized boolean updateWithNewMarkers(Collection markerEntries,
+	synchronized boolean updateWithNewMarkers(Collection<MarkerEntry> markerEntries,
 			boolean sortAndGroup, IProgressMonitor monitor) {
 		boolean initialVal = inChange;
 		try {
@@ -117,8 +118,7 @@ class Markers {
 			inChange = true;
 			// Sort by Category first
 			if (builder.isShowingHierarchy()) {
-				MarkerCategory[] markerCategories = groupIntoCategories(
-						monitor, markerEntryArray);
+				MarkerCategory[] markerCategories = groupIntoCategories(monitor, markerEntryArray);
 				categories = markerCategories;
 			} else {
 				categories = EMPTY_CATEGORY_ARRAY;
@@ -146,8 +146,7 @@ class Markers {
 		try {
 			inChange = true;
 			if (builder.isShowingHierarchy()) {
-				Comparator comparator = builder.getComparator()
-						.getFieldsComparator();
+				Comparator<MarkerItem> comparator = builder.getComparator().getFieldsComparator();
 				for (int i = 0; i < categories.length; i++) {
 					if (monitor.isCanceled()) {
 						return false;
@@ -186,10 +185,10 @@ class Markers {
 	 * @param available
 	 */
 	private int getShowingLimit(int available) {
-
 		boolean limitsEnabled = builder.getGenerator().isMarkerLimitsEnabled();
-		if(!limitsEnabled)
+		if(!limitsEnabled) {
 			return available;
+		}
 
 		int limit = builder.getGenerator().getMarkerLimits();
 		int effLimit = limit;
@@ -206,19 +205,17 @@ class Markers {
 	 * @param newMarkers
 	 * @return MarkerCategory
 	 */
-	MarkerCategory[] groupIntoCategories(IProgressMonitor monitor,
-			MarkerEntry[] newMarkers) {
-		Map boundaryInfoMap = groupMarkerEntries(newMarkers,
+	MarkerCategory[] groupIntoCategories(IProgressMonitor monitor, MarkerEntry[] newMarkers) {
+		Map<MarkerGroupingEntry, Integer> boundaryInfoMap = groupMarkerEntries(newMarkers,
 				builder.getCategoryGroup(), newMarkers.length - 1, monitor);
-		Iterator iterator = boundaryInfoMap.keySet().iterator();
+		Iterator<MarkerGroupingEntry> iterator = boundaryInfoMap.keySet().iterator();
 		int start = 0;
-		MarkerCategory[] markerCategories = new MarkerCategory[boundaryInfoMap
-				.size()];
+		MarkerCategory[] markerCategories = new MarkerCategory[boundaryInfoMap.size()];
 		int i = 0;
 		int end = 0;
 		while (iterator.hasNext()) {
-			Object key = iterator.next();
-			end = ((Integer) boundaryInfoMap.get(key)).intValue();
+			MarkerGroupingEntry key = iterator.next();
+			end = boundaryInfoMap.get(key).intValue();
 			markerCategories[i++] = new MarkerCategory(this, start, end,
 					builder.getCategoryGroup().getMarkerField()
 							.getValue(newMarkers[start]));
@@ -239,24 +236,23 @@ class Markers {
 	 * @return {@link Map}
 	 *
 	 */
-	private Map groupMarkerEntries(MarkerEntry[] entries, MarkerGroup group,
+	private Map<MarkerGroupingEntry, Integer> groupMarkerEntries(MarkerEntry[] entries, MarkerGroup group,
 			int k, IProgressMonitor monitor) {
-		TreeMap map = new TreeMap(group.getEntriesComparator());
+		TreeMap<MarkerGroupingEntry, List<MarkerEntry>> map = new TreeMap<MarkerGroupingEntry, List<MarkerEntry>>(
+				group.getEntriesComparator());
 		for (int i = 0; i <= k; i++) {
 			IMarker marker = entries[i].getMarker();
 			if (marker == null) {
 				continue;// skip stale markers
 			}
 			if (monitor.isCanceled()) {
-				map.clear();
-				return map;
+				return Collections.emptyMap();
 			}
 			try {
-				MarkerGroupingEntry groupingEntry = group.findGroupValue(
-						marker.getType(), marker);
-				List list = (List) map.get(groupingEntry);
+				MarkerGroupingEntry groupingEntry = group.findGroupValue(marker.getType(), marker);
+				List<MarkerEntry> list = map.get(groupingEntry);
 				if (list == null) {
-					list = new ArrayList();
+					list = new ArrayList<>();
 					map.put(groupingEntry, list);
 				}
 				list.add(entries[i]);
@@ -264,23 +260,24 @@ class Markers {
 				entries[i].checkIfMarkerStale();
 			}
 		}
-		Iterator keys = map.keySet().iterator();
+		TreeMap<MarkerGroupingEntry, Integer> result = new TreeMap<MarkerGroupingEntry, Integer>(
+				group.getEntriesComparator());
+		Iterator<MarkerGroupingEntry> keys = map.keySet().iterator();
 		int i = 0;
 		while (keys.hasNext()) {
 			if (monitor.isCanceled()) {
-				map.clear();
-				return map;
+				return Collections.emptyMap();
 			}
-			Object key = keys.next();
-			List list = (List) map.get(key);
-			Iterator iterator = list.iterator();
+			MarkerGroupingEntry key = keys.next();
+			List<MarkerEntry> list = map.get(key);
+			Iterator<MarkerEntry> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				MarkerEntry entry = (MarkerEntry) iterator.next();
+				MarkerEntry entry = iterator.next();
 				entries[i++] = entry;
 			}
-			map.put(key, new Integer(i - 1));
+			result.put(key, new Integer(i - 1));
 		}
-		return map;
+		return result;
 	}
 
 	/**
@@ -293,7 +290,6 @@ class Markers {
 	Integer[] getMarkerCounts() {
 		if (markerCounts == null) {
 			markerCounts = getMarkerCounts(markerEntryArray);
-
 		}
 		return markerCounts;
 	}
@@ -326,9 +322,7 @@ class Markers {
 				ints[3]++;
 			}
 		}
-
-		return new Integer[] { new Integer(ints[2]), new Integer(ints[1]),
-				new Integer(ints[0]), new Integer(ints[3]) };
+		return new Integer[] { new Integer(ints[2]), new Integer(ints[1]), new Integer(ints[0]), new Integer(ints[3]) };
 	}
 
 	/**
@@ -339,17 +333,17 @@ class Markers {
 	 */
 	public MarkerItem getMarkerItem(IMarker marker) {
 		if (markerToEntryMap == null) {
-			markerToEntryMap = new HashMap();
+			markerToEntryMap = new HashMap<>();
 			for (int i = 0; i < markerEntryArray.length; i++) {
 				IMarker nextMarker = markerEntryArray[i].getMarker();
-				if (nextMarker != null)
+				if (nextMarker != null) {
 					markerToEntryMap.put(nextMarker, markerEntryArray[i]);
+				}
 			}
 		}
-
-		if (markerToEntryMap.containsKey(marker))
-			return (MarkerItem) markerToEntryMap.get(marker);
-
+		if (markerToEntryMap.containsKey(marker)) {
+			return markerToEntryMap.get(marker);
+		}
 		return null;
 	}
 
@@ -403,11 +397,6 @@ class Markers {
 		return inChange;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -416,18 +405,10 @@ class Markers {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		}
-		if (obj == null) {
-			return false;
 		}
 		if (!(obj instanceof Markers)) {
 			return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,32 +31,25 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 class IncrementUpdateJob extends MarkerUpdateJob {
 
-	private LinkedList incrementEntryList;
-	private LinkedList updateQueue;
+	private LinkedList<MarkerEntry> incrementEntryList;
+	private LinkedList<MarkerUpdate> updateQueue;
 
 	/**
 	 * @param builder
 	 */
 	public IncrementUpdateJob(CachedMarkerBuilder builder) {
 		super(builder);
-		incrementEntryList = new LinkedList();
+		incrementEntryList = new LinkedList<>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
-	 * IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		monitor.beginTask(MarkerMessages.MarkerView_processUpdates,
-				IProgressMonitor.UNKNOWN);
+		monitor.beginTask(MarkerMessages.MarkerView_processUpdates, IProgressMonitor.UNKNOWN);
 		boolean clean= isClean();
 		if (clean) {
 			clearEntries();
 		}
-		Collection markerEntries = incrementalEntries();
+		Collection<MarkerEntry> markerEntries = incrementalEntries();
 		if (clean) {
 			/*
 			 * Unfortunately we cannot lock marker operations between gathering
@@ -64,7 +57,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 			 * investigation
 			 */
 			clean = !clean(markerEntries, monitor);
-			LinkedList queue = getUpdatesQueue();
+			LinkedList<MarkerUpdate> queue = getUpdatesQueue();
 			synchronized (queue) {
 				queue.clear();
 			}
@@ -90,8 +83,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
-		builder.getUpdateScheduler().scheduleUIUpdate(
-				MarkerUpdateScheduler.SHORT_DELAY);
+		builder.getUpdateScheduler().scheduleUIUpdate(MarkerUpdateScheduler.SHORT_DELAY);
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
@@ -105,7 +97,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 *
 	 * @param markerEntries
 	 */
-	private boolean updateIncrementalList(Collection markerEntries) {
+	private boolean updateIncrementalList(Collection<MarkerEntry> markerEntries) {
 		markerEntries.clear();
 		Markers clone = builder.getMarkers();
 		synchronized (clone) {
@@ -124,14 +116,14 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * @param monitor
 	 */
 	private boolean processUpdates(IProgressMonitor monitor) {
-		Collection markerEntries = incrementalEntries();
+		Collection<MarkerEntry> markerEntries = incrementalEntries();
 		int addCount = 0, removedCount = 0, changedCount = 0, size = 0, newSize = 0;
-		LinkedList queue = getUpdatesQueue();
+		LinkedList<MarkerUpdate> queue = getUpdatesQueue();
 		MarkerUpdate next = null;
 		do {
 			synchronized (queue) {
 				if (!queue.isEmpty()) {
-					next = (MarkerUpdate) queue.removeFirst();
+					next = queue.removeFirst();
 				} else {
 					next = null;
 				}
@@ -175,12 +167,12 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * @param added
 	 * @param monitor
 	 */
-	private void handleAddedEntries(Collection markerEntries, Collection added,
+	private void handleAddedEntries(Collection<MarkerEntry> markerEntries, Collection<MarkerEntry> added,
 			IProgressMonitor monitor) {
 		MarkerContentGenerator generator = builder.getGenerator();
-		Iterator iterator = added.iterator();
+		Iterator<MarkerEntry> iterator = added.iterator();
 		while (iterator.hasNext()) {
-			MarkerEntry entry = (MarkerEntry) iterator.next();
+			MarkerEntry entry = iterator.next();
 			if (generator.select(entry)) {
 				markerEntries.add(entry);
 			}
@@ -191,15 +183,15 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * @param changed
 	 * @param monitor
 	 */
-	private void handleChangedEntries(Collection markerEntries,
-			Collection changed, IProgressMonitor monitor) {
+	private void handleChangedEntries(Collection<MarkerEntry> markerEntries,
+			Collection<MarkerEntry> changed, IProgressMonitor monitor) {
 		MarkerContentGenerator generator = builder.getGenerator();
-		Iterator iterator = changed.iterator();
+		Iterator<MarkerEntry> iterator = changed.iterator();
 		while (iterator.hasNext()) {
-			MarkerEntry entry = (MarkerEntry) iterator.next();
-			Iterator iterator2 = markerEntries.iterator();
+			MarkerEntry entry = iterator.next();
+			Iterator<MarkerEntry> iterator2 = markerEntries.iterator();
 			while (iterator2.hasNext()) {
-				MarkerEntry oldEntry = (MarkerEntry) iterator2.next();
+				MarkerEntry oldEntry = iterator2.next();
 				if (oldEntry.getMarker().equals(entry.getMarker())) {
 					iterator2.remove();
 				}
@@ -215,12 +207,12 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * @param removed
 	 * @param monitor
 	 */
-	private void handleRemovedEntries(Collection markerEntries,
-			Collection removed, IProgressMonitor monitor) {
+	private void handleRemovedEntries(Collection<MarkerEntry> markerEntries,
+			Collection<MarkerEntry> removed, IProgressMonitor monitor) {
 		boolean found = false;
-		Iterator iterator = markerEntries.iterator();
+		Iterator<MarkerEntry> iterator = markerEntries.iterator();
 		while (iterator.hasNext()) {
-			MarkerEntry entry = (MarkerEntry) iterator.next();
+			MarkerEntry entry = iterator.next();
 			found = entry.getStaleState();
 			if (found) {
 				iterator.remove();
@@ -228,9 +220,9 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 			if (removed.isEmpty()) {
 				continue;
 			}
-			Iterator iterator2 = removed.iterator();
+			Iterator<MarkerEntry> iterator2 = removed.iterator();
 			while (iterator2.hasNext()) {
-				MarkerEntry stale = (MarkerEntry) iterator2.next();
+				MarkerEntry stale = iterator2.next();
 				if (stale.getMarker().equals(entry.getMarker())) {
 					iterator2.remove();
 					if (!found) {
@@ -247,7 +239,7 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		// TODO: do we check for residuals?
 		iterator = markerEntries.iterator();
 		while (iterator.hasNext()) {
-			MarkerEntry entry = (MarkerEntry) iterator.next();
+			MarkerEntry entry = iterator.next();
 			if (entry.getMarker() != null && !entry.getMarker().exists()) {
 				iterator.remove();
 			}
@@ -258,23 +250,23 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * Clean
 	 */
 	void clearEntries() {
-		incrementEntryList = new LinkedList();
+		incrementEntryList = new LinkedList<>();
 	}
 
 	/**
 	 * @return Returns the incrementEntryies.
 	 */
-	Collection incrementalEntries() {
+	Collection<MarkerEntry> incrementalEntries() {
 		return incrementEntryList;
 	}
 
 	/**
 	 * @return the updateQueue that holds the updates and maintains ordering
 	 */
-	LinkedList getUpdatesQueue() {
+	LinkedList<MarkerUpdate> getUpdatesQueue() {
 		synchronized (builder.MARKER_INCREMENTAL_UPDATE_FAMILY) {
 			if (updateQueue == null) {
-				updateQueue = new LinkedList();
+				updateQueue = new LinkedList<>();
 			}
 			return updateQueue;
 		}
@@ -286,17 +278,12 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 	 * @param update
 	 */
 	void addUpdate(MarkerUpdate update) {
-		LinkedList updateList = getUpdatesQueue();
+		LinkedList<MarkerUpdate> updateList = getUpdatesQueue();
 		synchronized (updateList) {
 			updateList.addLast(update);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-	 */
 	@Override
 	public boolean belongsTo(Object family) {
 		if (family.equals(builder.MARKER_INCREMENTAL_UPDATE_FAMILY)) {

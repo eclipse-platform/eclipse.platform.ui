@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class MarkerTypesModel {
 	/**
 	 * Maps from marker type id to MarkerType.
 	 */
-	private HashMap types;
+	private HashMap<String, MarkerType> types;
 
 	/**
 	 * Creates a new marker types model.
@@ -53,15 +53,16 @@ public class MarkerTypesModel {
 	}
 
 	/**
-	 * Returns the marker type with the given id, or <code>null</code> if
-	 * there is no such marker type.
+	 * @param id
+	 * @return the marker type with the given id, or <code>null</code> if there
+	 *         is no such marker type.
 	 */
 	public MarkerType getType(String id) {
-		return (MarkerType) types.get(id);
+		return types.get(id);
 	}
 
 	/**
-	 * Returns all known marker types.
+	 * @return all known marker types, never null.
 	 */
 	public MarkerType[] getTypes() {
 		MarkerType[] result = new MarkerType[types.size()];
@@ -89,12 +90,11 @@ public class MarkerTypesModel {
 	/**
 	 * Reads the marker types from the registry.
 	 */
-	private HashMap readTypes() {
-		HashMap types = new HashMap();
+	private HashMap<String, MarkerType> readTypes() {
+		HashMap<String, MarkerType> result = new HashMap<>();
 
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(ResourcesPlugin.PI_RESOURCES,
-						ResourcesPlugin.PT_MARKERS);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES,
+				ResourcesPlugin.PT_MARKERS);
 		if (point != null) {
 			// Gather all registered marker types.
 			IExtension[] extensions = point.getExtensions();
@@ -105,7 +105,7 @@ public class MarkerTypesModel {
 				if (label.equals("")) {//$NON-NLS-1$
 					label = getWellKnownLabel(id);
 				}
-				ArrayList supersList = new ArrayList();
+				ArrayList<String> supersList = new ArrayList<>();
 				IConfigurationElement[] configElements = ext
 						.getConfigurationElements();
 				for (int j = 0; j < configElements.length; ++j) {
@@ -120,9 +120,9 @@ public class MarkerTypesModel {
 				String[] superTypes = new String[supersList.size()];
 				supersList.toArray(superTypes);
 				MarkerType type = new MarkerType(this, id, label, superTypes);
-				types.put(id, type);
+				result.put(id, type);
 			}
 		}
-		return types;
+		return result;
 	}
 }

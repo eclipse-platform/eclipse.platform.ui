@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class AttributeMarkerGrouping {
 	private IConfigurationElement element;
 
 	// A list of groups we are associated with for unloading
-	private Collection groups = new HashSet();
+	private Collection<MarkerGroup> groups = new HashSet<>();
 
 	/**
 	 * Create a new instance of the receiver from element.
@@ -98,19 +98,17 @@ public class AttributeMarkerGrouping {
 	 */
 	public void addGroup(MarkerGroup markerGroup) {
 		groups.add(markerGroup);
-
 	}
 
 	/**
 	 * Unmap the receiver from the groups
 	 */
 	public void unmap() {
-		Iterator referencedGroups = groups.iterator();
+		Iterator<MarkerGroup> referencedGroups = groups.iterator();
 		while (referencedGroups.hasNext()) {
-			MarkerGroup group = (MarkerGroup) referencedGroups.next();
+			MarkerGroup group = referencedGroups.next();
 			group.unmap(this);
 		}
-
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,11 +32,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class DeleteCompletedHandler extends MarkerViewHandler {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) {
 
@@ -44,7 +39,7 @@ public class DeleteCompletedHandler extends MarkerViewHandler {
 		if (view == null)
 			return this;
 
-		final List completed = getCompletedTasks(view);
+		final List<IMarker> completed = getCompletedTasks(view);
 		// Check if there is anything to do
 		if (completed.size() == 0) {
 			MessageDialog.openInformation(view.getSite().getShell(),
@@ -84,9 +79,9 @@ public class DeleteCompletedHandler extends MarkerViewHandler {
 	 * @param view
 	 * @return List of {@link IMarker}
 	 */
-	private List getCompletedTasks(ExtendedMarkersView view) {
+	private List<IMarker> getCompletedTasks(ExtendedMarkersView view) {
 
-		List completed = new ArrayList();
+		List<IMarker> completed = new ArrayList<>();
 		MarkerItem[] items = view.getAllConcreteItems();
 
 		for (int i = 0; i < items.length; i++) {

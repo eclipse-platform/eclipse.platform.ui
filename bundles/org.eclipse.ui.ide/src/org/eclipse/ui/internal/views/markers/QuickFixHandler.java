@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,11 +61,6 @@ public class QuickFixHandler extends MarkerViewHandler {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
@@ -73,36 +68,34 @@ public class QuickFixHandler extends MarkerViewHandler {
 		if (view == null)
 			return this;
 
-		final Map resolutionsMap = new LinkedHashMap();
+		final Map<IMarkerResolution, Collection<IMarker>> resolutionsMap = new LinkedHashMap<>();
 		final IMarker[] selectedMarkers = view.getSelectedMarkers();
 		final IMarker firstSelectedMarker = selectedMarkers[0];
 
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) {
-				monitor
-						.beginTask(
-								MarkerMessages.resolveMarkerAction_computationManyAction,
-								100);
+				monitor.beginTask(MarkerMessages.resolveMarkerAction_computationManyAction, 100);
 
 				IMarker[] allMarkers = view.getAllMarkers();
 				monitor.worked(20);
 				IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry().getResolutions(firstSelectedMarker);
 				int progressCount = 80;
-				if (resolutions.length > 1)
+				if (resolutions.length > 1) {
 					progressCount= progressCount / resolutions.length;
+				}
 				for (int i = 0; i < resolutions.length; i++) {
 					IMarkerResolution markerResolution= resolutions[i];
 					if (markerResolution instanceof WorkbenchMarkerResolution) {
 						IMarker[] other = ((WorkbenchMarkerResolution)markerResolution).findOtherMarkers(allMarkers);
 						if (containsAllButFirst(other, selectedMarkers)) {
-							Collection markers = new ArrayList(other.length + 1);
+							Collection<IMarker> markers = new ArrayList<>(other.length + 1);
 							markers.add(firstSelectedMarker);
 							markers.addAll(Arrays.asList(other));
 							resolutionsMap.put(markerResolution, markers);
 						}
 					} else if (selectedMarkers.length == 1) {
-						Collection markers = new ArrayList(1);
+						Collection<IMarker> markers = new ArrayList<>(1);
 						markers.add(firstSelectedMarker);
 						resolutionsMap.put(markerResolution, markers);
 					}
@@ -112,27 +105,20 @@ public class QuickFixHandler extends MarkerViewHandler {
 			}
 		};
 
-		Object service = view.getSite().getAdapter(
-				IWorkbenchSiteProgressService.class);
+		Object service = view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
 
-		IRunnableContext context = new ProgressMonitorDialog(view.getSite()
-				.getShell());
+		IRunnableContext context = new ProgressMonitorDialog(view.getSite().getShell());
 
 		try {
 			if (service == null) {
-				PlatformUI.getWorkbench().getProgressService().runInUI(context,
-						resolutionsRunnable, null);
+				PlatformUI.getWorkbench().getProgressService().runInUI(context, resolutionsRunnable, null);
 			} else {
-				((IWorkbenchSiteProgressService) service).runInUI(context,
-						resolutionsRunnable, null);
+				((IWorkbenchSiteProgressService) service).runInUI(context, resolutionsRunnable, null);
 			}
 		} catch (InvocationTargetException exception) {
-			throw new ExecutionException(exception.getLocalizedMessage(),
-					exception);
+			throw new ExecutionException(exception.getLocalizedMessage(), exception);
 		} catch (InterruptedException exception) {
-
-			throw new ExecutionException(exception.getLocalizedMessage(),
-					exception);
+			throw new ExecutionException(exception.getLocalizedMessage(), exception);
 		}
 
 		String markerDescription= firstSelectedMarker.getAttribute(IMarker.MESSAGE,
@@ -151,19 +137,14 @@ public class QuickFixHandler extends MarkerViewHandler {
 						view.getSite().getShell(),
 						MarkerMessages.resolveMarkerAction_dialogTitle,
 						MarkerMessages.MarkerResolutionDialog_NoResolutionsFoundForMultiSelection);
-
 			}
 		} else {
-
 			String description = NLS.bind(
 					MarkerMessages.MarkerResolutionDialog_Description,
 					markerDescription);
-
-			Wizard wizard= new QuickFixWizard(description, selectedMarkers, resolutionsMap, view
-					.getSite());
+			Wizard wizard = new QuickFixWizard(description, selectedMarkers, resolutionsMap, view.getSite());
 			wizard.setWindowTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
-			WizardDialog dialog = new QuickFixWizardDialog(view.getSite()
-					.getShell(), wizard);
+			WizardDialog dialog = new QuickFixWizardDialog(view.getSite().getShell(), wizard);
 			dialog.open();
 		}
 		return this;
@@ -181,8 +162,9 @@ public class QuickFixHandler extends MarkerViewHandler {
 	private static boolean containsAllButFirst(Object[] extent, Object[] members) {
 		outer: for (int i= 1; i < members.length; i++) {
 			for (int j= 0; j < extent.length; j++) {
-				if (members[i] == extent[j])
+				if (members[i] == extent[j]) {
 					continue outer;
+				}
 			}
 			return false;
 		}
