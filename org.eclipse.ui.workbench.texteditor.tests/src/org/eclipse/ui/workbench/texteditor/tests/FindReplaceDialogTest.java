@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import java.util.ResourceBundle;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
 
 import org.eclipse.test.OrderedTestSuite;
 
@@ -33,6 +30,9 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.PlatformUI;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
 
 /**
  * Tests the FindReplaceDialog.
@@ -181,8 +181,13 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
-		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
+		if (shell == null && Util.isGtk()) {
+			if (ScreenshotTest.isRunByGerritHudsonJob()) {
+				takeScreenshot();
+				return;
+			} else
+				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
+		}
 		
 		assertTrue(findField.isFocusControl());
 		
@@ -223,7 +228,11 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
+			if (ScreenshotTest.isRunByGerritHudsonJob()) {
+				takeScreenshot();
+				return;
+			} else
+				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		
 		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
@@ -259,9 +268,13 @@ public class FindReplaceDialogTest extends TestCase {
 		IFindReplaceTarget target= (IFindReplaceTarget)fFindReplaceDialog.get("fTarget");
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
-		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
-		
+		if (shell == null && Util.isGtk()) {
+			if (ScreenshotTest.isRunByGerritHudsonJob()) {
+				takeScreenshot();
+				return;
+			} else
+				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
+		}
 		final Event event= new Event();
 
 		event.detail= SWT.TRAVERSE_RETURN;
@@ -289,4 +302,5 @@ public class FindReplaceDialogTest extends TestCase {
 		forwardRadioButton.traverse(SWT.TRAVERSE_RETURN, event);
 		assertEquals(5, (target.getSelection()).x);
 	}
+
 }

@@ -13,9 +13,6 @@ package org.eclipse.ui.workbench.texteditor.tests;
 import java.io.File;
 import java.io.PrintStream;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-
 import org.eclipse.test.OrderedTestSuite;
 
 import org.eclipse.swt.SWT;
@@ -34,6 +31,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Util;
 
 import org.eclipse.ui.PlatformUI;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
 
 public class ScreenshotTest extends TestCase {
 
@@ -101,7 +101,10 @@ public class ScreenshotTest extends TestCase {
 		
 		if (resultsHtmlDir == null) { // Fallback. Warning: uses same file location on all test platforms:
 			File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
-			resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile(); // ends up in testresults/html/<class>.<test>.png
+			if (isRunByGerritHudsonJob())
+				resultsHtmlDir= new File(eclipseDir, "/../").getAbsoluteFile(); // ends up in the workspace root
+			else
+				resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile(); // ends up in testresults/html/<class>.<test>.png
 		}
 		
 		Display display= PlatformUI.getWorkbench().getDisplay();
@@ -169,6 +172,10 @@ public class ScreenshotTest extends TestCase {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isRunByGerritHudsonJob() {
+		return System.getProperty("user.dir").indexOf("eclipse.platform.text-Gerrit") != -1;
 	}
 
 	private static void runEventQueue() {
