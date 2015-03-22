@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,6 @@ package org.eclipse.search.tests.filesearch;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
@@ -26,22 +22,25 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class LineAnnotationManagerTest extends TestCase {
 
@@ -89,7 +88,7 @@ public class LineAnnotationManagerTest extends TestCase {
 		try {
 			for (int i= 0; i < files.length; i++) {
 				IFile file= (IFile) files[0];
-				ITextEditor editor= (ITextEditor) IDE.openEditor(SearchPlugin.getActivePage(), file, true);
+				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();

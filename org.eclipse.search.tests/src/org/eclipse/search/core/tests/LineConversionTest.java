@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,21 +13,24 @@ package org.eclipse.search.core.tests;
 
 import java.io.ByteArrayInputStream;
 
-import junit.framework.TestCase;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.tests.SearchTestPlugin;
+
 import org.eclipse.search2.internal.ui.text.PositionTracker;
-import org.eclipse.ui.ide.IDE;
+
+import junit.framework.TestCase;
 
 /**
  */
@@ -58,7 +61,7 @@ public class LineConversionTest extends TestCase {
 	}
 	
 	public void testConvertToCharacter() throws Exception {
-		IDE.openEditor(SearchPlugin.getActivePage(), fFile);
+		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 		
@@ -84,7 +87,7 @@ public class LineConversionTest extends TestCase {
 	}
 	
 	public void testBogusLines() throws Exception {
-		IDE.openEditor(SearchPlugin.getActivePage(), fFile);
+		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
@@ -97,7 +100,7 @@ public class LineConversionTest extends TestCase {
 	}
 
 	public void atestLineOffsets() throws Exception {
-		IDE.openEditor(SearchPlugin.getActivePage(), fFile);
+		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 

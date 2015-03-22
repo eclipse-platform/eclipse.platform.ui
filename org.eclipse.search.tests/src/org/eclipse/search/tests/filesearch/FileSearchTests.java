@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IFile;
@@ -28,7 +24,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
@@ -37,7 +32,12 @@ import org.eclipse.search.core.text.TextSearchScope;
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.tests.ResourceHelper;
+import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.text.FileTextSearchScope;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class FileSearchTests extends TestCase {
 	
@@ -233,10 +233,10 @@ public class FileSearchTests extends TestCase {
 		
 		IWorkbenchPage activePage= SearchPlugin.getActivePage();
 		try {
-			IDE.openEditor(activePage, openFile1, true);
-			IDE.openEditor(activePage, openFile2, true);
-			IDE.openEditor(activePage, openFile3, true);
-			IDE.openEditor(activePage, openFile4, true);
+			SearchTestPlugin.openTextEditor(activePage, openFile1);
+			SearchTestPlugin.openTextEditor(activePage, openFile2);
+			SearchTestPlugin.openTextEditor(activePage, openFile3);
+			SearchTestPlugin.openTextEditor(activePage, openFile4);
 			
 			long start= System.currentTimeMillis();
 
@@ -330,7 +330,7 @@ public class FileSearchTests extends TestCase {
 		IFile file2= ResourceHelper.createFile(folder, "file2", buf.toString());
 
 		try {
-			IDE.openEditor(SearchPlugin.getActivePage(), file2, true);
+			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file2);
 			
 			Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 

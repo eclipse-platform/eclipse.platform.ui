@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,33 +10,32 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.LocationKind;
-
-import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class PositionTrackerTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -96,7 +95,7 @@ public class PositionTrackerTest extends TestCase {
 	private void checkInsertInsideMatch(FileSearchResult result, IFile file) throws PartInitException, BadLocationException {
 		Match[] matches= result.getMatches(file);
 		try {
-			IDE.openEditor(SearchPlugin.getActivePage(), file);
+			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			IDocument doc= fb.getDocument();
 
@@ -127,7 +126,7 @@ public class PositionTrackerTest extends TestCase {
 			originalStarts[i]= matches[i].getOffset();
 		}
 		try {
-			IDE.openEditor(SearchPlugin.getActivePage(), file);
+			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			IDocument doc= fb.getDocument();
 			doc.replace(0, 0, "Test");
