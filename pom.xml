@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2015 vogella GmbH.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+
+  Contributors:
+     Lars Vogel - initial implementation
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse</groupId>
+    <artifactId>eclipse-platform-parent</artifactId>
+    <version>4.5.0-SNAPSHOT</version>
+    <relativePath>../eclipse-platform-parent</relativePath>
+  </parent>
+
+  <groupId>org.eclipse</groupId>
+  <artifactId>eclipse.platform.ui.tools</artifactId>
+  <version>0.17.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+	<properties>
+		<tycho.scmUrl>scm:git:http://git.eclipse.org/gitroot/e4/org.eclipse.e4.tools</tycho.scmUrl>
+	</properties>
+
+ <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>eclipse-hosted</id>
+      <url>https://repo.eclipse.org/content/repositories/eclipse/</url>
+    </repository>
+  </repositories>
+
+   <modules>
+    <module>./bundles/org.eclipse.e4.tools</module>
+    <module>./bundles/org.eclipse.e4.tools.services</module>
+    <module>./bundles/org.eclipse.e4.tools.compat</module>
+    <module>./bundles/org.eclipse.e4.tools.emf.editor3x</module>
+    <module>./bundles/org.eclipse.e4.tools.emf.ui</module>
+    <module>./bundles/org.eclipse.e4.tools.jdt.templates</module>
+    <module>./features/org.eclipse.e4.core.tools.feature</module>
+  </modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<sourceReferences>
+						<generate>true</generate>
+					</sourceReferences>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-sourceref-jgit</artifactId>
+						<version>${tycho-extras.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
