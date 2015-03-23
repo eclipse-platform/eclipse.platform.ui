@@ -340,6 +340,10 @@ public class Section extends ExpandableComposite {
 		Image buffer = null;
 		Rectangle bounds = getClientArea();
 
+		if (bounds.width == 0 || bounds.height == 0) {
+			return;
+		}
+
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			buffer = new Image(getDisplay(), bounds.width, bounds.height);
 			buffer.setBackground(getBackground());
