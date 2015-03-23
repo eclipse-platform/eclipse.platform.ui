@@ -25,29 +25,4 @@
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.text.tests.EclipseTextTestSuite</testClass>
   </properties>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-surefire-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-          <useUIHarness>true</useUIHarness>
-          <useUIThread>true</useUIThread>
-          <dependencies>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.eclipse.equinox.event</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-          </dependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
