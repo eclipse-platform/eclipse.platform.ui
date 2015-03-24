@@ -12,10 +12,8 @@ package org.eclipse.ui.console;
 
 
 /**
- * Scroll lock provider for the text console viewer.
- * <p>
- * This interface allows a text console viewer to control the scroll lock state of its container, e.g. a view.
- * </p>
+ * A scroll lock provider allows a client to control the scroll lock state of
+ * its container, e.g. a view.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -25,24 +23,18 @@ package org.eclipse.ui.console;
 public interface IScrollLockStateProvider {
 
 	/**
-	 * Sets the scroll lock state set by user manually.
+	 * Sets the scroll lock state that got explicitly set by the user, e.g. by
+	 * pressing a button that controls the state.
 	 *
 	 * @param scrollLock <code>true</code> to turn scroll lock on, otherwise
 	 *            <code>false</code>
 	 */
 	public void setScrollLock(boolean scrollLock);
 
-	/**
-	 * Sets the scroll lock state for the current page automatically due to
-	 * user's action on console page.
-	 *
-	 * @param scrollLock <code>true</code> to turn scroll lock on, otherwise
-	 *            <code>false</code>
-	 */
-	public void setAutoScrollLock(boolean scrollLock);
 
 	/**
-	 * Returns the scroll lock state of the current page set by user manually.
+	 * Returns the scroll lock state that got explicitly set by the user, e.g.
+	 * by pressing a button that controls the state.
 	 *
 	 * @return <code>true</code> if scroll lock is on, <code>false</code>
 	 *         otherwise
@@ -50,10 +42,19 @@ public interface IScrollLockStateProvider {
 	public boolean getScrollLock();
 
 	/**
-	 * Returns the scroll lock state of the Page which was manually set by user
-	 * or automatically set due to user's action on console page.
+	 * Sets the auto-scroll lock state, e.g. when the user moves the caret
+	 * upwards in a console.
 	 *
-	 * @return <code>true</code> if scroll lock is on, <code>false</code>
+	 * @param scrollLock <code>true</code> to turn auto-scroll lock on,
+	 *            otherwise <code>false</code>
+	 */
+	public void setAutoScrollLock(boolean scrollLock);
+
+	/**
+	 * Returns the auto-scroll lock state.
+	 *
+	 * @see #setAutoScrollLock(boolean)
+	 * @return <code>true</code> if auto-scroll lock is on, <code>false</code>
 	 *         otherwise
 	 */
 	public boolean getAutoScrollLock();
