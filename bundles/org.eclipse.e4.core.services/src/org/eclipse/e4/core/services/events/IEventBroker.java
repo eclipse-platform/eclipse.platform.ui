@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,8 @@ public interface IEventBroker {
 	/**
 	 * Subscribe for events on the given topic.
 	 * <p>
-	 * The handler will be called on the UI thread if "headless" is set to <code>true</code>.
+	 * The handler will be called on the UI thread if "headless" is set to
+	 * <code>false</code>.
 	 * </p>
 	 *
 	 * @param topic
@@ -92,10 +93,10 @@ public interface IEventBroker {
 	 * @param eventHandler
 	 *            object to call when an event of interest arrives
 	 * @param headless
-	 *            <code>true</code> if handing of the events does not require UI; <code>false</code>
-	 *            otherwise
-	 * @return <code>true</code> if this operation was performed successfully; <code>false</code>
-	 *         otherwise
+	 *            <code>true</code> if handing of the events does not require
+	 *            UI; <code>false</code> otherwise
+	 * @return <code>true</code> if this operation was performed successfully;
+	 *         <code>false</code> otherwise
 	 */
 	public boolean subscribe(String topic, String filter, EventHandler eventHandler,
 			boolean headless);
