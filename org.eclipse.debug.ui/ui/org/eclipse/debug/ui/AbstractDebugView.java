@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,10 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
-import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -31,18 +34,14 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
+
+import org.eclipse.jface.text.TextViewer;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
@@ -59,7 +58,13 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+
 import org.eclipse.ui.texteditor.IUpdate;
+
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
 
 /**
  * Common function for views related to debugging. Clients implementing
@@ -252,17 +257,18 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 * @see IDebugView
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IDebugView.class) {
-			return this;
+			return (T) this;
 		}
 		if (adapter == IDebugModelPresentation.class) {
 			StructuredViewer viewer = getStructuredViewer();
 			if (viewer != null) {
 				IBaseLabelProvider labelProvider = viewer.getLabelProvider();
 				if (labelProvider instanceof IDebugModelPresentation) {
-					return labelProvider;
+					return (T) labelProvider;
 				}
 			}
 		}
