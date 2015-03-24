@@ -185,7 +185,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    }
 	    IPage page = getCurrentPage();
 	    if (page instanceof IOConsolePage) {
-	        ((IOConsolePage)page).setAutoScroll(!fScrollLock);
 	        ((IOConsolePage) page).setWordWrap(fWordWrap);
 	    }
 	}
@@ -795,4 +794,22 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
             setPinned(true);
         }
     }
+
+	@Override
+	public void setAutoScrollLock(boolean scrollLock) {
+		IPage page = getCurrentPage();
+		if (page instanceof IOConsolePage) {
+			((IOConsolePage) page).setAutoScroll(!scrollLock);
+		}
+
+	}
+
+	@Override
+	public boolean getAutoScrollLock() {
+		IPage page = getCurrentPage();
+		if (page instanceof IOConsolePage) {
+			return !((IOConsolePage) page).isAutoScroll();
+		}
+		return fScrollLock;
+	}
 }

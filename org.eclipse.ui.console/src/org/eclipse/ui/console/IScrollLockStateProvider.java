@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ package org.eclipse.ui.console;
 public interface IScrollLockStateProvider {
 
 	/**
-	 * Sets the scroll lock state.
+	 * Sets the scroll lock state set by user manually.
 	 *
 	 * @param scrollLock <code>true</code> to turn scroll lock on, otherwise
 	 *            <code>false</code>
@@ -33,10 +33,28 @@ public interface IScrollLockStateProvider {
 	public void setScrollLock(boolean scrollLock);
 
 	/**
-	 * Returns the scroll lock state.
+	 * Sets the scroll lock state for the current page automatically due to
+	 * user's action on console page.
+	 *
+	 * @param scrollLock <code>true</code> to turn scroll lock on, otherwise
+	 *            <code>false</code>
+	 */
+	public void setAutoScrollLock(boolean scrollLock);
+
+	/**
+	 * Returns the scroll lock state of the current page set by user manually.
 	 *
 	 * @return <code>true</code> if scroll lock is on, <code>false</code>
 	 *         otherwise
 	 */
 	public boolean getScrollLock();
+
+	/**
+	 * Returns the scroll lock state of the Page which was manually set by user
+	 * or automatically set due to user's action on console page.
+	 *
+	 * @return <code>true</code> if scroll lock is on, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean getAutoScrollLock();
 }
