@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="correction_move.svg">
   <defs
      id="defs4">
@@ -305,18 +305,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627416"
-     inkscape:cx="22.160623"
-     inkscape:cy="11.030753"
+     inkscape:zoom="31.999999"
+     inkscape:cx="18.867138"
+     inkscape:cy="9.2885003"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="469"
-     inkscape:window-height="455"
-     inkscape:window-x="150"
-     inkscape:window-y="150"
+     inkscape:window-width="1172"
+     inkscape:window-height="858"
+     inkscape:window-x="929"
+     inkscape:window-y="537"
      inkscape:window-maximized="0"
-     inkscape:snap-global="true">
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid3913" />
@@ -416,7 +416,7 @@
     <g
        id="layer1-7"
        inkscape:label="Layer 1"
-       transform="translate(3.067747,3.5484083)">
+       transform="translate(3.067747,4.09955)">
       <g
          id="g3866">
         <path

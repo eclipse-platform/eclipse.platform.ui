@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="info_alt_obj.svg">
   <defs
      id="defs4">
@@ -48,15 +48,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9999996"
-     inkscape:cx="-5.8066568"
-     inkscape:cy="-6.2865734"
+     inkscape:zoom="31.999998"
+     inkscape:cx="4.5016492"
+     inkscape:cy="7.1572565"
      inkscape:document-units="px"
-     inkscape:current-layer="g8159"
+     inkscape:current-layer="text4140-1-8"
      showgrid="true"
-     inkscape:window-width="1171"
+     inkscape:window-width="1170"
      inkscape:window-height="959"
-     inkscape:window-x="1542"
+     inkscape:window-x="1390"
      inkscape:window-y="399"
      inkscape:window-maximized="0"
      showguides="true"
@@ -92,9 +92,10 @@
          style="font-size:15.07241726000000000px;font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#939393;fill-opacity:1;stroke:none;display:inline;font-family:Kozuka Mincho Pr6N H;-inkscape-font-specification:Kozuka Mincho Pr6N H Heavy"
          id="text4140-1-8">
         <path
-           d="m 16.245657,1050.9177 c -0.355456,0.01 -0.65062,0.1291 -0.885494,0.3674 -0.234876,0.2383 -0.35671,0.5529 -0.365501,0.9439 0.0088,0.3981 0.130625,0.7172 0.365502,0.9571 0.234873,0.2399 0.530037,0.363 0.885493,0.3692 0.362672,-0.01 0.662232,-0.1293 0.898681,-0.3692 0.236442,-0.2399 0.358903,-0.559 0.367386,-0.9571 -0.0057,-0.3778 -0.122466,-0.6886 -0.35043,-0.9326 -0.227971,-0.244 -0.533183,-0.3702 -0.915637,-0.3787 z m 0.94955,3.3912 c -1.039986,0.4346 -2.019679,0.6808 -2.939084,0.7386 l 0,0.6029 c 0.435838,-0.02 0.70965,0.039 0.821436,0.1771 0.111784,0.1381 0.159513,0.476 0.143187,1.0136 l 0,3.4515 c 0.01539,0.5401 -0.03423,0.888 -0.148838,1.0438 -0.114613,0.1557 -0.386541,0.2248 -0.815785,0.2072 l 0,0.633 4.084573,0 0,-0.633 c -0.386544,0.017 -0.634608,-0.051 -0.744192,-0.2054 -0.109591,-0.1541 -0.157947,-0.4977 -0.145069,-1.0305 l 0,-5.8631 z"
-           style="fill:#939393;fill-opacity:1"
-           id="path5058" />
+           d="m 16.181975,1050.8477 c -0.431147,0.011 -0.789164,0.1463 -1.074054,0.4165 -0.284892,0.2701 -0.432668,0.6268 -0.443332,1.07 0.01064,0.4513 0.15844,0.8131 0.443333,1.0849 0.284889,0.272 0.642906,0.4116 1.074053,0.4186 0.4399,-0.011 0.803249,-0.1466 1.090049,-0.4186 0.286791,-0.2718 0.435329,-0.6336 0.445618,-1.0849 -0.007,-0.4282 -0.148544,-0.7806 -0.425052,-1.0572 -0.276516,-0.2766 -0.646721,-0.4196 -1.110615,-0.4293 z m 1.15175,3.8443 c -1.261445,0.4928 -2.449756,0.7718 -3.564942,0.8374 l 0,0.6834 c 0.528647,-0.022 0.860765,0.045 0.996355,0.2007 0.13559,0.1566 0.193482,0.5397 0.173677,1.1493 l 0,3.9126 c 0.01867,0.6122 -0.04152,1.0066 -0.18053,1.1833 -0.13902,0.1765 -0.468852,0.2548 -0.989502,0.2349 l 0,0.7175 4.954355,0 0,-0.7175 c -0.468856,0.019 -0.769743,-0.058 -0.902663,-0.2329 -0.132928,-0.1747 -0.19158,-0.5642 -0.175961,-1.1681 l 0,-6.6466 z"
+           style="font-size:15.07241725999999993px;font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#939393;fill-opacity:1;stroke:#ffffff;stroke-width:0.75;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:Kozuka Mincho Pr6N H;-inkscape-font-specification:Kozuka Mincho Pr6N H Heavy"
+           id="path5058"
+           inkscape:connector-curvature="0" />
       </g>
       <text
          xml:space="preserve"

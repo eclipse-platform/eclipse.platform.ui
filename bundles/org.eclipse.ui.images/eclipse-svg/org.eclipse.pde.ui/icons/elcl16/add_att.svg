@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="add_att.svg">
+   sodipodi:docname="add_obj.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -41,7 +41,7 @@
          id="stop5587-3" />
     </linearGradient>
     <linearGradient
-       gradientTransform="matrix(1.8479968,0,0,1.8479968,4.3881033,1029.8624)"
+       gradientTransform="matrix(1.9375158,0,0,2.0245922,3.5980621,1028.9745)"
        y2="9.1435204"
        x2="2.03125"
        y1="6.9396911"
@@ -51,7 +51,7 @@
        xlink:href="#linearGradient5591-4"
        inkscape:collect="always" />
     <linearGradient
-       gradientTransform="matrix(1.8479968,0,0,1.8479968,4.3881033,1029.8624)"
+       gradientTransform="matrix(1.9375158,0,0,2.0245922,3.5980621,1028.9745)"
        y2="4.671875"
        x2="2.03125"
        y1="9.1435204"
@@ -69,15 +69,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="32.000001"
-     inkscape:cx="9.0247213"
+     inkscape:cx="9.0872213"
      inkscape:cy="7.1700733"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1241"
      inkscape:window-height="814"
-     inkscape:window-x="1221"
-     inkscape:window-y="178"
+     inkscape:window-x="25"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -104,8 +104,8 @@
      style="display:inline"
      transform="translate(0,-1036.3622)">
     <path
-       style="fill:url(#linearGradient5618);fill-opacity:1;stroke:url(#linearGradient5620);stroke-width:0.83484107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
-       d="m 6.1206005,1038.8137 3.8114935,0 0,3.5806 3.695994,0 0,3.8114 -3.8692437,0 0,3.7539 -3.6382438,0 0,-3.7539 -3.8114934,0 0,-3.7536 3.7537436,0 z"
+       style="fill:url(#linearGradient5618);fill-opacity:1;stroke:url(#linearGradient5620);stroke-width:0.89473408;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 5.4144832,1038.7811 3.9961264,0 0,3.9228 3.8750314,0 0,4.1756 -4.0566734,0 0,4.1127 -3.8144844,0 0,-4.1127 -3.9961262,0 0,-4.1123 3.935579,0 z"
        id="path5581"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccccc" />

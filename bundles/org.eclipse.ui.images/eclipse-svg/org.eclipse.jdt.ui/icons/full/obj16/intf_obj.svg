@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="intf_obj.svg">
   <defs
      id="defs4">
@@ -80,9 +80,10 @@
      showgrid="true"
      inkscape:window-width="925"
      inkscape:window-height="1055"
-     inkscape:window-x="1471"
-     inkscape:window-y="433"
-     inkscape:window-maximized="0">
+     inkscape:window-x="811"
+     inkscape:window-y="434"
+     inkscape:window-maximized="0"
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -117,10 +118,10 @@
        sodipodi:rx="10.625"
        sodipodi:ry="10.625"
        d="m 398.75,468.23718 a 10.625,10.625 0 1 1 -21.25,0 10.625,10.625 0 1 1 21.25,0 z"
-       transform="matrix(0.55482947,0,0,0.55482947,-207.83019,785.0574)" />
+       transform="matrix(0.55482947,0,0,0.55482947,-207.83019,784.1824)" />
     <path
-       style="font-size:13.58917427000000100px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#9a9a9a;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
-       d="m 5.5130017,1041.3622 0,1.0313 1.0000019,0 0,4.9687 -1.0000019,0 0,1.0313 4.0000022,0 0,-1.0313 -1,0 0,-4.9687 1,0 0,-1.0313 -4.0000022,0 z"
+       style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#9a9a9a;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
+       d="m 5.5130017,1040.4872 0,1.0313 1.0000019,0 0,4.9687 -1.0000019,0 0,1.0313 4.0000022,0 0,-1.0313 -1,0 0,-4.9687 1,0 0,-1.0313 -4.0000022,0 z"
        id="rect7222"
        inkscape:connector-curvature="0" />
   </g>

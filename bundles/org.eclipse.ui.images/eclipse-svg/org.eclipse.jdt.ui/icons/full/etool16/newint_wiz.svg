@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="newint_wiz.svg">
   <defs
      id="defs4">
@@ -42,42 +42,6 @@
          offset="1"
          id="stop10802-1-5-3-0-4-8-4-2-9-2" />
     </linearGradient>
-    <filter
-       id="filter7474-3-2-7-4"
-       inkscape:collect="always"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur7476-5-5-6-7"
-         stdDeviation="0.11526932"
-         inkscape:collect="always" />
-    </filter>
-    <filter
-       id="filter7486-6-6-5-5"
-       inkscape:collect="always"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur7488-95-0-1-4"
-         stdDeviation="0.11526932"
-         inkscape:collect="always" />
-    </filter>
-    <filter
-       id="filter7478-9-8-2-6"
-       inkscape:collect="always"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur7480-8-8-9-2"
-         stdDeviation="0.11526932"
-         inkscape:collect="always" />
-    </filter>
-    <filter
-       id="filter7482-8-1-5-4"
-       inkscape:collect="always"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur7484-3-5-6-9"
-         stdDeviation="0.11526932"
-         inkscape:collect="always" />
-    </filter>
     <linearGradient
        id="linearGradient7540-2-3-8-7">
       <stop
@@ -327,6 +291,48 @@
          offset="1"
          style="stop-color:#ffd680;stop-opacity:1" />
     </linearGradient>
+    <linearGradient
+       y2="462.11539"
+       x2="388.63736"
+       y1="478.18777"
+       x1="388.63736"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3046"
+       xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1-9"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient10798-1-9-3-7-6-8-9-0-9-1-9">
+      <stop
+         style="stop-color:#7564b1;stop-opacity:1"
+         offset="0"
+         id="stop10800-5-2-1-8-20-6-4-9-8-2-1" />
+      <stop
+         id="stop10806-6-8-5-3-9-24-8-4-3-2-7"
+         offset="0.5"
+         style="stop-color:#5d4aa1;stop-opacity:1" />
+      <stop
+         style="stop-color:#9283c3;stop-opacity:1"
+         offset="1"
+         id="stop10802-1-5-3-0-4-8-4-2-9-2-3" />
+    </linearGradient>
+    <linearGradient
+       y2="462.11539"
+       x2="388.63736"
+       y1="478.18777"
+       x1="388.63736"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3016"
+       xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1-9"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1-9"
+       id="linearGradient3097"
+       gradientUnits="userSpaceOnUse"
+       x1="388.63736"
+       y1="478.18777"
+       x2="388.63736"
+       y2="462.11539" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -343,8 +349,8 @@
      showgrid="true"
      inkscape:window-width="925"
      inkscape:window-height="847"
-     inkscape:window-x="1411"
-     inkscape:window-y="372"
+     inkscape:window-x="1543"
+     inkscape:window-y="689"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -378,55 +384,24 @@
          style="fill:#737986;fill-opacity:1;stroke:#595e68;stroke-opacity:1" />
     </g>
     <g
-       transform="matrix(-1,0,0,1,16.12959,8.0140628)"
-       style="display:inline"
-       id="g6124-3">
-      <g
-         transform="scale(-1,1)"
-         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-         id="text6430" />
-      <g
-         transform="scale(-1,1)"
-         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
-         id="g6438">
-        <path
-           sodipodi:type="arc"
-           style="fill:url(#linearGradient3929-5);fill-opacity:1;stroke:#55429f;stroke-width:2.16621374999999983;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
-           id="path10796-2-6-2"
-           sodipodi:cx="388.125"
-           sodipodi:cy="468.23718"
-           sodipodi:rx="10.625"
-           sodipodi:ry="10.625"
-           d="m 398.75,468.23718 c 0,5.86803 -4.75697,10.625 -10.625,10.625 -5.86803,0 -10.625,-4.75697 -10.625,-10.625 0,-5.86802 4.75697,-10.625 10.625,-10.625 5.86803,0 10.625,4.75698 10.625,10.625 z"
-           transform="matrix(0.55482947,0,0,0.55482947,-223.95978,777.04334)" />
-        <g
-           id="g8461-0"
-           mask="url(#mask10620)"
-           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
-           transform="translate(-16.999387,-10.043212)">
-          <g
-             id="g7590-1-0-4"
-             transform="matrix(0.51237963,0,0,0.51237963,21.788022,514.89288)"
-             style="fill:#ffffff;stroke:#ffffff;display:inline">
-            <path
-               sodipodi:nodetypes="czczczczc"
-               inkscape:connector-curvature="0"
-               id="rect6501-1-6-8-6"
-               d="m -16.30668,1023.0143 c 0,0 0.754772,2.7548 2.663409,4.6634 1.908637,1.9086 4.663405,2.6634 4.663405,2.6634 0,0 -2.739141,0.7391 -4.663398,2.6634 -1.924257,1.9243 -2.663409,4.6634 -2.663409,4.6634 0,0 -0.676645,-2.6766 -2.66341,-4.6634 -1.986765,-1.9868 -4.663405,-2.6634 -4.663405,-2.6634 0,0 2.801649,-0.8017 4.663405,-2.6634 1.861756,-1.8618 2.663403,-4.6634 2.663403,-4.6634 z"
-               style="opacity:0.85;fill:#ffffff;stroke:#ffffff;stroke-width:5.85503387;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;filter:url(#filter8410-9-1)" />
-          </g>
-        </g>
-        <path
-           style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none"
-           d="m -10.616593,1033.3481 0,1.0313 1.0000019,0 0,4.9687 -1.0000019,0 0,1.0313 4.0000022,0 0,-1.0313 -1,0 0,-4.9687 1,0 0,-1.0313 -4.0000022,0 z"
-           id="rect7222"
-           inkscape:connector-curvature="0" />
-        <path
-           style="font-size:13.58917427000000089px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;filter:url(#filter8047);font-family:Sans;opacity:0.5"
-           d="m -10.429093,1033.5356 0,1.0313 1.000002,0 0,4.9687 -1.000002,0 0,1.0313 4.000002,0 0,-1.0313 -1,0 0,-4.9687 1,0 0,-1.0313 -4.000002,0 z"
-           id="rect7222-9"
-           inkscape:connector-curvature="0" />
-      </g>
+       id="g3093"
+       transform="translate(-16.440233,9.5017478)">
+      <path
+         transform="matrix(0.55482947,0,0,0.55482947,-191.34575,775.68824)"
+         d="m 398.75,468.23718 c 0,5.86803 -4.75697,10.625 -10.625,10.625 -5.86803,0 -10.625,-4.75697 -10.625,-10.625 0,-5.86802 4.75697,-10.625 10.625,-10.625 5.86803,0 10.625,4.75698 10.625,10.625 z"
+         sodipodi:ry="10.625"
+         sodipodi:rx="10.625"
+         sodipodi:cy="468.23718"
+         sodipodi:cx="388.125"
+         id="path10796-2-6-2"
+         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3097);fill-opacity:1;stroke:#55429f;stroke-width:2.16621375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;font-family:Sans"
+         sodipodi:type="arc" />
+      <path
+         sodipodi:nodetypes="ccccccccccccc"
+         inkscape:connector-curvature="0"
+         id="rect7222"
+         d="m 21.535823,1031.9047 0,1.0313 0.888066,0 0,4.9687 -0.93226,0 0,1.0313 4.789695,0 0,-1.0313 -1.285812,0 0,-4.9687 1.285812,0 0,-1.0313 z"
+         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans" />
     </g>
     <g
        style="display:inline"

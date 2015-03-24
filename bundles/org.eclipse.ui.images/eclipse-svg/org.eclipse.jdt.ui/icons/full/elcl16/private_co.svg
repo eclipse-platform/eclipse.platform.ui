@@ -4388,17 +4388,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568543"
-     inkscape:cx="2.4218841"
-     inkscape:cy="21.112138"
+     inkscape:zoom="45.254834"
+     inkscape:cx="7.0614037"
+     inkscape:cy="9.5128549"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="925"
      inkscape:window-height="862"
      inkscape:window-x="1171"
      inkscape:window-y="114"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3952" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -4407,7 +4411,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4427,7 +4431,7 @@
     </g>
     <g
        id="g8838"
-       transform="matrix(0.66886925,0,0,0.66886925,2.5413626,345.87662)">
+       transform="matrix(0.66886925,0,0,0.66886925,3.2263723,346.25227)">
       <rect
          y="1039.4933"
          x="2.9031553"

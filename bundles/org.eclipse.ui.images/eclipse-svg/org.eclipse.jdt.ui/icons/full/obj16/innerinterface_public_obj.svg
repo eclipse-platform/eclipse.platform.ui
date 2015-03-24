@@ -14,8 +14,8 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 1">
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="innerinterface_public_obj.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -60,6 +60,39 @@
        id="linearGradient7188"
        xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1"
        inkscape:collect="always" />
+    <linearGradient
+       y2="462.11539"
+       x2="388.63736"
+       y1="478.18777"
+       x1="388.63736"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient7188-6"
+       xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1-9"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient10798-1-9-3-7-6-8-9-0-9-1-9">
+      <stop
+         style="stop-color:#7564b1;stop-opacity:1"
+         offset="0"
+         id="stop10800-5-2-1-8-20-6-4-9-8-2-1" />
+      <stop
+         id="stop10806-6-8-5-3-9-24-8-4-3-2-7"
+         offset="0.5"
+         style="stop-color:#5d4aa1;stop-opacity:1" />
+      <stop
+         style="stop-color:#9283c3;stop-opacity:1"
+         offset="1"
+         id="stop10802-1-5-3-0-4-8-4-2-9-2-3" />
+    </linearGradient>
+    <linearGradient
+       y2="462.11539"
+       x2="388.63736"
+       y1="478.18777"
+       x1="388.63736"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3046"
+       xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1-9"
+       inkscape:collect="always" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -95,7 +128,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -106,23 +139,19 @@
      transform="translate(0,-1036.3622)">
     <path
        sodipodi:type="arc"
-       style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient7188);fill-opacity:1;stroke:#55429f;stroke-width:2.16621375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;font-family:Sans"
+       style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3046);fill-opacity:1;stroke:#55429f;stroke-width:2.16621375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;font-family:Sans"
        id="path10796-2-6-2"
        sodipodi:cx="388.125"
        sodipodi:cy="468.23718"
        sodipodi:rx="10.625"
        sodipodi:ry="10.625"
        d="m 398.75,468.23718 a 10.625,10.625 0 1 1 -21.25,0 10.625,10.625 0 1 1 21.25,0 z"
-       transform="matrix(0.55482947,0,0,0.55482947,-207.83019,785.0574)" />
+       transform="matrix(0.55482947,0,0,0.55482947,-207.83019,783.15705)" />
     <path
        style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
-       d="m 5.5130017,1041.3622 0,1.0313 1.0000019,0 0,4.9687 -1.0000019,0 0,1.0313 4.0000022,0 0,-1.0313 -1,0 0,-4.9687 1,0 0,-1.0313 -4.0000022,0 z"
+       d="m 5.0513789,1039.3735 0,1.0313 0.8880662,0 0,4.9687 -0.9322604,0 0,1.0313 4.789695,0 0,-1.0313 -1.2858115,0 0,-4.9687 1.2858115,0 0,-1.0313 z"
        id="rect7222"
-       inkscape:connector-curvature="0" />
-    <path
-       style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;filter:url(#filter8047);font-family:Sans"
-       d="m 5.7005017,1041.5497 0,1.0313 1.000002,0 0,4.9687 -1.000002,0 0,1.0313 4.000002,0 0,-1.0313 -1,0 0,-4.9687 1,0 0,-1.0313 -4.000002,0 z"
-       id="rect7222-9"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccccc" />
   </g>
 </svg>

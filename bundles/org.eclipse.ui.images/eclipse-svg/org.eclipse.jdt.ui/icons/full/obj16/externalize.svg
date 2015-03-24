@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="externalize.svg">
   <defs
      id="defs4">
@@ -247,20 +247,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="21.34375"
-     inkscape:cx="13.479513"
-     inkscape:cy="12.356121"
+     inkscape:zoom="30.184621"
+     inkscape:cx="11.56241"
+     inkscape:cy="5.0968274"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer1-7"
      showgrid="true"
      inkscape:window-width="1280"
      inkscape:window-height="900"
-     inkscape:window-x="81"
-     inkscape:window-y="29"
+     inkscape:window-x="542"
+     inkscape:window-y="319"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:snap-global="true">
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid3999" />
@@ -301,7 +301,7 @@
          sodipodi:nodetypes="cccccc"
          inkscape:connector-curvature="0"
          id="rect4001"
-         d="m 3.5193795,1037.8597 7.0096695,0 3.062057,3.0066 0,9.9546 -10.0717265,0 z"
+         d="m 3.6187679,1037.8597 6.9102811,0 3.062057,3.0066 0,9.9546 -9.9723381,0 z"
          style="fill:none;stroke:url(#linearGradient4088);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline" />
     </g>
     <g
@@ -409,7 +409,7 @@
       </g>
       <g
          id="g9371"
-         transform="matrix(0,-1,-1,0,1055.2199,1053.5482)">
+         transform="matrix(0,-1,-1,0,1054.5333,1053.4587)">
         <path
            sodipodi:nodetypes="ccccccccc"
            inkscape:connector-curvature="0"

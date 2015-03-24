@@ -14,7 +14,7 @@
    height="16"
    id="svg4223"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="over_co.svg">
   <defs
      id="defs4225">
@@ -516,6 +516,49 @@
        x2="7"
        y2="1042.475"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3848-2"
+       id="linearGradient3855-8"
+       x1="7"
+       y1="1045.3622"
+       x2="7"
+       y2="1042.475"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3848-2">
+      <stop
+         style="stop-color:#50b053;stop-opacity:1;"
+         offset="0"
+         id="stop3851-6" />
+      <stop
+         style="stop-color:#9ad16d;stop-opacity:1"
+         offset="1"
+         id="stop3853-0" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3846-2"
+       id="linearGradient3852-6"
+       x1="-11"
+       y1="1046.3622"
+       x2="-11"
+       y2="1042.3622"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.99999532,0.00305796,-0.00305796,0.99999532,23.191166,0.04157548)" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3846-2">
+      <stop
+         style="stop-color:#008233;stop-opacity:1"
+         offset="0"
+         id="stop3848-1" />
+      <stop
+         style="stop-color:#008c31;stop-opacity:1"
+         offset="1"
+         id="stop3850-4" />
+    </linearGradient>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -532,10 +575,10 @@
      showgrid="true"
      inkscape:window-width="1574"
      inkscape:window-height="1098"
-     inkscape:window-x="115"
-     inkscape:window-y="119"
+     inkscape:window-x="143"
+     inkscape:window-y="118"
      inkscape:window-maximized="0"
-     inkscape:snap-global="true">
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid4999"
@@ -563,6 +606,12 @@
      transform="translate(0,-1036.3622)">
     <g
        id="g3866">
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.28729308;stroke-linejoin:round;stroke-opacity:1"
+         d="m 14.224627,1046.6872 -6.180724,-6.6769 -6.2197766,6.7771 z"
+         id="path3836-2"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccc" />
       <path
          style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-linejoin:round;stroke-opacity:1;filter:url(#filter3896)"
          d="m 12.578511,1045.8614 -4.55569,-4.5836 -4.615713,4.5875 z"

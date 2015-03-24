@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="collapseall.svg">
   <defs
      id="defs4">
@@ -37,7 +37,8 @@
        x1="16.774115"
        y1="1040.2089"
        x2="26.536173"
-       y2="1046.4403" />
+       y2="1046.4403"
+       gradientTransform="translate(0.97227179,0.97227179)" />
     <linearGradient
        id="linearGradient5080-79">
       <stop
@@ -66,9 +67,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32.000001"
-     inkscape:cx="9.8373579"
-     inkscape:cy="7.0789147"
+     inkscape:zoom="22.627418"
+     inkscape:cx="9.3169434"
+     inkscape:cy="3.8885032"
      inkscape:document-units="px"
      inkscape:current-layer="g5108"
      showgrid="true"
@@ -108,7 +109,7 @@
       <g
          style="display:inline"
          id="g5108-3"
-         transform="translate(-17.043786,-2.2958763)">
+         transform="translate(-16.071514,-1.3236045)">
         <rect
            y="1040.9159"
            x="18.031223"
@@ -122,22 +123,22 @@
          id="g5108"
          transform="translate(-15.055048,-0.35127627)">
         <rect
-           y="1040.9159"
-           x="18.031223"
+           y="1041.8882"
+           x="19.003494"
            height="9.9932861"
            width="9.9986038"
            id="rect5076"
            style="color:#000000;fill:url(#linearGradient5113-12);fill-opacity:1;fill-rule:nonzero;stroke:#8b96ab;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
         <rect
-           y="1046.3809"
-           x="19.514599"
+           y="1047.3531"
+           x="20.48687"
            height="1.1048543"
            width="6.9826794"
            id="rect5088-0"
            style="color:#000000;fill:#d5f3ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
         <rect
-           y="1045.3795"
-           x="19.578018"
+           y="1046.3518"
+           x="20.550289"
            height="1.1048543"
            width="6.9826794"
            id="rect5088"

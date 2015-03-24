@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="template_obj.svg">
   <defs
      id="defs4">
@@ -49,7 +49,7 @@
        x2="0.044194315"
        y2="2.7859421"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.05,0,0,1,3.8205863,1037.2019)" />
+       gradientTransform="matrix(1.1295495,0,0,1.2357023,3.4694144,1036.4202)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4972"
@@ -137,7 +137,7 @@
        x2="12.520393"
        y1="1044.7372"
        x1="5.1146584"
-       gradientTransform="matrix(1.1156685,0,0,1,-0.87971976,1.3537395)"
+       gradientTransform="matrix(1.163235,0,0,0.88082597,-1.3209316,125.71553)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient4891-29"
        xlink:href="#linearGradient6799-4-3-9-9"
@@ -158,7 +158,7 @@
        x2="12.520393"
        y1="1044.7372"
        x1="5.1146584"
-       gradientTransform="matrix(0.75720272,0,0,1,1.427048,2.6533583)"
+       gradientTransform="matrix(0.72702183,0,0,0.88079591,1.4861494,126.97218)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient4925-6"
        xlink:href="#linearGradient6799-4-3-9-0-0"
@@ -179,7 +179,7 @@
        x2="12.520393"
        y1="1044.7372"
        x1="5.1146584"
-       gradientTransform="matrix(1.1156685,0,0,1,-0.87971976,0.02702326)"
+       gradientTransform="matrix(1.163235,0,0,0.88085603,-1.3209316,124.45888)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient4969"
        xlink:href="#linearGradient6799-4-3-8"
@@ -192,19 +192,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627417"
-     inkscape:cx="5.272469"
-     inkscape:cy="4.4994849"
+     inkscape:zoom="32"
+     inkscape:cx="6.1487591"
+     inkscape:cy="4.5666429"
      inkscape:document-units="px"
-     inkscape:current-layer="g6750"
-     showgrid="false"
+     inkscape:current-layer="layer1"
+     showgrid="true"
      inkscape:window-width="1171"
      inkscape:window-height="959"
      inkscape:window-x="1384"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
      showguides="true"
-     inkscape:guide-bbox="true" />
+     inkscape:guide-bbox="true"
+     inkscape:snap-global="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3022" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -225,7 +230,7 @@
      transform="translate(0,-1036.3622)">
     <g
        id="g4087"
-       transform="matrix(1.6322255,0,0,1.6322255,-10.172103,-661.63644)"
+       transform="matrix(1.6322255,0,0,1.6585351,-10.172103,-689.24457)"
        style="fill:url(#linearGradient4978);fill-opacity:1">
       <rect
          ry="0"
@@ -237,42 +242,42 @@
          style="color:#000000;fill:url(#linearGradient5417);fill-opacity:1;stroke:url(#linearGradient5419);stroke-width:0.63910681;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
     <rect
-       y="1038.2657"
-       x="2.7615027"
-       height="2.7675781"
-       width="10.629227"
+       y="1038.0304"
+       x="2.6822987"
+       height="2.6134865"
+       width="10.725135"
        id="rect6891"
-       style="opacity:0.77310947;color:#000000;fill:#fef17a;fill-opacity:1;stroke:#c89840;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+       style="opacity:0.77310947;color:#000000;fill:#fef17a;fill-opacity:1;stroke:#c89840;stroke-width:1.36659169;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <rect
        style="color:#000000;fill:url(#linearGradient4900);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect4892"
-       width="7.4246211"
-       height="0.79549515"
-       x="4.3310289"
-       y="1039.5901" />
+       width="7.9871211"
+       height="0.98299515"
+       x="4.0185289"
+       y="1039.3713" />
     <g
        id="g6750"
        style="fill:url(#linearGradient5138-5);fill-opacity:1;display:inline"
        transform="matrix(1.6322255,0,0,1.6322255,-6.0620452,-660.70836)">
       <rect
-         y="1043.9635"
-         x="6.2997332"
-         height="0.69549829"
-         width="4.7008624"
+         y="1044.0166"
+         x="6.1646171"
+         height="0.61263388"
+         width="4.9012837"
          id="rect6891-5-7-3-9"
          style="color:#000000;fill:url(#linearGradient4969);fill-opacity:1;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <rect
-         y="1045.2903"
-         x="6.2997332"
-         height="0.69549829"
-         width="4.7008624"
+         y="1045.2419"
+         x="6.1646171"
+         height="0.61261296"
+         width="4.9012837"
          id="rect6891-5-7-3-9-7"
          style="color:#000000;fill:url(#linearGradient4891-29);fill-opacity:1;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <rect
-         y="1046.59"
-         x="6.2997332"
-         height="0.69549829"
-         width="3.190469"
+         y="1046.4673"
+         x="6.1646171"
+         height="0.61259204"
+         width="3.063302"
          id="rect6891-5-7-3-9-7-4"
          style="color:#000000;fill:url(#linearGradient4925-6);fill-opacity:1;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
