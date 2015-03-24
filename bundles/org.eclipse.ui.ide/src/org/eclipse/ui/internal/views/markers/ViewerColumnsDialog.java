@@ -101,23 +101,21 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	void setColumnsObjs(T[] columnObjs) {
 		IColumnInfoProvider<T> columnInfo = doGetColumnInfoProvider();
 		IColumnUpdater<T> updater = doGetColumnUpdater();
-		@SuppressWarnings("hiding")
-		List<T> visible = getVisible();
-		@SuppressWarnings("hiding")
-		List<T> nonVisible = getNonVisible();
-		visible.clear();
-		nonVisible.clear();
+		List<T> visibleLocalVar = getVisible();
+		List<T> nonVisibleLocalVar = getNonVisible();
+		visibleLocalVar.clear();
+		nonVisibleLocalVar.clear();
 		T data = null;
 		for (int i = 0; i < columnObjs.length; i++) {
 			data = columnObjs[i];
 			if (columnInfo.isColumnVisible(data)) {
 				updater.setColumnVisible(data, true);
-				updater.setColumnIndex(data, visible.size());
-				visible.add(data);
+				updater.setColumnIndex(data, visibleLocalVar.size());
+				visibleLocalVar.add(data);
 			} else {
 				updater.setColumnVisible(data, false);
-				updater.setColumnIndex(data, nonVisible.size());
-				nonVisible.add(data);
+				updater.setColumnIndex(data, nonVisibleLocalVar.size());
+				nonVisibleLocalVar.add(data);
 			}
 		}
 	}
