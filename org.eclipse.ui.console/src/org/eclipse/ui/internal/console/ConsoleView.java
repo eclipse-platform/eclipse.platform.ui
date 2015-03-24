@@ -192,7 +192,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/**
 	 * Activates the participants for the given console, if any.
 	 *
-	 * @param console
+	 * @param console the console
 	 */
 	private void activateParticipants(IConsole console) {
 		// activate
@@ -296,9 +296,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
 	/**
-	 * Returns the page participants registered for the given console, or <code>null</code>
+	 * Returns the page participants registered for the given console, or
+	 * <code>null</code>
 	 *
-	 * @param console
+	 * @param console the console
 	 * @return registered page participants or <code>null</code>
 	 */
 	private ListenerList getParticipants(IConsole console) {
@@ -522,9 +523,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
 	/**
-	 * Registers the given runnable with the display
-	 * associated with this view's control, if any.
+	 * Registers the given runnable with the display associated with this view's
+	 * control, if any.
 	 *
+	 * @param r the runnable
 	 * @see org.eclipse.swt.widgets.Display#asyncExec(java.lang.Runnable)
 	 */
 	public void asyncExec(Runnable r) {
@@ -626,7 +628,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class key) {
+	public <T> T getAdapter(Class<T> key) {
         Object adpater = super.getAdapter(key);
         if (adpater == null) {
             IConsole console = getConsole();
@@ -639,13 +641,13 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
                         IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
                         adpater = participant.getAdapter(key);
                         if (adpater != null) {
-                            return adpater;
+							return (T) adpater;
                         }
                     }
                 }
             }
         }
-        return adpater;
+		return (T) adpater;
     }
 
 	@Override
@@ -681,11 +683,12 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
     /**
-     * Returns if the specified part reference is to this view part (if the part
-     * reference is the console view or not)
-     * @param partRef
-     * @return true if the specified part reference is the console view
-     */
+	 * Returns if the specified part reference is to this view part (if the part
+	 * reference is the console view or not)
+	 * 
+	 * @param partRef the workbench part reference
+	 * @return true if the specified part reference is the console view
+	 */
     protected boolean isThisPart(IWorkbenchPartReference partRef) {
         if (partRef instanceof IViewReference) {
             IViewReference viewRef = (IViewReference) partRef;
