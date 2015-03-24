@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MacroInstance;
+
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.debug.model.DebugMessageIds;
 
@@ -33,8 +34,8 @@ public class AntDebugState {
 	private static final String fgAntCallTaskName = "antcall"; //$NON-NLS-1$
 
 	private IDebugBuildLogger fLogger;
-	private Stack<Task> fTasks = new Stack<Task>();
-	private Map<Task, Object> fTaskToProxies = new HashMap<Task, Object>();
+	private Stack<Task> fTasks = new Stack<>();
+	private Map<Task, Object> fTaskToProxies = new HashMap<>();
 	private Task fCurrentTask;
 	private Task fStepOverTask;
 	private Task fStepIntoTask;
@@ -46,8 +47,8 @@ public class AntDebugState {
 
 	private Map<Project, Vector<?>> fProjectToTargetNames = null;
 	private Map<Project, Map<Target, Vector<Target>>> fProjectToMapOfTargetToBuildSequence = null;
-	private Stack<Target> fTargetsToExecute = new Stack<Target>();
-	private Stack<Target> fTargetsExecuting = new Stack<Target>();
+	private Stack<Target> fTargetsToExecute = new Stack<>();
+	private Stack<Target> fTargetsExecuting = new Stack<>();
 
 	private boolean fConsiderTargetBreakpoints = false;
 	private boolean fShouldSuspend;
@@ -60,8 +61,8 @@ public class AntDebugState {
 	}
 
 	public void buildStarted() {
-		fProjectToTargetNames = new HashMap<Project, Vector<?>>();
-		fProjectToMapOfTargetToBuildSequence = new HashMap<Project, Map<Target, Vector<Target>>>();
+		fProjectToTargetNames = new HashMap<>();
+		fProjectToMapOfTargetToBuildSequence = new HashMap<>();
 	}
 
 	/**
@@ -299,7 +300,7 @@ public class AntDebugState {
 			Object ref = eventProject.getReference(IAntCoreConstants.TARGET_VECTOR_NAME);
 			if (ref != null) {
 				fProjectToTargetNames.put(eventProject, (Vector<?>) ref);
-				HashMap<Target, Vector<Target>> targetToBuildSequence = new HashMap<Target, Vector<Target>>();
+				HashMap<Target, Vector<Target>> targetToBuildSequence = new HashMap<>();
 				setTargetToExecute(initializeBuildSequenceInformation(event, targetToBuildSequence));
 				fProjectToMapOfTargetToBuildSequence.put(eventProject, targetToBuildSequence);
 			}
@@ -548,7 +549,7 @@ public class AntDebugState {
 
 	private Target initializeBuildSequenceInformation(BuildEvent event, Map<Target, Vector<Target>> targetToBuildSequence) {
 		Project antProject = event.getProject();
-		Vector<String> targets = (Vector<String>) antProject.getReference(IAntCoreConstants.TARGET_VECTOR_NAME);
+		Vector<String> targets = antProject.getReference(IAntCoreConstants.TARGET_VECTOR_NAME);
 		if (targets == null || targets.size() < 1) {
 			return null;
 		}

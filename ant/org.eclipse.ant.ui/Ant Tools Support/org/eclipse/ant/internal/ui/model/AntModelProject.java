@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * Portions Copyright  2000-2004 The Apache Software Foundation
  * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
@@ -28,6 +28,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.types.Path;
+
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 
 /**
@@ -168,6 +169,7 @@ public class AntModelProject extends Project {
 	 * 
 	 * @see org.apache.tools.ant.Project#getReference(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getReference(String key) {
 		T ref = super.getReference(key);/* references.get(key); */
@@ -224,7 +226,7 @@ public class AntModelProject extends Project {
 	public AntClassLoader createClassLoader(Path path) {
 		synchronized (loaderLock) {
 			if (loaders == null) {
-				loaders = new Hashtable<String, AntClassLoader>(8);
+				loaders = new Hashtable<>(8);
 			}
 			Path p = path;
 			if (p == null) {
