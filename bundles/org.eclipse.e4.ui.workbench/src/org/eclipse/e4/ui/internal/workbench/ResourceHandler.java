@@ -241,12 +241,6 @@ public class ResourceHandler implements IModelResourceHandler {
 		}
 		if (resource == null) {
 			Resource applicationResource = loadResource(applicationDefinitionInstance);
-			if (!hasTopLevelWindows(applicationResource) && logger != null) {
-				logger.error(
-						new Exception(), // log a stack trace to help debug the corruption
-						"Initializing from the application definition instance yields no top-level windows! " //$NON-NLS-1$
-								+ "Continuing execution, but the missing windows may cause other initialization failures."); //$NON-NLS-1$
-			}
 			MApplication theApp = (MApplication) applicationResource.getContents().get(0);
 			resource = createResourceWithApp(theApp);
 			context.set(E4Workbench.NO_SAVED_MODEL_FOUND, Boolean.TRUE);
@@ -263,6 +257,13 @@ public class ResourceHandler implements IModelResourceHandler {
 		ModelAssembler contribProcessor = ContextInjectionFactory.make(ModelAssembler.class,
 				context);
 		contribProcessor.processModel(initialModel);
+
+		if (!hasTopLevelWindows(resource) && logger != null) {
+			logger.error(new Exception(), // log a stack trace to help debug the
+											// corruption
+					"Initializing from the application definition instance yields no top-level windows! " //$NON-NLS-1$
+							+ "Continuing execution, but the missing windows may cause other initialization failures."); //$NON-NLS-1$
+		}
 
 		if (!clearPersistedState) {
 			CommandLineOptionModelProcessor processor = ContextInjectionFactory.make(
