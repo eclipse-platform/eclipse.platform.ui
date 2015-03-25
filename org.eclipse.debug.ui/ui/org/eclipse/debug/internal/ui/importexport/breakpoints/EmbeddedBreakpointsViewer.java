@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class EmbeddedBreakpointsViewer {
 			//if we have handle to the view try get the current attributes, that way the 
 			//presentation of the embedded viewer matches the current view
 			Map<String, Object> map = null;
-		    IDebugModelPresentation current = (IDebugModelPresentation)view.getAdapter(IDebugModelPresentation.class);
+			IDebugModelPresentation current = view.getAdapter(IDebugModelPresentation.class);
 		    if (current instanceof DelegatingModelPresentation) {
 				map = ((DelegatingModelPresentation) current).getAttributes();
 			}

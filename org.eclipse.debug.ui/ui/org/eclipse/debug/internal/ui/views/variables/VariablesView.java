@@ -1245,15 +1245,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 		if (IDebugModelPresentation.class.equals(required)) {
-			return getModelPresentation();
+			return (T) getModelPresentation();
 		}
 		else if (fDetailPane != null){
 			Object adapter = fDetailPane.getAdapter(required);
 			if (adapter != null) {
-				return adapter;
+				return (T) adapter;
 			}
 		}
 		return super.getAdapter(required);
