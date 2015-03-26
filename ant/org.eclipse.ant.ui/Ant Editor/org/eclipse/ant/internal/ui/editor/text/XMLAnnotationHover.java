@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.internal.ui.editor.AntEditorMessages;
+
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -63,10 +65,10 @@ public class XMLAnnotationHover implements IAnnotationHover {
 		if (model == null)
 			return null;
 
-		List<Annotation> exact = new ArrayList<Annotation>();
+		List<Annotation> exact = new ArrayList<>();
 
 		Iterator<Annotation> e = model.getAnnotationIterator();
-		Map<Position, Object> messagesAtPosition = new HashMap<Position, Object>();
+		Map<Position, Object> messagesAtPosition = new HashMap<>();
 		while (e.hasNext()) {
 			Object o = e.next();
 			if (o instanceof Annotation) {
@@ -97,13 +99,14 @@ public class XMLAnnotationHover implements IAnnotationHover {
 				return true;
 
 			if (messagesAtPosition.get(position) instanceof List) {
+				@SuppressWarnings("unchecked")
 				List<String> messages = ((List<String>) messagesAtPosition.get(position));
 				if (messages.contains(message)) {
 					return true;
 				}
 				messages.add(message);
 			} else {
-				ArrayList<Object> messages = new ArrayList<Object>();
+				ArrayList<Object> messages = new ArrayList<>();
 				messages.add(messagesAtPosition.get(position));
 				messages.add(message);
 				messagesAtPosition.put(position, messages);
@@ -134,7 +137,7 @@ public class XMLAnnotationHover implements IAnnotationHover {
 
 			} else {
 
-				List<String> messages = new ArrayList<String>(xmlAnnotations.size());
+				List<String> messages = new ArrayList<>(xmlAnnotations.size());
 				Iterator<Annotation> e = xmlAnnotations.iterator();
 				while (e.hasNext()) {
 					Annotation xmlAnnotation = e.next();
