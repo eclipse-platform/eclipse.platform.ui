@@ -115,7 +115,8 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
-				return createImage(ResourceProvider.IMG_MenuItem);
+				final Image img = getImageFromIconURI(element);
+				return img != null ? img : createImage(ResourceProvider.IMG_MenuItem);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_MenuItem);
 		}
@@ -184,7 +185,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		if (this.getClass() != MenuItemEditor.class) {
 			// ------------------------------------------------------------
@@ -330,7 +331,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			combo.setInput(list);
 			context.bindValue(ViewerProperties.singleSelection().observe(combo),
 				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN)
-					.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
+				.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
 				new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
 		}
 

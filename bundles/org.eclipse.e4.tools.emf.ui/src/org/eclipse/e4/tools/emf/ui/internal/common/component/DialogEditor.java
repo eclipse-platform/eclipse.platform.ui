@@ -27,7 +27,8 @@ public class DialogEditor extends WindowEditor {
 		if (element instanceof MUIElement) {
 			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_Dialog);
+				final Image img = getImageFromIconURI(uiElement);
+				return img != null ? img : createImage(ResourceProvider.IMG_Dialog);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_Dialog);
 		}

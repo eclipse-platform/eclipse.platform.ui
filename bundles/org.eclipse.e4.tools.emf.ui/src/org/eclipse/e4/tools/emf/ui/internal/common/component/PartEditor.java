@@ -106,7 +106,8 @@ public class PartEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
-				return createImage(ResourceProvider.IMG_Part);
+				final Image img = getImageFromIconURI(element);
+				return img != null ? img : createImage(ResourceProvider.IMG_Part);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_Part);
 		}
@@ -191,7 +192,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.PartEditor_LabelLabel, master, context, textProp,
 			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, master, context,
@@ -284,8 +285,8 @@ public class PartEditor extends AbstractComponentEditor {
 				textProp.observeDelayed(200, t),
 				EMFEditProperties.value(getEditingDomain(),
 					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
-				new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-				new UpdateValueStrategy());
+					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+					new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

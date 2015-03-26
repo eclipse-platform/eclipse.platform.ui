@@ -135,7 +135,8 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		if (element instanceof MUIElement) {
 			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_Perspective);
+				final Image img = getImageFromIconURI(uiElement);
+				return img != null ? img : createImage(ResourceProvider.IMG_Perspective);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_Perspective);
 		}
@@ -223,7 +224,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
 			context, textProp,
 			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));

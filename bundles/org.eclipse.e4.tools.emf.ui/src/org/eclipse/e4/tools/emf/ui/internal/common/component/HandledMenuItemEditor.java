@@ -69,7 +69,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 		if (element instanceof MUIElement) {
 			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_HandledMenuItem);
+				final Image img = getImageFromIconURI(uiElement);
+				return img != null ? img : createImage(ResourceProvider.IMG_HandledMenuItem);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_HandledMenuItem);
 		}
@@ -103,8 +104,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t),
 				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
-					.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
-					.setConverter(new CommandToStringConverter(Messages)));
+				.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
+			.setConverter(new CommandToStringConverter(Messages)));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);

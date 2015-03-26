@@ -74,7 +74,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		if (element instanceof MUIElement) {
 			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_DirectToolItem);
+				final Image img = getImageFromIconURI(uiElement);
+				return img != null ? img : createImage(ResourceProvider.IMG_DirectToolItem);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_DirectToolItem);
 		}
@@ -120,8 +121,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		});
 		final Binding binding = context.bindValue(textProp.observeDelayed(200, t),
 			EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI)
-				.observeDetail(master), new UpdateValueStrategy()
-				.setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
+			.observeDetail(master), new UpdateValueStrategy()
+		.setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
 		Util.addDecoration(t, binding);
 
 		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

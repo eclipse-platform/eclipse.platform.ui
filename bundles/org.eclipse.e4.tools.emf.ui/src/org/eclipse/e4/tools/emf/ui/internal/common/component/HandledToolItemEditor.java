@@ -68,7 +68,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		if (element instanceof MUIElement) {
 			final MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_HandledToolItem);
+				final Image img = getImageFromIconURI(uiElement);
+				return img != null ? img : createImage(ResourceProvider.IMG_HandledToolItem);
 			}
 			return createImage(ResourceProvider.IMG_Tbr_HandledToolItem);
 		}
@@ -91,8 +92,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t),
 				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
-					.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
-					.setConverter(new CommandToStringConverter(Messages)));
+				.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
+			.setConverter(new CommandToStringConverter(Messages)));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);

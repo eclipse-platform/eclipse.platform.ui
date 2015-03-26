@@ -6,15 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 422465
- *     Steven Spungin <steven@spungin.tv> - Bug 437951, Bug 439709
+ * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Marco Descher <marco@descher.at> - Bug 422465
+ * Steven Spungin <steven@spungin.tv> - Bug 437951, Bug 439709
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> Bug 403583
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
@@ -40,6 +45,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -57,7 +63,7 @@ import org.eclipse.swt.widgets.Display;
 public abstract class AbstractComponentEditor {
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
-	private WritableValue master = new WritableValue();
+	private final WritableValue master = new WritableValue();
 
 	public static final int SEARCH_IMAGE = 0;
 	public static final int TABLE_ADD_IMAGE = 1;
@@ -86,6 +92,9 @@ public abstract class AbstractComponentEditor {
 	@Optional
 	private ProjectOSGiTranslationProvider translationProvider;
 
+	/** An imageregistry for dynamic component images (see bug #403583) */
+	private static ImageRegistry componentImages = new ImageRegistry();
+
 	private Composite editorControl;
 
 	private IdGenerator generator;
@@ -104,9 +113,10 @@ public abstract class AbstractComponentEditor {
 
 	protected void setElementId(Object element) {
 		if (getEditor().isAutoCreateElementId() && element instanceof MApplicationElement) {
-			MApplicationElement el = (MApplicationElement) element;
+			final MApplicationElement el = (MApplicationElement) element;
 			if (el.getElementId() == null || el.getElementId().trim().length() == 0) {
-				el.setElementId(Util.getDefaultElementId(((EObject) getMaster().getValue()).eResource(), el, getEditor().getProject()));
+				el.setElementId(Util.getDefaultElementId(((EObject) getMaster().getValue()).eResource(), el,
+					getEditor().getProject()));
 			}
 		}
 	}
@@ -120,6 +130,35 @@ public abstract class AbstractComponentEditor {
 			return null;
 		}
 		return ImageDescriptor.createFromImage(createImage(key));
+	}
+
+	/**
+	 * Get the image described in element if this is a MUILabel
+	 *
+	 * @param element the element in tree to be displayed
+	 * @return image of element if iconUri is correct, else returns null
+	 */
+	public Image getImageFromIconURI(Object element) {
+		Image img = null;
+		if (element instanceof MUILabel) {
+			final String iconUri = ((MUILabel) element).getIconURI();
+			if (iconUri != null) {
+				img = componentImages.get(iconUri);
+				if (img == null) {
+					try {
+						final URL url = new URL(iconUri);
+						final ImageDescriptor idesc = ImageDescriptor
+							.createFromURL(url);
+						componentImages.put(iconUri, idesc);
+						img = componentImages.get(iconUri);
+					} catch (final MalformedURLException e) {
+						// Nothing to do at this.. no image
+					}
+				}
+
+			}
+		}
+		return img;
 	}
 
 	public abstract Image getImage(Object element, Display display);
@@ -152,8 +191,8 @@ public abstract class AbstractComponentEditor {
 	}
 
 	/**
-	 * Translates an input <code>String</code> using the current
-	 * {@link ResourceBundleTranslationProvider} and <code>locale</code> from
+	 * Translates an input <code>String</code> using the current {@link ResourceBundleTranslationProvider} and
+	 * <code>locale</code> from
 	 * the {@link TranslationService}.
 	 *
 	 * @param string
@@ -188,7 +227,7 @@ public abstract class AbstractComponentEditor {
 
 	public void handleCopy() {
 		if (editorControl != null) {
-			Control focusControl = editorControl.getDisplay().getFocusControl();
+			final Control focusControl = editorControl.getDisplay().getFocusControl();
 
 			if (isFocusChild(focusControl) && focusControl.getData(ControlFactory.COPY_HANDLER) != null) {
 				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).copy();
@@ -198,7 +237,7 @@ public abstract class AbstractComponentEditor {
 
 	public void handlePaste() {
 		if (editorControl != null) {
-			Control focusControl = editorControl.getDisplay().getFocusControl();
+			final Control focusControl = editorControl.getDisplay().getFocusControl();
 
 			if (isFocusChild(focusControl) && focusControl.getData(ControlFactory.COPY_HANDLER) != null) {
 				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).paste();
@@ -208,7 +247,7 @@ public abstract class AbstractComponentEditor {
 
 	public void handleCut() {
 		if (editorControl != null) {
-			Control focusControl = editorControl.getDisplay().getFocusControl();
+			final Control focusControl = editorControl.getDisplay().getFocusControl();
 
 			if (isFocusChild(focusControl) && focusControl.getData(ControlFactory.COPY_HANDLER) != null) {
 				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).cut();
@@ -231,28 +270,29 @@ public abstract class AbstractComponentEditor {
 		scrolling.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				Rectangle r = scrolling.getClientArea();
+				final Rectangle r = scrolling.getClientArea();
 				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
 			}
 		});
 
 		scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		GridLayout gl = new GridLayout(3, false);
+		final GridLayout gl = new GridLayout(3, false);
 		gl.horizontalSpacing = 10;
 		contentContainer.setLayout(gl);
 
 		return contentContainer;
 	}
 
-	protected void createContributedEditorTabs(CTabFolder folder, EMFDataBindingContext context, WritableValue master, Class<?> clazz) {
-		List<AbstractElementEditorContribution> contributionList = editor.getTabContributionsForClass(clazz);
+	protected void createContributedEditorTabs(CTabFolder folder, EMFDataBindingContext context, WritableValue master,
+		Class<?> clazz) {
+		final List<AbstractElementEditorContribution> contributionList = editor.getTabContributionsForClass(clazz);
 
-		for (AbstractElementEditorContribution eec : contributionList) {
-			CTabItem item = new CTabItem(folder, SWT.BORDER);
+		for (final AbstractElementEditorContribution eec : contributionList) {
+			final CTabItem item = new CTabItem(folder, SWT.BORDER);
 			item.setText(eec.getTabLabel());
 
-			Composite parent = createScrollableContainer(folder);
+			final Composite parent = createScrollableContainer(folder);
 			item.setControl(parent.getParent());
 
 			eec.createContributedEditorTab(parent, context, master, getEditingDomain(), project);
@@ -279,7 +319,8 @@ public abstract class AbstractComponentEditor {
 		}
 		if (getEditor().isAutoCreateElementId()) {
 			generator = new IdGenerator();
-			generator.bind(getMaster(), EMFEditProperties.value(getEditingDomain(), attSource), EMFEditProperties.value(getEditingDomain(), attId), control);
+			generator.bind(getMaster(), EMFEditProperties.value(getEditingDomain(), attSource),
+				EMFEditProperties.value(getEditingDomain(), attId), control);
 		}
 	}
 }
