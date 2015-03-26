@@ -1051,8 +1051,12 @@ public class TrimStack {
 				// If we haven't found one then use the first
 				if (partToActivate == null) {
 					List<MPart> parts = modelService.findElements(area, null, MPart.class, null);
-					if (parts.size() > 0)
-						partToActivate = parts.get(0);
+					for (MPart part : parts) {
+						if (partService.isPartVisible(part)) {
+							partToActivate = part;
+							break;
+						}
+					}
 				}
 
 				if (partToActivate != null) {
