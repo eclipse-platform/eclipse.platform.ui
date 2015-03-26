@@ -47,7 +47,7 @@ public class HideTopLevelProjectIfNested extends ViewerFilter {
 						IAdaptable parentAdaptable = (IAdaptable)parentObject;
 						if (parentAdaptable.getAdapter(IWorkspaceRoot.class) != null ||
 							parentAdaptable.getAdapter(IWorkingSet.class) != null) {
-							return !NestedProjectManager.isShownAsNested((IProject)element);
+							return !NestedProjectManager.getInstance().isShownAsNested((IProject) element);
 						}
 					}
 				}

@@ -11,9 +11,15 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.nested;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
@@ -23,22 +29,64 @@ import org.eclipse.core.runtime.IPath;
  */
 public class NestedProjectManager {
 
+	private static NestedProjectManager INSTANCE = new NestedProjectManager();
+
+	private SortedMap<IPath, IProject> locationsToProjects = new TreeMap<IPath, IProject>(new PathComparator());
+
+	private NestedProjectManager() {
+		refreshProjectsList();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+			@Override
+			public void resourceChanged(IResourceChangeEvent event) {
+				if (event.getType() == IResourceChangeEvent.POST_CHANGE
+						&& event.getDelta().getResource().getType() == IResource.PROJECT) {
+					refreshProjectsList();
+				}
+			}
+		});
+	}
+
+	private void refreshProjectsListIfNeeded() {
+		if (this.locationsToProjects.size() != ResourcesPlugin.getWorkspace().getRoot().getProjects().length) {
+			// TODO: find other cheap checks to try in condition
+			// Need to find a cheap way to react to project refactoring (moved
+			// or renamed...)
+			refreshProjectsList();
+		}
+	}
+
+	private void refreshProjectsList() {
+		this.locationsToProjects.clear();
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			this.locationsToProjects.put(project.getLocation(), project);
+		}
+	}
+
+	public static NestedProjectManager getInstance() {
+		synchronized (INSTANCE) {
+			if (INSTANCE == null) {
+				INSTANCE = new NestedProjectManager();
+			}
+		}
+		return INSTANCE;
+	}
+
 	/**
 	 * @param folder a folder to decide about
 	 * @return an {@link IProject} that or {@code null}
 	 */
-	public static IProject getProject(IFolder folder) {
+	public IProject getProject(IFolder folder) {
 		if (folder == null) {
 			return null;
 		}
-		IPath folderLocation = folder.getLocation();
-		// FIXME: performance: this is probably called often enough to cache the folder -> project mapping?
-		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			if (project.getLocation().equals(folderLocation)) {
-				return project;
-			}
+		refreshProjectsListIfNeeded();
+		IProject res = this.locationsToProjects.get(folder.getLocation());
+		if (res != null && (!res.exists() || !res.getLocation().equals(folder.getLocation()))) {
+			// project was deleted and state not refreshed
+			refreshProjectsList();
+			return getProject(folder);
 		}
-		return null;
+		return res;
 	}
 
 	/**
@@ -47,36 +95,32 @@ public class NestedProjectManager {
 	 * @param folder
 	 * @return {@code true} if project having the same location as {@code folder} exists and nested is enabled, {@code false} otherwise
 	 */
-	public static boolean isShownAsProject(IFolder folder) {
+	public boolean isShownAsProject(IFolder folder) {
 		return getProject(folder) != null;
 	}
 
-	public static boolean isShownAsNested(IProject project) {
+	public boolean isShownAsNested(IProject project) {
 		if (!project.exists()) {
 			return false;
 		}
-		IPath queriedLocation = project.getLocation();
-		// FIXME: performance: this is probably called often enough to cache the project -> parentProject mapping?
-		for (IProject otherProject : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			IPath otherLocation = otherProject.getLocation();
-			if (otherProject.isOpen() && queriedLocation.segmentCount() - otherLocation.segmentCount() > 0 && otherLocation.isPrefixOf(queriedLocation)) {
-				/* otherLocation is ancestor of queriedLocation (but not equal) */
+		IPath queriedLocation = project.getLocation().removeLastSegments(1);
+		while (queriedLocation.segmentCount() > 0) {
+			if (this.locationsToProjects.containsKey(queriedLocation)) {
 				return true;
 			}
+			queriedLocation = queriedLocation.removeLastSegments(1);
 		}
 		return false;
 	}
 
-	public static IContainer getMostDirectOpenContainer(IProject project) {
+	public IContainer getMostDirectOpenContainer(IProject project) {
 		IProject mostDirectParentProject = null;
-		for (IProject other : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			if (!project.equals(other) && other.isOpen()) {
-				IPath otherLocation = other.getLocation();
-				if ((mostDirectParentProject == null || otherLocation.segmentCount() > mostDirectParentProject.getLocation().segmentCount())
-					&& other.getLocation().isPrefixOf(project.getLocation())) {
-					mostDirectParentProject = other;
-				}
+		IPath queriedLocation = project.getLocation().removeLastSegments(1);
+		while (mostDirectParentProject == null && queriedLocation.segmentCount() > 0) {
+			if (this.locationsToProjects.containsKey(queriedLocation)) {
+				mostDirectParentProject = this.locationsToProjects.get(queriedLocation);
 			}
+			queriedLocation = queriedLocation.removeLastSegments(1);
 		}
 		if (mostDirectParentProject != null) {
 			IPath parentContainerAbsolutePath = project.getLocation().removeLastSegments(1);
