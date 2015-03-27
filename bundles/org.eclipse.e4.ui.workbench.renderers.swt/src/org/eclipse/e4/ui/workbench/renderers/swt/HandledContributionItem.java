@@ -447,7 +447,7 @@ public class HandledContributionItem extends ContributionItem {
 		if (text != null) {
 			if (model instanceof MMenuElement) {
 				String mnemonics = ((MMenuElement) model).getMnemonics();
-				if (mnemonics != null) {
+				if (mnemonics != null && !mnemonics.isEmpty()) {
 					int idx = text.indexOf(mnemonics);
 					if (idx != -1) {
 						text = text.substring(0, idx) + '&'
