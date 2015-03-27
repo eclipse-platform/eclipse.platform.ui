@@ -36,8 +36,10 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -142,7 +144,11 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			final IBundleProjectDescription description = service.getDescription(project);
 			final Set<String> requiredBundles = getRequiredBundles();
 			final IRequiredBundleDescription[] arTmp = description.getRequiredBundles();
+			final IPackageImportDescription[] currentImportPacks = description.getPackageImports();
+			final Set<String> requiredImportPacks = getImportedPackages();
 			final List<IRequiredBundleDescription> descs = new ArrayList<IRequiredBundleDescription>();
+			final List<IPackageImportDescription> imDescs = new ArrayList<IPackageImportDescription>();
+
 			if (arTmp != null) {
 				descs.addAll(Arrays.asList(arTmp));
 			}
@@ -157,15 +163,63 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 				description.setRequiredBundles(descs.toArray(new IRequiredBundleDescription[0]));
 				description.apply(new NullProgressMonitor());
 			}
+
+			if (currentImportPacks != null) {
+				imDescs.addAll(Arrays.asList(currentImportPacks));
+			}
+			for (final IPackageImportDescription ds : imDescs) {
+				requiredImportPacks.remove(ds.getName());
+			}
+			if (!requiredImportPacks.isEmpty()) {
+				for (final String i : requiredImportPacks) {
+					// javax.annotation;version="1.0.0";resolution:=optional
+					final String[] parts = i.split(";"); //$NON-NLS-1$
+					final VersionRange r = findVersionRange(parts);
+					final boolean optional = isOptional(parts);
+
+					imDescs.add(service.newPackageImport(parts[0], r, optional));
+				}
+				description.setPackageImports(imDescs.toArray(new IPackageImportDescription[0]));
+				description.apply(new NullProgressMonitor());
+			}
 		} catch (final CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	private static VersionRange findVersionRange(String[] parts) {
+		for (final String p : parts) {
+			if (p.startsWith("version=")) { //$NON-NLS-1$
+				final String version = p.substring("version=".length() + 1, p.length() - 1); //$NON-NLS-1$
+				return new VersionRange(version.trim());
+			}
+		}
+		return null;
+	}
+
+	private static boolean isOptional(String[] parts) {
+		for (final String p : parts) {
+			if (p.startsWith("resolution:=")) { //$NON-NLS-1$
+				return p.contains("optional"); //$NON-NLS-1$
+			}
+		}
+		return false;
+	}
+
+	// public static void main(String[] args) {
+	// findVersionRange("javax.annotation;version=\"1.0.0\";resolution:=optional".split(";"));
+	// }
+
 	protected Set<String> getRequiredBundles() {
 		final Set<String> rv = new HashSet<String>();
-		rv.add("javax.inject"); //$NON-NLS-1$
+		//		rv.add("javax.inject"); //$NON-NLS-1$
+		return rv;
+	}
+
+	protected Set<String> getImportedPackages() {
+		final Set<String> rv = new HashSet<String>();
+		rv.add("javax.inject;version=\"1.0.0\""); //$NON-NLS-1$
 		return rv;
 	}
 

@@ -160,12 +160,20 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 	protected Set<String> getRequiredBundles() {
 		final Set<String> rv = super.getRequiredBundles();
 		final PartClass cl = (PartClass) getDomainClass();
-		if (cl.usePostConstruct || cl.usePredestroy) {
-			rv.add("javax.annotation"); //$NON-NLS-1$
-		} else if (cl.useFocus || cl.usePersist) {
+		if (cl.useFocus || cl.usePersist) {
 			rv.add("org.eclipse.e4.ui.di"); //$NON-NLS-1$
 		}
 
+		return rv;
+	}
+
+	@Override
+	protected Set<String> getImportedPackages() {
+		final Set<String> rv = super.getImportedPackages();
+		final PartClass cl = (PartClass) getDomainClass();
+		if (cl.usePostConstruct || cl.usePredestroy) {
+			rv.add("javax.annotation;version=\"1.0.0\";resolution:=optional"); //$NON-NLS-1$
+		}
 		return rv;
 	}
 

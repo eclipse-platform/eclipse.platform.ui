@@ -58,8 +58,14 @@ public class NewAddonClassWizard extends AbstractNewClassWizard {
 	@Override
 	protected Set<String> getRequiredBundles() {
 		final Set<String> rv = super.getRequiredBundles();
-		rv.add("javax.annotation"); //$NON-NLS-1$
 		rv.add("org.eclipse.e4.core.services"); //$NON-NLS-1$
 		return rv;
+	}
+
+	@Override
+	protected Set<String> getImportedPackages() {
+		final Set<String> rv = super.getImportedPackages();
+		rv.add("javax.annotation;version=\"1.0.0\";resolution:=optional"); //$NON-NLS-1$
+		return super.getImportedPackages();
 	}
 }
