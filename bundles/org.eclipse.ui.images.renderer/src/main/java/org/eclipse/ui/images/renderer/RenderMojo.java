@@ -1,5 +1,5 @@
 /*******************************************************************************
- * (c) Copyright 2013 l33t labs LLC and others.
+ * (c) Copyright 2015 l33t labs LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,44 +65,6 @@ public class RenderMojo extends AbstractMojo {
     /** Used to specify the number of render threads when rasterizing icons. */
     public static final String RENDERTHREADS = "eclipse.svg.renderthreads";
 
-    /**
-     * <p>IconEntry is used to define an icon to rasterize,
-     * where to put it and the dimensions to render it at.</p>
-     */
-    class IconEntry {
-
-        /** The name of the icon minus extension */
-        String nameBase;
-
-        /** The input path of the source svg files. */
-        File inputPath;
-
-        /**
-         * The path rasterized versions of this icon should be written into.
-         */
-        File outputPath;
-
-        /** The path to a disabled version of the icon (gets desaturated). */
-        private File disabledPath;
-
-        /**
-         * Creates an IconEntry used for record keeping when
-         * rendering a set of SVG icons.
-         *
-         * @param nameBase the name of the icon file, minus any extension
-         * @param inputPath the SVG file that is rendered
-         * @param outputPath the path to the rendered icon data
-         * @param disabledPath the part to the disabled version of the output icon
-         */
-        public IconEntry(String nameBase, File inputPath, File outputPath,
-                File disabledPath) {
-            this.nameBase = nameBase;
-            this.inputPath = inputPath;
-            this.outputPath = outputPath;
-            this.disabledPath = disabledPath;
-        }
-    }
-
     /** A list of directories with svg sources to rasterize. */
     private List<IconEntry> icons;
 
@@ -147,24 +108,6 @@ public class RenderMojo extends AbstractMojo {
      */
     public int getFailedIcons() {
         return failedIcons.size();
-    }
-
-    /**
-     * <p>Creates an IconEntry during the icon gather operation.</p>
-     *
-     * @param input the source of the icon file (SVG document)
-     * @param outputPath the path of the rasterized version to generate
-     * @param disabledPath the path of the disabled (desaturated) icon, if one is required
-     *
-     * @return an IconEntry describing the rendering operation
-     */
-    public IconEntry createIcon(File input, File outputPath, File disabledPath) {
-        String name = input.getName();
-        String[] split = name.split("\\.(?=[^\\.]+$)");
-
-        IconEntry def = new IconEntry(split[0], input, outputPath, disabledPath);
-
-        return def;
     }
 
     /**
@@ -500,77 +443,6 @@ public class RenderMojo extends AbstractMojo {
     }
 
     /**
-     * <p>Search the root resources directory for svg icons and add them to our
-     * collection for rasterization later.</p>
-     *
-     * @param outputName
-     * @param iconDir
-     * @param outputBase
-     * @param outputDir2
-     */
-    public void gatherIcons(String outputName, File rootDir, File iconDir,
-            File outputBase) {
-
-        File[] listFiles = iconDir.listFiles();
-
-        for (File child : listFiles) {
-            if (child.isDirectory()) {
-                gatherIcons(outputName, rootDir, child, outputBase);
-                continue;
-            }
-
-            if (!child.getName().endsWith("svg")) {
-                return;
-            }
-
-            // Compute a relative path for the output dir
-            URI rootUri = rootDir.toURI();
-            URI iconUri = iconDir.toURI();
-
-            String relativePath = rootUri.relativize(iconUri).getPath();
-            File outputDir = new File(outputBase, relativePath);
-            File disabledOutputDir = null;
-
-            File parentFile = child.getParentFile();
-
-            /* Determine if/where to put a disabled version of the icon
-               Eclipse traditionally uses a prefix of d for disabled, e for
-               enabled in the folder name */
-            if (parentFile != null) {
-                String parentDirName = parentFile.getName();
-                if (parentDirName.startsWith("e")) {
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("d");
-                    builder.append(parentDirName.substring(1, parentDirName.length()));
-
-                    // Disabled variant folder name
-                    String disabledVariant = builder.toString();
-
-                    // The parent's parent, to create the disabled directory in
-                    File setParent = parentFile.getParentFile();
-
-                    // The source directory's disabled folder
-                    File disabledSource = new File(setParent, disabledVariant);
-
-                    // Compute a relative path, so we can create the output folder
-                    String path = rootUri.relativize(
-                              disabledSource.toURI()).getPath();
-
-                    // Create the output folder, so a disabled icon is generated
-                    disabledOutputDir = new File(outputBase, path);
-                    if(!disabledOutputDir.exists()) {
-                        disabledOutputDir.mkdirs();
-                    }
-                }
-            }
-
-            IconEntry icon = createIcon(child, outputDir, disabledOutputDir);
-
-            icons.add(icon);
-        }
-    }
-
-    /**
      * <p>Initializes rasterizer defaults</p>
      *
      * @param threads the number of threads to render with
@@ -642,7 +514,7 @@ public class RenderMojo extends AbstractMojo {
             // Where to place the rendered icon
             File outputBase = new File(outputDir, dirName);
 
-            gatherIcons(dirName, file, file, outputBase);
+            IconGatherer.gatherIcons(icons, "svg", file, file, outputBase, true);
         }
 
         log.info("Working directory: " + outputDir.getAbsolutePath());
