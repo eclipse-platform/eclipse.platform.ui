@@ -153,17 +153,17 @@ public class CompositePartEditor extends AbstractComponentEditor {
 
 		// --- Import Actions ---
 		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleImportChild(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_VIEW);
-				}
-			});
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_VIEW);
+			}
+		});
 		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleImportChild(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
-				}
-			});
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
+			}
+		});
 
 	}
 
@@ -256,7 +256,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 			EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
 			context, textProp,
 			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
@@ -329,7 +329,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			final IViewerValueProperty vProp = ViewerProperties.singleSelection();
 			context.bindValue(vProp.observe(viewer),
 				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL)
-					.observeDetail(getMaster()));
+				.observeDetail(getMaster()));
 		}
 
 		ControlFactory.createSelectedElement(parent, this, context, Messages.CompositePartEditor_SelectedElement);
@@ -354,6 +354,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 
 			final ComboViewer childrenDropDown = new ComboViewer(buttonCompTop);
 			childrenDropDown.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
+			childrenDropDown.setContentProvider(ArrayContentProvider.getInstance());
 
 			final List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
 			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER)); //$NON-NLS-1$
