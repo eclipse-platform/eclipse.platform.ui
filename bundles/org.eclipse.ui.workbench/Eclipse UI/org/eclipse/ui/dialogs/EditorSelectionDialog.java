@@ -10,7 +10,7 @@
  *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
  *     						have Open With-->Other
  *     Helena Halperin - Bug 298747 [EditorMgmt] Bidi Incorrect file type direction in mirrored "Editor Selection" dialog
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 378485, 460555
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 378485, 460555, 463262
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -158,9 +159,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	private String fileName;
 
-	private Button fileTypeButton;
-
-	private Button fileNameButton;
+	private Button rememberTypeButton;
 
 	private Button rememberEditorButton;
 
@@ -316,40 +315,16 @@ public class EditorSelectionDialog extends Dialog {
 			rememberEditorButton.setLayoutData(data);
 			rememberEditorButton.setFont(font);
 
-			group = new Composite(contents, SWT.SHADOW_NONE);
-			group.setLayout(new GridLayout(2, false));
-			data = new GridData();
-			data.grabExcessHorizontalSpace = true;
-			data.horizontalAlignment = SWT.FILL;
-			data.horizontalSpan = 2;
-			data.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-			group.setLayoutData(data);
-
 			String fileType = getFileType();
 			if (!fileType.isEmpty()) {
-				fileTypeButton = new Button(group, SWT.RADIO | SWT.LEFT);
-				fileTypeButton.setText("*." + fileType); //$NON-NLS-1$
-				fileTypeButton.addListener(SWT.Selection, listener);
+				rememberTypeButton = new Button(contents, SWT.CHECK | SWT.LEFT);
+				rememberTypeButton.setText(NLS.bind(WorkbenchMessages.EditorSelection_rememberType, fileType));
+				rememberTypeButton.addListener(SWT.Selection, listener);
 				data = new GridData();
-				data.horizontalSpan = 1;
-				data.grabExcessHorizontalSpace = true;
-				fileTypeButton.setLayoutData(data);
-				fileTypeButton.setFont(font);
-				fileTypeButton.setSelection(true);
-				fileTypeButton.setEnabled(false);
-			}
-
-			fileNameButton = new Button(group, SWT.RADIO | SWT.LEFT);
-			fileNameButton.setText(fileName);
-			fileNameButton.addListener(SWT.Selection, listener);
-			data = new GridData();
-			data.horizontalSpan = 1;
-			data.grabExcessHorizontalSpace = true;
-			fileNameButton.setLayoutData(data);
-			fileNameButton.setFont(font);
-			fileNameButton.setEnabled(false);
-			if (fileType.isEmpty()) {
-				fileNameButton.setSelection(true);
+				data.horizontalSpan = 2;
+				data.horizontalIndent = 15;
+				rememberTypeButton.setLayoutData(data);
+				rememberTypeButton.setFont(font);
 			}
 		}
 
@@ -580,22 +555,23 @@ public class EditorSelectionDialog extends Dialog {
 	protected void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 		// record whether use was viewing internal or external editors
-		settings
-				.put(STORE_ID_INTERNAL_EXTERNAL, !internalButton.getSelection());
+		settings.put(STORE_ID_INTERNAL_EXTERNAL, !internalButton.getSelection());
 		settings.put(STORE_ID_DESCR, selectedEditor.getId());
 		String editorId = selectedEditor.getId();
 		settings.put(STORE_ID_DESCR, editorId);
-		if (rememberEditorButton == null || !rememberEditorButton.getSelection()) {
+		EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
+		if (rememberEditorButton == null) {
 			return;
 		}
-		EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
-		boolean useFileName = fileNameButton.getSelection();
-		updateFileMappings(reg, useFileName);
-		if (useFileName) {
+		if (rememberEditorButton.getSelection()) {
+			updateFileMappings(reg, true);
 			reg.setDefaultEditor(fileName, editorId);
-		} else {
-			reg.setDefaultEditor("*." + getFileType(), editorId); //$NON-NLS-1$
 		}
+		if (rememberTypeButton == null || !rememberTypeButton.getSelection()) {
+			return;
+		}
+		updateFileMappings(reg, false);
+		reg.setDefaultEditor("*." + getFileType(), editorId); //$NON-NLS-1$
 	}
 
 	/**
@@ -674,13 +650,6 @@ public class EditorSelectionDialog extends Dialog {
 		boolean enableExternal = externalButton.getSelection();
 		browseExternalEditorsButton.setEnabled(enableExternal);
 		updateOkButton();
-		if (rememberEditorButton != null) {
-			boolean selection = rememberEditorButton.getSelection();
-			fileNameButton.setEnabled(selection);
-			if (!getFileType().isEmpty()) {
-				fileTypeButton.setEnabled(selection);
-			}
-		}
 	}
 
 	@Override
