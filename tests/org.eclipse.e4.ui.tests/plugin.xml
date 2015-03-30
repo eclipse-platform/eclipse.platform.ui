@@ -22,6 +22,9 @@
       <fragment
             uri="xmi/modelprocessor/ModelFragments.e4xmi">
       </fragment>
+      <fragment
+            uri="xmi/modelprocessor/ModelFragmentsXPath.e4xmi">
+      </fragment>
       <processor
             beforefragment="true"
             class="org.eclipse.e4.ui.tests.application.PreModelProcessorImpl">

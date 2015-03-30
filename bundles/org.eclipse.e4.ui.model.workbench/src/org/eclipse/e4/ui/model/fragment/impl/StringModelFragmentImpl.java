@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,17 @@
  * Contributors:
  *      Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *      IBM Corporation - initial API and implementation
+ *      Steven Spungin <steven@spungin.tv> - Bug 437958
  */
 package org.eclipse.e4.ui.model.fragment.impl;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
+import org.eclipse.e4.emf.xpath.XPathContext;
+import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
@@ -22,6 +28,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -48,6 +55,8 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * @ordered
 	 */
 	protected static final String FEATURENAME_EDEFAULT = null;
+
+	final Pattern patternCSV = Pattern.compile("[,\\s]*,[,\\s]*");
 
 	/**
 	 * The cached value of the '{@link #getFeaturename() <em>Featurename</em>}' attribute.
@@ -281,16 +290,74 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 
 	@Override
 	public List<MApplicationElement> merge(MApplication application) {
-		MApplicationElement o =  ModelUtils.findElementById(application, getParentElementId());
-		if( o != null ) {
-			EStructuralFeature feature = ((EObject)o).eClass().getEStructuralFeature(getFeaturename());
-			if( feature != null ) {
-				return ModelUtils.merge(o, feature, getElements(), getPositionInList());
-			}
+		List<MApplicationElement> ret = new ArrayList<MApplicationElement>();
 
+		String idsOrXPath = getParentElementId();
+		if (idsOrXPath.startsWith("xpath:")) {
+			String xPath = idsOrXPath.substring(6);
+			mergeXPath(application, ret, xPath);
+		} else {
+			mergeIdList(application, ret, idsOrXPath);
 		}
 
-		return Collections.emptyList();
+		return ret;
 	}
+
+	private void mergeIdList(MApplication application, List<MApplicationElement> ret, String ids) {
+		String[] parentIds = patternCSV.split(ids);
+		for (String parentId : parentIds) {
+			MApplicationElement o = ModelUtils.findElementById(application, parentId);
+			if (o != null) {
+				EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(getFeaturename());
+				if (feature != null) {
+					List<MApplicationElement> elements;
+					if (parentIds.length > 1) {
+						elements = new ArrayList<MApplicationElement>();
+						for (MApplicationElement element : getElements()) {
+							elements.add((MApplicationElement) EcoreUtil.copy((EObject) element));
+						}
+					} else {
+						elements = getElements();
+					}
+					ret.addAll(ModelUtils.merge(o, feature, elements, getPositionInList()));
+				}
+			}
+		}
+	}
+
+	private void mergeXPath(MApplication application, List<MApplicationElement> ret, String xPath) {
+
+		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
+		XPathContext xpathContext = f.newContext((EObject) application);
+		Iterator<Object> i = xpathContext.iterate(xPath);
+
+		List<MApplicationElement> targetElements = new ArrayList<MApplicationElement>();
+		try {
+			while (i.hasNext()) {
+				Object obj = i.next();
+				if (obj instanceof MApplicationElement) {
+					MApplicationElement o = (MApplicationElement) obj;
+					targetElements.add(o);
+				}
+			}
+		} catch (Exception ex) {
+			// custom xpath functions will throw exceptions
+			ex.printStackTrace();
+		}
+		for (MApplicationElement targetElement : targetElements) {
+			EStructuralFeature feature = ((EObject) targetElement).eClass().getEStructuralFeature(getFeaturename());
+			if (feature != null) {
+				List<MApplicationElement> elements;
+				elements = new ArrayList<MApplicationElement>();
+				for (MApplicationElement element : getElements()) {
+					elements.add((MApplicationElement) EcoreUtil.copy((EObject) element));
+				}
+				if (elements.isEmpty() == false) {
+					ret.addAll(ModelUtils.merge(targetElement, feature, elements, getPositionInList()));
+				}
+			}
+		}
+	}
+
 
 } //StringModelFragmentImpl

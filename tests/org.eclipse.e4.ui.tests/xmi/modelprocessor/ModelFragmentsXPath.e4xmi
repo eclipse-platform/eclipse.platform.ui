@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="_YoHdUHVHEd-aXt9fFntEtw">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_wJeMkNR_EeSO5JjZMOp53Q" featurename="children" parentElementId="fragment.contributedMainMenu">
+    <elements xsi:type="menu:Menu" xmi:id="_ElgL4NSAEeSO5JjZMOp53Q" elementId="fragment.contributedMenu1"/>
+    <elements xsi:type="menu:Menu" xmi:id="_G98C4NSAEeSO5JjZMOp53Q" elementId="fragment.contributedMenu2"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4TJ-kNSBEeSO5JjZMOp53Q" featurename="children" parentElementId="fragment.contributedMenu1,fragment.contributedMenu2">
+    <elements xsi:type="menu:DirectMenuItem" xmi:id="_8ShXINSBEeSO5JjZMOp53Q" elementId="fragment.contributedMenuItem.csv"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_BgfQ0NSCEeSO5JjZMOp53Q" featurename="children" parentElementId="xpath://*[@elementId='fragment.contributedMenu1' or @elementId='fragment.contributedMenu2']">
+    <elements xsi:type="menu:DirectMenuItem" xmi:id="_H8z0ANSCEeSO5JjZMOp53Q" elementId="fragment.contributedMenuItem.xpath"/>
+  </fragments>
+</fragment:ModelFragments>
