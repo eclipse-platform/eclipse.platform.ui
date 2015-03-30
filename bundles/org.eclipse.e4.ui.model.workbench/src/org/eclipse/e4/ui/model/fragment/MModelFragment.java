@@ -63,7 +63,7 @@ public interface MModelFragment {
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * Merges an MModelFragment into an MApplication.
+	 * Merges this MModelFragment into an MApplication.
 	 * @param application The MApplication to merge into.  Must not be null.
 	 * @return A list of MApplicationElements that were added to the MApplication.  Must not be null.
 	 * <!-- end-user-doc -->
