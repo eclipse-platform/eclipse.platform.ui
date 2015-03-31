@@ -52,7 +52,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	/**
 	 * The id of this action.
 	 */
-	@SuppressWarnings("hiding")
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseUnrelatedProjectsAction"; //$NON-NLS-1$
 
 	private final List<IResource> projectsToClose = new ArrayList<>();
