@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.91 r"
    sodipodi:docname="javadoc_location_attrib.svg">
   <defs
      id="defs4">
@@ -115,7 +115,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="42.6875"
-     inkscape:cx="4.4834794"
+     inkscape:cx="0.80558775"
      inkscape:cy="6.7865478"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -187,14 +187,14 @@
        id="path3007"
        inkscape:connector-curvature="0" />
     <g
-       style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#005597;fill-opacity:1;stroke:#005597;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:1;display:inline;font-family:AustralianFlyingCorpsStencil;-inkscape-font-specification:AustralianFlyingCorpsStencil"
+       style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#005597;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:1;display:inline;font-family:AustralianFlyingCorpsStencil;-inkscape-font-specification:AustralianFlyingCorpsStencil"
        id="text3909-7-7-1"
        transform="translate(17.171238,-0.00631064)">
       <path
          d="m -7.2237588,1043.7401 c -1e-5,0.9975 -0.2419038,1.8936 -0.725682,2.6882 -0.536711,0.9045 -1.2321556,1.3567 -2.0863352,1.3567 -0.340171,0 -0.627419,-0.097 -0.861748,-0.2916 -0.257018,-0.2198 -0.389304,-0.5156 -0.396858,-0.8876 -0.408201,0.7777 -0.926005,1.1665 -1.553412,1.1665 -0.566943,0 -1.012935,-0.1944 -1.337976,-0.5832 -0.325048,-0.3974 -0.487571,-0.9173 -0.487568,-1.5596 -3e-6,-0.8876 0.287247,-1.6865 0.861747,-2.3966 0.574494,-0.7102 1.251042,-1.0651 2.029642,-1.0651 0.748353,0 1.15277,0.3549 1.21325,1.0651 l 0.249454,-0.9258 1.29262,0 c -0.2116652,0.7525 -0.4195427,1.5048 -0.6236329,2.2572 -0.2872564,1.0736 -0.4308811,1.7964 -0.4308741,2.1683 -7e-6,0.3888 0.1247197,0.5833 0.3741801,0.5833 0.1133802,0 0.2683434,-0.068 0.4648901,-0.203 1.0431588,-0.7185 1.5647421,-1.8386 1.5647517,-3.3602 -9.6e-6,-1.175 -0.355291,-2.109 -1.0658454,-2.8023 -0.6803347,-0.6508 -1.5534205,-0.9763 -2.6192585,-0.9763 -1.337981,0 -2.44162,0.5283 -3.310924,1.585 -0.839071,1.0228 -1.258606,2.2909 -1.258605,3.804 -10e-7,1.3779 0.381737,2.4599 1.145217,3.2462 0.733238,0.7523 1.723491,1.1285 2.970761,1.1285 1.118753,0 2.2904259,-0.4269 3.5150219,-1.2808 l 0.2494533,0.4058 c -1.1036494,0.9468 -2.3509132,1.4202 -3.7417972,1.4202 -1.511842,0 -2.743988,-0.4142 -3.696444,-1.2427 -1.035609,-0.9129 -1.553412,-2.1936 -1.553412,-3.842 0,-1.6653 0.559379,-3.0517 1.67814,-4.1591 1.08096,-1.0736 2.37358,-1.6104 3.877863,-1.6104 1.232141,0 2.237511,0.3678 3.0161153,1.1032 0.8315011,0.7947 1.2472559,1.864 1.2472659,3.2081 m -3.7077822,-0.4058 c -6e-6,-0.4142 -0.166307,-0.6213 -0.498905,-0.6213 -0.468675,0 -0.89199,0.486 -1.269945,1.4582 -0.332608,0.837 -0.498909,1.5596 -0.498905,2.1683 -4e-6,0.5833 0.204094,0.875 0.612294,0.875 0.408191,0 0.801268,-0.5411 1.179233,-1.6232 0.31748,-0.9298 0.476222,-1.6822 0.476228,-2.257"
          id="path4719"
          inkscape:connector-curvature="0"
-         style="stroke-width:0.10849548" />
+         style="stroke-width:0.10849548;stroke:none" />
     </g>
   </g>
 </svg>

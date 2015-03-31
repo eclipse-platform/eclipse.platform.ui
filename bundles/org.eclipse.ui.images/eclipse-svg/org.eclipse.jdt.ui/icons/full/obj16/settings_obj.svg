@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.91 r"
    sodipodi:docname="settings_obj.svg">
   <defs
      id="defs4">
@@ -132,7 +132,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.313709"
-     inkscape:cx="15.986869"
+     inkscape:cx="2.109899"
      inkscape:cy="12.584171"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -168,12 +168,12 @@
      style="display:inline"
      transform="translate(0,-1036.3622)">
     <rect
-       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;marker:none;enable-background:accumulate"
        id="rect7499"
-       width="14.142136"
-       height="13.169864"
-       x="0.9722718"
-       y="1037.4106" />
+       width="13.081475"
+       height="11.048543"
+       x="1.9445436"
+       y="1038.3829" />
     <rect
        style="opacity:0.3487395;color:#000000;fill:#5b6c89;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect7415-2"
