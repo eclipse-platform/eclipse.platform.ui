@@ -31,7 +31,15 @@
         <version>${tycho.version}</version>
         <configuration>
           <format>'v${buildTimestamp}'</format>
-        </configuration>
+          <additionalFileSets>
+            <fileSet>
+             <directory>${project.build.directory}</directory>
+             <includes>
+               <include>.api_description</include>
+             </includes>
+            </fileSet>
+          </additionalFileSets>
+         </configuration>
       </plugin>
     </plugins>
   </build>
