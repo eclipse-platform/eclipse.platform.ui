@@ -10,7 +10,7 @@
  *     Brock Janicyak - brockj@tpg.com.au
  *     		- Fix for Bug 11142 [HeapStatus] Heap status is updated too frequently
  *          - Fix for Bug 192996 [Workbench] Reduce amount of garbage created by HeapStatus
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040, 372517
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422040, 372517, 463652
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -405,8 +405,9 @@ public class HeapStatus extends Composite {
         int sw = w - bw - 3; // status width
         int uw = (int) (sw * usedMem / totalMem); // used mem width
         int ux = x + 1 + uw; // used mem right edge
-
-        gc.setBackground(bgCol);
+        if (bgCol != null) {
+			gc.setBackground(bgCol);
+		}
         gc.fillRectangle(rect);
         gc.setForeground(sepCol);
 		gc.drawLine(dx, y, dx, y + h);
