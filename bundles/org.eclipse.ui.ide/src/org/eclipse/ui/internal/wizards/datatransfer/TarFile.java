@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 243347 TarFile should not throw NPE in finalize()
+ * Marc-Andre Laperle <marc-andre.laperle@ericsson.com> - Bug 463633
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -56,7 +57,7 @@ public class TarFile {
 		}
 		try {
 			entryEnumerationStream = new TarInputStream(in);
-		} catch (TarException ex) {
+		} catch (TarException | IOException ex) {
 			in.close();
 			throw ex;
 		}
