@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="caller_co.svg">
   <defs
      id="defs4">
@@ -99,16 +99,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="44.8"
-     inkscape:cx="5.2453102"
-     inkscape:cy="3.1949435"
+     inkscape:zoom="63.356768"
+     inkscape:cx="3.792864"
+     inkscape:cy="4.3251095"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1363"
      inkscape:window-height="877"
-     inkscape:window-x="588"
-     inkscape:window-y="508"
+     inkscape:window-x="993"
+     inkscape:window-y="527"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -136,6 +136,13 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3351"
+       width="7.0079331"
+       height="8.0338697"
+       x="0"
+       y="1044.3599" />
     <g
        transform="matrix(-0.74698003,-0.66484647,-0.66484647,0.74698003,720.27941,287.41912)"
        inkscape:label="Layer 1"

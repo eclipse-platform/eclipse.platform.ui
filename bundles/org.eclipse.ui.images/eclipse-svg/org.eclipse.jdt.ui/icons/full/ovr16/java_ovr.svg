@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="java_ovr.svg">
   <defs
      id="defs4">
@@ -60,16 +60,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="31.678384"
-     inkscape:cx="3.5906342"
-     inkscape:cy="4.3967497"
+     inkscape:zoom="44.8"
+     inkscape:cx="7.3443892"
+     inkscape:cy="4.3578248"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="153"
-     inkscape:window-y="366"
+     inkscape:window-x="1108"
+     inkscape:window-y="484"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -97,6 +97,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 4.0090429,1044.3757 0,2.9909 -3.014674,0.01 c 0,0 -0.26722643,2.4484 0.2051873,3.3462 0.4724137,0.8977 0.6450779,1.1364 1.4205269,1.5152 0.775449,0.3788 2.4306796,0.1579 2.4306796,0.1579 0,0 1.6730651,-0.1894 1.894036,-2.0519 0.2209709,-1.8625 0.1262691,-5.9978 0.1262691,-5.9978 z"
+       id="path4152"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccczzcscc" />
     <path
        style="fill:none;stroke:#ffffff;stroke-width:1.50000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3787);stroke-miterlimit:4;stroke-dasharray:none;opacity:0.75"
        d="m 2.470527,1048.3667 0,0.9905 c 0,2.0131 3.0205444,2.0023 3.0205444,0 l 0,-4.9637"

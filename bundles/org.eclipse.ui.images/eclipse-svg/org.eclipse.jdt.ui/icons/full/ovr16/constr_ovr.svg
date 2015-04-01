@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="constr_ovr.svg">
   <defs
      id="defs4">
@@ -105,16 +105,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="31.678384"
-     inkscape:cx="1.728998"
-     inkscape:cy="3.3018997"
+     inkscape:zoom="44.8"
+     inkscape:cx="6.0086908"
+     inkscape:cy="3.894114"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="350"
-     inkscape:window-y="350"
+     inkscape:window-x="997"
+     inkscape:window-y="447"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -142,6 +142,18 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <ellipse
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="path3351"
+       cx="3.4709821"
+       cy="1050.2751"
+       rx="2.4665179"
+       ry="1.0825893" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 0.99437055,1044.3441 c 0,0 0.0262225,6.1581 0,6.0609 -0.0262225,-0.097 5.00707565,0 5.00707565,0 l 0,-6.029 z"
+       id="path3350"
+       inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path6435"

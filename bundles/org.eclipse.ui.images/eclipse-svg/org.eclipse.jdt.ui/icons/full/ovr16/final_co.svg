@@ -14,8 +14,8 @@
    height="7"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="final_co - Copy.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="final_co.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -60,16 +60,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.839192"
-     inkscape:cx="1.389315"
-     inkscape:cy="4.6207419"
+     inkscape:zoom="44.8"
+     inkscape:cx="4.2711996"
+     inkscape:cy="6.3736818"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="153"
-     inkscape:window-y="366"
+     inkscape:window-x="999"
+     inkscape:window-y="354"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -96,11 +96,60 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1045.3622)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342"
+       width="3"
+       height="7"
+       x="1"
+       y="1045.3622" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;filter:url(#filter3774);stroke-width:0.50000000000000000;stroke-miterlimit:4;stroke-dasharray:none;opacity:0.75"
        d="m 2,1045.3622 0,1 0,2 0,1 0,3 1,0 0,-3 2,0 0,-1 -2,0 0,-2 3,0 0,-1 -3,0 -1,0 z"
        id="rect2999-1"
        inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342-3"
+       width="3"
+       height="3.0267856"
+       x="3.0018706"
+       y="1045.3678" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342-3-7"
+       width="1.0357143"
+       height="3.0267856"
+       x="2.9795492"
+       y="1049.3633" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342-3-7-5"
+       width="3.0223215"
+       height="0.99553561"
+       x="1.9795492"
+       y="1049.3633" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342-3-7-5-0"
+       width="3.0223215"
+       height="2.0223212"
+       x="3.9840136"
+       y="1045.3499" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342-3-7-5-9"
+       width="3.0223215"
+       height="0.99553561"
+       x="3.9795492"
+       y="1046.3633" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3342-3-7-5-9-7"
+       width="3.0223215"
+       height="0.99553561"
+       x="2.9482994"
+       y="1047.39" />
     <path
        style="fill:#286296;fill-opacity:1;stroke:none"
        d="m 2,1045.3622 0,1 0,2 0,1 0,3 1,0 0,-3 2,0 0,-1 -2,0 0,-2 3,0 0,-1 -3,0 -1,0 z"

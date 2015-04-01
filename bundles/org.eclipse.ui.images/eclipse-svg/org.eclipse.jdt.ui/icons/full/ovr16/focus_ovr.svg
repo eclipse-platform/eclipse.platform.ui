@@ -14,7 +14,7 @@
    height="10"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="focus_ovr.svg">
   <defs
      id="defs4">
@@ -187,18 +187,6 @@
        y1="3.265625"
        x2="10.9375"
        y2="10.890689" />
-    <filter
-       height="1.3598877"
-       y="-0.17994386"
-       width="1.1800281"
-       x="-0.090014042"
-       id="filter3959"
-       inkscape:collect="always">
-      <feGaussianBlur
-         id="feGaussianBlur3961"
-         stdDeviation="0.22312288"
-         inkscape:collect="always" />
-    </filter>
     <linearGradient
        inkscape:collect="always"
        id="linearGradient4090-4">
@@ -1004,16 +992,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="45.254834"
-     inkscape:cx="1.8192125"
-     inkscape:cy="2.6765938"
+     inkscape:cx="1.8634067"
+     inkscape:cy="3.5604773"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="350"
-     inkscape:window-y="350"
-     inkscape:window-maximized="0">
+     inkscape:window-x="906"
+     inkscape:window-y="434"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -1039,6 +1029,11 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1042.3622)">
+    <path
+       style="fill:#ffffff;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+       d="m 0,1044.3622 5,4 0,1 -4,4 -1,0 z"
+       id="path3506"
+       inkscape:connector-curvature="0" />
     <g
        transform="translate(-0.08562143,2.3283996)"
        id="layer1-5"

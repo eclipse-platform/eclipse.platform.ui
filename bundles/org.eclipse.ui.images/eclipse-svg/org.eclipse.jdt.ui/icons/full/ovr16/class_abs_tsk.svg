@@ -14,8 +14,8 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="abstract_co.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="class_abs_tsk.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -49,15 +49,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="31.678384"
-     inkscape:cx="2.1841337"
+     inkscape:cx="2.3104027"
      inkscape:cy="1.662233"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="153"
-     inkscape:window-y="366"
+     inkscape:window-x="1103"
+     inkscape:window-y="430"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -84,6 +84,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 0.01015254,1049.3622 0,3 6.99999996,0 0,-3 -0.042829,-5 -6.94590831,0 z"
+       id="path3361"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc" />
     <path
        style="fill:url(#linearGradient3774);fill-opacity:1;stroke:none"
        d="m 3,1044.3622 -2,7 1,0 0.59375,-2 1.8125,0 0.59375,2 1,0 -2,-7 -1,0 z m 0.5,2 0.59375,2 -1.1875,0 0.59375,-2 z"

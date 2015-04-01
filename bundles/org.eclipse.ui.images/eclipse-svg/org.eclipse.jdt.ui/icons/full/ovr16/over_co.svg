@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="over_co.svg">
   <defs
      id="defs4">
@@ -771,7 +771,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="31.678384"
-     inkscape:cx="3.2497591"
+     inkscape:cx="3.3128936"
      inkscape:cy="4.14808"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -806,6 +806,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path3836-1-8"
+       d="m 8.468284,1049.9363 -5.0069128,-5.0883 -4.8090924,5.0436 z"
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.97500074;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"

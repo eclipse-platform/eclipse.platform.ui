@@ -14,8 +14,8 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="sync_over.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="sync_impl.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -100,18 +100,6 @@
        id="linearGradient3855"
        xlink:href="#linearGradient3848"
        inkscape:collect="always" />
-    <filter
-       height="1.5398589"
-       y="-0.26992943"
-       width="1.2700353"
-       x="-0.13501765"
-       id="filter3896"
-       inkscape:collect="always">
-      <feGaussianBlur
-         id="feGaussianBlur3898"
-         stdDeviation="0.51595886"
-         inkscape:collect="always" />
-    </filter>
     <linearGradient
        id="linearGradient3846-1"
        inkscape:collect="always">
@@ -660,16 +648,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.4"
-     inkscape:cx="3.6146785"
-     inkscape:cy="-0.55806643"
+     inkscape:zoom="44.8"
+     inkscape:cx="4.8568796"
+     inkscape:cy="1.9584597"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="347"
-     inkscape:window-y="409"
+     inkscape:window-x="970"
+     inkscape:window-y="563"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -696,13 +684,20 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="rect3454"
+       width="7"
+       height="8"
+       x="0"
+       y="1044.3622" />
     <g
        style="display:inline"
        id="g8579"
        transform="matrix(0.41486416,0,0,0.41486416,-19.810748,612.1688)">
       <path
          transform="matrix(1.2134991,0,0,1.2134991,22.226208,1050.2508)"
-         d="m 30,-2 a 4,4 0 1 1 -8,0 4,4 0 1 1 8,0 z"
+         d="m 30,-2 a 4,4 0 0 1 -4,4 4,4 0 0 1 -4,-4 4,4 0 0 1 4,-4 4,4 0 0 1 4,4 z"
          sodipodi:ry="4"
          sodipodi:rx="4"
          sodipodi:cy="-2"

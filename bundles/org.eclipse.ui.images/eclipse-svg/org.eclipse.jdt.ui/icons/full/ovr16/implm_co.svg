@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="implm_co.svg">
   <defs
      id="defs4">
@@ -770,16 +770,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.839192"
-     inkscape:cx="12.149647"
-     inkscape:cy="4.8751998"
+     inkscape:zoom="63.356768"
+     inkscape:cx="3.425869"
+     inkscape:cy="4.2196479"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="347"
-     inkscape:window-y="409"
+     inkscape:window-x="994"
+     inkscape:window-y="510"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -806,6 +806,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path3836-1-8"
+       d="m 8.489699,1049.9352 -5.0069131,-5.0883 -4.8090924,5.0436 z"
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.97500074;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"

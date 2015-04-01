@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="write.svg">
   <defs
      id="defs4">
@@ -176,15 +176,6 @@
        id="linearGradient4185"
        xlink:href="#linearGradient5300-4"
        inkscape:collect="always" />
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter5428-5-2"
-       inkscape:collect="always">
-      <feGaussianBlur
-         id="feGaussianBlur5430-1-5"
-         stdDeviation="0.22207033"
-         inkscape:collect="always" />
-    </filter>
     <linearGradient
        id="linearGradient5077-5-7-6">
       <stop
@@ -259,15 +250,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="44.8"
-     inkscape:cx="3.2651597"
+     inkscape:cx="3.3544455"
      inkscape:cy="2.8697869"
      inkscape:document-units="px"
      inkscape:current-layer="layer1-7"
      showgrid="true"
      inkscape:window-width="945"
      inkscape:window-height="1125"
-     inkscape:window-x="75"
-     inkscape:window-y="75"
+     inkscape:window-x="910"
+     inkscape:window-y="184"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -300,6 +291,12 @@
        style="display:inline"
        id="layer1-7"
        inkscape:label="Layer 1">
+      <path
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.38792133px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 1.8335342,1044.514 -1.89494335,4.969 -0.49419166,2.5327 4.03630181,1.4367 3.4272053,-1.8604 1.7136026,-0.9302 4.5208231,-4.8025 -0.0093,-3.481 c 0,0 -1.006077,-1.2199 -1.155081,-1.2622 -0.149004,-0.042 -4.4240629,-1.7724 -4.4240629,-1.7724 z"
+         id="path3388"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccccc" />
       <path
          sodipodi:nodetypes="ccccccc"
          inkscape:connector-curvature="0"

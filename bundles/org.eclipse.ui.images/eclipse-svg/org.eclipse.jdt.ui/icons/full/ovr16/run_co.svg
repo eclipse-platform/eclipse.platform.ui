@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="run_co.svg">
   <defs
      id="defs4">
@@ -152,9 +152,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.2"
-     inkscape:cx="7.5407931"
-     inkscape:cy="-8.2482577"
+     inkscape:zoom="22.4"
+     inkscape:cx="4.5306353"
+     inkscape:cy="0.17979497"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -189,6 +189,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 9.000617,1047.4682 -6.9803119,-2.1139 -2.05187237,0 0,7.0079 2.02030507,0 7.0118792,-1.9721"
+       id="path3360"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
     <g
        style="display:inline;fill:#ffffff;stroke:#ffffff;filter:url(#filter3854)"
        id="layer1-6-4"

@@ -13,7 +13,7 @@
    height="7"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="static_co.svg">
   <defs
      id="defs4" />
@@ -24,16 +24,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.4"
-     inkscape:cx="3.2018395"
-     inkscape:cy="-0.17430532"
+     inkscape:zoom="126.71354"
+     inkscape:cx="1.451321"
+     inkscape:cy="5.5590017"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="153"
-     inkscape:window-y="366"
+     inkscape:window-x="836"
+     inkscape:window-y="512"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -61,6 +61,13 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1045.3622)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="rect3335"
+       width="6.0056729"
+       height="7.0078855"
+       x="1.0022607"
+       y="1045.3542" />
     <path
        style="fill:none;stroke:#c7022d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 5.5580592,1047.3622 c 0,-2.0361 -3,-1.991 -3,0 0,0 -0.1329922,1.0624 1.5,1.5 1.6329922,0.4376 1.5,1.5 1.5,1.5 0,1.9897 -3,2.0051 -3,0"

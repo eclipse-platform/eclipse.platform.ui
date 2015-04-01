@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="synch_co.svg">
   <defs
      id="defs4">
@@ -75,16 +75,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.919596"
-     inkscape:cx="12.072526"
-     inkscape:cy="-15.644487"
+     inkscape:zoom="31.678384"
+     inkscape:cx="4.6111101"
+     inkscape:cy="4.8661841"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="831"
      inkscape:window-height="877"
-     inkscape:window-x="340"
-     inkscape:window-y="761"
+     inkscape:window-x="941"
+     inkscape:window-y="616"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -111,13 +111,20 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1044.3622)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="rect3348"
+       width="7"
+       height="8"
+       x="0"
+       y="1044.3622" />
     <g
        style="display:inline"
        id="g8579"
        transform="matrix(0.61462059,0,0,0.61462059,-29.513779,403.91436)">
       <path
          transform="matrix(1.2249496,0,0,1.2249496,21.871427,1050.2166)"
-         d="m 30,-2 a 4,4 0 1 1 -8,0 4,4 0 1 1 8,0 z"
+         d="m 30,-2 a 4,4 0 0 1 -4,4 4,4 0 0 1 -4,-4 4,4 0 0 1 4,-4 4,4 0 0 1 4,4 z"
          sodipodi:ry="4"
          sodipodi:rx="4"
          sodipodi:cy="-2"
