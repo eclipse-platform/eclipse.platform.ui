@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ public class ActiveContextsFunction extends ContextFunction {
 		IEclipseContext current = context.getActiveLeaf();
 		//2 form an answer going up
 		boolean inDialog = false;
-		Set<String> rc = new HashSet<String>();
+		Set<Object> rc = new HashSet<>();
 		while (current != null) {
-			LinkedList<String> locals = (LinkedList<String>) current.getLocal(ContextContextService.LOCAL_CONTEXTS);
+			LinkedList<?> locals = (LinkedList<?>) current.getLocal(ContextContextService.LOCAL_CONTEXTS);
 			if (locals != null) {
 				if (!inDialog || !locals.contains("org.eclipse.ui.contexts.window")) {
 					rc.addAll(locals);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.internal.services;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -22,10 +21,7 @@ public class Activator implements BundleActivator {
 
 	private static Activator singleton;
 
-	private ServiceRegistration contextServiceReg;
-	private ServiceRegistration handlerServiceReg;
-
-	private ServiceTracker eventAdminTracker;
+	private ServiceTracker<EventAdmin, EventAdmin> eventAdminTracker;
 	private BundleContext bundleContext;
 
 	/*
@@ -47,23 +43,14 @@ public class Activator implements BundleActivator {
 	 */
 	public EventAdmin getEventAdmin() {
 		if (eventAdminTracker == null) {
-			eventAdminTracker = new ServiceTracker(bundleContext, EventAdmin.class.getName(), null);
+			eventAdminTracker = new ServiceTracker<>(bundleContext, EventAdmin.class, null);
 			eventAdminTracker.open();
 		}
-		return (EventAdmin) eventAdminTracker.getService();
+		return eventAdminTracker.getService();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (contextServiceReg != null) {
-			contextServiceReg.unregister();
-			contextServiceReg = null;
-		}
-		if (handlerServiceReg != null) {
-			handlerServiceReg.unregister();
-			handlerServiceReg = null;
-		}
-
 		if (eventAdminTracker != null) {
 			eventAdminTracker.close();
 			eventAdminTracker = null;
