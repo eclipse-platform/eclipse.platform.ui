@@ -27,10 +27,10 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MMenu#isEnabled <em>Enabled</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

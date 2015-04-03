@@ -29,11 +29,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getParentId <em>Parent Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getPositionInParent <em>Position In Parent</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

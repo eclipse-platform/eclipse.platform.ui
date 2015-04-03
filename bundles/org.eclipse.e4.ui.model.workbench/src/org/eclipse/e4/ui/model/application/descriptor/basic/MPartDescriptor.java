@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isAllowMultiple <em>Allow Multiple</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getCategory <em>Category</em>}</li>
@@ -46,7 +47,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated
@@ -112,12 +112,12 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This defines the list of the menus associated with the part represented by this descriptor.
+	 * This defines the list of the menus associated with the part represented by this descriptor. 
 	 * There are two specific menus that are managed by the core UI;
 	 * <ul>
-	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the
+	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the 
 	 * drop down menu available from the view's toolbar.</li>
-	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the
+	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the 
 	 * ddefault context menu for this view.</li>
 	 * </ul>
 	 * Other menus can be added here but have to be managed by the part itsefl...

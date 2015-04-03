@@ -23,11 +23,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.StringToObjectMapImpl#getTypedKey <em>Key</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.StringToObjectMapImpl#getTypedValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

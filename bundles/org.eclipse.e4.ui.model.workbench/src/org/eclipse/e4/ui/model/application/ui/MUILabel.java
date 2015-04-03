@@ -27,6 +27,7 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getIconURI <em>Icon URI</em>}</li>
@@ -34,7 +35,6 @@ package org.eclipse.e4.ui.model.application.ui;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedLabel <em>Localized Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  * </ul>
- * </p>
  *
  * @model interface="true" abstract="true"
  * @generated

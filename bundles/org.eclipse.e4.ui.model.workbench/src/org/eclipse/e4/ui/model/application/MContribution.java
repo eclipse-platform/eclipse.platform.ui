@@ -27,11 +27,11 @@ package org.eclipse.e4.ui.model.application;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}</li>
  * </ul>
- * </p>
  *
  * @model abstract="true"
  * @generated

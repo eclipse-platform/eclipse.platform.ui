@@ -27,13 +27,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl#getLocalizedName <em>Localized Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

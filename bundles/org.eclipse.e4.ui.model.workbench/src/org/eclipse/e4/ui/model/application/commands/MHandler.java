@@ -28,10 +28,10 @@ import org.eclipse.e4.ui.model.application.MContribution;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MHandler#getCommand <em>Command</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

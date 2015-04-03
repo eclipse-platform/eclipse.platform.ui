@@ -28,10 +28,10 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MDirtyable#isDirty <em>Dirty</em>}</li>
  * </ul>
- * </p>
  *
  * @model interface="true" abstract="true"
  * @generated

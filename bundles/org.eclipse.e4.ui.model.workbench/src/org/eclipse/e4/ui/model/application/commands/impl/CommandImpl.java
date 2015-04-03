@@ -36,6 +36,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getCommandName <em>Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getDescription <em>Description</em>}</li>
@@ -44,7 +45,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedCommandName <em>Localized Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

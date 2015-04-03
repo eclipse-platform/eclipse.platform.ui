@@ -30,10 +30,10 @@ import java.util.List;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MBindings#getBindingContexts <em>Binding Contexts</em>}</li>
  * </ul>
- * </p>
  *
  * @model interface="true" abstract="true"
  * @generated
@@ -47,8 +47,8 @@ public interface MBindings {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

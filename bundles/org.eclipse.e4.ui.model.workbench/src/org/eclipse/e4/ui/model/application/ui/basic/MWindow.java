@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getMainMenu <em>Main Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getX <em>X</em>}</li>
@@ -45,7 +46,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getWindows <em>Windows</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#getSharedElements <em>Shared Elements</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

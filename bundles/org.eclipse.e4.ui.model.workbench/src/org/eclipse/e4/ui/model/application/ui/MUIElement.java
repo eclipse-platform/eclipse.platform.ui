@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getRenderer <em>Renderer</em>}</li>
@@ -43,7 +44,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getAccessibilityPhrase <em>Accessibility Phrase</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getLocalizedAccessibilityPhrase <em>Localized Accessibility Phrase</em>}</li>
  * </ul>
- * </p>
  *
  * @model abstract="true"
  * @generated
@@ -140,8 +140,8 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -205,7 +205,7 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <p>
 	 * This field is a reference to this element's container. Note that while this field is valid
 	 * for most UIElements there are a few (such as TrimBars and the Windows associated
-	 * with top level windows and perspectives) where this will return 'null'
+	 * with top level windows and perspectives) where this will return 'null' 
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parent</em>' container reference.
@@ -292,8 +292,8 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

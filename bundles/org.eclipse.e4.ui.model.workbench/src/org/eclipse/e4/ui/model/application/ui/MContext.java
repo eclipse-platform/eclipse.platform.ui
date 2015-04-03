@@ -32,12 +32,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MContext#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MContext#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MContext#getProperties <em>Properties</em>}</li>
  * </ul>
- * </p>
  *
  * @model interface="true" abstract="true"
  * @generated
@@ -49,7 +49,7 @@ public interface MContext {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This attribute is a reference to the IEclipseContext for this UI element. It will be
+	 * This attribute is a reference to the IEclipseContext for this UI element. It will be 
 	 * non-null only when the element is rendered.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -78,8 +78,8 @@ public interface MContext {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -98,8 +98,8 @@ public interface MContext {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

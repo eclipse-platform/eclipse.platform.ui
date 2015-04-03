@@ -21,8 +21,8 @@ package org.eclipse.e4.ui.model.fragment;
  * <!-- begin-model-doc -->
  * <p>
  * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in
- * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
+ * Add more detailed documentation by editing this comment in 
+ * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
  * There is a GenModel/documentation node under each type and attribute.
  * </p>
  * @since 1.0
@@ -30,12 +30,12 @@ package org.eclipse.e4.ui.model.fragment;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.MStringModelFragment#getFeaturename <em>Featurename</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.MStringModelFragment#getParentElementId <em>Parent Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.MStringModelFragment#getPositionInList <em>Position In List</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated
@@ -48,8 +48,8 @@ public interface MStringModelFragment extends MModelFragment {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -89,8 +89,8 @@ public interface MStringModelFragment extends MModelFragment {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -119,8 +119,8 @@ public interface MStringModelFragment extends MModelFragment {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

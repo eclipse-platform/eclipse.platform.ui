@@ -29,11 +29,11 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getPositionInParent <em>Position In Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getParentId <em>Parent Id</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

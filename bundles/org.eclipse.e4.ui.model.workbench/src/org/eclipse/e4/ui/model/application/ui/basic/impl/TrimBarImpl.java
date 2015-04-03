@@ -25,10 +25,10 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimBarImpl#getPendingCleanup <em>Pending Cleanup</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

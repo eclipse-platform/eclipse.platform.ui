@@ -27,11 +27,11 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl#getParentId <em>Parent Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl#getPositionInParent <em>Position In Parent</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

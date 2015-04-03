@@ -32,11 +32,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#getRef <em>Ref</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#isCloseable <em>Closeable</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

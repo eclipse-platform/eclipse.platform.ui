@@ -27,11 +27,11 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MParameter#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MParameter#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

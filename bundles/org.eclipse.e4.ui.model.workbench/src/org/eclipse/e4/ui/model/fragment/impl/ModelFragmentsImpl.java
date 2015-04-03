@@ -29,11 +29,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.ModelFragmentsImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.ModelFragmentsImpl#getFragments <em>Fragments</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

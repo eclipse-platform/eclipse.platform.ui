@@ -32,11 +32,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

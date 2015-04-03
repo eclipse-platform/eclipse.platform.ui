@@ -27,10 +27,10 @@ package org.eclipse.e4.ui.model.application.commands;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MKeySequence#getKeySequence <em>Key Sequence</em>}</li>
  * </ul>
- * </p>
  *
  * @model interface="true" abstract="true"
  * @generated

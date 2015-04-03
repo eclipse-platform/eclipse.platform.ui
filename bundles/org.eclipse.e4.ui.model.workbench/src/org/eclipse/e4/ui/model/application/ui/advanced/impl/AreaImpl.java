@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getIconURI <em>Icon URI</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalizedLabel <em>Localized Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

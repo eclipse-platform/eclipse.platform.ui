@@ -29,11 +29,11 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MKeyBinding#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MKeyBinding#getParameters <em>Parameters</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated

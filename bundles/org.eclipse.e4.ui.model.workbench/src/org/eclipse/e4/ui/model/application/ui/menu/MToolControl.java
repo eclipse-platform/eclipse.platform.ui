@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This is a concrete class representing a widget hosted directly in the trim
+ * This is a concrete class representing a widget hosted directly in the trim 
  * or as an item in a Toolbar.
  * </p>
  * @since 1.0

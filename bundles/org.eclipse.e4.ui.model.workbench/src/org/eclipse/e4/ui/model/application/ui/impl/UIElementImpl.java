@@ -33,6 +33,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getRenderer <em>Renderer</em>}</li>
@@ -46,7 +47,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getAccessibilityPhrase <em>Accessibility Phrase</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getLocalizedAccessibilityPhrase <em>Localized Accessibility Phrase</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

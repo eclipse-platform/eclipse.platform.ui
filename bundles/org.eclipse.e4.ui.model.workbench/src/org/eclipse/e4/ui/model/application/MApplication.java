@@ -53,13 +53,13 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getAddons <em>Addons</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getCategories <em>Categories</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getDialogs <em>Dialogs</em>}</li>
  * </ul>
- * </p>
  *
  * @model
  * @generated
@@ -76,7 +76,7 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * represent some logical operation. The actual implementation of the operation is
 	 * determined by the MHandler chosen by the system based on the current execution
 	 * context.
-	 *
+	 * 
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Commands</em>' containment reference list.
@@ -110,8 +110,8 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

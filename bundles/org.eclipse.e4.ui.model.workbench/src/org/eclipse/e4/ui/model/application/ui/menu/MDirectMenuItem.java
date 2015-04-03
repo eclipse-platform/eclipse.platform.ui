@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.model.application.MContribution;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This is the concrete class use to represent a menu item that is directly
+ * This is the concrete class use to represent a menu item that is directly 
  * invoked when selected.  The supplied contribution is asked to execute
  * when selected.
  * </p>

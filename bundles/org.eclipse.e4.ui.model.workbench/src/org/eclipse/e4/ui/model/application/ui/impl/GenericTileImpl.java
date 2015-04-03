@@ -22,10 +22,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl#isHorizontal <em>Horizontal</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -25,11 +25,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl#getRef <em>Ref</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl#isCloseable <em>Closeable</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

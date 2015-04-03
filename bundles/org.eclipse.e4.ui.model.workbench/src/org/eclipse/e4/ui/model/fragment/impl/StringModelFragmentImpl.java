@@ -36,12 +36,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl#getFeaturename <em>Featurename</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl#getParentElementId <em>Parent Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl#getPositionInList <em>Position In List</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

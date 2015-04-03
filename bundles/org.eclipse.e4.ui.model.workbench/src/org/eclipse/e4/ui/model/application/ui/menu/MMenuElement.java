@@ -28,10 +28,10 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#getMnemonics <em>Mnemonics</em>}</li>
  * </ul>
- * </p>
  *
  * @model abstract="true"
  * @generated

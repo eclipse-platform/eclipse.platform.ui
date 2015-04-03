@@ -25,10 +25,10 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}</li>
  * </ul>
- * </p>
  *
  * @model abstract="true"
  * @generated
