@@ -14,6 +14,7 @@
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.ui,master,tests/org.eclipse.e4.core.commands.tests"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.runtime,master,bundles/org.eclipse.e4.core.contexts"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.runtime,master,bundles/org.eclipse.e4.core.di"/>
+<project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.runtime,master,bundles/org.eclipse.e4.core.di.annotations"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.runtime,master,bundles/org.eclipse.e4.core.di.extensions"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.runtime,master,bundles/org.eclipse.e4.core.services"/>
 <project reference="1.0,ssh://git.eclipse.org:29418/platform/eclipse.platform.runtime,master,tests/org.eclipse.e4.core.tests"/>
