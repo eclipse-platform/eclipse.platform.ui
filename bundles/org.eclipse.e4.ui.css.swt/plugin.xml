@@ -478,9 +478,19 @@
                name="swt-background-mode">
          </property-name>
       </handler>
-      
-      
-      <!-- Theme element definitions -->            
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.TreeElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTreeArrowsSWTHandler">
+         <property-name
+               name="swt-tree-arrows-color">
+         </property-name>
+         <property-name
+               name="swt-tree-arrows-mode"> <!--triangle/square -->
+         </property-name>
+      </handler>
+
+
+      <!-- Theme element definitions -->
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.definition.ThemeDefinitionElement"
             handler="org.eclipse.e4.ui.css.swt.properties.definition.CSSPropertyThemeElementDefinitionHandler">

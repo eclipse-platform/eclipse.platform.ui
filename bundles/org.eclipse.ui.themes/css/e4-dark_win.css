@@ -9,8 +9,14 @@
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 431845
+ *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 434201
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_basestyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_globalstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
+
+Tree {
+	swt-tree-arrows-color:#cccccc;
+	swt-tree-arrows-mode: triangle;  /* triangle or square */
+}
