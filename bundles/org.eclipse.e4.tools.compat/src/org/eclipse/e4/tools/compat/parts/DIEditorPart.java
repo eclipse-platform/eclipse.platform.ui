@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,7 @@ import org.eclipse.ui.part.EditorPart;
  *
  * @param <C>
  */
-public abstract class DIEditorPart<C> extends EditorPart implements
-		IDirtyProviderService {
+public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProviderService {
 	private IEclipseContext context;
 	private C component;
 	private Class<C> clazz;
@@ -83,8 +82,7 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 	}
 
 	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
 
@@ -157,10 +155,8 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 
 	@Override
 	public void dispose() {
-		PartHelper.disposeContextIfE3((IEclipseContext) getSite().getService(
-				IEclipseContext.class), context);
+		PartHelper.disposeContextIfE3(getSite().getService(IEclipseContext.class), context);
 		super.dispose();
 	}
-
 
 }

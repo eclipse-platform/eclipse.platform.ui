@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class PartHelper {
 
 	public static IEclipseContext createPartContext(WorkbenchPart part) throws PartInitException {
 		final IWorkbenchPartSite site = part.getSite();
-		final IEclipseContext parentContext = (IEclipseContext) site.getService(IEclipseContext.class);
+		final IEclipseContext parentContext = site.getService(IEclipseContext.class);
 
 		// Check if running in 4.x
 		if (parentContext.get(ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE) != null) {

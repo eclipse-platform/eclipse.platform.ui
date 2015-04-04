@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 EclipseSource München GmbH and others.
+ * Copyright (c) 2012, 2015 EclipseSource München GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * This is a preliminary implementation of a Handler wrapper. It does not support @CanExecute yet
- * 
+ *
  * @author Jonas
  *
  * @param <C>
@@ -41,14 +41,12 @@ public class DIHandler<C> extends AbstractHandler {
 	}
 
 	private static IEclipseContext getParentContext() {
-		return (IEclipseContext) PlatformUI.getWorkbench().getService(
-			IEclipseContext.class);
+		return PlatformUI.getWorkbench().getService(IEclipseContext.class);
 	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		return ContextInjectionFactory.invoke(component, Execute.class,
-			getActiveContext());
+		return ContextInjectionFactory.invoke(component, Execute.class, getActiveContext());
 	}
 
 }

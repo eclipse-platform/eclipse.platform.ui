@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,17 +45,17 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 public class ContextServiceFactory extends AbstractServiceFactory {
 
 	@Override
-	public Object create(@SuppressWarnings("rawtypes") Class serviceInterface, IServiceLocator parentLocator,
+	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 		IServiceLocator locator) {
 		if (!IEclipseContext.class.equals(serviceInterface)) {
 			return null;
 		}
 
-		final IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
-			.getService(IWorkbenchLocationService.class);
+		final IWorkbenchLocationService wls = locator.getService(IWorkbenchLocationService.class);
 		final IWorkbenchWindow window = wls.getWorkbenchWindow();
 		final IWorkbenchPartSite site = wls.getPartSite();
 
+		@SuppressWarnings("unchecked")
 		final Object o = parentLocator.getService(serviceInterface);
 
 		// This happens when we run in plain 3.x
