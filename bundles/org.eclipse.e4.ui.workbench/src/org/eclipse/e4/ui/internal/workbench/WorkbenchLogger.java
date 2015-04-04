@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public final class WorkbenchLogger extends Logger {
 	 */
 	private static FrameworkLogEntry getLog(IStatus status) {
 		Throwable t = status.getException();
-		ArrayList childlist = new ArrayList();
+		ArrayList<FrameworkLogEntry> childlist = new ArrayList<>();
 
 		int stackCode = t instanceof CoreException ? 1 : 0;
 		// ensure a substatus inside a CoreException is properly logged
@@ -78,8 +78,8 @@ public final class WorkbenchLogger extends Logger {
 			}
 		}
 
-		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null
-				: childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+		FrameworkLogEntry[] children = childlist.size() == 0 ? null
+				: childlist.toArray(new FrameworkLogEntry[childlist.size()]);
 
 		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(),
 				status.getMessage(), stackCode, t, children);

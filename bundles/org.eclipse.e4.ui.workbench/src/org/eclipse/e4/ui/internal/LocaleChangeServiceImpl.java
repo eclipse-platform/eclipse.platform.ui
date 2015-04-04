@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Dirk Fauth and others.
+ * Copyright (c) 2013, 2015 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 	 * @param children
 	 *            The list of {@link MUIElement}s that should be checked for Locale updates.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	protected void updateLocalization(List<? extends MUIElement> children) {
 		for (MUIElement element : children) {
 			if (element instanceof MElementContainer) {

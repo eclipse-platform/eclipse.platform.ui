@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,8 @@ public class EMFDeltaEntrySet extends ModelDelta {
 
 	@Override
 	public IStatus apply() {
-		EMap map = (EMap) ((EObject) getObject()).eGet(feature);
+		@SuppressWarnings("unchecked")
+		EMap<String, String> map = (EMap<String, String>) ((EObject) getObject()).eGet(feature);
 		map.put(key, value);
 		return Status.OK_STATUS;
 	}

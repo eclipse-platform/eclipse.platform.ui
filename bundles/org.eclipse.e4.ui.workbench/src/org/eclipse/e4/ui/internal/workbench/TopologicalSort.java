@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Manumitting Technologies Inc and others.
+ * Copyright (c) 2015 Manumitting Technologies Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public abstract class TopologicalSort<T, ID> {
 	 *            the objects to be sorted
 	 * @return the objects in a topologically-sorted order
 	 */
-	public T[] sort(T... objects) {
+	public T[] sort(T[] objects) {
 		if (objects.length <= 1) {
 			return objects;
 		}
@@ -178,7 +178,7 @@ public abstract class TopologicalSort<T, ID> {
 	/**
 	 * @param objects
 	 */
-	private void addAll(T... objects) {
+	private void addAll(T[] objects) {
 		// first build up the list of object ids actually being considered
 		for (T o : objects) {
 			ID id = getId(o);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,7 +148,9 @@ public class ModelServiceImpl implements EModelService {
 		boolean classMatch = clazz == null ? true : clazz.isInstance(searchRoot);
 		if (classMatch && matcher.select(searchRoot)) {
 			if (!elements.contains(searchRoot)) {
-				elements.add((T) searchRoot);
+				@SuppressWarnings("unchecked")
+				T element = (T) searchRoot;
+				elements.add(element);
 			}
 		}
 		if (searchRoot instanceof MApplication && (searchFlags == ANYWHERE)) {
@@ -196,8 +198,8 @@ public class ModelServiceImpl implements EModelService {
 			if (searchRoot instanceof MPerspectiveStack) {
 				if ((searchFlags & IN_ANY_PERSPECTIVE) != 0) {
 					// Search *all* the perspectives
-					MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
-					List<MUIElement> children = container.getChildren();
+					MElementContainer<? extends MUIElement> container = (MPerspectiveStack) searchRoot;
+					List<? extends MUIElement> children = container.getChildren();
 					for (MUIElement child : children) {
 						findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 					}
@@ -216,6 +218,7 @@ public class ModelServiceImpl implements EModelService {
 					}
 				}
 			} else {
+				@SuppressWarnings("unchecked")
 				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
 				List<MUIElement> children = container.getChildren();
 				for (MUIElement child : children) {
@@ -338,6 +341,7 @@ public class ModelServiceImpl implements EModelService {
 			return 0;
 		}
 
+		@SuppressWarnings("unchecked")
 		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
 		int count = 0;
 		List<MUIElement> kids = container.getChildren();
@@ -485,7 +489,9 @@ public class ModelServiceImpl implements EModelService {
 				element.setToBeRendered(true);
 			}
 
-			((MElementContainer<MUIElement>) parent).setSelectedElement(element);
+			@SuppressWarnings("unchecked")
+			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) parent;
+			container.setSelectedElement(element);
 			if (window != parent) {
 				showElementInWindow(window, parent);
 			}
