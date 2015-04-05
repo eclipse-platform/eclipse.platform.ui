@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,39 +41,23 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 	/**
 	 * key=selector type, value = CSSStyleDeclaration
 	 */
-	private Map styleDeclarationMap = null;
+	private Map<Integer, List<?>> styleDeclarationMap;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheets.DocumentStyle#getStyleSheets()
-	 */
 	@Override
 	public StyleSheetList getStyleSheets() {
 		return styleSheetList;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.DocumentCSS#getOverrideStyle(org.w3c.dom.Element, java.lang.String)
-	 */
 	@Override
 	public CSSStyleDeclaration getOverrideStyle(Element element, String s) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.e4.css.core.dom.ExtendedDocumentCSS#addStyleSheet(org.w3c.dom.stylesheets.StyleSheet)
-	 */
 	@Override
 	public void addStyleSheet(StyleSheet styleSheet) {
 		styleSheetList.addStyleSheet(styleSheet);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.e4.css.core.dom.ExtendedDocumentCSS#removeAllStyleSheets()
-	 */
 	@Override
 	public void removeAllStyleSheets() {
 		styleSheetList.removeAllStyleSheets();
@@ -81,13 +65,13 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 	}
 
 	@Override
-	public List queryConditionSelector(int conditionType) {
+	public List<?> queryConditionSelector(int conditionType) {
 		return querySelector(Selector.SAC_CONDITIONAL_SELECTOR, conditionType);
 	}
 
 	@Override
-	public List querySelector(int selectorType, int conditionType) {
-		List list = getCSSStyleDeclarationList(selectorType, conditionType);
+	public List<?> querySelector(int selectorType, int conditionType) {
+		List<?> list = getCSSStyleDeclarationList(selectorType, conditionType);
 		if (list != null) {
 			return list;
 		}
@@ -133,14 +117,12 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 		return list;
 	}
 
-	protected List getCSSStyleDeclarationList(int selectorType,
-			int conditionType) {
+	protected List<?> getCSSStyleDeclarationList(int selectorType, int conditionType) {
 		Integer key = getKey(selectorType, conditionType);
-		return (List) getStyleDeclarationMap().get(key);
+		return getStyleDeclarationMap().get(key);
 	}
 
-	protected void setCSSStyleDeclarationList(List list, int selectorType,
-			int conditionType) {
+	protected void setCSSStyleDeclarationList(List<?> list, int selectorType, int conditionType) {
 		Integer key = getKey(selectorType, conditionType);
 		getStyleDeclarationMap().put(key, list);
 	}
@@ -162,9 +144,9 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 		return OTHER_SAC_SELECTOR;
 	}
 
-	protected Map getStyleDeclarationMap() {
+	protected Map<Integer, List<?>> getStyleDeclarationMap() {
 		if (styleDeclarationMap == null) {
-			styleDeclarationMap = new HashMap();
+			styleDeclarationMap = new HashMap<>();
 		}
 		return styleDeclarationMap;
 	}

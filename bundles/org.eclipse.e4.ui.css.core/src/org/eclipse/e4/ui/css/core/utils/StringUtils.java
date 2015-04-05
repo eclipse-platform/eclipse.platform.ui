@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,11 +60,11 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String[] split(String line, String delim) {
-		List list = new ArrayList();
-		for (StringTokenizer t = new StringTokenizer(line, delim); t
-				.hasMoreTokens(); list.add(t.nextToken()))
+		List<String> list = new ArrayList<>();
+		for (StringTokenizer t = new StringTokenizer(line, delim); t.hasMoreTokens(); list.add(t.nextToken())) {
 			;
-		return (String[]) list.toArray(new String[list.size()]);
+		}
+		return list.toArray(new String[list.size()]);
 	}
 
 	/**
@@ -183,8 +183,8 @@ public class StringUtils {
 		if (delimiters == null) {
 			return Character.isWhitespace(ch);
 		}
-		for (int i = 0, isize = delimiters.length; i < isize; i++) {
-			if (ch == delimiters[i]) {
+		for (char delimiter : delimiters) {
+			if (ch == delimiter) {
 				return true;
 			}
 		}

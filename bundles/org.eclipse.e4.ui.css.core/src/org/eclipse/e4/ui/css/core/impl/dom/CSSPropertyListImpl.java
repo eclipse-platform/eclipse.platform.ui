@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,24 +22,16 @@ import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
  */
 public class CSSPropertyListImpl implements CSSPropertyList {
 
-	private List properties = null;
+	private List<CSSProperty> properties;
 
 	public CSSPropertyListImpl() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.e4.css.core.dom.CSSPropertyList#getLength()
-	 */
 	@Override
 	public int getLength() {
 		return (properties != null) ? properties.size() : 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.e4.css.core.dom.CSSPropertyList#item(int)
-	 */
 	@Override
 	public CSSProperty item(int index) {
 		return (properties != null) ? (CSSProperty) properties.get(index)
@@ -51,7 +43,7 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 	 */
 	public void add(CSSProperty property) {
 		if (properties == null) {
-			properties = new ArrayList();
+			properties = new ArrayList<>();
 		}
 		properties.add(property);
 	}
@@ -63,7 +55,7 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 	 */
 	public void insert(CSSProperty property, int index) {
 		if (properties == null) {
-			properties = new ArrayList();
+			properties = new ArrayList<>();
 		}
 		properties.add(index, property);
 	}
@@ -74,15 +66,11 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 	 */
 	public void delete(int index) {
 		if (properties == null) {
-			properties = new ArrayList();
+			properties = new ArrayList<>();
 		}
 		properties.remove(index);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

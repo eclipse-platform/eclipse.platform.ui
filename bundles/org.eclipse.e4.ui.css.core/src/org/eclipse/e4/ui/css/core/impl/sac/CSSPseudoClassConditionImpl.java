@@ -21,7 +21,6 @@
 package org.eclipse.e4.ui.css.core.impl.sac;
 
 import java.util.Set;
-
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.w3c.dom.Element;
 
@@ -109,15 +108,18 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 */
 	@Override
 	public boolean match(Element e, String pseudoE) {
-		if (pseudoE != null && !pseudoE.equals(getValue()))
+		if (pseudoE != null && !pseudoE.equals(getValue())) {
 			// pseudo instance is filled, it is not valid.
 			return false;
-		if (!(e instanceof CSSStylableElement))
+		}
+		if (!(e instanceof CSSStylableElement)) {
 			return false;
+		}
 		CSSStylableElement element = (CSSStylableElement) e;
 		boolean isPseudoInstanceOf = element.isPseudoInstanceOf(getValue());
-		if (!isPseudoInstanceOf)
+		if (!isPseudoInstanceOf) {
 			return false;
+		}
 		if (pseudoE == null) {
 			// pseudo element is not filled.
 			// test if this CSSPseudoClassCondition is NOT a static pseudo
@@ -131,7 +133,7 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 	 * Fills the given set with the attribute names found in this selector.
 	 */
 	@Override
-	public void fillAttributeSet(Set attrSet) {
+	public void fillAttributeSet(Set<String> attrSet) {
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ package org.eclipse.e4.ui.css.swt.resources;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.e4.ui.css.core.resources.AbstractResourcesRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -139,13 +139,12 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 		return false;
 	}
 
-	public List<Object> removeResourcesByKeyTypeAndType(Class<?> keyType,
-			Class<?>... types) {
+	public List<Object> removeResourcesByKeyTypeAndType(Class<?> keyType, Class<?>... types) {
 		List<Object> removedResources = new ArrayList<Object>();
 		for (Class<?> cls : types) {
-			Iterator<Map.Entry<?, ?>> iter = getCacheByType(cls).entrySet().iterator();
+			Iterator<Entry<Object, Object>> iter = getCacheByType(cls).entrySet().iterator();
 			while (iter.hasNext()) {
-				Map.Entry<?, ?> entry = iter.next();
+				Entry<Object, Object> entry = iter.next();
 				if (keyType.isAssignableFrom(entry.getKey().getClass())) {
 					removedResources.add(entry.getValue());
 					iter.remove();

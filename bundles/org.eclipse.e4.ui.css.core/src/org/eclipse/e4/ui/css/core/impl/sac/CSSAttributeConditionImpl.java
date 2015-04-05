@@ -134,7 +134,7 @@ public class CSSAttributeConditionImpl extends AbstractAttributeCondition {
 	 * Fills the given set with the attribute names found in this selector.
 	 */
 	@Override
-	public void fillAttributeSet(Set attrSet) {
+	public void fillAttributeSet(Set<String> attrSet) {
 		attrSet.add(localName);
 	}
 

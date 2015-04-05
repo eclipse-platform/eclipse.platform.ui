@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,10 @@ import org.w3c.dom.stylesheets.MediaList;
 
 public class MediaListImpl implements MediaList {
 
-	private List mediaList = null;
+	private List<String> mediaList;
 
 	public MediaListImpl(SACMediaList media) {
-		mediaList = new ArrayList();
+		mediaList = new ArrayList<>();
 		for (int i = 0; i < media.getLength(); i++) {
 			mediaList.add(media.item(i));
 		}
@@ -32,7 +32,9 @@ public class MediaListImpl implements MediaList {
 
 	@Override
 	public void appendMedium(String newMedium) throws DOMException {
-		if (mediaList.contains(newMedium)) mediaList.remove(newMedium);
+		if (mediaList.contains(newMedium)) {
+			mediaList.remove(newMedium);
+		}
 		mediaList.add(newMedium);
 	}
 
@@ -62,15 +64,19 @@ public class MediaListImpl implements MediaList {
 
 	@Override
 	public String item(int index) {
-		if (index > mediaList.size()) return null;
-		return (String) mediaList.get(index);
+		if (index > mediaList.size()) {
+			return null;
+		}
+		return mediaList.get(index);
 	}
 
 	@Override
 	public void setMediaText(String mediaText) throws DOMException {
 		while (mediaText.length() > 0) {
 			int next = mediaText.indexOf(',');
-			if (next == -1) next = mediaText.length();
+			if (next == -1) {
+				next = mediaText.length();
+			}
 			String media = mediaText.substring(0, next);
 			appendMedium(media.trim());
 			if (next + 1 < mediaText.length()) {

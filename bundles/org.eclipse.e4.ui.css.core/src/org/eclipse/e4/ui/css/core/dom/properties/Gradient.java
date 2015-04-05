@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.e4.ui.css.core.dom.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.w3c.dom.css.CSSPrimitiveValue;
 
 /**
@@ -23,11 +22,11 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  */
 public class Gradient {
 
-	private final List rgbs = new ArrayList();
-	private final List percents = new ArrayList();
+	private final List<Object> rgbs = new ArrayList<>();
+	private final List<Integer> percents = new ArrayList<>();
 
 	//TODO see bug #278077
-	private final List values = new ArrayList();
+	private final List<CSSPrimitiveValue> values = new ArrayList<>();
 
 	private boolean isLinear = true;
 
@@ -61,15 +60,15 @@ public class Gradient {
 		this.vertical = vertical;
 	}
 
-	public List getRGBs() {
+	public List<Object> getRGBs() {
 		return rgbs;
 	}
 
-	public List getValues() {
+	public List<CSSPrimitiveValue> getValues() {
 		return values;
 	}
 
-	public List getPercents() {
+	public List<Integer> getPercents() {
 		return percents;
 	}
 

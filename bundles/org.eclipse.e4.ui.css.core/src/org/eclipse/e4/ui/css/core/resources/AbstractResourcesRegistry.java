@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.e4.ui.css.core.resources;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -26,48 +26,36 @@ import java.util.Set;
  */
 public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 
-	private Map allResourcesMap = null;
+	private Map<Object, Map<Object, Object>> allResourcesMap;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#getResource(java.lang.Object,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public Object getResource(Object type, Object key) {
 		if (allResourcesMap == null) {
 			return null;
 		}
-		Map resourcesMap = (Map) allResourcesMap.get(type);
+		Map<Object, Object> resourcesMap = allResourcesMap.get(type);
 		if (resourcesMap == null) {
 			return null;
 		}
 		return resourcesMap.get(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#registerResource(java.lang.Object,
-	 *      java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void registerResource(Object type, Object key, Object resource) {
 		if (allResourcesMap == null) {
-			allResourcesMap = new HashMap();
+			allResourcesMap = new HashMap<>();
 		}
-		Map resourcesMap = (Map) allResourcesMap.get(type);
+		Map<Object, Object> resourcesMap = allResourcesMap.get(type);
 		if (resourcesMap == null) {
-			resourcesMap = new HashMap();
+			resourcesMap = new HashMap<>();
 			allResourcesMap.put(type, resourcesMap);
 		}
 		resourcesMap.put(key, resource);
 	}
 
-	protected Map getCacheByType(Object type) {
+	protected Map<Object, Object> getCacheByType(Object type) {
 		if (allResourcesMap != null) {
-			Map resourcesMap = (Map) allResourcesMap.get(type);
+			Map<Object, Object> resourcesMap = allResourcesMap.get(type);
 			if (resourcesMap != null) {
 				return resourcesMap;
 			}
@@ -75,18 +63,12 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 		return Collections.EMPTY_MAP;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#unregisterResource(java.lang.Object,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public void unregisterResource(Object type, Object key) {
 		if (allResourcesMap == null) {
 			return;
 		}
-		Map resourcesMap = (Map) allResourcesMap.get(type);
+		Map<Object, Object> resourcesMap = allResourcesMap.get(type);
 		if (resourcesMap == null) {
 			return;
 		}
@@ -99,7 +81,7 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 	public void unregisterResource(Object resource) {
 		Object type = getResourceType(resource);
 		if (type != null) {
-			Map resourcesMap = (Map) allResourcesMap.get(type);
+			Map<Object, Object> resourcesMap = allResourcesMap.get(type);
 			if (resourcesMap != null) {
 				resourcesMap.remove(resource);
 			}
@@ -110,33 +92,23 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 		return resource.getClass();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.core.css.resources.IResourcesRegistry#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (allResourcesMap == null) {
 			return;
 		}
 		// Loop for all resources stored into cache
-		Set allResources = allResourcesMap.entrySet();
-		for (Iterator iterator = allResources.iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
+		Set<Entry<Object, Map<Object, Object>>> allResources = allResourcesMap.entrySet();
+		for (Entry<Object, Map<Object, Object>> entry : allResources) {
 			Object type = entry.getKey();
-			Map resourcesMap = (Map) entry.getValue();
-			Set resources = resourcesMap.entrySet();
-			for (Iterator iterator2 = resources.iterator(); iterator2.hasNext();) {
-				Map.Entry entry2 = (Map.Entry) iterator2.next();
+			Set<Entry<Object, Object>> resources = entry.getValue().entrySet();
+			for (Entry<Object, Object> entry2 : resources) {
 				// Dispose the current resource.
-				disposeResource(type, entry2.getKey(), entry2
-						.getValue());
+				disposeResource(type, entry2.getKey(), entry2.getValue());
 			}
 		}
 		allResourcesMap = null;
 	}
 
-	public abstract void disposeResource(Object type, Object key,
-			Object resource);
+	public abstract void disposeResource(Object type, Object key, Object resource);
 }

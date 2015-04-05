@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,9 @@ public abstract class CSSEngineImpl extends AbstractCSSEngine {
 	public static final ConditionFactory CONDITIONFACTORY_INSTANCE = new CSSConditionFactoryImpl(
 			null, "class", null, "id");
 
-	private CSSPropertyHandlerSimpleProviderImpl handlerProvider = null;
+	private CSSPropertyHandlerSimpleProviderImpl handlerProvider;
 
-	private CSSPropertyHandlerLazyProviderImpl lazyHandlerProvider = null;
+	private CSSPropertyHandlerLazyProviderImpl lazyHandlerProvider;
 
 	public CSSEngineImpl() {
 		super();
@@ -60,7 +60,7 @@ public abstract class CSSEngineImpl extends AbstractCSSEngine {
 		return parser;
 	}
 
-	public void registerCSSPropertyHandler(Class cl, ICSSPropertyHandler handler) {
+	public void registerCSSPropertyHandler(Class<?> cl, ICSSPropertyHandler handler) {
 		initHandlerProviderIfNeed();
 		handlerProvider.registerCSSPropertyHandler(cl, handler);
 	}
@@ -72,8 +72,7 @@ public abstract class CSSEngineImpl extends AbstractCSSEngine {
 		}
 	}
 
-	public void registerCSSProperty(String propertyName,
-			Class propertyHandlerClass) {
+	public void registerCSSProperty(String propertyName, Class<? extends ICSSPropertyHandler> propertyHandlerClass) {
 		initHandlerProviderIfNeed();
 		handlerProvider.registerCSSProperty(propertyName, propertyHandlerClass);
 	}
