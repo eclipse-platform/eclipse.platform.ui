@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class ProviderInjectionTest extends TestCase {
 		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(TestData.class);
 
-		TestConstructorClass userObject = (TestConstructorClass) ContextInjectionFactory.make(TestConstructorClass.class, context);
+		TestConstructorClass userObject = ContextInjectionFactory.make(TestConstructorClass.class, context);
 
 		assertNotNull(userObject);
 		assertNotNull(userObject.provider);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.osgi.framework.FrameworkUtil;
 public class EclipseContextTest extends TestCase {
 
 	private static class ComputedValueBar extends ContextFunction {
+		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			return context.get("bar");
 		}
@@ -33,6 +34,7 @@ public class EclipseContextTest extends TestCase {
 
 	private int runCounter;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		parentContext = EclipseContextFactory.create(getName() + "-parent");
@@ -125,6 +127,7 @@ public class EclipseContextTest extends TestCase {
 	public void testRunAndTrack() {
 		final Object[] value = new Object[1];
 		context.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				runCounter++;
 				value[0] = context.get("foo");
@@ -140,6 +143,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(3, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return context.get("bar");
 			}
@@ -166,6 +170,7 @@ public class EclipseContextTest extends TestCase {
 	public void testRegisterRunAndTrackTwice() {
 		final Object[] value = new Object[1];
 		RunAndTrack runnable = new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				runCounter++;
 				value[0] = context.get("foo");
@@ -191,6 +196,7 @@ public class EclipseContextTest extends TestCase {
 		parent.set("parentValue", "x");
 		child.set("childValue", "x");
 		RunAndTrack runnable = new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				runCounter++;
 				if (runCounter < 2) {

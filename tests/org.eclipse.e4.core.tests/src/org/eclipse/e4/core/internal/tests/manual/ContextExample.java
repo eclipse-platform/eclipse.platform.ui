@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,14 @@ public class ContextExample {
 			this.color = color;
 		}
 
+		@Override
 		public Color getColor() {
 			return color;
 		}
 	}
 
 	static class ComplementaryColor extends ContextFunction {
+		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			switch ((Color) context.get("color")) {
 			case RED:
@@ -82,6 +84,7 @@ public class ContextExample {
 	}
 
 	static class ResourceSelection extends ContextFunction {
+		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			return null;
 		}
@@ -139,11 +142,13 @@ public class ContextExample {
 		context.set("price", 19.99);
 		context.set("tax", 0.05);
 		context.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				total = (Double) context.get("price") * (1.0 + (Double) context.get("tax"));
 				return true;
 			}
 
+			@Override
 			public String toString() {
 				return "calculator";
 			}

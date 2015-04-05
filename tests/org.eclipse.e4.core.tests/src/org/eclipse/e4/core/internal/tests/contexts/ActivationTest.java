@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 public class ActivationTest extends TestCase {
 
 	static public class TestRAT extends ContextFunction {
+		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			IEclipseContext activeContext = context.getActiveLeaf();
 			// returns name of the context
@@ -182,6 +183,7 @@ public class ActivationTest extends TestCase {
 		final String[] result = new String[1];
 
 		child1.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				result[0] = (String) context.getActive("var");
 				return true;
@@ -222,6 +224,7 @@ public class ActivationTest extends TestCase {
 		called[0] = 0;
 
 		child1.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				result[0] = (String) context.getActive("var");
 				called[0]++;
@@ -277,6 +280,7 @@ public class ActivationTest extends TestCase {
 		called[0] = 0;
 
 		child1.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				result[0] = (String) context.getActive("var");
 				called[0]++;

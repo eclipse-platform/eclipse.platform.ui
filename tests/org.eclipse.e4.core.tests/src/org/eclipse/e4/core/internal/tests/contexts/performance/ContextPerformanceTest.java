@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class ContextPerformanceTest extends TestCase {
 	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		parentContext = EclipseContextFactory.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
@@ -74,6 +75,7 @@ public class ContextPerformanceTest extends TestCase {
 
 	public void testLookup() {
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				context.get("something");
 			}
@@ -82,11 +84,13 @@ public class ContextPerformanceTest extends TestCase {
 
 	public void testLookupContextFunction() {
 		context.set("somefunction", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return "result";
 			}
 		});
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				context.get("somefunction");
 			}
@@ -95,6 +99,7 @@ public class ContextPerformanceTest extends TestCase {
 
 	public void testSetContextFunction() {
 		context.set("somefunction", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return context.get("something");
 			}
@@ -102,6 +107,7 @@ public class ContextPerformanceTest extends TestCase {
 		new PerformanceTestRunner() {
 			int i = 0;
 
+			@Override
 			protected void test() {
 				context.set("something", "value-" + i++);
 			}
@@ -114,6 +120,7 @@ public class ContextPerformanceTest extends TestCase {
 	 */
 	public void testSetValueRunAndTrack() {
 		context.set("somefunction", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				// make sure this function has a large number of dependencies
 				for (int i = 0; i < 1000; i++) {
@@ -123,6 +130,7 @@ public class ContextPerformanceTest extends TestCase {
 			}
 		});
 		context.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				context.get("somefunction");
 				return true;
@@ -131,6 +139,7 @@ public class ContextPerformanceTest extends TestCase {
 		new PerformanceTestRunner() {
 			int i = 0;
 
+			@Override
 			protected void test() {
 				context.set("something", "value-" + i++);
 			}

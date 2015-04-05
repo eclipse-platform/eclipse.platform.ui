@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  */
 public class AddContextFunction extends ContextFunction {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.
-	 * eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
-	 */
+	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
 		Integer xInt = (Integer) context.get("x");
 		Integer yInt = (Integer) context.get("y");

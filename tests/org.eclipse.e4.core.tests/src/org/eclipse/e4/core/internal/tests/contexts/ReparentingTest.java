@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,6 +128,7 @@ public class ReparentingTest extends TestCase {
 		final String[] value = new String[1];
 		final IEclipseContext child = EclipseContextFactory.create();
 		child.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				value[0] = (String) child.get("x");
 				return true;
@@ -149,6 +150,7 @@ public class ReparentingTest extends TestCase {
 		final IEclipseContext child = parent.createChild();
 		parent.set("x", "oldParent");
 		child.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				value[0] = (String) child.get("x");
 				return true;
@@ -165,6 +167,7 @@ public class ReparentingTest extends TestCase {
 		final IEclipseContext child = parent.createChild();
 		parent.set("x", "oldParent");
 		child.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				value[0] = (String) child.get("x");
 				return true;
@@ -235,6 +238,7 @@ public class ReparentingTest extends TestCase {
 		newParent.set("x", "2");
 
 		child.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				called[0] = true;
 				context.get("x"); // creates a link
@@ -260,6 +264,7 @@ public class ReparentingTest extends TestCase {
 		testServiceCount[0] = 0;
 		IEclipseContext parentContext = EclipseContextFactory.create("parent");
 		parentContext.set(TestService.class.getName(), new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				testServiceCount[0]++;
 				return ContextInjectionFactory.make(TestService.class, context);

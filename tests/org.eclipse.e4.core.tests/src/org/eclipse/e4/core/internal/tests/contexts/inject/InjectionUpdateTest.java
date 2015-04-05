@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class InjectionUpdateTest extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -68,18 +69,21 @@ public class InjectionUpdateTest extends TestCase {
 		c1.set("base", "abc");
 
 		c21.set("derived1", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				String baseString = (String) context.get("base");
 				return baseString.charAt(0) + "_";
 			}});
 
 		c22.set("derived2", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				String baseString = (String) context.get("base");
 				return "_" + baseString.charAt(baseString.length() - 1);
 			}});
 
 		c1.set("calculated", new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				IEclipseContext context21 = (IEclipseContext) context.get("c21");
 				String derived1 = (String) context21.get("derived1");
@@ -89,7 +93,7 @@ public class InjectionUpdateTest extends TestCase {
 				return derived1 + derived2;
 			}});
 
-		PropagationTest testObject = (PropagationTest) ContextInjectionFactory.make(PropagationTest.class, c1);
+		PropagationTest testObject = ContextInjectionFactory.make(PropagationTest.class, c1);
 		assertNotNull(testObject);
 		assertEquals(1, testObject.called);
 		assertEquals("a__c", testObject.in);
@@ -122,6 +126,7 @@ public class InjectionUpdateTest extends TestCase {
 	public void testNestedUpdatesPostConstruct() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		appContext.set(InjectTarget.class.getName(), new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return ContextInjectionFactory
 						.make(InjectTarget.class, context);
@@ -157,6 +162,7 @@ public class InjectionUpdateTest extends TestCase {
 	public void testNestedUpdatesConstructor() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		appContext.set(InjectTarget2.class.getName(), new ContextFunction() {
+			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				return ContextInjectionFactory.make(InjectTarget2.class,
 						context);

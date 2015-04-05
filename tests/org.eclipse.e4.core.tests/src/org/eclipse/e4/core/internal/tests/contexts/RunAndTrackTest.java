@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class RunAndTrackTest extends TestCase {
 
 	private class ActivePartLookupFunction extends ContextFunction {
 
+		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			IEclipseContext childContext = (IEclipseContext) context.getLocal(ACTIVE_CHILD);
 			if (childContext != null) {
@@ -110,11 +111,7 @@ public class RunAndTrackTest extends TestCase {
 		return contexts;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		for (Iterator<IEclipseContext> i = createdContexts.iterator(); i.hasNext();) {
 			IEclipseContext context = i.next();
@@ -155,12 +152,14 @@ public class RunAndTrackTest extends TestCase {
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
 		windows[0].runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
 				return true;
 			}
 
+			@Override
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
@@ -209,12 +208,14 @@ public class RunAndTrackTest extends TestCase {
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
 		windows[0].runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
 				return true;
 			}
 
+			@Override
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
@@ -294,6 +295,7 @@ public class RunAndTrackTest extends TestCase {
 	void doHiddenValueChangeTest(final String newRootValue) {
 		doHiddenValueChangeTest(new ITestAction() {
 
+			@Override
 			public void execute(IEclipseContext root, String var) {
 				root.set(var, newRootValue);
 
@@ -347,6 +349,7 @@ public class RunAndTrackTest extends TestCase {
 	public void testRemoveHiddenVariable() {
 		doHiddenValueChangeTest(new ITestAction() {
 
+			@Override
 			public void execute(IEclipseContext root, String var) {
 				root.remove(var);;
 
@@ -360,6 +363,7 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testSetContextVarToSameObject() {
 		doSingleContextChangeTest(new ITestAction() {
+			@Override
 			public void execute(IEclipseContext root, String var) {
 				root.set(var, "root");
 			}
@@ -372,6 +376,7 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testSetContextVarToEqualObject() {
 		doSingleContextChangeTest(new ITestAction() {
+			@Override
 			public void execute(IEclipseContext root, String var) {
 				root.set(var, new String("root"));
 			}
@@ -384,6 +389,7 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testSetContextVarToOtherObject() {
 		doSingleContextChangeTest(new ITestAction() {
+			@Override
 			public void execute(IEclipseContext root, String var) {
 				root.set(var, "other");
 			}
@@ -395,6 +401,7 @@ public class RunAndTrackTest extends TestCase {
 	 */
 	public void testRemoveContextVar() {
 		doSingleContextChangeTest(new ITestAction() {
+			@Override
 			public void execute(IEclipseContext root, String var) {
 				root.remove(var);
 			}

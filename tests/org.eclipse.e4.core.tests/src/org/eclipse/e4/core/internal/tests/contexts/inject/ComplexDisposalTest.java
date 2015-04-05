@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class ComplexDisposalTest extends TestCase {
 		parentContext.set("aString", "");
 		IEclipseContext context = parentContext.createChild();
 
-		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
+		Test test = ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
 		context.dispose();

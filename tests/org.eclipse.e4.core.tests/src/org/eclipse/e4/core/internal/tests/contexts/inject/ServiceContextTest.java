@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class ServiceContextTest extends TestCase {
 			this.color = color;
 		}
 
+		@Override
 		public Color getColor() {
 			return color;
 		}
@@ -81,6 +82,7 @@ public class ServiceContextTest extends TestCase {
 	private IEclipseContext context;
 	private final List<ServiceRegistration<?>> registrations = new ArrayList<ServiceRegistration<?>>();
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		//don't use the global shared service context to avoid contamination across tests
@@ -89,6 +91,7 @@ public class ServiceContextTest extends TestCase {
 		registrations.clear();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// Consumers must not dispose OSGi context as it is reused
@@ -237,6 +240,7 @@ public class ServiceContextTest extends TestCase {
 		ensureUnregistered(reg1);
 		final boolean[] done = new boolean[] {false};
 		context.runAndTrack(new RunAndTrack() {
+			@Override
 			public boolean changed(IEclipseContext context) {
 				if (context.get(PrintService.SERVICE_NAME) == null) {
 						child.dispose();

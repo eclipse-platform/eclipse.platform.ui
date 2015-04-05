@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class ParentContextDisposalTest extends TestCase {
 		IEclipseContext child = context.createChild();
 		child.set("o", new Object());
 
-		Target target = (Target) ContextInjectionFactory.make(Target.class, child);
+		Target target = ContextInjectionFactory.make(Target.class, child);
 		assertEquals(1, target.pc);
 
 		context.dispose();

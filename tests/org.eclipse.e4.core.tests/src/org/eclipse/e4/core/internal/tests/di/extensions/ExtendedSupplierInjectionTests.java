@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,13 +72,14 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 
 	private EventAdminHelper helper;
 
+	@Override
 	public void setUp() {
 		InjectionEventTest.ensureEventAdminStarted();
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass())
 				.getBundleContext();
 		IEclipseContext localContext = EclipseContextFactory
 				.getServiceContext(bundleContext);
-		helper = (EventAdminHelper) ContextInjectionFactory.make(
+		helper = ContextInjectionFactory.make(
 				EventAdminHelper.class, localContext);
 	}
 

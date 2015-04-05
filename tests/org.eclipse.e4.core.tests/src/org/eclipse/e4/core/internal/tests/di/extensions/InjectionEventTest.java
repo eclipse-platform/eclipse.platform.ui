@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,7 +127,7 @@ public class InjectionEventTest extends TestCase {
 		ensureEventAdminStarted();
 		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 		IEclipseContext localContext = EclipseContextFactory.getServiceContext(bundleContext);
-		helper = (EventAdminHelper) ContextInjectionFactory.make(EventAdminHelper.class, localContext);
+		helper = ContextInjectionFactory.make(EventAdminHelper.class, localContext);
 	}
 
 	public void testEventInjection() throws InvocationTargetException, InstantiationException {
@@ -136,7 +136,7 @@ public class InjectionEventTest extends TestCase {
 		injector.addBinding(MyBinding.class);
 
 		IEclipseContext context = EclipseContextFactory.create();
-		InjectTarget target = (InjectTarget) ContextInjectionFactory.make(InjectTarget.class, context);
+		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class, context);
 
 		// initial state
 		assertEquals(0, target.counter1);
@@ -246,7 +246,7 @@ public class InjectionEventTest extends TestCase {
 	private void wrapSetup() throws InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		{
-			InjectTarget target = (InjectTarget) ContextInjectionFactory.make(InjectTarget.class, context);
+			InjectTarget target = ContextInjectionFactory.make(InjectTarget.class, context);
 			// send event
 			helper.sendEvent("e4/test/event1", "event1data");
 			assertEquals(1, target.counter1);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class DisposeClassLinkTest extends TestCase {
 
 	public void testMake() throws Exception {
 		IEclipseContext context = EclipseContextFactory.create();
-		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
+		Test test = ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
 		context.dispose();
@@ -91,7 +91,7 @@ public class DisposeClassLinkTest extends TestCase {
 	public void testDisposeParent() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		IEclipseContext context = parentContext.createChild();
-		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
+		Test test = ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
 		context.dispose();
@@ -127,7 +127,7 @@ public class DisposeClassLinkTest extends TestCase {
 	public void testInjectedWithContext() throws Exception {
 	    IEclipseContext context = EclipseContextFactory.create();
 
-	    InjectionObject obj = (InjectionObject) ContextInjectionFactory.make(InjectionObject.class, context);
+	    InjectionObject obj = ContextInjectionFactory.make(InjectionObject.class, context);
 
 	    assertEquals("The object has been injected with the context", context, obj.context);
 	    assertEquals("@PostConstruct should have been called once", 1, obj.postConstruct);

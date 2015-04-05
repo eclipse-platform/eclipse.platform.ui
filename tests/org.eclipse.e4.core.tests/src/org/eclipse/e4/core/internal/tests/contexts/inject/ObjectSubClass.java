@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,11 +43,13 @@ public class ObjectSubClass extends ObjectSuperClass {
 		setObjectCalled++;
 	}
 
+	@Override
 	@Inject
 	public void OverriddenMethod(Float f) {
 		setOverriddenCalled++;
 	}
 
+	@Override
 	@Inject
 	public void contextSet(IEclipseContext context) {
 		super.contextSet(context);
@@ -83,6 +85,7 @@ public class ObjectSubClass extends ObjectSuperClass {
 		subPreDestroyCount++;
 	}
 
+	@Override
 	@PreDestroy
 	public void overriddenPreDestroy() {
 		overriddenPreDestroyCount++;
