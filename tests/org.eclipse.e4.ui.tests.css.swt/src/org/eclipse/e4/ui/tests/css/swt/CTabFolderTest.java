@@ -187,7 +187,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimize-visible", null));
 	}
 
-	@SuppressWarnings("restriction")
 	@Test
 	public void testMRUVisible() {
 		final boolean mruControlledByCSSDefault = CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS();
@@ -205,7 +204,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	@Test
 	public void testMRUVisibleCSSControlOff() {
 		final boolean mruControlledByCSSDefault = CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS();
